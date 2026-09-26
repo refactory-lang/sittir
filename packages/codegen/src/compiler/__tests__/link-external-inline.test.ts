@@ -28,7 +28,7 @@ const root: Rule<'evaluate'> = {
 		{ type: SYMBOL, name: '_content', inline: true }	]
 };
 
-const body: Rule<'evaluate'> = { type: PATTERN, value: '[^]*' };
+const body: Rule<'evaluate'> = { type: SEQ, members: [{ type: STRING, value: '<' }, { type: PATTERN, value: '[^>]*' }] };
 
 function contentOf(linked: ReturnType<typeof link>) {
 	const members = (linked.rules['root'] as { members: Rule<'link'>[] }).members;
@@ -37,7 +37,7 @@ function contentOf(linked: ReturnType<typeof link>) {
 
 describe('link inlines a hidden reference to its body', () => {
 	it('splices the body of a hidden rule', () => {
-		expect(contentOf(link(raw({ root, _content: body }, [])))).toMatchObject({ type: PATTERN });
+		expect(contentOf(link(raw({ root, _content: body }, [])))).toMatchObject({ type: SEQ });
 	});
 
 	it('keeps the symbol when the hidden rule is an external that carries a body', () => {

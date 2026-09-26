@@ -26,8 +26,8 @@ export namespace Modifier {
 		export interface Pub<G extends GrammarContext> extends Simplify<SubKindOf<V.Modifier.Visibility<G>>> {
 			// claimed by r
 			readonly kind: 'modifier.visibility.pub';
-			readonly visibilityModifierGroup?: V.Unmapped<'rust:visibility_modifier_group'>;
-			// unmapped: <rust:visibility_modifier_group>
+			readonly visibilityModifierPubScope?: V.Unmapped<'rust:visibility_modifier_pub_scope'>;
+			// unmapped: <rust:visibility_modifier_pub_scope>
 		}
 		export type Any<G extends GrammarContext> = V.Modifier.Visibility<G> | V.Modifier.Visibility.Pub<G>;
 	}

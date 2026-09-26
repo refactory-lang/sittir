@@ -13,6 +13,7 @@ export interface Type<G extends GrammarContext> {
 	readonly content?:
 		| V.Unmapped<'rust:function_type_fn_form'>
 		| V.Unmapped<'rust:function_type_trait_form'>
+		| V.Unmapped<'typescript:literal_type_negative_number'>
 		| V.Unmapped<'typescript:type_query_call_expression'>
 		| V.Unmapped<'typescript:type_query_instantiation_expression'>
 		| V.Unmapped<'typescript:type_query_member_expression'>
@@ -24,14 +25,14 @@ export interface Type<G extends GrammarContext> {
 		| G['pattern']
 		| G['type'];
 	// prt only
-	// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form> <typescript:type_query_call_expression> <typescript:type_query_instantiation_expression> <typescript:type_query_member_expression> <typescript:type_query_subscript_expression>
+	// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form> <typescript:literal_type_negative_number> <typescript:type_query_call_expression> <typescript:type_query_instantiation_expression> <typescript:type_query_member_expression> <typescript:type_query_subscript_expression>
 }
 
 export namespace Type {
 	export interface Abstract<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by r
 		readonly kind: 'type.abstract';
-		readonly trait: V.Clause.Bounds.Removed<G> | G['identifier'] | G['type'];
+		readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier.Type<G> | G['type'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export interface Array<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
@@ -72,7 +73,7 @@ export namespace Type {
 	export interface Dynamic<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by r
 		readonly kind: 'type.dynamic';
-		readonly trait: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
+		readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
 	}
 	export interface Existential<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
@@ -107,7 +108,7 @@ export namespace Type {
 		readonly kind: 'type.generic';
 		readonly name?: G['identifier'] | 'type' | V.Type.Path<G>;
 		// pt only
-		readonly type?: G['identifier'] | V.Type.Path<G>;
+		readonly type?: G['identifier'] | 'default' | 'gen' | 'union' | V.Type.Path<G>;
 		// r only
 		readonly typeArguments?: G['type'][];
 		// rt only
@@ -131,7 +132,7 @@ export namespace Type {
 	export interface Infer<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
 		readonly kind: 'type.infer';
-		readonly name: G['identifier'];
+		readonly name: V.Identifier.Type<G>;
 		readonly type?: G['identifier'] | G['type'];
 	}
 	export interface Intersection<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
@@ -143,7 +144,8 @@ export namespace Type {
 	export interface Literal<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
 		readonly kind: 'type.literal';
-		readonly content: G['literal'];
+		readonly content: V.Unmapped<'typescript:literal_type_negative_number'> | G['literal'];
+		// unmapped: <typescript:literal_type_negative_number>
 	}
 	export interface Lookup<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
@@ -192,15 +194,59 @@ export namespace Type {
 		readonly module?: G['identifier'];
 		// t only
 		readonly name: G['identifier'];
-		readonly path?: G['identifier'] | G['type'];
+		readonly path?:
+			| G['identifier']
+			| 'bool'
+			| 'char'
+			| 'default'
+			| 'f32'
+			| 'f64'
+			| 'gen'
+			| 'i128'
+			| 'i16'
+			| 'i32'
+			| 'i64'
+			| 'i8'
+			| 'isize'
+			| 'str'
+			| 'u128'
+			| 'u16'
+			| 'u32'
+			| 'u64'
+			| 'u8'
+			| 'union'
+			| 'usize'
+			| G['type'];
 		// r only
 	}
 	export namespace Path {
 		export interface Expression<G extends GrammarContext> extends Simplify<SubKindOf<V.Type.Path<G>>> {
 			// claimed by r
 			readonly kind: 'type.path.expression';
-			readonly name: G['identifier'];
-			readonly path?: G['identifier'] | V.Type.Generic.Turbofish<G>;
+			readonly name: V.Identifier.Type<G>;
+			readonly path?:
+				| G['identifier']
+				| 'bool'
+				| 'char'
+				| 'default'
+				| 'f32'
+				| 'f64'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'isize'
+				| 'str'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'usize'
+				| V.Type.Generic.Turbofish<G>;
 		}
 		export type Any<G extends GrammarContext> = V.Type.Path<G> | V.Type.Path.Expression<G>;
 	}

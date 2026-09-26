@@ -133,7 +133,7 @@ describe('Link — reference resolution', () => {
 		});
 		const linked = link(raw);
 		// The wrapper is consumed by normalize's `token` builder, not here.
-		expect(linked.rules['comment']).toEqual({ type: TOKEN, content: { type: STRING, value: '//' }, immediate: false });
+		expect(linked.rules['comment']).toEqual({ type: TOKEN, content: { type: STRING, value: '//' }, immediate: false, hidden: false });
 	});
 
 	it('keeps a token.immediate wrapper structurally, immediacy on the wrapper', () => {
@@ -145,7 +145,7 @@ describe('Link — reference resolution', () => {
 			}
 		});
 		const linked = link(raw);
-		expect(linked.rules['esc']).toEqual({ type: TOKEN, content: { type: STRING, value: '\\n' }, immediate: true });
+		expect(linked.rules['esc']).toEqual({ type: TOKEN, content: { type: STRING, value: '\\n' }, immediate: true, hidden: false });
 	});
 });
 
@@ -172,15 +172,17 @@ describe('Link — hidden rule classification', () => {
 		expect(linked.rules['_expression']).toEqual({
 			type: 'SUPERTYPE',
 			name: '_expression',
+			hidden: true,
 			subtypes: [
-				{ type: 'SYMBOL', name: 'binary_expression' },
-				{ type: 'SYMBOL', name: 'identifier' }
+				{ type: 'SYMBOL', name: 'binary_expression', inline: false },
+				{ type: 'SYMBOL', name: 'identifier', inline: false }
 			]
 		});
 	});
 
 	it('classifies hidden choice-of-strings as enum', () => {
 		const raw = makeRaw({
+			item: { type: SYMBOL, name: '_visibility' },
 			_visibility: {
 				type: CHOICE,
 				members: [
@@ -229,13 +231,14 @@ describe('Link — hidden rule classification', () => {
 			expect(linked.rules['_simple_pattern']).toEqual({
 				type: 'SUPERTYPE',
 				name: '_simple_pattern',
+				hidden: true,
 				// Each subtype ref stamps its own storage→parse alias inline
 				// (`aliasedFrom`) rather than a separate parallel map — the
 				// parse name carries the alias occurrence's own runtime symbol
 				// id for dispatch (see `SymbolRule.aliasedFrom`/`aliasedFromId`).
 				subtypes: [
-					{ type: 'SYMBOL', name: 'identifier' },
-					{ type: 'SYMBOL', name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative' }
+					{ type: 'SYMBOL', name: 'identifier', inline: false },
+					{ type: 'SYMBOL', name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative', inline: true }
 				],
 				variantArms: ['_simple_pattern_negative']
 			});
@@ -384,6 +387,7 @@ describe('Link — top-level alias bodies', () => {
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
 			type: 'PATTERN',
 			value: '[A-Za-z_]\\w*',
+			hidden: false,
 			inlinedFrom: 'identifier'
 		});
 	});
@@ -669,7 +673,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// The variant children come from the arms' variant annotations
 		// (`deriveVariantChildren`), so the inner choice's two annotated
 		// symbols are found without an explicit pairs argument.
-		applyOverridePolymorphs(rules, derivations);
+		applyOverridePolymorphs(rules, derivations, undefined);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the
@@ -1283,8 +1287,8 @@ describe('link — variantChildren is stamped on the linked grammar', () => {
 		const linked = link(raw);
 		expect(linked.variantChildren).toBeDefined();
 		expect(linked.variantChildren?.get('array_expression')).toEqual([
-			{ kind: 'array_expression_semi', name: 'semi' },
-			{ kind: 'array_expression_list', name: 'list' }
+			{ kind: 'array_expression_semi', name: 'semi', definedBy: 'override' },
+			{ kind: 'array_expression_list', name: 'list', definedBy: 'override' }
 		]);
 	});
 });

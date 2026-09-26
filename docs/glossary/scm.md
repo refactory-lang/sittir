@@ -12,14 +12,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/scm/extract-roles.ts::resolveGrammarRoot`
 
-```text
-/**
- * Resolve the root directory of a tree-sitter grammar npm package.
- *
- * @returns Absolute path to the package root, or `undefined` if the package
- *          is not installed.
- */
-```
+Resolve the root directory of the grammar's upstream tree-sitter package, from the grammar package's own dependencies (`grammarRequire`). Returns `undefined` when the package is not installed.
 
 ### `packages/codegen/src/scm/extract-roles.ts::readIfExists`
 

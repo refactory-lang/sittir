@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { emitKindIdRust } from '../kind-id-rust.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
@@ -10,19 +9,17 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
-import { deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
+import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GrammarName } from '../../grammars.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
-async function emittedKindIds(grammar: 'rust' | 'typescript' | 'python') {
+async function emittedKindIds(grammar: GrammarName) {
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 	const raw = await evaluate(entryPath);
-	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
-	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
-		readFileSync(parserCPath, 'utf8'),
-		`packages/${grammar}/.sittir/src/parser.c`
-	);
+	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const nodeMap = assemble(
 		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
@@ -52,6 +49,26 @@ describe('is_text_kind', () => {
 		expect(ids.has(idOf('mutable_specifier'))).toBe(false);
 		// function_item is a branch: it rebuilds from its slots.
 		expect(ids.has(idOf('function_item'))).toBe(false);
+	});
+});
+
+describe('wire_slot', () => {
+	it('routes an untagged child by its kind to the model slot that stores it', async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		expect(source).toContain(
+			"pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {"
+		);
+		expect(source).toContain(`(${idOf('for_in_statement')}, None, "for_header_lhs") => Some("for_header"),`);
+	});
+	it('routes a field-tagged child by its field when the model slot has another name', async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		expect(source).toContain(`(${idOf('enum_body_elements')}, Some("name"), _) => Some("content"),`);
+		expect(source).toContain(`(${idOf('enum_body_elements')}, None, "enum_assignment") => Some("content"),`);
+	});
+	it('leaves a child whose key already names its slot to the parser', async () => {
+		const { source } = await emittedKindIds('typescript');
+		const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
+		expect(table).not.toMatch(/, None, "([a-z_]+)"\) => Some\("\1"\)/);
 	});
 });
 

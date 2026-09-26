@@ -13,7 +13,8 @@ vi.mock('../src/run.ts', () => ({
 		divergentCount: 0,
 		errors: [],
 		skips: [],
-		excluded: []
+		excluded: [],
+		trivia: []
 	}),
 	runRt: vi.fn().mockResolvedValue({
 		grammar: 'rust',
@@ -30,7 +31,8 @@ vi.mock('../src/run.ts', () => ({
 		// happy path it means to pin.
 		accessorThrows: [],
 		skips: [],
-		excluded: []
+		excluded: [],
+		trivia: []
 	}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [], excluded: [] }),
 	runFactory: vi.fn().mockResolvedValue({
@@ -170,7 +172,11 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skip: 0,
 				astMatchPass: 8,
 				errors: [],
-				astMismatches: []
+				astMismatches: [],
+				accessorThrows: [],
+				skips: [],
+				excluded: [],
+				trivia: []
 			})
 			.mockResolvedValueOnce({
 				grammar: 'rust',
@@ -180,7 +186,11 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skip: 0,
 				astMatchPass: 5,
 				errors: [],
-				astMismatches: []
+				astMismatches: [],
+				accessorThrows: [],
+				skips: [],
+				excluded: [],
+				trivia: []
 			});
 	});
 

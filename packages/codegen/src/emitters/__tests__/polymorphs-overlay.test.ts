@@ -6,6 +6,8 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import type { GeneratedIdEntry, GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
 
@@ -18,10 +20,16 @@ import { listRestParamType } from '../shared.ts';
 // (`link` only keeps rules reachable from it).
 // ---------------------------------------------------------------------------
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
+function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
+	const stamped = { ...rules } as Record<string, Rule>;
+	stampAutomaticVariants(stamped, new Set(), new Set());
+	return stamped as Record<string, Rule<'evaluate'>>;
+}
+
+function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
-		rules,
+		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
@@ -33,9 +41,9 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		word: null,
 		references: []
 	};
-	const linked = link(raw);
+	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
-	return assemble(AssembleCtx.from(normalized));
+	return assemble(AssembleCtx.from(normalized, generatedIdTables));
 }
 
 function polymorphNodeMap(): NodeMap {
@@ -79,8 +87,8 @@ function polymorphNodeMap(): NodeMap {
 					content: {
 						type: CHOICE,
 						members: [
-							{ type: STRING, value: 'and' },
-							{ type: STRING, value: 'or' }
+							{ type: STRING, value: 'and', annotations: { variant: 'and', variantOf: 'logic' } },
+							{ type: STRING, value: 'or', annotations: { variant: 'or', variantOf: 'logic' } }
 						]
 					}
 				},
@@ -102,8 +110,8 @@ function polymorphNodeMap(): NodeMap {
 						content: {
 							type: CHOICE,
 							members: [
-								{ type: STRING, value: 'plus' },
-								{ type: STRING, value: 'minus' }
+								{ type: STRING, value: 'plus', annotations: { variant: 'plus', variantOf: 'annotated' } },
+								{ type: STRING, value: 'minus', annotations: { variant: 'minus', variantOf: 'annotated' } }
 							]
 						}
 					}
@@ -127,8 +135,8 @@ function parameterlessArmNodeMap(): NodeMap {
 					content: {
 						type: CHOICE,
 						members: [
-							{ type: SYMBOL, name: 'kw_self' },
-							{ type: SYMBOL, name: 'kw_super' }
+							{ type: SYMBOL, name: 'kw_self', annotations: { variant: 'kw_self', variantOf: 'pair' } },
+							{ type: SYMBOL, name: 'kw_super', annotations: { variant: 'kw_super', variantOf: 'pair' } }
 						]
 					}
 				}
@@ -142,37 +150,15 @@ function parameterlessArmNodeMap(): NodeMap {
 
 function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap({
-		grandparent_c: {
+		twice: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'parent_c' },
-				{ type: SYMBOL, name: 'leaf_c' }
+				{ type: SYMBOL, name: 'first', annotations: { variant: 'same', variantOf: 'twice' } },
+				{ type: SYMBOL, name: 'second', annotations: { variant: 'same', variantOf: 'twice' } }
 			]
 		},
-		parent_c: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin_a' },
-				{ type: SYMBOL, name: 'twin_b' }
-			]
-		},
-		twin_a: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'leaf_c' }
-			]
-		},
-		twin_b: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'other_c' }
-			]
-		},
-		twin: { type: PATTERN, value: '[a-z]+' },
-		leaf_c: { type: PATTERN, value: '[0-9]+' },
-		other_c: { type: PATTERN, value: '[A-Z]+' }
+		first: { type: PATTERN, value: '[a-z]+' },
+		second: { type: PATTERN, value: '[0-9]+' }
 	});
 }
 
@@ -213,12 +199,13 @@ describe('emitPolymorphsOverlay', () => {
 		);
 	});
 
-	it('stamps a parameterless child into its slot instead of asking the caller for an empty argument tuple', () => {
+	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
 		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
 
 		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
-		expect(text).toContain('{ ...config, content: _c(child)() }');
-		expect(text).not.toContain('_c(child)(...seated)');
+		expect(text).toContain('{ ...config, content: value }');
+		expect(text).toContain("strict: pair$kwSelf(F.buildPair, 'self')");
+		expect(text).not.toContain('_c(child)');
 	});
 
 	it('prints an emit diagnostic for a skipped sub-factory on its own console.warn channel', () => {
@@ -228,55 +215,12 @@ describe('emitPolymorphsOverlay', () => {
 		emitPolymorphsOverlay({ nodeMap });
 
 		expect(warn).toHaveBeenCalledWith(
-			'[codegen] grandparent_c: sub-factory twin skipped (ambiguous): parent_c.twinATwin, parent_c.twinBTwin'
+			'[codegen] twice: sub-factory same skipped (ambiguous): first, second'
 		);
 	});
 });
 
-function hoistedMiddleNodeMap(): NodeMap {
-	return buildNodeMap({
-		grandparent: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: '_parent' },
-				{ type: SYMBOL, name: 'leaf_a' }
-			]
-		},
-		_parent: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'leaf_a' },
-				{ type: SYMBOL, name: 'leaf_b' }
-			],
-			annotations: { hoisted: true }
-		},
-		leaf_a: { type: PATTERN, value: '[a-z]+' },
-		leaf_b: {
-			type: SEQ,
-			members: [
-				{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'identifier' } },
-				{ type: FIELD, name: 'y', content: { type: SYMBOL, name: 'identifier' } }
-			]
-		},
-		identifier: { type: PATTERN, value: '[0-9]+' }
-	});
-}
-
-describe('a hoisted kind in the middle of a flattened arm', () => {
-	it('gets a private wire set the grandparent routes through, and no export', () => {
-		const nodeMap = hoistedMiddleNodeMap();
-		const parent = nodeMap.nodes.get('_parent')!;
-		expect(parent.annotations?.hoisted).toBe(true);
-		const key = parent.factoryName!;
-		const text = emitPolymorphsOverlay({ nodeMap });
-		expect(text).toContain(`const ${key}: {`);
-		expect(text).not.toContain(`export const ${key}`);
-		expect(text).toContain(`grandparent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
-		expect(text.indexOf(`const ${key}: {`)).toBeLessThan(text.indexOf('export const grandparent'));
-	});
-});
-
-describe('a single hoisted group splices onto its parent', () => {
+describe('a single hoisted group flattens onto its parent', () => {
 	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
@@ -284,11 +228,11 @@ describe('a single hoisted group splices onto its parent', () => {
 				type: SEQ,
 				members: [
 					{ type: STRING, value: 'catch' },
-					{ type: OPTIONAL, content: { type: SYMBOL, name: '_clause_group' } },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'clause_group' } },
 					{ type: FIELD, name: 'body', content: { type: PATTERN, value: '.+' } }
 				]
 			},
-			_clause_group: {
+			clause_group: {
 				type: SEQ,
 				members: [
 					{ type: STRING, value: '(' },
@@ -301,12 +245,12 @@ describe('a single hoisted group splices onto its parent', () => {
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
 		const out = emitPolymorphsOverlay({ nodeMap });
-		expect(out).toContain('const clause$splice =');
+		expect(out).toContain('const clause$flatten =');
 		expect(out).toContain(
 			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
 		);
 		expect(out).toContain('export const clause: typeof B.clause & {');
-		expect(out).toContain('= clause$splice(F.buildClause, F.buildClauseGroup);');
+		expect(out).toContain('= clause$flatten(F.buildClause, F.buildClauseGroup);');
 		expect(out).toContain('strict: clause$seated,');
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
 	});
@@ -323,11 +267,11 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 					{
 						type: FIELD,
 						name: 'comparators',
-						content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } }
+						content: { type: REPEAT1, content: { type: SYMBOL, name: 'comparison_comparator' } }
 					}
 				]
 			},
-			_comparison_comparator: {
+			comparison_comparator: {
 				type: SEQ,
 				members: [
 					{
@@ -362,13 +306,13 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 						name: 'patterns',
 						content: {
 							type: REPEAT1,
-							content: { type: CHOICE, members: [{ type: SYMBOL, name: '_union_negative' }, { type: SYMBOL, name: 'literal' }] }
+							content: { type: CHOICE, members: [{ type: SYMBOL, name: 'union_negative' }, { type: SYMBOL, name: 'literal' }] }
 						}
 					},
 					{ type: STRING, value: ')' }
 				]
 			},
-			_union_negative: {
+			union_negative: {
 				type: SEQ,
 				members: [
 					{ type: FIELD, name: 'sign', content: { type: CHOICE, members: [{ type: STRING, value: '-' }, { type: STRING, value: '+' }] } },
@@ -391,21 +335,27 @@ describe('a mount route carries the seats of its own parent', () => {
 			clause: {
 				type: SEQ,
 				members: [
-					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: '_clause_patterns' } },
+					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: 'clause_patterns' } },
 					{
 						type: FIELD,
 						name: 'body',
-						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_clause_block' }, { type: SYMBOL, name: 'literal' }] }
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: SYMBOL, name: 'clause_block', annotations: { variant: 'block', variantOf: 'clause' } },
+								{ type: SYMBOL, name: 'literal', annotations: { variant: 'literal', variantOf: 'clause' } }
+							]
+						}
 					}
 				]
 			},
-			_clause_patterns: {
+			clause_patterns: {
 				type: FIELD,
 				name: 'pattern',
 				content: { type: REPEAT1, content: { type: SYMBOL, name: 'literal' } },
 				annotations: { hoisted: true }
 			},
-			_clause_block: {
+			clause_block: {
 				type: SEQ,
 				members: [{ type: STRING, value: '{' }, { type: FIELD, name: 'inner', content: { type: SYMBOL, name: 'literal' } }],
 				annotations: { hoisted: true }
@@ -419,7 +369,7 @@ describe('a mount route carries the seats of its own parent', () => {
 	});
 });
 
-describe('a visible wrapper declared spliced seats on its parent', () => {
+describe('a visible wrapper declared flattened seats on its parent', () => {
 	const wrapperGrammar = (): NodeMap =>
 		buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'match' }, { type: SYMBOL, name: 'arm' }] },
@@ -430,7 +380,7 @@ describe('a visible wrapper declared spliced seats on its parent', () => {
 						type: FIELD,
 						name: 'pattern',
 						content: { type: SYMBOL, name: 'wrapper' },
-						annotations: { spliced: true }
+						annotations: { flattened: true }
 					},
 					{ type: STRING, value: '=>' },
 					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[a-z]+' } }
@@ -450,11 +400,11 @@ describe('a visible wrapper declared spliced seats on its parent', () => {
 			nodeMap: wrapperGrammar(),
 			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
 		});
-		expect(out).toContain('const arm$splice =');
+		expect(out).toContain('const arm$flatten =');
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
 		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
-		expect(out).toMatch(/= arm\$splice\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toMatch(/= arm\$flatten\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
 		expect(out).toContain("import { TSKindId } from '../../types.js';");
 	});
 });
@@ -468,5 +418,55 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	it('lets an empty-capable list take nothing, or only its options', () => {
 		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
 		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
+	});
+});
+
+describe('a keyword literal arm named by its text', () => {
+	const keyword = (id: number, kind: string, text: string): GeneratedIdEntry => ({
+		id,
+		parser: { cSymbol: `anon_sym_${id}`, parserName: kind, symbolName: kind, literalText: text, anon: true, aux: false, alias: false, hidden: false, keyword: true }
+	});
+
+	it('mounts each keyword literal of an unfielded choice under its source text', () => {
+		const nodeMap = buildNodeMap(
+			{
+				junction: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'word' } },
+						{ type: CHOICE, members: [{ type: STRING, value: 'and' }, { type: STRING, value: 'or' }] },
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'word' } }
+					]
+				},
+				word: { type: PATTERN, value: '[a-z]+' }
+			},
+			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
+		);
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain("and: { strict: junction$and(F.buildJunction, 'and')");
+		expect(out).toContain("or: { strict: junction$or(F.buildJunction, 'or')");
+	});
+
+	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {
+		const nodeMap = buildNodeMap(
+			{
+				junction: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'word' } },
+						{ type: CHOICE, members: [{ type: STRING, value: 'and' }, { type: SYMBOL, name: 'and' }] },
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'word' } }
+					]
+				},
+				and: { type: SEQ, members: [{ type: STRING, value: '&' }, { type: STRING, value: '&' }] },
+				word: { type: PATTERN, value: '[a-z]+' }
+			},
+			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
+		);
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
+		expect(out).not.toContain('junction$and');
+		warn.mockRestore();
 	});
 });

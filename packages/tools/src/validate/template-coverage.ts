@@ -497,9 +497,8 @@ function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string
 }
 
 /**
- * Compute, for each kind the compiler stamped as an override-defined
- * polymorph (`node-model.json5`'s `polymorphVariants[kind].definedBy ===
- * 'override'` — a parent dispatching to a set of separately-aliased
+ * Compute, for each polymorph in `node-model.json5`'s `polymorphVariants`
+ * (a parent dispatching to a set of separately-aliased
  * variant kinds via `patches:` `variant()` labels in grammar.sittir.ts,
  * e.g. `call_expression` → `call_expression_call`/`_member`/
  * `_template_call`), the set of field names declared on ANY of those
@@ -527,7 +526,6 @@ function computeChildDelegatedFields(
 	const byType = new Map(entries.map((e) => [e.type, e]));
 	const out = new Map<string, { contentSlot: string; fields: Set<string> }>();
 	for (const [kind, descriptor] of Object.entries(polymorphVariants)) {
-		if (descriptor.definedBy !== 'override') continue;
 		const slotNames = Object.keys(factorySlots[kind] ?? {});
 		// The parent's own slot registry (Root 3's fix in templates.ts)
 		// only ever falls back to a single-slot owner — if this kind's

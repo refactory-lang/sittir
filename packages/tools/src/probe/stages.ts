@@ -43,9 +43,9 @@
  *   5. Assemble's field→slot mapping.
  */
 
-import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { load } from '../codegen-surface.ts';
+import { REPO_ROOT } from '@sittir/codegen/grammars';
 
 export interface ProbeStagesOptions {
 	grammar: string;
@@ -59,10 +59,9 @@ export interface ProbeStagesOptions {
 export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const grammar = opts.grammar;
 	const kind = opts.kind;
-	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 
-	const { resolveGrammarJsPath } = await load('resolveGrammar');
-	const overridesPath = resolve(repoRoot, `packages/${grammar}/grammar.sittir.ts`);
+	const { resolveGrammarJsPath, resolveOverridesPath } = await load('resolveGrammar');
+	const overridesPath = resolveOverridesPath(grammar);
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const useOverrides = !opts.noOverrides && existsSync(overridesPath);
 	const entryPath = useOverrides ? overridesPath : grammarJsPath;
@@ -70,7 +69,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const stages: Record<string, unknown> = {
 		grammar,
 		kind,
-		entryPath: relFromRoot(entryPath, repoRoot)
+		entryPath: relFromRoot(entryPath, REPO_ROOT)
 	};
 
 	const origLog = console.log;

@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
-import { REPO_ROOT, generatedRootsFor, type Grammar } from './generated-manifest.ts';
+import { generatedRootsFor } from './generated-manifest.ts';
+import { REPO_ROOT, type GrammarName } from '../grammars.ts';
 import { compareOrdinal } from '../emitters/shared.ts';
 
 const EMITTER_ORDER = [
@@ -137,7 +138,7 @@ function joinRanges(ranges: string[], max = 6): string {
 	return `${ranges.slice(0, max).join(', ')}, +${ranges.length - max} more`;
 }
 
-export function formatEmitDiff(grammar: Grammar): string | null {
+export function formatEmitDiff(grammar: GrammarName): string | null {
 	let raw: string;
 	try {
 		raw = execFileSync('git', ['diff', '--unified=0', '--no-color', 'HEAD', '--', ...generatedRootsFor(grammar)], {

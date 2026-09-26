@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { deriveAddressTables, hintEmitterOf, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
 import type { PreferenceArm, SitePreference } from '../../compiler/model/site-preferences.ts';
 import { siteKey } from '../../dsl/primitives/spacing.ts';
+import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 const armType: ArmTypeResolver = (arm) => (arm.kind === undefined ? arm.value : `TSKindId.${arm.kind}`);
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
@@ -47,7 +48,7 @@ describe('renderOptionsModule', () => {
 		};
 		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', 'comma_separator_space_after'), delimiter];
 		const arms = { spacingType, whitespaceType: spacingType };
-		const addresses = deriveAddressTables(sites, kindEntries, armType, new Map());
+		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), armType, new Map());
 		const hints = hintEmitterOf(addresses, kindEntries, arms, new Set(['formal_parameters']));
 		expect(hints.roots.find((r) => r.name === 'formal_parameters')?.hint).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: SpacingArm } } } }');
 		expect(hints.roots.filter((r) => r.label).map((r) => [r.name, r.key])).toEqual([['return_statement', 'returnStatement']]);
@@ -63,7 +64,7 @@ describe('renderOptionsModule', () => {
 	it('spells every key camel-cased, including literal tokens and list kinds', () => {
 		const entries = [...kindEntries, { kind: 'colon_colon', member: 'ColonColon', symbolName: '::', literalText: '::', anon: true }];
 		const site: SitePreference = { kind: 'token_tree_punctuation', slot: 'colon_colon', address: 'colon_colon_after', label: 'colon_colon_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
-		const hints = hintEmitterOf(deriveAddressTables([site], entries, armType, new Map()), entries, undefined, new Set());
+		const hints = hintEmitterOf(deriveAddressTables([site], entries, makeSiteKindsNodeMap([site]), armType, new Map()), entries, undefined, new Set());
 		expect(hints.roots.map((r) => [r.key, r.label])).toEqual([['tokenTreePunctuation', true]]);
 		expect(renderOptionsModule({ hints })).toContain('readonly tokenTreePunctuation?: { readonly colonColon?: { readonly after?: TSKindId.tight | TSKindId.space | TSKindId.newline } };');
 	});
@@ -73,7 +74,7 @@ describe('renderOptionsModule', () => {
 		const whitespaceType = `${spacingType} | TSKindId.indent | TSKindId.dedent`;
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
-		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, armType, new Map()), kindEntries, { spacingType, whitespaceType }, new Set(['block']));
+		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, makeSiteKindsNodeMap([edge]), armType, new Map()), kindEntries, { spacingType, whitespaceType }, new Set(['block']));
 		expect(hints.roots.map((r) => [r.key, r.hint])).toEqual([['block', '{ readonly before?: WhitespaceArm }']]);
 	});
 });
@@ -98,7 +99,7 @@ describe('deriveAddressTables', () => {
 	});
 
 	it('splits an address into the branches above a site and the site itself', () => {
-		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm, new Map());
+		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, makeSiteKindsNodeMap([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')]), addressArm, new Map());
 		expect(tables.roots).toEqual(['block']);
 		expect(tables.branches).toEqual([
 			{ path: 'block', children: ['before', 'lbrace'], segments: [{ kind: 'kind-match', name: 'block' }] },
@@ -121,7 +122,7 @@ describe('deriveAddressTables', () => {
 			...site('block', 'lbrace', 'lbrace_after'),
 			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'literal', text: '\u00a4' }, { kind: 'name', name: 'after' }]
 		};
-		expect(() => deriveAddressTables([orphanLiteral], kindEntries, addressArm, new Map())).toThrow(
+		expect(() => deriveAddressTables([orphanLiteral], kindEntries, makeSiteKindsNodeMap([orphanLiteral]), addressArm, new Map())).toThrow(
 			'options: literal "\u00a4" has no kind name'
 		);
 	});
@@ -136,7 +137,7 @@ describe('deriveAddressTables', () => {
 			...site('block', 'lbrace', 'lbrace_after'),
 			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'name', name: 'comma' }, { kind: 'name', name: 'after' }]
 		};
-		expect(() => deriveAddressTables([literalSite, nameSite], entries, addressArm, new Map())).toThrow(
+		expect(() => deriveAddressTables([literalSite, nameSite], entries, makeSiteKindsNodeMap([literalSite, nameSite]), addressArm, new Map())).toThrow(
 			"options: address 'block/comma' names two segments"
 		);
 	});

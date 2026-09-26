@@ -9,8 +9,7 @@ import {
 	AssembledKeyword,
 	AssembledNonterminal,
 	AssembledPunctuation,
-	isNodeRef,
-	valueParseKindsOf
+	isNodeRef
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
@@ -26,6 +25,7 @@ import {
 	isNonEmpty,
 	isRequired,
 	resolveFieldStorageInfo,
+	reclaimsAnonymousChild,
 	wrapExposesChildren,
 	classifyWrapEmission,
 	isSlotBearingCompound,
@@ -35,9 +35,8 @@ import {
 	kindEnumAltIdPairs,
 	kindEnumOwnSymbolIds,
 	fieldTypeComponents,
-	collectConcreteStorageKeys,
-	expandToConcreteParseKinds,
-	slotSeparatorTexts
+	slotSeparatorTexts,
+	pruneUnusedImports
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -136,7 +135,6 @@ interface ResolveSlotDrillConfig {
 	readonly nonEmpty?: boolean;
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
-	readonly candidateStorageKeys?: readonly string[];
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
@@ -153,12 +151,7 @@ function resolveSlotDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const rawStoreExpr = resolveSlotStoreExpr(
-		slot,
-		config.dataExpr,
-		config.candidateStorageKeys,
-		config.forceUnknownElement
-	);
+	const rawStoreExpr = dataAccessExpr(config.dataExpr, slot.storageKey);
 	if (config.separatorIdsExpr !== undefined && slot.arity === 'many' && config.elided) {
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
@@ -177,8 +170,8 @@ function resolveSlotDrillExprs(
 			: slotStoreExpr;
 	const diagnosticContextExpr = `{ tree, nodeType: ${config.dataExpr}.$type, slotName: ${JSON.stringify(slot.name)}, span: (${config.dataExpr} as _NodeData).$span }`;
 	const reclaimedStoreExpr =
-		config.storageInfo?.kind === 'kindEnum' && config.reclaimKindIdsExpr
-			? `(${filteredStoreExpr} ?? readTerminalFromOther(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
+		config.reclaimKindIdsExpr !== undefined
+			? `(${filteredStoreExpr} ?? readTerminalFromOther<${config.elemType}>(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
 			: filteredStoreExpr;
 	const typeArg = config.forceUnknownElement ? '<unknown>' : '';
 	const normalizedStoreExpr =
@@ -276,49 +269,8 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function computeConsumedCandidateKeys(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {
-	const canonicalStorageKeys = new Set(slots.map((f) => f.storageKey));
-	return [
-		...new Set(
-			slots.flatMap((f) => (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => !canonicalStorageKeys.has(k)))
-		)
-	].sort();
-}
-
-function collectWrapWireKeyTypes(
-	slots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): ReadonlyMap<string, string> {
-	const canonicalKeys = new Set(slots.map((f) => f.storageKey));
-	const keyTypes = new Map<string, string>();
-	for (const f of slots) {
-		const candidates = collectConcreteStorageKeys(f, nodeMap);
-		if (!candidates) continue;
-		const elemType = fieldElementType(f, nodeMap, kindEntries);
-		const candidateType =
-			f.arity === 'many'
-				? `${elemType} | readonly ${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
-				: elemType;
-		for (const k of candidates) {
-			if (k === f.storageKey || canonicalKeys.has(k)) continue;
-			const existing = keyTypes.get(k);
-			keyTypes.set(
-				k,
-				existing === undefined || existing === candidateType ? candidateType : `${existing} | ${candidateType}`
-			);
-		}
-	}
-	return keyTypes;
-}
-
-function buildWrapParamType(typeName: string, wireKeyTypes: ReadonlyMap<string, string>, otherType?: string): string {
-	if (wireKeyTypes.size === 0 && otherType === undefined) return `T.${typeName}`;
-	const members = [
-		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
-		...(otherType !== undefined ? [`readonly $other?: ${otherType};`] : [])
-	];
-	return `T.${typeName} & { ${members.join(' ')} }`;
+function buildWrapParamType(typeName: string, otherType?: string): string {
+	return otherType === undefined ? `T.${typeName}` : `T.${typeName} & { readonly $other?: ${otherType}; }`;
 }
 
 const SAFE_IDENT_KEY = /^_[A-Za-z_$][A-Za-z0-9_$]*$/;
@@ -328,34 +280,6 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 		return `${dataExpr}.${storageKey}`;
 	}
 	return `${dataExpr}[${JSON.stringify(storageKey)}]`;
-}
-
-function resolveSlotStoreExpr(
-	slot: SlotModel,
-	dataExpr: string,
-	candidateKeys?: readonly string[],
-	forceUnknownElement?: boolean
-): string {
-	if (candidateKeys && candidateKeys.length > 0) {
-		const candidates = candidateKeys.filter((k) => k !== slot.storageKey);
-		const canonicalExpr = dataAccessExpr(dataExpr, slot.storageKey);
-
-		if (slot.arity === 'many') {
-			const sources = candidates.map(
-				(k) => `[${JSON.stringify(k.startsWith('_') ? k.slice(1) : k)}, ${dataAccessExpr(dataExpr, k)}]`
-			);
-			const concatTypeArg = forceUnknownElement ? '<unknown>' : '';
-			const candidateExpr =
-				sources.length > 0
-					? `_interleaveBySlotOrder${concatTypeArg}(${dataExpr} as _NodeData, [${sources.join(', ')}])`
-					: '[]';
-			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
-		}
-
-		const probes = [canonicalExpr, ...candidates.map((k) => dataAccessExpr(dataExpr, k))];
-		return `(${probes.join(' ?? ')})`;
-	}
-	return dataAccessExpr(dataExpr, slot.storageKey);
 }
 
 function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
@@ -373,7 +297,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		...(node.transitiveParseKinds ?? []).filter(isNodeRef).map((ref) => storageKindOfRef(ref.node))
 	];
 	const allowedKinds = [...new Set(reachable.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
-	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
+	const paramType = buildWrapParamType(node.typeName, `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	const subtypeRefs = node.subtypes.filter(isNodeRef);
 	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledPunctuation || ref.node instanceof AssembledKeyword)) {
 		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
@@ -421,50 +345,8 @@ export function buildSeparatedListContentSlot(node: AssembledList): AssembledNon
 	});
 }
 
-function isFieldBackedSeparatedList(node: AssembledList): boolean {
-	return (node.simplifiedRule as { fieldName?: string }).fieldName !== undefined;
-}
-
-function collectSeparatedListContentStorageKeys(
-	contentSlot: AssembledNonterminal,
-	nodeMap: NodeMap,
-	fieldBacked: boolean
-): readonly string[] {
-	if (fieldBacked) return [];
-	const parseKinds = valueParseKindsOf(contentSlot);
-	if (parseKinds.length === 0) return [];
-	const concrete = expandToConcreteParseKinds(parseKinds, nodeMap);
-	const armFieldNames = contentSlot.values.map((v) => v.parseName).filter((n): n is string => n !== undefined);
-	return [...new Set([...armFieldNames.map((n) => `_${n}`), ...concrete.map((k) => `_${k}`)])];
-}
-
-function collectSeparatedListWireKeyTypes(
-	contentSlot: AssembledNonterminal,
-	canonicalField: AssembledNonterminal,
-	canonicalKeys: ReadonlySet<string>,
-	fallbackStorageKey: string,
-	nodeMap: NodeMap,
-	fieldBacked: boolean,
-	kindEntries?: readonly KindEnumEntry[]
-): ReadonlyMap<string, string> {
-	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
-	const elemType = fieldElementType(canonicalField, nodeMap, kindEntries);
-	const keyTypes = new Map<string, string>();
-	for (const k of candidates) {
-		if (canonicalKeys.has(k)) continue;
-		keyTypes.set(k, elemType);
-	}
-	if (!canonicalKeys.has(fallbackStorageKey)) keyTypes.set(fallbackStorageKey, elemType);
-	return keyTypes;
-}
-
-function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: ReadonlyMap<string, string>): string {
-	const members = [
-		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
-		"readonly $other?: _NodeData['$other'];",
-		'readonly $span?: { start: number; end: number };'
-	];
-	return `T.${typeName} & { ${members.join(' ')} }`;
+function buildSeparatedListWrapParamType(typeName: string): string {
+	return `T.${typeName} & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } }`;
 }
 
 function emitSeparatedListWrap(
@@ -479,21 +361,9 @@ function emitSeparatedListWrap(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const canonical = canonicalSeparatedListField(node);
 	const canonicalKeys = new Set(node.slots.map((f) => f.storageKey));
-	const fieldBacked = isFieldBackedSeparatedList(node);
-	const wireKeyTypes = collectSeparatedListWireKeyTypes(
-		contentSlot,
-		canonical,
-		canonicalKeys,
-		canonical.storageKey,
-		nodeMap,
-		fieldBacked,
-		kindEntries
-	);
-	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
+	const paramType = buildSeparatedListWrapParamType(node.typeName);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
-	lines.push(
-		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...canonicalKeys, ...wireKeyTypes.keys()])])});`
-	);
+	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...canonicalKeys])});`);
 	if (wrapsAnonLiteralContent(node.slots, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
@@ -501,7 +371,6 @@ function emitSeparatedListWrap(
 	}
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
-	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap, fieldBacked);
 	const contentModel: SlotModel = {
 		name: canonical.name,
 		propertyName: canonical.propertyName,
@@ -514,17 +383,11 @@ function emitSeparatedListWrap(
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
-		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined,
 		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
 	lines.push('  return withMethods({');
-	const consumedCandidateKeys = computeConsumedCandidateKeys(node.slots, nodeMap);
-	if (consumedCandidateKeys.length > 0) {
-		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
-	} else {
-		lines.push('    ...data,');
-	}
+	lines.push('    ...data,');
 	if (kindEntries) {
 		const entry = findKindEntry(kindEntries, node.kind);
 		if (entry) {
@@ -583,7 +446,7 @@ function computeCollidedReclaimKinds(
 	const claimedBy = new Map<string, string[]>();
 	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		if (storageInfo.kind !== 'kindEnum') continue;
+		if (!reclaimsAnonymousChild(f, nodeMap)) continue;
 		for (const k of storageInfo.enumKinds) {
 			if (!hasCatalogEntry(kindEntries, k)) continue;
 			const slots = claimedBy.get(k) ?? [];
@@ -596,7 +459,7 @@ function computeCollidedReclaimKinds(
 		if (slots.length < 2) continue;
 		collided.add(k);
 		console.warn(
-			`[codegen] reclaim-ambiguous: kind '${ownerKind}' has kindEnum slots ` +
+			`[codegen] reclaim-ambiguous: kind '${ownerKind}' has unnamed slots ` +
 				`[${slots.join(', ')}] all reclaiming member '${k}' from $other; the token is ` +
 				`ambiguous between them — auto-reclaim suppressed. Field one operator (override) to resolve.`
 		);
@@ -615,9 +478,8 @@ function emitFieldStorageLines(
 	const collidedReclaimKinds = computeCollidedReclaimKinds(slots, ownerKind, nodeMap, kindEntries);
 	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
 		const reclaimKindIdsExpr =
-			storageInfo.kind === 'kindEnum'
+			reclaimsAnonymousChild(f, nodeMap)
 				? (() => {
 						const ids = storageInfo.enumKinds
 							.filter((k) => !collidedReclaimKinds.has(k))
@@ -636,7 +498,6 @@ function emitFieldStorageLines(
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			candidateStorageKeys,
 			reclaimKindIdsExpr,
 			kindEnumTextIdPairs:
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
@@ -710,14 +571,11 @@ function emitFieldCarryingWrap(
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	const wireKeyTypes = collectWrapWireKeyTypes(slots, nodeMap, kindEntries);
 	const needsOther = children.length > 0;
-	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
+	const paramType = buildWrapParamType(node.typeName, needsOther ? "_NodeData['$other']" : undefined);
 	const interior = interiorOf(nodeMap.nodes.get(node.kind)!);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
-	lines.push(
-		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...slots.map((f) => f.storageKey), ...wireKeyTypes.keys()])])});`
-	);
+	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set(slots.map((f) => f.storageKey))])});`);
 	if (interior !== undefined) {
 		lines.push(`  data = _projectLexed(data, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)});`);
 	}
@@ -734,12 +592,7 @@ function emitFieldCarryingWrap(
 	} else {
 		lines.push('  return withMethods({');
 	}
-	const consumedCandidateKeys = computeConsumedCandidateKeys(slots, nodeMap);
-	if (consumedCandidateKeys.length > 0) {
-		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
-	} else {
-		lines.push('    ...data,');
-	}
+	lines.push('    ...data,');
 	if (kindEntries) {
 		const entry = findKindEntry(kindEntries, node.kind);
 		if (entry) {
@@ -965,10 +818,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
-		const usesInterleaveBySlotOrder = /\b_interleaveBySlotOrder\b/.test(bodySource);
-		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource) || usesInterleaveBySlotOrder;
-		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
-		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
+		const usesToArr = /\b_toArr\b/.test(bodySource);
 		const usesKeepModelledSlots = /\b_keepModelledSlots\b/.test(bodySource);
 		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource) || /\b_projectLexed\b/.test(bodySource);
 		const usesProjectLexed = /\b_projectLexed\b/.test(bodySource);
@@ -1032,30 +882,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    if (value !== undefined && value !== false) out[`_${name}`] = value;',
 						'  }',
 						'  return out as D;',
-						'}',
-						''
-					]
-				: []),
-			...(usesOmitWrapKeys
-				? [
-						'// Drop CONSUMED raw candidate storage keys from the spread base. A',
-						'// field whose `??`-chain reads concrete kind-keyed wire keys',
-						'// (`_binary_expression`, …) copies the winner into its canonical',
-						'// `_<name>` key — leaving the raw stub on the object gives generic',
-						'// key-walkers (the validator deep walk dedupes candidates by node',
-						'// coords) a never-wrap-dispatched shadow copy that can win by',
-						'// Object.keys insertion order and mask the canonical one (the',
-						'// deep-read Missing-field class). Copy-on-first-delete keeps the',
-						'// no-candidate fast path allocation-free.',
-						'function _omitWrapKeys<T extends object>(data: T, keys: readonly string[]): T {',
-						'  let out: T = data;',
-						'  for (const key of keys) {',
-						'    if (key in out) {',
-						'      if (out === data) out = { ...data };',
-						'      delete (out as Record<string, unknown>)[key];',
-						'    }',
-						'  }',
-						'  return out;',
 						'}',
 						''
 					]
@@ -1179,69 +1005,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
-			...(usesConcatInSourceOrder
-				? [
-						'// _concatInSourceOrder — concatenate the per-kind wire arrays of a',
-						'// repeated heterogeneous-union slot, then STABLE-sort by CST position.',
-						'// The native reader buckets repeated unfielded children by kind, so a',
-						'// plain declaration-order concat loses cross-kind source order. Each',
-						'// node stub carries `$span.start` (byte offset) / `$childIndex` (position',
-						'// in parent); sort on those to restore order. Text-collapsed scalar',
-						'// leaves lack both → sorted to the end, stable among themselves (so a',
-						'// homogeneous single-bucket slot is a no-op).',
-						'function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {',
-						'  const flat = parts.flatMap((p) => _toArr(p));',
-						'  const pos = (e: T): number => {',
-						'    const n = e as unknown as { $span?: { start?: number }; $childIndex?: number };',
-						'    return n?.$span?.start ?? n?.$childIndex ?? Number.MAX_SAFE_INTEGER;',
-						'  };',
-						'  return flat',
-						'    .map((e, i) => [e, i] as const)',
-						'    .sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)',
-						'    .map(([e]) => e);',
-						'}'
-					]
-				: []),
-			...(usesInterleaveBySlotOrder
-				? [
-						'// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union',
-						"// slot's per-route wire buckets into document order by walking the",
-						"// parent's `$slotOrder` stamp (route names in child order, emitted by",
-						'// the native reader on multi-bucket parents) with a cursor per bucket.',
-						'// Text-collapsed scalar leaves carry no `$span`, so a position sort',
-						'// cannot order them — the stamp is the only cross-bucket order source.',
-						'// Nodes without the stamp (older captures) fall back to the position',
-						'// sort; elements the stamp does not cover are appended in bucket order',
-						'// so a mismatch never drops members.',
-						'function _interleaveBySlotOrder<T>(',
-						'  data: { readonly $slotOrder?: readonly string[] },',
-						'  pairs: readonly (readonly [string, T | readonly T[] | undefined])[]',
-						'): readonly T[] {',
-						'  const order = data.$slotOrder;',
-						'  if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));',
-						'  const buckets = new Map<string, readonly T[]>();',
-						'  for (const [route, value] of pairs) {',
-						'    if (value === undefined) continue;',
-						'    buckets.set(route, _toArr(value));',
-						'  }',
-						'  const cursors = new Map<string, number>();',
-						'  const out: T[] = [];',
-						'  for (const route of order) {',
-						'    const bucket = buckets.get(route);',
-						'    if (!bucket) continue;',
-						'    const i = cursors.get(route) ?? 0;',
-						'    if (i < bucket.length) {',
-						'      out.push(bucket[i] as T);',
-						'      cursors.set(route, i + 1);',
-						'    }',
-						'  }',
-						'  for (const [route, bucket] of buckets) {',
-						'    for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);',
-						'  }',
-						'  return out;',
-						'}'
-					]
-				: []),
 			"// The wrap layer's method engine. A wrapped node carries accessor",
 			'// methods over storage the reader spelled its own way, so',
 			'// `$render`/`$toEdit` project it to plain data first — routing every',
@@ -1281,7 +1044,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// would dispatch straight back into the wrap function that called',
 						'// this, with the same data.',
 						'function drillInSelf<T>(entry: T, tree: TreeHandle): T {',
-						'  if (!entry) return undefined as unknown as T;',
+						'  if (entry == null) return undefined as unknown as T;',
 						'  const e = entry as unknown as _NodeData;',
 						'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
 						'  return entry;',
@@ -1363,12 +1126,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// so there is no double-render. A final `?? readTerminalFromOther(...)` only',
 						'// fires when the nominal storage keys are all empty (the unfielded case);',
 						'// when the token IS field-tagged the chain short-circuits before reaching it.',
-						'function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {',
+						'function readTerminalFromOther<T = _NodeData | number>(data: _NodeData, allowedKindIds: readonly number[]): T | undefined {',
 						'  const other = (data as { $other?: readonly unknown[] }).$other;',
 						'  if (!Array.isArray(other)) return undefined;',
 						'  for (const e of other) {',
 						'    const id = typeof e === "number" ? e : (typeof e === "object" && e !== null ? (e as { $type?: unknown }).$type : undefined);',
-						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as _NodeData | number;',
+						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as T;',
 						'  }',
 						'  return undefined;',
 						'}'
@@ -1774,9 +1537,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('  const rawType = data.$type as unknown as string;');
 			lines.push('  const fn = _wrapTable[rawType];');
 		}
-		lines.push(
-			'  if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children'
-		);
+		lines.push('  if (!fn) return _drillUnknownKindChildren(data, tree);');
 		lines.push('  return fn(data, tree);');
 		lines.push('}');
 		lines.push('');
@@ -1819,6 +1580,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('}');
 		lines.push('');
 
-		return lines.join('\n');
+		return pruneUnusedImports(lines, ['Delimiter']).join('\n');
 	}
 }

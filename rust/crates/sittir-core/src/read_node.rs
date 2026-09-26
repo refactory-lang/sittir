@@ -71,6 +71,25 @@ pub trait ReadModel {
         false
     }
 
+    /// Whether a node of this kind keeps its anonymous children as `$other`
+    /// even when it has no named child: the kind has an unnamed slot that
+    /// stores terminal kinds, so an anonymous child is that slot's value and
+    /// the wrap layer reclaims it from `$other`.
+    fn keeps_anonymous_children(&self, kind: KindId) -> bool {
+        let _ = kind;
+        false
+    }
+
+    /// The model slot a child of a `parent` node is stored under, when its
+    /// name differs from the key the parser gives the child: a field-tagged
+    /// child by its field, a named child without a field by its kind name.
+    /// `None` keeps the parser's key: the slot is named for it, or the model
+    /// has no slot for the child.
+    fn wire_slot(&self, parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
+        let _ = (parent, field, child);
+        None
+    }
+
     /// Whether this parse kind id is an alias envelope: a kind the model
     /// wraps around the storage node the parser shows under that id. The
     /// reader stamps both ids on such a node when it is the storage node
@@ -208,7 +227,8 @@ fn read_ts_node(
     let is_leaf = fields.is_none()
         && children
             .as_ref()
-            .is_none_or(|cs| cs.iter().all(|c| !c.named));
+            .is_none_or(|cs| cs.iter().all(|c| !c.named))
+        && !keeps_anonymous_children(&node, model);
     let text = if carries_text(&node, model) {
         source.get(byte_range.clone()).map(|s| s.to_string())
     } else {
@@ -420,18 +440,21 @@ fn read_children(
                 },
             }
         };
-        match field_name {
+        match field_name.as_deref() {
             Some(name) => {
-                slot_order_acc.push(name.clone());
-                assign_named_slot(&mut fields_acc, &name, data);
+                let slot = model
+                    .wire_slot(parent_kind, Some(name), child.kind())
+                    .unwrap_or(name);
+                slot_order_acc.push(slot.to_string());
+                assign_named_slot(&mut fields_acc, slot, data);
             }
             None => {
                 if child.is_named() {
-                    // Named child without a field tag — route by kind to a `_<kind>` slot.
-                    // This produces a kind-named storage entry in the serialized NodeData,
-                    // uniform with field-tagged slots (spec 2026-05-17 kind-named slots).
-                    slot_order_acc.push(child.kind().to_string());
-                    assign_named_slot(&mut fields_acc, child.kind(), data);
+                    let slot = model
+                        .wire_slot(parent_kind, None, child.kind())
+                        .unwrap_or_else(|| child.kind());
+                    slot_order_acc.push(slot.to_string());
+                    assign_named_slot(&mut fields_acc, slot, data);
                 } else {
                     // Anonymous literal token — stays in the legacy children bucket
                     // (numeric kind IDs only after the slot model unification).
@@ -478,6 +501,11 @@ fn read_children(
 /// shown as (`kind_id`, the alias target) — `print` used as an identifier
 /// parses as its own symbol and is shown as `identifier`, and it is the
 /// identifier's transport that takes the text.
+fn keeps_anonymous_children(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    model.keeps_anonymous_children(stamped_kind(node))
+        || model.keeps_anonymous_children(KindId(node.kind_id()))
+}
+
 fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
     !node.is_named()
         || model.is_text_kind(stamped_kind(node))

@@ -15,11 +15,10 @@
  */
 
 import { compileParser } from './packages/codegen/src/transpile/compile-parser.ts';
+import { allGrammars, grammarPackageDir } from './packages/codegen/src/grammars.ts';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-
-const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export async function setup() {
 	// Rebuild TS package dists so tests never run against stale compiled
@@ -61,8 +60,8 @@ export async function setup() {
 		console.log('[vitest-setup] CI detected — skipping redundant pnpm -r run build (workflow already built)');
 	}
 
-	for (const grammar of GRAMMARS) {
-		const grammarDir = join(import.meta.dirname, 'packages', grammar);
+	for (const grammar of allGrammars()) {
+		const grammarDir = grammarPackageDir(grammar);
 		const grammarJs = join(grammarDir, '.sittir', 'grammar.js');
 		if (!existsSync(grammarJs)) {
 			console.warn(`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`);

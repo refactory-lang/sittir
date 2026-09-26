@@ -12,7 +12,13 @@ import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { classifyValueStorage, enumArmsOf, fieldTypeComponents, kindEnumOwnSymbolIds, resolveFieldStorageInfo } from '../shared.ts';
+import {
+	classifyValueStorage,
+	enumArmsOf,
+	fieldTypeComponents,
+	kindEnumOwnSymbolIds,
+	resolveFieldStorageInfo
+} from '../shared.ts';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -42,7 +48,13 @@ function makeNodeMap() {
 		'_primitive_type',
 		new AssembledEnum(
 			'_primitive_type',
-			{ type: CHOICE, members: [{ type: STRING, value: 'u8' }, { type: STRING, value: 'bool' }] },
+			{
+				type: CHOICE,
+				members: [
+					{ type: STRING, value: 'u8' },
+					{ type: STRING, value: 'bool' }
+				]
+			},
 			{ kindEntries }
 		)
 	);
@@ -94,8 +106,22 @@ describe('an enum leaf is kind-id-stored', () => {
 		nodeMap.nodes.set('typed', new AssembledBranch('typed', flatten(rule), flatten(rule)));
 		const slot = nodeMap.nodes.get('typed')!.slots.find((s) => s.name === 'type')!;
 		expect(fieldTypeComponents(slot, nodeMap)).toEqual([
-			{ kind: 'literal', value: 'u8', rawKind: 'u8', resolvedKindId: 1, immediate: undefined },
-			{ kind: 'literal', value: 'bool', rawKind: 'bool', resolvedKindId: 2, immediate: undefined }
+			{
+				kind: 'literal',
+				value: 'u8',
+				rawKind: 'u8',
+				resolvedKindId: 1,
+				immediate: undefined,
+				enumKind: '_primitive_type'
+			},
+			{
+				kind: 'literal',
+				value: 'bool',
+				rawKind: 'bool',
+				resolvedKindId: 2,
+				immediate: undefined,
+				enumKind: '_primitive_type'
+			}
 		]);
 	});
 });
@@ -127,12 +153,21 @@ function makeMixedEnumNodeMap(enumKind: string) {
 		]
 	};
 	const nodeMap = makeNodeMap();
-	nodeMap.nodes.set('holder', new AssembledBranch('holder', flatten(rule), flatten(rule), { kindEntries: wrapKindEntries }));
+	nodeMap.nodes.set(
+		'holder',
+		new AssembledBranch('holder', flatten(rule), flatten(rule), { kindEntries: wrapKindEntries })
+	);
 	nodeMap.nodes.set(
 		enumKind,
 		new AssembledEnum(
 			enumKind,
-			{ type: CHOICE, members: [{ type: STRING, value: 'u8' }, { type: STRING, value: 'bool' }] },
+			{
+				type: CHOICE,
+				members: [
+					{ type: STRING, value: 'u8' },
+					{ type: STRING, value: 'bool' }
+				]
+			},
 			{ kindEntries }
 		)
 	);

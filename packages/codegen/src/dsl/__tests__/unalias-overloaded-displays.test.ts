@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { unaliasOverloadedDisplays } from '../rule-transforms.ts';
-import { tokenUseCounts } from '../rule-patterns.ts';
+import { predictedSymbolSource } from '../rule-patterns.ts';
 import type { Rule } from '../../types/rule.ts';
 
 type R = Rule<'evaluate'>;
@@ -13,7 +13,7 @@ const alias = (content: R, value: string) => ({ type: 'ALIAS', named: true, valu
 
 function run(rules: Record<string, R>, inline: readonly string[] = []): Record<string, R> {
 	return unaliasOverloadedDisplays(rules, {
-		symbols: { rules, externals: new Set(), inline: new Set(inline), tokenUses: tokenUseCounts(rules) }
+		symbols: predictedSymbolSource(rules, [], inline)
 	});
 }
 

@@ -1,7 +1,7 @@
 import type { AnyNodeData } from '@sittir/types';
 import { loadBoundaryRender } from '../scripts/collect-baseline.ts';
 
-type GrammarName = 'rust' | 'typescript' | 'python';
+import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
 type FactoryFn = (...args: readonly unknown[]) => unknown;
 type FactorySlotMeta = {
@@ -121,12 +121,8 @@ export interface ExerciseOptions {
 }
 
 const COMMON_MODULE_PATH = '../validate/common.ts';
-const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-const BUILTIN_CASES: Record<GrammarName, readonly ExerciseCase[]> = {
+const factoryModulePath = (grammar: GrammarName): string => `../../../${grammar}/src/factories/raw.ts`;
+const BUILTIN_CASES: Partial<Record<GrammarName, readonly ExerciseCase[]>> = {
 	rust: [
 		{ kind: 'identifier', find: 'identifier', source: 'fn foo() {}' },
 		{ kind: 'parameters', find: 'parameters', source: 'fn foo() {}' }
@@ -168,7 +164,7 @@ async function loadCommon(): Promise<CommonModule> {
 
 export async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifacts> {
 	const factoryModule: { _factoryMap?: Record<string, FactoryFn> } = await import(
-		new URL(FACTORY_MODULE_PATHS[grammar], import.meta.url).pathname
+		new URL(factoryModulePath(grammar), import.meta.url).pathname
 	);
 	// PR-K: validator factory metadata now lives in node-model.json5, read via
 	// the shared `loadNodeModel` loader in codegen's validate/common.ts.
@@ -283,10 +279,10 @@ async function resolveCases(
 	common: CommonModule,
 	parser: { parse(source: string): { rootNode: TreeSitterNode } | null }
 ): Promise<readonly ExerciseCase[]> {
-	if (kinds.length === 0) return BUILTIN_CASES[grammar];
+	if (kinds.length === 0) return BUILTIN_CASES[grammar] ?? [];
 	const selected: ExerciseCase[] = [];
 	for (const kind of kinds) {
-		const builtinMatches = BUILTIN_CASES[grammar].filter((entry) => entry.kind === kind);
+		const builtinMatches = (BUILTIN_CASES[grammar] ?? []).filter((entry) => entry.kind === kind);
 		if (builtinMatches.length > 0) {
 			selected.push(...builtinMatches);
 			continue;
@@ -303,7 +299,7 @@ async function resolveCases(
 
 export async function run(opts: ExerciseOptions): Promise<number> {
 	const { grammar: grammarStr, kinds } = opts;
-	const grammar = grammarStr as GrammarName;
+	const grammar = assertGrammar(grammarStr);
 
 	const common = await loadCommon();
 	const artifacts = await loadFactoryArtifacts(grammar);

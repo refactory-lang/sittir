@@ -13,13 +13,14 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { Grammar, Backend } from './run.ts';
+import type { Backend } from './run.ts';
+import type { GrammarName } from '@sittir/codegen/grammars';
 
 /** One row in `validation-history.jsonl`. */
 export interface ValidationRun {
 	/** ISO-8601 timestamp of the run. */
 	ts: string;
-	grammar: Grammar;
+	grammar: GrammarName;
 	backend: Backend;
 	fromPass: number;
 	fromTotal: number;
@@ -38,6 +39,10 @@ export interface ValidationRun {
 	irRenderParsePass?: number;
 	irRenderParseTotal?: number;
 	irRenderParseAstMatchPass?: number;
+	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
+	fromTrivia?: number;
+	readRenderParseTrivia?: number;
+	readRenderParseShallowTrivia?: number;
 	/** Legacy pre-rename fields kept optional for older rows. */
 	rtPass?: number;
 	rtTotal?: number;

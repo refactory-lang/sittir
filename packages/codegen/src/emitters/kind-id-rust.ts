@@ -1,10 +1,16 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { findEntryForLiteralText, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import {
+	findEntryForLiteralText,
+	modelKindOfEntry,
+	type GeneratedIdTables,
+	type KindEntryLike
+} from '../compiler/generated-metadata.ts';
 import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
-import { findOwnKindEntry, collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
-import { slotSeparatorTexts } from './shared.ts';
+import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { reclaimsAnonymousChild, slotSeparatorTexts, wireRoutesOf } from './shared.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -58,6 +64,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	for (const entry of entries) {
 		const displayStr = entry.symbolName ?? entry.kind;
 		lines.push(`        ${entry.id} => ${JSON.stringify(displayStr)}, // ${JSON.stringify(entry.kind)}`);
+		if (entry.parseId !== undefined && entry.parseId !== entry.id && entry.parseName !== undefined) {
+			lines.push(`        ${entry.parseId} => ${JSON.stringify(entry.parseName)}, // ${JSON.stringify(entry.kind)}`);
+		}
 	}
 	lines.push(`        _ => "<unknown>",`);
 	lines.push(`    }`);
@@ -67,7 +76,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		...new Set(
 			entries
 				.filter((entry) => {
-					const node = nodeMap.nodes.get(entry.kind);
+					const node = nodeMap.nodes.get(modelKindOfEntry(entry, entries));
 					return (
 						node?.modelType === 'pattern' ||
 						node?.modelType === 'enum' ||
@@ -98,6 +107,38 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
 	lines.push('pub fn is_alias_envelope(kind: KindId) -> bool {');
 	lines.push(`    matches!(kind.0, ${aliasEnvelopeIds.length > 0 ? aliasEnvelopeIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
+	const keepsAnonymousIds = [
+		...new Set(
+			[...nodeMap.nodes.values()]
+				.filter((node) => node.slots.some((slot) => reclaimsAnonymousChild(slot, nodeMap)))
+				.map((node) => findOwnKindEntry(entries, node.kind)?.id)
+				.filter((id): id is number => id !== undefined)
+		)
+	].sort((a, b) => a - b);
+	lines.push('');
+	lines.push('/// Whether a node of this kind keeps its anonymous children as `$other`');
+	lines.push('/// when it has no named child: an unnamed slot of the kind stores terminal');
+	lines.push("/// kinds, and the wrap layer reclaims that slot's value from `$other`.");
+	lines.push('pub fn keeps_anonymous_children(kind: KindId) -> bool {');
+	lines.push(`    matches!(kind.0, ${keepsAnonymousIds.length > 0 ? keepsAnonymousIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
+	lines.push('');
+	lines.push('/// The model slot a child is stored under where its name differs from the');
+	lines.push("/// parser's key: a field-tagged child by (parent kind id, field), a named");
+	lines.push("/// child without a field by (parent kind id, the child's kind name).");
+	lines.push("/// `None` keeps the parser's key.");
+	lines.push("pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {");
+	lines.push('    match (parent.0, field, child) {');
+	for (const route of wireSlotRows(nodeMap, entries)) {
+		const fieldPattern = route.field === undefined ? 'None' : `Some(${JSON.stringify(route.field)})`;
+		const childPattern = route.child === undefined ? '_' : JSON.stringify(route.child);
+		lines.push(`        (${route.parentId}, ${fieldPattern}, ${childPattern}) => Some(${JSON.stringify(route.slot)}),`);
+	}
+	lines.push('        _ => None,');
+	lines.push('    }');
 	lines.push('}');
 
 	const separatorRows: string[] = [];
@@ -140,6 +181,42 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 
 	return lines.join('\n');
+}
+
+export interface WireSlotRow {
+	readonly parentId: number;
+	readonly field?: string;
+	readonly child?: string;
+	readonly slot: string;
+}
+
+export function wireSlotRows(
+	nodeMap: NodeMap,
+	entries: readonly (KindEntryLike & { readonly id: number })[]
+): readonly WireSlotRow[] {
+	const rows = new Map<string, WireSlotRow>();
+	const claim = (kind: string, row: WireSlotRow): void => {
+		const key = `${row.parentId} ${row.field ?? ''} ${row.child ?? ''}`;
+		const claimed = rows.get(key);
+		if (claimed !== undefined && claimed.slot !== row.slot) {
+			const by = row.field !== undefined ? `field '${row.field}'` : `untagged kind '${row.child}'`;
+			throw new Error(`kind-id-rust: '${kind}' routes ${by} to two slots ('${claimed.slot}', '${row.slot}')`);
+		}
+		rows.set(key, row);
+	};
+	for (const [, node] of nodeMap.nodes) {
+		const parentId = findOwnKindEntry(entries, node.kind)?.id;
+		if (parentId === undefined) continue;
+		for (const slot of node.slots) {
+			const routes = wireRoutesOf(slot, nodeMap);
+			for (const field of routes.fields) claim(node.kind, { parentId, field, slot: slot.storageName });
+			for (const child of routes.kinds) claim(node.kind, { parentId, child, slot: slot.storageName });
+		}
+	}
+	const order = (row: WireSlotRow): string => `${row.field ?? ''}\u0000${row.child ?? ''}`;
+	return [...rows.values()]
+		.filter((row) => (row.field ?? row.child) !== row.slot)
+		.sort((a, b) => a.parentId - b.parentId || (order(a) < order(b) ? -1 : order(a) > order(b) ? 1 : 0));
 }
 
 export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {

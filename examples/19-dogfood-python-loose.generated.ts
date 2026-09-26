@@ -14,11 +14,11 @@ export function rebuildPython4spaceLoose() {
 		body: ir.block(ir.functionDefinition({
 			name: "__init__",
 			parameters: ["self", ir.typedParameter({
+				name: "user_id",
 				type: "int",
-				content: "user_id",
 			}), ir.typedParameter({
+				name: "name",
 				type: "str",
-				content: "name",
 			})],
 			returnType: TSKindId.None,
 			body: ir.block(ir.simpleStatementsElements(ir.assignment.eq({
@@ -52,11 +52,11 @@ export function rebuildPython4spaceLoose() {
 	}), ir.functionDefinition({
 		name: "find_user",
 		parameters: [ir.typedParameter({
+			name: "users",
 			type: "list",
-			content: "users",
 		}), ir.typedParameter({
+			name: "user_id",
 			type: "int",
-			content: "user_id",
 		})],
 		returnType: ir.genericType({
 			name: "Optional",

@@ -1,0 +1,9 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-regex",
+	"version": "0.25.0",
+	"ref": "v0.25.0",
+	"commit": "b2ac15e27fce703d2f37a79ccd94a5c0cbe9720b",
+	"files": [
+		"main.txt"
+	]
+}

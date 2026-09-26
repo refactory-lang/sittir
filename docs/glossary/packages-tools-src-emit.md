@@ -22,9 +22,13 @@ the parser's own display name, `literalText` the token's literal text, and
 so this must mirror `KindEntryLike` exactly, not just `symbolName`/`anon`.
 ```
 
+### `packages/tools/src/emit/factory-source.ts::mountArmPrinters`
+
+Attaches a printer (`mountPrinter`) for every arm mount a host kind's seats declare, then recurses into the mounted kind's own arm seats, so a route composed across several hops (`pub.scope.inPath`) has a printer at every step. This mirrors the `ir` surface, where each arm's child carries its own arms under it. The recursion is cut by a kind-keyed cycle guard only, with no depth cap.
+
 ### `packages/tools/src/emit/factory-source.ts::mountPrinter`
 
-The printer for a form reached through a parent's mount route (`ir.<parent>.<mount>.strict(...)`): each argument is printed as a seated config when it is an object and as a direct value otherwise. Arguments are printed only up to the last one that is defined, so a form whose optional slot the source left empty prints as `strict()` rather than `strict(undefined)` — the spelling the form's own surface admits.
+The printer for a form reached through a parent's mount route (`ir.<parent>.<mount>.strict(...)`, or deeper, `ir.<parent>.<mount>.<mount>.strict(...)`): each argument is printed as a seated config of the host kind (the kind whose seat declares the mount) when it is an object, and as a direct value otherwise. The printed node is the built kind: the parent the call returns, whatever depth the mount sits at. Arguments are printed only up to the last one that is defined, so a form whose optional slot the source left empty prints as `strict()` rather than `strict(undefined)` — the spelling the form's own surface admits.
 
 ### `packages/tools/src/emit/factory-source.ts::LooseFacts`
 
@@ -77,7 +81,10 @@ the value passes unchanged.
 ### `packages/tools/src/emit/factory-source.ts::loosenValue`
 
 The loosest spelling of a printed node at a slot, in the order the runtime
-resolves a value. A single-slot wrapper is dropped when its inner value is
+resolves a value. A transparent envelope holding a text leaf is its bare text
+when the envelope is the one the coercer would route that leaf through
+(`envelopeReaching`) and the leaf is the sole match among the slot's text
+candidates (`textCandidateKinds`). A single-slot wrapper is dropped when its inner value is
 not admitted directly and exactly one arm of the slot admits it bare — and
 that arm is the wrapper itself, or the runtime would build a different
 wrapper. A list envelope with default options is its bare array when the
@@ -307,6 +314,14 @@ matching the config is left as it is.
  */
 ```
 
+### `packages/tools/src/emit/factory-source.ts::textCandidateKinds`
+
+The kinds a bare string can name at a slot: the slot's kinds plus the text leaves each transparent envelope arm reaches (`textLeavesThrough`), the same set the coercer's `_resolveBareText` ranks.
+
+### `packages/tools/src/emit/factory-source.ts::envelopeReaching`
+
+The first slot kind that is a transparent envelope reaching `leaf`, or none when the slot admits the leaf directly: the envelope the coercer wraps a bare string of that leaf in.
+
 ### `packages/tools/src/emit/factory-source.ts::bareTextAdmitted`
 
 ```text
@@ -316,6 +331,8 @@ matching the config is left as it is.
  * (the first text leaf of the slot), so a bare string builds the same leaf.
  */
 ```
+
+The pattern kinds counted are the slot's text candidates (`textCandidateKinds`), so a leaf a transparent envelope arm reaches counts as admitted.
 
 ### `packages/tools/src/emit/factory-source.ts::admitsDirectly`
 
@@ -428,8 +445,9 @@ An alias kind's entry returns its argument unchanged: the printed source is the 
 ```text
 /**
  * The printing counterpart of a grammar's `ir` bindings: every kind's
- * `strict`, plus one entry per mount name its seats declare, printing
- * `ir.<parent>.<mount>.strict(…)`. Handing this to
+ * `strict`, plus one entry per mount name its seats declare, and under
+ * each the mounted kind's own arm mounts (`mountArmPrinters`), printing
+ * `ir.<parent>.<mount>….strict(…)`. Handing this to
  * `buildFactoryNodeFromReference` as the surface makes the printer take the
  * same seat projection the validators take, so the emitted spelling is the
  * one `ir-render-parse` builds rather than a second derivation of it.

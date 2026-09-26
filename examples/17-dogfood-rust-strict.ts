@@ -26,11 +26,12 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // Open issues on this surface: docs/factory-surface-issues.md
 
 const id = (text: string) => ir.identifier(text);
+const tok = (content: Parameters<typeof ir.nonSpecialToken.strict>[0]) => ir.nonSpecialToken.strict(content);
 const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id(path), name: id(name) });
 const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
 	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
 const str = (text: string) =>
-	ir.stringLiteral.strict({ stringOpen: ir.stringLiteralOpen('"'), elements: [ir.stringContent(text)] });
+	ir.stringLiteral.strict({ stringOpen: ir.stringOpen('"'), elements: [ir.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
@@ -52,13 +53,13 @@ export function deriveStrict() {
 		ir.attribute.input.strict({
 			path: id('derive'),
 			arguments: ir.delimTokenTree.paren.strict(
-				id('Debug'),
-				TSKindId.Comma,
-				id('Clone'),
-				TSKindId.Comma,
-				id('PartialEq'),
-				TSKindId.Comma,
-				id('Eq'),
+				tok(id('Debug')),
+				tok(TSKindId.Comma),
+				tok(id('Clone')),
+				tok(TSKindId.Comma),
+				tok(id('PartialEq')),
+				tok(TSKindId.Comma),
+				tok(id('Eq')),
 			),
 		})
 	);
@@ -115,7 +116,7 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 function writeCall(format: string) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren.strict(id('f'), TSKindId.Comma, str(format)),
+		arguments: ir.delimTokenTree.paren.strict(tok(id('f')), tok(TSKindId.Comma), tok(str(format))),
 	});
 }
 

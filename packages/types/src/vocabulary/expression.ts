@@ -16,6 +16,7 @@ export namespace Expression {
 		// claimed by prt
 		readonly kind: 'expression.assignment';
 		readonly left:
+			| V.Unmapped<'typescript:lhs_expression'>
 			| G['expression']
 			| G['identifier']
 			| G['literal']
@@ -23,17 +24,21 @@ export namespace Expression {
 			| G['statement']
 			| 'any'
 			| 'async'
+			| 'await'
 			| 'boolean'
 			| 'declare'
+			| 'exec'
 			| 'export'
 			| 'get'
 			| 'let'
+			| 'match'
 			| 'module'
 			| 'namespace'
 			| 'new'
 			| 'number'
 			| 'object'
 			| 'override'
+			| 'print'
 			| 'private'
 			| 'protected'
 			| 'public'
@@ -43,6 +48,7 @@ export namespace Expression {
 			| 'string'
 			| 'symbol'
 			| 'type';
+		// unmapped: <typescript:lhs_expression>
 		readonly right: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 		readonly using?: boolean;
 	}
@@ -596,7 +602,27 @@ export namespace Expression {
 			| G['identifier']
 			| G['literal']
 			| V.Pattern.Splat<G>
-			| G['statement'];
+			| G['statement']
+			| 'bool'
+			| 'char'
+			| 'default'
+			| 'f32'
+			| 'f64'
+			| 'gen'
+			| 'i128'
+			| 'i16'
+			| 'i32'
+			| 'i64'
+			| 'i8'
+			| 'isize'
+			| 'str'
+			| 'u128'
+			| 'u16'
+			| 'u32'
+			| 'u64'
+			| 'u8'
+			| 'union'
+			| 'usize';
 		readonly typeArguments?: G['type'][];
 		// t only
 	}
@@ -609,7 +635,7 @@ export namespace Expression {
 			// claimed by r
 			readonly kind: 'expression.call.macro';
 			readonly arguments: V.Element.Macro.TokenTree.Delimited<G>;
-			readonly function: G['identifier'];
+			readonly function: G['identifier'] | 'default' | 'gen' | 'union';
 		}
 		export interface Member<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Call<G>>> {
 			// claimed by prt
@@ -618,7 +644,32 @@ export namespace Expression {
 				| (G['expression'] | G['element'] | G['argument'])[]
 				| (G['expression'] | G['element'])[]
 				| V.Expression.Comprehension.Generator<G>;
-			readonly function: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G> | G['statement'];
+			readonly function:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement']
+				| 'bool'
+				| 'char'
+				| 'default'
+				| 'f32'
+				| 'f64'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'isize'
+				| 'str'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'usize';
 			readonly typeArguments?: G['type'][];
 			// t only
 		}
@@ -633,7 +684,31 @@ export namespace Expression {
 			// claimed by r
 			readonly kind: 'expression.call.path';
 			readonly arguments: (G['expression'] | G['element'])[];
-			readonly function: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+			readonly function:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| 'bool'
+				| 'char'
+				| 'default'
+				| 'f32'
+				| 'f64'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'isize'
+				| 'str'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'usize';
 		}
 		export interface Template<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Call<G>>> {
 			// claimed by t
@@ -698,7 +773,7 @@ export namespace Expression {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		readonly extends?: V.Clause.Extends<G>;
 		readonly implements?: (G['identifier'] | G['type'])[];
-		readonly name?: G['identifier'];
+		readonly name?: V.Identifier.Type<G>;
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export interface Collection<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
@@ -729,7 +804,33 @@ export namespace Expression {
 		export interface Object<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by t
 			readonly kind: 'expression.collection.object';
-			readonly properties?: (V.Declaration.Method<G> | G['element'] | V.Identifier.Property.Shorthand<G>)[];
+			readonly properties?: (
+				| V.Declaration.Method<G>
+				| G['element']
+				| V.Identifier.Property.Shorthand<G>
+				| 'any'
+				| 'async'
+				| 'boolean'
+				| 'declare'
+				| 'export'
+				| 'get'
+				| 'let'
+				| 'module'
+				| 'namespace'
+				| 'new'
+				| 'number'
+				| 'object'
+				| 'override'
+				| 'private'
+				| 'protected'
+				| 'public'
+				| 'readonly'
+				| 'set'
+				| 'static'
+				| 'string'
+				| 'symbol'
+				| 'type'
+			)[];
 		}
 		export interface Set<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by p
@@ -742,7 +843,7 @@ export namespace Expression {
 			readonly kind: 'expression.collection.struct';
 			readonly body: V.Unmapped<'rust:field_initializer_list'>;
 			// unmapped: <rust:field_initializer_list>
-			readonly name: G['identifier'] | G['type'];
+			readonly name: V.Identifier.Type<G> | G['type'];
 		}
 		export interface Tuple<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by pr
@@ -874,7 +975,8 @@ export namespace Expression {
 		export interface Format<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Interpolation<G>>> {
 			// claimed by p
 			readonly kind: 'expression.interpolation.format';
-			readonly contents?: (V.Expression.Interpolation<G> | '[^{}\\n]+')[];
+			readonly contents?: (V.Unmapped<'python:format_expression'> | '[^{}\\n]+')[];
+			// unmapped: <python:format_expression>
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Expression.Interpolation<G>
@@ -957,17 +1059,8 @@ export namespace Expression {
 	export interface Parenthesized<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
 		readonly kind: 'expression.parenthesized';
-		readonly content?:
-			| V.Unmapped<'typescript:parenthesized_expression_sequence'>
-			| V.Unmapped<'typescript:parenthesized_expression_typed'>
-			| V.Element.Splat<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['pattern']
-			| V.Attribute.Content.Any<G>;
-		// pt only
-		// unmapped: <typescript:parenthesized_expression_sequence> <typescript:parenthesized_expression_typed>
+		readonly content?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		// p only
 		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// r only
 	}

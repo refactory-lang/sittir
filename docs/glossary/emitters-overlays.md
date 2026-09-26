@@ -64,29 +64,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
-
-```text
-/**
- * The arm a flattened grand-arm nests under: the direct arm that reaches the
- * same child. A variant minted inside another variant's rule is spelled
- * inside it too — `ir.visibilityModifier.pub.inPath`, not a flat
- * `ir.visibilityModifier.inPath` that reads as its sibling. A grand-arm whose
- * child no parent arm reaches stays flat, since there is nothing to nest it
- * under. The nested key is the child's own arm name, since the flattened
- * name's prefix is exactly the arm it now sits under.
- */
-```
-
-```text
-/**
- * How an arm of `kind` is actually spelled on its emitted entry: one segment
- * when it sits at the top, two when it nests under the arm that reaches its
- * child. A reference into a child's arms has to follow the same nesting the
- * child was emitted with, or it names a key that is not there.
- */
-```
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
 #### body

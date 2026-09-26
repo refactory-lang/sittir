@@ -6,7 +6,7 @@ export const assembleShapeCensus: CommandModule = {
 	describe: 'Census the rule shapes that reach each Assembled* constructor, grouped by modelType',
 	register: (program) => {
 		withGrammar(defineCommand(program, assembleShapeCensus))
-			.option('--all-grammars', 'Run all three grammars')
+			.option('--all-grammars', 'Run every stable grammar')
 			.option('--format <fmt>', 'Output format: table | json', 'table')
 			.option('--view <view>', 'Which rule view to census: constructor | simplified | both', 'both')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean; format?: string; view?: string }) => {

@@ -10,10 +10,11 @@ import {
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
-import type { GeneratedIdTables } from './generated-metadata.ts';
+import { stampVisibleExternals, type GeneratedIdTables } from './generated-metadata.ts';
 
 export interface Compilation {
 	readonly grammar: string;
+	readonly generatedIdTables?: GeneratedIdTables;
 	readonly raw: RawGrammar;
 	readonly linked: LinkedGrammar;
 	readonly normalized: NormalizedGrammar;
@@ -34,13 +35,14 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
-	const raw = await evaluate(entryPath);
+	const evaluated = await evaluate(entryPath);
+	const generatedIdTables = stampVisibleExternals(cfg.generatedIdTables, evaluated);
 
-	const { linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics, diagnostics } =
+	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics, diagnostics } =
 		collectGrammarDiagnosticsForGrammar({
-			rawGrammar: raw,
+			rawGrammar: evaluated,
 			include: cfg.include,
-			generatedIdTables: cfg.generatedIdTables
+			generatedIdTables
 		});
 
 	hydrateSlotRefs(nodeMap, {
@@ -51,6 +53,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 
 	return {
 		grammar: cfg.grammar,
+		generatedIdTables,
 		raw,
 		linked,
 		normalized,

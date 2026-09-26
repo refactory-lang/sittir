@@ -1,8 +1,9 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { AssembledSupertype, snakeToCamel } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { findOwnKindEntry, collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
 
 export interface EmitIsConfig {

@@ -324,117 +324,34 @@ git commit -m "feat(compiler): an inline alias distributes over its arms; link b
 
 ---
 
-### Task 2: Split `publicKindName` into a display-name accessor and a storage identifier
+### Task 2: Display names are stamped on the node; `publicKindName` is gone (landed)
 
-**Files:**
-- Create: `packages/codegen/src/compiler/model/display-name.ts`
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts:132` (delete `publicKindName`) and every reference (61 at ad445142f): `render-rules.ts` (26), `site-preferences.ts` (10), `site-addresses.ts` (3), `supertype-members.ts` (2), `whitespace-arms.ts` (2), `emitters/render-module.ts` (11), `emitters/render-options-rs.ts` (2), `emitters/options.ts` (3), `emitters/shared.ts` (2); `find_all_references` on `render-rules.ts::publicKindName` lists them
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts:452-467` (`isDisplayedLiteral`, landed with Task 1: an options address reaches a displayed literal through its display) — it reads the same accessor, not its own strip
-- Audit: `packages/codegen/src/compiler/link.ts:838` (`collectAliasedHiddenKinds`) — list its readers; retire it here if `displayUnions` answers every one
-- Test: `packages/codegen/src/compiler/model/__tests__/display-name.test.ts` (new)
+**What landed** (all 74 `publicKindName` references in 10 files, recounted on the branch; the plan's 61 predates Task 1):
 
-**Why this task is now urgent:** the merged code still strips underscores to address a renamed container: `_number` displays as `unary_expression_number` but is addressed as `number` (the `publicKindName` addressing gap the Task 1 PR lists as a follow-up). Every rename `unaliasOverloadedDisplays` mints is a site where the strip and the display disagree.
+- `compiler/model/display-name.ts`: `stampDisplay` sets `AssembledNodeBase.display = { name, source }` at construction from the kind's own catalog row (`findOwnKindEntry`); `displayNameOf(kind, nodeMap)` reads it and throws for a name that is not a node; `displayNameOfEntry(entry, kindEntries)` answers for a catalog row (an anonymous token has no node); `displayNameOfRef(ref)` is the per-site display. The display is the row's parser symbol (`symbolName`), never the literal spelling: a hidden rule the parser shows as an anonymous token displays as that token's kind (typescript `_ternary_qmark` → `qmark`).
+- One naming rule for a name the parser does not show, `displayOfParserName` → `undisplayedKindAddress`: a hidden-prefixed parser name keeps its underscore-less address (rust `_let_chain`, `_token_keywords`; python `_augmented_assignment_operator`, `_simple_statements`). No other strip survives.
+- A node with no own row: `source` records why, with `supertype` for a supertype tree-sitter issues no symbol for, `alias-name` for a node assemble mints under an alias name, and `phantom` otherwise (the six sittir-minted operator enums, python `keyword_identifier`). Its display comes from the same naming rule. `AssembledSupertype` now receives the catalog; this moved no output.
+- Shared displays: the kind that owns its display (`ownsItsDisplay`) holds the options hint home; any other collision throws. The visible-twin merge in `emitOptionsHints` is gone.
+- Whitespace arms are stamped on each `whitespaceChoice` member (`annotations.arm`) and read back by `partOf`/`seamChoiceDefault`; `whitespaceSymbolsOf` maps arm to member symbol from the `_whitespace` supertype.
+- `admitsNoExtras` names a lexical kind by structure (`isLexicalSymbol`: an external, or a rule lexical all the way down), not by the `_`-reprefix name bridge.
+- `isDisplayedLiteral` reads `aliasTargetOf`. `collectAliasedHiddenKinds` and its plumbing are retired: every entry it held was a non-node kind, which `acceptedTransportKinds` never consulted (byte-identical).
+- No `storageIdentifier`: nothing needed one.
 
-**Interfaces:**
-- Consumes: `aliasTargetOf(ref)` and `storageNameOf(ref)` (`types/rule.ts`, landed); `NodeMap.displayUnions` (landed); `AssembledAlias.kind` as the display of a minted envelope.
-- Produces:
-  - `displayNameOf(kind: string, nodeMap: NodeMap): string` — the kind's display name: `kind` when the grammar has a rule of that name that is visible, else the unique display union that contains `kind` when there is exactly one, else `kind`. A kind that displays under two names at different sites has no single display name; the function throws naming the kind and the names, so a caller that needs a per-site name passes the ref instead.
-  - `displayNameOfRef(ref: SymbolRule<'link'>): string` — `aliasTargetOf(ref) ?? storageNameOf(ref)`.
-  - `storageIdentifier(kind: string): string` — the kind's own name, hidden prefix kept, through the existing identifier casing (`_as_pattern` → `_AsPattern`). Reuses the casing helper the transport already uses for hidden struct names.
+**Output moves (reviewed and accepted):** python `(parameters)/parameter…` → `(parameters_elements)/parameter…`; typescript `_number` owns its edges as `unary_expression_number` (five sites, three seated); display-sharing `Edged` ids (typescript fragments → `string_fragment` 109, `_ternary_qmark` → 126; rust `raw_string_literal_content` → 155).
 
-- [ ] **Step 1: Write the failing test**
-
-```ts
-// packages/codegen/src/compiler/model/__tests__/display-name.test.ts
-import { describe, it, expect } from 'vitest';
-import { displayNameOf, storageIdentifier } from '../display-name.ts';
-import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
-
-describe('display names come from the alias mapping, never from a strip', () => {
-	it('a hidden kind aliased to a non-matching name displays under that name', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['case_as_pattern', new Set(['_as_pattern'])]]) });
-		expect(displayNameOf('_as_pattern', nodeMap)).toBe('case_as_pattern');
-	});
-	it('a kind that is its own rule displays as itself even when it is also an alias target', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['generic_type', new Set(['generic_type', 'generic_type_with_turbofish'])]]) });
-		expect(displayNameOf('generic_type', nodeMap)).toBe('generic_type');
-	});
-	it('a kind with two display names has no single one', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['a', new Set(['_x'])], ['b', new Set(['_x'])]]) });
-		expect(() => displayNameOf('_x', nodeMap)).toThrow(/'_x' displays as a, b/);
-	});
-	it('a storage identifier keeps the hidden prefix', () => {
-		expect(storageIdentifier('_as_pattern')).toBe('_AsPattern');
-		expect(storageIdentifier('as_pattern')).toBe('AsPattern');
-	});
-});
-```
-
-- [ ] **Step 2: Run it to verify it fails**
-
-Run: `cd packages/codegen && pnpm exec vitest run src/compiler/model/__tests__/display-name.test.ts`
-Expected: FAIL, module not found.
-
-- [ ] **Step 3: Implement the module**
-
-```ts
-// packages/codegen/src/compiler/model/display-name.ts
-import type { NodeMap } from '../types.ts';
-import type { SymbolRule } from '../../types/rule.ts';
-import { aliasTargetOf, storageNameOf } from '../../types/rule.ts';
-import { toPascalCase } from '../../emitters/naming.ts'; // the casing helper transport struct names use
-
-export function displayNameOf(kind: string, nodeMap: NodeMap): string {
-	const node = nodeMap.nodes.get(kind);
-	if (node !== undefined && !kind.startsWith('_')) return kind;
-	const names = [...nodeMap.displayUnions].filter(([, members]) => members.has(kind)).map(([name]) => name);
-	if (names.length === 1) return names[0]!;
-	if (names.length > 1) throw new Error(`display name: '${kind}' displays as ${names.join(', ')}; resolve it per reference`);
-	return kind;
-}
-
-export function displayNameOfRef(ref: SymbolRule<'link'>): string {
-	return aliasTargetOf(ref) ?? storageNameOf(ref);
-}
-
-export function storageIdentifier(kind: string): string {
-	return kind.startsWith('_') ? `_${toPascalCase(kind.slice(1))}` : toPascalCase(kind);
-}
-```
-
-If the casing helper lives under another name, use that name; do not add a second casing function.
-
-- [ ] **Step 4: Run the test**
-
-Run: `cd packages/codegen && pnpm exec vitest run src/compiler/model/__tests__/display-name.test.ts`
-Expected: PASS
-
-- [ ] **Step 5: Replace every `publicKindName` reference**
-
-For each of the 85 references, decide which question the site asks and substitute:
-
-| the site needs | replace with |
-| --- | --- |
-| a name to match `options:` keys, `bindings.scm`, node-types, or an options address (`site-preferences.ts`, `site-addresses.ts`, `options.ts`, `render-options-rs.ts` address labels) | `displayNameOf(kind, nodeMap)` or `displayNameOfRef(ref)` when a ref is in hand |
-| a key for a spacing site, a struct or enum name, a wrap function name, or a map keyed by kind (`render-rules.ts` `spacingSitesOf`/`seatedSites`/`ownsKindEdges`, `render-module.ts` seat and seam sites, `supertype-members.ts`) | the raw `kind`, and `storageIdentifier(kind)` where an identifier is spelled |
-
-Record the decision per file in the commit message body as a two-column list. Then delete `publicKindName`.
-
-- [ ] **Step 6: Regenerate and gate**
-
-Run the regen loop, `pnpm run validate:native`, `pnpm run type-check`, `cargo check --workspace`, then vitest.
-Expected: generated output byte-identical apart from `generated.manifest.json` and the bundled `grammar.js` (every live alias today strips to its own display name, so the split changes nothing yet). Any generated diff is a real divergence: stop, keep the tree, report the site.
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add -- packages/codegen/src/compiler/model/display-name.ts packages/codegen/src/compiler/model/__tests__/display-name.test.ts packages/codegen/src/compiler/model/render-rules.ts packages/codegen/src/compiler/model/site-preferences.ts packages/codegen/src/compiler/model/site-addresses.ts packages/codegen/src/compiler/model/supertype-members.ts packages/codegen/src/compiler/model/whitespace-arms.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/options.ts packages/codegen/src/emitters/shared.ts packages/*/.sittir/generated.manifest.json packages/*/.sittir/grammar.js
-git commit -m "refactor(compiler,emitters): display names read the alias mapping; storage identifiers keep the hidden prefix"
-```
+**Follow-up:** hidden kinds' `typeName` casing is inconsistent (`_Number` vs `TemplateChars`); unify it through the one identifier casing when a task next touches type names.
 
 ---
 
-### Task 3: `rule(name, body)` placeholder
+### Task 3: `rule(name, body)` placeholder (landed)
+
+**What landed, where it differs from the steps below:**
+- The name is installed as a rule by `injectPlaceholderHiddenRules` (`placeholderHiddenName` returns it), the same path variant and alias mints take. A name the grammar already has (authored, base, patched or external) is refused at wire time.
+- The body is built from the executing pipeline's real `$`, which `buildPatchedParentFn` scopes on the wire context (`currentDollar`, read through `wireDollar()`), not from a simple proxy.
+- The patch key is passed into `resolvePatch` as a parameter; there is no current-patch-path global. The deposit keeps its declaring site (`wireRegisterSyntheticRule(name, body, site)`, `wireGetSyntheticRule`).
+- The body is not wrapped in the path's precedence (`variant()` is).
+- Bodies are compared with `canonicalRuleText`, exported from `token-forms.ts` (it was a private `canonical`). `applyTransformForTest` is added to `_test-helpers.ts`.
+
 
 **Files:**
 - Create: `packages/codegen/src/dsl/primitives/rule.ts`
@@ -540,7 +457,14 @@ git commit -m "feat(dsl): rule(name, body) declares a real rule at a patch path"
 
 ---
 
-### Task 4: `alias(name)` promotes an unnamed alias; leaf mints are not hoisted
+### Task 4: `alias(name)` promotes an unnamed alias; leaf mints are not hoisted (landed)
+
+**What landed:**
+- The ALIAS branch of `resolveAliasPlaceholder` sets `named: true`.
+- "Leaf" is what tree-sitter lexes as one token: `lexesAsOneToken` in rule-patterns wraps `extractedToken`, and `hoistedUnlessToken` applies it to `alias()` and `variant()` mints alike (user ruling). Rust `range_pattern_with_left_bare` and `line_comment_content` lose `hoisted` and their seats.
+- A leaf variant arm keeps its overlay surface, the way enum arms do (user ruling). The multi-choice-slot arm walk, renamed `authoredArmCandidatesOf`, admits a hoisted group or a variant arm, so `rangePatternWithLeft.bare` is byte-identical.
+- Assemble no longer mints a supertype under an alias name. The storage carries the display and the unprefixed type name (user ruling): typescript `_LhsExpression` → `LhsExpression`, rust `_NonSpecialToken` → `NonSpecialToken`. The `alias-name` display source is gone; `ownsItsDisplay` covers only a symbol-less supertype sharing a visible kind's name.
+
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/transform/transform.ts:859-871` (`resolveAliasPlaceholder`), `:873-913` (`registerAliasedVariant`)
@@ -618,9 +542,20 @@ git add -- packages/codegen/src/dsl/transform/transform.ts packages/codegen/src/
 git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a subtype, not a hoist"
 ```
 
+
 ---
 
-### Task 5: `alias-distributed` preflight diagnostic
+### Task 5: `alias-distributed` preflight diagnostic (landed)
+
+**What landed:**
+- `display-union` members carry their literal stamp (`DisplayUnionMember { storage, literal }`), set where `collectDisplayUnions` records them. The minter resolves each member by the stamp instead of trying catalog lookups in order. This is its own commit and byte-identical.
+- `terminalContentOf` / `terminalSymbolOf` / `choiceArmsOf` moved from enrich's closures into rule-patterns beside `parserSymbolClassOf`; enrich calls them (byte-identical).
+- `compiler/diagnostics/alias-distributed.ts`:
+  - `diagnoseDistributedAliases` walks with `RuleWalker`. It checks named aliases only, and looks through precedence, `optional` and `field` wrappers and through inlined rules (by `parserSymbolClassOf`), never through `token()`.
+  - `diagnoseMixedDisplayUnions` classifies a literal member by its stamp and any other member by `terminalSymbolOf`; a member that is neither a rule, an external nor a literal is a `display-union-unknown-member` error.
+  - The collector builds one `ParserSymbolCtx` from the raw grammar for both.
+- Silent on all three grammars. The one census hit, typescript's unnamed `alias(seq('unique', 'symbol'), 'unique symbol')`, is out of scope by the named-only rule.
+
 
 > **Amended 2026-09-24** (spec §A.3, §A.4 as re-amended). Two changes
 > from the merged Task 1:
@@ -761,7 +696,10 @@ git commit -m "feat(diagnostics): an alias over a sequence or a repeat is a bloc
 
 ---
 
-### Task 6: The validator compares grammar types; tolerances deleted
+### Task 6: The validator compares grammar types; tolerances deleted (landed)
+
+**What landed:** `astStructuralDiff(a, b, path?, variantChildKinds?)` compares `grammarId` (web-tree-sitter 0.26.9) and reports `grammar type X ≠ Y`. The root-alias pair, the leaf-alias allowlist, `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` and `leafAliasKey` are deleted. Both callers are updated: the validator, and `probe/kind.ts`, which the steps below miss. Validator rows are unchanged on all three grammars with the tolerances gone.
+
 
 **Files:**
 - Modify: `packages/tools/src/validate/read-render-parse.ts:220-330` (`astStructuralDiff`), `:913-925` (call site), the `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` declaration at `:214` (already `{}` at ad445142f: no grammar carries a tolerance any more, only the plumbing is left), its comment at `:243` and `leafAliasKey`
@@ -826,38 +764,44 @@ Task 1 already retired two other rust overrides by other means (`_let_chain` →
 **Interfaces:**
 - Consumes: `rule()` (Task 3), promoting `alias()` and unhoisted leaf mints (Task 4), display names from the mapping (Task 2).
 
-- [ ] **Step 1: rust `_wildcard_pattern`**
+- [x] **Step 1: rust `_wildcard_pattern`**
 
 Delete the `_wildcard_pattern: ($) => '_'` entry under `rules:`; keep `patches: { _pattern: { '-1': alias('wildcard_pattern') } }`. Regenerate rust, run `pnpm run validate:native` and `pnpm exec vitest run packages/tools/tests/census/hoisted.test.ts`.
 Expected: rust rows equal; the hoisted census reports no new unseated kind (the mint carries no `hoisted`).
+Landed: the injected rule is appended to the grammar, so rust kind ids from `wildcard_pattern` onward renumber (ids only).
 
-- [ ] **Step 2: rust `string_literal`**
+- [x] **Step 2: rust `string_literal`**
 
-Delete the `string_literal` entry under `rules:`; add `patches: { string_literal: { 0: alias('string_open') } }` (promotes the base's unnamed `alias(/[bc]?"/, '"')`). Regenerate rust; `pnpm run validate:native`.
+Delete the `string_literal` entry under `rules:`; add `alias('string_open')` at `string_literal/0` beside the existing `field('string_open')` patch, as the array form `[{ 0: alias('string_open') }, { 0: field('string_open') }]` (a duplicate key replaces). It promotes the base's unnamed `alias(/[bc]?"/, '"')`.
+Prerequisite (landed): an alias over inline content mints the content as the leaf rule `_<name>`; promoted in place it left `string_open` with no model kind and a kindless `string` slot. Landed: storage `_string_open`, typeName `StringOpen` (was `StringLiteralOpen`, the user's ruling). Regenerate rust; `pnpm run validate:native`.
 Expected: rust rows equal; `b"…"` and `c"…"` round-trip in the corpus rows that carry them.
 
-- [ ] **Step 3: python `case_as_pattern`**
+- [x] **Step 3: python `case_as_pattern`**
 
-Delete the `case_as_pattern` entry under `rules:`; add `patches: { case_pattern: { 0: alias('case_as_pattern') } }`. Regenerate python; `cargo check --workspace`; `pnpm run validate:native`.
+Delete the `case_as_pattern` and `case_pattern` entries under `rules:` (the override references `$.case_as_pattern`); add `patches: { case_pattern: { 0: alias('case_as_pattern') } }`.
+Landed (the user's ruling): storage `_as_pattern`, typeName `_AsPattern` (was `CaseAsPattern`, with a typename-collision info diagnostic beside `as_pattern`); without the override, enrich's `simple_pattern` alias of case_pattern's third arm reaches the parser, so node-types gains `simple_pattern`. python from/cov totals 164→163 and 144→143, all passing. Regenerate python; `cargo check --workspace`; `pnpm run validate:native`.
 Expected: cargo green (the `_AsPattern…` struct keeps its own spacing sites keyed `_as_pattern`; `as_pattern`'s are keyed `as_pattern`); python rows equal.
 
-- [ ] **Step 4: python `comprehension_clauses`**
+- [x] **Step 4: python `comprehension_clauses`**
 
 Delete the `comprehension_clauses` rule and the four comprehension-kind rewrites under `rules:`; add:
 
 ```ts
+const comprehensionClauses = rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause))));
 patches: {
-	list_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	dictionary_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	set_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	generator_expression: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) }
+	list_comprehension: { 2: comprehensionClauses },
+	dictionary_comprehension: { 2: comprehensionClauses },
+	set_comprehension: { 2: comprehensionClauses },
+	generator_expression: { 2: comprehensionClauses }
 }
 ```
 
-The index is the position of `_comprehension_clauses` in each base rule; confirm each against `packages/python/.sittir/src/grammar.json` before writing. Regenerate python; `pnpm run validate:native`.
+`_comprehension_clauses` sits at index 2 in all four base rules (`'['`, `field('body', …)`, the clauses). The `field('content', …)` keeps the options address `comprehension_clauses: { 'content:/separator': … }`.
+
+Prerequisite (landed): a `rule()` body used at several sites is built by the installed rule from that rule's own `$` (`declaredRuleFn`), not at the patch site. Built at the site, each body's symbols carried the patching parent as their owner, so the four equal bodies compared unequal and the refs belonged to `list_comprehension`. Regenerate python; `pnpm run validate:native`.
 Expected: python rows equal; `(x for x in y for z in w)` renders once per clause in the corpus rows.
 
-- [ ] **Step 5: Full gate and commit**
+- [x] **Step 5: Full gate and commit**
 
 Run the regen loop for all three, `pnpm run validate:native`, `pnpm run type-check`, `pnpm run lint`, vitest.
 
@@ -867,6 +811,134 @@ git commit -m "refactor(rust,python): four hand-written rules retire into alias(
 ```
 
 ---
+
+### Task 7a: Arms are the variants at the end of wire
+
+The user's rule: a sub-factory arm exists exactly where a variant label (`variant`/`variantOf` annotation) exists at the end of wire. Nothing else makes an arm. The field rule lives where variants are made: a fielded slot gets no automatic variant.
+
+**Stamp (enrich).** Enrich stamps `variant: <name>, variantOf: <owner>` on each arm of every unfielded (`_content`) choice. The name is computed once, at stamp time, with today's arm naming: `prefixNamedSuffix(owner, display) ?? display`, where display = the alias target, else the storage name without its leading `_`. A literal arm is named by its token kind, the same rule as every other arm (keyword kinds are `<text>_keyword`); no text-derived names. Enrich records every label it stamps in its non-enumerable sidecar.
+- A displayed literal (an anonymous literal shown under another kind's display, e.g. `alias('async', $.identifier)`) gets no variant: it is its display.
+- A supertype's own members are stamped with the supertype as `variantOf`; the existing variant-subtype path mounts them wherever the supertype sits.
+- The clash-fallback rename in `unaliasOverloadedDisplays` (`_number` → `unary_expression_number`) is named by the one naming rule (`armNameOf`), with no stamp of its own. A name collision is resolved by an authored `variant()`: typescript `literal_type`'s `negative_number` (the user's ruling).
+
+**Strip (wire).** When a patch fields a slot after enrich, wire removes the automatic variants on that slot, using the sidecar. `alias(name)` on a site writes that site's label (`variant` = the name's arm label, `variantOf` = the owning rule), overwriting an automatic one. Authored `variant()` stays.
+
+**Overlay.** The arm set is exactly the variant-labelled members. Nesting is a child's own variants under its arm. Nothing is lifted: the flattened grand-arm copies (rust 80, ts 73, py 58, each also reachable nested) are removed ir paths, accepted by the user. Deleted: display-derived arm naming (`armName`, `kindArmName`, `displayNameOfValue` for arms, `armNaming`'s fallback), grand-arm lifting (`grandArmCandidates`, `flattened`, `hostedApart`, claim counting and deconfliction), `armSubtypes`/`declaredSupertype`, `foldDisplayedLiterals`/`displayedLiteralTarget`, and the unlabelled hoisted-group path.
+
+**Provenance.** A node-model childKind descriptor built from enrich-stamped labels reads `definedBy: 'enrich'` (from `author: 'enrich'` on the stamp), `'override'` otherwise; the descriptor's value is `'enrich'` only when every labelled arm of the kind is enrich-authored. It is a label; nothing branches on it.
+
+- [ ] Enrich stamp and sidecar record.
+- [ ] Wire strip on field(); alias() writes the label.
+- [ ] Overlay arm set = variant-labelled members; deletions above.
+- [ ] definedBy 'enrich'.
+- [ ] Test: an upstream-fielded choice gets no automatic stamp.
+- [ ] Test: a patch-added field() strips enrich's automatic variants on that slot, while an authored variant() on it survives.
+- [ ] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
+- [ ] Report the arm diff per grammar before committing, with every ir-path change named.
+- [ ] Nested arms recurse: each arm's child carries its own arms under it, with no depth cap; only a kind-keyed cycle guard stops it. The tools' printing surface mounts arm printers at every depth too.
+- [ ] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
+
+**Follow-up:** a patch path should reach through a mint that `variant()` renamed. Today rust `visibility_modifier` works only because of patch order: the `in`/`in_path` patches apply first, then `'1/1/0': variant('scope')`, then `crate`/`pub`. With the scope patch first, the `in_path` path descends into the renamed group-lift symbol, which the lift map does not know. With it last, `'1'` is already minted as `pub`, so `'1/1/0'` cannot descend.
+
+**Follow-up:** module.ts recognises a minted variant route by name (`mintedBy`: the child's name equals `polymorphVisibleName(parent, variant)` and the parent is its sole referrer). Stamp a minted fact at wire mint time and read that instead.
+
+**Follow-up:** `seatsInlinedLabel` recognises a label minted by an inline rule by its owner having no model node. The slot's stamped `inlinedFrom` is not that fact: a fielded slot holding an inline reference (typescript `terminator` over `_semicolon`) carries no `inlinedFrom`, and reading it re-admits 48 typescript arms. An inline-owner fact must be stamped on the value where the inline rule is spliced.
+
+**Follow-up:** `emitters/ir.ts`'s `memberKeyFor` derives a supertype member's ir key in the emitter (`supertypeMemberName`). The member's stamped `variant` already carries that name; read it instead.
+
+**Follow-up:** the automatic-variant record is keyed by content (owner, label, reference). An authored writer claiming one site also unclaims any identical arm elsewhere under the same owner. Key it by an identity stamped at the mint (pairs with stamping `mintedBy` at mint time).
+
+**Follow-up:** a registered choice option's resolved arm lives in `ctx.options.spacing`, so the table's name no longer says what it holds. Rename it for what it carries (spacing and choice arms).
+
+**Follow-up:** `optionDefaultFills` finds a slot's option site by searching the render plan by (kind, slot). Stamp the site on the slot where the site is registered and read it.
+
+**Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
+
+**Follow-up task: type-name collision renames the visible side.** When a hidden storage kind and a visible kind share a type name, the visible kind should keep the plain name and the underscore storage kind should be renamed. Today the storage kind wins: in the python `_simple_pattern` retirement trial, `_list_pattern` took the enum name `ListPattern` and the visible `list_pattern` became `ListPattern_196` (`tuple_pattern` → `TuplePattern_195`). Census: every typename-collision in `grammar-diagnostics.json` across the three grammars, including Task 7's python `_as_pattern` (`_AsPattern`), and every ir key with a leading underscore (e.g. `_listPattern` in the same trial).
+
+**Follow-up:** the `collect-baseline` determinism test (`packages/tools/src/__tests__/collect-baseline.test.ts`) is flaky: web-tree-sitter `setLanguage` throws "Incompatible language version 0" inside `validateFrom` under full-suite load. Isolation: it failed on 3 of 7 full runs at 8e7b5cf1e's tree, one of them with a trivial placeholder test in place of the new class_body test (so the new test's content is not the trigger), and passed on every run of the file alone; all three `parser.wasm` files load at ABI 15 sequentially and in parallel, and no test rewrites them during the run.
+
+**Follow-up:** unreferenced leftover mints ship in grammar.json: rust `range_pattern_arm1`–`3`, `visibility_modifier_group`, `reference_expression_arm`; typescript `export_statement_arm2`/`4`/`5`, `class_body_arm2`. Nothing references them; each is superseded by a later mint. Find the pass that leaves them behind and prune a mint once it is superseded — they are dead rules in the parser's input. Also typescript `object_type_elements`: a sittir mint (absent from upstream tree-sitter-typescript) that ships in `packages/typescript/.sittir/src/grammar.json` with no referencing rule (`object_type` routes through `object_type_content`) and no node-model entry. A separator census found it as the only stable separator detection with a non-STRING arm (`","`, `_semicolon`).
+
+**Follow-up:** `wire`'s base parameter is optional but semantically required: patches resolve against the base grammar. Make it required, or error when patches exist without a base. `sittirGrammar(base, cfg)` is the long-term form and would also retire the `adoptMintedGroups` bridge. Minimal shape and repro: `docs/plans/2026-09-25-grammar-bootstrap-follow-ups.md` (feat/grammar-bootstrap).
+
+**Follow-up:** shared-slot choice lowering emits non-exclusive if-tests, so a slot shared by two choice arms renders twice. Add a blocking shared-slot-choice diagnostic first, then fix the lowering. Repro in the same follow-ups doc.
+
+**Follow-up:** variant arms on a shared slot produce a Rust transport arity mismatch (E0308: `Vec<SlotValue>` vs `SlotValue`). Observed only; the cause is not traced. Repro in the same follow-ups doc.
+
+### Task 7b: A built node carries the alias envelope its read shows
+
+Every alias site is an envelope (the user's rule), and the read materializes it: python `case test():` reads `case_pattern → _simple_pattern {simple_pattern} → _class_pattern`, typescript `a = 1;` reads `assignment_expression._left = {lhs_expression} → _identifier`. A factory or composer at an aliased site builds the content directly (`casePattern.classPattern(...)` → `case_pattern._content = class_pattern`), so built ≠ read; render and the validators still pass because they compare text and parse trees, not the read-vs-built model shape.
+
+Instances: python `_simple_pattern` at case_pattern (alias `simple_pattern`); typescript `_lhs_expression` at assignment_expression and for_header_lhs (alias `lhs_expression`); rust `_non_special_token` at the eleven token-tree kinds (alias `non_special_token`).
+
+- [ ] A composer or factory at an aliased site builds the AssembledAlias envelope, so a built node equals the read node.
+- [ ] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
+- [ ] Gates as Task 7.
+
+### Task 7c: An absent registered choice option renders its default
+
+Run this right after Task 7a. A registered choice option (`terminator`, `quotes:style`, and the statement kinds that carry one) left unset by the caller must render with the default its option chain resolves. Today it fails before render runs.
+
+Facts:
+- Factory: `registeredSlotSource`'s `registeredOption === 'choice'` branch emits `options?.<key>` with no default. This is deliberate: the render-time chain is meant to own resolution.
+- Transport: the slot's field is a required `SlotValue<…TransportSlot>` (for example `LexicalDeclarationTransport.terminator`). The napi decode rejects an absent value with "Missing field `_terminator`".
+- Prepare: the kind's `Prepare` impl fills only spacing seams from `ctx.options.spacing[SITE_…]`. It never fills the registered slot.
+- Render: `render_<kind>` renders the slot as given.
+- The site exists (`SITE_LEXICAL_DECLARATION_TERMINATOR`, its option row with admitted kind ids, and a `sites[]` default arm), but nothing in transport or render reads it.
+- Reproduces with `ir.returnStatement.strict(id('r')).$render()`. The same factory and transport shapes are at HEAD, where a `.semi`-style arm form filling the slot hid the defect.
+
+- [x] Transport emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
+- [x] Prepare: an absent registered-choice slot is filled from the option chain (per-tree, then engine, then the grammar default), i.e. the site's resolved arm.
+- [x] A kind-id → slot constructor is generated for each registered-choice slot enum. Prepare uses it to build the value from the resolved arm.
+- [x] Render reads the filled value; no other change.
+- [x] Test: a node built with the option omitted renders under two different engine option sets to two different results. The same node with the option set explicitly renders the same under both.
+- [x] Remove the workarounds: the typescript `expectTestFailures` entries citing the unfilled option default, and examples/18's explicit `terminator`.
+- [x] Gates as Task 7.
+
+### Task 7e: A keyword literal arm is named by its text
+
+The user's ruling: a literal arm whose token is one of sittir's keyword mints (`<text>_keyword`) is named by its source text, so `junction.andKeyword` becomes `junction.and`. The `_keyword` suffix exists for parser disambiguation, not as a name. This narrows the rule that literal arms take their token kind's name: every non-keyword literal keeps its kind name. Run it right after the push of Task 7c, before retiring the alias-shape hand-written rules.
+
+- [x] The keyword mint records a fact on the kind it mints: its source text (or that it is a keyword mint). No emitter strips `_keyword` from a name.
+- [x] `armFactsOf` names a literal arm whose resolved kind carries that fact by the fact's text, through `armNameOf`.
+- [x] A clash with a node arm of the same name goes through the existing ambiguous-name diagnostic.
+- [x] Test: a keyword literal arm is named by its text; a non-keyword literal keeps its kind name.
+- [x] The commit lists every renamed ir path per grammar.
+- [x] Gates as Task 7.
+
+### Task 7f: Retire the alias-shape hand-written rules
+
+A hand-written rule is retired when it reduces to enrich plus a patch with the parser unchanged (grammar.json structurally equal apart from where an alias sits; validate rows unchanged; no node-model, kind or ir move). Each rule was trialled; the ones that did not reduce keep their hand-written body with a stated cause, recorded in the unsupported-shape diagnostics plan (Task 4).
+
+- [x] `alias(name)` on a site enrich wrapped in an inferred field reads the site as the author wrote it: the inferred field (`isEnrichShapedFieldWrapper`, the predicate `field()` placeholders use) is dropped and the symbol aliased in place. Test: alias() over an enrich-inferred field gives an ALIAS over the SYMBOL, no FIELD, no `_<name>` deposit.
+- [x] typescript `extends_clause` → `{ '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') }`. grammar.json and node-types.json byte-identical.
+- [x] Kept, with causes: typescript `arrow_function`; python `string_content`; python `_simple_pattern`/`_wildcard_pattern`/`case_list_pattern`/`case_tuple_pattern` (the user's ruling that the names stay); rust `tuple_type`, `tuple_expression`, `_non_special_token` families; python `print_statement` family.
+- [x] typescript `class_body` → `'1/0/4': alias('empty_member')` on the stray `';'` arm (the user's name). It mints `_empty_member` over `';'`, so the read keeps the minted symbol's own id (a leaf aliased in place would read with the shared `';'` token's grammar symbol). The sittir-invented `semicolon` kind (and its public `Semicolon` type, namespace and factory) is replaced by the hidden leaf kind `_empty_member` shown as `empty_member`; the slot is fielded, so no arm moves. Test: a native read of `class C { ; foo() {} }` gives `contents()[0] === TSKindId.EmptyMember`.
+
+**Follow-up:** a leaf mint's input hint admits the anonymous token id beside its own: typescript `KindEnum<';', TSKindId.EmptyMember | TSKindId.Semi>`, python `KindEnum<'_', … TSKindId.WildcardPattern | TSKindId.Underscore>`. The stored value should be the mint's own id only.
+
+### Task 7g: Role slots are fielded
+
+The user's ruling: a fielded slot takes no automatic arms, so an unfielded choice that names a role (not a form selector) gets a `field()` patch in `grammar.sittir.ts`, which reaches the parser. The census of unfielded choice slots classified the role slots; typescript `string_content` is held.
+
+- [x] Fielded (node-types field added, the automatic arms under the slot removed): rust `bracketed_type` type, `else_clause` body, `generic_pattern` name; typescript `asserts` value, `class_body` member, `decorator` expression, `decorator_parenthesized_expression` expression, `object_type_content` members, `template_type` type, `type_query` expression; python `dictionary_splat_pattern` target, `format_specifier` elements, `list_splat_pattern` target, `parenthesized_expression` expression, `parenthesized_list_splat` content, `_simple_pattern` negative arm value, `typed_parameter` name.
+- [x] Skipped, with causes: typescript `enum_body_elements` (an arm is already fielded as `name`, so fielding the choice nests the field and removes `name`); rust `attributed_parameter`, `attributed_type_parameter`, `type_argument` (fielding the group's choice moves the `attribute_item` list into the parent `type_parameters_elements`).
+- [x] Skipped: typescript `import_clause_group` bindings. Cause: patching a hoisted mint un-hoists it (`reconstructContainer` drops the container's annotations), so the group would become a flat `ir.importClauseGroup`. Deferred to group seating (its plan's "a patch on a hoisted mint un-hoists it" section).
+- [x] python `complex_pattern`: the patch named position 0 (the sign) `real` and position 1 (the real part) `imaginary`, leaving the imaginary part as an unfielded `content`. Now sign / real / operator / imaginary. Test: `1+2j` and `-1-2j` read with real `1`, imaginary `2j`, and a sign only on the second.
+
+**Follow-ups:**
+- A `groups:` mint that gains a field loses its own seat (the rust attributed groups above); diagnose why.
+- [x] A patch keyed by a `groups:` or `injects:` declaration (its key or its `_` mint name) was silently dropped: the declared body is registered after the patch wrappers and replaces the wrapper. `wire()` now refuses it (`assertNoDeclaredGroupPatches`).
+- A patch key that names no rule at all (a typo) is not refused: `composeOrSynthesizePatchedParents` synthesizes a rule for it. Measured: the keys that name no rule in `rules:`, `groups:` or the base grammar are typescript `export_statement_default`, `export_statement_equals_export`, `export_statement_namespace_export`, `export_statement_type_export` and python `_parenthesized_import_list`. Each names a rule another patch mints (a variant mint), none is a typo. A typo check therefore has to admit the names other patches mint, not only the known rule set.
+
+### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
+
+A contextual keyword displayed as `identifier` is an identifier only where the parser admits it: each slot lists the keywords it admits (the per-slot admitted keyword sets). Today the identifier leaf guard is the identifier pattern alone, so `ir.identifier('if')` is accepted anywhere.
+
+- [ ] The identifier leaf guard rejects a reserved word unless the slot it is built for admits that keyword, read from the slot's admitted keyword set.
+- [ ] Test: an admitting slot builds, renders and reparses the keyword spelling; a non-admitting slot rejects it.
+- [ ] Gates as Task 7.
 
 ### Task 8: Glossary, spec status, PR
 

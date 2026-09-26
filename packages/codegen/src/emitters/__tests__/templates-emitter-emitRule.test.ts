@@ -640,11 +640,16 @@ function seamChoice(label: string): ChoiceRule {
 		type: CHOICE,
 		nonterminal: true,
 		fieldName: label,
-		members: ['_tight', '_space', '_newline', '_blankline'].map((name, i) => ({
+		members: [
+			['_tight', 'tight'],
+			['_space', 'space'],
+			['_newline', 'newline'],
+			['_blankline', 'blankline']
+		].map(([name, arm], i) => ({
 			type: SYMBOL,
 			name,
 			nonterminal: true,
-			annotations: { preference: label, ...(i === 0 ? { default: true } : {}) }
+			annotations: { preference: label, arm, ...(i === 0 ? { default: true } : {}) }
 		}))
 	} as unknown as ChoiceRule;
 }

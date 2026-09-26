@@ -1,6 +1,7 @@
+import { stableGrammars } from '@sittir/codegen/grammars';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 
-for (const g of ['rust', 'python', 'typescript']) {
+for (const g of stableGrammars()) {
 	const r = await validateReadRenderParse(g, { backend: 'native' });
 	console.log(
 		g,

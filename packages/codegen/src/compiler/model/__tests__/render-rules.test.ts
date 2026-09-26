@@ -6,6 +6,7 @@ import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPart
 import { AssembledBranch, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
+import { stampDisplay } from '../display-name.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -32,9 +33,10 @@ function nodeMapOf(
 	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
-	for (const kind of Object.keys(rules)) nodes.set(kind, { kind });
+	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom') });
+	for (const kind of Object.keys(rules)) nodes.set(kind, stub(kind));
 	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
-	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, { kind: w });
+	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, stub(w));
 	const supertypes = { _whitespace: opts.whitespace === false ? [] : whitespace, ...opts.supertypes };
 	for (const [supertype, members] of Object.entries(supertypes)) {
 		nodes.set(
@@ -81,7 +83,7 @@ describe('spaceRenderRules', () => {
 			members: { name: string; annotations: object }[];
 		};
 		expect(choice.members.map((m) => m.name)).toEqual(['_tight', '_space', '_newline', '_blankline']);
-		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', default: true });
+		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', arm: 'space', default: true });
 	});
 
 	it('gives an unseparated repeat the empty gap choice as its separator', () => {

@@ -58,11 +58,6 @@ export namespace Element {
 		export interface TokenTree<G extends GrammarContext> extends Simplify<SubKindOf<V.Element.Macro<G>>> {
 			// claimed by r
 			readonly kind: 'element.macro.token_tree';
-			readonly content?:
-				| V.Unmapped<'rust:token_tree_brace'>
-				| V.Unmapped<'rust:token_tree_bracket'>
-				| V.Unmapped<'rust:token_tree_paren'>;
-			// unmapped: <rust:token_tree_brace> <rust:token_tree_bracket> <rust:token_tree_paren>
 		}
 		export namespace TokenTree {
 			export interface Delimited<G extends GrammarContext> extends Simplify<SubKindOf<V.Element.Macro.TokenTree<G>>> {
@@ -90,7 +85,33 @@ export namespace Element {
 	export interface Pair<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
 		// claimed by pt
 		readonly kind: 'element.pair';
-		readonly key: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly key:
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| 'any'
+			| 'async'
+			| 'boolean'
+			| 'declare'
+			| 'export'
+			| 'get'
+			| 'let'
+			| 'module'
+			| 'namespace'
+			| 'new'
+			| 'number'
+			| 'object'
+			| 'override'
+			| 'private'
+			| 'protected'
+			| 'public'
+			| 'readonly'
+			| 'set'
+			| 'static'
+			| 'string'
+			| 'symbol'
+			| 'type';
 		readonly value: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Splat<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
@@ -127,7 +148,7 @@ export namespace Element {
 			// claimed by r
 			readonly kind: 'element.struct.field';
 			readonly attributeItems?: G['attribute'][];
-			readonly field?: G['identifier'] | V.Literal.Number.Integer<G>;
+			readonly field?: V.Identifier.Field<G> | V.Literal.Number.Integer<G>;
 			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		}
 		export namespace Field {
@@ -185,7 +206,7 @@ export namespace Element {
 	export interface TypeBinding<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
 		// claimed by r
 		readonly kind: 'element.type_binding';
-		readonly name: G['identifier'];
+		readonly name: V.Identifier.Type<G>;
 		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly typeArguments?: G['type'][];
 	}

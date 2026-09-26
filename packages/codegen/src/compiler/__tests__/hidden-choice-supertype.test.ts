@@ -69,7 +69,7 @@ describe('hidden choice-of-kinds rules are supertypes', () => {
 
 		const source = nodeMap.nodes.get('source') as AbstractAssembledCompound;
 		expect(source).toBeInstanceOf(AbstractAssembledCompound);
-		expect(slotKindNames(source.soleSlot!).sort()).toEqual(['_stmt']);
+		expect(slotKindNames(source.soleSlot!).sort()).toEqual(['a_stmt', 'b_stmt']);
 	});
 
 	it('a visible kind with a choice body stays a compound', () => {

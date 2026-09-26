@@ -301,7 +301,7 @@ export interface BoundedTypeTransport {
 export interface BracketedTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<Box<BracketedTypeContentTransportSlot>>
+  _type: SlotValue<Box<BracketedTypeTypeTransportSlot>>
 }
 
 export interface BreakExpressionTransport {
@@ -442,7 +442,7 @@ export interface DynamicTypeTransport {
 export interface ElseClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<Box<ElseClauseContentTransportSlot>>
+  _body: SlotValue<Box<ElseClauseBodyTransportSlot>>
 }
 
 export interface EngineOptions {
@@ -717,8 +717,8 @@ export interface GenericFunctionTransport {
 export interface GenericPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _name: SlotValue<Box<GenericPatternNameTransportSlot>>
   _type_arguments: SlotValue<TypeArgumentsTransport>
-  _content: SlotValue<Box<GenericPatternContentTransportSlot>>
 }
 
 export interface GenericTypeTransport {
@@ -891,13 +891,13 @@ export interface LifetimeTransport {
 export interface LineCommentDocInnerTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _doc: SlotValue<LineDocContentTransport, true>
+  _doc: SlotValue<DocCommentTransport, true>
 }
 
 export interface LineCommentDocOuterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _doc: SlotValue<LineDocContentTransport, true>
+  _doc: SlotValue<DocCommentTransport, true>
 }
 
 export interface LineCommentTransport {
@@ -1034,6 +1034,12 @@ export interface NegativeLiteralTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _value: SlotValue<NegativeLiteralValueTransportSlot>
+}
+
+export interface NonSpecialTokenTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<NonSpecialTokenContentTransportSlot>
 }
 
 export interface OrderedFieldDeclarationListElementsTransport {
@@ -1173,7 +1179,7 @@ export interface RawStringLiteralTransport {
   '$_edges'?: Edges
   _raw_string_literal_start: SlotValue<RawStringLiteralStartTransport>
   _string_content: SlotValue<RawStringLiteralContentTransport>
-  _raw_string_literal_end: SlotValue<RawStringLiteralEndTransport>
+  _raw_string_literal_end: SlotValue<RawStringLiteralEndTransport, true>
 }
 
 export interface ReferenceExpressionBareTransport {
@@ -1317,7 +1323,7 @@ export interface StaticItemTransport {
 export interface StringLiteralTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _string_open: SlotValue<StringLiteralOpenTransport>
+  _string_open: SlotValue<StringOpenTransport>
   _elements?: Array<SlotValue<StringLiteralElementsTransportSlot>>
 }
 
@@ -1688,22 +1694,22 @@ export interface VariadicParameterTransport {
   _pattern?: SlotValue<PatternTransport>
 }
 
-export interface VisibilityModifierGroupTransport {
+export interface VisibilityModifierPubScopeInPathTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<VisibilityModifierGroupContentTransportSlot>
+  _path: SlotValue<VisibilityModifierPubScopeInPathPathTransportSlot>
 }
 
-export interface VisibilityModifierPubInPathTransport {
+export interface VisibilityModifierPubScopeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _path: SlotValue<VisibilityModifierPubInPathPathTransportSlot>
+  _content: SlotValue<VisibilityModifierPubScopeContentTransportSlot>
 }
 
 export interface VisibilityModifierPubTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _visibility_modifier_group?: SlotValue<VisibilityModifierGroupTransport>
+  _visibility_modifier_pub_scope?: SlotValue<VisibilityModifierPubScopeTransport>
 }
 
 export interface VisibilityModifierTransport {

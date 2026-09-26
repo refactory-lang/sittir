@@ -5,7 +5,7 @@ export const phantomKinds: CommandModule = {
 	describe: 'Enumerate codegen kinds with no parser symbol across grammars',
 	register: (program) => {
 		defineCommand(program, phantomKinds)
-			.argument('[grammars...]', 'Grammars to check (default: all three)', [])
+			.argument('[grammars...]', 'Grammars to check (default: every stable grammar)', [])
 			.action(async (grammars: string[]) => {
 				const { phantomKinds: runPhantomKinds } = await import('@sittir/tools');
 				const code = await runPhantomKinds({ grammars });

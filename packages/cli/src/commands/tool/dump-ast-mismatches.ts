@@ -6,7 +6,7 @@ export const dumpAstMismatches: CommandModule = {
 	describe: 'Diagnostic for read-render-parse AST gaps',
 	register: (program) => {
 		withGrammar(defineCommand(program, dumpAstMismatches))
-			.option('--all-grammars', 'Run all three grammars')
+			.option('--all-grammars', 'Run every stable grammar')
 			.option('-m, --mode <mode>', 'Mode: deep | shallow | diff', 'deep')
 			.option('-f, --filter <substr>', 'Restrict to entries whose name contains substr')
 			.option('-c, --cluster', 'Group mismatches by message pattern')

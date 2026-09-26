@@ -7,7 +7,7 @@
  * can trace why a kind is classified the way it is.
  *
  * Usage:
- *   classify [--grammar rust|typescript|python] [--kind <name>]
+ *   classify [--grammar <name>] [--kind <name>]
  *
  * Options:
  *   --grammar   grammar name (default: rust)

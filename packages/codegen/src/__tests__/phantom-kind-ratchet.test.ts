@@ -22,9 +22,9 @@ import { describe, expect, it } from 'vitest';
  * quoting differs).
  */
 const CEILINGS: Record<string, number> = {
-	rust: 11,
-	typescript: 28,
-	python: 11
+	rust: 1,
+	typescript: 4,
+	python: 2
 };
 
 interface ConstsModule {

@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 301,
+  "nodeCount": 304,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -10,7 +10,6 @@
     "_left_hand_side",
     "_named_expression_lhs",
     "_right_hand_side",
-    "_simple_pattern",
     "_simple_statement",
     "_statement",
     "_suite",
@@ -31,37 +30,79 @@
     "]",
     "_blankline",
     "_dedent",
-    "_double_newline",
+    "_double_blankline",
     "_indent",
     "_newline",
     "_space",
-    "_string_content",
     "_tight",
     "comment",
     "escape_interpolation",
     "except",
     "string_end",
+    "string_fragment",
     "string_start",
     "}"
   ],
   "polymorphVariants": {
+    "future_import_statement": {
+      "definedBy": "override",
+      "childKind": {
+        "import_list": "import_list",
+        "parenthesized_import_list": "parenthesized_import_list"
+      }
+    },
+    "import_from_statement": {
+      "definedBy": "override",
+      "childKind": {
+        "import_list": "import_list",
+        "parenthesized_import_list": "parenthesized_import_list"
+      }
+    },
     "expression_statement": {
       "definedBy": "override",
       "childKind": {
-        "expression_statement_tuple": "tuple"
-      }
-    },
-    "_match_block": {
-      "definedBy": "override",
-      "childKind": {
-        "match_block_block": "block",
-        "newline": "empty"
+        "expression": "expression",
+        "expression_statement_tuple": "tuple",
+        "assignment": "assignment",
+        "augmented_assignment": "augmented_assignment",
+        "yield": "yield"
       }
     },
     "except_clause": {
       "definedBy": "override",
       "childKind": {
         "except_clause_exception": "exception"
+      }
+    },
+    "case_pattern": {
+      "definedBy": "override",
+      "childKind": {
+        "case_as_pattern": "case_as_pattern",
+        "keyword_pattern": "keyword_pattern",
+        "simple_pattern": "simple_pattern"
+      }
+    },
+    "_simple_pattern": {
+      "definedBy": "override",
+      "childKind": {
+        "simple_pattern_negative": "negative"
+      }
+    },
+    "yield": {
+      "definedBy": "override",
+      "childKind": {
+        "yield_from_clause": "from_clause"
+      }
+    },
+    "type": {
+      "definedBy": "enrich",
+      "childKind": {
+        "expression": "expression",
+        "splat_type": "splat_type",
+        "generic_type": "generic_type",
+        "union_type": "union_type",
+        "constrained_type": "constrained_type",
+        "member_type": "member_type"
       }
     }
   },
@@ -95,11 +136,11 @@
     "module.statements": {
       "simple_statements": "_simple_statements"
     },
-    "import_statement.import_list": {
-      "names": "_import_list"
-    },
     "block.statements": {
       "simple_statements": "_simple_statements"
+    },
+    "case_pattern.content": {
+      "simple_pattern": "_simple_pattern"
     }
   },
   "factorySlots": {
@@ -122,15 +163,12 @@
       }
     },
     "import_statement": {
-      "import_list": {
+      "names": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_names"
-        ]
+        "nonEmpty": false
       }
     },
     "relative_import": {
@@ -155,11 +193,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_import_list",
-          "_parenthesized_import_list"
-        ]
+        "nonEmpty": false
       }
     },
     "import_from_statement": {
@@ -175,15 +209,10 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_wildcard_import",
-          "_import_list",
-          "_parenthesized_import_list"
-        ]
+        "nonEmpty": false
       }
     },
-    "_import_list": {
+    "import_list": {
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -214,11 +243,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_print_statement_chevron",
-          "_print_statement_plain"
-        ]
+        "nonEmpty": false
       }
     },
     "chevron": {
@@ -245,58 +270,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_expression_statement_tuple",
-          "_assignment_eq",
-          "_assignment_type",
-          "_assignment_typed",
-          "_augmented_assignment",
-          "_yield"
-        ]
+        "nonEmpty": false
       }
     },
     "named_expression": {
@@ -321,53 +295,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_expression_list"
-        ]
+        "nonEmpty": false
       }
     },
     "delete_statement": {
@@ -376,53 +304,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_expression_list"
-        ]
+        "nonEmpty": false
       }
     },
     "raise_statement": {
@@ -431,53 +313,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_expression_list"
-        ]
+        "nonEmpty": false
       },
       "cause": {
         "unnamed": false,
@@ -551,17 +387,13 @@
         "nonEmpty": false
       }
     },
-    "_match_block": {
+    "match_block": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_match_block_block",
-          "_newline"
-        ]
+        "nonEmpty": false
       }
     },
     "case_clause": {
@@ -697,12 +529,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_suite_inline",
-          "_suite_block",
-          "_suite_empty"
-        ]
+        "nonEmpty": false
       }
     },
     "finally_clause": {
@@ -800,15 +627,12 @@
       }
     },
     "lambda_parameters": {
-      "parameters": {
+      "parameters_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parameters_elements"
-        ]
+        "nonEmpty": false
       }
     },
     "list_splat": {
@@ -924,11 +748,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parenthesized_list_splat",
-          "_list_splat"
-        ]
+        "nonEmpty": false
       }
     },
     "argument_list": {
@@ -980,52 +800,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern"
-        ]
+        "nonEmpty": false
       },
       "tail": {
         "unnamed": false,
@@ -1050,26 +825,32 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_case_as_pattern",
-          "_keyword_pattern",
-          "_class_pattern",
-          "_splat_pattern",
-          "_union_pattern",
-          "_case_list_pattern",
-          "_case_tuple_pattern",
-          "_dict_pattern",
-          "_string",
-          "_concatenated_string",
-          "_true",
-          "_false",
-          "_none",
-          "_simple_pattern_negative",
-          "_complex_pattern",
-          "_dotted_name",
-          "_wildcard_pattern"
-        ]
+        "nonEmpty": false
+      }
+    },
+    "_simple_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "case_as_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "union_pattern": {
@@ -1090,7 +871,7 @@
         "nonEmpty": false
       }
     },
-    "_key_value_pattern": {
+    "key_value_pattern": {
       "key": {
         "unnamed": false,
         "slotCount": 1,
@@ -1155,14 +936,14 @@
       }
     },
     "complex_pattern": {
-      "real": {
+      "sign": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "imaginary": {
+      "real": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1176,24 +957,15 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "imaginary": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific"
-        ]
+        "nonEmpty": false
       }
     },
-    "_parameters": {
+    "parameters_elements": {
       "parameter": {
         "unnamed": false,
         "slotCount": 1,
@@ -1202,7 +974,7 @@
         "nonEmpty": true
       }
     },
-    "_patterns": {
+    "patterns": {
       "pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -1269,43 +1041,21 @@
       }
     },
     "list_splat_pattern": {
-      "content": {
+      "target": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute"
-        ]
+        "nonEmpty": false
       }
     },
     "dictionary_splat_pattern": {
-      "content": {
+      "target": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute"
-        ]
+        "nonEmpty": false
       }
     },
     "as_pattern": {
@@ -1472,21 +1222,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute",
-          "_list_splat_pattern",
-          "_tuple_pattern",
-          "_list_pattern"
-        ]
+        "nonEmpty": false
       },
       "tail": {
         "unnamed": false,
@@ -1502,54 +1238,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_yield_from_clause",
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_expression_list"
-        ]
+        "nonEmpty": false
       }
     },
     "attribute": {
@@ -1624,17 +1313,12 @@
       }
     },
     "typed_parameter": {
-      "content": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_list_splat_pattern",
-          "_dictionary_splat_pattern"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -1650,57 +1334,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_splat_type",
-          "_generic_type",
-          "_union_type",
-          "_constrained_type",
-          "_member_type"
-        ]
+        "nonEmpty": false
       }
     },
     "splat_type": {
@@ -1916,61 +1550,15 @@
       }
     },
     "parenthesized_expression": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_yield"
-        ]
+        "nonEmpty": false
       }
     },
-    "_collection_elements": {
+    "collection_elements": {
       "element": {
         "unnamed": false,
         "slotCount": 1,
@@ -2079,19 +1667,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_escape_interpolation",
-          "_escape_sequence_unicode_fixed",
-          "_escape_sequence_unicode_wide",
-          "_escape_sequence_hex",
-          "_escape_sequence_octal",
-          "_escape_sequence_line_break",
-          "_escape_sequence_simple",
-          "_escape_sequence_named",
-          "_not_escape_sequence",
-          "_string_fragment"
-        ]
+        "nonEmpty": false
       }
     },
     "interpolation": {
@@ -2125,15 +1701,12 @@
       }
     },
     "format_specifier": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_format_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "keyword_identifier": {
@@ -2223,52 +1796,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": true,
-        "nonEmpty": true,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern"
-        ]
+        "nonEmpty": true
       }
     },
     "list_pattern_case_patterns": {
@@ -2295,21 +1823,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": true,
-        "nonEmpty": true,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute",
-          "_list_splat_pattern",
-          "_tuple_pattern",
-          "_list_pattern"
-        ]
+        "nonEmpty": true
       }
     },
     "subscripts": {
@@ -2336,52 +1850,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern"
-        ]
+        "nonEmpty": false
       }
     },
     "except_clause_exception_as": {
@@ -2418,32 +1887,7 @@
         "nonEmpty": false
       }
     },
-    "case_as_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "comprehension_clauses": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_print_arguments": {
+    "print_arguments": {
       "argument": {
         "unnamed": false,
         "slotCount": 1,
@@ -2452,7 +1896,7 @@
         "nonEmpty": true
       }
     },
-    "_print_chevron_arguments": {
+    "print_chevron_arguments": {
       "argument": {
         "unnamed": false,
         "slotCount": 1,
@@ -2474,11 +1918,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_print_chevron_arguments",
-          "_comma"
-        ]
+        "nonEmpty": false
       }
     },
     "print_statement_plain": {
@@ -2490,12 +1930,21 @@
         "nonEmpty": false
       }
     },
-    "_parenthesized_import_list": {
+    "parenthesized_import_list": {
       "import_list": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comprehension_clauses": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -2725,21 +2174,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific"
-        ]
+        "nonEmpty": false
       }
     },
     "except_clause_exception_list": {
@@ -2757,11 +2197,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_except_clause_exception_as",
-          "_except_clause_exception_list"
-        ]
+        "nonEmpty": false
       }
     },
     "assignment_eq": {
@@ -2882,7 +2318,7 @@
         "nonEmpty": false
       }
     },
-    "_comparison_operator_comparator": {
+    "comparison_operator_comparator": {
       "operators": {
         "unnamed": false,
         "slotCount": 1,
@@ -2895,99 +2331,25 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern"
-        ]
+        "nonEmpty": false
       }
     },
-    "_yield_from_clause": {
+    "yield_from_clause": {
       "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern"
-        ]
+        "nonEmpty": false
+      }
+    },
+    "names": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "as_pattern_target": {
@@ -3018,7 +2380,8 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"__future__\" as const",
-      "text": "__future__"
+      "text": "__future__",
+      "factoryShape": "text"
     },
     {
       "kind": "_augmented_assignment_operator",
@@ -3055,200 +2418,6 @@
       "text": "\n\n"
     },
     {
-      "kind": "_collection_elements",
-      "modelType": "list",
-      "typeName": "CollectionElements",
-      "factoryName": "collectionElements",
-      "irKey": "collectionElements",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "expression",
-        "yield",
-        "list_splat",
-        "parenthesized_list_splat"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "element"
-      ],
-      "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
-        "as_pattern",
-        "async_keyword",
-        "attribute",
-        "await",
-        "await_keyword",
-        "binary_operator",
-        "boolean_operator",
-        "call",
-        "comparison_operator",
-        "concatenated_string",
-        "conditional_expression",
-        "dictionary",
-        "dictionary_comprehension",
-        "dictionary_elements",
-        "dictionary_splat",
-        "ellipsis",
-        "exec_keyword",
-        "expression_list",
-        "false",
-        "float_leading_point",
-        "float_point",
-        "float_scientific",
-        "generator_expression",
-        "identifier",
-        "integer_binary",
-        "integer_decimal",
-        "integer_hex",
-        "integer_octal",
-        "lambda",
-        "list",
-        "list_comprehension",
-        "list_splat",
-        "list_splat_pattern",
-        "match_keyword",
-        "named_expression",
-        "none",
-        "not_operator",
-        "pair",
-        "parenthesized_expression",
-        "parenthesized_list_splat",
-        "print_keyword",
-        "set",
-        "set_comprehension",
-        "string",
-        "subscript",
-        "true",
-        "tuple",
-        "type_keyword",
-        "unary_operator",
-        "yield"
-      ]
-    },
-    {
-      "kind": "_comparison_operator_comparator",
-      "modelType": "branch",
-      "typeName": "ComparisonOperatorComparator",
-      "factoryName": "_comparisonOperatorComparator",
-      "irKey": "comparisonOperatorComparator",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "operators",
-          "propertyName": "operators",
-          "paramName": "operators",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "<",
-              "parseKind": "lt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "<=",
-              "parseKind": "lt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "==",
-              "parseKind": "eq_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "!=",
-              "parseKind": "bang_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ">=",
-              "parseKind": "gt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ">",
-              "parseKind": "gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "<>",
-              "parseKind": "lt_gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "in",
-              "parseKind": "in_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "not in",
-              "parseKind": "_not_in"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "is",
-              "parseKind": "is_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "is not",
-              "parseKind": "_is_not"
-            }
-          ]
-        },
-        {
-          "name": "primary_expression",
-          "propertyName": "primaryExpression",
-          "paramName": "primaryExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "primary_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "primary_expression",
-              "parseKind": "primary_expression"
-            }
-          ]
-        }
-      ],
-      "name": "_comparison_operator_comparator",
-      "factoryShape": "config",
-      "factoryFields": [
-        "operators",
-        "primary_expression"
-      ]
-    },
-    {
       "kind": "_compound_statement",
       "modelType": "supertype",
       "typeName": "CompoundStatement",
@@ -3276,10 +2445,10 @@
       "hidden": false
     },
     {
-      "kind": "_double_newline",
+      "kind": "_double_blankline",
       "modelType": "punctuation",
-      "typeName": "DoubleNewline",
-      "irKey": "doubleNewline",
+      "typeName": "DoubleBlankline",
+      "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -3324,31 +2493,6 @@
       ]
     },
     {
-      "kind": "_import_list",
-      "modelType": "list",
-      "typeName": "ImportList",
-      "factoryName": "importList",
-      "irKey": "importList",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "dotted_name",
-        "aliased_import"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "name"
-      ],
-      "bareAccepts": [
-        "aliased_import",
-        "dotted_name"
-      ]
-    },
-    {
       "kind": "_indent",
       "modelType": "pattern",
       "typeName": "Indent",
@@ -3357,17 +2501,106 @@
       "hidden": false
     },
     {
-      "kind": "_key_value_pattern",
-      "modelType": "branch",
-      "typeName": "KeyValuePattern",
-      "factoryName": "keyValuePattern",
-      "irKey": "keyValuePattern",
+      "kind": "_is_not",
+      "modelType": "punctuation",
+      "typeName": "IsNot",
+      "irKey": "isNot",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"is not\" as const",
+      "text": "is not"
+    },
+    {
+      "kind": "_kw_async_marker",
+      "modelType": "keyword",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "text": "async",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_left_hand_side",
+      "modelType": "supertype",
+      "typeName": "LeftHandSide",
+      "irKey": "leftHandSide",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "pattern",
+        "pattern_list"
+      ]
+    },
+    {
+      "kind": "_named_expression_lhs",
+      "modelType": "supertype",
+      "typeName": "NamedExpressionLhs",
+      "irKey": "namedExpressionLhs",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "async_keyword",
+        "await_keyword",
+        "exec_keyword",
+        "identifier",
+        "match_keyword",
+        "print_keyword",
+        "type_keyword"
+      ]
+    },
+    {
+      "kind": "_newline",
+      "modelType": "punctuation",
+      "typeName": "Newline",
+      "factoryName": "newline",
+      "irKey": "newline",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "text": "\n",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_not_in",
+      "modelType": "punctuation",
+      "typeName": "NotIn",
+      "irKey": "notIn",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"not in\" as const",
+      "text": "not in"
+    },
+    {
+      "kind": "_right_hand_side",
+      "modelType": "supertype",
+      "typeName": "RightHandSide",
+      "irKey": "rightHandSide",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "assignment",
+        "augmented_assignment",
+        "expression",
+        "expression_list",
+        "pattern_list",
+        "yield"
+      ]
+    },
+    {
+      "kind": "_simple_pattern",
+      "modelType": "envelope",
+      "typeName": "SimplePattern",
+      "factoryName": "simplePattern",
+      "irKey": "simplePattern",
       "hidden": false,
       "slots": [
         {
-          "name": "key",
-          "propertyName": "key",
-          "paramName": "key",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3387,7 +2620,7 @@
             "simple_pattern_negative",
             "complex_pattern",
             "dotted_name",
-            "_wildcard_pattern"
+            "wildcard_pattern"
           ],
           "values": [
             {
@@ -3482,99 +2715,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_wildcard_pattern",
+              "name": "wildcard_pattern",
               "parseKind": "wildcard_pattern"
-            }
-          ]
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "case_pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_pattern",
-              "parseKind": "case_pattern"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "key",
-        "value"
-      ]
-    },
-    {
-      "kind": "_kw_async_marker",
-      "modelType": "keyword",
-      "typeName": "KwAsyncMarker",
-      "factoryName": "kwAsyncMarker",
-      "irKey": "kwAsyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_left_hand_side",
-      "modelType": "supertype",
-      "typeName": "LeftHandSide",
-      "irKey": "leftHandSide",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "pattern",
-        "pattern_list"
-      ]
-    },
-    {
-      "kind": "_match_block",
-      "modelType": "polymorph",
-      "typeName": "MatchBlock",
-      "factoryName": "matchBlock",
-      "irKey": "matchBlock",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "match_block_block",
-            "_newline"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "match_block_block",
-              "parseKind": "match_block_block",
-              "seat": {
-                "kind": "match_block_block",
-                "shape": "arm",
-                "mount": "block"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "newline"
             }
           ]
         }
@@ -3584,350 +2726,34 @@
         "content"
       ],
       "bareAccepts": [
-        "_newline",
-        "match_block_block"
-      ]
-    },
-    {
-      "kind": "_named_expression_lhs",
-      "modelType": "supertype",
-      "typeName": "NamedExpressionLhs",
-      "irKey": "namedExpressionLhs",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "async_keyword",
-        "await_keyword",
-        "exec_keyword",
-        "identifier",
-        "match_keyword",
-        "print_keyword",
-        "type_keyword"
-      ]
-    },
-    {
-      "kind": "_newline",
-      "modelType": "punctuation",
-      "typeName": "Newline",
-      "irKey": "newline",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\n\" as const",
-      "text": "\n"
-    },
-    {
-      "kind": "_not_escape_sequence",
-      "modelType": "punctuation",
-      "typeName": "NotEscapeSequence",
-      "irKey": "notEscapeSequence",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\\\" as const",
-      "text": "\\"
-    },
-    {
-      "kind": "_parameters",
-      "modelType": "list",
-      "typeName": "_Parameters",
-      "factoryName": "_parameters",
-      "irKey": "_parameters",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "parameter"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "parameter"
-      ],
-      "bareAccepts": [
-        "_patterns",
-        "async_keyword",
-        "attribute",
-        "await_keyword",
-        "default_parameter",
-        "dictionary_splat_pattern",
-        "exec_keyword",
-        "identifier",
-        "keyword_separator",
-        "list_pattern",
-        "list_splat_pattern",
-        "match_keyword",
-        "positional_separator",
-        "print_keyword",
-        "subscript",
-        "tuple_pattern",
-        "type_keyword",
-        "typed_default_parameter",
-        "typed_parameter"
-      ]
-    },
-    {
-      "kind": "_parenthesized_import_list",
-      "modelType": "envelope",
-      "typeName": "ParenthesizedImportList",
-      "factoryName": "parenthesizedImportList",
-      "irKey": "parenthesizedImportList",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "_import_list"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_import_list",
-              "parseKind": "import_list"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "forwarded",
-      "forwardsTo": "_import_list",
-      "factoryFields": [
-        "import_list"
-      ],
-      "bareAccepts": [
-        "_import_list",
-        "aliased_import",
-        "dotted_name"
-      ]
-    },
-    {
-      "kind": "_patterns",
-      "modelType": "list",
-      "typeName": "Patterns",
-      "factoryName": "patterns",
-      "irKey": "patterns",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "pattern"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "pattern"
-      ],
-      "bareAccepts": [
-        "_patterns",
-        "async_keyword",
-        "attribute",
-        "await_keyword",
-        "exec_keyword",
-        "identifier",
-        "list_pattern",
-        "list_splat_pattern",
-        "match_keyword",
-        "print_keyword",
-        "subscript",
-        "tuple_pattern",
-        "type_keyword"
-      ]
-    },
-    {
-      "kind": "_print_arguments",
-      "modelType": "list",
-      "typeName": "PrintArguments",
-      "factoryName": "printArguments",
-      "irKey": "printArguments",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "none",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "expression"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "argument"
-      ],
-      "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
-        "as_pattern",
-        "async_keyword",
-        "attribute",
-        "await",
-        "await_keyword",
-        "binary_operator",
-        "boolean_operator",
-        "call",
-        "comparison_operator",
-        "concatenated_string",
-        "conditional_expression",
-        "dictionary",
-        "dictionary_comprehension",
-        "dictionary_elements",
-        "dictionary_splat",
-        "ellipsis",
-        "exec_keyword",
-        "expression_list",
-        "false",
-        "float_leading_point",
-        "float_point",
-        "float_scientific",
-        "generator_expression",
-        "identifier",
-        "integer_binary",
-        "integer_decimal",
-        "integer_hex",
-        "integer_octal",
-        "lambda",
-        "list",
-        "list_comprehension",
-        "list_splat",
-        "list_splat_pattern",
-        "match_keyword",
-        "named_expression",
-        "none",
-        "not_operator",
-        "pair",
-        "parenthesized_expression",
-        "parenthesized_list_splat",
-        "print_keyword",
-        "set",
-        "set_comprehension",
-        "string",
-        "subscript",
-        "true",
-        "tuple",
-        "type_keyword",
-        "unary_operator",
-        "yield"
-      ]
-    },
-    {
-      "kind": "_print_chevron_arguments",
-      "modelType": "list",
-      "typeName": "PrintChevronArguments",
-      "factoryName": "printChevronArguments",
-      "irKey": "printChevronArguments",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingDelimiter": "mandatory",
-      "trailingDelimiter": "optional",
-      "defaultDelimiter": "Delimiter.None",
-      "elementKinds": [
-        "expression"
-      ],
-      "factoryShape": "elements",
-      "factoryFields": [
-        "argument"
-      ],
-      "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
-        "as_pattern",
-        "async_keyword",
-        "attribute",
-        "await",
-        "await_keyword",
-        "binary_operator",
-        "boolean_operator",
-        "call",
-        "comparison_operator",
-        "concatenated_string",
-        "conditional_expression",
-        "dictionary",
-        "dictionary_comprehension",
-        "dictionary_elements",
-        "dictionary_splat",
-        "ellipsis",
-        "exec_keyword",
-        "expression_list",
-        "false",
-        "float_leading_point",
-        "float_point",
-        "float_scientific",
-        "generator_expression",
-        "identifier",
-        "integer_binary",
-        "integer_decimal",
-        "integer_hex",
-        "integer_octal",
-        "lambda",
-        "list",
-        "list_comprehension",
-        "list_splat",
-        "list_splat_pattern",
-        "match_keyword",
-        "named_expression",
-        "none",
-        "not_operator",
-        "pair",
-        "parenthesized_expression",
-        "parenthesized_list_splat",
-        "print_keyword",
-        "set",
-        "set_comprehension",
-        "string",
-        "subscript",
-        "true",
-        "tuple",
-        "type_keyword",
-        "unary_operator",
-        "yield"
-      ]
-    },
-    {
-      "kind": "_right_hand_side",
-      "modelType": "supertype",
-      "typeName": "RightHandSide",
-      "irKey": "rightHandSide",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "assignment",
-        "augmented_assignment",
-        "expression",
-        "expression_list",
-        "pattern_list",
-        "yield"
-      ]
-    },
-    {
-      "kind": "_simple_pattern",
-      "modelType": "supertype",
-      "typeName": "SimplePattern",
-      "irKey": "simplePattern",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_wildcard_pattern",
+        "_simple_pattern",
+        "case_as_pattern",
         "case_list_pattern",
+        "case_pattern",
         "case_tuple_pattern",
         "class_pattern",
         "complex_pattern",
         "concatenated_string",
         "dict_pattern",
+        "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
+        "keyword_pattern",
+        "list_pattern_case_patterns",
         "none",
         "simple_pattern_negative",
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
+      ],
+      "textLeavesThrough": [
+        "true",
+        "false",
+        "none",
+        "wildcard_pattern"
       ]
     },
     {
@@ -3991,11 +2817,6 @@
         "simple_statements_elements"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_import_list",
-        "_parenthesized_import_list",
-        "_print_arguments",
-        "_yield_from_clause",
         "aliased_import",
         "as_pattern",
         "assert_statement",
@@ -4011,6 +2832,7 @@
         "boolean_operator",
         "break_statement",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -4036,6 +2858,7 @@
         "global_statement",
         "identifier",
         "import_from_statement",
+        "import_list",
         "import_statement",
         "integer_binary",
         "integer_decimal",
@@ -4048,13 +2871,16 @@
         "list_splat_pattern",
         "match_keyword",
         "named_expression",
+        "names",
         "none",
         "nonlocal_statement",
         "not_operator",
         "pair",
         "parenthesized_expression",
+        "parenthesized_import_list",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_arguments",
         "print_keyword",
         "print_statement",
         "print_statement_chevron",
@@ -4071,7 +2897,8 @@
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -4104,17 +2931,6 @@
         "while_statement",
         "with_statement"
       ]
-    },
-    {
-      "kind": "_string_content",
-      "modelType": "pattern",
-      "typeName": "_StringContent",
-      "factoryName": "_stringContent",
-      "irKey": "_stringContent",
-      "hidden": false,
-      "pattern": "[^\"'\\\\{}\\n]+",
-      "leafPattern": "/^(?:(?:[^\"'\\\\{}\\n]+))$/u",
-      "factoryShape": "text"
     },
     {
       "kind": "_suite",
@@ -4162,114 +2978,10 @@
       "transparent": true,
       "subtypes": [
         "_blankline",
-        "_double_newline",
+        "_double_blankline",
         "_newline",
         "_space",
         "_tight"
-      ]
-    },
-    {
-      "kind": "_wildcard_pattern",
-      "modelType": "keyword",
-      "typeName": "WildcardPattern",
-      "factoryName": "wildcardPattern",
-      "irKey": "wildcardPattern",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"_\" as const",
-      "text": "_",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_yield_from_clause",
-      "modelType": "envelope",
-      "typeName": "YieldFromClause",
-      "factoryName": "_yieldFromClause",
-      "irKey": "yieldFromClause",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "parseKind": "expression"
-            }
-          ]
-        }
-      ],
-      "name": "_yield_from_clause",
-      "factoryShape": "direct",
-      "factoryFields": [
-        "expression"
-      ],
-      "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
-        "as_pattern",
-        "async_keyword",
-        "attribute",
-        "await",
-        "await_keyword",
-        "binary_operator",
-        "boolean_operator",
-        "call",
-        "comparison_operator",
-        "concatenated_string",
-        "conditional_expression",
-        "dictionary",
-        "dictionary_comprehension",
-        "dictionary_elements",
-        "dictionary_splat",
-        "ellipsis",
-        "exec_keyword",
-        "expression_list",
-        "false",
-        "float_leading_point",
-        "float_point",
-        "float_scientific",
-        "generator_expression",
-        "identifier",
-        "integer_binary",
-        "integer_decimal",
-        "integer_hex",
-        "integer_octal",
-        "lambda",
-        "list",
-        "list_comprehension",
-        "list_splat",
-        "list_splat_pattern",
-        "match_keyword",
-        "named_expression",
-        "none",
-        "not_operator",
-        "pair",
-        "parenthesized_expression",
-        "parenthesized_list_splat",
-        "print_keyword",
-        "set",
-        "set_comprehension",
-        "string",
-        "subscript",
-        "true",
-        "tuple",
-        "type_keyword",
-        "unary_operator",
-        "yield"
       ]
     },
     {
@@ -4393,8 +3105,6 @@
         "arguments"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "argument_list_elements",
         "as_pattern",
         "async_keyword",
@@ -4404,6 +3114,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -4446,7 +3157,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -4476,8 +3188,6 @@
         "element"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -4486,6 +3196,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -4528,7 +3239,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -4631,8 +3343,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -4641,6 +3351,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -4682,7 +3393,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -5270,8 +3982,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -5280,6 +3990,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -5321,7 +4032,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -5908,8 +4620,7 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
-        "_wildcard_pattern",
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -5921,6 +4632,7 @@
         "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
         "keyword_pattern",
         "list_pattern_case_patterns",
         "none",
@@ -5928,7 +4640,8 @@
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
       ]
     },
     {
@@ -5946,25 +4659,11 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "case_as_pattern",
             "keyword_pattern",
-            "class_pattern",
-            "splat_pattern",
-            "union_pattern",
-            "case_list_pattern",
-            "case_tuple_pattern",
-            "dict_pattern",
-            "string",
-            "concatenated_string",
-            "true",
-            "false",
-            "none",
-            "simple_pattern_negative",
-            "complex_pattern",
-            "dotted_name",
-            "_wildcard_pattern"
+            "_simple_pattern"
           ],
           "values": [
             {
@@ -5982,97 +4681,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "class_pattern",
-              "parseKind": "class_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "splat_pattern",
-              "parseKind": "splat_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "union_pattern",
-              "parseKind": "union_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_list_pattern",
-              "parseKind": "case_list_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_tuple_pattern",
-              "parseKind": "case_tuple_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "dict_pattern",
-              "parseKind": "dict_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "parseKind": "string"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "concatenated_string",
-              "parseKind": "concatenated_string"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "true",
-              "parseKind": "true"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "false",
-              "parseKind": "false"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "none",
-              "parseKind": "none"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative",
-              "seat": {
-                "kind": "simple_pattern_negative",
-                "shape": "arm",
-                "mount": "negative"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "complex_pattern",
-              "parseKind": "complex_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "dotted_name",
-              "parseKind": "dotted_name"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_wildcard_pattern",
-              "parseKind": "wildcard_pattern"
+              "name": "_simple_pattern",
+              "parseKind": "simple_pattern"
             }
           ]
         }
@@ -6082,8 +4692,7 @@
         "content"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
-        "_wildcard_pattern",
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -6095,6 +4704,7 @@
         "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
         "keyword_pattern",
         "list_pattern_case_patterns",
         "none",
@@ -6102,7 +4712,8 @@
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
       ]
     },
     {
@@ -6128,8 +4739,7 @@
         "case_pattern"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
-        "_wildcard_pattern",
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -6141,6 +4751,7 @@
         "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
         "keyword_pattern",
         "list_pattern_case_patterns",
         "none",
@@ -6148,7 +4759,8 @@
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
       ]
     },
     {
@@ -6186,8 +4798,7 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
-        "_wildcard_pattern",
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -6199,6 +4810,7 @@
         "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
         "keyword_pattern",
         "list_pattern_case_patterns",
         "none",
@@ -6206,7 +4818,8 @@
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
       ]
     },
     {
@@ -6243,8 +4856,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -6253,6 +4864,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -6294,7 +4906,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -6465,6 +5078,83 @@
       ]
     },
     {
+      "kind": "collection_elements",
+      "modelType": "list",
+      "typeName": "CollectionElements",
+      "factoryName": "collectionElements",
+      "irKey": "collectionElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "expression",
+        "yield",
+        "list_splat",
+        "parenthesized_list_splat"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "element"
+      ],
+      "bareAccepts": [
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "collection_elements",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "type_keyword",
+        "unary_operator",
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
       "kind": "colon",
       "modelType": "punctuation",
       "typeName": "Colon",
@@ -6579,16 +5269,16 @@
           "nonEmpty": true,
           "storage": "verbatim",
           "kinds": [
-            "_comparison_operator_comparator"
+            "comparison_operator_comparator"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "_comparison_operator_comparator",
+              "name": "comparison_operator_comparator",
               "parseKind": "comparison_operator_comparator",
               "seat": {
-                "kind": "_comparison_operator_comparator",
+                "kind": "comparison_operator_comparator",
                 "shape": "elements"
               }
             }
@@ -6602,6 +5292,123 @@
       ]
     },
     {
+      "kind": "comparison_operator_comparator",
+      "modelType": "branch",
+      "typeName": "ComparisonOperatorComparator",
+      "factoryName": "comparisonOperatorComparator",
+      "irKey": "comparisonOperatorComparator",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "operators",
+          "propertyName": "operators",
+          "paramName": "operators",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<",
+              "parseKind": "lt"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<=",
+              "parseKind": "lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "==",
+              "parseKind": "eq_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!=",
+              "parseKind": "bang_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">=",
+              "parseKind": "gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">",
+              "parseKind": "gt"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<>",
+              "parseKind": "lt_gt"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "not in",
+              "parseKind": "_not_in"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "is",
+              "parseKind": "is_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "is not",
+              "parseKind": "_is_not"
+            }
+          ]
+        },
+        {
+          "name": "primary_expression",
+          "propertyName": "primaryExpression",
+          "paramName": "primaryExpression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "primary_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "primary_expression",
+              "parseKind": "primary_expression"
+            }
+          ]
+        }
+      ],
+      "name": "comparison_operator_comparator",
+      "factoryShape": "config",
+      "factoryFields": [
+        "operators",
+        "primary_expression"
+      ]
+    },
+    {
       "kind": "complex_pattern",
       "modelType": "branch",
       "typeName": "ComplexPattern",
@@ -6610,9 +5417,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "real",
-          "propertyName": "real",
-          "paramName": "real",
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6628,9 +5435,9 @@
           ]
         },
         {
-          "name": "imaginary",
-          "propertyName": "imaginary",
-          "paramName": "imaginary",
+          "name": "real",
+          "propertyName": "real",
+          "paramName": "real",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6679,9 +5486,9 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6708,10 +5515,10 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
+        "sign",
         "real",
-        "imaginary",
         "operator",
-        "content"
+        "imaginary"
       ]
     },
     {
@@ -7069,8 +5876,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -7079,6 +5884,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7120,7 +5926,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -7248,8 +6055,6 @@
         "expressions"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -7258,6 +6063,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7299,7 +6105,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -7337,8 +6144,8 @@
         "dict_pattern_elements"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
         "dict_pattern_elements",
+        "key_value_pattern",
         "splat_pattern"
       ]
     },
@@ -7366,7 +6173,7 @@
         "element"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
+        "key_value_pattern",
         "splat_pattern"
       ]
     },
@@ -7405,8 +6212,6 @@
         "entries"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -7415,6 +6220,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7456,7 +6262,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -7538,8 +6345,6 @@
         "element"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -7548,6 +6353,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7589,7 +6395,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -7626,8 +6433,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -7636,6 +6441,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7677,7 +6483,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -7689,9 +6496,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "target",
+          "propertyName": "target",
+          "paramName": "target",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7712,37 +6519,37 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "print",
-              "parseKind": "print_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "exec",
-              "parseKind": "exec_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "async",
-              "parseKind": "async_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "await",
-              "parseKind": "await_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "match",
-              "parseKind": "match_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -7761,7 +6568,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "target"
       ],
       "bareAccepts": [
         "attribute",
@@ -7925,12 +6732,7 @@
         "body"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_import_list",
         "_newline",
-        "_parenthesized_import_list",
-        "_print_arguments",
-        "_yield_from_clause",
         "aliased_import",
         "as_pattern",
         "assert_statement",
@@ -7947,6 +6749,7 @@
         "boolean_operator",
         "break_statement",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -7972,6 +6775,7 @@
         "global_statement",
         "identifier",
         "import_from_statement",
+        "import_list",
         "import_statement",
         "integer_binary",
         "integer_decimal",
@@ -7984,13 +6788,16 @@
         "list_splat_pattern",
         "match_keyword",
         "named_expression",
+        "names",
         "none",
         "nonlocal_statement",
         "not_operator",
         "pair",
         "parenthesized_expression",
+        "parenthesized_import_list",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_arguments",
         "print_keyword",
         "print_statement",
         "print_statement_chevron",
@@ -8010,7 +6817,8 @@
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -8822,12 +7630,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "expression_list_expressions",
-              "parseKind": "expression_list_expressions",
-              "seat": {
-                "kind": "expression_list_expressions",
-                "shape": "arm",
-                "mount": "expressions"
-              }
+              "parseKind": "expression_list_expressions"
             }
           ]
         }
@@ -8861,8 +7664,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -8871,6 +7672,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -8912,7 +7714,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -8982,8 +7785,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "assignment_eq",
         "assignment_type",
@@ -8996,6 +7797,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -9038,7 +7840,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -9064,8 +7867,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -9074,6 +7875,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -9115,7 +7917,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -9164,12 +7967,7 @@
         "block"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_import_list",
         "_newline",
-        "_parenthesized_import_list",
-        "_print_arguments",
-        "_yield_from_clause",
         "aliased_import",
         "as_pattern",
         "assert_statement",
@@ -9186,6 +7984,7 @@
         "boolean_operator",
         "break_statement",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -9211,6 +8010,7 @@
         "global_statement",
         "identifier",
         "import_from_statement",
+        "import_list",
         "import_statement",
         "integer_binary",
         "integer_decimal",
@@ -9223,13 +8023,16 @@
         "list_splat_pattern",
         "match_keyword",
         "named_expression",
+        "names",
         "none",
         "nonlocal_statement",
         "not_operator",
         "pair",
         "parenthesized_expression",
+        "parenthesized_import_list",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_arguments",
         "print_keyword",
         "print_statement",
         "print_statement_chevron",
@@ -9249,7 +8052,8 @@
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -10014,9 +8818,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10041,7 +8845,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -10211,20 +9015,20 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_import_list",
-            "_parenthesized_import_list"
+            "import_list",
+            "parenthesized_import_list"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_list",
+              "name": "import_list",
               "parseKind": "import_list"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_parenthesized_import_list",
+              "name": "parenthesized_import_list",
               "parseKind": "parenthesized_import_list"
             }
           ]
@@ -10235,10 +9039,10 @@
         "content"
       ],
       "bareAccepts": [
-        "_import_list",
-        "_parenthesized_import_list",
         "aliased_import",
-        "dotted_name"
+        "dotted_name",
+        "import_list",
+        "parenthesized_import_list"
       ]
     },
     {
@@ -10487,8 +9291,6 @@
         "condition"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -10497,6 +9299,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -10538,7 +9341,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -10679,21 +9483,21 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_import_list",
-            "_parenthesized_import_list",
+            "import_list",
+            "parenthesized_import_list",
             "wildcard_import"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_list",
+              "name": "import_list",
               "parseKind": "import_list"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_parenthesized_import_list",
+              "name": "parenthesized_import_list",
               "parseKind": "parenthesized_import_list"
             },
             {
@@ -10723,6 +9527,31 @@
       "factoryShape": "text"
     },
     {
+      "kind": "import_list",
+      "modelType": "list",
+      "typeName": "ImportList",
+      "factoryName": "importList",
+      "irKey": "importList",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "dotted_name",
+        "aliased_import"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "name"
+      ],
+      "bareAccepts": [
+        "aliased_import",
+        "dotted_name"
+      ]
+    },
+    {
       "kind": "import_prefix",
       "modelType": "pattern",
       "typeName": "ImportPrefix",
@@ -10741,35 +9570,36 @@
       "hidden": false,
       "slots": [
         {
-          "name": "import_list",
-          "propertyName": "importList",
-          "paramName": "importList",
+          "name": "names",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_import_list"
+            "names"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_import_list",
+              "name": "names",
               "parseKind": "names"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_import_list",
+      "forwardsTo": "names",
       "factoryFields": [
-        "import_list"
+        "names"
       ],
       "bareAccepts": [
-        "_import_list",
         "aliased_import",
-        "dotted_name"
+        "dotted_name",
+        "import_list",
+        "names"
       ]
     },
     {
@@ -11191,6 +10021,165 @@
       "factoryShape": "text"
     },
     {
+      "kind": "key_value_pattern",
+      "modelType": "branch",
+      "typeName": "KeyValuePattern",
+      "factoryName": "keyValuePattern",
+      "irKey": "keyValuePattern",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "key",
+          "propertyName": "key",
+          "paramName": "key",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "class_pattern",
+            "splat_pattern",
+            "union_pattern",
+            "case_list_pattern",
+            "case_tuple_pattern",
+            "dict_pattern",
+            "string",
+            "concatenated_string",
+            "true",
+            "false",
+            "none",
+            "simple_pattern_negative",
+            "complex_pattern",
+            "dotted_name",
+            "wildcard_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "class_pattern",
+              "parseKind": "class_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "union_pattern",
+              "parseKind": "union_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_list_pattern",
+              "parseKind": "case_list_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_tuple_pattern",
+              "parseKind": "case_tuple_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "dict_pattern",
+              "parseKind": "dict_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "concatenated_string",
+              "parseKind": "concatenated_string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "true",
+              "parseKind": "true"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "false",
+              "parseKind": "false"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "none",
+              "parseKind": "none"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "simple_pattern_negative",
+              "parseKind": "simple_pattern_negative",
+              "seat": {
+                "kind": "simple_pattern_negative",
+                "shape": "arm",
+                "mount": "negative",
+                "seated": true
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "complex_pattern",
+              "parseKind": "complex_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "dotted_name",
+              "parseKind": "dotted_name"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "wildcard_pattern",
+              "parseKind": "wildcard_pattern"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "key",
+        "value"
+      ]
+    },
+    {
       "kind": "keyword_argument",
       "modelType": "branch",
       "typeName": "KeywordArgument",
@@ -11364,7 +10353,7 @@
             "simple_pattern_negative",
             "complex_pattern",
             "dotted_name",
-            "_wildcard_pattern"
+            "wildcard_pattern"
           ],
           "values": [
             {
@@ -11459,7 +10448,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_wildcard_pattern",
+              "name": "wildcard_pattern",
               "parseKind": "wildcard_pattern"
             }
           ]
@@ -11558,34 +10547,32 @@
       "hidden": false,
       "slots": [
         {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
+          "name": "parameters_elements",
+          "propertyName": "parametersElements",
+          "paramName": "parametersElements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_parameters"
+            "parameters_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_parameters",
+              "name": "parameters_elements",
               "parseKind": "parameters_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_parameters",
+      "forwardsTo": "parameters_elements",
       "factoryFields": [
-        "parameters"
+        "parameters_elements"
       ],
       "bareAccepts": [
-        "_parameters",
-        "_patterns",
         "async_keyword",
         "attribute",
         "await_keyword",
@@ -11597,6 +10584,8 @@
         "list_pattern",
         "list_splat_pattern",
         "match_keyword",
+        "parameters_elements",
+        "patterns",
         "positional_separator",
         "print_keyword",
         "subscript",
@@ -11747,26 +10736,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_collection_elements"
+            "collection_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_collection_elements",
+              "name": "collection_elements",
               "parseKind": "collection_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_collection_elements",
+      "forwardsTo": "collection_elements",
       "factoryFields": [
         "collection_elements"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -11775,6 +10762,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -11816,7 +10804,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -11891,25 +10880,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_patterns"
+            "patterns"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_patterns",
+              "name": "patterns",
               "parseKind": "patterns"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_patterns",
+      "forwardsTo": "patterns",
       "factoryFields": [
         "patterns"
       ],
       "bareAccepts": [
-        "_patterns",
         "async_keyword",
         "attribute",
         "await_keyword",
@@ -11918,6 +10906,7 @@
         "list_pattern",
         "list_splat_pattern",
         "match_keyword",
+        "patterns",
         "print_keyword",
         "subscript",
         "tuple_pattern",
@@ -11947,8 +10936,7 @@
         "case_pattern"
       ],
       "bareAccepts": [
-        "_key_value_pattern",
-        "_wildcard_pattern",
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -11960,6 +10948,7 @@
         "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
         "keyword_pattern",
         "list_pattern_case_patterns",
         "none",
@@ -11967,7 +10956,8 @@
         "splat_pattern",
         "string",
         "true",
-        "union_pattern"
+        "union_pattern",
+        "wildcard_pattern"
       ]
     },
     {
@@ -12004,8 +10994,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -12014,6 +11002,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -12055,7 +11044,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -12067,9 +11057,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "target",
+          "propertyName": "target",
+          "paramName": "target",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12090,37 +11080,37 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "print",
-              "parseKind": "print_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "exec",
-              "parseKind": "exec_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "async",
-              "parseKind": "async_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "await",
-              "parseKind": "await_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "match",
-              "parseKind": "match_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -12139,7 +11129,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "target"
       ],
       "bareAccepts": [
         "attribute",
@@ -12206,6 +11196,57 @@
       "isParameterless": true,
       "stampExpression": "\"<<=\" as const",
       "text": "<<="
+    },
+    {
+      "kind": "match_block",
+      "modelType": "polymorph",
+      "typeName": "MatchBlock",
+      "factoryName": "matchBlock",
+      "irKey": "matchBlock",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "match_block_block",
+            "_newline"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_block_block",
+              "parseKind": "match_block_block",
+              "seat": {
+                "kind": "match_block_block",
+                "shape": "arm",
+                "mount": "block"
+              },
+              "default": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_newline",
+        "match_block_block"
+      ]
     },
     {
       "kind": "match_block_block",
@@ -12297,13 +11338,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_match_block"
+            "match_block"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_match_block",
+              "name": "match_block",
               "parseKind": "match_block"
             }
           ]
@@ -12503,6 +11544,45 @@
       ]
     },
     {
+      "kind": "names",
+      "modelType": "alias",
+      "typeName": "Names",
+      "factoryName": "names",
+      "irKey": "names",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "import_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import_list",
+              "parseKind": "import_list"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "aliased_import",
+        "dotted_name",
+        "import_list"
+      ]
+    },
+    {
       "kind": "none",
       "modelType": "keyword",
       "typeName": "None",
@@ -12560,6 +11640,18 @@
       ]
     },
     {
+      "kind": "not_escape_sequence",
+      "modelType": "punctuation",
+      "typeName": "NotEscapeSequence",
+      "factoryName": "notEscapeSequence",
+      "irKey": "notEscapeSequence",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\" as const",
+      "text": "\\",
+      "factoryShape": "text"
+    },
+    {
       "kind": "not_keyword",
       "modelType": "keyword",
       "typeName": "NotKeyword",
@@ -12604,8 +11696,6 @@
         "argument"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -12614,6 +11704,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -12655,7 +11746,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -12760,26 +11852,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_parameters"
+            "parameters_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_parameters",
+              "name": "parameters_elements",
               "parseKind": "parameters_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_parameters",
+      "forwardsTo": "parameters_elements",
       "factoryFields": [
         "elements"
       ],
       "bareAccepts": [
-        "_parameters",
-        "_patterns",
         "async_keyword",
         "attribute",
         "await_keyword",
@@ -12791,6 +11881,49 @@
         "list_pattern",
         "list_splat_pattern",
         "match_keyword",
+        "parameters_elements",
+        "patterns",
+        "positional_separator",
+        "print_keyword",
+        "subscript",
+        "tuple_pattern",
+        "type_keyword",
+        "typed_default_parameter",
+        "typed_parameter"
+      ]
+    },
+    {
+      "kind": "parameters_elements",
+      "modelType": "list",
+      "typeName": "ParametersElements",
+      "factoryName": "parametersElements",
+      "irKey": "parametersElements",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "parameter"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "parameter"
+      ],
+      "bareAccepts": [
+        "async_keyword",
+        "attribute",
+        "await_keyword",
+        "default_parameter",
+        "dictionary_splat_pattern",
+        "exec_keyword",
+        "identifier",
+        "keyword_separator",
+        "list_pattern",
+        "list_splat_pattern",
+        "match_keyword",
+        "patterns",
         "positional_separator",
         "print_keyword",
         "subscript",
@@ -12809,9 +11942,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12838,11 +11971,9 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -12851,6 +11982,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -12892,7 +12024,48 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
+      "kind": "parenthesized_import_list",
+      "modelType": "envelope",
+      "typeName": "ParenthesizedImportList",
+      "factoryName": "parenthesizedImportList",
+      "irKey": "parenthesizedImportList",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "import_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import_list",
+              "parseKind": "import_list"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "forwarded",
+      "forwardsTo": "import_list",
+      "factoryFields": [
+        "import_list"
+      ],
+      "bareAccepts": [
+        "aliased_import",
+        "dotted_name",
+        "import_list"
       ]
     },
     {
@@ -12936,8 +12109,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -12946,6 +12117,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -12987,7 +12159,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -13085,12 +12258,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "pattern_list_patterns",
-              "parseKind": "pattern_list_patterns",
-              "seat": {
-                "kind": "pattern_list_patterns",
-                "shape": "arm",
-                "mount": "patterns"
-              }
+              "parseKind": "pattern_list_patterns"
             }
           ]
         }
@@ -13124,7 +12292,6 @@
         "pattern"
       ],
       "bareAccepts": [
-        "_patterns",
         "async_keyword",
         "attribute",
         "await_keyword",
@@ -13133,6 +12300,42 @@
         "list_pattern",
         "list_splat_pattern",
         "match_keyword",
+        "patterns",
+        "print_keyword",
+        "subscript",
+        "tuple_pattern",
+        "type_keyword"
+      ]
+    },
+    {
+      "kind": "patterns",
+      "modelType": "list",
+      "typeName": "Patterns",
+      "factoryName": "patterns",
+      "irKey": "patterns",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "pattern"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "pattern"
+      ],
+      "bareAccepts": [
+        "async_keyword",
+        "attribute",
+        "await_keyword",
+        "exec_keyword",
+        "identifier",
+        "list_pattern",
+        "list_splat_pattern",
+        "match_keyword",
+        "patterns",
         "print_keyword",
         "subscript",
         "tuple_pattern",
@@ -13253,6 +12456,154 @@
       ]
     },
     {
+      "kind": "print_arguments",
+      "modelType": "list",
+      "typeName": "PrintArguments",
+      "factoryName": "printArguments",
+      "irKey": "printArguments",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "none",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "argument"
+      ],
+      "bareAccepts": [
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "collection_elements",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "type_keyword",
+        "unary_operator",
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
+      "kind": "print_chevron_arguments",
+      "modelType": "list",
+      "typeName": "PrintChevronArguments",
+      "factoryName": "printChevronArguments",
+      "irKey": "printChevronArguments",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingDelimiter": "mandatory",
+      "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
+      "elementKinds": [
+        "expression"
+      ],
+      "factoryShape": "elements",
+      "factoryFields": [
+        "argument"
+      ],
+      "bareAccepts": [
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "collection_elements",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "type_keyword",
+        "unary_operator",
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
       "kind": "print_keyword",
       "modelType": "keyword",
       "typeName": "PrintKeyword",
@@ -13304,9 +12655,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_print_arguments",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -13315,6 +12663,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -13347,6 +12696,7 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_arguments",
         "print_keyword",
         "print_statement_chevron",
         "print_statement_plain",
@@ -13358,7 +12708,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -13398,13 +12749,13 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_print_chevron_arguments"
+            "print_chevron_arguments"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_print_chevron_arguments",
+              "name": "print_chevron_arguments",
               "parseKind": "print_chevron_arguments"
             },
             {
@@ -13439,27 +12790,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_print_arguments"
+            "print_arguments"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_print_arguments",
+              "name": "print_arguments",
               "parseKind": "print_arguments"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_print_arguments",
+      "forwardsTo": "print_arguments",
       "factoryFields": [
         "print_arguments"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_print_arguments",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -13468,6 +12816,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -13500,6 +12849,7 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_arguments",
         "print_keyword",
         "set",
         "set_comprehension",
@@ -13509,7 +12859,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -13712,8 +13063,6 @@
         "expressions"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -13722,6 +13071,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -13763,7 +13113,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -13793,26 +13144,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_collection_elements"
+            "collection_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_collection_elements",
+              "name": "collection_elements",
               "parseKind": "collection_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_collection_elements",
+      "forwardsTo": "collection_elements",
       "factoryFields": [
         "collection_elements"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -13821,6 +13170,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -13862,7 +13212,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -13950,9 +13301,9 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13981,7 +13332,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "sign",
-        "content"
+        "value"
       ]
     },
     {
@@ -14007,11 +13358,6 @@
         "simple_statement"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_import_list",
-        "_parenthesized_import_list",
-        "_print_arguments",
-        "_yield_from_clause",
         "aliased_import",
         "as_pattern",
         "assert_statement",
@@ -14027,6 +13373,7 @@
         "boolean_operator",
         "break_statement",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -14052,6 +13399,7 @@
         "global_statement",
         "identifier",
         "import_from_statement",
+        "import_list",
         "import_statement",
         "integer_binary",
         "integer_decimal",
@@ -14064,13 +13412,16 @@
         "list_splat_pattern",
         "match_keyword",
         "named_expression",
+        "names",
         "none",
         "nonlocal_statement",
         "not_operator",
         "pair",
         "parenthesized_expression",
+        "parenthesized_import_list",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_arguments",
         "print_keyword",
         "print_statement",
         "print_statement_chevron",
@@ -14086,7 +13437,8 @@
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -14196,7 +13548,7 @@
               "parseKind": "slice_group",
               "seat": {
                 "kind": "slice_group",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]
@@ -14247,8 +13599,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -14257,6 +13607,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -14298,7 +13649,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -14567,8 +13919,8 @@
           "kinds": [
             "escape_interpolation",
             "escape_sequence",
-            "_not_escape_sequence",
-            "_string_content"
+            "not_escape_sequence",
+            "string_fragment"
           ],
           "values": [
             {
@@ -14586,13 +13938,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_not_escape_sequence",
+              "name": "not_escape_sequence",
               "parseKind": "not_escape_sequence"
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_content",
+              "name": "string_fragment",
               "parseKind": "string_fragment"
             }
           ]
@@ -14612,6 +13964,17 @@
       "hidden": false,
       "pattern": "[\"']+",
       "leafPattern": "/^(?:(?:[\"']+))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "string_fragment",
+      "modelType": "pattern",
+      "typeName": "StringFragment",
+      "factoryName": "stringFragment",
+      "irKey": "stringFragment",
+      "hidden": false,
+      "pattern": "[^\"'\\\\{}\\n]+",
+      "leafPattern": "/^(?:(?:[^\"'\\\\{}\\n]+))$/u",
       "factoryShape": "text"
     },
     {
@@ -14648,8 +14011,6 @@
         "subject"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -14658,6 +14019,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -14699,7 +14061,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -14785,8 +14148,6 @@
         "subscript"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -14795,6 +14156,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -14837,7 +14199,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -14915,7 +14278,8 @@
         }
       ],
       "name": "suite_empty",
-      "factoryShape": "direct",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_newline",
       "factoryFields": [
         "newline"
       ],
@@ -14962,11 +14326,6 @@
         "simple_statements_elements"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_import_list",
-        "_parenthesized_import_list",
-        "_print_arguments",
-        "_yield_from_clause",
         "aliased_import",
         "as_pattern",
         "assert_statement",
@@ -14982,6 +14341,7 @@
         "boolean_operator",
         "break_statement",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -15007,6 +14367,7 @@
         "global_statement",
         "identifier",
         "import_from_statement",
+        "import_list",
         "import_statement",
         "integer_binary",
         "integer_decimal",
@@ -15019,13 +14380,16 @@
         "list_splat_pattern",
         "match_keyword",
         "named_expression",
+        "names",
         "none",
         "nonlocal_statement",
         "not_operator",
         "pair",
         "parenthesized_expression",
+        "parenthesized_import_list",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_arguments",
         "print_keyword",
         "print_statement",
         "print_statement_chevron",
@@ -15042,7 +14406,8 @@
         "type_alias_statement",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -15192,26 +14557,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_collection_elements"
+            "collection_elements"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_collection_elements",
+              "name": "collection_elements",
               "parseKind": "collection_elements"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_collection_elements",
+      "forwardsTo": "collection_elements",
       "factoryFields": [
         "collection_elements"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -15220,6 +14583,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -15261,7 +14625,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -15281,25 +14646,24 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_patterns"
+            "patterns"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_patterns",
+              "name": "patterns",
               "parseKind": "patterns"
             }
           ]
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "_patterns",
+      "forwardsTo": "patterns",
       "factoryFields": [
         "patterns"
       ],
       "bareAccepts": [
-        "_patterns",
         "async_keyword",
         "attribute",
         "await_keyword",
@@ -15308,6 +14672,7 @@
         "list_pattern",
         "list_splat_pattern",
         "match_keyword",
+        "patterns",
         "print_keyword",
         "subscript",
         "tuple_pattern",
@@ -15383,8 +14748,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -15393,6 +14756,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -15439,7 +14803,8 @@
         "type_keyword",
         "unary_operator",
         "union_type",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -15554,8 +14919,6 @@
         "types"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -15564,6 +14927,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -15612,7 +14976,8 @@
         "types",
         "unary_operator",
         "union_type",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -15700,9 +15065,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15756,7 +15121,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "name",
         "type"
       ]
     },
@@ -15783,8 +15148,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -15793,6 +15156,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -15840,7 +15204,8 @@
         "type_keyword",
         "unary_operator",
         "union_type",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -15940,7 +15305,7 @@
             "simple_pattern_negative",
             "complex_pattern",
             "dotted_name",
-            "_wildcard_pattern"
+            "wildcard_pattern"
           ],
           "values": [
             {
@@ -16034,7 +15399,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "_wildcard_pattern",
+              "name": "wildcard_pattern",
               "parseKind": "wildcard_pattern"
             }
           ]
@@ -16200,6 +15565,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "wildcard_pattern",
+      "modelType": "keyword",
+      "typeName": "WildcardPattern",
+      "factoryName": "wildcardPattern",
+      "irKey": "wildcardPattern",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"_\" as const",
+      "text": "_",
+      "factoryShape": "text"
+    },
+    {
       "kind": "with_clause",
       "modelType": "supertype",
       "typeName": "WithClause",
@@ -16234,8 +15611,6 @@
         "with_item"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -16244,6 +15619,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -16286,7 +15662,8 @@
         "type_keyword",
         "unary_operator",
         "with_item",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -16328,8 +15705,6 @@
         "with_clause_with_items"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -16338,6 +15713,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -16381,7 +15757,8 @@
         "unary_operator",
         "with_clause_with_items",
         "with_item",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -16407,8 +15784,6 @@
         "with_item"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -16417,6 +15792,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -16459,7 +15835,8 @@
         "type_keyword",
         "unary_operator",
         "with_item",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -16496,8 +15873,6 @@
         "value"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -16506,6 +15881,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -16547,7 +15923,8 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
       ]
     },
     {
@@ -16654,7 +16031,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_yield_from_clause",
+            "yield_from_clause",
             "expression",
             "expression_list"
           ],
@@ -16662,10 +16039,10 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_yield_from_clause",
+              "name": "yield_from_clause",
               "parseKind": "yield_from_clause",
               "seat": {
-                "kind": "_yield_from_clause",
+                "kind": "yield_from_clause",
                 "shape": "arm",
                 "mount": "fromClause",
                 "seated": true
@@ -16691,8 +16068,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_collection_elements",
-        "_yield_from_clause",
         "as_pattern",
         "async_keyword",
         "attribute",
@@ -16701,6 +16076,7 @@
         "binary_operator",
         "boolean_operator",
         "call",
+        "collection_elements",
         "comparison_operator",
         "concatenated_string",
         "conditional_expression",
@@ -16742,7 +16118,100 @@
         "tuple",
         "type_keyword",
         "unary_operator",
-        "yield"
+        "yield",
+        "yield_from_clause"
+      ]
+    },
+    {
+      "kind": "yield_from_clause",
+      "modelType": "envelope",
+      "typeName": "YieldFromClause",
+      "factoryName": "yieldFromClause",
+      "irKey": "yieldFromClause",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
+      "name": "yield_from_clause",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "expression"
+      ],
+      "bareAccepts": [
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "collection_elements",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "type_keyword",
+        "unary_operator",
+        "yield",
+        "yield_from_clause"
       ]
     },
     {

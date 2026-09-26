@@ -5,15 +5,15 @@ import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitIr } from '../ir.ts';
 
-// A hidden pattern leaf that is an alias source (rust `_string_literal_open`,
-// visible as `string_literal_open`) is user-facing; a hidden pattern that is
+// A hidden pattern leaf that is an alias source (rust `_string_open`,
+// visible as `string_open`) is user-facing; a hidden pattern that is
 // nothing's alias (sittir's `_space`) is not; an enum of literals is a set
 // of kind ids and gets no builder; a hidden keyword marker's value is its
 // kind id, so it gets none either; a hidden pattern whose key keeps the
 // underscore (python's `_string_content` beside `string_content`) stays off.
 function makeNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
-	const open = new AssembledPattern('_string_literal_open', { type: PATTERN, value: '[bc]?"' });
+	const open = new AssembledPattern('_string_open', { type: PATTERN, value: '[bc]?"' });
 	open.userFacing = true;
 	const space = new AssembledPattern('_space', { type: PATTERN, value: ' +' });
 	space.userFacing = false;
@@ -31,7 +31,7 @@ function makeNodeMap() {
 	content.userFacing = true;
 	nodes.set('_kw_async_marker', marker);
 	nodes.set('_string_content', content);
-	nodes.set('_string_literal_open', open);
+	nodes.set('_string_open', open);
 	nodes.set('_space', space);
 	nodes.set('_token_tree_punctuation', punct);
 	return makeNodeMapWith(nodes);
@@ -40,7 +40,7 @@ function makeNodeMap() {
 describe('ir leaf exposure follows userFacing, not the name prefix', () => {
 	it('exposes a user-facing aliased pattern leaf and hides a non-user-facing one', () => {
 		const source = emitIr({ grammar: 'rust', nodeMap: makeNodeMap() });
-		expect(source).toContain('stringLiteralOpen: F.');
+		expect(source).toContain('stringOpen: F.');
 		expect(source).not.toContain('space: F.');
 	});
 	it('gives an enum of literals no builder', () => {

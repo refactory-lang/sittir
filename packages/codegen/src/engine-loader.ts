@@ -1,5 +1,11 @@
 import type * as TS from 'web-tree-sitter';
 
+const INIT = Symbol.for('sittir.web-tree-sitter.init');
+
+interface InitSlot {
+	[INIT]?: Promise<void>;
+}
+
 export async function loadWebTreeSitter(): Promise<{
 	Parser: typeof TS.Parser;
 	Language: typeof TS.Language;
@@ -10,6 +16,7 @@ export async function loadWebTreeSitter(): Promise<{
 	if (!Parser || !Language) {
 		throw new Error('web-tree-sitter: could not locate `Parser` or `Language` export');
 	}
-	await Parser.init();
+	const slot: typeof Parser & InitSlot = Parser;
+	await (slot[INIT] ??= Parser.init());
 	return { Parser, Language };
 }

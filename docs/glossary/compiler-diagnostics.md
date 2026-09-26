@@ -97,104 +97,51 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::diagnoseSlotGrouping`
 
-```text
-/**
- * Walk every simplified rule in the map and emit a diagnostic record for each
- * violation of the "one slot per structural boundary" invariant.
- *
- * @param rules - The simplified rule map (output of `computeSimplifiedRules`).
- * @param inlineKinds - The grammar's inline kind set (from wire phase). Auto-group
- *   helpers (`_<parent>_repeat<N>`, `_<parent>_optional<N>`) are in this set;
- *   their top-level bodies are treated as slot-position seqs and checked.
- *   All other kinds are only checked for NESTED slot-position seqs.
- * @param polymorphSkipExtra - Extra kind names to skip for shape ①/②/③.
- * @returns An array of diagnostic records (may be empty).
- */
-```
+Reports the `content-collision` shape over the simplified rule map: a kind
+whose body yields more than one unnamed `content` slot, which would share the
+`_content` storage key (an unemittable ambiguity), so at least one needs a
+`field()` name. Counted on the simplified rule, before `mergeSlotsByName`
+folds the duplicate `content` slots into one and masks the collision.
 
-```text
-// ---------------------------------------------------------------------------
-// Main entry point
-// ---------------------------------------------------------------------------
-```
+All-text-shape kinds (`identifier`, `integer_literal`, `float`, ... whose
+modelType is `pattern`) are skipped: their simplified rules hold unnamed
+choices of patterns that all resolve to text, so no storage key collides.
+`isAllTextShape` is the same predicate assemble.ts classifies `pattern` with.
 
-#### body
+Records are always blocking here. Accepted-floor exceptions are applied in
+`collectGrammarDiagnostics` from the grammar's own `expectDiagnostics:`
+declaration; this function has no grammar identity, so a kind-name check here
+would except a same-named kind in any grammar.
 
-```text
-// PolymorphRule was removed; the built-in skip-set is always empty.
-// Use only the caller-provided extra entries (variant() skip-set from
-// polymorphVariants metadata threaded through normalize.ts).
-```
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::diagnoseRepeatedSeqGrouping`
 
-#### body
+Reports the `multi-slot-nested-seq` shape over the link-phase rule map: a
+`repeat`/`repeat1` whose element is a seq with two or more slots. Downstream,
+the builders push the repeat's multiplicity onto each slot-bearing member and
+splice the bare seq into its parent, so the slots become parallel arrays that
+lose the per-repetition pairing. The check runs on link rules because that is
+the last phase where the REPEAT(SEQ) structure still exists; flatten and
+simplify have already dissolved it into attributes.
 
-```text
-// §4c content-collision: count the UNNAMED content slots the kind's body
-// yields (field-named seqs are single named slots, NOT distributed). >1
-// means they'd share the `_content` storage key — an unemittable ambiguity
-// — so at least one needs a `field()` name. Counted on the simplified rule,
-// BEFORE mergeSlotsByName folds the duplicate `content` slots into one
-// (which masks the collision).
-//
-// FALSE POSITIVE guard: skip all-text-shape kinds (pure text leaves like
-// `identifier`, `integer_literal`, `float` whose modelType === 'pattern').
-// Their simplified rules contain unnamed slot-boundary choices-of-patterns
-// that all resolve to text content — no real storage-key collision exists
-// because the kind emits no structural slots. `isAllTextShape` is the SAME
-// predicate assemble.ts uses to classify 'pattern' (imported, not mirrored).
-```
+One record per owner kind, carrying the largest slot count found. The body is
+seen through inline kinds (`buildInlinableKinds`), since the parser splices
+them into the repeat. Silent positions: a kind's own body (it is the kind, not
+a slot), `optional(seq)` (enrich's clause hoist owns that shape and the
+multiplicity pushdown keeps its members paired), and seq choice arms (the
+choice is one union slot). A repeat that link's `liftSeparators` turned into a
+separated list no longer has a REPEAT(SEQ) and is silent too.
 
-#### body
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::repeatedSeqSlotCount`
 
-```text
-// Always blocking here — accepted-floor exceptions are applied later,
-// in grammar-diagnostics.ts's `collectGrammarDiagnostics`, driven by
-// the grammar's OWN `expectDiagnostics:` declaration in its
-// grammar.sittir.ts. This function has no grammar identity, so a
-// kind-name-only check here would incorrectly except a same-named
-// kind in ANY grammar.
-```
+The largest slot count of any repeated multi-slot seq under `rule`, or `0`.
+Recurses through seq, choice, optional and field; alias, token and leaf rules
+end the search because their contents are not slots of the owner.
 
-#### body
+### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::spliceBody`
 
-```text
-// Skip any kind that belongs to the polymorph system (shape ①/②/③ below
-// treat the variant/promotePolymorph machinery as already-correct dispatch).
-```
-
-#### body
-
-```text
-// Determine whether the top-level rule body is in slot position.
-// Auto-group helpers (in inlineKinds) represent extracted seq content
-// of an inlined repeat(seq(...)) — their body IS the repeating element,
-// so it is in slot position. All other kinds: top-level body is NOT
-// in slot position (it is the rule itself, not a slot).
-```
-
-#### body
-
-```text
-// Top-level body of an inline helper is in repeat/optional slot position
-// (not a choice arm), so inChoiceArm=false at the top level.
-```
-
-```text
-/* inChoiceArm= */
-```
-
-### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::walkRule`
-
-```text
-/**
- * Walk the simplified rule looking for seqs in slot position. On the
- * simplified view a slot position is a choice arm (every arm is one slot
- * candidate) or the top level of a kind that is inlined into its parents
- * (`inlineKinds`); seq and variant/group members inherit their parent's
- * position. Wrapper-carried positions (repeat / optional / field content)
- * do not exist here — those wrappers are attributes on the wrapped node.
- */
-```
+Resolves a repeat's element through references to inline kinds, returning the
+rule the parser actually splices in. `seen` stops a self-referential inline
+kind from recursing forever.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::countSlots`
 
@@ -437,7 +384,60 @@ construction sites, so this override never touches them.
 // Assemble warnings are observational — codegen continues.
 ```
 
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseDistributedAliases`
+
+Blocks a named alias over content tree-sitter applies the alias to member by
+member: a sequence of two or more members or a repeat, reached through
+precedence, `optional` and `field` wrappers, or through a rule the parser
+inlines (the `SymbolSource`'s `isInlined`: tree-sitter substitutes its
+body). The model would describe one node where the parser issues several.
+It never looks through `token()`, which lexes as one token, or through a
+hidden rule that is not inlined, which is a node of its own whatever its use
+count.
+
+Only named aliases are checked. An unnamed alias mints no kind, so there is
+no single model node to be wrong about. The known unnamed case is
+typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
+'unique symbol')`.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolFacts`
+
+The grammar facts `symbolSourceOf` builds a source from: rule bodies, external and `inline:` names, and the catalog rows (empty before the first generate).
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
+
+Chooses the grammar diagnostics' `SymbolSource` (`dsl/rule-patterns.ts::SymbolSource`) once, so each alias diagnostic has a single code path:
+
+- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
+- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`dsl/rule-patterns.ts::predictedSymbolSource`), so the diagnostics still fire in that phase.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`
+
+Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
+
+The distributed shape an alias's content has, described for the message, or
+`undefined` when the alias names one node.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseMixedDisplayUnions`
+
+An invariant guard, not a user-facing shape check: enrich
+(`unaliasOverloadedDisplays`) resolves every display that would sit over both
+a terminal and a nonterminal storage, so after enrich no display union holds
+both. Members are classified by the `SymbolSource` (`isTerminal`: the
+parser catalog after the first generate, the shape prediction before it),
+and a literal member is a terminal by its own stamp
+(`DisplayUnionMember.literal`).
+A member that is neither a rule, an external nor a literal is reported
+rather than defaulted, since defaulting would make the guard guess.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
+
+Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from it (`symbolSourceOf`: the
+catalog's facts once parser.c exists, else the same prediction enrich
+classifies with), and hands it to both alias diagnostics.
+
 
 #### body
 
@@ -449,11 +449,10 @@ construction sites, so this override never touches them.
 #### body
 
 ```text
-// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
-// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
-// e.g. rust `_match_block_optional1`) never fires on this path, so
-// `multi-slot-nested-seq` violations were console-only during regen and
-// absent from the persisted grammar-diagnostics.json / validation report.
+// The inline set mirrors generate.ts's NormalizeCtx input (shared via
+// inline-sets.ts). The link-phase repeated-seq check reads the same set to see
+// through inline kinds, so both shapes land in the persisted
+// grammar-diagnostics.json through one collector.
 ```
 
 #### body
@@ -474,51 +473,18 @@ construction sites, so this override never touches them.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::module`
 
-```text
-/**
- * compiler/diagnostics/slot-grouping.ts — Simplify-time propose-promotion diagnostic.
- *
- * Enforces the invariant: "a slot never contains multiple slots; a multi-slot
- * substructure must be a group." Walks each simplified rule and emits diagnostic
- * records for three violation shapes:
- *
- *   1. multi-slot-nested-seq   — a seq with countSlots≥2 that is in a genuine
- *      slot-creating position: inside repeat/optional content, or in the body of an
- *      auto-group helper that is in the grammar's inline set.
- *      Choice-arm position is SUPPRESSED (choice-distributed — collectSlots already
- *      treats the whole choice as a single union slot boundary; the seq arms are NOT
- *      separate slots and do NOT need grouping).
- *      → propose a visible `groups:` registration.
- *   2. supertype-list          — repeat/repeat1 of a single non-field-named
- *      symbol/supertype → propose `transforms: field()` rename.
- *   3. repeat-choice-with-literal — repeat/repeat1(choice(..., literal, ...))
- *      → flag as ambiguous; author decides.
- *
- * Key invariant for shape ①: the top-level rule BODY of a normal grammar kind
- * is NOT a "slot" — it is the kind itself. Shape ① fires only when a seq
- * occupies a slot-creating position:
- *
- *   a. As the content of a `repeat` / `repeat1` / `optional` (seq is the
- *      repeating element body — the whole point of the diagnostic).
- *   b. As the top-level body of an auto-group helper kind (a hidden kind whose
- *      name appears in `inlineKinds` — these are exactly the synthesized
- *      `_<parent>_repeat<N>` / `_<parent>_optional<N>` helpers that represent
- *      the seq content of an inlined `repeat(seq(...))`).
- *
- *   SUPPRESSED position — choice arms: collectSlots treats the whole choice as a
- *   single union slot boundary, so a multi-slot seq arm is already handled by the
- *   union — it is NOT a genuine group-lift violation. Firing on choice arms was a
- *   false positive (diagnostic narrowing).
- *
- *   Rules whose top-level body is a seq but are NOT in `inlineKinds` (normal
- *   branch kinds, already-registered group kinds) are SILENT at the top level
- *   because their seq is the rule body, not a slot.
- *
- * DIAGNOSTIC ONLY: records never drive codegen behavior
- * (feedback_metadata_not_behavior). They are surfaced via the derivation log
- * and console during regen so the author can act.
- */
-```
+Propose-promotion diagnostics for the invariant "a slot never contains
+multiple slots; a multi-slot substructure must be a group". Two shapes, each
+checked in the phase where it is still visible:
+
+- `multi-slot-nested-seq` (`diagnoseRepeatedSeqGrouping`, link rules): a
+  repeat over a multi-slot seq. Proposes a visible `groups:` registration so
+  each repetition becomes one group node.
+- `content-collision` (`diagnoseSlotGrouping`, simplified rules): more than
+  one unnamed `content` slot in a kind. Proposes a `field()` name.
+
+The records are diagnostics only and never drive codegen. They reach the
+console during regen and the persisted grammar-diagnostics.json.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::SlotGroupingShape`
 
@@ -532,31 +498,7 @@ construction sites, so this override never touches them.
 
 ```text
 // ---------------------------------------------------------------------------
-// Polymorph skip-set construction
-// ---------------------------------------------------------------------------
-```
-
-```text
-// ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::checkSeq`
-
-```text
-// ---------------------------------------------------------------------------
-// Shape ①: multi-slot seq in a slot position
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// FALSE POSITIVE guard: a multi-slot seq inside a CHOICE arm is NOT a genuine
-// group-lift violation. collectSlots treats the whole choice as a single union
-// slot boundary, so the seq's members are choice-distributed — each arm is a
-// variant of the union, not a separate slot. Only repeat/optional positions
-// (inChoiceArm === false) are genuine group-lift candidates.
 ```
 

@@ -5,9 +5,11 @@ import { compileGrammar, assertCompilation, type Compilation } from './compile.t
 import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
+import { isStableGrammar } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
+import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
@@ -29,6 +31,8 @@ export interface GeneratedFiles {
 	types: string;
 	engine: string;
 	renderEngine: string;
+	backend: string;
+	boundary: string;
 	templates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
@@ -73,9 +77,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	});
 
 	try {
-		const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 		const compilation =
-			cfg.compilation ?? (await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables }));
+			cfg.compilation ??
+			(await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables: await loadGeneratedIdTables(cfg.grammar) }));
+		const { generatedIdTables } = compilation;
 		const { raw, linked, normalized, nodeMap } = compilation;
 		tracePhaseRules('evaluate', raw.rules);
 		tracePhaseRules('link', linked.rules);
@@ -142,6 +147,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			grammar: emitGrammar({ grammar: cfg.grammar }),
 			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			backend: emitBackend({ grammar: cfg.grammar }),
+			boundary: emitBoundary({ grammar: cfg.grammar }),
 			types: emitted.types,
 			templates: emitted.templates,
 			factories: emitted.factories,
@@ -156,7 +163,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			options: emitted.options,
 			index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 			tests: emitted.tests,
-			config: emitConfig({ grammar: cfg.grammar }),
+			config: emitConfig({ grammar: cfg.grammar, stable: isStableGrammar(cfg.grammar) }),
 			nodeModel,
 			is: emitted.is,
 			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',

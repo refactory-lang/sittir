@@ -1,8 +1,6 @@
 import { parseArgs } from 'node:util';
-import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
-import { createRequire } from 'node:module';
 
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
@@ -10,10 +8,9 @@ import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { assertGrammar, stableGrammars, type GrammarName } from '../grammars.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 
-const requireFromHere = createRequire(import.meta.url);
-const GRAMMARS = ['rust', 'typescript', 'python'] as const;
-type Grammar = (typeof GRAMMARS)[number];
 
 export interface Divergence {
 	kind: string;
@@ -90,19 +87,13 @@ export function diffSlotNames(slot: AssembledNonterminal, kind: string): Diverge
 	return out;
 }
 
-function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
-	const overridesPath = resolve(repoRoot, `packages/${grammar}/grammar.sittir.ts`);
-	if (existsSync(overridesPath)) return overridesPath;
-	for (const c of [`tree-sitter-${grammar}/grammar.js`, `tree-sitter-${grammar}/common/define-grammar.js`]) {
-		try {
-			return requireFromHere.resolve(c);
-		} catch {}
-	}
-	throw new Error(`reconcile-naming: could not resolve grammar entry for '${grammar}'`);
+function resolveEntryPath(grammar: GrammarName): string {
+	const overridesPath = resolveOverridesPath(grammar);
+	return existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 }
 
-async function probeGrammar(grammar: Grammar, repoRoot: string): Promise<Divergence[]> {
-	const raw = await evaluate(resolveEntryPath(grammar, repoRoot));
+async function probeGrammar(grammar: GrammarName): Promise<Divergence[]> {
+	const raw = await evaluate(resolveEntryPath(grammar));
 	const normalized = normalizeGrammar(link(raw, undefined));
 	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(grammar)));
 	const divergences: Divergence[] = [];
@@ -122,9 +113,8 @@ export async function run(argv: string[]): Promise<number> {
 			first: { type: 'string', default: '10' }
 		}
 	});
-	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 	const first = Number.parseInt(values.first ?? '10', 10);
-	const targets: Grammar[] = values.grammar ? [values.grammar as Grammar] : [...GRAMMARS];
+	const targets: readonly GrammarName[] = values.grammar ? [assertGrammar(values.grammar)] : stableGrammars();
 
 	const origLog = console.log;
 	const origWarn = console.warn;
@@ -134,7 +124,7 @@ export async function run(argv: string[]): Promise<number> {
 	let totalUnexpected = 0;
 	try {
 		for (const grammar of targets) {
-			const divergences = await probeGrammar(grammar, repoRoot);
+			const divergences = await probeGrammar(grammar);
 			const unexpected = divergences.filter((d) => !isAllowlisted(d));
 			const allowlisted = divergences.length - unexpected.length;
 			totalUnexpected += unexpected.length;

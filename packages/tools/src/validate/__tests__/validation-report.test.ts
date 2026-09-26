@@ -200,3 +200,30 @@ describe('writeValidationReport', () => {
 		rmSync(dir, { recursive: true, force: true });
 	});
 });
+
+describe('trivia row', () => {
+	const trivia = (grammar: string, code: string): ValidationReportEntry =>
+		({
+			source: 'validator',
+			grammar,
+			backend: 'native',
+			code,
+			severity: 'warning',
+			message: 'native-read-dropped-extra',
+			sClass: 'trivia'
+		}) as ValidationReportEntry;
+
+	it("classifies every stage's trivia code as trivia, never S1", () => {
+		for (const code of ['from-trivia', 'read-render-parse-trivia', 'read-render-parse-shallow-trivia'])
+			expect(classifySClass({ code, message: 'native-read-dropped-extra' })).toBe('trivia');
+	});
+
+	it('counts trivia entries against their own ceiling', () => {
+		const entries = [trivia('rust', 'from-trivia'), trivia('rust', 'read-render-parse-trivia')];
+		expect(countSClassEntries(entries)).toEqual({ rust: { trivia: 2 } });
+		const ceilings: SClassCeilings = { rust: { trivia: 1 } };
+		expect(checkSClassCeilings(entries, ceilings, ['rust']).violations).toEqual([
+			{ grammar: 'rust', sClass: 'trivia', count: 2, ceiling: 1 }
+		]);
+	});
+});

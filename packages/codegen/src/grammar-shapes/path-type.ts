@@ -2,6 +2,7 @@ import type { PrecRuleUnion } from './grammar-json.ts';
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
+import type { RulePlaceholder } from '../dsl/primitives/rule.ts';
 import type { ArmDefaultPlaceholder } from '../dsl/primitives/arm.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
@@ -104,6 +105,7 @@ export type TransformPatchValue =
 	| FieldLike
 	| VariantPlaceholder
 	| AliasPlaceholder
+	| RulePlaceholder
 	| ArmDefaultPlaceholder;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

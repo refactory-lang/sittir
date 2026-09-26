@@ -15,20 +15,17 @@ import type { NormalizedGrammar } from './types.ts';
 export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly builder: AttributeBuilder;
 	readonly inlineKinds: ReadonlySet<string>;
-	readonly polymorphSkipExtra?: ReadonlySet<string>;
 	readonly slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
 	constructor(
 		init: BaseCtxInit<'normalize'> & {
 			builder?: AttributeBuilder;
 			inlineKinds?: ReadonlySet<string>;
-			polymorphSkipExtra?: ReadonlySet<string>;
 			slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
 		}
 	) {
 		super(init);
 		this.builder = init.builder ?? attributeBuilder;
 		this.inlineKinds = init.inlineKinds ?? new Set();
-		this.polymorphSkipExtra = init.polymorphSkipExtra;
 		this.slotGroupingCollector = init.slotGroupingCollector;
 	}
 
@@ -268,8 +265,6 @@ export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyC
 
 export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, SimplifiedRule> {
 	const normalizedRules = ctx.rules;
-	const inlineKinds = ctx.inlineKinds;
-	const polymorphSkipExtra = ctx.polymorphSkipExtra ?? new Set<string>();
 	const simplified = simplifyRules(normalizedRules, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
@@ -283,7 +278,7 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 		}
 	}
 
-	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds, polymorphSkipExtra);
+	const slotDiagnostics = diagnoseSlotGrouping(canonicalized);
 	for (const rec of slotDiagnostics) {
 		const isNew = ctx.slotGroupingCollector?.record(rec) ?? false;
 		if (isNew && ctx?.diagnostics) {

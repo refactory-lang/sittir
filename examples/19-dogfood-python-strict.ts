@@ -40,7 +40,7 @@ export function headerStrict() {
 /** `import argparse`, `import difflib`, … — one statement per module. */
 export function importsStrict() {
 	return ['argparse', 'difflib', 'json', 'os', 're', 'subprocess', 'sys'].map((name) =>
-		ir.simpleStatements.strict(ir.importStatement.strict(ir.dottedName.strict(id(name))))
+		ir.simpleStatements.strict(ir.importStatement.strict(ir.importList.strict(ir.dottedName.strict(id(name)))))
 	);
 }
 
@@ -53,10 +53,10 @@ export function callStatementStrict() {
 
 /** `def main():` with an indented suite. */
 export function mainDefStrict() {
-	return ir.functionDefinition.block.strict({
+	return ir.functionDefinition.strict({
 		name: id('main'),
 		parameters: ir.parameters.strict(),
-		body: [callStatementStrict()],
+		body: ir.suite.block.strict(callStatementStrict()),
 	});
 }
 

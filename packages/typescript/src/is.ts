@@ -35,8 +35,7 @@ import type {
 	UpdateExpression,
 	VariableDeclarator,
 	Whitespace,
-	_Identifier,
-	_LhsExpression
+	_Identifier
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -203,6 +202,9 @@ export interface IsGuards {
 	subscriptExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SubscriptExpression };
+	LhsExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentExpression };
@@ -311,9 +313,6 @@ export interface IsGuards {
 	extendsClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtendsClause };
-	ExtendsClauseSingle<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtendsClauseSingle };
 	implementsClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplementsClause };
@@ -371,14 +370,6 @@ export interface IsGuards {
 	typeAnnotation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeAnnotation };
-	TypeQueryMemberExpressionInTypeAnnotation<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & {
-		readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
-	};
-	TypeQueryCallExpressionInTypeAnnotation<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation };
 	asserts<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Asserts };
@@ -421,18 +412,6 @@ export interface IsGuards {
 	typePredicateAnnotation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypePredicateAnnotation };
-	TypeQueryMemberExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryMemberExpression };
-	TypeQuerySubscriptExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQuerySubscriptExpression };
-	TypeQueryCallExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryCallExpression };
-	TypeQueryInstantiationExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryInstantiationExpression };
 	typeQuery<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQuery };
@@ -448,9 +427,6 @@ export interface IsGuards {
 	literalType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LiteralType };
-	Number<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId._Number };
 	flowMaybeType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FlowMaybeType };
@@ -555,7 +531,6 @@ export interface IsGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
@@ -655,6 +630,7 @@ export interface AssertGuards {
 	subscriptExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SubscriptExpression };
+	LhsExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AssignmentExpression };
@@ -725,9 +701,6 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ImportRequireClause };
 	extendsClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExtendsClause };
-	ExtendsClauseSingle(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ExtendsClauseSingle };
 	implementsClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImplementsClause };
 	ambientDeclaration(
 		v: { readonly $type: number } | number
@@ -769,12 +742,6 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
 	typeAnnotation(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeAnnotation };
-	TypeQueryMemberExpressionInTypeAnnotation(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation };
-	TypeQueryCallExpressionInTypeAnnotation(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation };
 	asserts(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Asserts };
 	assertsAnnotation(
 		v: { readonly $type: number } | number
@@ -797,24 +764,11 @@ export interface AssertGuards {
 	typePredicateAnnotation(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TypePredicateAnnotation };
-	TypeQueryMemberExpression(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQueryMemberExpression };
-	TypeQuerySubscriptExpression(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQuerySubscriptExpression };
-	TypeQueryCallExpression(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQueryCallExpression };
-	TypeQueryInstantiationExpression(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TypeQueryInstantiationExpression };
 	typeQuery(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeQuery };
 	indexTypeQuery(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IndexTypeQuery };
 	lookupType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LookupType };
 	mappedTypeClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MappedTypeClause };
 	literalType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LiteralType };
-	Number(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId._Number };
 	flowMaybeType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FlowMaybeType };
 	parenthesizedType(
 		v: { readonly $type: number } | number
@@ -881,7 +835,6 @@ export interface AssertGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): asserts v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): asserts v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): asserts v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
@@ -914,13 +867,13 @@ const _supertype_moduleExportName_ids = new Set<number>([1]);
 const _supertype_declaration_ids = new Set<number>([
 	241, 243, 238, 201, 200, 290, 301, 302, 303, 312, 309, 307, 305, 300
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([404, 405]);
+const _supertype_importSpecifier_ids = new Set<number>([406, 407]);
 const _supertype_statement_ids = new Set<number>([
 	191, 216, 199, 203, 205, 206, 207, 208, 210, 211, 212, 213, 214, 215, 217, 218, 219, 220
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([425, 426]);
-const _supertype_forHeader_ids = new Set<number>([429, 430, 431]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([406, 407]);
+const _supertype_variableDeclarator_ids = new Set<number>([427, 428]);
+const _supertype_forHeader_ids = new Set<number>([431, 432, 433]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([408, 409]);
 const _supertype_expressions_ids = new Set<number>([264]);
 const _supertype_expression_ids = new Set<number>([293, 294, 295, 303, 292, 254, 256, 250, 262, 261, 260, 249, 229]);
 const _supertype_primaryExpression_ids = new Set<number>([
@@ -928,33 +881,27 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	266, 268, 121, 122, 123, 230, 234, 240, 244, 242, 237, 287
 ]);
 const _supertype_formalParameter_ids = new Set<number>([315, 316]);
-const _supertype_callExpression_ids = new Set<number>([408, 409, 410]);
-const _supertype_lhsExpression_ids = new Set<number>([
-	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235, 287
-]);
+const _supertype_callExpression_ids = new Set<number>([410, 411, 412]);
 const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
 	251, 252, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 287
 ]);
 const _supertype_destructuringPattern_ids = new Set<number>([231, 235]);
-const _supertype_updateExpression_ids = new Set<number>([413, 414]);
-const _supertype_string_ids = new Set<number>([411, 412]);
+const _supertype_updateExpression_ids = new Set<number>([415, 416]);
+const _supertype_string_ids = new Set<number>([413, 414]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
 const _supertype_identifier_ids = new Set<number>([124, 1]);
-const _supertype_metaProperty_ids = new Set<number>([427, 428]);
-const _supertype_pattern_ids = new Set<number>([
-	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235,
-	287, 279
-]);
+const _supertype_metaProperty_ids = new Set<number>([429, 430]);
+const _supertype_pattern_ids = new Set<number>([253, 279]);
 const _supertype_propertyName_ids = new Set<number>([118, 284]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
-const _supertype_type_ids = new Set<number>([370, 367, 332, 336, 322, 323]);
+const _supertype_type_ids = new Set<number>([370, 367, 332, 336]);
 const _supertype_tupleTypeMember_ids = new Set<number>([327, 328, 329, 330]);
 const _supertype_primaryType_ids = new Set<number>([
 	353, 354, 306, 338, 356, 365, 366, 352, 345, 346, 119, 351, 349, 347, 337, 335, 369, 368
 ]);
-const _supertype_indexSignature_ids = new Set<number>([401, 402]);
-const _supertype_exportStatementDefault_ids = new Set<number>([418, 419]);
+const _supertype_indexSignature_ids = new Set<number>([403, 404]);
+const _supertype_exportStatementDefault_ids = new Set<number>([420, 421]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -1011,6 +958,7 @@ export const is = {
 	awaitExpression: _g(TSKindId.AwaitExpression),
 	memberExpression: _g(TSKindId.MemberExpression),
 	subscriptExpression: _g(TSKindId.SubscriptExpression),
+	LhsExpression: _g(TSKindId.LhsExpression),
 	assignmentExpression: _g(TSKindId.AssignmentExpression),
 	augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
 	spreadElement: _g(TSKindId.SpreadElement),
@@ -1047,7 +995,6 @@ export const is = {
 	instantiationExpression: _g(TSKindId.InstantiationExpression),
 	importRequireClause: _g(TSKindId.ImportRequireClause),
 	extendsClause: _g(TSKindId.ExtendsClause),
-	ExtendsClauseSingle: _g(TSKindId.ExtendsClauseSingle),
 	implementsClause: _g(TSKindId.ImplementsClause),
 	ambientDeclaration: _g(TSKindId.AmbientDeclaration),
 	abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
@@ -1067,8 +1014,6 @@ export const is = {
 	addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
 	optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
 	typeAnnotation: _g(TSKindId.TypeAnnotation),
-	TypeQueryMemberExpressionInTypeAnnotation: _g(TSKindId.TypeQueryMemberExpressionInTypeAnnotation),
-	TypeQueryCallExpressionInTypeAnnotation: _g(TSKindId.TypeQueryCallExpressionInTypeAnnotation),
 	asserts: _g(TSKindId.Asserts),
 	assertsAnnotation: _g(TSKindId.AssertsAnnotation),
 	tupleParameter: _g(TSKindId.TupleParameter),
@@ -1083,16 +1028,11 @@ export const is = {
 	genericType: _g(TSKindId.GenericType),
 	typePredicate: _g(TSKindId.TypePredicate),
 	typePredicateAnnotation: _g(TSKindId.TypePredicateAnnotation),
-	TypeQueryMemberExpression: _g(TSKindId.TypeQueryMemberExpression),
-	TypeQuerySubscriptExpression: _g(TSKindId.TypeQuerySubscriptExpression),
-	TypeQueryCallExpression: _g(TSKindId.TypeQueryCallExpression),
-	TypeQueryInstantiationExpression: _g(TSKindId.TypeQueryInstantiationExpression),
 	typeQuery: _g(TSKindId.TypeQuery),
 	indexTypeQuery: _g(TSKindId.IndexTypeQuery),
 	lookupType: _g(TSKindId.LookupType),
 	mappedTypeClause: _g(TSKindId.MappedTypeClause),
 	literalType: _g(TSKindId.LiteralType),
-	Number: _g(TSKindId._Number),
 	flowMaybeType: _g(TSKindId.FlowMaybeType),
 	parenthesizedType: _g(TSKindId.ParenthesizedType),
 	typeArguments: _g(TSKindId.TypeArguments),
@@ -1137,7 +1077,6 @@ export const is = {
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
 	formalParameter: _sg(_supertype_formalParameter_ids),
 	callExpression: _sg(_supertype_callExpression_ids),
-	lhsExpression: _sg(_supertype_lhsExpression_ids),
 	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
@@ -1237,6 +1176,7 @@ export const assert = {
 	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
 	memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
 	subscriptExpression: _makeAssert('subscriptExpression', is.subscriptExpression as _AnyGuard),
+	LhsExpression: _makeAssert('LhsExpression', is.LhsExpression as _AnyGuard),
 	assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
 	augmentedAssignmentExpression: _makeAssert(
 		'augmentedAssignmentExpression',
@@ -1279,7 +1219,6 @@ export const assert = {
 	instantiationExpression: _makeAssert('instantiationExpression', is.instantiationExpression as _AnyGuard),
 	importRequireClause: _makeAssert('importRequireClause', is.importRequireClause as _AnyGuard),
 	extendsClause: _makeAssert('extendsClause', is.extendsClause as _AnyGuard),
-	ExtendsClauseSingle: _makeAssert('ExtendsClauseSingle', is.ExtendsClauseSingle as _AnyGuard),
 	implementsClause: _makeAssert('implementsClause', is.implementsClause as _AnyGuard),
 	ambientDeclaration: _makeAssert('ambientDeclaration', is.ambientDeclaration as _AnyGuard),
 	abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
@@ -1299,14 +1238,6 @@ export const assert = {
 	addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),
 	optingTypeAnnotation: _makeAssert('optingTypeAnnotation', is.optingTypeAnnotation as _AnyGuard),
 	typeAnnotation: _makeAssert('typeAnnotation', is.typeAnnotation as _AnyGuard),
-	TypeQueryMemberExpressionInTypeAnnotation: _makeAssert(
-		'TypeQueryMemberExpressionInTypeAnnotation',
-		is.TypeQueryMemberExpressionInTypeAnnotation as _AnyGuard
-	),
-	TypeQueryCallExpressionInTypeAnnotation: _makeAssert(
-		'TypeQueryCallExpressionInTypeAnnotation',
-		is.TypeQueryCallExpressionInTypeAnnotation as _AnyGuard
-	),
 	asserts: _makeAssert('asserts', is.asserts as _AnyGuard),
 	assertsAnnotation: _makeAssert('assertsAnnotation', is.assertsAnnotation as _AnyGuard),
 	tupleParameter: _makeAssert('tupleParameter', is.tupleParameter as _AnyGuard),
@@ -1321,22 +1252,11 @@ export const assert = {
 	genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
 	typePredicate: _makeAssert('typePredicate', is.typePredicate as _AnyGuard),
 	typePredicateAnnotation: _makeAssert('typePredicateAnnotation', is.typePredicateAnnotation as _AnyGuard),
-	TypeQueryMemberExpression: _makeAssert('TypeQueryMemberExpression', is.TypeQueryMemberExpression as _AnyGuard),
-	TypeQuerySubscriptExpression: _makeAssert(
-		'TypeQuerySubscriptExpression',
-		is.TypeQuerySubscriptExpression as _AnyGuard
-	),
-	TypeQueryCallExpression: _makeAssert('TypeQueryCallExpression', is.TypeQueryCallExpression as _AnyGuard),
-	TypeQueryInstantiationExpression: _makeAssert(
-		'TypeQueryInstantiationExpression',
-		is.TypeQueryInstantiationExpression as _AnyGuard
-	),
 	typeQuery: _makeAssert('typeQuery', is.typeQuery as _AnyGuard),
 	indexTypeQuery: _makeAssert('indexTypeQuery', is.indexTypeQuery as _AnyGuard),
 	lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
 	mappedTypeClause: _makeAssert('mappedTypeClause', is.mappedTypeClause as _AnyGuard),
 	literalType: _makeAssert('literalType', is.literalType as _AnyGuard),
-	Number: _makeAssert('Number', is.Number as _AnyGuard),
 	flowMaybeType: _makeAssert('flowMaybeType', is.flowMaybeType as _AnyGuard),
 	parenthesizedType: _makeAssert('parenthesizedType', is.parenthesizedType as _AnyGuard),
 	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
@@ -1384,7 +1304,6 @@ export const assert = {
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
 	formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
 	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
-	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
 	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),

@@ -62,6 +62,7 @@ export const newExpression = bundle(F.buildNewExpression, C.coerceToNewExpressio
 export const awaitExpression = bundle(F.buildAwaitExpression, C.coerceToAwaitExpression);
 export const memberExpression = bundle(F.buildMemberExpression, C.coerceToMemberExpression);
 export const subscriptExpression = bundle(F.buildSubscriptExpression, C.coerceToSubscriptExpression);
+export const lhsExpression = bundle(F.buildLhsExpression, C.coerceToLhsExpression);
 export const assignmentExpression = bundle(F.buildAssignmentExpression, C.coerceToAssignmentExpression);
 export const augmentedAssignmentExpression = bundle(
 	F.buildAugmentedAssignmentExpression,
@@ -161,7 +162,6 @@ export const indexTypeQuery = bundle(F.buildIndexTypeQuery, C.coerceToIndexTypeQ
 export const lookupType = bundle(F.buildLookupType, C.coerceToLookupType);
 export const mappedTypeClause = bundle(F.buildMappedTypeClause, C.coerceToMappedTypeClause);
 export const literalType = bundle(F.buildLiteralType, C.coerceToLiteralType);
-export const _number = bundle(F.build_Number, C.coerceTo_Number);
 export const flowMaybeType = bundle(F.buildFlowMaybeType, C.coerceToFlowMaybeType);
 export const parenthesizedType = bundle(F.buildParenthesizedType, C.coerceToParenthesizedType);
 export const typeArguments = bundle(F.buildTypeArguments, C.coerceToTypeArguments);

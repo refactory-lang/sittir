@@ -12,7 +12,7 @@ export function rebuildListSeatConfigsRustLoose() {
 					arguments: [{
 						attributeItem: [ir.attribute.input({
 							path: "cfg",
-							arguments: ir.delimTokenTree.paren("a"),
+							arguments: ir.delimTokenTree.paren(ir.identifier("a")),
 						})],
 						expression: "x",
 					}, "y"],

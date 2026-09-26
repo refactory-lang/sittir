@@ -12,7 +12,7 @@ export function rebuildListSeatConfigsRustGenerated() {
 					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 						attributeItem: [ir.attributeItem.strict(ir.attribute.input.strict({
 							path: ir.identifier("cfg"),
-							arguments: ir.delimTokenTree.paren.strict(ir.identifier("a")),
+							arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("a"))),
 						}))],
 						expression: ir.identifier("x"),
 					}, {

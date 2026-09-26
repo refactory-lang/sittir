@@ -1,9 +1,9 @@
 {
 	"modules": {
-		"compiler/normalize.ts": 12,
+		"compiler/normalize.ts": 10,
 		"compiler/simplify.ts": 2,
-		"compiler/evaluate.ts": 13,
-		"compiler/link.ts": 34,
+		"compiler/evaluate.ts": 12,
+		"compiler/link.ts": 33,
 		"compiler/assemble.ts": 13,
 		"compiler/model/node-map.ts": 1,
 		"dsl/rule-transforms.ts": 7

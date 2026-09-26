@@ -2,10 +2,10 @@ import type { NodeMap } from '../compiler/types.ts';
 import { snakeToCamel } from '../compiler/model/node-map.ts';
 import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
 import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../compiler/generated-metadata.ts';
-import { supertypeMembersByPublicName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
+import { supertypeMembersByDisplayName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
+import { displayedKinds } from '../compiler/model/display-name.ts';
 import {
 	collectSitePreferences,
-	publicKindName,
 	type PreferenceArm,
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';
@@ -14,8 +14,6 @@ import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-ar
 import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
 import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
-
-export { publicKindName } from '../compiler/model/site-preferences.ts';
 
 export type ArmTypeResolver = (arm: PreferenceArm) => string;
 
@@ -147,6 +145,7 @@ export function hintEmitterOf(addresses: AddressTables, kindEntries: readonly Ki
 export function deriveAddressTables(
 	sites: readonly SitePreference[],
 	kindEntries: readonly KindEntryLike[],
+	nodeMap: NodeMap,
 	armType: ArmTypeResolver,
 	membersOf: SupertypeMembers,
 	declared?: OptionsDeclarations
@@ -162,7 +161,7 @@ export function deriveAddressTables(
 			throw new Error(`options: address '${path}' names two segments`);
 		}
 	};
-	for (const site of addressSites(sites, kindEntries)) {
+	for (const site of addressSites(sites, kindEntries, nodeMap)) {
 		const keys = site.path.map((segment) => nestedKey(segment, kindEntries));
 		depth = Math.max(depth, keys.length);
 		roots.add(keys[0]!);
@@ -182,7 +181,7 @@ export function deriveAddressTables(
 		leaves.set(path, { type, canonical: [site.path], segments: site.path });
 	}
 	if (declared !== undefined) {
-		const addressed = addressSites(sites, kindEntries);
+		const addressed = addressSites(sites, kindEntries, nodeMap);
 		const reached = new Map<string, AddressedSite<SitePreference>[]>();
 		for (const binding of declared.bindings) {
 			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
@@ -260,8 +259,8 @@ export function addressTablesFor(
 	optionsBlock?: OptionsConfig
 ): AddressTables {
 	const declared =
-		optionsBlock === undefined ? undefined : readOptionsBlock(optionsBlock, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
-	return deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
+		optionsBlock === undefined ? undefined : readOptionsBlock(optionsBlock, displayedKinds(nodeMap));
+	return deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), supertypeMembersByDisplayName(nodeMap), declared);
 }
 
 export interface EmitOptionsConfig {
@@ -284,9 +283,5 @@ export function emitOptions(config: EmitOptionsConfig): string {
 		});
 	const arms = armAliasesOf(config.nodeMap, config.kindEntries, sites);
 	const addresses = config.addresses ?? addressTablesFor(config.nodeMap, config.kindEntries, sites, config.options);
-	return renderOptionsModule({ arms, hints: hintEmitterOf(addresses, config.kindEntries, arms, publicKindNames(config.nodeMap)) });
-}
-
-export function publicKindNames(nodeMap: NodeMap): ReadonlySet<string> {
-	return new Set([...nodeMap.nodes.keys()].map(publicKindName));
+	return renderOptionsModule({ arms, hints: hintEmitterOf(addresses, config.kindEntries, arms, displayedKinds(config.nodeMap)) });
 }

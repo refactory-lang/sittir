@@ -3,13 +3,14 @@ import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
-import type { Grammar, RenderModuleBundle } from './render-module.ts';
+import type { RenderModuleBundle } from './render-module.ts';
+import type { GrammarName } from '../grammars.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
 import { AssembledSupertype } from '../compiler/model/node-map.ts';
 
 export interface RunRenderModuleEmitterConfig {
-	grammar: Grammar;
+	grammar: GrammarName;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	templates?: EmittedTemplates;

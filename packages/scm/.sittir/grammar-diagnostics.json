@@ -1,0 +1,162 @@
+[
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "scm",
+    "ownerKind": "predicate",
+    "ruleId": "rule:predicate:root",
+    "message": "Kind 'predicate' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "list",
+    "message": "[collect-slots] kind 'list': choice rule:list:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "grouping",
+    "message": "[collect-slots] kind 'grouping': choice rule:grouping:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "missing_node",
+    "message": "[collect-slots] kind 'missing_node': choice rule:missing_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "anonymous_node",
+    "message": "[collect-slots] kind 'anonymous_node': choice rule:anonymous_node:members.1 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "named_node",
+    "message": "[collect-slots] kind 'named_node': choice rule:named_node:root routes 1 unnamed-nonterminal arm(s) [named_node_arm] into one union slot alongside 2 label-routed arm(s) [field(name):identifier, field(name):underscore] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name",
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "named_node",
+    "message": "[collect-slots] kind 'named_node': choice rule:named_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-content-collision",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "named_node",
+    "message": "[derive-slots] kind 'named_node': union slot name(s) [content] already claimed by a sibling slot — union routing disabled for this rule (status-quo distribution). Free the name via field() naming in overrides (named slots bypass the claim).",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "predicate",
+    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "nested-seq",
+      "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
+      "ruleId": "rule:predicate:members.1"
+    }
+  },
+  {
+    "code": "kindid-unstamped-literals",
+    "message": "3 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        " "
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar",
+    "grammar": "scm"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        " "
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "scm"
+  }
+]

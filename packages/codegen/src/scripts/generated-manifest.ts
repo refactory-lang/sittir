@@ -2,43 +2,37 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
+import { GRAMMAR_ENTRY, REPO_ROOT, grammarPackageDir, nativeCrateRelDir, stableGrammars, type GrammarName } from '../grammars.ts';
 
-export const REPO_ROOT = (() => {
-	const here = dirname(fileURLToPath(import.meta.url));
-	return dirname(dirname(dirname(dirname(here))));
-})();
-
-export const GRAMMARS = ['rust', 'typescript', 'python'] as const;
-export type Grammar = (typeof GRAMMARS)[number];
+export { REPO_ROOT };
 
 const MANIFEST_FILENAME = 'generated.manifest.json';
 
-export function generatedRootsFor(grammar: Grammar): string[] {
+export function generatedRootsFor(grammar: GrammarName): string[] {
 	return [
 		`packages/${grammar}/src`,
 		`packages/${grammar}/.sittir`,
-		`rust/crates/sittir-${grammar}/src`,
-		`rust/crates/sittir-${grammar}/test-fixtures.json`,
-		`rust/crates/sittir-${grammar}/index.d.ts`,
-		`rust/crates/sittir-${grammar}/index.js`
+		`${nativeCrateRelDir(grammar)}/src`,
+		`${nativeCrateRelDir(grammar)}/test-fixtures.json`,
+		`${nativeCrateRelDir(grammar)}/index.d.ts`,
+		`${nativeCrateRelDir(grammar)}/index.js`
 	];
 }
 
-function pathsFor(grammar: Grammar): string[] {
+function pathsFor(grammar: GrammarName): string[] {
 	return generatedRootsFor(grammar);
 }
 
-function hostFilesFor(grammar: Grammar): string[] {
-	const crateDir = join(REPO_ROOT, `rust/crates/sittir-${grammar}`);
+function hostFilesFor(grammar: GrammarName): string[] {
+	const crateDir = join(REPO_ROOT, nativeCrateRelDir(grammar));
 	if (!existsSync(crateDir)) return [];
 	return readdirSync(crateDir)
 		.filter((name) => name.endsWith('.node'))
-		.map((name) => `rust/crates/sittir-${grammar}/${name}`);
+		.map((name) => `${nativeCrateRelDir(grammar)}/${name}`);
 }
 
-function manifestPath(grammar: Grammar): string {
+function manifestPath(grammar: GrammarName): string {
 	return join(REPO_ROOT, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
 }
 
@@ -90,7 +84,7 @@ function isManifestExcluded(relPath: string): boolean {
 	return relPath.endsWith('/test-fixtures.json') || relPath.endsWith('/test-fixtures.left-out.json');
 }
 
-function collectFiles(grammar: Grammar): string[] {
+function collectFiles(grammar: GrammarName): string[] {
 	const all: string[] = [];
 	for (const root of pathsFor(grammar)) walk(join(REPO_ROOT, root), all);
 	const manifestAbs = manifestPath(grammar);
@@ -101,7 +95,7 @@ function collectFiles(grammar: Grammar): string[] {
 }
 
 interface Manifest {
-	grammar: Grammar;
+	grammar: GrammarName;
 	source_hash: string;
 	files: Record<string, string>;
 	host_files?: Record<string, string>;
@@ -109,10 +103,10 @@ interface Manifest {
 
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
-function sourceInputsFor(grammar: Grammar): string[] {
+function sourceInputsFor(grammar: GrammarName): string[] {
 	return [
-		join(REPO_ROOT, `packages/${grammar}/grammar.sittir.ts`),
-		join(REPO_ROOT, `packages/${grammar}/package.json`)
+		join(grammarPackageDir(grammar), GRAMMAR_ENTRY),
+		join(grammarPackageDir(grammar), 'package.json')
 	];
 }
 
@@ -137,7 +131,7 @@ function codegenSourceHash(): string {
 	return cachedCodegenHash;
 }
 
-export function computeSourceHash(grammar: Grammar): string {
+export function computeSourceHash(grammar: GrammarName): string {
 	const hash = createHash('sha256');
 	for (const input of sourceInputsFor(grammar)) {
 		if (existsSync(input)) {
@@ -152,7 +146,7 @@ export function computeSourceHash(grammar: Grammar): string {
 	return hash.digest('hex');
 }
 
-export function writeManifestForGrammar(grammar: Grammar): void {
+export function writeManifestForGrammar(grammar: GrammarName): void {
 	const files: Record<string, string> = {};
 	for (const f of collectFiles(grammar)) {
 		const rel = relative(REPO_ROOT, f);
@@ -176,7 +170,7 @@ export function writeManifestForGrammar(grammar: Grammar): void {
 	writeFileSync(path, JSON.stringify(manifest, null, 2) + '\n');
 }
 
-function readExistingManifest(grammar: Grammar): Manifest | null {
+function readExistingManifest(grammar: GrammarName): Manifest | null {
 	const path = manifestPath(grammar);
 	if (!existsSync(path)) return null;
 	try {
@@ -187,7 +181,7 @@ function readExistingManifest(grammar: Grammar): Manifest | null {
 }
 
 export interface VerifyResult {
-	grammar: Grammar;
+	grammar: GrammarName;
 	ok: boolean;
 	manifestPresent: boolean;
 	sourceHashMismatch: boolean;
@@ -197,7 +191,7 @@ export interface VerifyResult {
 	stale: string[];
 }
 
-export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
+export function verifyManifestForGrammar(grammar: GrammarName): VerifyResult {
 	const result: VerifyResult = {
 		grammar,
 		ok: false,
@@ -244,9 +238,9 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 	return result;
 }
 
-export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): void {
+export function assertGeneratedManifestsClean(grammars?: readonly GrammarName[]): void {
 	if (process.env.SITTIR_INTERNAL_CODEGEN_RUN === '1') return;
-	const targets = grammars ?? GRAMMARS;
+	const targets = grammars ?? stableGrammars();
 	const results = targets.map((g) => verifyManifestForGrammar(g));
 	const failed = results.filter((r) => !r.ok);
 	if (failed.length === 0) return;

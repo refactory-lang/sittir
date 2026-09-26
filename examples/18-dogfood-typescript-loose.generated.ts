@@ -177,6 +177,13 @@ export function rebuildFormatLoose() {
 								property: "sort",
 							}),
 							arguments: ir.arrowFunction({
+								content: ir.callSignature({
+									parameters: [ir.requiredParameter({
+										pattern: "a",
+									}), ir.requiredParameter({
+										pattern: "b",
+									})],
+								}),
 								body: ir.binaryExpression({
 									left: ir.memberExpression({
 										object: "b",
@@ -189,13 +196,6 @@ export function rebuildFormatLoose() {
 										separator: TSKindId.Dot,
 										property: "offset",
 									}),
-								}),
-								content: ir.callSignature({
-									parameters: [ir.requiredParameter({
-										pattern: "a",
-									}), ir.requiredParameter({
-										pattern: "b",
-									})],
 								}),
 							}),
 						}),
@@ -211,6 +211,12 @@ export function rebuildFormatLoose() {
 				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement({
+					forHeader: ir.forHeader.letConstKind({
+						kind: TSKindId.ConstKeyword,
+						left: "item",
+						operator: TSKindId.OfKeyword,
+						right: "sorted",
+					}),
 					body: ir.statementBlock({
 						statements: [ir.lexicalDeclaration({
 							kind: TSKindId.ConstKeyword,
@@ -275,12 +281,6 @@ export function rebuildFormatLoose() {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
-					}),
-					forHeader: ir.forHeader.letConstKind({
-						kind: TSKindId.ConstKeyword,
-						left: "item",
-						operator: TSKindId.OfKeyword,
-						right: "sorted",
 					}),
 				}), ir.returnStatement(ir.identifier("result"), {
 					terminator: TSKindId.Semi,
@@ -397,6 +397,11 @@ export function rebuildFormatLoose() {
 						property: "map",
 					}),
 					arguments: ir.arrowFunction({
+						content: ir.callSignature({
+							parameters: ir.requiredParameter({
+								pattern: "item",
+							}),
+						}),
 						body: ir.statementBlock({
 							statements: [ir.ifStatement({
 								condition: ir.parenthesizedExpression.typed({
@@ -442,11 +447,6 @@ export function rebuildFormatLoose() {
 							})), {
 								terminator: TSKindId.Semi,
 							}).$trivia.leading("// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output).")],
-						}),
-						content: ir.callSignature({
-							parameters: ir.requiredParameter({
-								pattern: "item",
-							}),
 						}),
 					}),
 				}), {
@@ -504,6 +504,19 @@ export function rebuildFormatLoose() {
 				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement({
+					forHeader: ir.forHeader.letConstKind({
+						kind: TSKindId.ConstKeyword,
+						left: ir.arrayPattern("key", "sub"),
+						operator: TSKindId.OfKeyword,
+						right: ir.callExpression.call({
+							function: ir.memberExpression({
+								object: "Object",
+								separator: TSKindId.Dot,
+								property: "entries",
+							}),
+							arguments: "kinds",
+						}),
+					}),
 					body: ir.statementBlock({
 						statements: [ir.expressionStatement(ir.assignmentExpression({
 							left: ir.subscriptExpression({
@@ -518,19 +531,6 @@ export function rebuildFormatLoose() {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
-					}),
-					forHeader: ir.forHeader.letConstKind({
-						kind: TSKindId.ConstKeyword,
-						left: ir.arrayPattern("key", "sub"),
-						operator: TSKindId.OfKeyword,
-						right: ir.callExpression.call({
-							function: ir.memberExpression({
-								object: "Object",
-								separator: TSKindId.Dot,
-								property: "entries",
-							}),
-							arguments: "kinds",
-						}),
 					}),
 				}), ir.returnStatement(ir.identifier("result"), {
 					terminator: TSKindId.Semi,

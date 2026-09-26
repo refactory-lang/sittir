@@ -54,7 +54,8 @@ const MODULES = {
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
 	types: '../../codegen/src/emitters/types.ts',
-	templates: '../../codegen/src/emitters/templates.ts'
+	templates: '../../codegen/src/emitters/templates.ts',
+	from: '../../codegen/src/emitters/from.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -83,6 +84,7 @@ export interface CodegenSurface {
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
+	from: typeof import('../../codegen/src/emitters/from.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;

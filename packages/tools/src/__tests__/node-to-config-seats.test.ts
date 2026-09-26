@@ -39,7 +39,7 @@ const factoryShapes = {
 } as const;
 
 const seats: SeatTable = {
-	clause: { clause_group: { _clause_group: { kind: '_clause_group', shape: 'splice' } } },
+	clause: { clause_group: { _clause_group: { kind: '_clause_group', shape: 'flatten' } } },
 	comparison: { comparators: { _comparison_comparator: { kind: '_comparison_comparator', shape: 'elements' } } },
 	header: {
 		content: {
@@ -48,7 +48,7 @@ const seats: SeatTable = {
 		}
 	},
 	tree: { content: { _tree_paren: { kind: '_tree_paren', shape: 'arm', mount: 'paren' } } },
-	block: { arms: { _block_arms: { kind: '_block_arms', shape: 'splice' } } }
+	block: { arms: { _block_arms: { kind: '_block_arms', shape: 'flatten' } } }
 };
 
 function surfaceWith(entries: IrSurface['entries']): IrSurface {
@@ -58,7 +58,7 @@ function surfaceWith(entries: IrSurface['entries']): IrSurface {
 const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}) };
 
 describe('nodeToConfig projects a hoisted child by its seat on the ir surface', () => {
-	it('splices a spliced seat child into the parent config', () => {
+	it('flattens a flattened seat child into the parent config', () => {
 		const data = {
 			$type: 'clause',
 			_clause_group: { $type: '_clause_group', _parameter: 'e', _type: 'E' },
@@ -186,14 +186,14 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 		expect(tok).toHaveBeenCalledWith({ name: 'n' });
 	});
 
-	it('calls the entry strict with the spliced config', () => {
+	it('calls the entry strict with the flattened config', () => {
 		const strict = vi.fn(() => 'built');
 		const data = { $type: 'clause', _clause_group: { $type: '_clause_group', _parameter: 'e' }, _body: 'x' };
 		buildFactoryNodeFromReference(data as never, 'clause', artifacts({ clause: { strict } }, { clause: vi.fn() }));
 		expect(strict).toHaveBeenCalledWith({ parameter: 'e', body: 'x' });
 	});
 
-	it('hands a forwarded parent the spliced group config as its one value', () => {
+	it('hands a forwarded parent the flattened group config as its one value', () => {
 		const strict = vi.fn(() => 'built');
 		const data = { $type: 'block', _arms: { $type: '_block_arms', _arm: [{ $type: 'arm' }], _last: 'z' } };
 		buildFactoryNodeFromReference(data as never, 'block', artifacts({ block: { strict } }, { block: vi.fn() }));

@@ -68,7 +68,7 @@ IR namespace — flat + grouped (spec 008 US5), both tree-shakeable:
 ```ts
 import { ir, expression } from '@sittir/rust';
 
-ir.binary(config); // flat camelCase (supertype-stripped short name)
+ir.binaryExpression(config); // flat camelCase (the builder's one key)
 ir.expression.binary(config); // grouped (attached to ir)
 expression.binary(config); // standalone (tree-shakeable)
 ```

@@ -7,7 +7,8 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
-import type { Grammar, RenderModuleBundle } from './render-module.ts';
+import type { RenderModuleBundle } from './render-module.ts';
+import type { GrammarName } from '../grammars.ts';
 
 import { FactoryEmitter } from './factories.ts';
 import { FromEmitter } from './from.ts';
@@ -22,7 +23,8 @@ import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
-import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
+import { RenderModuleEmitter } from './render-module.ts';
+import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -76,11 +78,11 @@ export interface EmitAllResult {
 	rootTreeTypeName?: string;
 }
 
-type RenderModuleEmission = { tag: 'emit'; validGrammar: Grammar } | { tag: 'skip' };
+type RenderModuleEmission = { tag: 'emit'; validGrammar: GrammarName } | { tag: 'skip' };
 
 function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
 	if (emitRenderModule !== true) return { tag: 'skip' };
-	if (!isRenderModuleGrammar(grammar)) return { tag: 'skip' };
+	if (!isGrammar(grammar)) return { tag: 'skip' };
 	return { tag: 'emit', validGrammar: grammar };
 }
 

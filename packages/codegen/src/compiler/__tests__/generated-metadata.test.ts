@@ -3,6 +3,7 @@ import {
 	collectGeneratedKindEntries,
 	deriveGeneratedIdTablesFromLanguage,
 	deriveGeneratedIdTablesFromParserCSource,
+	findEntryForLiteralText,
 	type TreeSitterLanguageMetadata
 } from '../generated-metadata.ts';
 
@@ -137,9 +138,11 @@ static const char * const ts_field_names[] = {
 		expect(newlineEntry).toBeDefined();
 		expect(newlineEntry?.id).toBe(101);
 		// The alias's display name ("newline") survives on the surviving
-		// `_newline` row instead of being dropped — this is what lets
-		// `kindIdFromName('newline')` resolve at runtime.
-		expect(newlineEntry?.symbolName).toBe('newline');
+		// `_newline` row as the parse name beside the parse id, instead of
+		// being dropped — this is what lets `kindIdFromName('newline')`
+		// resolve at runtime.
+		expect(newlineEntry?.parseName).toBe('newline');
+		expect(newlineEntry?.parseId).toBe(291);
 
 		// No separate `alias_sym_newline`-derived entry — it was merged
 		// into `_newline`, not kept as its own catalog row.
@@ -167,7 +170,88 @@ static const char * const ts_field_names[] = {
 			'parser.c'
 		);
 		const entries = collectGeneratedKindEntries(tables);
-		expect(entries.find((entry) => entry.id === 10)?.kind).toBe('if_keyword');
+		expect(entries.find((entry) => entry.id === 10)).toMatchObject({ kind: 'if_keyword', literalText: 'if', keyword: true });
+	});
+
+	it('marks a symbol listed in the non-terminal alias map as an aliased non-terminal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym__lhs_expression = 20,
+  sym_object_type = 21,
+  sym_pattern = 22,
+  alias_sym_lhs_expression = 30,
+  alias_sym_interface_body = 31,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym__lhs_expression] = "_lhs_expression",
+  [sym_object_type] = "object_type",
+  [sym_pattern] = "pattern",
+  [alias_sym_lhs_expression] = "lhs_expression",
+  [alias_sym_interface_body] = "interface_body",
+};
+
+static const uint16_t ts_non_terminal_alias_map[] = {
+  sym__lhs_expression, 2,
+    sym__lhs_expression,
+    alias_sym_lhs_expression,
+  sym_object_type, 2,
+    sym_object_type,
+    alias_sym_interface_body,
+  0,
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c'
+		);
+		const byId = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, entry]));
+		expect(byId.get(20)?.aliasedNonTerminal).toBe(true);
+		expect(byId.get(21)?.aliasedNonTerminal).toBe(true);
+		expect(byId.get(22)?.aliasedNonTerminal).toBeUndefined();
+		expect(byId.get(30)?.aliasedNonTerminal).toBeUndefined();
+		expect(byId.get(31)?.aliasedNonTerminal).toBeUndefined();
+	});
+
+	it('marks a symbol whose id is below TOKEN_COUNT as a terminal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 3
+
+enum ts_symbol_identifiers {
+  sym_identifier = 1,
+  sym__block_comment_content = 2,
+  sym__let_chain = 3,
+  sym_let_condition = 4,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym_identifier] = "identifier",
+  [sym__block_comment_content] = "_block_comment_content",
+  [sym__let_chain] = "_let_chain",
+  [sym_let_condition] = "let_condition",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c'
+		);
+		const byId = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, entry]));
+		expect(byId.get(1)?.terminal).toBe(true);
+		expect(byId.get(2)?.terminal).toBe(true);
+		expect(byId.get(3)?.terminal).toBeUndefined();
+		expect(byId.get(4)?.terminal).toBeUndefined();
 	});
 
 	it('leaves a symbolic (non-keyword-shaped) anonymous token under its plain derived name', async () => {
@@ -192,6 +276,7 @@ static const char * const ts_field_names[] = {
 		);
 		const entries = collectGeneratedKindEntries(tables);
 		expect(entries.find((entry) => entry.id === 11)?.kind).toBe('comma');
+		expect(entries.find((entry) => entry.id === 11)?.keyword).toBeUndefined();
 	});
 
 	it("names the underscore token 'underscore', not a keyword — it has no non-underscore character", async () => {
@@ -248,6 +333,21 @@ static const char * const ts_symbol_names[] = {
   [anon_sym__] = "_",
 };
 
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym__wildcard_pattern] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__kw_pass] = {
+    .visible = false,
+    .named = true,
+  },
+  [anon_sym__] = {
+    .visible = true,
+    .named = false,
+  },
+};
+
 enum ts_field_identifiers {
 };
 
@@ -281,6 +381,48 @@ static const char * const ts_field_names[] = {
 		const underscoreEntry = entries.find((entry) => entry.kind === 'underscore');
 		expect(underscoreEntry?.id).toBe(12);
 		expect(underscoreEntry?.anon).toBe(true);
+	});
+
+	it('finds a string token by its text when every use aliases it to a named kind', async () => {
+		const grammarJson = {
+			rules: {
+				atom: { type: 'ALIAS', content: { type: 'STRING', value: 'x' }, named: true, value: 'identity_escape' }
+			}
+		};
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 6
+
+enum ts_symbol_identifiers {
+  anon_sym_x = 5,
+};
+
+static const char * const ts_symbol_names[] = {
+  [anon_sym_x] = "identity_escape",
+};
+
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [anon_sym_x] = {
+    .visible = true,
+    .named = true,
+  },
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c',
+			grammarJson
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		const token = entries.find((entry) => entry.id === 5);
+		expect(token?.anon).toBeUndefined();
+		expect(token?.terminal).toBe(true);
+		expect(findEntryForLiteralText(entries, 'x')).toBe(token);
 	});
 
 	it('stamps a literal rule whose display name differs from its rule name via an UNNAMED alias site elsewhere (no named-alias claimant)', async () => {
@@ -358,6 +500,17 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_true] = "true",
 };
 
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym_true_keyword] = {
+    .visible = true,
+    .named = true,
+  },
+  [anon_sym_true] = {
+    .visible = true,
+    .named = false,
+  },
+};
+
 enum ts_field_identifiers {
 };
 
@@ -400,5 +553,67 @@ static const char * const ts_field_names[] = {
 		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c', grammarJson)).rejects.toThrow(
 			'generated-metadata: aliased token anon_sym_UNVERIFIED (display "renamed_thing") has no verbatim literal'
 		);
+	});
+
+	const aliasSource = (entries: readonly [string, number, string][]) => `
+enum ts_symbol_identifiers {
+${entries.map(([c, id]) => `  ${c} = ${id},`).join('\n')}
+};
+
+static const char * const ts_symbol_names[] = {
+${entries.map(([c, , name]) => `  [${c}] = "${name}",`).join('\n')}
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`;
+	const aliasedStrings = (value: string, literals: readonly string[]) => ({
+		rules: Object.fromEntries(
+			literals.map((literal, i) => [
+				`rule_${i}`,
+				{ type: 'ALIAS', content: { type: 'STRING', value: literal }, named: true, value }
+			])
+		)
+	});
+
+	it('recovers a non-identifier aliased literal from the grammar, not from the mangled C name', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([['anon_sym_BSLASH_DASH', 19, 'identity_escape']]),
+			'parser.c',
+			aliasedStrings('identity_escape', ['\\-'])
+		);
+		const entry = collectGeneratedKindEntries(tables).find((e) => e.id === 19);
+		expect(entry?.literalText).toBe('\\-');
+	});
+
+	it('pairs identifier-safe aliased literals by name and eliminates to the one remaining literal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([
+				['anon_sym_x', 20, 'escape'],
+				['anon_sym_BSLASH_DASH', 21, 'escape']
+			]),
+			'parser.c',
+			aliasedStrings('escape', ['x', '\\-'])
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		expect(entries.find((e) => e.id === 20)?.literalText).toBe('x');
+		expect(entries.find((e) => e.id === 21)?.literalText).toBe('\\-');
+	});
+
+	it('throws when several non-identifier literals alias to one name', async () => {
+		await expect(
+			deriveGeneratedIdTablesFromParserCSource(
+				aliasSource([
+					['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
+					['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+				]),
+				'parser.c',
+				aliasedStrings('identity_escape', ['\\-', '\\.'])
+			)
+		).rejects.toThrow('generated-metadata: aliased token anon_sym_BSLASH_DASH (display "identity_escape") has no verbatim literal');
 	});
 });

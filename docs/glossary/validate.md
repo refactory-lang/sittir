@@ -139,15 +139,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Classification per kind. */
 ```
 
-### `packages/codegen/src/validate/node-types-loader.ts::GRAMMAR_PATHS`
+### `packages/codegen/src/validate/node-types-loader.ts::NODE_TYPES_SUBPATHS`
 
-```text
-/**
- * Non-standard node-types.json locations. Most grammars follow the
- * `tree-sitter-{name}/src/node-types.json` convention; this table
- * lists the exceptions (typescript ships two grammars per package).
- */
-```
+Non-standard `node-types.json` locations inside the upstream package. Most grammars follow `src/node-types.json`; typescript ships its dialects in subdirectories. Resolved from the grammar package (`grammarRequire`).
 
 ### `packages/codegen/src/validate/renderable.ts::module`
 
@@ -222,13 +216,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * fixtures), they pass the resolved path directly via the
  * `explicitPath` argument — there is no module-level path registry.
  */
-```
-
-### `packages/codegen/src/validate/node-types-loader.ts::packagesDir`
-
-```text
-// `new URL(...).pathname` is not portable on Windows and leaks URL-encoded
-// escape sequences; `fileURLToPath` produces a correct platform path.
 ```
 
 ### `packages/tools/src/validate/common.ts::soleWrappedNode`

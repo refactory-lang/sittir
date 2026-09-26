@@ -95,23 +95,17 @@ elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`
 
-```text
-/**
- * True when `rule` is an enrich-synthesized group-lift symbol — a SYMBOL ref
- * tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
- * decision 6 — was `metadata.source === 'enrich'`). enrich hoists
- * `optional(seq)` / `repeat(seq)` into such a symbol and carries the original
- * seq body inline on `content` so path-descent can travel THROUGH it (see
- * `descendThroughGroupLiftSymbol`). The tag is the canonical provenance
- * marker (the legacy top-level `source: 'group-lift'` field is retired).
- */
-```
+True when `rule` is an enrich-synthesized group-lift symbol: a SYMBOL whose
+metadata records `symbolSource: 'group-lift'`, the construction-time fact
+`makeGroupLiftSymbol` stamps. Enrich hoists `optional(seq)` / `repeat(seq)`
+into such a symbol and keeps the original seq body reachable so path descent
+can travel through it (see `descendThroughGroupLiftSymbol`).
 
 #### body
 
 ```text
 // MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
-// also carries `metadata.author === 'enrich'` but is handled separately by
+// is handled separately by
 // `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
 // type guard, an alias would match here and `descendThroughGroupLiftSymbol`
 // would throw "group-lift symbol has no name" (an alias has no `.name`).
@@ -164,18 +158,13 @@ elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
 
-```text
-/**
- * True when `rule` is an enrich-synthesized content-alias — an `ALIAS`
- * node tagged `metadata.author === 'enrich'` (debt: source-homonym
- * resolution, decision 6 — was `metadata.source === 'enrich'`). enrich wraps
- * an inline-unsafe `optional(seq)` / bare `choice` in `alias(<content>,
- * $.<name>)` to surface it as a visible CST kind; path-descent travels
- * THROUGH it (see `descendThroughEnrichContentAlias`), unlike a normal
- * aliased symbol (which keeps `descendThroughAlias`'s single-content /
- * index-0 behaviour).
- */
-```
+True when `rule` is an enrich-synthesized content-alias — an `ALIAS` node
+tagged `metadata.aliasSource === 'visible-group'`, the one field this test
+keys on. enrich wraps an inline-unsafe `optional(seq)` / bare `choice` in
+`alias(<content>, $.<name>)` to surface it as a visible CST kind;
+path-descent travels THROUGH it (see `descendThroughEnrichContentAlias`),
+unlike a normal aliased symbol (which keeps `descendThroughAlias`'s
+single-content / index-0 behaviour).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
@@ -367,6 +356,12 @@ elsewhere. It is what a literal segment matches against.
  * runtime's native dsl function with the new members. Delegating to
  * native ensures the result has the correct rule-type case and
  * inherits any normalization the runtime applies.
+ *
+ * A patch rebuilds the same rule, so the container keeps its own
+ * properties through `carryOverProperties`, as a rebuilt wrapper does:
+ * the automatic `variantOf` label on a choice arm and the container's
+ * `metadata` survive a patch on one of its members. The one exception
+ * is `hoisted`, which `withoutHoisted` removes first.
  */
 ```
 
@@ -398,6 +393,24 @@ elsewhere. It is what a literal segment matches against.
  *
  * Throws on an unknown wrapper type — safer than emitting a hand-rolled
  * shape that may be wrong-case in the tree-sitter runtime.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::withoutHoisted`
+
+```text
+/**
+ * The container `reconstructContainer` carries over, minus the
+ * `hoisted` annotation (the rest of its annotations and its metadata
+ * are kept; an annotation set left empty is dropped).
+ *
+ * A patch that rebuilds a hoisted group's body clears `hoisted`, so
+ * the group leaves the hoisted set and is no longer seated on its
+ * parent. Keeping `hoisted` would seat 19 groups that are not seated
+ * today, and the seating does not yet handle them. That work, its
+ * group list and the rows it moves are in the group-seating plan's
+ * section "a patch on a hoisted mint un-hoists it". Lifting this
+ * exclusion is its remaining step.
  */
 ```
 
@@ -1008,6 +1021,18 @@ on the way in; an authored body of that name is left as authored.
 // uppercase spellings ever appear here.
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::resolveRulePlaceholder`
+
+Leaves a reference to the rule `rule(name, body)` names at the path. The
+body is not built here: the installed rule builds it from its own `$`
+(`declaredRuleFn`), so it is written as authored and, unlike `variant()`, is
+not wrapped in the precedence of the path it replaces; the reference left at
+the path sits under the parent's precedence like any other reference. Every
+path that declares the name must carry an equal body: each site's body is
+built from the name-neutral `$` and compared as `canonicalRuleText`
+(`wireDeclareRuleBody`), and a different body fails naming both sites
+(`<kind>/<key>`).
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveAliasPlaceholder`
 
 ```text
@@ -1031,11 +1056,43 @@ on the way in; an authored body of that name is left as authored.
 #### body
 
 ```text
-// An arm that already carries a named alias keeps its content and takes
-// the placeholder's name as its face — an upsert, never a second alias
-// around the first and never a deposit under the target's hidden name,
-// which would redefine an existing rule as an alias of itself.
+// An arm that already aliases a symbol keeps that symbol and takes the
+// placeholder's name as its face, becoming named if it was not — an upsert,
+// never a second alias around the first and never a deposit under the
+// target's hidden name, which would redefine an existing rule as an alias
+// of itself.
 ```
+
+A site that enrich wrapped in an inferred field (`isEnrichShapedFieldWrapper`,
+the predicate `field()` placeholders use to recognise enrich's own field) is
+read as the author wrote it: the field is dropped and its content is the site.
+An authored alias over `field('x', $._x)` therefore aliases `$._x` in place,
+exactly as upstream's `alias($._x, $.x)` does, instead of minting `_x` over the
+field (which would redefine `_x` as a reference to itself). Enrich's inferred
+facts give way to an authored patch at that site, the same rule as automatic
+arm labels.
+
+An alias over inline content (a pattern, string or token, such as rust's
+unnamed `alias(/[bc]?"/, '"')`) has no rule behind it, so promoting it in
+place would leave the parser a named node the model has no kind for. Its
+content is minted like any other `alias()` target instead: the terminal
+becomes the hidden leaf rule `_<name>` (no `hoisted`, since it lexes as one
+token) and the arm becomes `alias($._<name>, $.<name>)`.
+
+Every branch's result — the lift rename, the inline mint, and the
+already-named-symbol upsert — passes through `relabelledArm` against
+`originalMember` before it is returned: when the arm being replaced carried
+a `variantOf`, the new shape gets the same owner and a `variant` name
+recomputed for its own display, so the resolved site keeps standing in for
+the arm it replaced instead of losing its label.
+
+### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
+
+The annotation a minted body carries: `hoisted` (a group whose slots seat on
+the parent) unless the body lexes as one token (`lexesAsOneToken`), in which
+case the mint is a leaf subtype and carries none. It applies to `alias()` and
+`variant()` mints alike: a literal arm (rust `range_pattern_with_left_bare`)
+or a token-bodied arm (rust `line_comment_content`) has nothing to seat.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 
@@ -1367,17 +1424,16 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withVariantAnnotation`
 
-```text
-/** Stamp an arm's declared variant name and declaring kind onto the rule, so
- *  the name reaches the emitters as data instead of being reconstructed
- *  later from the minted kind name.
- *
- *  For an ALIAS the stamp goes on the CONTENT, never the wrapper: the alias
- *  attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
- *  anything left on the wrapper is dropped the moment the alias collapses to
- *  a symbol. Stamping the content instead carries the annotation through that
- *  collapse without any phase having to forward it. */
-```
+Stamps an arm's declared variant name and declaring kind onto the rule, so
+the name reaches the emitters as data instead of being reconstructed later
+from the minted kind name. Writes through `automatic-variants.ts`'s
+`withAuthoredLabel`, which claims the site in the automatic-variant record
+(so the label is never mistaken for one of enrich's automatic labels) and —
+for an ALIAS — lands on the CONTENT,
+never the wrapper (`withAnnotations`'s ALIAS transparency): the alias
+attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
+anything left on the wrapper would be dropped the moment the alias
+collapses to a symbol.
 
 `withVariantAnnotation`'s fourth argument is the choice member the variant
 was hoisted from, before the arm was mint-wrapped. `isDefaultArm` reads that
@@ -1481,9 +1537,9 @@ as one arm fact, not two derivations of the same declaration.
 A `group()` placeholder lowers to `annotations.hoisted` on the addressed
 rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 
-#### splice
+#### flatten
 
-A `splice()` patch stamps `annotations.spliced` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
+A `flatten()` patch stamps `annotations.flattened` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
 
 #### token interior
 
@@ -1563,6 +1619,16 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 // existing 'expression1'/'expression2'/'pattern') is the intended
 // override-trumps-existing behavior — silent by design.
 ```
+
+#### body
+
+Strips any automatically-stamped variant label out of the content before
+handing it to the native `field()` builder (`withoutAutomaticVariants`,
+against `wireAutomaticVariants()`): once content sits under a field it is
+addressed by that field's name, so an enrich-stamped arm label underneath
+would be a second, unused address for the same content. An override-declared
+label is untouched — only a key `wireAutomaticVariants()` actually holds is
+stripped.
 
 #### body
 
@@ -1690,13 +1756,11 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 ```text
 // Enrich group-lift symbols are transparent to path addressing, like prec
 // wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
-// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
-// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
-// seq body on `content`. An authored patch whose path was written against the pre-hoist
-// seq must travel THROUGH the symbol into that body. We descend without
-// consuming a segment (transparent) and rebuild the symbol around the patched
-// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
-// because the tag + body ride the symbol object itself — no rule-map resolver.
+// tagged `metadata.symbolSource === 'group-lift'`, and the hoisted body is
+// looked up by name in the group-lift rule map. An authored patch whose path
+// was written against the pre-hoist seq must travel THROUGH the symbol into
+// that body. We descend without consuming a segment (transparent) and write
+// the patched body back to the map.
 ```
 
 #### body
@@ -1705,8 +1769,7 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 // Enrich content-aliases are ALSO transparent to path addressing. enrich
 // wraps an inline-unsafe `optional(seq)` / bare `choice` in
 // `alias(<content>, $.<name>)` (the visible-kind form) tagged
-// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
-// decision 6). enrich runs BEFORE the authored
+// `metadata.aliasSource === 'visible-group'`. enrich runs BEFORE the authored
 // transform()/variant()/groups path-patches, so a patch whose path was
 // written against the pre-alias content must travel THROUGH the alias into
 // that content. Without this, `descendThroughAlias` (single-content, index 0
@@ -1779,6 +1842,13 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
  * the leading underscore), a symbol's name, looking through prec wrappers.
  */
 ```
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::canonicalRuleText`
+
+A runtime rule's identity as text, with the per-evaluation `id` and
+`metadata` dropped: two rules built by the same authoring are equal under
+it. Used to dedupe token-form arms and to check that `rule()` bodies of one
+name agree.
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::classifyTokenChoice`
 

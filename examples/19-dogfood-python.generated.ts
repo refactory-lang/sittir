@@ -4,7 +4,7 @@ import { ir, TSKindId, Delimiter } from '@sittir/python';
 export function rebuildPython4spaceGenerated() {
 	return ir.module.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.string.strict({
 		stringStart: ir.stringStart("\"\"\""),
-		content: [ir.stringContent.strict("Simple user management module.")],
+		content: [ir.stringContent.strict(ir.stringFragment("Simple user management module."))],
 		stringEnd: ir.stringEnd("\"\"\""),
 	}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.importFromStatement.strict({
 		moduleName: ir.dottedName.strict(ir.identifier("typing")),
@@ -13,12 +13,12 @@ export function rebuildPython4spaceGenerated() {
 		name: ir.identifier("User"),
 		body: ir.suite.block.strict(ir.block.strict(ir.functionDefinition.strict({
 			name: ir.identifier("__init__"),
-			parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("self"), ir.typedParameter.strict({
+			parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, ir.identifier("self"), ir.typedParameter.strict({
+				name: ir.identifier("user_id"),
 				type: ir.type.strict(ir.identifier("int")),
-				content: ir.identifier("user_id"),
 			}), ir.typedParameter.strict({
+				name: ir.identifier("name"),
 				type: ir.type.strict(ir.identifier("str")),
-				content: ir.identifier("name"),
 			}))),
 			returnType: ir.type.strict(TSKindId.None),
 			body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
@@ -36,27 +36,27 @@ export function rebuildPython4spaceGenerated() {
 			}))))),
 		}), ir.functionDefinition.strict({
 			name: ir.identifier("greet"),
-			parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("self"))),
+			parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, ir.identifier("self"))),
 			returnType: ir.type.strict(ir.identifier("str")),
 			body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.string.strict({
 				stringStart: ir.stringStart("f\""),
-				content: [ir.stringContent.strict("Hello, "), ir.interpolation.strict({
+				content: [ir.stringContent.strict(ir.stringFragment("Hello, ")), ir.interpolation.strict({
 					expression: ir.attribute.strict({
 						object: ir.identifier("self"),
 						attribute: ir.identifier("name"),
 					}),
-				}), ir.stringContent.strict("!")],
+				}), ir.stringContent.strict(ir.stringFragment("!"))],
 				stringEnd: ir.stringEnd("\""),
 			}))))),
 		}))),
 	}), ir.functionDefinition.strict({
 		name: ir.identifier("find_user"),
-		parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.typedParameter.strict({
+		parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, ir.typedParameter.strict({
+			name: ir.identifier("users"),
 			type: ir.type.strict(ir.identifier("list")),
-			content: ir.identifier("users"),
 		}), ir.typedParameter.strict({
+			name: ir.identifier("user_id"),
 			type: ir.type.strict(ir.identifier("int")),
-			content: ir.identifier("user_id"),
 		}))),
 		returnType: ir.type.strict(ir.genericType.strict({
 			name: ir.identifier("Optional"),

@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { AnyRule } from '../../types/rule.ts';
-import { parserSymbolClassOf, tokenUseCounts, type ParserSymbolClass, type ParserSymbolCtx } from '../rule-patterns.ts';
+import { stableGrammars } from '../../grammars.ts';
+import { predictedSymbolSource } from '../rule-patterns.ts';
+
+type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
 
 const ROOT = fileURLToPath(new URL('../../../../../', import.meta.url));
 
@@ -68,19 +71,20 @@ function parserClasses(grammar: string): (name: string) => ParserSymbolClass {
 	};
 }
 
-describe('parserSymbolClassOf agrees with the generated parser at every alias site', () => {
-	for (const grammar of ['rust', 'typescript', 'python']) {
+describe('the predicted symbol source agrees with the generated parser at every alias site', () => {
+	for (const grammar of stableGrammars()) {
 		it(grammar, () => {
 			const json = JSON.parse(readFileSync(`${ROOT}packages/${grammar}/.sittir/src/grammar.json`, 'utf8')) as GrammarJson;
-			const ctx: ParserSymbolCtx = {
-				rules: json.rules,
-				externals: new Set((json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : []))),
-				inline: new Set(json.inline ?? []),
-				tokenUses: tokenUseCounts(json.rules)
-			};
+			const symbols = predictedSymbolSource(
+				json.rules,
+				(json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : [])),
+				json.inline ?? []
+			);
+			const predictedClassOf = (name: string): ParserSymbolClass =>
+				symbols.isInlined(name) ? 'inlined' : symbols.isTerminal(name) ? 'terminal' : 'nonterminal';
 			const parserClassOf = parserClasses(grammar);
 			const disagreements = [...aliasStorages(json, reachableRules(json))].sort().flatMap((name) => {
-				const predicted = parserSymbolClassOf(name, ctx);
+				const predicted = predictedClassOf(name);
 				const actual = parserClassOf(name);
 				return predicted === actual ? [] : [`${name}: predicted ${predicted}, parser ${actual}`];
 			});

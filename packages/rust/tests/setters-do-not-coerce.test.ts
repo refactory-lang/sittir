@@ -27,9 +27,8 @@ describe('setters do not coerce', () => {
 
 	it('rejects a bare string that the CONSTRUCTOR accepts', () => {
 		const built = ir.label(ir.identifier('outer'));
-		// @ts-expect-error the setter stores what it is given; `ir.identifier`
-		// is how a string becomes an Identifier.
-		built.$with.name('inner');
+		// @ts-expect-error `ir.identifier` is how a string becomes an Identifier.
+		expect(() => built.$with.name('inner')).toThrow(/a strict factory takes a built node, not a string/);
 		expect(built.$with.name(ir.identifier('inner')).$render()).toContain('inner');
 	});
 

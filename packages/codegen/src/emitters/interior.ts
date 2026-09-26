@@ -215,7 +215,7 @@ function interiorGuard(interior: NodeInterior): RegExp {
 }
 
 function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
-	if (!node.rawFactoryName || kind.startsWith('_')) return undefined;
+	if (!node.rawFactoryName || node.surfaceHidden) return undefined;
 	const interior = interiorOf(node);
 	if (interior !== undefined) return interiorGuard(interior);
 	return node instanceof AssembledPattern ? anchoredLeafRegex(kind, node.textPattern) : undefined;

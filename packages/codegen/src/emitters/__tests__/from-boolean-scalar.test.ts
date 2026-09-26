@@ -25,6 +25,7 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 	const entries: KindEnumEntry[] = [
 		{
 			id: 1,
+			lexicalRank: 1,
 			kind: 'true_keyword',
 			member: 'TrueKeyword',
 			symbolName: 'boolean_literal',
@@ -33,14 +34,15 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 		},
 		{
 			id: 2,
+			lexicalRank: 2,
 			kind: 'false_keyword',
 			member: 'FalseKeyword',
 			symbolName: 'boolean_literal',
 			literalText: 'false',
 			anon: true
 		},
-		{ id: 3, kind: 'boolean_literal', member: 'BooleanLiteral' },
-		{ id: 4, kind: 'let_declaration', member: 'LetDeclaration' }
+		{ id: 3, lexicalRank: 3, kind: 'boolean_literal', member: 'BooleanLiteral' },
+		{ id: 4, lexicalRank: 4, kind: 'let_declaration', member: 'LetDeclaration' }
 	];
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
@@ -82,9 +84,9 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 
 describe('a boolean resolves to the keyword kinds of the two texts, whatever their case', () => {
 	const entries: KindEnumEntry[] = [
-		{ id: 1, kind: 'true', member: 'True', symbolName: 'true', literalText: 'True', anon: true },
-		{ id: 2, kind: 'false', member: 'False', symbolName: 'false', literalText: 'False', anon: true },
-		{ id: 3, kind: 'let_declaration', member: 'LetDeclaration' }
+		{ id: 1, lexicalRank: 1, kind: 'true', member: 'True', symbolName: 'true', literalText: 'True', anon: true },
+		{ id: 2, lexicalRank: 2, kind: 'false', member: 'False', symbolName: 'false', literalText: 'False', anon: true },
+		{ id: 3, lexicalRank: 3, kind: 'let_declaration', member: 'LetDeclaration' }
 	];
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('true', new AssembledKeyword('true', { type: STRING, value: 'True' }, { kindEntries: entries }));

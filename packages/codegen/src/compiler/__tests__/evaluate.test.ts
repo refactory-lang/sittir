@@ -403,7 +403,7 @@ describe('Evaluate — edge cases', () => {
 	});
 
 	describe('createProxy — hidden-symbol and optional-ref stamping (private helper, exercised through evaluate())', () => {
-		it('marks underscore-prefixed symbol references inline via the proxy (hidden stays a rule-level fact)', async () => {
+		it('marks underscore-prefixed symbol references inline via the proxy (hidden is a rule-level fact link stamps)', async () => {
 			const raw = await evaluate(fixture('test-grammar.js'));
 			const expressionStatement = raw.rules['expression_statement'] as {
 				members: readonly { type: string; name?: string; hidden?: boolean; inline?: boolean }[];
@@ -411,7 +411,7 @@ describe('Evaluate — edge cases', () => {
 			const hiddenRef = expressionStatement.members.find((m) => m.type === 'SYMBOL' && m.name === '_expression');
 			expect(hiddenRef).toEqual(expect.objectContaining({ inline: true }));
 			expect(hiddenRef?.hidden).toBeUndefined();
-			expect(raw.rules['_expression']?.hidden).toBe(true);
+			expect(link(raw).rules['_expression']?.hidden).toBe(true);
 		});
 
 		it('enriches references with optional=true when the ref is wrapped in optional()', async () => {

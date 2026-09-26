@@ -85,7 +85,7 @@ function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {
 	return rebuilt(rule, { content: dropAt(contentOf(rule), rest) });
 }
 
-const canonical = (rule: RuntimeRule): string =>
+export const canonicalRuleText = (rule: RuntimeRule): string =>
 	JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'metadata' ? undefined : value));
 
 export function distributeTokenForms(rule: RuntimeRule, kind: string): RuntimeRule {
@@ -104,7 +104,7 @@ export function distributeTokenForms(rule: RuntimeRule, kind: string): RuntimeRu
 	if (empty >= 0) throw new Error(`token forms: arm ${empty} of '${kind}' matches the empty string`);
 	const seen = new Map<string, number>();
 	arms.forEach((arm, i) => {
-		const key = canonical(arm);
+		const key = canonicalRuleText(arm);
 		const prior = seen.get(key);
 		if (prior !== undefined) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
 		seen.set(key, i);

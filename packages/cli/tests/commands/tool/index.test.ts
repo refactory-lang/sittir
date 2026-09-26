@@ -7,6 +7,7 @@ const EXPECTED = [
 	'bench',
 	'bench-codemod',
 	'bindings-inventory',
+	'bootstrap-grammar',
 	'check-baseline',
 	'check-perf',
 	'classify',
@@ -16,6 +17,7 @@ const EXPECTED = [
 	'dump-ast-mismatches',
 	'emit-factory-source',
 	'exercise',
+	'fetch-corpus',
 	'field-provenance',
 	'grammar-diagnostics',
 	'hoisted-census',
@@ -32,12 +34,13 @@ const EXPECTED = [
 	'propose-14',
 	'separated-lists',
 	'test-history',
+	'text-kind-overlap',
 	'variant-derivation-probe',
 	'walk'
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 31 converted tools', () => {
+	it('registers exactly the 34 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

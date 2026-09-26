@@ -9,13 +9,13 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				name: ir.identifier("T"),
 			})),
 			parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-				pattern: ir.identifier("a"),
+				pattern: ir.lhsExpression.strict(ir.identifier("a")),
 				type: ir.typeAnnotation.strict(ir.genericType.strict({
 					name: ir.identifier("Array"),
 					typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, ir.identifier("T")),
 				})),
 			}), ir.requiredParameter.strict({
-				pattern: ir.identifier("b"),
+				pattern: ir.lhsExpression.strict(ir.identifier("b")),
 				type: ir.typeAnnotation.strict(ir.tupleType.strict({ delimiter: Delimiter.None }, TSKindId.NumberKeyword, TSKindId.StringKeyword)),
 			})),
 			returnType: ir.typeAnnotation.strict(ir.arrayType.strict(ir.parenthesizedType.strict(ir.unionType.strict({
@@ -59,7 +59,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					}),
 					body: ir.statementBlock.strict({
 						statements: [ir.expressionStatement.strict(ir.assignmentExpression.strict({
-							left: ir.identifier("x"),
+							left: ir.lhsExpression.strict(ir.identifier("x")),
 							right: ir.parenthesizedExpression.typed.strict({
 								expression: ir.binaryExpression.strict({
 									left: ir.identifier("x"),
@@ -98,12 +98,6 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						automaticSemicolon: true,
 					}),
 				}), ir.forInStatement.strict({
-					body: ir.statementBlock.strict({
-						statements: [ir.continueStatement.strict(undefined, {
-							terminator: TSKindId.Semi,
-						})],
-						automaticSemicolon: true,
-					}),
 					forHeader: ir.forHeader.letConstKind.strict({
 						kind: TSKindId.ConstKeyword,
 						left: ir.identifier("i"),
@@ -111,6 +105,12 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						right: ir.parenthesizedExpression.typed.strict({
 							expression: ir.identifier("a"),
 						}),
+					}),
+					body: ir.statementBlock.strict({
+						statements: [ir.continueStatement.strict(undefined, {
+							terminator: TSKindId.Semi,
+						})],
+						automaticSemicolon: true,
 					}),
 				}), ir.switchStatement.strict({
 					value: ir.parenthesizedExpression.typed.strict({
@@ -188,13 +188,13 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						name: ir.identifier("g"),
 						value: ir.arrowFunction.strict({
 							asyncMarker: true,
-							body: ir.parenthesizedExpression.typed.strict({
-								expression: ir.identifier("z"),
-							}),
 							content: ir.callSignature.strict({
 								parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-									pattern: ir.identifier("z"),
+									pattern: ir.lhsExpression.strict(ir.identifier("z")),
 								})),
+							}),
+							body: ir.parenthesizedExpression.typed.strict({
+								expression: ir.identifier("z"),
 							}),
 						}),
 					})],
@@ -251,9 +251,9 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("tpl"),
-						value: ir.templateString.strict("a", ir.templateSubstitution.strict(ir.parenthesizedExpression.typed.strict({
+						value: ir.templateString.strict(ir.templateChars("a"), ir.templateSubstitution.strict(ir.parenthesizedExpression.typed.strict({
 							expression: ir.identifier("x"),
-						})), "b"),
+						})), ir.templateChars("b")),
 					})],
 				}, {
 					terminator: TSKindId.Semi,

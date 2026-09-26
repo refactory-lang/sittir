@@ -6,6 +6,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitTests } from '../test.ts';
 
 // ---------------------------------------------------------------------------
@@ -14,10 +15,16 @@ import { emitTests } from '../test.ts';
 // positional parent) — so its sub-factories are `doc` and `plain`.
 // ---------------------------------------------------------------------------
 
+function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
+	const stamped = { ...rules } as Record<string, Rule>;
+	stampAutomaticVariants(stamped, new Set(), new Set());
+	return stamped as Record<string, Rule<'evaluate'>>;
+}
+
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
-		rules,
+		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],

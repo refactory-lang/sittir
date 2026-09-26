@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, splice, regex, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, flatten, regex, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -193,6 +193,9 @@ export default grammar(
 			},
 
 			patches: {
+				bracketed_type: { 1: field('type') },
+				else_clause: { 1: field('body') },
+				generic_pattern: { 0: field('name') },
 				integer_literal: {
 					0: variant('decimal', { default: true }),
 					1: variant('hex'),
@@ -255,7 +258,7 @@ export default grammar(
 				},
 				last_match_arm: {
 					'0': field('attributes'),
-					'1': splice(),
+					'1': flatten(),
 					'4/0': field('comma')
 				},
 
@@ -323,11 +326,9 @@ export default grammar(
 
 				visibility_modifier: [
 					{ '1/1/0/1/3/0': field('in') },
-					{
-						'1/1/0/1/3': variant('in_path'),
-						'0': variant('crate'),
-						'1': variant('pub')
-					}
+					{ '1/1/0/1/3': variant('in_path') },
+					{ '1/1/0': variant('scope') },
+					{ '0': variant('crate'), '1': variant('pub') }
 				],
 
 				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
@@ -370,13 +371,11 @@ export default grammar(
 				},
 
 				// string_literal's opening token carries the b"/c" byte-/C-string
-				// prefix (`alias(/[bc]?"/, $.string_open)` in `rules:` below) — a
-				// NAMED alias, so its real per-occurrence text (`c"`/`b"`/`"`)
-				// survives instead of collapsing to the base grammar's anonymous
-				// `alias(/[bc]?"/, '"')` display string.
-				string_literal: {
-					0: field('string_open')
-				},
+				// prefix. The base grammar's `alias(/[bc]?"/, '"')` is unnamed, so
+				// the prefix would collapse to the display string '"'; alias() names
+				// it `string_open`, so its real per-occurrence text (`c"`/`b"`/`"`)
+				// survives as a captured slot.
+				string_literal: [{ 0: alias('string_open') }, { 0: field('string_open') }],
 
 				// raw_string_literal's delimiters are HIDDEN external-scanner
 				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
@@ -467,25 +466,25 @@ export default grammar(
 					'2/1': variant('body')
 				},
 
-				match_arm: [{ 0: field('attributes'), 1: splice() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
+				match_arm: [{ 0: field('attributes'), 1: flatten() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
 				// `///` and `//!` reach this choice as separate arms: their
 				// outer/inner marker fields are alternatives, which enrich
 				// distributes over the doc sequence rather than fusing onto one
 				// kind as two independent optional markers.
 				line_comment: {
-					'1/0': variant('regular_dslash'),
+					'1/0': variant('extra_slashes'),
 					'1/1': variant('doc_outer'),
 					'1/2': variant('doc_inner'),
-					'1/3': variant('content')
+					'1/3': variant('regular', { default: true })
 				},
 
-				// `/**` and `/*!`, the block spelling of the same split. Only
-				// the two distributed arms are named; the third is already a
-				// reference to a named content rule.
+				// `/**` and `/*!`, the block spelling of the same split; the
+				// plain `/* … */` arm is the default.
 				block_comment: {
 					'1/0/0': variant('doc_outer'),
-					'1/0/1': variant('doc_inner')
+					'1/0/1': variant('doc_inner'),
+					'1/0/2': variant('regular', { default: true })
 				},
 
 				// The token-tree repeats' element fields (`field('delim_tokens',
@@ -516,7 +515,7 @@ export default grammar(
 				// $._pattern)` in tuple_struct_pattern, tuple_pattern, slice_pattern,
 				// closure parameters) tree-sitter surfaces `_` as an anonymous child
 				// that the read's named-only capture drops. Aliasing it to the named
-				// `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
+				// `wildcard_pattern` kind (alias() mints the `_wildcard_pattern` leaf)
 				// gives it a real node, so every `_pattern` list position round-trips
 				// without render-side heuristics.
 				_pattern: { '-1': alias('wildcard_pattern') },
@@ -654,20 +653,7 @@ export default grammar(
 
 				where_predicates: ($, previous) => prec.right(0, previous),
 
-				_wildcard_pattern: ($) => '_',
-
 				_range_expression_bare: ($) => '..',
-
-				// string_literal's opening token is `alias(/[bc]?"/, '"')` in the
-				// base grammar — an UNNAMED alias, so the b"/c" prefix distinction
-				// collapses to the fixed display string '"' before the compiler
-				// ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
-				// above: alias the pattern into its own real, named node so its
-				// per-occurrence text survives.
-				string_literal: ($, original) =>
-					seq(alias($._string_literal_open, $.string_open), ...original.members.slice(1)),
-
-				_string_literal_open: ($) => /[bc]?"/,
 
 				reference_expression: ($) =>
 					prec(
@@ -706,6 +692,8 @@ export default grammar(
 				_inner_line_doc_comment_marker: token.immediate('!'),
 				_outer_block_doc_comment_marker: token.immediate('*'),
 				_inner_block_doc_comment_marker: token.immediate('!'),
+				_raw_string_literal_start: /[bc]?r#*"/,
+				_raw_string_literal_end: token.immediate(/"#*/),
 				_line_doc_content: token.immediate(/.*/),
 				_block_comment_content: token.immediate(/[^]*/)
 			})

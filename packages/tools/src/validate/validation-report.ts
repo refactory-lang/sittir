@@ -92,9 +92,10 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
  * Round-trip-fidelity source-class taxonomy: S1 alias-storage identity, S2
  * marker population/representation, S3 separator possession, S4 slot
  * arity, S5 template projection, S6 factory extras, S7 zero-width-token
- * divergence, S8 validator/report artifacts.
+ * divergence, S8 validator/report artifacts. `trivia` holds the losses of
+ * extras the native read drops (kept out of the validator totals).
  */
-export type SClass = 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | 'S8';
+export type SClass = 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | 'S8' | 'trivia';
 
 /** Codes that determine their S-class unambiguously, independent of message text. */
 const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
@@ -133,6 +134,7 @@ function classifyByMessage(message: string): SClass | undefined {
 export function classifySClass(entry: { readonly code: string; readonly message: string }): SClass | undefined {
 	const direct = DIRECT_CODE_TO_S_CLASS[entry.code];
 	if (direct) return direct;
+	if (entry.code.endsWith('-trivia')) return 'trivia';
 	if (entry.code.endsWith('-error') || entry.code.endsWith('-ast-mismatch')) return classifyByMessage(entry.message);
 	return undefined;
 }
@@ -181,7 +183,7 @@ export function writeValidationReport(entries: readonly ValidationReportEntry[],
  */
 export type SClassCeilings = Readonly<Record<string, Readonly<Partial<Record<SClass, number>>>>>;
 
-const S_CLASSES: readonly SClass[] = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
+const S_CLASSES: readonly SClass[] = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'trivia'];
 
 /** Count classified report entries per grammar per S-class. Unclassified entries are outside the taxonomy and not counted. */
 export function countSClassEntries(

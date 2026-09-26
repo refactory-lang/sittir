@@ -18,7 +18,6 @@ import type {
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
-	HiddenLeaf,
 	OmitEach
 } from '@sittir/types';
 import type * as T from './types.js';
@@ -92,8 +91,11 @@ export type LeafStringMap = {
 	['_unary_expression_operator']: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
 	['__number_operator']: '-' | '+';
 	['_operator']: '++' | '--';
+	[TSKindId.EmptyMember]: ';';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
+	[TSKindId.AutomaticSemicolon]: '\n';
+	[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.TypeofKeyword]: 'typeof';
@@ -422,7 +424,7 @@ export enum TSKindId {
 	AwaitExpression = 250,
 	MemberExpression = 251,
 	SubscriptExpression = 252,
-	_LhsExpression = 253,
+	LhsExpression = 253,
 	AssignmentExpression = 254,
 	AugmentedAssignmentLhs = 255,
 	AugmentedAssignmentExpression = 256,
@@ -566,73 +568,74 @@ export enum TSKindId {
 	ExportStatementNamespaceExport = 394,
 	ExportStatementTypeExport = 395,
 	ExportStatementEqualsExport = 396,
-	BinaryExpressionIn = 397,
-	ClassBodyMethod = 398,
-	ClassBodyMethodSig = 399,
-	ClassBodyMember = 400,
-	IndexSignatureColon = 401,
-	IndexSignatureMappedTypeClause = 402,
-	ImportStatementClauseFrom = 403,
-	ImportSpecifierName = 404,
-	ImportSpecifierAs = 405,
-	ParenthesizedExpressionTyped = 406,
-	ParenthesizedExpressionSequence = 407,
-	CallExpressionCall = 408,
-	CallExpressionTemplateCall = 409,
-	CallExpressionMember = 410,
-	StringDouble = 411,
-	StringSingle = 412,
-	UpdateExpressionPostfix = 413,
-	UpdateExpressionPrefix = 414,
-	ArrowFunctionParameter = 415,
-	ClassHeritageExtendsClause = 416,
-	ImportClauseDefaultImport = 417,
-	ExportStatementDefaultFrom = 418,
-	ExportStatementDefaultDeclaration = 419,
-	ExportStatementDefaultFromStarFrom = 420,
-	ExportStatementDefaultFromNsFrom = 421,
-	ExportStatementDefaultFromClauseFrom = 422,
-	ExportStatementDefaultDeclarationDefaultKw = 423,
-	ExportStatementDefaultDeclarationDefaultKwValue = 424,
-	VariableDeclaratorPlain = 425,
-	VariableDeclaratorDefinite = 426,
-	MetaPropertyNewTarget = 427,
-	MetaPropertyImportMeta = 428,
-	ForHeaderLhs = 429,
-	ForHeaderVarKind = 430,
-	ForHeaderLetConstKind = 431,
-	ProgramRepeat1 = 432,
-	VariableDeclarationRepeat1 = 433,
-	SwitchBodyRepeat1 = 434,
-	ObjectRepeat1 = 435,
-	ObjectPatternRepeat1 = 436,
-	ArrayRepeat1 = 437,
-	ArrayPatternRepeat1 = 438,
-	ClassRepeat1 = 439,
-	SequenceExpressionRepeat1 = 440,
-	TemplateStringRepeat1 = 441,
-	ClassBodyRepeat1 = 442,
-	ExtendsClauseRepeat1 = 443,
-	ImplementsClauseRepeat1 = 444,
-	ExtendsTypeClauseRepeat1 = 445,
-	TemplateLiteralTypeRepeat1 = 446,
-	ExportSpecifiersRepeat1 = 447,
-	ImportSpecifiersRepeat1 = 448,
-	FormalParametersElementsRepeat1 = 449,
-	EnumBodyElementsRepeat1 = 450,
-	TypeParametersElementsRepeat1 = 451,
-	TupleTypeMembersRepeat1 = 452,
-	ObjectTypeContentRepeat1 = 453,
-	StringDoubleRepeat1 = 454,
-	StringSingleRepeat1 = 455,
-	_InterfaceBody = 456,
-	_PropertyIdentifier = 458,
-	_Semicolon = 459,
-	_ShorthandPropertyIdentifier = 460,
-	_ShorthandPropertyIdentifierPattern = 461,
-	_StatementIdentifier = 462,
-	_ThisType = 463,
-	_TypeIdentifier = 464
+	LiteralTypeNegativeNumber = 397,
+	BinaryExpressionIn = 398,
+	EmptyMember = 399,
+	ClassBodyMethod = 400,
+	ClassBodyMethodSig = 401,
+	ClassBodyMember = 402,
+	IndexSignatureColon = 403,
+	IndexSignatureMappedTypeClause = 404,
+	ImportStatementClauseFrom = 405,
+	ImportSpecifierName = 406,
+	ImportSpecifierAs = 407,
+	ParenthesizedExpressionTyped = 408,
+	ParenthesizedExpressionSequence = 409,
+	CallExpressionCall = 410,
+	CallExpressionTemplateCall = 411,
+	CallExpressionMember = 412,
+	StringDouble = 413,
+	StringSingle = 414,
+	UpdateExpressionPostfix = 415,
+	UpdateExpressionPrefix = 416,
+	ArrowFunctionParameter = 417,
+	ClassHeritageExtendsClause = 418,
+	ImportClauseDefaultImport = 419,
+	ExportStatementDefaultFrom = 420,
+	ExportStatementDefaultDeclaration = 421,
+	ExportStatementDefaultFromStarFrom = 422,
+	ExportStatementDefaultFromNsFrom = 423,
+	ExportStatementDefaultFromClauseFrom = 424,
+	ExportStatementDefaultDeclarationDefaultKw = 425,
+	ExportStatementDefaultDeclarationDefaultKwValue = 426,
+	VariableDeclaratorPlain = 427,
+	VariableDeclaratorDefinite = 428,
+	MetaPropertyNewTarget = 429,
+	MetaPropertyImportMeta = 430,
+	ForHeaderLhs = 431,
+	ForHeaderVarKind = 432,
+	ForHeaderLetConstKind = 433,
+	ProgramRepeat1 = 434,
+	VariableDeclarationRepeat1 = 435,
+	SwitchBodyRepeat1 = 436,
+	ObjectRepeat1 = 437,
+	ObjectPatternRepeat1 = 438,
+	ArrayRepeat1 = 439,
+	ArrayPatternRepeat1 = 440,
+	ClassRepeat1 = 441,
+	SequenceExpressionRepeat1 = 442,
+	TemplateStringRepeat1 = 443,
+	ClassBodyRepeat1 = 444,
+	ExtendsClauseRepeat1 = 445,
+	ImplementsClauseRepeat1 = 446,
+	ExtendsTypeClauseRepeat1 = 447,
+	TemplateLiteralTypeRepeat1 = 448,
+	ExportSpecifiersRepeat1 = 449,
+	ImportSpecifiersRepeat1 = 450,
+	FormalParametersElementsRepeat1 = 451,
+	EnumBodyElementsRepeat1 = 452,
+	TypeParametersElementsRepeat1 = 453,
+	TupleTypeMembersRepeat1 = 454,
+	ObjectTypeContentRepeat1 = 455,
+	StringDoubleRepeat1 = 456,
+	StringSingleRepeat1 = 457,
+	InterfaceBody = 458,
+	PropertyIdentifier = 460,
+	ShorthandPropertyIdentifier = 461,
+	ShorthandPropertyIdentifierPattern = 462,
+	StatementIdentifier = 463,
+	ThisType = 464,
+	TypeIdentifier = 465
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -889,7 +892,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[251, 'member_expression'],
 	[252, 'subscript_expression'],
 	[253, '_lhs_expression'],
-	[457, '_lhs_expression'],
+	[459, '_lhs_expression'],
 	[254, 'assignment_expression'],
 	[255, '_augmented_assignment_lhs'],
 	[256, 'augmented_assignment_expression'],
@@ -934,7 +937,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[295, 'instantiation_expression'],
 	[296, 'import_require_clause'],
 	[297, 'extends_clause'],
-	[298, '_extends_clause_single'],
+	[298, 'extends_clause_single'],
 	[299, 'implements_clause'],
 	[300, 'ambient_declaration'],
 	[301, 'abstract_class_declaration'],
@@ -958,8 +961,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[319, 'adding_type_annotation'],
 	[320, 'opting_type_annotation'],
 	[321, 'type_annotation'],
-	[322, '_type_query_member_expression_in_type_annotation'],
-	[323, '_type_query_call_expression_in_type_annotation'],
+	[322, 'type_query_member_expression_in_type_annotation'],
+	[323, 'type_query_call_expression_in_type_annotation'],
 	[324, 'asserts'],
 	[325, 'asserts_annotation'],
 	[326, 'type'],
@@ -977,10 +980,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[338, 'generic_type'],
 	[339, 'type_predicate'],
 	[340, 'type_predicate_annotation'],
-	[341, '_type_query_member_expression'],
-	[342, '_type_query_subscript_expression'],
-	[343, '_type_query_call_expression'],
-	[344, '_type_query_instantiation_expression'],
+	[341, 'type_query_member_expression'],
+	[342, 'type_query_subscript_expression'],
+	[343, 'type_query_call_expression'],
+	[344, 'type_query_instantiation_expression'],
 	[345, 'type_query'],
 	[346, 'index_type_query'],
 	[347, 'lookup_type'],
@@ -1033,73 +1036,74 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[394, 'export_statement_namespace_export'],
 	[395, 'export_statement_type_export'],
 	[396, 'export_statement_equals_export'],
-	[397, 'binary_expression_in'],
-	[398, 'class_body_method'],
-	[399, 'class_body_method_sig'],
-	[400, 'class_body_member'],
-	[401, 'index_signature_colon'],
-	[402, 'index_signature_mapped_type_clause'],
-	[403, 'import_statement_clause_from'],
-	[404, 'import_specifier_name'],
-	[405, 'import_specifier_as'],
-	[406, 'parenthesized_expression_typed'],
-	[407, 'parenthesized_expression_sequence'],
-	[408, 'call_expression_call'],
-	[409, 'call_expression_template_call'],
-	[410, 'call_expression_member'],
-	[411, 'string_double'],
-	[412, 'string_single'],
-	[413, 'update_expression_postfix'],
-	[414, 'update_expression_prefix'],
-	[415, 'arrow_function_parameter'],
-	[416, 'class_heritage_extends_clause'],
-	[417, 'import_clause_default_import'],
-	[418, 'export_statement_default_from'],
-	[419, 'export_statement_default_declaration'],
-	[420, 'export_statement_default_from_star_from'],
-	[421, 'export_statement_default_from_ns_from'],
-	[422, 'export_statement_default_from_clause_from'],
-	[423, 'export_statement_default_declaration_default_kw'],
-	[424, 'export_statement_default_declaration_default_kw_value'],
-	[425, 'variable_declarator_plain'],
-	[426, 'variable_declarator_definite'],
-	[427, 'meta_property_new_target'],
-	[428, 'meta_property_import_meta'],
-	[429, 'for_header_lhs'],
-	[430, 'for_header_var_kind'],
-	[431, 'for_header_let_const_kind'],
-	[432, 'program_repeat1'],
-	[433, 'variable_declaration_repeat1'],
-	[434, 'switch_body_repeat1'],
-	[435, 'object_repeat1'],
-	[436, 'object_pattern_repeat1'],
-	[437, 'array_repeat1'],
-	[438, 'array_pattern_repeat1'],
-	[439, 'class_repeat1'],
-	[440, 'sequence_expression_repeat1'],
-	[441, 'template_string_repeat1'],
-	[442, 'class_body_repeat1'],
-	[443, 'extends_clause_repeat1'],
-	[444, 'implements_clause_repeat1'],
-	[445, 'extends_type_clause_repeat1'],
-	[446, 'template_literal_type_repeat1'],
-	[447, 'export_specifiers_repeat1'],
-	[448, 'import_specifiers_repeat1'],
-	[449, 'formal_parameters_elements_repeat1'],
-	[450, 'enum_body_elements_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'tuple_type_members_repeat1'],
-	[453, 'object_type_content_repeat1'],
-	[454, 'string_double_repeat1'],
-	[455, 'string_single_repeat1'],
-	[456, 'interface_body'],
-	[458, 'property_identifier'],
-	[459, 'semicolon'],
-	[460, 'shorthand_property_identifier'],
-	[461, 'shorthand_property_identifier_pattern'],
-	[462, 'statement_identifier'],
-	[463, 'this_type'],
-	[464, 'type_identifier']
+	[397, 'literal_type_negative_number'],
+	[398, 'binary_expression_in'],
+	[399, 'empty_member'],
+	[400, 'class_body_method'],
+	[401, 'class_body_method_sig'],
+	[402, 'class_body_member'],
+	[403, 'index_signature_colon'],
+	[404, 'index_signature_mapped_type_clause'],
+	[405, 'import_statement_clause_from'],
+	[406, 'import_specifier_name'],
+	[407, 'import_specifier_as'],
+	[408, 'parenthesized_expression_typed'],
+	[409, 'parenthesized_expression_sequence'],
+	[410, 'call_expression_call'],
+	[411, 'call_expression_template_call'],
+	[412, 'call_expression_member'],
+	[413, 'string_double'],
+	[414, 'string_single'],
+	[415, 'update_expression_postfix'],
+	[416, 'update_expression_prefix'],
+	[417, 'arrow_function_parameter'],
+	[418, 'class_heritage_extends_clause'],
+	[419, 'import_clause_default_import'],
+	[420, 'export_statement_default_from'],
+	[421, 'export_statement_default_declaration'],
+	[422, 'export_statement_default_from_star_from'],
+	[423, 'export_statement_default_from_ns_from'],
+	[424, 'export_statement_default_from_clause_from'],
+	[425, 'export_statement_default_declaration_default_kw'],
+	[426, 'export_statement_default_declaration_default_kw_value'],
+	[427, 'variable_declarator_plain'],
+	[428, 'variable_declarator_definite'],
+	[429, 'meta_property_new_target'],
+	[430, 'meta_property_import_meta'],
+	[431, 'for_header_lhs'],
+	[432, 'for_header_var_kind'],
+	[433, 'for_header_let_const_kind'],
+	[434, 'program_repeat1'],
+	[435, 'variable_declaration_repeat1'],
+	[436, 'switch_body_repeat1'],
+	[437, 'object_repeat1'],
+	[438, 'object_pattern_repeat1'],
+	[439, 'array_repeat1'],
+	[440, 'array_pattern_repeat1'],
+	[441, 'class_repeat1'],
+	[442, 'sequence_expression_repeat1'],
+	[443, 'template_string_repeat1'],
+	[444, 'class_body_repeat1'],
+	[445, 'extends_clause_repeat1'],
+	[446, 'implements_clause_repeat1'],
+	[447, 'extends_type_clause_repeat1'],
+	[448, 'template_literal_type_repeat1'],
+	[449, 'export_specifiers_repeat1'],
+	[450, 'import_specifiers_repeat1'],
+	[451, 'formal_parameters_elements_repeat1'],
+	[452, 'enum_body_elements_repeat1'],
+	[453, 'type_parameters_elements_repeat1'],
+	[454, 'tuple_type_members_repeat1'],
+	[455, 'object_type_content_repeat1'],
+	[456, 'string_double_repeat1'],
+	[457, 'string_single_repeat1'],
+	[458, 'interface_body'],
+	[460, 'property_identifier'],
+	[461, 'shorthand_property_identifier'],
+	[462, 'shorthand_property_identifier_pattern'],
+	[463, 'statement_identifier'],
+	[464, 'this_type'],
+	[465, 'type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1356,8 +1360,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[250, 'await_expression'],
 	[251, 'member_expression'],
 	[252, 'subscript_expression'],
-	[253, 'lhs_expression'],
-	[457, 'lhs_expression'],
+	[253, '_lhs_expression'],
+	[459, 'lhs_expression'],
 	[254, 'assignment_expression'],
 	[255, '_augmented_assignment_lhs'],
 	[256, 'augmented_assignment_expression'],
@@ -1454,7 +1458,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[347, 'lookup_type'],
 	[348, 'mapped_type_clause'],
 	[349, 'literal_type'],
-	[350, 'unary_expression_number'],
+	[350, '_number'],
 	[351, 'existential_type'],
 	[352, 'flow_maybe_type'],
 	[353, 'parenthesized_type'],
@@ -1501,73 +1505,74 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[394, 'export_statement_namespace_export'],
 	[395, 'export_statement_type_export'],
 	[396, 'export_statement_equals_export'],
-	[397, 'binary_expression_in'],
-	[398, 'class_body_method'],
-	[399, 'class_body_method_sig'],
-	[400, 'class_body_member'],
-	[401, 'index_signature_colon'],
-	[402, 'index_signature_mapped_type_clause'],
-	[403, 'import_statement_clause_from'],
-	[404, 'import_specifier_name'],
-	[405, 'import_specifier_as'],
-	[406, 'parenthesized_expression_typed'],
-	[407, 'parenthesized_expression_sequence'],
-	[408, 'call_expression_call'],
-	[409, 'call_expression_template_call'],
-	[410, 'call_expression_member'],
-	[411, 'string_double'],
-	[412, 'string_single'],
-	[413, 'update_expression_postfix'],
-	[414, 'update_expression_prefix'],
-	[415, 'arrow_function_parameter'],
-	[416, 'class_heritage_extends_clause'],
-	[417, 'import_clause_default_import'],
-	[418, 'export_statement_default_from'],
-	[419, 'export_statement_default_declaration'],
-	[420, 'export_statement_default_from_star_from'],
-	[421, 'export_statement_default_from_ns_from'],
-	[422, 'export_statement_default_from_clause_from'],
-	[423, 'export_statement_default_declaration_default_kw'],
-	[424, 'export_statement_default_declaration_default_kw_value'],
-	[425, 'variable_declarator_plain'],
-	[426, 'variable_declarator_definite'],
-	[427, 'meta_property_new_target'],
-	[428, 'meta_property_import_meta'],
-	[429, 'for_header_lhs'],
-	[430, 'for_header_var_kind'],
-	[431, 'for_header_let_const_kind'],
-	[432, 'program_repeat1'],
-	[433, 'variable_declaration_repeat1'],
-	[434, 'switch_body_repeat1'],
-	[435, 'object_repeat1'],
-	[436, 'object_pattern_repeat1'],
-	[437, 'array_repeat1'],
-	[438, 'array_pattern_repeat1'],
-	[439, 'class_repeat1'],
-	[440, 'sequence_expression_repeat1'],
-	[441, 'template_string_repeat1'],
-	[442, 'class_body_repeat1'],
-	[443, 'extends_clause_repeat1'],
-	[444, 'implements_clause_repeat1'],
-	[445, 'extends_type_clause_repeat1'],
-	[446, 'template_literal_type_repeat1'],
-	[447, 'export_specifiers_repeat1'],
-	[448, 'import_specifiers_repeat1'],
-	[449, 'formal_parameters_elements_repeat1'],
-	[450, 'enum_body_elements_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'tuple_type_members_repeat1'],
-	[453, 'object_type_content_repeat1'],
-	[454, 'string_double_repeat1'],
-	[455, 'string_single_repeat1'],
-	[456, 'interface_body'],
-	[458, 'property_identifier'],
-	[459, 'semicolon'],
-	[460, 'shorthand_property_identifier'],
-	[461, 'shorthand_property_identifier_pattern'],
-	[462, 'statement_identifier'],
-	[463, 'this_type'],
-	[464, 'type_identifier']
+	[397, 'literal_type_negative_number'],
+	[398, 'binary_expression_in'],
+	[399, 'empty_member'],
+	[400, 'class_body_method'],
+	[401, 'class_body_method_sig'],
+	[402, 'class_body_member'],
+	[403, 'index_signature_colon'],
+	[404, 'index_signature_mapped_type_clause'],
+	[405, 'import_statement_clause_from'],
+	[406, 'import_specifier_name'],
+	[407, 'import_specifier_as'],
+	[408, 'parenthesized_expression_typed'],
+	[409, 'parenthesized_expression_sequence'],
+	[410, 'call_expression_call'],
+	[411, 'call_expression_template_call'],
+	[412, 'call_expression_member'],
+	[413, 'string_double'],
+	[414, 'string_single'],
+	[415, 'update_expression_postfix'],
+	[416, 'update_expression_prefix'],
+	[417, 'arrow_function_parameter'],
+	[418, 'class_heritage_extends_clause'],
+	[419, 'import_clause_default_import'],
+	[420, 'export_statement_default_from'],
+	[421, 'export_statement_default_declaration'],
+	[422, 'export_statement_default_from_star_from'],
+	[423, 'export_statement_default_from_ns_from'],
+	[424, 'export_statement_default_from_clause_from'],
+	[425, 'export_statement_default_declaration_default_kw'],
+	[426, 'export_statement_default_declaration_default_kw_value'],
+	[427, 'variable_declarator_plain'],
+	[428, 'variable_declarator_definite'],
+	[429, 'meta_property_new_target'],
+	[430, 'meta_property_import_meta'],
+	[431, 'for_header_lhs'],
+	[432, 'for_header_var_kind'],
+	[433, 'for_header_let_const_kind'],
+	[434, 'program_repeat1'],
+	[435, 'variable_declaration_repeat1'],
+	[436, 'switch_body_repeat1'],
+	[437, 'object_repeat1'],
+	[438, 'object_pattern_repeat1'],
+	[439, 'array_repeat1'],
+	[440, 'array_pattern_repeat1'],
+	[441, 'class_repeat1'],
+	[442, 'sequence_expression_repeat1'],
+	[443, 'template_string_repeat1'],
+	[444, 'class_body_repeat1'],
+	[445, 'extends_clause_repeat1'],
+	[446, 'implements_clause_repeat1'],
+	[447, 'extends_type_clause_repeat1'],
+	[448, 'template_literal_type_repeat1'],
+	[449, 'export_specifiers_repeat1'],
+	[450, 'import_specifiers_repeat1'],
+	[451, 'formal_parameters_elements_repeat1'],
+	[452, 'enum_body_elements_repeat1'],
+	[453, 'type_parameters_elements_repeat1'],
+	[454, 'tuple_type_members_repeat1'],
+	[455, 'object_type_content_repeat1'],
+	[456, 'string_double_repeat1'],
+	[457, 'string_single_repeat1'],
+	[458, 'interface_body'],
+	[460, 'property_identifier'],
+	[461, 'shorthand_property_identifier'],
+	[462, 'shorthand_property_identifier_pattern'],
+	[463, 'statement_identifier'],
+	[464, 'this_type'],
+	[465, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2083,7 +2088,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'subscript_expression':
 			return TSKindId.SubscriptExpression;
 		case '_lhs_expression':
-			return TSKindId._LhsExpression;
+			return TSKindId.LhsExpression;
 		case 'assignment_expression':
 			return TSKindId.AssignmentExpression;
 		case '_augmented_assignment_lhs':
@@ -2172,7 +2177,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportRequireClause;
 		case 'extends_clause':
 			return TSKindId.ExtendsClause;
-		case '_extends_clause_single':
+		case 'extends_clause_single':
 			return TSKindId.ExtendsClauseSingle;
 		case 'implements_clause':
 			return TSKindId.ImplementsClause;
@@ -2220,9 +2225,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.OptingTypeAnnotation;
 		case 'type_annotation':
 			return TSKindId.TypeAnnotation;
-		case '_type_query_member_expression_in_type_annotation':
+		case 'type_query_member_expression_in_type_annotation':
 			return TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
-		case '_type_query_call_expression_in_type_annotation':
+		case 'type_query_call_expression_in_type_annotation':
 			return TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 		case 'asserts':
 			return TSKindId.Asserts;
@@ -2258,13 +2263,13 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypePredicate;
 		case 'type_predicate_annotation':
 			return TSKindId.TypePredicateAnnotation;
-		case '_type_query_member_expression':
+		case 'type_query_member_expression':
 			return TSKindId.TypeQueryMemberExpression;
-		case '_type_query_subscript_expression':
+		case 'type_query_subscript_expression':
 			return TSKindId.TypeQuerySubscriptExpression;
-		case '_type_query_call_expression':
+		case 'type_query_call_expression':
 			return TSKindId.TypeQueryCallExpression;
-		case '_type_query_instantiation_expression':
+		case 'type_query_instantiation_expression':
 			return TSKindId.TypeQueryInstantiationExpression;
 		case 'type_query':
 			return TSKindId.TypeQuery;
@@ -2370,8 +2375,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementTypeExport;
 		case 'export_statement_equals_export':
 			return TSKindId.ExportStatementEqualsExport;
+		case 'literal_type_negative_number':
+			return TSKindId.LiteralTypeNegativeNumber;
 		case 'binary_expression_in':
 			return TSKindId.BinaryExpressionIn;
+		case 'empty_member':
+			return TSKindId.EmptyMember;
 		case 'class_body_method':
 			return TSKindId.ClassBodyMethod;
 		case 'class_body_method_sig':
@@ -2489,21 +2498,19 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'string_single_repeat1':
 			return TSKindId.StringSingleRepeat1;
 		case 'interface_body':
-			return TSKindId._InterfaceBody;
+			return TSKindId.InterfaceBody;
 		case 'property_identifier':
-			return TSKindId._PropertyIdentifier;
-		case 'semicolon':
-			return TSKindId._Semicolon;
+			return TSKindId.PropertyIdentifier;
 		case 'shorthand_property_identifier':
-			return TSKindId._ShorthandPropertyIdentifier;
+			return TSKindId.ShorthandPropertyIdentifier;
 		case 'shorthand_property_identifier_pattern':
-			return TSKindId._ShorthandPropertyIdentifierPattern;
+			return TSKindId.ShorthandPropertyIdentifierPattern;
 		case 'statement_identifier':
-			return TSKindId._StatementIdentifier;
+			return TSKindId.StatementIdentifier;
 		case 'this_type':
-			return TSKindId._ThisType;
+			return TSKindId.ThisType;
 		case 'type_identifier':
-			return TSKindId._TypeIdentifier;
+			return TSKindId.TypeIdentifier;
 		case '*':
 			return TSKindId.Star;
 		case 'as':
@@ -2777,23 +2784,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
 		case 'lhs_expression':
-			return TSKindId._LhsExpression;
-		case 'extends_clause_single':
-			return TSKindId.ExtendsClauseSingle;
-		case 'type_query_member_expression_in_type_annotation':
-			return TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
-		case 'type_query_call_expression_in_type_annotation':
-			return TSKindId.TypeQueryCallExpressionInTypeAnnotation;
-		case 'type_query_member_expression':
-			return TSKindId.TypeQueryMemberExpression;
-		case 'type_query_subscript_expression':
-			return TSKindId.TypeQuerySubscriptExpression;
-		case 'type_query_call_expression':
-			return TSKindId.TypeQueryCallExpression;
-		case 'type_query_instantiation_expression':
-			return TSKindId.TypeQueryInstantiationExpression;
-		case 'unary_expression_number':
-			return TSKindId._Number;
+			return TSKindId.LhsExpression;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -2973,38 +2964,6 @@ export enum CallExpressionKind {
 	CallExpressionMember = 'call_expression_member'
 }
 
-export enum _LhsExpressionKind {
-	MemberExpression = 'member_expression',
-	SubscriptExpression = 'subscript_expression',
-	Undefined = 'undefined',
-	Identifier = 'identifier',
-	DeclareKeyword = 'declare_keyword',
-	NamespaceKeyword = 'namespace_keyword',
-	TypeKeyword = 'type_keyword',
-	PublicKeyword = 'public_keyword',
-	PrivateKeyword = 'private_keyword',
-	ProtectedKeyword = 'protected_keyword',
-	OverrideKeyword = 'override_keyword',
-	ReadonlyKeyword = 'readonly_keyword',
-	ModuleKeyword = 'module_keyword',
-	AnyKeyword = 'any_keyword',
-	NumberKeyword = 'number_keyword',
-	BooleanKeyword = 'boolean_keyword',
-	StringKeyword = 'string_keyword',
-	SymbolKeyword = 'symbol_keyword',
-	ExportKeyword = 'export_keyword',
-	ObjectKeyword = 'object_keyword',
-	NewKeyword = 'new_keyword',
-	GetKeyword = 'get_keyword',
-	SetKeyword = 'set_keyword',
-	AsyncKeyword = 'async_keyword',
-	StaticKeyword = 'static_keyword',
-	LetKeyword = 'let_keyword',
-	ObjectPattern = 'object_pattern',
-	ArrayPattern = 'array_pattern',
-	NonNullExpression = 'non_null_expression'
-}
-
 export enum AugmentedAssignmentLhsKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
@@ -3077,36 +3036,7 @@ export enum MetaPropertyKind {
 }
 
 export enum PatternKind {
-	_LhsExpression = '_lhs_expression',
-	MemberExpression = 'member_expression',
-	SubscriptExpression = 'subscript_expression',
-	Undefined = 'undefined',
-	Identifier = 'identifier',
-	DeclareKeyword = 'declare_keyword',
-	NamespaceKeyword = 'namespace_keyword',
-	TypeKeyword = 'type_keyword',
-	PublicKeyword = 'public_keyword',
-	PrivateKeyword = 'private_keyword',
-	ProtectedKeyword = 'protected_keyword',
-	OverrideKeyword = 'override_keyword',
-	ReadonlyKeyword = 'readonly_keyword',
-	ModuleKeyword = 'module_keyword',
-	AnyKeyword = 'any_keyword',
-	NumberKeyword = 'number_keyword',
-	BooleanKeyword = 'boolean_keyword',
-	StringKeyword = 'string_keyword',
-	SymbolKeyword = 'symbol_keyword',
-	ExportKeyword = 'export_keyword',
-	ObjectKeyword = 'object_keyword',
-	NewKeyword = 'new_keyword',
-	GetKeyword = 'get_keyword',
-	SetKeyword = 'set_keyword',
-	AsyncKeyword = 'async_keyword',
-	StaticKeyword = 'static_keyword',
-	LetKeyword = 'let_keyword',
-	ObjectPattern = 'object_pattern',
-	ArrayPattern = 'array_pattern',
-	NonNullExpression = 'non_null_expression',
+	LhsExpression = '_lhs_expression',
 	RestPattern = 'rest_pattern'
 }
 
@@ -3129,8 +3059,8 @@ export enum TypeKind {
 	ReadonlyType = 'readonly_type',
 	ConstructorType = 'constructor_type',
 	InferType = 'infer_type',
-	TypeQueryMemberExpressionInTypeAnnotation = '_type_query_member_expression_in_type_annotation',
-	TypeQueryCallExpressionInTypeAnnotation = '_type_query_call_expression_in_type_annotation'
+	TypeQueryMemberExpressionInTypeAnnotation = 'type_query_member_expression_in_type_annotation',
+	TypeQueryCallExpressionInTypeAnnotation = 'type_query_call_expression_in_type_annotation'
 }
 
 export enum TupleTypeMemberKind {
@@ -3180,38 +3110,6 @@ export enum WhitespaceKind {
 export enum ExportStatementDefaultKind {
 	ExportStatementDefaultFrom = 'export_statement_default_from',
 	ExportStatementDefaultDeclaration = 'export_statement_default_declaration'
-}
-
-export enum LhsExpressionKind {
-	MemberExpression = 'member_expression',
-	SubscriptExpression = 'subscript_expression',
-	Undefined = 'undefined',
-	Identifier = 'identifier',
-	DeclareKeyword = 'declare_keyword',
-	NamespaceKeyword = 'namespace_keyword',
-	TypeKeyword = 'type_keyword',
-	PublicKeyword = 'public_keyword',
-	PrivateKeyword = 'private_keyword',
-	ProtectedKeyword = 'protected_keyword',
-	OverrideKeyword = 'override_keyword',
-	ReadonlyKeyword = 'readonly_keyword',
-	ModuleKeyword = 'module_keyword',
-	AnyKeyword = 'any_keyword',
-	NumberKeyword = 'number_keyword',
-	BooleanKeyword = 'boolean_keyword',
-	StringKeyword = 'string_keyword',
-	SymbolKeyword = 'symbol_keyword',
-	ExportKeyword = 'export_keyword',
-	ObjectKeyword = 'object_keyword',
-	NewKeyword = 'new_keyword',
-	GetKeyword = 'get_keyword',
-	SetKeyword = 'set_keyword',
-	AsyncKeyword = 'async_keyword',
-	StaticKeyword = 'static_keyword',
-	LetKeyword = 'let_keyword',
-	ObjectPattern = 'object_pattern',
-	ArrayPattern = 'array_pattern',
-	NonNullExpression = 'non_null_expression'
 }
 
 // Node types — concrete interfaces
@@ -4103,56 +4001,6 @@ export interface AssignmentPattern {
 	readonly _left: Pattern;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly left:
-			| KindEnum<
-					| 'undefined'
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					| TSKindId.Undefined
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  >
-			| Pattern;
 		readonly right:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -4299,60 +4147,6 @@ export interface Array {
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
 	readonly _elements?: readonly (Pattern | AssignmentPattern | undefined)[];
-	readonly __inputHints__?: {
-		readonly elements?: readonly (
-			| KindEnum<
-					| 'undefined'
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					| TSKindId.Undefined
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  >
-			| Pattern
-			| AssignmentPattern
-		)[];
-	};
 	elements(): readonly (Pattern | AssignmentPattern | undefined)[];
 }
 
@@ -4657,14 +4451,134 @@ export interface SubscriptExpression {
 	index(): Expression | SequenceExpression;
 }
 
+export interface LhsExpression {
+	readonly $type: TSKindId.LhsExpression;
+	readonly _content:
+		| MemberExpression
+		| SubscriptExpression
+		| TSKindId.Undefined
+		| Identifier
+		| TSKindId.DeclareKeyword
+		| TSKindId.NamespaceKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| TSKindId.OverrideKeyword
+		| TSKindId.ReadonlyKeyword
+		| TSKindId.ModuleKeyword
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
+		| ObjectPattern
+		| ArrayPattern
+		| NonNullExpression;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					| 'undefined'
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					| TSKindId.Undefined
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+			  >
+			| MemberExpression
+			| SubscriptExpression
+			| Identifier
+			| ObjectPattern
+			| ArrayPattern
+			| NonNullExpression;
+	};
+	content():
+		| MemberExpression
+		| SubscriptExpression
+		| TSKindId.Undefined
+		| Identifier
+		| TSKindId.DeclareKeyword
+		| TSKindId.NamespaceKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| TSKindId.OverrideKeyword
+		| TSKindId.ReadonlyKeyword
+		| TSKindId.ModuleKeyword
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
+		| ObjectPattern
+		| ArrayPattern
+		| NonNullExpression;
+}
+
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
 	readonly _using_marker?: boolean;
-	readonly _left: ParenthesizedExpression | _LhsExpression;
+	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
 		readonly using_marker?: BaseBooleanKeyword<'using'>;
-		readonly left: KindEnum<'undefined', TSKindId.Undefined> | ParenthesizedExpression | _LhsExpression;
 		readonly right:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -4676,7 +4590,7 @@ export interface AssignmentExpression {
 		readonly using_marker?: 'using' | 'using';
 	};
 	usingMarker(): boolean | undefined;
-	left(): ParenthesizedExpression | _LhsExpression;
+	left(): ParenthesizedExpression | LhsExpression;
 	right(): Expression;
 }
 
@@ -5042,12 +4956,12 @@ export interface Arguments {
 
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
-	readonly _content:
+	readonly _expression:
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
-	content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
+	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
 export interface DecoratorMemberExpression {
@@ -5106,18 +5020,24 @@ export interface ClassBody {
 		| ClassBodyMethodSig
 		| ClassStaticBlock
 		| ClassBodyMember
-		| TSKindId.Semi
+		| TSKindId.EmptyMember
 	)[];
 	readonly __inputHints__?: {
 		readonly content?: readonly (
-			| KindEnum<';', TSKindId.Semi>
+			| KindEnum<';', TSKindId.EmptyMember | TSKindId.Semi>
 			| ClassBodyMethod
 			| ClassBodyMethodSig
 			| ClassStaticBlock
 			| ClassBodyMember
 		)[];
 	};
-	contents(): readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | TSKindId.Semi)[];
+	contents(): readonly (
+		| ClassBodyMethod
+		| ClassBodyMethodSig
+		| ClassStaticBlock
+		| ClassBodyMember
+		| TSKindId.EmptyMember
+	)[];
 }
 
 export interface FormalParameters {
@@ -5620,57 +5540,6 @@ export interface PairPattern {
 			| String
 			| Number
 			| ComputedPropertyName;
-		readonly value:
-			| KindEnum<
-					| 'undefined'
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let',
-					| TSKindId.Undefined
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  >
-			| Pattern
-			| AssignmentPattern;
 	};
 	key():
 		| PropertyIdentifier
@@ -6213,8 +6082,8 @@ export interface FunctionSignature {
 
 export interface DecoratorParenthesizedExpression {
 	readonly $type: TSKindId.DecoratorParenthesizedExpression;
-	readonly _content: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
-	content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	readonly _expression: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface TypeAssertion {
@@ -6766,58 +6635,7 @@ export interface RequiredParameter {
 		>;
 		readonly override_modifier?: BaseBooleanKeyword<'override'>;
 		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
-		readonly pattern:
-			| KindEnum<
-					| 'undefined'
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let'
-					| 'this',
-					| TSKindId.Undefined
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.This
-			  >
-			| Pattern;
+		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -6854,58 +6672,7 @@ export interface OptionalParameter {
 		>;
 		readonly override_modifier?: BaseBooleanKeyword<'override'>;
 		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
-		readonly pattern:
-			| KindEnum<
-					| 'undefined'
-					| 'declare'
-					| 'namespace'
-					| 'type'
-					| 'public'
-					| 'private'
-					| 'protected'
-					| 'override'
-					| 'readonly'
-					| 'module'
-					| 'any'
-					| 'number'
-					| 'boolean'
-					| 'string'
-					| 'symbol'
-					| 'export'
-					| 'object'
-					| 'new'
-					| 'get'
-					| 'set'
-					| 'async'
-					| 'static'
-					| 'let'
-					| 'this',
-					| TSKindId.Undefined
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.This
-			  >
-			| Pattern;
+		readonly pattern: KindEnum<'this', TSKindId.This> | Pattern;
 		readonly value?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -7097,11 +6864,11 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 
 export interface Asserts {
 	readonly $type: TSKindId.Asserts;
-	readonly _content: TypePredicate | Identifier | TSKindId.This;
+	readonly _value: TypePredicate | Identifier | TSKindId.This;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
+		readonly value: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
 	};
-	content(): TypePredicate | Identifier | TSKindId.This;
+	value(): TypePredicate | Identifier | TSKindId.This;
 }
 
 export interface AssertsAnnotation {
@@ -7251,9 +7018,9 @@ export interface ConstructorType {
 
 export interface TemplateType {
 	readonly $type: TSKindId.TemplateType;
-	readonly _content: PrimaryType | InferType;
+	readonly _type: PrimaryType | InferType;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly type:
 			| KindEnum<
 					| 'any'
 					| 'number'
@@ -7281,7 +7048,7 @@ export interface TemplateType {
 			| PrimaryType
 			| InferType;
 	};
-	content(): PrimaryType | InferType;
+	type(): PrimaryType | InferType;
 }
 
 export interface TemplateLiteralType {
@@ -7692,7 +7459,7 @@ export interface TypeQueryInstantiationExpression {
 
 export interface TypeQuery {
 	readonly $type: TSKindId.TypeQuery;
-	readonly _content:
+	readonly _expression:
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression
@@ -7700,7 +7467,7 @@ export interface TypeQuery {
 		| Identifier
 		| TSKindId.This;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly expression:
 			| KindEnum<'this', TSKindId.This>
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
@@ -7708,7 +7475,7 @@ export interface TypeQuery {
 			| TypeQueryInstantiationExpression
 			| Identifier;
 	};
-	content():
+	expression():
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression
@@ -7882,29 +7649,32 @@ export interface MappedTypeClause {
 
 export interface LiteralType {
 	readonly $type: TSKindId.LiteralType;
-	readonly _content: _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
+	readonly _content:
+		| LiteralTypeNegativeNumber
+		| Number
+		| String
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Undefined;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
 					'true' | 'false' | 'null' | 'undefined',
 					TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
 			  >
-			| _Number
+			| LiteralTypeNegativeNumber
 			| Number
 			| String;
 	};
-	content(): _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
-}
-
-export interface _Number {
-	readonly $type: TSKindId._Number;
-	readonly _operator: number;
-	readonly _argument: Number;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
-	};
-	operator(): number;
-	argument(): Number;
+	content():
+		| LiteralTypeNegativeNumber
+		| Number
+		| String
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Undefined;
 }
 
 export interface FlowMaybeType {
@@ -8724,22 +8494,12 @@ export interface AmbientDeclarationModule {
 
 export interface ObjectTypeContent {
 	readonly $type: TSKindId.ObjectTypeContent;
-	readonly _content?: readonly (
-		| ExportStatement
-		| PropertySignature
-		| CallSignature
-		| ConstructSignature
-		| IndexSignature
-		| MethodSignature
-	)[];
-	contents(): readonly (
-		| ExportStatement
-		| PropertySignature
-		| CallSignature
-		| ConstructSignature
-		| IndexSignature
-		| MethodSignature
-	)[];
+	readonly _members: NonEmptyArray<
+		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
+	>;
+	members(): NonEmptyArray<
+		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
+	>;
 }
 
 export interface ExportStatementNamespaceExport {
@@ -8796,6 +8556,17 @@ export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
 	readonly _content: string;
 	content(): string;
+}
+
+export interface LiteralTypeNegativeNumber {
+	readonly $type: TSKindId.LiteralTypeNegativeNumber;
+	readonly _operator: number;
+	readonly _argument: Number;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
+	};
+	operator(): number;
+	argument(): Number;
 }
 
 export interface NumberHex {
@@ -8915,12 +8686,12 @@ export interface ClassBodyMethodSig {
 
 export interface ClassBodyMember {
 	readonly $type: TSKindId.ClassBodyMember;
-	readonly _content: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+	readonly _member: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
 	};
-	content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+	member(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
 }
 
@@ -9501,11 +9272,10 @@ export interface VariableDeclaratorDefinite {
 
 export interface ForHeaderLhs {
 	readonly $type: TSKindId.ForHeaderLhs;
-	readonly _left: _LhsExpression | ParenthesizedExpression;
+	readonly _left: LhsExpression | ParenthesizedExpression;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
 	readonly __inputHints__?: {
-		readonly left: KindEnum<'undefined', TSKindId.Undefined> | _LhsExpression | ParenthesizedExpression;
 		readonly operator: KindEnum<'in' | 'of', TSKindId.InKeyword | TSKindId.OfKeyword>;
 		readonly right:
 			| KindEnum<
@@ -9515,7 +9285,7 @@ export interface ForHeaderLhs {
 			| Expression
 			| SequenceExpression;
 	};
-	left(): _LhsExpression | ParenthesizedExpression;
+	left(): LhsExpression | ParenthesizedExpression;
 	operator(): number;
 	right(): Expression | SequenceExpression;
 }
@@ -9575,7 +9345,7 @@ export interface ForHeaderLetConstKind {
 }
 
 export interface StatementIdentifier {
-	readonly $type: TSKindId._StatementIdentifier;
+	readonly $type: TSKindId.StatementIdentifier;
 	readonly _content:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -9678,7 +9448,7 @@ export interface StatementIdentifier {
 }
 
 export interface ShorthandPropertyIdentifier {
-	readonly $type: TSKindId._ShorthandPropertyIdentifier;
+	readonly $type: TSKindId.ShorthandPropertyIdentifier;
 	readonly _content:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -9781,7 +9551,7 @@ export interface ShorthandPropertyIdentifier {
 }
 
 export interface ShorthandPropertyIdentifierPattern {
-	readonly $type: TSKindId._ShorthandPropertyIdentifierPattern;
+	readonly $type: TSKindId.ShorthandPropertyIdentifierPattern;
 	readonly _content:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -9884,7 +9654,7 @@ export interface ShorthandPropertyIdentifierPattern {
 }
 
 export interface PropertyIdentifier {
-	readonly $type: TSKindId._PropertyIdentifier;
+	readonly $type: TSKindId.PropertyIdentifier;
 	readonly _content:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -9987,24 +9757,14 @@ export interface PropertyIdentifier {
 }
 
 export interface TypeIdentifier {
-	readonly $type: TSKindId._TypeIdentifier;
+	readonly $type: TSKindId.TypeIdentifier;
 	readonly _content: Identifier;
 	readonly __aliasContent__?: TypeIdentifier.Types;
 	content(): Identifier;
 }
 
-export interface Semicolon {
-	readonly $type: TSKindId._Semicolon;
-	readonly _content: number;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<';', TSKindId.Semi>;
-	};
-	readonly __aliasContent__?: Semicolon.Types;
-	content(): number;
-}
-
 export interface InterfaceBody {
-	readonly $type: TSKindId._InterfaceBody;
+	readonly $type: TSKindId.InterfaceBody;
 	readonly _content: ObjectType;
 	readonly __aliasContent__?: InterfaceBody.Types;
 	content(): ObjectType;
@@ -10076,11 +9836,14 @@ export type UnaryExpressionOperator =
 export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
+export type EmptyMember = TSKindId.EmptyMember;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
-export type TemplateChars = HiddenLeaf<Terminal<TSKindId.TemplateChars, string>>;
+export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
+export type AutomaticSemicolon = TSKindId.AutomaticSemicolon;
+export type FunctionSignatureAutomaticSemicolon = TSKindId.FunctionSignatureAutomaticSemicolon;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type TypeKeyword = TSKindId.TypeKeyword;
@@ -10161,6 +9924,9 @@ export interface NewExpressionTree extends TreeNode<'new_expression'> {}
 export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
+export interface LhsExpressionTree extends AnyTreeNode {
+	readonly type: '_lhs_expression';
+}
 export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
 export interface AugmentedAssignmentExpressionTree extends TreeNode<'augmented_assignment_expression'> {}
 export interface SpreadElementTree extends TreeNode<'spread_element'> {}
@@ -10197,9 +9963,7 @@ export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'
 export interface InstantiationExpressionTree extends TreeNode<'instantiation_expression'> {}
 export interface ImportRequireClauseTree extends TreeNode<'import_require_clause'> {}
 export interface ExtendsClauseTree extends TreeNode<'extends_clause'> {}
-export interface ExtendsClauseSingleTree extends AnyTreeNode {
-	readonly type: '_extends_clause_single';
-}
+export interface ExtendsClauseSingleTree extends TreeNode<'extends_clause_single'> {}
 export interface ImplementsClauseTree extends TreeNode<'implements_clause'> {}
 export interface AmbientDeclarationTree extends TreeNode<'ambient_declaration'> {}
 export interface AbstractClassDeclarationTree extends TreeNode<'abstract_class_declaration'> {}
@@ -10219,12 +9983,8 @@ export interface OmittingTypeAnnotationTree extends TreeNode<'omitting_type_anno
 export interface AddingTypeAnnotationTree extends TreeNode<'adding_type_annotation'> {}
 export interface OptingTypeAnnotationTree extends TreeNode<'opting_type_annotation'> {}
 export interface TypeAnnotationTree extends TreeNode<'type_annotation'> {}
-export interface TypeQueryMemberExpressionInTypeAnnotationTree extends AnyTreeNode {
-	readonly type: '_type_query_member_expression_in_type_annotation';
-}
-export interface TypeQueryCallExpressionInTypeAnnotationTree extends AnyTreeNode {
-	readonly type: '_type_query_call_expression_in_type_annotation';
-}
+export interface TypeQueryMemberExpressionInTypeAnnotationTree extends TreeNode<'type_query_member_expression_in_type_annotation'> {}
+export interface TypeQueryCallExpressionInTypeAnnotationTree extends TreeNode<'type_query_call_expression_in_type_annotation'> {}
 export interface AssertsTree extends TreeNode<'asserts'> {}
 export interface AssertsAnnotationTree extends TreeNode<'asserts_annotation'> {}
 export interface TupleParameterTree extends TreeNode<'tuple_parameter'> {}
@@ -10239,26 +9999,15 @@ export interface ConditionalTypeTree extends TreeNode<'conditional_type'> {}
 export interface GenericTypeTree extends TreeNode<'generic_type'> {}
 export interface TypePredicateTree extends TreeNode<'type_predicate'> {}
 export interface TypePredicateAnnotationTree extends TreeNode<'type_predicate_annotation'> {}
-export interface TypeQueryMemberExpressionTree extends AnyTreeNode {
-	readonly type: '_type_query_member_expression';
-}
-export interface TypeQuerySubscriptExpressionTree extends AnyTreeNode {
-	readonly type: '_type_query_subscript_expression';
-}
-export interface TypeQueryCallExpressionTree extends AnyTreeNode {
-	readonly type: '_type_query_call_expression';
-}
-export interface TypeQueryInstantiationExpressionTree extends AnyTreeNode {
-	readonly type: '_type_query_instantiation_expression';
-}
+export interface TypeQueryMemberExpressionTree extends TreeNode<'type_query_member_expression'> {}
+export interface TypeQuerySubscriptExpressionTree extends TreeNode<'type_query_subscript_expression'> {}
+export interface TypeQueryCallExpressionTree extends TreeNode<'type_query_call_expression'> {}
+export interface TypeQueryInstantiationExpressionTree extends TreeNode<'type_query_instantiation_expression'> {}
 export interface TypeQueryTree extends TreeNode<'type_query'> {}
 export interface IndexTypeQueryTree extends TreeNode<'index_type_query'> {}
 export interface LookupTypeTree extends TreeNode<'lookup_type'> {}
 export interface MappedTypeClauseTree extends TreeNode<'mapped_type_clause'> {}
 export interface LiteralTypeTree extends TreeNode<'literal_type'> {}
-export interface _NumberTree extends AnyTreeNode {
-	readonly type: '_number';
-}
 export interface FlowMaybeTypeTree extends TreeNode<'flow_maybe_type'> {}
 export interface ParenthesizedTypeTree extends TreeNode<'parenthesized_type'> {}
 export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
@@ -10293,6 +10042,7 @@ export interface ExportStatementTypeExportTree extends TreeNode<'export_statemen
 export interface ExportStatementEqualsExportTree extends TreeNode<'export_statement_equals_export'> {}
 export interface CommentLineTree extends TreeNode<'comment_line'> {}
 export interface CommentBlockTree extends TreeNode<'comment_block'> {}
+export interface LiteralTypeNegativeNumberTree extends TreeNode<'literal_type_negative_number'> {}
 export interface NumberHexTree extends TreeNode<'number_hex'> {}
 export interface NumberFloatPointTree extends TreeNode<'number_float_point'> {}
 export interface NumberFloatLeadingPointTree extends TreeNode<'number_float_leading_point'> {}
@@ -10338,7 +10088,6 @@ export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_pro
 export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
 export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
-export interface SemicolonTree extends TreeNode<'semicolon'> {}
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
 export interface ImportTree extends AnyTreeNode {
 	readonly type: 'import';
@@ -10427,6 +10176,9 @@ export interface OperatorTree extends AnyTreeNode {
 	readonly type: '_operator';
 }
 export interface NumberDecimalTree extends TreeNode<'number_decimal'> {}
+export interface EmptyMemberTree extends AnyTreeNode {
+	readonly type: 'empty_member';
+}
 export interface MetaPropertyNewTargetTree extends AnyTreeNode {
 	readonly type: 'meta_property_new_target';
 }
@@ -10439,6 +10191,12 @@ export interface JsxTextTree extends AnyTreeNode {
 }
 export interface TemplateCharsTree extends AnyTreeNode {
 	readonly type: '_template_chars';
+}
+export interface AutomaticSemicolonTree extends AnyTreeNode {
+	readonly type: '_automatic_semicolon';
+}
+export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode {
+	readonly type: '_function_signature_automatic_semicolon';
 }
 export interface TernaryQmarkTree extends AnyTreeNode {
 	readonly type: '_ternary_qmark';
@@ -10909,68 +10667,6 @@ export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | C
 
 export type CallExpressionTree = CallExpressionCallTree | CallExpressionTemplateCallTree | CallExpressionMemberTree;
 
-export type _LhsExpression =
-	| MemberExpression
-	| SubscriptExpression
-	| Undefined
-	| Identifier
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| ObjectPattern
-	| ArrayPattern
-	| NonNullExpression;
-
-export type _LhsExpressionTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| ObjectPatternTree
-	| ArrayPatternTree
-	| NonNullExpressionTree;
-
 export type AugmentedAssignmentLhs =
 	| MemberExpression
 	| SubscriptExpression
@@ -11072,70 +10768,9 @@ export type MetaProperty = MetaPropertyNewTarget | MetaPropertyImportMeta;
 
 export type MetaPropertyTree = MetaPropertyNewTargetTree | MetaPropertyImportMetaTree;
 
-export type Pattern =
-	| _LhsExpression
-	| MemberExpression
-	| SubscriptExpression
-	| Undefined
-	| Identifier
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| ObjectPattern
-	| ArrayPattern
-	| NonNullExpression
-	| RestPattern;
+export type Pattern = LhsExpression | RestPattern;
 
-export type PatternTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| ObjectPatternTree
-	| ArrayPatternTree
-	| NonNullExpressionTree
-	| RestPatternTree;
+export type PatternTree = LhsExpressionTree | RestPatternTree;
 
 export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 
@@ -11218,68 +10853,6 @@ export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatemen
 
 export type ExportStatementDefaultTree = ExportStatementDefaultFromTree | ExportStatementDefaultDeclarationTree;
 
-export type LhsExpression =
-	| MemberExpression
-	| SubscriptExpression
-	| Undefined
-	| Identifier
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| ObjectPattern
-	| ArrayPattern
-	| NonNullExpression;
-
-export type LhsExpressionTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| ObjectPatternTree
-	| ArrayPatternTree
-	| NonNullExpressionTree;
-
 export namespace ExportStatement {
 	export type Kind = 'export_statement';
 	export type Tree = ExportStatementTree;
@@ -11343,11 +10916,6 @@ export namespace FormalParameter {
 export namespace CallExpression {
 	export type Kind = 'call_expression';
 	export type Tree = CallExpressionTree;
-}
-
-export namespace _LhsExpression {
-	export type Kind = '_lhs_expression';
-	export type Tree = _LhsExpressionTree;
 }
 
 export namespace AugmentedAssignmentLhs {
@@ -11434,20 +11002,7 @@ export namespace ExportStatementDefault {
 	export type Tree = ExportStatementDefaultTree;
 }
 
-export namespace LhsExpression {
-	export type Kind = 'lhs_expression';
-	export type Tree = LhsExpressionTree;
-}
-
 // Token type aliases (only tokens referenced in field/child unions)
-export type AutomaticSemicolon = TSKindId.AutomaticSemicolon;
-export interface AutomaticSemicolonTree extends AnyTreeNode {
-	readonly type: '_automatic_semicolon';
-}
-export type FunctionSignatureAutomaticSemicolon = TSKindId.FunctionSignatureAutomaticSemicolon;
-export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode {
-	readonly type: '_function_signature_automatic_semicolon';
-}
 export type Tight = TSKindId.Tight;
 export interface TightTree extends AnyTreeNode {
 	readonly type: '_tight';
@@ -11528,6 +11083,7 @@ export type TypescriptNode =
 	| AwaitExpression
 	| MemberExpression
 	| SubscriptExpression
+	| LhsExpression
 	| AssignmentExpression
 	| AugmentedAssignmentExpression
 	| SpreadElement
@@ -11609,7 +11165,6 @@ export type TypescriptNode =
 	| LookupType
 	| MappedTypeClause
 	| LiteralType
-	| _Number
 	| FlowMaybeType
 	| ParenthesizedType
 	| TypeArguments
@@ -11644,6 +11199,7 @@ export type TypescriptNode =
 	| ExportStatementEqualsExport
 	| CommentLine
 	| CommentBlock
+	| LiteralTypeNegativeNumber
 	| NumberHex
 	| NumberFloatPoint
 	| NumberFloatLeadingPoint
@@ -11689,7 +11245,6 @@ export type TypescriptNode =
 	| ShorthandPropertyIdentifierPattern
 	| PropertyIdentifier
 	| TypeIdentifier
-	| Semicolon
 	| InterfaceBody;
 
 export interface OptionsHintMap {
@@ -11854,6 +11409,7 @@ export interface OptionsHintMap {
 	exportStatementNamespaceExport: ExportStatementNamespaceExport.Hints;
 	exportStatementTypeExport: ExportStatementTypeExport.Hints;
 	exportStatementEqualsExport: ExportStatementEqualsExport.Hints;
+	literalTypeNegativeNumber: LiteralTypeNegativeNumber.Hints;
 	binaryExpressionIn: BinaryExpressionIn.Hints;
 	classBodyMethod: ClassBodyMethod.Hints;
 	classBodyMethodSig: ClassBodyMethodSig.Hints;
@@ -12561,16 +12117,11 @@ export namespace ArrayPattern {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly elements?: {
-				readonly arrayPattern?: { readonly after?: WhitespaceArm };
 				readonly assignmentPattern?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
-				readonly memberExpression?: { readonly after?: WhitespaceArm };
-				readonly nonNullExpression?: { readonly after?: WhitespaceArm };
-				readonly objectPattern?: { readonly after?: WhitespaceArm };
 				readonly restPattern?: { readonly after?: WhitespaceArm };
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
 				readonly start?: WhitespaceArm;
-				readonly subscriptExpression?: { readonly after?: WhitespaceArm };
 			};
 			readonly lbrack?: { readonly after?: WhitespaceArm };
 			readonly rbrack?: { readonly before?: WhitespaceArm };
@@ -13184,6 +12735,7 @@ export namespace ImplementsClause {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -13910,6 +13462,7 @@ export namespace Types {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -13963,6 +13516,7 @@ export namespace TupleTypeMembers {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -14037,7 +13591,7 @@ export namespace ObjectTypeContent {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly members?: {
 				readonly callSignature?: { readonly after?: WhitespaceArm };
 				readonly constructSignature?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
@@ -14100,6 +13654,12 @@ export namespace ExportStatementEqualsExport {
 			readonly semi?: { readonly before?: WhitespaceArm };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 		};
+	}
+}
+
+export namespace LiteralTypeNegativeNumber {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
@@ -15131,6 +14691,17 @@ export interface SubscriptExpressionNs extends NodeNs<
 	never,
 	'subscript_expression'
 > {}
+export interface LhsExpressionNs extends NodeNs<
+	LhsExpression,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LhsExpression.Built,
+	LhsExpression.BuildArgs,
+	LhsExpression.LooseArgs,
+	'content',
+	'_lhs_expression'
+> {}
 export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression,
 	LeafScalarMap,
@@ -15282,7 +14853,7 @@ export interface DecoratorNs extends NodeNs<
 	Decorator.Built,
 	Decorator.BuildArgs,
 	Decorator.LooseArgs,
-	'content',
+	'expression',
 	'decorator'
 > {}
 export interface DecoratorMemberExpressionNs extends NodeNs<
@@ -15458,7 +15029,7 @@ export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	DecoratorParenthesizedExpression.Built,
 	DecoratorParenthesizedExpression.BuildArgs,
 	DecoratorParenthesizedExpression.LooseArgs,
-	'content',
+	'expression',
 	'decorator_parenthesized_expression'
 > {}
 export interface TypeAssertionNs extends NodeNs<
@@ -15536,7 +15107,7 @@ export interface ExtendsClauseSingleNs extends NodeNs<
 	ExtendsClauseSingle.BuildArgs,
 	ExtendsClauseSingle.LooseArgs,
 	never,
-	'_extends_clause_single'
+	'extends_clause_single'
 > {}
 export interface ImplementsClauseNs extends NodeNs<
 	ImplementsClause,
@@ -15756,7 +15327,7 @@ export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryMemberExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryMemberExpressionInTypeAnnotation.LooseArgs,
 	never,
-	'_type_query_member_expression_in_type_annotation'
+	'type_query_member_expression_in_type_annotation'
 > {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation,
@@ -15767,7 +15338,7 @@ export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryCallExpressionInTypeAnnotation.LooseArgs,
 	never,
-	'_type_query_call_expression_in_type_annotation'
+	'type_query_call_expression_in_type_annotation'
 > {}
 export interface AssertsNs extends NodeNs<
 	Asserts,
@@ -15777,7 +15348,7 @@ export interface AssertsNs extends NodeNs<
 	Asserts.Built,
 	Asserts.BuildArgs,
 	Asserts.LooseArgs,
-	'content',
+	'value',
 	'asserts'
 > {}
 export interface AssertsAnnotationNs extends NodeNs<
@@ -15854,7 +15425,7 @@ export interface TemplateTypeNs extends NodeNs<
 	TemplateType.Built,
 	TemplateType.BuildArgs,
 	TemplateType.LooseArgs,
-	'content',
+	'type',
 	'template_type'
 > {}
 export interface TemplateLiteralTypeNs extends NodeNs<
@@ -15932,7 +15503,7 @@ export interface TypeQueryMemberExpressionNs extends NodeNs<
 	TypeQueryMemberExpression.BuildArgs,
 	TypeQueryMemberExpression.LooseArgs,
 	never,
-	'_type_query_member_expression'
+	'type_query_member_expression'
 > {}
 export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression,
@@ -15943,7 +15514,7 @@ export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression.BuildArgs,
 	TypeQuerySubscriptExpression.LooseArgs,
 	never,
-	'_type_query_subscript_expression'
+	'type_query_subscript_expression'
 > {}
 export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression,
@@ -15954,7 +15525,7 @@ export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression.BuildArgs,
 	TypeQueryCallExpression.LooseArgs,
 	never,
-	'_type_query_call_expression'
+	'type_query_call_expression'
 > {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression,
@@ -15965,7 +15536,7 @@ export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression.BuildArgs,
 	TypeQueryInstantiationExpression.LooseArgs,
 	never,
-	'_type_query_instantiation_expression'
+	'type_query_instantiation_expression'
 > {}
 export interface TypeQueryNs extends NodeNs<
 	TypeQuery,
@@ -15975,7 +15546,7 @@ export interface TypeQueryNs extends NodeNs<
 	TypeQuery.Built,
 	TypeQuery.BuildArgs,
 	TypeQuery.LooseArgs,
-	'content',
+	'expression',
 	'type_query'
 > {}
 export interface IndexTypeQueryNs extends NodeNs<
@@ -16021,17 +15592,6 @@ export interface LiteralTypeNs extends NodeNs<
 	LiteralType.LooseArgs,
 	'content',
 	'literal_type'
-> {}
-export interface _NumberNs extends NodeNs<
-	_Number,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	_Number.Built,
-	_Number.BuildArgs,
-	_Number.LooseArgs,
-	never,
-	'_number'
 > {}
 export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType,
@@ -16349,7 +15909,7 @@ export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent.Built,
 	ObjectTypeContent.BuildArgs,
 	ObjectTypeContent.LooseArgs,
-	'content',
+	'members',
 	'object_type_content'
 > {}
 export interface ExportStatementNamespaceExportNs extends NodeNs<
@@ -16406,6 +15966,17 @@ export interface CommentBlockNs extends NodeNs<
 	CommentBlock.LooseArgs,
 	'content',
 	'comment_block'
+> {}
+export interface LiteralTypeNegativeNumberNs extends NodeNs<
+	LiteralTypeNegativeNumber,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LiteralTypeNegativeNumber.Built,
+	LiteralTypeNegativeNumber.BuildArgs,
+	LiteralTypeNegativeNumber.LooseArgs,
+	never,
+	'literal_type_negative_number'
 > {}
 export interface NumberHexNs extends NodeNs<
 	NumberHex,
@@ -16525,7 +16096,7 @@ export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember.Built,
 	ClassBodyMember.BuildArgs,
 	ClassBodyMember.LooseArgs,
-	'content',
+	'member',
 	'class_body_member'
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
@@ -16902,17 +16473,6 @@ export interface TypeIdentifierNs extends NodeNs<
 	'content',
 	'type_identifier'
 > {}
-export interface SemicolonNs extends NodeNs<
-	Semicolon,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	Semicolon.Built,
-	Semicolon.BuildArgs,
-	Semicolon.LooseArgs,
-	'content',
-	'semicolon'
-> {}
 export interface InterfaceBodyNs extends NodeNs<
 	InterfaceBody,
 	LeafScalarMap,
@@ -16998,6 +16558,7 @@ export interface KwConstMarkerNs extends KeywordNs<
 	KwConstMarkerTree,
 	'_kw_const_marker'
 > {}
+export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', EmptyMemberTree, 'empty_member'> {}
 export interface MetaPropertyNewTargetNs extends KeywordNs<
 	TSKindId.MetaPropertyNewTarget,
 	'new.target',
@@ -17009,6 +16570,18 @@ export interface MetaPropertyImportMetaNs extends KeywordNs<
 	'import.meta',
 	MetaPropertyImportMetaTree,
 	'meta_property_import_meta'
+> {}
+export interface AutomaticSemicolonNs extends KeywordNs<
+	TSKindId.AutomaticSemicolon,
+	'\n',
+	AutomaticSemicolonTree,
+	'_automatic_semicolon'
+> {}
+export interface FunctionSignatureAutomaticSemicolonNs extends KeywordNs<
+	TSKindId.FunctionSignatureAutomaticSemicolon,
+	'\n',
+	FunctionSignatureAutomaticSemicolonTree,
+	'_function_signature_automatic_semicolon'
 > {}
 export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TypeKeywordTree, 'type_keyword'> {}
 export interface DeclareKeywordNs extends KeywordNs<
@@ -17222,6 +16795,7 @@ export interface NamespaceMap {
 	[TSKindId.AwaitExpression]: AwaitExpressionNs;
 	[TSKindId.MemberExpression]: MemberExpressionNs;
 	[TSKindId.SubscriptExpression]: SubscriptExpressionNs;
+	[TSKindId.LhsExpression]: LhsExpressionNs;
 	[TSKindId.AssignmentExpression]: AssignmentExpressionNs;
 	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpressionNs;
 	[TSKindId.SpreadElement]: SpreadElementNs;
@@ -17303,7 +16877,6 @@ export interface NamespaceMap {
 	[TSKindId.LookupType]: LookupTypeNs;
 	[TSKindId.MappedTypeClause]: MappedTypeClauseNs;
 	[TSKindId.LiteralType]: LiteralTypeNs;
-	[TSKindId._Number]: _NumberNs;
 	[TSKindId.FlowMaybeType]: FlowMaybeTypeNs;
 	[TSKindId.ParenthesizedType]: ParenthesizedTypeNs;
 	[TSKindId.TypeArguments]: TypeArgumentsNs;
@@ -17338,6 +16911,7 @@ export interface NamespaceMap {
 	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
 	[TSKindId.CommentLine]: CommentLineNs;
 	[TSKindId.CommentBlock]: CommentBlockNs;
+	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumberNs;
 	[TSKindId.NumberHex]: NumberHexNs;
 	[TSKindId.NumberFloatPoint]: NumberFloatPointNs;
 	[TSKindId.NumberFloatLeadingPoint]: NumberFloatLeadingPointNs;
@@ -17378,13 +16952,12 @@ export interface NamespaceMap {
 	[TSKindId.ForHeaderLhs]: ForHeaderLhsNs;
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKindNs;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKindNs;
-	[TSKindId._StatementIdentifier]: StatementIdentifierNs;
-	[TSKindId._ShorthandPropertyIdentifier]: ShorthandPropertyIdentifierNs;
-	[TSKindId._ShorthandPropertyIdentifierPattern]: ShorthandPropertyIdentifierPatternNs;
-	[TSKindId._PropertyIdentifier]: PropertyIdentifierNs;
-	[TSKindId._TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId._Semicolon]: SemicolonNs;
-	[TSKindId._InterfaceBody]: InterfaceBodyNs;
+	[TSKindId.StatementIdentifier]: StatementIdentifierNs;
+	[TSKindId.ShorthandPropertyIdentifier]: ShorthandPropertyIdentifierNs;
+	[TSKindId.ShorthandPropertyIdentifierPattern]: ShorthandPropertyIdentifierPatternNs;
+	[TSKindId.PropertyIdentifier]: PropertyIdentifierNs;
+	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
+	[TSKindId.InterfaceBody]: InterfaceBodyNs;
 	[TSKindId.Import]: ImportNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.OptionalChain]: OptionalChainNs;
@@ -17404,8 +16977,11 @@ export interface NamespaceMap {
 	[TSKindId.KwAbstractMarker]: KwAbstractMarkerNs;
 	[TSKindId.KwAccessorMarker]: KwAccessorMarkerNs;
 	[TSKindId.KwConstMarker]: KwConstMarkerNs;
+	[TSKindId.EmptyMember]: EmptyMemberNs;
 	[TSKindId.MetaPropertyNewTarget]: MetaPropertyNewTargetNs;
 	[TSKindId.MetaPropertyImportMeta]: MetaPropertyImportMetaNs;
+	[TSKindId.AutomaticSemicolon]: AutomaticSemicolonNs;
+	[TSKindId.FunctionSignatureAutomaticSemicolon]: FunctionSignatureAutomaticSemicolonNs;
 	[TSKindId.TypeKeyword]: TypeKeywordNs;
 	[TSKindId.DeclareKeyword]: DeclareKeywordNs;
 	[TSKindId.NamespaceKeyword]: NamespaceKeywordNs;
@@ -18396,7 +17972,7 @@ export namespace AssignmentPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			left(value: NonNullable<T.AssignmentPattern.Config>['left']): T.AssignmentPattern.Built;
+			left(value: T.Pattern): T.AssignmentPattern.Built;
 			right(value: NonNullable<T.AssignmentPattern.Config>['right']): T.AssignmentPattern.Built;
 		};
 	}
@@ -18771,6 +18347,120 @@ export namespace SubscriptExpression {
 	export type Tree = TreeFor<TSKindId.SubscriptExpression>;
 	export type Kind = 'subscript_expression';
 }
+export namespace LhsExpression {
+	export type Config = ConfigFor<TSKindId.LhsExpression>;
+	export interface Built extends T.LhsExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<
+					| T.MemberExpression
+					| T.SubscriptExpression
+					| TSKindId.Undefined
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.ObjectPattern
+					| T.ArrayPattern
+					| T.NonNullExpression
+				>
+			): T.LhsExpression.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LhsExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LhsExpression>;
+	export type BuildArgs = [
+		value:
+			| T.MemberExpression
+			| T.SubscriptExpression
+			| TSKindId.Undefined
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.ObjectPattern
+			| T.ArrayPattern
+			| T.NonNullExpression
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			| T.MemberExpression
+			| T.SubscriptExpression
+			| TSKindId.Undefined
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.ObjectPattern
+			| T.ArrayPattern
+			| T.NonNullExpression,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.LhsExpression>;
+	export type Kind = '_lhs_expression';
+}
 export namespace AssignmentExpression {
 	export type Config = ConfigFor<TSKindId.AssignmentExpression>;
 	export interface Built extends T.AssignmentExpression, NodeMethodsOf {
@@ -18778,7 +18468,7 @@ export namespace AssignmentExpression {
 		readonly $named: true;
 		readonly $with: {
 			usingMarker(value?: NonNullable<T.AssignmentExpression.Config>['usingMarker']): T.AssignmentExpression.Built;
-			left(value: NonNullable<T.AssignmentExpression.Config>['left']): T.AssignmentExpression.Built;
+			left(value: T.ParenthesizedExpression | T.LhsExpression): T.AssignmentExpression.Built;
 			right(value: NonNullable<T.AssignmentExpression.Config>['right']): T.AssignmentExpression.Built;
 		};
 	}
@@ -18935,17 +18625,15 @@ export namespace TemplateString {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(
-				...vs: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]
-			): T.TemplateString.Built;
+			elements(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): T.TemplateString.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateString>;
-	export type BuildArgs = [...children: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]];
+	export type BuildArgs = [...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string,
+			T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -19031,7 +18719,7 @@ export namespace Decorator {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value:
 					| T.Identifier
 					| T.DecoratorMemberExpression
@@ -19106,18 +18794,30 @@ export namespace ClassBody {
 		readonly $named: true;
 		readonly $with: {
 			contents(
-				...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
+				...vs: (
+					| T.ClassBodyMethod
+					| T.ClassBodyMethodSig
+					| T.ClassStaticBlock
+					| T.ClassBodyMember
+					| TSKindId.EmptyMember
+				)[]
 			): T.ClassBody.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ClassBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassBody>;
 	export type BuildArgs = [
-		...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
+		...children: (
+			| T.ClassBodyMethod
+			| T.ClassBodyMethodSig
+			| T.ClassStaticBlock
+			| T.ClassBodyMember
+			| TSKindId.EmptyMember
+		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi,
+			T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -19338,7 +19038,7 @@ export namespace PairPattern {
 		readonly $named: true;
 		readonly $with: {
 			key(value: NonNullable<T.PairPattern.Config>['key']): T.PairPattern.Built;
-			value(value: NonNullable<T.PairPattern.Config>['value']): T.PairPattern.Built;
+			value(value: T.Pattern | T.AssignmentPattern): T.PairPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PairPattern>;
@@ -19532,7 +19232,7 @@ export namespace DecoratorParenthesizedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression
 			): T.DecoratorParenthesizedExpression.Built;
 		};
@@ -19689,7 +19389,7 @@ export namespace ExtendsClauseSingle {
 			| T.ExtendsClauseSingle
 	];
 	export type Tree = TreeFor<TSKindId.ExtendsClauseSingle>;
-	export type Kind = '_extends_clause_single';
+	export type Kind = 'extends_clause_single';
 }
 export namespace ImplementsClause {
 	export type Config = ConfigFor<TSKindId.ImplementsClause>;
@@ -20128,7 +19828,7 @@ export namespace TypeQueryMemberExpressionInTypeAnnotation {
 			| T.TypeQueryMemberExpressionInTypeAnnotation
 	];
 	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
-	export type Kind = '_type_query_member_expression_in_type_annotation';
+	export type Kind = 'type_query_member_expression_in_type_annotation';
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
@@ -20151,7 +19851,7 @@ export namespace TypeQueryCallExpressionInTypeAnnotation {
 			| T.TypeQueryCallExpressionInTypeAnnotation
 	];
 	export type Tree = TreeFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
-	export type Kind = '_type_query_call_expression_in_type_annotation';
+	export type Kind = 'type_query_call_expression_in_type_annotation';
 }
 export namespace Asserts {
 	export type Config = ConfigFor<TSKindId.Asserts>;
@@ -20159,7 +19859,7 @@ export namespace Asserts {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Built;
+			value(value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Asserts>;
@@ -20290,7 +19990,7 @@ export namespace TemplateType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>): T.TemplateType.Built;
+			type(value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>): T.TemplateType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateType>;
@@ -20313,19 +20013,14 @@ export namespace TemplateLiteralType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: ((T.TemplateChars | T.TemplateType) | string)[]): T.TemplateLiteralType.Built;
+			elements(...vs: (T.TemplateChars | T.TemplateType)[]): T.TemplateLiteralType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateLiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateLiteralType>;
-	export type BuildArgs = [...children: ((T.TemplateChars | T.TemplateType) | string)[]];
+	export type BuildArgs = [...children: (T.TemplateChars | T.TemplateType)[]];
 	export type LooseArgs = [
-		...children: LooseValue<
-			(T.TemplateChars | T.TemplateType) | string,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TemplateLiteralType>;
 	export type Kind = 'template_literal_type';
@@ -20446,7 +20141,7 @@ export namespace TypeQueryMemberExpression {
 			| T.TypeQueryMemberExpression
 	];
 	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpression>;
-	export type Kind = '_type_query_member_expression';
+	export type Kind = 'type_query_member_expression';
 }
 export namespace TypeQuerySubscriptExpression {
 	export type Config = ConfigFor<TSKindId.TypeQuerySubscriptExpression>;
@@ -20467,7 +20162,7 @@ export namespace TypeQuerySubscriptExpression {
 			| T.TypeQuerySubscriptExpression
 	];
 	export type Tree = TreeFor<TSKindId.TypeQuerySubscriptExpression>;
-	export type Kind = '_type_query_subscript_expression';
+	export type Kind = 'type_query_subscript_expression';
 }
 export namespace TypeQueryCallExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpression>;
@@ -20488,7 +20183,7 @@ export namespace TypeQueryCallExpression {
 			| T.TypeQueryCallExpression
 	];
 	export type Tree = TreeFor<TSKindId.TypeQueryCallExpression>;
-	export type Kind = '_type_query_call_expression';
+	export type Kind = 'type_query_call_expression';
 }
 export namespace TypeQueryInstantiationExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryInstantiationExpression>;
@@ -20511,7 +20206,7 @@ export namespace TypeQueryInstantiationExpression {
 			| T.TypeQueryInstantiationExpression
 	];
 	export type Tree = TreeFor<TSKindId.TypeQueryInstantiationExpression>;
-	export type Kind = '_type_query_instantiation_expression';
+	export type Kind = 'type_query_instantiation_expression';
 }
 export namespace TypeQuery {
 	export type Config = ConfigFor<TSKindId.TypeQuery>;
@@ -20519,7 +20214,7 @@ export namespace TypeQuery {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value: NonNullable<
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
@@ -20623,7 +20318,13 @@ export namespace LiteralType {
 		readonly $with: {
 			content(
 				value: NonNullable<
-					T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+					| T.LiteralTypeNegativeNumber
+					| T.Number
+					| T.String
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.Null
+					| TSKindId.Undefined
 				>
 			): T.LiteralType.Built;
 		};
@@ -20631,11 +20332,24 @@ export namespace LiteralType {
 	export type Loose = LooseFor<TSKindId.LiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralType>;
 	export type BuildArgs = [
-		value: T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+		value:
+			| T.LiteralTypeNegativeNumber
+			| T.Number
+			| T.String
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.Null
+			| TSKindId.Undefined
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined,
+			| T.LiteralTypeNegativeNumber
+			| T.Number
+			| T.String
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.Null
+			| TSKindId.Undefined,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -20643,25 +20357,6 @@ export namespace LiteralType {
 	];
 	export type Tree = TreeFor<TSKindId.LiteralType>;
 	export type Kind = 'literal_type';
-}
-export namespace _Number {
-	export type Config = ConfigFor<TSKindId._Number>;
-	export interface Built extends T._Number, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			operator(value: NonNullable<T._Number.Config>['operator']): T._Number.Built;
-			argument(value: T.Number): T._Number.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId._Number>;
-	export type LooseConfig = LooseConfigFor<TSKindId._Number>;
-	export type BuildArgs = [config: ConfigOf<T._Number>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T._Number, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T._Number
-	];
-	export type Tree = TreeFor<TSKindId._Number>;
-	export type Kind = '_number';
 }
 export namespace FlowMaybeType {
 	export type Config = ConfigFor<TSKindId.FlowMaybeType>;
@@ -21482,7 +21177,7 @@ export namespace ObjectTypeContent {
 		readonly _separator: number | undefined;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			contents(
+			members(
 				...vs: NonEmptyArray<
 					| T.ExportStatement
 					| T.PropertySignature
@@ -21649,6 +21344,27 @@ export namespace CommentBlock {
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.CommentBlock>;
 	export type Kind = 'comment_block';
+}
+export namespace LiteralTypeNegativeNumber {
+	export type Config = ConfigFor<TSKindId.LiteralTypeNegativeNumber>;
+	export interface Built extends T.LiteralTypeNegativeNumber, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operator(value: NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']): T.LiteralTypeNegativeNumber.Built;
+			argument(value: T.Number): T.LiteralTypeNegativeNumber.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.LiteralTypeNegativeNumber
+	];
+	export type Tree = TreeFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type Kind = 'literal_type_negative_number';
 }
 export namespace NumberHex {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;
@@ -21947,7 +21663,7 @@ export namespace ClassBodyMember {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			member(
 				value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
 			): T.ClassBodyMember.Built;
 			terminator(value: NonNullable<T.ClassBodyMember.Options>['terminator']): T.ClassBodyMember.Built;
@@ -22653,7 +22369,7 @@ export namespace ForHeaderLhs {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			left(value: NonNullable<T.ForHeaderLhs.Config>['left']): T.ForHeaderLhs.Built;
+			left(value: T.LhsExpression | T.ParenthesizedExpression): T.ForHeaderLhs.Built;
 			operator(value: NonNullable<T.ForHeaderLhs.Config>['operator']): T.ForHeaderLhs.Built;
 			right(value: NonNullable<T.ForHeaderLhs.Config>['right']): T.ForHeaderLhs.Built;
 		};
@@ -22715,7 +22431,7 @@ export namespace ForHeaderLetConstKind {
 	export type Kind = 'for_header_let_const_kind';
 }
 export namespace StatementIdentifier {
-	export type Config = ConfigFor<TSKindId._StatementIdentifier>;
+	export type Config = ConfigFor<TSKindId.StatementIdentifier>;
 	export type Types =
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -22773,8 +22489,8 @@ export namespace StatementIdentifier {
 			): T.StatementIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._StatementIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._StatementIdentifier>;
+	export type Loose = LooseFor<TSKindId.StatementIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.StatementIdentifier>;
 	export type BuildArgs = [
 		value:
 			| T.Identifier
@@ -22831,11 +22547,11 @@ export namespace StatementIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId._StatementIdentifier>;
+	export type Tree = TreeFor<TSKindId.StatementIdentifier>;
 	export type Kind = 'statement_identifier';
 }
 export namespace ShorthandPropertyIdentifier {
-	export type Config = ConfigFor<TSKindId._ShorthandPropertyIdentifier>;
+	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type Types =
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -22893,8 +22609,8 @@ export namespace ShorthandPropertyIdentifier {
 			): T.ShorthandPropertyIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._ShorthandPropertyIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._ShorthandPropertyIdentifier>;
+	export type Loose = LooseFor<TSKindId.ShorthandPropertyIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type BuildArgs = [
 		value:
 			| T.Identifier
@@ -22951,11 +22667,11 @@ export namespace ShorthandPropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId._ShorthandPropertyIdentifier>;
+	export type Tree = TreeFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type Kind = 'shorthand_property_identifier';
 }
 export namespace ShorthandPropertyIdentifierPattern {
-	export type Config = ConfigFor<TSKindId._ShorthandPropertyIdentifierPattern>;
+	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type Types =
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -23013,8 +22729,8 @@ export namespace ShorthandPropertyIdentifierPattern {
 			): T.ShorthandPropertyIdentifierPattern.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._ShorthandPropertyIdentifierPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId._ShorthandPropertyIdentifierPattern>;
+	export type Loose = LooseFor<TSKindId.ShorthandPropertyIdentifierPattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type BuildArgs = [
 		value:
 			| T.Identifier
@@ -23071,11 +22787,11 @@ export namespace ShorthandPropertyIdentifierPattern {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId._ShorthandPropertyIdentifierPattern>;
+	export type Tree = TreeFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type Kind = 'shorthand_property_identifier_pattern';
 }
 export namespace PropertyIdentifier {
-	export type Config = ConfigFor<TSKindId._PropertyIdentifier>;
+	export type Config = ConfigFor<TSKindId.PropertyIdentifier>;
 	export type Types =
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -23133,8 +22849,8 @@ export namespace PropertyIdentifier {
 			): T.PropertyIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._PropertyIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._PropertyIdentifier>;
+	export type Loose = LooseFor<TSKindId.PropertyIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.PropertyIdentifier>;
 	export type BuildArgs = [
 		value:
 			| T.Identifier
@@ -23191,11 +22907,11 @@ export namespace PropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId._PropertyIdentifier>;
+	export type Tree = TreeFor<TSKindId.PropertyIdentifier>;
 	export type Kind = 'property_identifier';
 }
 export namespace TypeIdentifier {
-	export type Config = ConfigFor<TSKindId._TypeIdentifier>;
+	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
 	export type Types = Identifier;
 	export interface Built extends T.TypeIdentifier, NodeMethodsOf {
 		readonly $source: 2;
@@ -23204,32 +22920,15 @@ export namespace TypeIdentifier {
 			content(value: T.Identifier): T.TypeIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._TypeIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._TypeIdentifier>;
+	export type Loose = LooseFor<TSKindId.TypeIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._TypeIdentifier>;
+	export type Tree = TreeFor<TSKindId.TypeIdentifier>;
 	export type Kind = 'type_identifier';
 }
-export namespace Semicolon {
-	export type Config = ConfigFor<TSKindId._Semicolon>;
-	export type Types = TSKindId.Semi;
-	export interface Built extends T.Semicolon, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<TSKindId.Semi>): T.Semicolon.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId._Semicolon>;
-	export type LooseConfig = LooseConfigFor<TSKindId._Semicolon>;
-	export type BuildArgs = [value: TSKindId.Semi];
-	export type LooseArgs = [value: LooseValue<TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._Semicolon>;
-	export type Kind = 'semicolon';
-}
 export namespace InterfaceBody {
-	export type Config = ConfigFor<TSKindId._InterfaceBody>;
+	export type Config = ConfigFor<TSKindId.InterfaceBody>;
 	export type Types = ObjectType;
 	export interface Built extends T.InterfaceBody, NodeMethodsOf {
 		readonly $source: 2;
@@ -23238,11 +22937,11 @@ export namespace InterfaceBody {
 			content(value: T.ObjectType): T.InterfaceBody.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._InterfaceBody>;
-	export type LooseConfig = LooseConfigFor<TSKindId._InterfaceBody>;
+	export type Loose = LooseFor<TSKindId.InterfaceBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
 	export type BuildArgs = [value: T.ObjectType];
 	export type LooseArgs = [value: LooseValue<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._InterfaceBody>;
+	export type Tree = TreeFor<TSKindId.InterfaceBody>;
 	export type Kind = 'interface_body';
 }
 export namespace Import {
@@ -23435,6 +23134,16 @@ export namespace KwConstMarker {
 	export type Tree = KwConstMarkerNs['Tree'];
 	export type Kind = '_kw_const_marker';
 }
+export namespace EmptyMember {
+	export type Config = EmptyMemberNs['Config'];
+	export type Built = EmptyMemberNs['Built'];
+	export type Loose = EmptyMemberNs['Loose'];
+	export type LooseConfig = EmptyMemberNs['LooseConfig'];
+	export type BuildArgs = EmptyMemberNs['BuildArgs'];
+	export type LooseArgs = EmptyMemberNs['LooseArgs'];
+	export type Tree = EmptyMemberNs['Tree'];
+	export type Kind = 'empty_member';
+}
 export namespace MetaPropertyNewTarget {
 	export type Config = MetaPropertyNewTargetNs['Config'];
 	export type Built = MetaPropertyNewTargetNs['Built'];
@@ -23454,6 +23163,26 @@ export namespace MetaPropertyImportMeta {
 	export type LooseArgs = MetaPropertyImportMetaNs['LooseArgs'];
 	export type Tree = MetaPropertyImportMetaNs['Tree'];
 	export type Kind = 'meta_property_import_meta';
+}
+export namespace AutomaticSemicolon {
+	export type Config = AutomaticSemicolonNs['Config'];
+	export type Built = AutomaticSemicolonNs['Built'];
+	export type Loose = AutomaticSemicolonNs['Loose'];
+	export type LooseConfig = AutomaticSemicolonNs['LooseConfig'];
+	export type BuildArgs = AutomaticSemicolonNs['BuildArgs'];
+	export type LooseArgs = AutomaticSemicolonNs['LooseArgs'];
+	export type Tree = AutomaticSemicolonNs['Tree'];
+	export type Kind = '_automatic_semicolon';
+}
+export namespace FunctionSignatureAutomaticSemicolon {
+	export type Config = FunctionSignatureAutomaticSemicolonNs['Config'];
+	export type Built = FunctionSignatureAutomaticSemicolonNs['Built'];
+	export type Loose = FunctionSignatureAutomaticSemicolonNs['Loose'];
+	export type LooseConfig = FunctionSignatureAutomaticSemicolonNs['LooseConfig'];
+	export type BuildArgs = FunctionSignatureAutomaticSemicolonNs['BuildArgs'];
+	export type LooseArgs = FunctionSignatureAutomaticSemicolonNs['LooseArgs'];
+	export type Tree = FunctionSignatureAutomaticSemicolonNs['Tree'];
+	export type Kind = '_function_signature_automatic_semicolon';
 }
 export namespace TypeKeyword {
 	export type Config = TypeKeywordNs['Config'];

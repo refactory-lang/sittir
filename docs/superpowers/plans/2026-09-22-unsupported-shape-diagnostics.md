@@ -741,11 +741,18 @@ git commit -m "feat(diagnostics): hand-written rules are judged against the upst
 
 For each grammar file, extend the import to include `reauthored, vocabulary, renderOnly`, then wrap each `rules:` entry per this table (from the census in the spec; verify each name against `tool grammar-diagnostics --upstream`'s rule list):
 
-typescript (17): `_whitespace` → `vocabulary`; `html_comment`, `jsx_text`, `_template_chars` → `renderOnly`; `string`, `template_string`, `template_literal_type`, `template_type`, `template_substitution` → `reauthored('lexical-interior', …)`; `_reserved_identifier`, `extends_clause` → `reauthored('alias-shape', …)`; `arrow_function`, `class_body`, `object_type` → `reauthored('ambiguity', …)`; `ambient_declaration_global`, `ambient_declaration_module`, `object_type_content` → left bare (new helpers; `rule-undeclared-helper`, warning).
+typescript (15): `_whitespace` → `vocabulary`; `html_comment`, `jsx_text`, `_template_chars` → `renderOnly`; `string`, `template_string`, `template_literal_type`, `template_type`, `template_substitution` → `reauthored('lexical-interior', …)`; `_reserved_identifier` → `reauthored('alias-shape', …)` (`extends_clause` is retired into two `alias()` patches); `arrow_function`, `object_type` → `reauthored('ambiguity', …)` (`class_body` is retired into an `alias('empty_member')` patch); `ambient_declaration_global`, `ambient_declaration_module`, `object_type_content` → left bare (new helpers; `rule-undeclared-helper`, warning).
 
 rust (26): `_whitespace` → `vocabulary`; `float_literal`, `string_content`, `raw_string_literal_content`, `_outer_block_doc_comment_marker`, `_inner_block_doc_comment_marker`, `_line_doc_content`, `_block_comment_content` → `renderOnly`; `string_literal`, `_inner_line_doc_comment_marker` → `reauthored('lexical-interior', …)`; `tuple_type`, `tuple_expression`, `_non_special_token`, `_non_delim_token`, `_let_chain` → `reauthored('alias-shape', …)`; `reference_expression`, `impl_item` → `reauthored('ambiguity', …)`; the ten new helpers (`_tuple_type_elements`, `_tuple_expression_elements`, `_token_tree_punctuation`, `_token_keywords`, `where_predicates`, `_wildcard_pattern`, `_range_expression_bare`, `_string_literal_open`, `_impl_item_unsafe_marker`) left bare.
 
 python (22): `_whitespace` → `vocabulary`; `string_content`, `format_specifier` → `reauthored('lexical-interior', …)`; `case_pattern`, `list_comprehension`, `dictionary_comprehension`, `set_comprehension`, `generator_expression`, `print_statement`, `_simple_pattern` → `reauthored('alias-shape', …)`; `primary_expression` → `reauthored('ambiguity', …)`; the twelve new helpers left bare.
+
+Causes established by the alias-shape retirement (each rule was tried as enrich plus a patch; the trial moved the output as stated). Use these texts in the `reauthored(…)` declarations:
+- typescript `arrow_function`: a patch cannot replace a site with a different symbol reference (`_call_signature` → `call_signature`).
+- python `string_content`: retiring it lets enrich infer an `elements` field the upstream shape lacks (a parser move).
+- python `_simple_pattern`, `_wildcard_pattern`, `case_list_pattern`, `case_tuple_pattern`: retiring renames the case_* storage to upstream `_list_pattern`/`_tuple_pattern`; the storage names then collide with the visible `list_pattern`/`tuple_pattern`.
+- rust `tuple_type` + `_tuple_type_elements`, rust `tuple_expression` + `_tuple_expression_elements`: the alias wraps a span of the upstream seq; a patch addresses one position.
+- rust `_non_special_token` + `_token_tree_punctuation` + `_token_keywords`, python `print_statement` family: a restructure that changes the parser, not an alias placement.
 
 Where a cause in this table is wrong for a rule, the grammar glossary entry for that rule (`docs/<grammar>-grammar-sittir-glossary.md`) is the authority; pick the cause it describes and note the correction in the PR.
 

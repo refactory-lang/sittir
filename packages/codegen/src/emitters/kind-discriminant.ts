@@ -1,6 +1,6 @@
-import type { NodeMap } from '../compiler/types.ts';
+import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
 import { compareOrdinal } from './shared.ts';
 
 export function toPascal(kind: string): string {
@@ -16,11 +16,16 @@ export interface KindEnumEntry {
 	readonly member: string;
 	readonly id: number;
 	readonly parseId?: number;
+	readonly parseName?: string;
 	readonly symbolName?: string;
 	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 	readonly alias?: boolean;
+	readonly hidden?: boolean;
+	readonly supertype?: boolean;
+	readonly visibleExternal?: boolean;
+	readonly lexicalRank?: number;
 }
 
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
@@ -40,35 +45,33 @@ export function collectKindEntries(
 	generatedIdTables: GeneratedIdTables
 ): KindEnumEntry[] {
 	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
-	const entries: KindEnumEntry[] = [];
-	const seenMembers = new Map<string, string>();
+	const rows: Omit<KindEnumEntry, 'member'>[] = [];
 	for (const kind of allKinds) {
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
-		let member = kindIdMemberName(nodeMap, kind);
-		const existing = seenMembers.get(member);
-		if (existing !== undefined && existing !== kind) {
-			member = `${member}_${row.id}`;
-		}
-		seenMembers.set(member, kind);
 		const literalRule = row.parser?.literalRule || undefined;
 		const symbolName = symbolNameIsNotable(row.parser?.symbolName, kind, literalRule) ? row.parser?.symbolName : undefined;
 		const literalText = row.parser?.literalText;
 		const anon = row.parser?.anon ?? false;
 		const alias = row.parser?.alias || undefined;
-		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule, alias });
+		const hidden = row.parser?.hidden || undefined;
+		const supertype = row.parser?.supertype || undefined;
+		const visibleExternal = row.parser?.visibleExternal || undefined;
+		rows.push({ kind, id: row.id, parseId: row.parseId, parseName: row.parseName, symbolName, literalText, anon: anon || undefined, literalRule, alias, hidden, supertype, visibleExternal, lexicalRank: row.parser?.lexicalRank });
+	}
+	const entries: KindEnumEntry[] = [];
+	const seenMembers = new Map<string, string>();
+	for (const row of rows) {
+		const member = kindIdMemberName(nodeMap, modelKindOfEntry(row, rows));
+		const existing = seenMembers.get(member);
+		if (existing !== undefined && existing !== row.kind) {
+			throw new Error(`TSKindId: kinds '${existing}' and '${row.kind}' both name member '${member}'`);
+		}
+		seenMembers.set(member, row.kind);
+		entries.push({ ...row, member });
 	}
 	entries.sort((a, b) => a.id - b.id || compareOrdinal(a.kind, b.kind));
 	return entries;
-}
-
-export function modelKindOfEntry(entry: { readonly kind: string; readonly symbolName?: string; readonly alias?: boolean }): string {
-	return entry.alias === true && entry.symbolName !== undefined ? entry.symbolName : entry.kind;
-}
-
-export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
-	const entry = findEntryForKindName(entries, kind);
-	return entry !== undefined && modelKindOfEntry(entry) === kind ? entry : undefined;
 }
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
@@ -132,17 +135,8 @@ function toIdMap(ids: GeneratedIdTables['kindIds']): Map<string, number> {
 interface CatalogRow {
 	readonly id?: number;
 	readonly parseId?: number;
-	readonly parser?: {
-		readonly cSymbol: string;
-		readonly parserName: string;
-		readonly symbolName?: string;
-		readonly literalText?: string;
-		readonly literalRule?: boolean;
-		readonly anon: boolean;
-		readonly aux: boolean;
-		readonly alias: boolean;
-		readonly hidden: boolean;
-	};
+	readonly parseName?: string;
+	readonly parser?: KindParserMetadata;
 }
 
 function toCatalogMap(ids: GeneratedIdTables['kindIds']): Map<string, CatalogRow> {

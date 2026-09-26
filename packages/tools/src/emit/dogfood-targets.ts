@@ -1,7 +1,9 @@
+import type { GrammarName } from '@sittir/codegen/grammars';
+
 export type DogfoodSurface = 'strict' | 'loose';
 
 export interface DogfoodTarget {
-	readonly grammar: 'rust' | 'typescript' | 'python';
+	readonly grammar: GrammarName;
 	readonly source: string;
 	readonly stem: string;
 	readonly name: string;

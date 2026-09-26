@@ -5,7 +5,8 @@ import {
 	type PreferenceSegment
 } from '../../dsl/primitives/preference-path.ts';
 import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.ts';
-import { publicKindName } from './render-rules.ts';
+import type { NodeMap } from '../types.ts';
+import { displayNameOf } from './display-name.ts';
 import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
 import type { SupertypeMembers } from './supertype-members.ts';
 import type { SeamOrigin } from '../../types/rule.ts';
@@ -26,22 +27,24 @@ export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
 
 export function addressSites<T extends SiteAddressInput>(
 	sites: readonly T[],
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	nodeMap: NodeMap
 ): AddressedSite<T>[] {
 	return sites
 		.map((site) => {
-			const cascadePaths = cascadePathsOf(site, kindEntries);
-			return { ...site, path: pathOf(site, kindEntries), ...(cascadePaths === undefined ? {} : { cascadePaths }) };
+			const cascadePaths = cascadePathsOf(site, kindEntries, nodeMap);
+			return { ...site, path: pathOf(site, kindEntries, nodeMap), ...(cascadePaths === undefined ? {} : { cascadePaths }) };
 		})
 		.sort((a, b) => comparePreferencePaths(a.path, b.path));
 }
 
 export function cascadePathsOf(
 	site: SiteAddressInput,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	nodeMap: NodeMap
 ): readonly (readonly PreferenceSegment[])[] | undefined {
 	if (site.edgeLiterals === undefined || site.edgeLiterals.length === 0) return undefined;
-	const own = publicKindName(site.kind);
+	const own = displayNameOf(site.kind, nodeMap);
 	const seam = parseSeamLabel(site.address);
 	if (seam === undefined || seam.token !== own) return undefined;
 	return site.edgeLiterals.map((edgeLiteral) => {
@@ -51,9 +54,9 @@ export function cascadePathsOf(
 	});
 }
 
-export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
+export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[], nodeMap: NodeMap): readonly PreferenceSegment[] {
 	if (site.path !== undefined) return site.path;
-	const own = publicKindName(site.kind);
+	const own = displayNameOf(site.kind, nodeMap);
 	const kind: PreferenceSegment = { kind: 'kind-match', name: own };
 
 	const seam = parseSeamLabel(site.address);

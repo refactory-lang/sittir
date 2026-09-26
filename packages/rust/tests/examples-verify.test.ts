@@ -43,8 +43,7 @@ describe('examples/01 construct nodes', () => {
 	});
 	it('nested strict construction renders greet with its parameter', () => {
 		const text = nestedGreetFunction().$render();
-		// The arm three levels down keeps the name the grammar authored, so
-		// `visibilityModifier.inPath` renders the whole pub(...) chain.
+		// `visibilityModifier.pub.scope.inPath` renders the whole pub(...) chain.
 		expect(text).toContain('pub(in crate::x)');
 		expect(text).toContain('greet');
 		expect(text).toContain('name');
@@ -157,19 +156,19 @@ describe('dogfoodContract helper', () => {
 
 describe('structuralShape trivia handling', () => {
 	it("keeps a bare leaf's $text alongside its $_trivia", () => {
-		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.content('c'));
+		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
 		expect(shape.$_trivia).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
-		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.content('alpha'));
-		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment.content('beta'));
+		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('alpha'));
+		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('beta'));
 		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
 	});
 	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.content('c')] });
-		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.content('c')] });
+		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.regular('c')] });
+		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.regular('c')] });
 		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
 	});
 });
@@ -196,27 +195,24 @@ describe('namespaced constructors reach the arm kinds', () => {
 		}
 	});
 	it('builds a plain line comment through the same parent', () => {
-		expect(ir.lineComment.content(' hi').$render()).toBe('// hi');
+		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi');
 	});
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
 	});
 	// A variant minted inside another variant's rule is spelled inside it: the
-	// caller types the authored form name, under the arm that reaches it.
+	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
-		const pub = ir.visibilityModifier.pub as unknown as Record<
-			string,
-			{ strict(...args: unknown[]): { $render(): string } }
-		>;
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(pub.inPath!.strict(path).$render()).toBe('pub(in crate::x)');
-		expect(pub.self!.strict().$render()).toBe('pub(self)');
+		expect(ir.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
+		expect(ir.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
 	});
-	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
-	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is
-	// dropped and this kind's own arm — never hoisted — keeps the name.
-	it('keeps the direct arm when a hoisted constructor claims its name', () => {
+	// `crate` names both `visibility_modifier`'s own arm and the arm under
+	// `pub.scope`; each sits under the arm that reaches it, so neither claims
+	// the other's name.
+	it('keeps a direct arm and a nested arm of the same name apart', () => {
 		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
+		expect(ir.visibilityModifier.pub.scope.crate().$render()).toBe('pub(crate)');
 	});
 });
 
@@ -226,13 +222,13 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
-		// (274 callable builders today — the ceiling is the exact current
-		// count, so any new top-level builder trips it. The user-facing
-		// aliased pattern leaves — stringLiteralOpen, rawStringLiteralStart /
+		// (The ceiling is the exact current count, so any new top-level
+		// builder trips it. The user-facing
+		// aliased pattern leaves — stringOpen, rawStringLiteralStart /
 		// End, the comment-content patterns — are on the surface; the
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(261);
+		expect(builders.length).toBeLessThanOrEqual(177);
 	});
 });
 

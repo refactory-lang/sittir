@@ -251,11 +251,7 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', flatten(wrapperRule), flatten(wrapperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
-	// `_wrapped_item` is the hidden CONTENT of a named alias to the
-	// visible `wrapped_item` — the fixture's generatedIdTables catalogs
-	// the shared kind id under that visible name (see acceptedTransportKinds
-	// in transport-common.ts).
-	return nodeMapWith(nodes, new Map([['_wrapped_item', 'wrapped_item']]));
+	return nodeMapWith(nodes);
 }
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
@@ -555,27 +551,10 @@ describe('native transport emission', () => {
 		expect(emitted).toContain('122 => Ok(Self::ExpressionStatement(');
 	});
 
-	it('accepts visible alias kind ids for hidden-wrapper child enums', () => {
-		// KNOWN REAL BUG (confirmed 2026-07-17, not a stale-test issue): the
-		// enum itself is correctly renamed/generated (HiddenWrapperParentContentTransportSlot,
-		// with a WrappedItem(WrappedItemTransport) variant), but its
-		// FromNapiValue kind-id dispatch never gets an arm for kind id 410.
-		// Root cause: `acceptedTransportKinds` (packages/codegen/src/emitters/
-		// transport-common.ts:124-130) is a no-op stub — `if (node.modelType
-		// === 'supertype') return [kind]; return [kind];` — both branches
-		// return the same thing, so it never considers a hidden kind's
-		// (`_wrapped_item`) visible-alias name (`wrapped_item`, the key this
-		// fixture's generatedIdTables actually uses) when building the id→variant
-		// map in `emitPerSlotChildEnum` (render-module.ts:2841-2843). The lookup
-		// `kindIdByKind.get('_wrapped_item')` misses, so id 410 is silently
-		// dropped and the WrappedItem variant is unreachable via numeric
-		// dispatch. This needs its own fix in transport-common.ts (resolve a
-		// hidden kind's registered visible-alias target before the id lookup),
-		// not a test-only patch — left failing/red on purpose so it stays
-		// visible rather than being silently masked.
+	it('accepts a hidden wrapper kind id for hidden-wrapper child enums', () => {
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
-				wrapped_item: 410,
+				_wrapped_item: 410,
 				integer: 411,
 				identifier: 412
 			},
