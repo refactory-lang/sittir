@@ -218,17 +218,21 @@ collect-slots during assemble. No slot fact is derived twice.
 
 Slot-shape checks must see a hidden kind's body where normalize will splice
 it. The splice view walks the evaluated rules through every SYMBOL whose
-reference inlines (`inlinesAtReference`), with symbol facts from the
-predicted `SymbolSource`: hiddenness, supertype, terminality and visibility
-read from the rules, externals, `inline:` and `supertypes:`, never from
-parser.c. Normalize's splicing uses the same predicate, so the view and the
-normalized tree agree by construction.
+reference inlines. `inlinesAtReference` takes a `SymbolSource` and is the
+one predicate: the splice view calls it with the predicted source, and link
+(stamping parser visibility, then normalize's splicing) calls it with the
+catalog source. `SymbolSource` answers every fact the predicate reads:
+hiddenness (including an aliased hidden rule), supertype, terminality,
+visible external and inlining. The predicted source reads them from the
+rules, externals, `inline:` and `supertypes:`, never from parser.c.
 
 Renames that link applies from the parser's tables (a hidden rule that the
 parser always presents under an alias name) are predicted from the rules'
-alias sites the same way, and link asserts that its parser-derived renames
-equal the prediction. A disagreement is a predictor bug, fixed in the
-predictor; it is never absorbed by moving a floor.
+alias sites the same way. Link asserts that the catalog agrees with the
+prediction on every fact the predicate reads and on the renames. A
+disagreement is a predictor bug, fixed in the predictor; it is never absorbed
+by moving a floor. With that assertion in place, the view and the normalized
+tree agree.
 
 ### 4.4 What is not a grammar diagnostic
 
@@ -260,7 +264,7 @@ interface DiagnosticRecord {
   ruleId: RuleId;              // the owner kind's root rule id
   ownerKind: string;
   slotName?: string;
-  ruleProvenance?: 'upstream' | 'enrich' | 'wire';
+  ruleProvenance: 'upstream' | 'enrich' | 'wire';
   resolved: boolean;
   resolvedBy?: { stage: 'enrich' | 'wire'; by: readonly ResolvedBy[] };
 }
@@ -271,14 +275,15 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
   rule ids below the root are not stable across stages (enrich's field wraps
   and hoists change paths), so the key uses the owner's root id. All stages
   use evaluate-time kind names, so no rename canonicalization is needed.
-- `ruleProvenance` is the first stage the key appears in; absent when that
-  stage produced no records.
+- `ruleProvenance` is where the owner kind comes from: `upstream` if the raw
+  stage declares it, `enrich` if enrich mints it, otherwise `wire`. The first
+  stage a key appears in is not stored; it is read from the stage records.
 - `resolved` is operational: the key is absent from the final stage's
   exhaustive check.
 - `resolvedBy.by` lists the `rules:` entries and patch sites that resolved
   the key. A patch site claims the records owned by its owner kind and by
-  every group lift its path passes through; the lift writers record that
-  evidence, never a name match. An enrich resolution has an empty `by`:
+  every enrich lift the patch rewrites or renames; the lift writers record
+  that evidence, never a name match. An enrich resolution has an empty `by`:
   nothing names the enrich pass that removed a diagnostic.
 - Patch-site labels (`authoring` / `resolving`) derive from the records: a
   site is resolving iff it claims a key present in the enriched stage and
@@ -305,8 +310,8 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
   unfloored blocking record stops before link; a unit fixture proves it.
 - Every stage, including typescript's raw stage, produces records; no stage
   compile exists to fail.
-- Link's parser-derived renames equal the predicted renames in all five
-  grammars.
+- In all five grammars, link's catalog agrees with the predicted
+  `SymbolSource` on every fact `inlinesAtReference` reads and on the renames.
 - The compiler invariants of §4.4 are assertions and fire on no grammar; the
   final-stage floors are unchanged or smaller.
 - Native gate unchanged: read-render-parse, factory-render-parse and
