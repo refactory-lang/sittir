@@ -892,7 +892,8 @@ function resolveAliasPlaceholder(
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
 		const content = contentOf(originalMember);
 		if (!isSymbolType(content.type)) return labelled(mint(content));
-		return labelled({ ...(originalMember as object), named: true, value: patch.name } as unknown as RuntimeRule);
+		const renamed = { ...originalMember, named: true, value: patch.name };
+		return labelled(renamed);
 	}
 	return labelled(mint(originalMember));
 }

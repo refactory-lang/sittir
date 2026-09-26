@@ -59,7 +59,7 @@ function labelOf(owner: string, display: string | undefined, ownerIsSupertype: b
 }
 
 function withAutomaticLabel(core: ArmShape, label: RuleAnnotations, automatic: AutomaticVariants): ArmShape {
-	const out = withAnnotations(core, label) as ArmShape;
+	const out = withAnnotations(core, label);
 	automatic.keys.add(automaticVariantKey(out)!);
 	return out;
 }
@@ -192,7 +192,7 @@ export function withoutLabel<T>(rule: T): T {
 }
 
 export function withAuthoredLabel<T>(site: T, label: RuleAnnotations, automatic: AutomaticVariants): T {
-	const out = withAnnotations(site, label) as T;
+	const out = withAnnotations(site, label);
 	const key = automaticVariantKey(out);
 	if (key !== undefined) automatic.keys.delete(key);
 	return out;

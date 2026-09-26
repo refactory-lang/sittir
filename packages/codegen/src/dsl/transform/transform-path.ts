@@ -189,7 +189,7 @@ function descendThroughPrecWrapper(
 export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'SYMBOL') return false;
-	const meta = readRuleMetadata((rule as unknown as { metadata?: unknown }).metadata);
+	const meta = readRuleMetadata('metadata' in rule ? rule.metadata : undefined);
 	return meta?.symbolSource === 'group-lift';
 }
 
@@ -237,7 +237,7 @@ function descendThroughGroupLiftSymbol(
 function isEnrichContentAlias(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'ALIAS') return false;
-	return readRuleMetadata((rule as unknown as { metadata?: unknown }).metadata)?.aliasSource === 'visible-group';
+	return readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.aliasSource === 'visible-group';
 }
 
 function descendThroughEnrichContentAlias(

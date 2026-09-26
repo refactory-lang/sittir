@@ -564,7 +564,7 @@ function buildPatchedParentFn(
 	return function wiredPatchedParent($, original) {
 		const base = userFn ? userFn($, original) : (context.deposits.get(kind) ?? original);
 		if (patchSets.length === 0) return base;
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		return transformFn(base as RuntimeRule, ...(patchSets as readonly Parameters<typeof transformFn>[1][]));
 	};
 }
 

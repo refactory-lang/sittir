@@ -274,7 +274,7 @@ function hoistTokenForms(
 	const arms = (core as unknown as { members: Rule[] }).members;
 	const members = arms.map((arm, i) => {
 		const minted = visibleGroupSynthName(
-			withAnnotations(arm, { tokenForm: true }) as unknown as Rule,
+			withAnnotations(arm, { tokenForm: true }),
 			parentKind,
 			ctx,
 			counter,
@@ -326,14 +326,14 @@ function annotateTokenFormArms(parent: string, rules: Record<string, Rule>, pare
 	const rule = rules[parent];
 	if (rule === undefined) return;
 	rules[parent] = throughPrec(rule, (core) => {
-		const members = (core as unknown as { members?: Rule[] }).members;
-		if (members === undefined) return core;
+		if (!('members' in core)) return core;
+		const members: readonly Rule[] = core.members;
 		const preferred = defaultTokenFormArm(members, rules);
 		const annotated = members.map((member, i) => {
 			const variant = armNameOf(parent, undisplayedKindAddress((member as { name?: string }).name ?? ''), parentIsSupertype);
-			return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) }) as unknown as Rule;
+			return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) });
 		});
-		return { ...core, members: annotated } as unknown as Rule;
+		return { ...core, members: annotated };
 	});
 }
 

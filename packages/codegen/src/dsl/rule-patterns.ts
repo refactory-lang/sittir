@@ -161,7 +161,7 @@ export function separatorOf<R extends RuntimeRule>(
 	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
 	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	const isToken = (r: R): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as unknown as AnyRule, symbols.isTerminal);
+	const isToken = (r: RuntimeRule): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as AnyRule, symbols.isTerminal);
 	if (isToken(first) && !secondIsStr) return { content: second, separator: first };
 	if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
 
@@ -226,8 +226,8 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 export function isMultiSlotRepeatElement(content: unknown, symbols: SymbolSource): boolean {
 	const core = unwrapPrec(content) as RuntimeRule | undefined;
 	if (!core || typeof core !== 'object' || !isSeqType(core.type)) return false;
-	if (separatorOf(core, symbols) !== null) return false;
-	return collectSlots((core as unknown as { members: unknown[] }).members, symbols.rules).length >= 2;
+	if (separatorOf(core, symbols) !== null || !('members' in core) || !Array.isArray(core.members)) return false;
+	return collectSlots(core.members, symbols.rules).length >= 2;
 }
 
 export function unwrapPrec(rule: unknown): unknown {
@@ -680,12 +680,13 @@ export function predictedSymbolSource(
 }
 
 export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
-	if (content.type !== CHOICE) return undefined;
-	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+	const rule: AnyRule = content;
+	if (rule.type !== CHOICE) return undefined;
+	return (rule.members as unknown as readonly R[]).flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
 
 export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: string) => boolean): boolean {
-	if (content.type === SYMBOL) return isTerminalSymbol((content as unknown as { name: string }).name);
+	if (content.type === SYMBOL) return isTerminalSymbol(content.name);
 	if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
 	const arms = choiceArmsOf(content);
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));

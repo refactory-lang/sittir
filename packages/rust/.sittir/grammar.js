@@ -385,7 +385,7 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
 function isEnrichGroupLiftSymbol(rule) {
   const t = rule.type;
   if (t !== "SYMBOL") return false;
-  const meta = readRuleMetadata(rule.metadata);
+  const meta = readRuleMetadata("metadata" in rule ? rule.metadata : void 0);
   return meta?.symbolSource === "group-lift";
 }
 var groupLiftRuleMap;
@@ -416,7 +416,7 @@ function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
 function isEnrichContentAlias(rule) {
   const t = rule.type;
   if (t !== "ALIAS") return false;
-  return readRuleMetadata(rule.metadata)?.aliasSource === "visible-group";
+  return readRuleMetadata("metadata" in rule ? rule.metadata : void 0)?.aliasSource === "visible-group";
 }
 function descendThroughEnrichContentAlias(rule, segments, patch, precStack) {
   const body = rule.content;
@@ -1115,7 +1115,7 @@ function collectSlots(members, rulesBag) {
 function isMultiSlotRepeatElement(content, symbols) {
   const core = unwrapPrec(content);
   if (!core || typeof core !== "object" || !isSeqType(core.type)) return false;
-  if (separatorOf(core, symbols) !== null) return false;
+  if (separatorOf(core, symbols) !== null || !("members" in core) || !Array.isArray(core.members)) return false;
   return collectSlots(core.members, symbols.rules).length >= 2;
 }
 function unwrapPrec(rule) {
@@ -1456,8 +1456,9 @@ function predictedSymbolSource(rules, externals, inline) {
   };
 }
 function choiceArmsOf(content) {
-  if (content.type !== CHOICE) return void 0;
-  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+  const rule = content;
+  if (rule.type !== CHOICE) return void 0;
+  return rule.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
 function terminalContentOf(content, isTerminalSymbol) {
   if (content.type === SYMBOL) return isTerminalSymbol(content.name);
@@ -2420,8 +2421,8 @@ function annotateTokenFormArms(parent, rules, parentIsSupertype) {
   const rule = rules[parent];
   if (rule === void 0) return;
   rules[parent] = throughPrec(rule, (core) => {
+    if (!("members" in core)) return core;
     const members = core.members;
-    if (members === void 0) return core;
     const preferred = defaultTokenFormArm(members, rules);
     const annotated = members.map((member, i) => {
       const variant2 = armNameOf(parent, undisplayedKindAddress(member.name ?? ""), parentIsSupertype);
@@ -4895,7 +4896,8 @@ function resolveAliasPlaceholder(patch, site, precStack) {
   if (originalMember.type === "ALIAS") {
     const content = contentOf3(originalMember);
     if (!isSymbolType(content.type)) return labelled(mint(content));
-    return labelled({ ...originalMember, named: true, value: patch.name });
+    const renamed = { ...originalMember, named: true, value: patch.name };
+    return labelled(renamed);
   }
   return labelled(mint(originalMember));
 }

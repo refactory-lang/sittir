@@ -303,16 +303,6 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	return seats;
 }
 
-/**
- * The shape-4 seat: a singular slot whose one value is a hoisted kind whose
- * OWN factory surface is a rest-parameter one (`spread`, or a separated
- * list's `elements`, which also carries an options bag). Such a child has no
- * config object to flatten and no choice to name, so the parent's slot takes
- * the child's whole argument list as a tuple and the parent builds it.
- *
- * Only a config-shaped parent needs one: a parent that takes its sole slot
- * positionally already spreads the child's arguments into its own call.
- */
 export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
