@@ -50,7 +50,10 @@ export interface TreeSitterLanguageMetadata {
 	fieldNameForId(id: number): string | null;
 }
 
-export async function loadGeneratedIdTables(grammar: string, root = process.cwd()): Promise<GeneratedIdTables | undefined> {
+export async function loadGeneratedIdTables(
+	grammar: string,
+	root = process.cwd()
+): Promise<GeneratedIdTables | undefined> {
 	const parserCPath = join(root, 'packages', grammar, '.sittir', 'src', 'parser.c');
 	if (existsSync(parserCPath)) {
 		const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
@@ -99,7 +102,14 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	const lexicalRanks = collectLexicalRanks(grammarJson);
 
 	return {
-		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts, symbolFacts, lexicalRanks),
+		kindIds: joinIdNames(
+			symbolIds,
+			symbolNames,
+			deriveSymbolRuntimeName(symbolTextFacts),
+			symbolTextFacts,
+			symbolFacts,
+			lexicalRanks
+		),
 		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
 		sourceArtifact
 	};
@@ -154,7 +164,8 @@ function walkGrammarNode(
 	}
 	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') {
 		const content = record.content as Record<string, unknown> | undefined;
-		if (content?.type === 'SYMBOL' && typeof content.name === 'string') literalRules.set(content.name, record.value as string);
+		if (content?.type === 'SYMBOL' && typeof content.name === 'string')
+			literalRules.set(content.name, record.value as string);
 	}
 	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, stringLiterals, literalRules);
 }
@@ -300,7 +311,9 @@ export function isRenamedEntry(entry: KindEntryLike, entries: readonly KindEntry
 }
 
 export function modelKindOfEntry(entry: KindEntryLike, entries: readonly KindEntryLike[]): string {
-	return entry.symbolName !== undefined && (entry.alias === true || isRenamedEntry(entry, entries)) ? entry.symbolName : entry.kind;
+	return entry.symbolName !== undefined && (entry.alias === true || isRenamedEntry(entry, entries))
+		? entry.symbolName
+		: entry.kind;
 }
 
 export function parserHiddenOf(entry: KindEntryLike | undefined, kind: string): boolean {
@@ -308,7 +321,9 @@ export function parserHiddenOf(entry: KindEntryLike | undefined, kind: string): 
 }
 
 export function surfaceHiddenOf(entry: KindEntryLike | undefined, kind: string): boolean {
-	return (parserHiddenOf(entry, kind) && entry?.supertype !== true) || (entry?.anon === true && entry.literalRule === true);
+	return (
+		(parserHiddenOf(entry, kind) && entry?.supertype !== true) || (entry?.anon === true && entry.literalRule === true)
+	);
 }
 
 export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
@@ -319,14 +334,30 @@ export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike
 	return parserHiddenOf(findOwnKindEntry(entries, kind), kind);
 }
 
+const modelKindOwners = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, KindEntryLike>>();
+
+function modelKindOwner(entries: readonly KindEntryLike[], kind: string): KindEntryLike | undefined {
+	let owners = modelKindOwners.get(entries);
+	if (owners === undefined) {
+		const index = new Map<string, KindEntryLike>();
+		for (const entry of entries) {
+			const modelKind = modelKindOfEntry(entry, entries);
+			if (!index.has(modelKind)) index.set(modelKind, entry);
+		}
+		owners = index;
+		modelKindOwners.set(entries, owners);
+	}
+	return owners.get(kind);
+}
+
 export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
+	const owner = modelKindOwner(entries, kind);
+	if (owner === undefined) return undefined;
 	const entry = findEntryForKindName(entries, kind);
 	if (entry !== undefined && modelKindOfEntry(entry, entries) === kind) return entry;
-	const owner = entries.find((row) => modelKindOfEntry(row, entries) === kind);
-	if (owner !== undefined) {
-		throw new Error(`generated-metadata: kind '${kind}' has catalog row '${owner.kind}' but resolves to ${entry === undefined ? 'no row' : `'${entry.kind}'`}`);
-	}
-	return undefined;
+	throw new Error(
+		`generated-metadata: kind '${kind}' has catalog row '${owner.kind}' but resolves to ${entry === undefined ? 'no row' : `'${entry.kind}'`}`
+	);
 }
 
 export function findAnonEntryForLiteralText<T extends KindEntryLike>(
@@ -448,7 +479,10 @@ interface ParserSymbolFacts {
 	readonly supertypes: ReadonlySet<string>;
 }
 
-function collectSymbolFlags(parser: CParser, source: string): Pick<ParserSymbolFacts, 'visible' | 'named' | 'supertypes'> {
+function collectSymbolFlags(
+	parser: CParser,
+	source: string
+): Pick<ParserSymbolFacts, 'visible' | 'named' | 'supertypes'> {
 	const visible = new Map<string, boolean>();
 	const named = new Map<string, boolean>();
 	const supertypes = new Set<string>();
@@ -485,7 +519,8 @@ function collectAliasedNonTerminals(parser: CParser, source: string): Set<string
 	if (!tree) return new Set();
 	const values: string[] = [];
 	walkCNodes(tree.rootNode, (node) => {
-		if (node.parent?.type === 'initializer_list' && (node.type === 'identifier' || node.type === 'number_literal')) values.push(node.text);
+		if (node.parent?.type === 'initializer_list' && (node.type === 'identifier' || node.type === 'number_literal'))
+			values.push(node.text);
 	});
 	const result = new Set<string>();
 	for (let i = 0; i + 1 < values.length; ) {
@@ -548,7 +583,12 @@ function joinIdNames(
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
 			if (parser.alias) {
 				if (parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
-					result.set(key, { id: existing.id, parseId: entry.id, parseName: parser.symbolName, parser: existing.parser });
+					result.set(key, {
+						id: existing.id,
+						parseId: entry.id,
+						parseName: parser.symbolName,
+						parser: existing.parser
+					});
 				}
 				continue;
 			}
@@ -604,7 +644,8 @@ function tokenLexicalPrec(rule: GrammarJsonRule | undefined): number {
 
 function isFixedTextRule(rule: GrammarJsonRule | undefined): boolean {
 	let current = rule;
-	while (current?.type === 'TOKEN' || current?.type === 'IMMEDIATE_TOKEN' || current?.type === 'PREC') current = current.content;
+	while (current?.type === 'TOKEN' || current?.type === 'IMMEDIATE_TOKEN' || current?.type === 'PREC')
+		current = current.content;
 	return current?.type === 'STRING';
 }
 
@@ -619,20 +660,36 @@ interface GrammarJsonRule {
 }
 
 export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, number> {
-	const grammar = grammarJson as { rules?: Record<string, GrammarJsonRule>; externals?: readonly GrammarJsonRule[] } | undefined;
+	const grammar = grammarJson as
+		| { rules?: Record<string, GrammarJsonRule>; externals?: readonly GrammarJsonRule[] }
+		| undefined;
 	const rules = grammar?.rules ?? {};
 	const ruleNames = Object.keys(rules);
-	const externals = (grammar?.externals ?? []).flatMap((external) => (typeof external.name === 'string' ? [external.name] : []));
+	const externals = (grammar?.externals ?? []).flatMap((external) =>
+		typeof external.name === 'string' ? [external.name] : []
+	);
 	const mintSources = new Map<string, { readonly owner: string; readonly arm: number }>();
 	const aliasStorage = new Map<string, string>();
 	for (const owner of ruleNames) {
 		let arm = 0;
 		const walk = (node: GrammarJsonRule | undefined): void => {
 			if (node === undefined) return;
-			if (node.type === 'SYMBOL' && typeof node.name === 'string' && node.metadata?.symbolSource === 'group-lift' && !mintSources.has(node.name)) {
+			if (
+				node.type === 'SYMBOL' &&
+				typeof node.name === 'string' &&
+				node.metadata?.symbolSource === 'group-lift' &&
+				!mintSources.has(node.name)
+			) {
 				mintSources.set(node.name, { owner, arm: ++arm });
 			}
-			if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string' && node.content?.type === 'SYMBOL' && typeof node.content.name === 'string' && !aliasStorage.has(node.value)) {
+			if (
+				node.type === 'ALIAS' &&
+				node.named === true &&
+				typeof node.value === 'string' &&
+				node.content?.type === 'SYMBOL' &&
+				typeof node.content.name === 'string' &&
+				!aliasStorage.has(node.value)
+			) {
 				aliasStorage.set(node.value, node.content.name);
 			}
 			walk(node.content);
@@ -654,7 +711,12 @@ export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, n
 	};
 	const keyOf = (name: string): LexicalKey => {
 		const rule = rules[name];
-		return [externals.includes(name) ? 0 : 1, -tokenLexicalPrec(rule), isFixedTextRule(rule) ? 0 : 1, ...positionOf(name, new Set())];
+		return [
+			externals.includes(name) ? 0 : 1,
+			-tokenLexicalPrec(rule),
+			isFixedTextRule(rule) ? 0 : 1,
+			...positionOf(name, new Set())
+		];
 	};
 	const keys = new Map<string, LexicalKey>();
 	for (const name of [...externals, ...ruleNames]) keys.set(name, keyOf(name));
@@ -671,7 +733,10 @@ function shouldReplaceSymbol(existingCName: string | undefined, nextCName: strin
 	return existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_');
 }
 
-function keywordTextOf(cName: string, symbolTextFacts: ReadonlyMap<string, SymbolTextFacts> | undefined): string | undefined {
+function keywordTextOf(
+	cName: string,
+	symbolTextFacts: ReadonlyMap<string, SymbolTextFacts> | undefined
+): string | undefined {
 	const text = symbolTextFacts?.get(cName)?.literalText;
 	return text !== undefined && cName === `anon_sym_${text}` && /[^_]/.test(text) ? text : undefined;
 }

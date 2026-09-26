@@ -2890,10 +2890,9 @@ runs once the metadata callbacks have been evaluated.
 /**
  * Evaluate a grammar.js (or grammar.sittir.ts) file and return a RawGrammar.
  *
- * Injects DSL functions as globals, then imports the module, then runs the
- * imported result through `canonicalizeRawGrammar` — the one place
- * `hidden`/`inline` get their final evaluate-phase stamp before link ever
- * sees the grammar.
+ * Injects DSL functions as globals, then imports the module. Evaluate has
+ * no parser catalog, so it stamps no `hidden` or `inline` fact; link stamps
+ * both from the catalog (`stampParserVisibility`).
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 ```
@@ -2951,10 +2950,6 @@ which one fails; this is the only place `globalThis` is touched.
  * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
  */
 ```
-
-### `packages/codegen/src/compiler/evaluate.ts::canonicalizeRawGrammar`
-
-Evaluate's exit gate. It records `RawGrammar.visibleInlineNames`: the grammar's `inline:` entries that do not start with `_`, which link reports as `inline-array-visible-name` because the parser inlines them whatever their spelling. Evaluate has no parser catalog, so it stamps no `hidden` or `inline` fact; link stamps both from the catalog (`stampParserVisibility`).
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyIntrinsic`
 
@@ -3593,28 +3588,15 @@ The whole-text regex of every linked rule that composes to one (`composeTokenTex
  *  name) without re-deriving the walk at each call site. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::unhideAliasedTargets`
-
-```text
-/** A hidden rule some named alias wraps produces a real, separately-named
- *  CST node (the parser emits it under the alias's display name) — it is
- *  not swallowed the way an ordinary hidden helper is. Walks every rule
- *  for a `named` ALIAS over a bare SYMBOL and flips that symbol's target
- *  rule to `hidden: false`, correcting the leading-underscore default
- *  `canonicalizeRawGrammar` (evaluate) stamped before link ever ran. Runs once,
- *  after every top-level rule has been resolved, so it sees the final
- *  ALIAS shapes `resolveRule` produced. */
-```
-
 ### `packages/codegen/src/compiler/link.ts::stampLinkMintedVisibility`
 
 ```text
 /** A rule link mints with no counterpart in `ctx.rules` (the raw grammar's
  *  own rule names — an external role rule, a synthesized supertype, …)
- *  never went through evaluate's visibility stamping, so it has no
- *  `hidden` stamp yet — back-fill it from the leading-underscore
- *  convention. A rule with a raw-grammar counterpart, or one that already
- *  carries a `hidden` stamp (from `unhideAliasedTargets`), is left alone. */
+ *  never went through `stampParserVisibility`, so it has no `hidden`
+ *  stamp yet — back-fill it from the leading-underscore convention (a
+ *  link mint has no parser row). A rule with a raw-grammar counterpart,
+ *  or one that already carries a `hidden` stamp, is left alone. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
@@ -6352,7 +6334,7 @@ The model kind a catalog row names: an alias row's display name, a renamed row's
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::parserHiddenOf`
 
-Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never for an alias row), or, for a name with no row (a sittir mint), the leading-underscore spelling.
+Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never for an alias row). The leading-underscore spelling decides only for a name with no catalog row: a phantom kind (a sittir mint with no parser symbol, held to the phantom-kind ceilings) or an `inline:` entry, which the parser never gives a symbol. A name the catalog owns never reaches that fallback (`findOwnKindEntry` throws instead).
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::isParserHiddenKind`
 
@@ -6371,7 +6353,11 @@ Whether a kind is hidden on the generated surface, from the two parser symbol fl
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::findOwnKindEntry`
 
-The catalog row whose model kind is exactly `kind` (`findEntryForKindName`, then `modelKindOfEntry` must agree), or `undefined` for a name with no row. A kind that some row names as its model kind but that the resolution chain misses throws: a rowless fallback (the leading-underscore name rule) is only for synthetic grammars and sittir mints, never for a kind the catalog owns.
+The catalog row whose model kind is exactly `kind` (`findEntryForKindName`, then `modelKindOfEntry` must agree), or `undefined` for a name with no row. Whether any row owns `kind` is one lookup in a per-catalog `modelKind → row` index (`modelKindOwner`), so a rowless name returns without scanning the catalog. A kind that some row names as its model kind but that the resolution chain misses throws: a rowless fallback (the leading-underscore name rule) is only for synthetic grammars and sittir mints, never for a kind the catalog owns.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::modelKindOwner`
+
+The first catalog row whose `modelKindOfEntry` is `kind`, from an index built once per catalog array and cached in a WeakMap keyed by that array (the same scheme as `visibleTreeNameCount`).
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::stampVisibleExternals`
 
@@ -7003,16 +6989,6 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 	 *
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::visibleInlineNames`
-
-```text
-/** Entries of the grammar's `inline:` array that do NOT start with `_` —
- *  computed once at evaluate's exit (`canonicalizeRawGrammar`). The parser
- *  inlines these regardless of the leading-underscore convention, so they
- *  never surface as their own nodes; link reports a non-empty set as the
- *  `inline-array-visible-name` diagnostic. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::automaticVariants`
@@ -10815,7 +10791,7 @@ re-derives a fact the pipeline already stamps.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
 
-A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, visibleInlineNames, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 

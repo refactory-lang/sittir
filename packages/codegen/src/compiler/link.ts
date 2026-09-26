@@ -194,12 +194,13 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals, kindEntries);
-	if (raw.visibleInlineNames !== undefined && raw.visibleInlineNames.length > 0) {
+	const visibleInlineNames = raw.inline.filter((name) => !isParserHiddenKind(name, kindEntries));
+	if (visibleInlineNames.length > 0) {
 		linkCtx.diagnostics.warn({
 			code: 'inline-array-visible-name',
-			message: `${raw.visibleInlineNames.length} inline: entry(ies) name a visible kind (no leading '_'); the parser inlines them, so they never surface as nodes`,
+			message: `${visibleInlineNames.length} inline: entry(ies) name a visible kind; the parser inlines them, so they never surface as nodes`,
 			canProceed: true,
-			details: { kinds: [...raw.visibleInlineNames].sort() }
+			details: { kinds: [...visibleInlineNames].sort() }
 		});
 	}
 
@@ -851,7 +852,6 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 		expectDiagnostics: renameRecord(raw.expectDiagnostics),
 		expectTestFailures: renameRecord(raw.expectTestFailures),
 		orphanedSyntheticGroups: raw.orphanedSyntheticGroups?.map(rename),
-		visibleInlineNames: raw.visibleInlineNames?.map(rename),
 		bodyPatternZeroMatches: raw.bodyPatternZeroMatches?.map(rename),
 		desugarDivergences: raw.desugarDivergences?.map((event) => ({ ...event, name: rename(event.name) })),
 		automaticVariants:
@@ -1071,7 +1071,8 @@ function mintDisplayUnionRules(
 		return undefined;
 	};
 	for (const [display, members] of displayUnions) {
-		if (display.startsWith('_') || !isAsciiIdentifier(display) || rules[display] !== undefined) continue;
+		if (isParserHiddenKind(display, kindEntries) || !isAsciiIdentifier(display) || rules[display] !== undefined)
+			continue;
 		const refs = [...members].map(memberRef).filter((r): r is Rule<'link'> => r !== undefined);
 		if (refs.length === 0) continue;
 		if (!kindEntries.some((entry) => entry.alias === true && entry.symbolName === display)) continue;
@@ -1118,7 +1119,7 @@ function collectAliasedByParents(
 				const source = rule.content.name;
 				if (isParserHiddenKind(source, ctx.kindEntries)) {
 					parentAliasedKinds.add(source);
-				} else if (typeof rule.value === 'string' && !rule.value.startsWith('_')) {
+				} else if (typeof rule.value === 'string' && !isParserHiddenKind(rule.value, ctx.kindEntries)) {
 					const arr = visibleAliasTargets.get(rule.value);
 					if (arr) {
 						if (!arr.includes(source)) arr.push(source);
@@ -1595,7 +1596,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 			};
 
 		case ALIAS: {
-			if (rule.named && rule.value && !rule.value.startsWith('_')) {
+			if (rule.named && rule.value && !isParserHiddenKind(rule.value, ctx.kindEntries)) {
 				const content = resolveRule(rule.content, ctx, currentName);
 				if (content.type === STRING || aliasedSymbolWithin(content) !== undefined) return { ...rule, content };
 				if (ctx.rules[rule.value] === undefined) return { ...rule, content };
@@ -1605,7 +1606,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				!rule.named &&
 				typeof rule.value === 'string' &&
 				rule.value.length > 0 &&
-				!rule.value.startsWith('_') &&
+				!isParserHiddenKind(rule.value, ctx.kindEntries) &&
 				!/^[A-Za-z_]\w*$/.test(rule.value)
 			) {
 				return { type: STRING, value: rule.value };

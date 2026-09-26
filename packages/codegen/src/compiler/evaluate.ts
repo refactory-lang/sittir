@@ -11,7 +11,7 @@ import {
 	SEQ,
 	STRING,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -403,10 +403,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
 	return { grammar: grammarResult };
-}
-
-function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
-	return { ...raw, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {
@@ -1021,7 +1017,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 		const g = globalThis as Record<string, unknown>;
 		const savedGlobals = saveAndInjectDslGlobals(g);
 		try {
-			return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+			return await importAndExtractGrammar(entryPath);
 		} finally {
 			restoreSavedGlobals(g, savedGlobals);
 		}
