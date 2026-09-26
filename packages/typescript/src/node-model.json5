@@ -669,8 +669,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "registered": true
+        "nonEmpty": false
       }
     },
     "return_statement": {

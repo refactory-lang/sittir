@@ -74,7 +74,8 @@ import {
 	transparentWrapperContentSlot,
 	isAuthoredCompound,
 	enumMemberDiscriminant,
-	expandAndDedupeContentTypes
+	expandAndDedupeContentTypes,
+	registeredSlots
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -819,15 +820,6 @@ function paramsToTuple(params: string): string {
 
 function looseValueOf(elementType: string): string {
 	return `LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
-}
-
-export function registeredSlots(node: {
-	readonly slots: readonly AssembledNonterminal[];
-	readonly configSlots?: readonly AssembledNonterminal[];
-}): readonly AssembledNonterminal[] {
-	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
-	const config = new Set(node.configSlots);
-	return node.slots.filter((slot) => !config.has(slot));
 }
 
 function registeredSlotSource(

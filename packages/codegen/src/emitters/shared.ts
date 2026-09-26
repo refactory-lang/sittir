@@ -840,6 +840,15 @@ export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap)
 	return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
 }
 
+export function registeredSlots(node: {
+	readonly slots: readonly AssembledNonterminal[];
+	readonly configSlots?: readonly AssembledNonterminal[];
+}): readonly AssembledNonterminal[] {
+	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
+	const config = new Set(node.configSlots);
+	return node.slots.filter((slot) => !config.has(slot));
+}
+
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -859,8 +868,7 @@ export function classifyFactoryShape(
 				// emission, wrap, test generation) needs to agree on that, so
 				// the fallback to 'config' lives here rather than being
 				// special-cased downstream.
-				const hasRegistered = node.slots.some((f) => f.registeredOption !== undefined);
-				if (!hasRegistered) return 'spread';
+				if (registeredSlots(node).length === 0) return 'spread';
 			} else {
 				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';

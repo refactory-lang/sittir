@@ -7,7 +7,8 @@ import {
 	collectConcreteStorageKeys,
 	forwardedTargetKind,
 	resolveFactoryFieldNames,
-	isAuthoredCompound
+	isAuthoredCompound,
+	registeredSlots
 } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -66,8 +67,9 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
+		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
-			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), field.registeredOption !== undefined);
+			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), registered.has(field));
 			const wireKeys = collectConcreteStorageKeys(field, nodeMap);
 			slots[field.name] = wireKeys === undefined ? meta : { ...meta, wireKeys };
 		}
