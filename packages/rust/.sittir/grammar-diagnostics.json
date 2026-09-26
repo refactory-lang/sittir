@@ -136,5 +136,77 @@
     "message": "groups: body-pattern '_visibility_modifier_in_path' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
     "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
     "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "tuple_type",
+    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "tuple_expression",
+    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "_non_special_token",
+    "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "_primitive_type",
+    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "reference_expression",
+    "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "impl_item",
+    "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "ambiguity"
+    }
   }
 ]

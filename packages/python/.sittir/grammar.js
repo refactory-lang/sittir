@@ -4251,6 +4251,16 @@ function resolveToEnumMembersOneLevelDeep(target) {
 
 // packages/codegen/src/dsl/primitives/rule-cause.ts
 var RULE_CAUSE = /* @__PURE__ */ Symbol.for("sittir.ruleCause");
+function tag(body, declaration) {
+  Object.defineProperty(body, RULE_CAUSE, { value: declaration, enumerable: false, writable: false });
+  return body;
+}
+function reauthored(cause, body) {
+  return tag(body, { kind: "reauthored", cause });
+}
+function vocabulary(body) {
+  return tag(body, { kind: "vocabulary" });
+}
 function ruleCauseOf(fn) {
   if (typeof fn !== "function") return void 0;
   return fn[RULE_CAUSE];
@@ -5894,7 +5904,10 @@ function role(symbol, roleName) {
 
 // packages/python/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default);
-var comprehensionClauses = rule("comprehension_clauses", ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause))));
+var comprehensionClauses = rule(
+  "comprehension_clauses",
+  ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause)))
+);
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -6200,58 +6213,97 @@ var grammar_sittir_default = grammar(
         // See docs/python-grammar-sittir-glossary.md::_suite
         _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
+      expectDiagnostics: {
+        "rule-reauthored-without-cause": [
+          "_simple_pattern",
+          "format_specifier",
+          "primary_expression",
+          "print_statement",
+          "string_content"
+        ]
+      },
       rules: {
-        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent),
+        _whitespace: vocabulary(
+          ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent)
+        ),
         // See docs/python-grammar-sittir-glossary.md::primary_expression
-        primary_expression: ($, original) => {
+        primary_expression: reauthored("ambiguity", ($, original) => {
           let base2 = original.members;
           return choice(...base2.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
-        },
-        except_clause_exception_as: ($) => seq(field("value", $.expression), optional($._except_clause_exception_as_optional1)),
-        _except_clause_exception_as_optional1: ($) => seq("as", field("alias", $.expression)),
+        }),
+        except_clause_exception_as: vocabulary(
+          ($) => seq(field("value", $.expression), optional($._except_clause_exception_as_optional1))
+        ),
+        _except_clause_exception_as_optional1: vocabulary(($) => seq("as", field("alias", $.expression))),
         // See docs/python-grammar-sittir-glossary.md::string_content
-        string_content: ($) => prec.right(
-          repeat1(
-            choice(
-              $.escape_interpolation,
-              $.escape_sequence,
-              alias($._not_escape_sequence, $.not_escape_sequence),
-              alias($._string_content, $.string_fragment)
+        string_content: reauthored(
+          "lexical-interior",
+          ($) => prec.right(
+            repeat1(
+              choice(
+                $.escape_interpolation,
+                $.escape_sequence,
+                alias($._not_escape_sequence, $.not_escape_sequence),
+                alias($._string_content, $.string_fragment)
+              )
             )
           )
         ),
         // See docs/python-grammar-sittir-glossary.md::format_specifier
-        format_specifier: ($) => seq(":", repeat(field("elements", choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression))))),
-        // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
-        case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
-        case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),
-        _print_arguments: ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(",")),
-        _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
-        print_statement_chevron: ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))),
-        print_statement_plain: ($) => seq("print", alias($._print_arguments, $.print_arguments)),
-        print_statement: ($) => choice(prec(1, $.print_statement_chevron), prec(-3, prec.dynamic(-1, $.print_statement_plain))),
-        // See docs/python-grammar-sittir-glossary.md::_simple_pattern
-        _simple_pattern: ($) => prec(
-          1,
-          choice(
-            $.class_pattern,
-            $.splat_pattern,
-            $.union_pattern,
-            $.case_list_pattern,
-            $.case_tuple_pattern,
-            $.dict_pattern,
-            $.string,
-            $.concatenated_string,
-            $.true,
-            $.false,
-            $.none,
-            seq(optional("-"), choice($.integer, $.float)),
-            $.complex_pattern,
-            $.dotted_name,
-            alias($._wildcard_pattern, $.wildcard_pattern)
+        format_specifier: reauthored(
+          "lexical-interior",
+          ($) => seq(
+            ":",
+            repeat(
+              field(
+                "elements",
+                choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression))
+              )
+            )
           )
         ),
-        _wildcard_pattern: ($) => "_"
+        // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
+        case_tuple_pattern: vocabulary(($) => seq("(", optional($.list_pattern_case_patterns), ")")),
+        case_list_pattern: vocabulary(($) => seq("[", optional($.list_pattern_case_patterns), "]")),
+        _print_arguments: vocabulary(
+          ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(","))
+        ),
+        _print_chevron_arguments: vocabulary(
+          ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(","))
+        ),
+        print_statement_chevron: vocabulary(
+          ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ",")))
+        ),
+        print_statement_plain: vocabulary(($) => seq("print", alias($._print_arguments, $.print_arguments))),
+        print_statement: reauthored(
+          "alias-shape",
+          ($) => choice(prec(1, $.print_statement_chevron), prec(-3, prec.dynamic(-1, $.print_statement_plain)))
+        ),
+        // See docs/python-grammar-sittir-glossary.md::_simple_pattern
+        _simple_pattern: reauthored(
+          "alias-shape",
+          ($) => prec(
+            1,
+            choice(
+              $.class_pattern,
+              $.splat_pattern,
+              $.union_pattern,
+              $.case_list_pattern,
+              $.case_tuple_pattern,
+              $.dict_pattern,
+              $.string,
+              $.concatenated_string,
+              $.true,
+              $.false,
+              $.none,
+              seq(optional("-"), choice($.integer, $.float)),
+              $.complex_pattern,
+              $.dotted_name,
+              alias($._wildcard_pattern, $.wildcard_pattern)
+            )
+          )
+        ),
+        _wildcard_pattern: vocabulary(($) => "_")
       }
     },
     enrichedBase

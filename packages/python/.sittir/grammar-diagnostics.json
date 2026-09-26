@@ -115,5 +115,65 @@
     },
     "scope": "grammar",
     "grammar": "python"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "primary_expression",
+    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "string_content",
+    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "lexical-interior"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "format_specifier",
+    "message": "rules: 'format_specifier' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "lexical-interior"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "print_statement",
+    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "warning",
+    "ownerKind": "_simple_pattern",
+    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": true,
+    "details": {
+      "cause": "alias-shape"
+    }
   }
 ]

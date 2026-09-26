@@ -4221,6 +4221,13 @@ function resolveToEnumMembersOneLevelDeep(target) {
 
 // packages/codegen/src/dsl/primitives/rule-cause.ts
 var RULE_CAUSE = /* @__PURE__ */ Symbol.for("sittir.ruleCause");
+function tag(body, declaration) {
+  Object.defineProperty(body, RULE_CAUSE, { value: declaration, enumerable: false, writable: false });
+  return body;
+}
+function vocabulary(body) {
+  return tag(body, { kind: "vocabulary" });
+}
 function ruleCauseOf(fn) {
   if (typeof fn !== "function") return void 0;
   return fn[RULE_CAUSE];
@@ -5866,7 +5873,7 @@ var grammar_sittir_default = grammar(
         }
       },
       rules: {
-        _whitespace: ($) => choice($._tight, $._space, $._newline)
+        _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
       }
     },
     enrichedBase
