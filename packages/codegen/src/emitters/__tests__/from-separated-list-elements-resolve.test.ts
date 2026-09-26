@@ -41,11 +41,11 @@ const LIST_RULE: SeparatedListElementRule = {
 };
 
 const KIND_ENTRIES: KindEnumEntry[] = [
-	{ id: 1, kind: 'arguments', member: 'Arguments' },
-	{ id: 2, kind: 'arguments_elements', member: 'ArgumentsElements' },
-	{ id: 3, kind: 'identifier', member: 'Identifier' },
-	{ id: 4, kind: 'integer_literal', member: 'IntegerLiteral' },
-	{ id: 5, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
+	{ id: 1, lexicalRank: 1, kind: 'arguments', member: 'Arguments' },
+	{ id: 2, lexicalRank: 2, kind: 'arguments_elements', member: 'ArgumentsElements' },
+	{ id: 3, lexicalRank: 3, kind: 'identifier', member: 'Identifier' },
+	{ id: 4, lexicalRank: 4, kind: 'integer_literal', member: 'IntegerLiteral' },
+	{ id: 5, lexicalRank: 5, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
 
 function makeNodeMap() {

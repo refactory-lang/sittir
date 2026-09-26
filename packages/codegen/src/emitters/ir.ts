@@ -280,7 +280,7 @@ function isFlatLeafOrKeyword(
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
 	if (isVisibleTextLeaf(node) ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
-	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey) || node.irKey.startsWith('_')) return false;
+	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
 

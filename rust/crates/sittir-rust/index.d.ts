@@ -1173,7 +1173,7 @@ export interface RawStringLiteralTransport {
   '$_edges'?: Edges
   _raw_string_literal_start: SlotValue<RawStringLiteralStartTransport>
   _string_content: SlotValue<RawStringLiteralContentTransport>
-  _raw_string_literal_end: SlotValue<RawStringLiteralEndTransport>
+  _raw_string_literal_end: SlotValue<RawStringLiteralEndTransport, true>
 }
 
 export interface ReferenceExpressionBareTransport {

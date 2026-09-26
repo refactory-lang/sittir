@@ -6487,6 +6487,8 @@ var grammar_sittir_default = grammar(
         _inner_line_doc_comment_marker: token.immediate("!"),
         _outer_block_doc_comment_marker: token.immediate("*"),
         _inner_block_doc_comment_marker: token.immediate("!"),
+        _raw_string_literal_start: /[bc]?r#*"/,
+        _raw_string_literal_end: token.immediate(/"#*/),
         _line_doc_content: token.immediate(/.*/),
         _block_comment_content: token.immediate(/[^]*/)
       })

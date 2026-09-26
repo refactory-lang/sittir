@@ -858,7 +858,13 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Follow-up:** the `collect-baseline` determinism test (`packages/tools/src/__tests__/collect-baseline.test.ts`) is flaky: web-tree-sitter `setLanguage` throws "Incompatible language version 0" inside `validateFrom` under full-suite load. Isolation: it failed on 3 of 7 full runs at 8e7b5cf1e's tree, one of them with a trivial placeholder test in place of the new class_body test (so the new test's content is not the trigger), and passed on every run of the file alone; all three `parser.wasm` files load at ABI 15 sequentially and in parallel, and no test rewrites them during the run.
 
-**Follow-up:** unreferenced leftover mints ship in grammar.json: rust `range_pattern_arm1`–`3`, `visibility_modifier_group`, `reference_expression_arm`; typescript `export_statement_arm2`/`4`/`5`, `class_body_arm2`. Nothing references them; each is superseded by a later mint. Find the pass that leaves them behind and prune a mint once it is superseded — they are dead rules in the parser's input.
+**Follow-up:** unreferenced leftover mints ship in grammar.json: rust `range_pattern_arm1`–`3`, `visibility_modifier_group`, `reference_expression_arm`; typescript `export_statement_arm2`/`4`/`5`, `class_body_arm2`. Nothing references them; each is superseded by a later mint. Find the pass that leaves them behind and prune a mint once it is superseded — they are dead rules in the parser's input. Also typescript `object_type_elements`: a sittir mint (absent from upstream tree-sitter-typescript) that ships in `packages/typescript/.sittir/src/grammar.json` with no referencing rule (`object_type` routes through `object_type_content`) and no node-model entry. A separator census found it as the only stable separator detection with a non-STRING arm (`","`, `_semicolon`).
+
+**Follow-up:** `wire`'s base parameter is optional but semantically required: patches resolve against the base grammar. Make it required, or error when patches exist without a base. `sittirGrammar(base, cfg)` is the long-term form and would also retire the `adoptMintedGroups` bridge. Minimal shape and repro: `docs/plans/2026-09-25-grammar-bootstrap-follow-ups.md` (feat/grammar-bootstrap).
+
+**Follow-up:** shared-slot choice lowering emits non-exclusive if-tests, so a slot shared by two choice arms renders twice. Add a blocking shared-slot-choice diagnostic first, then fix the lowering. Repro in the same follow-ups doc.
+
+**Follow-up:** variant arms on a shared slot produce a Rust transport arity mismatch (E0308: `Vec<SlotValue>` vs `SlotValue`). Observed only; the cause is not traced. Repro in the same follow-ups doc.
 
 ### Task 7b: A built node carries the alias envelope its read shows
 

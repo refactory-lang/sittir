@@ -6632,6 +6632,10 @@ separately from `hidden`; a consumer that needs a hidden nonterminal shown
 under an alias reads both. `collectGeneratedKindEntries` carries it onto
 `GeneratedKindEntry.aliasedNonTerminal`.
 
+#### lexicalRank
+
+The symbol's position in the grammar's lexical precedence order (`collectLexicalRanks`). The generated catalog copies it onto `GeneratedKindEntry`, and the from emitter orders `_TEXT_KINDS_BY_RANK` by it.
+
 ### `packages/codegen/src/compiler/types.ts::presence`
 
 ```text
@@ -9611,6 +9615,41 @@ the set from that annotation alone.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::collectLexicalRanks`
+
+The lexical precedence of every rule, external and alias display in the compiled `grammar.json`, as a dense rank (0 first). The loose surface builds a bare string as the first admitted text kind in this order, so the order has to follow the facts tree-sitter's lexer uses when two tokens could match the same text. Each name gets a key, compared element by element:
+
+1. externals before rules — the external scanner runs before the internal lexer;
+2. higher lexical precedence first — a `PREC` directly inside `TOKEN`/`IMMEDIATE_TOKEN` (`tokenLexicalPrec`);
+3. fixed text before a pattern (`isFixedTextRule`) — tree-sitter prefers a string match over a regex match of the same length;
+4. position — the index in `externals` or `rules`.
+
+A sittir mint (a `SYMBOL` stamped `metadata.symbolSource: 'group-lift'`) takes its source rule's position followed by its arm order within that rule, so it ranks where its text was declared. A named `ALIAS` display that is not itself a rule takes its storage symbol's key, since the lexer matches the storage token. Ties at the key are broken by name so the order is deterministic.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::GrammarJsonRule`
+
+The slice of a `grammar.json` rule node `collectLexicalRanks` reads: type, name, value, `named`, content, members and the `symbolSource` stamp.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::LexicalKey`
+
+A lexical sort key: a sequence of numbers compared element by element (`compareLexicalKeys`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::grammarNameOfSymbol`
+
+The grammar name of a parser symbol's C name: `sym_`, `anon_sym_`, `aux_sym_` or `alias_sym_` stripped. It is the key `collectLexicalRanks` rows are looked up by.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::compareLexicalKeys`
+
+Element-by-element comparison of two `LexicalKey`s; a key that is a prefix of the other sorts first.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::tokenLexicalPrec`
+
+The lexical precedence of a rule: the value of a `PREC` placed directly inside `TOKEN` or `IMMEDIATE_TOKEN`, else 0. A `PREC` outside the token is a parse precedence and does not order the lexer.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isFixedTextRule`
+
+Whether a rule, under its `TOKEN`/`IMMEDIATE_TOKEN`/`PREC` wrappers, is a single `STRING`.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::joinIdNames`
 
 #### body
@@ -9661,6 +9700,10 @@ the set from that annotation alone.
 				   alias (294) — the id every render-dispatch match arm must key
 				   on, since that's what tree-sitter really emits. */
 ```
+
+#### lexicalRank
+
+Each row's parser metadata carries the symbol's `lexicalRank` from `collectLexicalRanks`, looked up by the symbol's grammar name (`grammarNameOfSymbol`); `createParserMetadata` stamps it and a symbol with no rule, external or alias display gets none.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectGrammarFacts`
 

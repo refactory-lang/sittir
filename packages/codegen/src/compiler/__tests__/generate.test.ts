@@ -7,9 +7,11 @@ vi.mock('../generated-metadata.ts', async () => {
 		...actual,
 		loadGeneratedIdTables: vi.fn(async (grammar: string) => {
 			const parserCUrl = new URL(`../../../../../packages/${grammar}/.sittir/src/parser.c`, import.meta.url);
+			const grammarJsonUrl = new URL(`../../../../../packages/${grammar}/.sittir/src/grammar.json`, import.meta.url);
 			return actual.deriveGeneratedIdTablesFromParserCSource(
 				readFileSync(parserCUrl, 'utf8'),
-				`packages/${grammar}/.sittir/src/parser.c`
+				`packages/${grammar}/.sittir/src/parser.c`,
+				JSON.parse(readFileSync(grammarJsonUrl, 'utf8'))
 			);
 		})
 	};

@@ -401,6 +401,7 @@ export const ir: {
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly stringStart: typeof F.buildStringStart;
+	readonly _stringContent: typeof F.build_StringContent;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly as: typeof F.asPattern;
@@ -620,6 +621,7 @@ export const ir: {
 	typeConversion: F.buildTypeConversion,
 	identifier: F.buildIdentifier,
 	stringStart: F.buildStringStart,
+	_stringContent: F.build_StringContent,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
 

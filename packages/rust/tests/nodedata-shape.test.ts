@@ -149,8 +149,9 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 		expect(withNs).toBeDefined();
 		const nameFn = withNs['name'] as (v: unknown) => unknown;
 		expect(typeof nameFn).toBe('function');
-		const updated = nameFn('updated') as unknown as Record<string, unknown>;
-		expect(updated['_name']).toBe('updated');
+		expect(() => nameFn('updated')).toThrow(/a strict factory takes a built node, not a string/);
+		const updated = nameFn(ir.identifier('updated')) as unknown as { $render(): string };
+		expect(updated.$render()).toContain('updated');
 	});
 
 	it.fails('$with produces a new frozen node; original is unchanged', () => {

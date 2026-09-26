@@ -849,10 +849,10 @@ export const ir: {
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
-	readonly lineDocContent: typeof F.buildLineDocContent;
-	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
 	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
+	readonly lineDocContent: typeof F.buildLineDocContent;
+	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly abstract: typeof F.abstractType;
 	readonly array: typeof F.arrayType;
 	readonly as: typeof F.useAsClause;
@@ -1121,10 +1121,10 @@ export const ir: {
 	floatLiteral: F.buildFloatLiteral,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
-	lineDocContent: F.buildLineDocContent,
-	blockCommentContent: F.buildBlockCommentContent,
 	rawStringLiteralStart: F.buildRawStringLiteralStart,
 	rawStringLiteralEnd: F.buildRawStringLiteralEnd,
+	lineDocContent: F.buildLineDocContent,
+	blockCommentContent: F.buildBlockCommentContent,
 
 	// Supertype-stripped short aliases
 	abstract: F.abstractType,

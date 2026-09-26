@@ -84,7 +84,6 @@ import {
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
-	hiddenTextLeafKinds,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
@@ -377,7 +376,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesWidenNumeric = /\bWidenNumeric\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
-	const usesHiddenLeaf = /\bHiddenLeaf\b/.test(body);
 	const usesKeywordNs = /\bKeywordNs\b/.test(body);
 	const usesLeafNs = /\bLeafNs\b/.test(body);
 	const usesOmitEach = /\bOmitEach\b/.test(body);
@@ -399,7 +397,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'BooleanKeyword as BaseBooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : []),
-		...(usesHiddenLeaf ? ['HiddenLeaf'] : []),
 		...(usesOmitEach ? ['OmitEach'] : [])
 	];
 	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
@@ -573,7 +570,6 @@ function emitLeafTerminalAliases(
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
-	const hiddenLeafKinds = hiddenTextLeafKinds(nodeMap);
 	lines.push('// Leaf node types');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -591,7 +587,7 @@ function emitLeafTerminalAliases(
 		}
 
 		const terminal = `Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>`;
-		lines.push(`export type ${node.typeName} = ${hiddenLeafKinds.has(kind) ? `HiddenLeaf<${terminal}>` : terminal};`);
+		lines.push(`export type ${node.typeName} = ${terminal};`);
 	}
 	lines.push('');
 }
