@@ -3,16 +3,14 @@ import { existsSync } from 'node:fs';
 import { evaluate } from './evaluate.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
-import {
-	collectGrammarDiagnosticsForGrammar,
-	GrammarDiagnosticError
-} from './diagnostics/grammar-diagnostics.ts';
+import { collectGrammarDiagnosticsForGrammar, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import { stampVisibleExternals, type GeneratedIdTables } from './generated-metadata.ts';
 import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
 import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
+import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
 
 export interface Compilation {
 	readonly grammar: string;
@@ -55,8 +53,17 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	});
 
 	const upstream = evaluated.upstream === undefined ? undefined : compileUpstream(evaluated.upstream);
-	const ruleCauseDiagnostics =
-		upstream === undefined ? [] : diagnoseRuleCauses({ grammar: cfg.grammar, raw: evaluated, upstream });
+	const departureDiagnostics =
+		upstream === undefined
+			? []
+			: [
+					...diagnoseRuleCauses({ grammar: cfg.grammar, raw: evaluated, upstream }),
+					...diagnosePatchSites({
+						grammar: cfg.grammar,
+						sites: labelPatchSites(evaluated.patchSites ?? [], upstream),
+						expectDiagnostics: evaluated.expectDiagnostics
+					})
+				];
 
 	return {
 		grammar: cfg.grammar,
@@ -67,7 +74,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		nodeMap,
 		diagnostics: compilerDiagnostics,
 		slotGroupingDiagnostics,
-		grammarDiagnostics: [...diagnostics, ...ruleCauseDiagnostics],
+		grammarDiagnostics: [...diagnostics, ...departureDiagnostics],
 		upstream
 	};
 }

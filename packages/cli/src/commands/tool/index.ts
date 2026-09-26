@@ -23,6 +23,7 @@ import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
+import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
 import { probeKind } from './probe-kind.ts';
 import { probeParity } from './probe-parity.ts';
@@ -60,6 +61,7 @@ export const toolModules: readonly CommandModule[] = [
 	inspectRefs,
 	inspectType,
 	listKinds,
+	overrideCensus,
 	phantomKinds,
 	probeKind,
 	probeParity,

@@ -1548,6 +1548,18 @@ A `flatten()` patch stamps `annotations.flattened` on the member at its path, th
 that name its slots. The path of a rule that is itself a pattern is `.`.
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::recordPatchSites`
+
+Records each entry of a patch set as a `PatchSite` under the current rule
+kind before the set is applied. `transform()` is where every entry passes,
+including sibling `variant()` entries that hoist whole-arm without reaching
+`resolvePatch` and wildcard paths that reach it once per matching member.
+
+### `packages/codegen/src/dsl/transform/transform.ts::patchFormOf`
+
+The `PatchForm` of a patch value, from the placeholder guards; a raw rule
+value is `literal`, and a one-argument or full `field()` is `field`.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 
 ```text

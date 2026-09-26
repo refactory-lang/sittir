@@ -162,6 +162,9 @@ describe('post-evaluate invariant', () => {
 				// bare bodies — read by the rule-cause diagnostics.
 				'ruleCauses',
 				'undeclaredRules',
+				// Every patches: entry by owner, path and placeholder form — read by the
+				// patch-site labelling and the override census.
+				'patchSites',
 				// The base evaluated with no wire config — read by the upstream compile.
 				'upstream',
 				// Enrich-synthesized clause-hoist names orphaned by an override

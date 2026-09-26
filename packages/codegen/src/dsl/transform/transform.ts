@@ -21,7 +21,7 @@ import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName } f
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
-import type { PreferencePlaceholder } from '../primitives/preference.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
@@ -40,7 +40,9 @@ import {
 	wireHasDeposit,
 	wireDeclareRuleBody,
 	wireAutomaticVariants,
-	makeSimpleDollarProxy
+	wireRecordPatchSite,
+	makeSimpleDollarProxy,
+	type PatchSite
 } from '../wire/wire.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
@@ -98,6 +100,7 @@ type PatchSet = Record<number | string, PatchValue>;
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
 	for (const patches of patchSets) {
+		recordPatchSites(patches);
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
 			(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
@@ -109,6 +112,26 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 		}
 	}
 	return rule;
+}
+
+function recordPatchSites(patches: PatchSet): void {
+	const ownerKind = wireGetCurrentRuleKind();
+	if (ownerKind === null) return;
+	for (const [path, value] of Object.entries(patches)) wireRecordPatchSite({ ownerKind, path, ...patchFormOf(value) });
+}
+
+function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
+	if (isRulePlaceholder(value)) return { form: 'rule', name: value.name };
+	if (isFieldPlaceholder(value)) return { form: 'field', name: value.name };
+	if (isAliasPlaceholder(value)) return { form: 'alias', name: value.name };
+	if (isVariantPlaceholder(value)) return { form: 'variant', name: value.name };
+	if (isArmDefault(value)) return { form: 'default' };
+	if (isGroupPlaceholder(value)) return { form: 'group' };
+	if (isFlattenPlaceholder(value)) return { form: 'flatten' };
+	if (isRegexPlaceholder(value)) return { form: 'regex' };
+	if (isPreference(value)) return { form: 'preference' };
+	if (isFieldLike(value)) return { form: 'field', name: value.name };
+	return { form: 'literal' };
 }
 
 function requiresPathMode(patches: PatchSet): boolean {

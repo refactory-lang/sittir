@@ -910,6 +910,23 @@ The `rules:` entries whose function carries no declaration (bare bodies).
 Partitions the config's `rules:` functions into `ruleCauses` and
 `undeclaredRules` for the wire context.
 
+### `packages/codegen/src/dsl/wire/wire.ts::PatchSite`
+
+One `patches:` entry: the owner kind it patches, its path key, and the form
+of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
+`default`, `group`, `flatten`, `regex`, `preference`, or `literal` for a raw
+rule value), with the placeholder's name where it has one.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
+
+Every `patches:` entry applied under this wire context, keyed by
+owner|path|form so an entry recorded by a rule function that runs more than
+once counts once.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRecordPatchSite`
+
+Records a `PatchSite` on the active wire context; a no-op outside one.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::deposits`
 
 ```text

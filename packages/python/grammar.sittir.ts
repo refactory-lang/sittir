@@ -367,6 +367,12 @@ export default grammar(
 				_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
 			},
 			expectDiagnostics: {
+				'patch-without-cause': [
+					'dictionary_comprehension',
+					'generator_expression',
+					'list_comprehension',
+					'set_comprehension'
+				],
 				'rule-reauthored-without-cause': [
 					'_simple_pattern',
 					'format_specifier',

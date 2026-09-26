@@ -2297,6 +2297,16 @@ Copies `WireContext.ruleCauses` and `WireContext.undeclaredRules` onto
 `RawGrammar.ruleCauses` / `RawGrammar.undeclaredRules` (the latter sorted);
 each is omitted when empty, and both when the grammar was not wired.
 
+### `packages/codegen/src/compiler/evaluate.ts::drainPatchSitesMetadata`
+
+Copies `WireContext.patchSites` onto `RawGrammar.patchSites`, sorted by
+owner, path and form; omitted when there are none.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
+
+Every `patches:` entry the grammar applied, by owner kind, path and
+placeholder form. Read by the patch-site labelling and the override census.
+
 ### `packages/codegen/src/compiler/evaluate.ts::departsFromUpstream`
 
 Whether a wired grammar departs from its base: it declares at least one

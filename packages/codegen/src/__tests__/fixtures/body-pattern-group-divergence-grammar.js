@@ -23,6 +23,7 @@ module.exports = grammar({
 		currentRuleKind: null,
 		authoredRuleNames: new Set(['host']),
 		ruleCauses: new Map(),
-		undeclaredRules: new Set(['host'])
+		undeclaredRules: new Set(['host']),
+		patchSites: new Map()
 	}
 });

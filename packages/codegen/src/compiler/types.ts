@@ -119,6 +119,7 @@ export interface RawGrammar {
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
 	readonly undeclaredRules?: readonly string[];
+	readonly patchSites?: readonly PatchSite[];
 	readonly upstream?: UpstreamEvaluation;
 	readonly orphanedSyntheticGroups?: readonly string[];
 	readonly automaticVariants?: AutomaticVariants;
@@ -136,7 +137,7 @@ export interface DesugarDivergenceEvent {
 	readonly name: string;
 }
 
-import type { RefineForm } from '../dsl/wire/wire.ts';
+import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
 export type { RefineForm };
 
 export interface NarrowedField {

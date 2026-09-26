@@ -37,7 +37,7 @@ import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
+import type { PatchSite, WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
@@ -373,6 +373,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
 	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
+	const patchSites = drainPatchSitesMetadata(opts);
 	const upstream = departsFromUpstream(opts) ? evaluateUpstream(optionsOrBase, ctx) : undefined;
 
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
@@ -401,6 +402,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectTestFailures,
 		ruleCauses,
 		undeclaredRules,
+		patchSites,
 		upstream,
 		orphanedSyntheticGroups,
 		automaticVariants: wireCtx?.automaticVariants,
@@ -452,6 +454,13 @@ function drainRuleCausesMetadata(opts: GrammarOptions): Pick<RawGrammar, 'ruleCa
 		ruleCauses: wireCtx.ruleCauses.size > 0 ? Object.fromEntries(wireCtx.ruleCauses) : undefined,
 		undeclaredRules: undeclaredRules.length > 0 ? undeclaredRules : undefined
 	};
+}
+
+function drainPatchSitesMetadata(opts: GrammarOptions): readonly PatchSite[] | undefined {
+	const sites = [...(getWireContext(opts)?.patchSites.values() ?? [])];
+	if (sites.length === 0) return undefined;
+	const key = (s: PatchSite) => `${s.ownerKind}|${s.path}|${s.form}`;
+	return sites.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
 }
 
 function departsFromUpstream(opts: GrammarOptions): boolean {

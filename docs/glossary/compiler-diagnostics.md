@@ -560,3 +560,23 @@ declares, else nothing.
 The `reauthored` judgement: the name must be an upstream rule, some
 `PROVOKING_CODES` code must fire on it upstream, and one of those codes must
 belong to the declared cause.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
+
+Labels each patch site against the upstream compile. A site is `resolving`
+when some diagnostic blocks the upstream shape of its owner kind, and it
+claims every such code; otherwise it is `authoring` and claims nothing. The
+labelling is owner-level, because upstream diagnostics name an owner, not a
+path: an authoring `field()` on a flagged owner also reads as resolving, so
+the labels may over-report resolving sites but never under-report them. Only
+`diagnosePatchSites` acts on the labels, and it judges `rule()` sites alone,
+where the coarseness cannot matter. `content-collision` and
+`storagename-collision` count here: a `field()` patch resolves them.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::diagnosePatchSites`
+
+`patch-without-cause` for every `rule()` site labelled authoring: a
+`rule(name, body)` placeholder can only be justified by a shape the upstream
+compile blocks on, so one on an unflagged owner resolves nothing. It blocks
+unless the owner is floor-listed for it in `expectDiagnostics`. Authoring
+forms (`field`, `variant`, `alias` used to name) are never judged.

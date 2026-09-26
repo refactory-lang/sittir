@@ -36,6 +36,25 @@ export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unkn
 
 export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
+export type PatchForm =
+	| 'field'
+	| 'variant'
+	| 'alias'
+	| 'rule'
+	| 'default'
+	| 'group'
+	| 'flatten'
+	| 'regex'
+	| 'preference'
+	| 'literal';
+
+export interface PatchSite {
+	readonly ownerKind: string;
+	readonly path: string;
+	readonly form: PatchForm;
+	readonly name?: string;
+}
+
 export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
@@ -55,6 +74,7 @@ export interface WireContext {
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
 	readonly undeclaredRules: ReadonlySet<string>;
+	readonly patchSites: Map<string, PatchSite>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
@@ -138,6 +158,10 @@ export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): bool
 	return true;
 }
 
+export function wireRecordPatchSite(site: PatchSite): void {
+	currentContext?.patchSites.set(`${site.ownerKind}|${site.path}|${site.form}`, site);
+}
+
 export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
@@ -176,6 +200,7 @@ export function withWireContext<T>(
 		authoredRuleNames: new Set(),
 		ruleCauses: new Map(),
 		undeclaredRules: new Set(),
+		patchSites: new Map(),
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
@@ -354,6 +379,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		...declaredRuleCauses(cfg.rules ?? {}),
+		patchSites: new Map(),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),

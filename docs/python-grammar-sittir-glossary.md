@@ -694,8 +694,10 @@ they need no entry in `transforms`.
 
 ### `expectDiagnostics` (`packages/python/grammar.sittir.ts`)
 
-The `rule-reauthored-without-cause` floor: `rules:` entries that replace an
-upstream rule whose shape no current diagnostic provokes. Each stays because
+The departure floors: `rules:` entries that replace an upstream rule
+(`rule-reauthored-without-cause`), and `rule()` patches
+(`patch-without-cause`), whose upstream shape no current diagnostic
+provokes. Each stays because
 deleting it makes the output worse or breaks generation; the floor only
 shrinks.
 
@@ -707,6 +709,11 @@ shrinks.
   becomes `contents` and the text token loses its immediacy. missing detector: 'lexical-interior' ← token-interior opacity.
 - `_simple_pattern` (declared `'alias-shape'`, unverified: no detector): without it `from` loses a case.
   missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+- `patch-without-cause` on `list_comprehension`, `dictionary_comprehension`,
+  `set_comprehension` and `generator_expression`: their
+  `rule('comprehension_clauses', …)` patches are unverified: no detector;
+  kept: `options:` is coupled to the `rule()` shape
+  (`comprehension_clauses/content:/separator` names no site without it).
 - `print_statement` (declared `'alias-shape'`, unverified: no detector): kept: an emitter is coupled to the
   re-authored shape (without it `emitFieldCarryingFactory` throws on the
   optional-delimiter `argument` field of `print_statement_arm1`). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
