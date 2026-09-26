@@ -175,5 +175,61 @@
     "details": {
       "cause": "alias-shape"
     }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "warning",
+    "ownerKind": "dictionary_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'dictionary_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": true,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "warning",
+    "ownerKind": "generator_expression",
+    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'generator_expression'. Delete the patch so the upstream shape stands",
+    "canProceed": true,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "warning",
+    "ownerKind": "list_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'list_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": true,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "warning",
+    "ownerKind": "set_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'set_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": true,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
   }
 ]

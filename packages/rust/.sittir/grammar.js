@@ -872,6 +872,14 @@ var arm = {
   default: { __sittirPlaceholder: "default" }
 };
 
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
+}
+
 // packages/codegen/src/dsl/primitives/group.ts
 function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
@@ -4223,6 +4231,7 @@ function ruleRef(ruleName, nodeName) {
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
+    recordPatchSites(patches);
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
       (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
@@ -4234,6 +4243,24 @@ function transform(original, ...patchSets) {
     }
   }
   return rule;
+}
+function recordPatchSites(patches) {
+  const ownerKind = wireGetCurrentRuleKind();
+  if (ownerKind === null) return;
+  for (const [path, value] of Object.entries(patches)) wireRecordPatchSite({ ownerKind, path, ...patchFormOf(value) });
+}
+function patchFormOf(value) {
+  if (isRulePlaceholder(value)) return { form: "rule", name: value.name };
+  if (isFieldPlaceholder(value)) return { form: "field", name: value.name };
+  if (isAliasPlaceholder(value)) return { form: "alias", name: value.name };
+  if (isVariantPlaceholder(value)) return { form: "variant", name: value.name };
+  if (isArmDefault(value)) return { form: "default" };
+  if (isGroupPlaceholder(value)) return { form: "group" };
+  if (isFlattenPlaceholder(value)) return { form: "flatten" };
+  if (isRegexPlaceholder(value)) return { form: "regex" };
+  if (isPreference(value)) return { form: "preference" };
+  if (isFieldLike(value)) return { form: "field", name: value.name };
+  return { form: "literal" };
 }
 function requiresPathMode(patches) {
   return Object.keys(patches).some((k) => !/^\d+$/.test(k));
@@ -4978,14 +5005,6 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/primitives/preference.ts
-function isPreference(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
-}
-function preference(arm2) {
-  return { __sittirPlaceholder: "preference", default: arm2 };
-}
-
 // packages/codegen/src/dsl/primitives/spacing.ts
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
@@ -5116,6 +5135,9 @@ function wireRegisterSymbolRename(oldName, newName) {
 function wireHasAuthoredRule(name) {
   return currentContext?.authoredRuleNames.has(name) ?? false;
 }
+function wireRecordPatchSite(site) {
+  currentContext?.patchSites.set(`${site.ownerKind}|${site.path}|${site.form}`, site);
+}
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
@@ -5152,6 +5174,7 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
     ...declaredRuleCauses(cfg.rules ?? {}),
+    patchSites: /* @__PURE__ */ new Map(),
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
