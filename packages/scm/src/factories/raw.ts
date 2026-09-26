@@ -741,7 +741,7 @@ export type FluentKindMap = {
 	_immediate_identifier: T.ImmediateIdentifier;
 	capture: T.Capture.Built;
 	string: T.String.Built;
-	_immediate_string: T.ImmediateString.Built;
+	immediate_string: T.ImmediateString.Built;
 	string_content: T.StringContent.Built;
 	parameters: T.Parameters.Built;
 	comment: T.Comment.Built;
@@ -768,7 +768,7 @@ export const _factoryMap = {
 	_immediate_identifier: buildImmediateIdentifier,
 	capture: buildCapture,
 	string: buildString,
-	_immediate_string: buildImmediateString,
+	immediate_string: buildImmediateString,
 	string_content: buildStringContent,
 	parameters: buildParameters,
 	comment: buildComment,

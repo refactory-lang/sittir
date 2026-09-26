@@ -495,7 +495,7 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		assignment: (r) => r,
 		function_definition: (r) => r,
 		parameters: (r) => `def _f${r}:\n    pass`,
-		_parameters: (r) => `def _f(${r}):\n    pass`,
+		parameters_elements: (r) => `def _f(${r}):\n    pass`,
 		argument_list: (r) => `_f${r}`,
 		dotted_name: (r) => `import ${r}`,
 		list_splat: (r) => `_f(${r})`,

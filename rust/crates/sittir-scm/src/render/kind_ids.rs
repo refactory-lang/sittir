@@ -149,6 +149,13 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
     matches!(kind.0, u16::MAX if false)
 }
 
+/// Whether a node of this kind keeps its anonymous children as `$other`
+/// when it has no named child: an unnamed slot of the kind stores terminal
+/// kinds, and the wrap layer reclaims that slot's value from `$other`.
+pub fn keeps_anonymous_children(kind: KindId) -> bool {
+    matches!(kind.0, 38 | 39 | 40 | 41 | 46)
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

@@ -124,13 +124,13 @@ pub const _NEWLINE: KindId = KindId(113);
 pub const _INDENT: KindId = KindId(114);
 pub const _DEDENT: KindId = KindId(115);
 pub const STRING_START: KindId = KindId(116);
-pub const _STRING_CONTENT: KindId = KindId(117);
+pub const _STRING_FRAGMENT: KindId = KindId(117);
 pub const ESCAPE_INTERPOLATION: KindId = KindId(118);
 pub const STRING_END: KindId = KindId(119);
 pub const _TIGHT: KindId = KindId(120);
 pub const _SPACE: KindId = KindId(121);
 pub const _BLANKLINE: KindId = KindId(122);
-pub const _DOUBLE_NEWLINE: KindId = KindId(123);
+pub const _DOUBLE_BLANKLINE: KindId = KindId(123);
 pub const MODULE: KindId = KindId(124);
 pub const _STATEMENT: KindId = KindId(125);
 pub const _SIMPLE_STATEMENTS: KindId = KindId(126);
@@ -188,7 +188,7 @@ pub const EXPRESSION_LIST: KindId = KindId(177);
 pub const DOTTED_NAME: KindId = KindId(178);
 pub const CASE_PATTERN: KindId = KindId(179);
 pub const _SIMPLE_PATTERN: KindId = KindId(180);
-pub const _AS_PATTERN: KindId = KindId(181);
+pub const _CASE_AS_PATTERN: KindId = KindId(181);
 pub const UNION_PATTERN: KindId = KindId(182);
 pub const DICT_PATTERN: KindId = KindId(183);
 pub const _KEY_VALUE_PATTERN: KindId = KindId(184);
@@ -196,7 +196,7 @@ pub const KEYWORD_PATTERN: KindId = KindId(185);
 pub const SPLAT_PATTERN: KindId = KindId(186);
 pub const CLASS_PATTERN: KindId = KindId(187);
 pub const COMPLEX_PATTERN: KindId = KindId(188);
-pub const _PARAMETERS: KindId = KindId(189);
+pub const _PARAMETERS_ELEMENTS: KindId = KindId(189);
 pub const _PATTERNS: KindId = KindId(190);
 pub const PARAMETER: KindId = KindId(191);
 pub const PATTERN: KindId = KindId(192);
@@ -468,10 +468,11 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         120 => "_tight", // "_tight"
         121 => "_space", // "_space"
         122 => "_blankline", // "_blankline"
-        123 => "_double_newline", // "_double_newline"
+        123 => "_double_blankline", // "_double_blankline"
         124 => "module", // "module"
         125 => "_statement", // "_statement"
-        126 => "simple_statements", // "_simple_statements"
+        126 => "_simple_statements", // "_simple_statements"
+        335 => "simple_statements", // "_simple_statements"
         127 => "import_statement", // "import_statement"
         128 => "import_prefix", // "import_prefix"
         129 => "relative_import", // "relative_import"
@@ -525,7 +526,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         177 => "expression_list", // "expression_list"
         178 => "dotted_name", // "dotted_name"
         179 => "case_pattern", // "case_pattern"
-        180 => "simple_pattern", // "_simple_pattern"
+        180 => "_simple_pattern", // "_simple_pattern"
+        334 => "simple_pattern", // "_simple_pattern"
         181 => "case_as_pattern", // "_as_pattern"
         182 => "union_pattern", // "union_pattern"
         183 => "dict_pattern", // "dict_pattern"
@@ -694,7 +696,14 @@ pub fn is_text_kind(kind: KindId) -> bool {
 /// grammar symbol beside it when the node is the storage node shown under
 /// the alias, so the wrap layer can seat it as the envelope's content.
 pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 331 | 332)
+    matches!(kind.0, 331 | 332 | 333)
+}
+
+/// Whether a node of this kind keeps its anonymous children as `$other`
+/// when it has no named child: an unnamed slot of the kind stores terminal
+/// kinds, and the wrap layer reclaims that slot's value from `$other`.
+pub fn keeps_anonymous_children(kind: KindId) -> bool {
+    matches!(kind.0, 131 | 138 | 141 | 142 | 143 | 151 | 177 | 179 | 216 | 222 | 245 | 263 | 269 | 276 | 293 | 294 | 295)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

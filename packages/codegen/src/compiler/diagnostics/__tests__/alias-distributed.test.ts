@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
-import { tokenUseCounts, type ParserSymbolCtx } from '../../../dsl/rule-patterns.ts';
+import { symbolSourceOf, type SymbolSource } from '../alias-distributed.ts';
+import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { AnyRule } from '../../../types/rule.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
@@ -8,9 +9,16 @@ const P = (value: string) => ({ type: 'PATTERN', value });
 const sym = (name: string) => ({ type: 'SYMBOL', name });
 const alias = (content: unknown, value: string, named = true) => ({ type: 'ALIAS', named, value, content });
 
-function symbolsOf(rules: Record<string, unknown>, opts: { inline?: string[]; externals?: string[] } = {}): ParserSymbolCtx {
-	const r = rules as Record<string, AnyRule>;
-	return { rules: r, externals: new Set(opts.externals ?? []), inline: new Set(opts.inline ?? []), tokenUses: tokenUseCounts(r) };
+function symbolsOf(
+	rules: Record<string, unknown>,
+	opts: { inline?: string[]; externals?: string[]; kindEntries?: KindEntryLike[] } = {}
+): SymbolSource {
+	return symbolSourceOf({
+		rules: rules as Record<string, AnyRule>,
+		externals: new Set(opts.externals ?? []),
+		inline: new Set(opts.inline ?? []),
+		kindEntries: opts.kindEntries ?? []
+	});
 }
 const distributed = (rules: Record<string, unknown>, opts?: { inline?: string[] }) =>
 	diagnoseDistributedAliases({ grammar: 'demo', symbols: symbolsOf(rules, opts) });
@@ -54,11 +62,12 @@ describe('alias-distributed', () => {
 
 describe('display-union-mixed', () => {
 	const rules = { tok: { type: 'TOKEN', content: P('[a-z]+') }, node: { type: 'SEQ', members: [sym('tok'), S(';')] }, user: sym('tok'), other: sym('tok') };
+	const kindEntries: KindEntryLike[] = [{ kind: 'tok', terminal: true }, { kind: 'node' }];
 	it('fires when one display sits over a terminal and a nonterminal', () => {
 		const out = diagnoseMixedDisplayUnions({
 			grammar: 'demo',
 			displayUnions: new Map([['shown', [{ storage: 'tok', literal: false }, { storage: 'node', literal: false }]]]),
-			symbols: symbolsOf(rules)
+			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out).toHaveLength(1);
 		expect(out[0]).toMatchObject({ code: 'display-union-mixed', ownerKind: 'shown', canProceed: false, details: { terminals: ['tok'], nonterminals: ['node'] } });
@@ -67,15 +76,39 @@ describe('display-union-mixed', () => {
 		const out = diagnoseMixedDisplayUnions({
 			grammar: 'demo',
 			displayUnions: new Map([['shown', [{ storage: 'tok', literal: false }, { storage: 'node', literal: true }]]]),
-			symbols: symbolsOf(rules)
+			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out).toEqual([]);
+	});
+	it('with no parser catalog yet, files a member by the predicted class of its rule shape', () => {
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['shown', [{ storage: 'tok', literal: false }, { storage: 'node', literal: false }]]]),
+			symbols: symbolsOf(rules)
+		});
+		expect(out[0]).toMatchObject({ code: 'display-union-mixed', details: { terminals: ['tok'], nonterminals: ['node'] } });
+	});
+	it("files a member by the parser catalog's terminal fact, not by its rule shape", () => {
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['shown', [{ storage: 'tok', literal: false }, { storage: 'node', literal: false }]]]),
+			symbols: symbolsOf(rules, { kindEntries: [{ kind: 'tok' }, { kind: 'node' }] })
+		});
+		expect(out).toEqual([]);
+	});
+	it('files an inlined member by its body, since the parser substitutes it', () => {
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['shown', [{ storage: '_word', literal: false }, { storage: 'node', literal: false }]]]),
+			symbols: symbolsOf({ ...rules, _word: sym('tok') }, { inline: ['_word'], kindEntries })
+		});
+		expect(out[0]).toMatchObject({ code: 'display-union-mixed', details: { terminals: ['_word'], nonterminals: ['node'] } });
 	});
 	it('refuses a member that is neither a rule, an external nor a literal', () => {
 		const out = diagnoseMixedDisplayUnions({
 			grammar: 'demo',
 			displayUnions: new Map([['shown', [{ storage: 'ghost', literal: false }]]]),
-			symbols: symbolsOf(rules)
+			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out.map((d) => [d.code, d.details])).toEqual([['display-union-unknown-member', { display: 'shown', member: 'ghost' }]]);
 	});

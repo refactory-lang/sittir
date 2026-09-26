@@ -89,9 +89,10 @@ export function emitTests(config: EmitTestsConfig): string {
 		lines.push("import { TSKindId } from '../src/types.js';");
 	}
 	lines.push('');
+	let usesDelimiter = false;
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
+		if (node.surfaceHidden) continue;
 		if (!node.factoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const key = node.irKey;
@@ -115,7 +116,7 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'supertype':
 				break;
 			case 'list':
-				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
+				usesDelimiter = emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap) || usesDelimiter;
 				break;
 			case 'pattern':
 				if (node.annotations?.tokenForm !== true) emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
@@ -136,6 +137,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 	}
 
+	if (usesDelimiter) lines.splice(lines.indexOf(''), 0, "import { Delimiter } from '../src/types.js';");
 	return lines.join('\n');
 }
 
@@ -300,9 +302,7 @@ function subFactoryChildrenArgs(
 	if (patternDummy !== undefined) return patternDummy;
 	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
 	if (resolved === null || resolved.firstKindName === undefined) return '';
-	const { facts, firstKindName } = resolved;
-	if (facts.multiple && !facts.nonEmpty) return '';
-	return buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set());
+	return buildDummyStub(resolved.firstKindName, nodeMap, kindEntries, 0, new Set());
 }
 
 function childBareCallArgs(
@@ -550,12 +550,13 @@ function emitSeparatedListTest(
 	key: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
-): void {
-	if (node.modelType !== 'list') return;
+): boolean {
+	if (node.modelType !== 'list') return false;
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
-	const callArgs = `...${elementsArg}`;
+	const trailing = node instanceof AssembledList && node.singleElementNeedsTrailing;
+	const callArgs = trailing ? `{ delimiter: Delimiter.Trailing }, ...${elementsArg}` : `...${elementsArg}`;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -569,6 +570,7 @@ function emitSeparatedListTest(
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
+	return trailing;
 }
 
 function emitLeafTest(
@@ -679,7 +681,7 @@ function resolveConcreteKind(
 			continue;
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
-		if (current.startsWith('_')) continue;
+		if (node.surfaceHidden) continue;
 		if (node.modelType === 'pattern' || isFixedTextLeaf(node)) return current;
 		if (node.modelType === 'enum') enumCandidates.push(current);
 		else nonLeafCandidates.push(current);

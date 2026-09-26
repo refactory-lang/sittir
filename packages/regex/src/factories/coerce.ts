@@ -19,8 +19,8 @@ export const _fromMap = {
 	boundary_assertion: coerceToBoundaryAssertion,
 	non_boundary_assertion: coerceToNonBoundaryAssertion,
 	lookaround_assertion: coerceToLookaroundAssertion,
-	_lookahead_assertion: coerceToLookaheadAssertion,
-	_lookbehind_assertion: coerceToLookbehindAssertion,
+	lookahead_assertion: coerceToLookaheadAssertion,
+	lookbehind_assertion: coerceToLookbehindAssertion,
 	pattern_character: coerceToPatternCharacter,
 	character_class: coerceToCharacterClass,
 	posix_character_class: coerceToPosixCharacterClass,
@@ -41,7 +41,7 @@ export const _fromMap = {
 	character_class_escape: coerceToCharacterClassEscape,
 	unicode_character_escape: coerceToUnicodeCharacterEscape,
 	unicode_property_value_expression: coerceToUnicodePropertyValueExpression,
-	unicode_property: coerceToUnicodeProperty,
+	unicode_property_value: coerceToUnicodePropertyValue,
 	control_escape: coerceToControlEscape,
 	control_letter_escape: coerceToControlLetterEscape,
 	identity_escape: coerceToIdentityEscape,
@@ -84,7 +84,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u,
 		factory: F.buildUnicodeCharacterEscape
 	},
-	unicode_property: { pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u, factory: F.buildUnicodeProperty },
+	unicode_property_value: { pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u, factory: F.buildUnicodePropertyValue },
 	control_escape: { pattern: /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u, factory: F.buildControlEscape },
 	control_letter_escape: { pattern: /^(?:(?:\\c[a-zA-Z]))$/u, factory: F.buildControlLetterEscape },
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
@@ -92,7 +92,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
 	unicode_property_name: {
 		pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u,
-		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodeProperty(text) as never)
+		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodePropertyValue(text) as never)
 	}
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
@@ -123,7 +123,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'optional',
 	'decimal_escape',
 	'unicode_character_escape',
-	'unicode_property',
+	'unicode_property_value',
 	'unicode_property_name',
 	'control_escape',
 	'control_letter_escape',
@@ -377,7 +377,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	character_class_escape: TSKindId.CharacterClassEscape,
 	count_quantifier_group: TSKindId.CountQuantifierGroup,
 	unicode_property_value_expression_group: TSKindId.UnicodePropertyValueExpressionGroup,
-	unicode_property_name: TSKindId._UnicodePropertyName
+	unicode_property_name: TSKindId.UnicodePropertyName
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -390,7 +390,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	named_group_backreference: 'group_name',
 	count_quantifier_group: 'decimal_digits',
 	unicode_property_value_expression_group: 'unicode_property_name',
-	unicode_property_name: 'unicode_property'
+	unicode_property_name: 'unicode_property_value'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -556,7 +556,7 @@ function _requireField<T>(kind: string, slot: string, v: T | undefined | null): 
 // Interned resolver kind lists (dedup)
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = ['alternation', 'term'];
-const _K2: readonly string[] = ['_lookahead_assertion', '_lookbehind_assertion'];
+const _K2: readonly string[] = ['lookahead_assertion', 'lookbehind_assertion'];
 const _K3: readonly string[] = ['class_character', 'control_escape', 'control_letter_escape'];
 const _K4: readonly string[] = ['character_class_escape', 'identity_escape', 'posix_character_class', 'class_range'];
 const _K5: readonly string[] = ['class_character', 'control_escape'];
@@ -729,8 +729,8 @@ export function coerceToLookaheadAssertion(
 	if (!_isLooseConfig<T.LookaheadAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookaheadAssertion>;
 	return F.buildLookaheadAssertion({
-		content: _requireField('_lookahead_assertion', 'content', resolveLookaheadAssertion_content(input.content)),
-		pattern: _requireField('_lookahead_assertion', 'pattern', resolveLookaheadAssertion_pattern(input.pattern))
+		content: _requireField('lookahead_assertion', 'content', resolveLookaheadAssertion_content(input.content)),
+		pattern: _requireField('lookahead_assertion', 'pattern', resolveLookaheadAssertion_pattern(input.pattern))
 	});
 }
 
@@ -755,8 +755,8 @@ export function coerceToLookbehindAssertion(
 	if (!_isLooseConfig<T.LookbehindAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookbehindAssertion>;
 	return F.buildLookbehindAssertion({
-		content: _requireField('_lookbehind_assertion', 'content', resolveLookbehindAssertion_content(input.content)),
-		pattern: _requireField('_lookbehind_assertion', 'pattern', resolveLookbehindAssertion_pattern(input.pattern))
+		content: _requireField('lookbehind_assertion', 'content', resolveLookbehindAssertion_content(input.content)),
+		pattern: _requireField('lookbehind_assertion', 'pattern', resolveLookbehindAssertion_pattern(input.pattern))
 	});
 }
 
@@ -1114,10 +1114,10 @@ export function resolveUnicodePropertyValueExpression_unicodePropertyValueExpres
 	);
 }
 
-export function resolveUnicodePropertyValueExpression_unicodeProperty(
-	value: T.UnicodePropertyValueExpression.LooseConfig['unicodeProperty']
-): T.UnicodePropertyValueExpression['_unicode_property'] {
-	return _resolveOneLeaf<T.UnicodeProperty>(value, 'unicode_property');
+export function resolveUnicodePropertyValueExpression_unicodePropertyValue(
+	value: T.UnicodePropertyValueExpression.LooseConfig['unicodePropertyValue']
+): T.UnicodePropertyValueExpression['_unicode_property_value'] {
+	return _resolveOneLeaf<T.UnicodePropertyValue>(value, 'unicode_property_value');
 }
 
 export function coerceToUnicodePropertyValueExpression(
@@ -1129,17 +1129,19 @@ export function coerceToUnicodePropertyValueExpression(
 		unicodePropertyValueExpressionGroup: resolveUnicodePropertyValueExpression_unicodePropertyValueExpressionGroup(
 			input.unicodePropertyValueExpressionGroup
 		),
-		unicodeProperty: _requireField(
+		unicodePropertyValue: _requireField(
 			'unicode_property_value_expression',
-			'unicodeProperty',
-			resolveUnicodePropertyValueExpression_unicodeProperty(input.unicodeProperty)
+			'unicodePropertyValue',
+			resolveUnicodePropertyValueExpression_unicodePropertyValue(input.unicodePropertyValue)
 		)
 	});
 }
 
-export function coerceToUnicodeProperty(input: T.UnicodeProperty.Loose): ReturnType<typeof F.buildUnicodeProperty> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnicodeProperty>;
-	return F.buildUnicodeProperty(input as Parameters<typeof F.buildUnicodeProperty>[0]);
+export function coerceToUnicodePropertyValue(
+	input: T.UnicodePropertyValue.Loose
+): ReturnType<typeof F.buildUnicodePropertyValue> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnicodePropertyValue>;
+	return F.buildUnicodePropertyValue(input as Parameters<typeof F.buildUnicodePropertyValue>[0]);
 }
 
 export function coerceToControlEscape(input: T.ControlEscape.Loose): ReturnType<typeof F.buildControlEscape> {
@@ -1439,7 +1441,7 @@ export function resolveLazy_content(value: T.Lazy.LooseConfig['content']): T.Laz
 }
 
 export function coerceToLazy(input: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId._Lazy)
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Lazy)
 		return input as unknown as ReturnType<typeof F.buildLazy>;
 	return F.buildLazy(
 		_requireField(
@@ -1468,21 +1470,21 @@ export function coerceToLazy(input: T.Lazy.Loose): ReturnType<typeof F.buildLazy
 export function resolveUnicodePropertyName_content(
 	value: T.UnicodePropertyName.LooseConfig['content']
 ): T.UnicodePropertyName['_content'] {
-	return _resolveOneLeaf<T.UnicodeProperty>(value, 'unicode_property');
+	return _resolveOneLeaf<T.UnicodePropertyValue>(value, 'unicode_property_value');
 }
 
 export function coerceToUnicodePropertyName(
 	input: T.UnicodePropertyName.Loose
 ): ReturnType<typeof F.buildUnicodePropertyName> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId._UnicodePropertyName)
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.UnicodePropertyName)
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
 	return F.buildUnicodePropertyName(
 		_requireField(
 			'unicode_property_name',
 			'content',
-			_resolveOneLeaf<T.UnicodeProperty>(
+			_resolveOneLeaf<T.UnicodePropertyValue>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				'unicode_property'
+				'unicode_property_value'
 			)
 		)
 	);

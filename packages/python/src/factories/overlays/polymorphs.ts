@@ -201,35 +201,35 @@ export const comparisonOperator: typeof B.comparisonOperator & {
 	coerce: comparisonOperator$seatedCoerce
 };
 
-const _yieldFromClause$comparison =
+const yieldFromClause$comparison =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$not =
+const yieldFromClause$not =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$boolean =
+const yieldFromClause$boolean =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$lambda =
+const yieldFromClause$lambda =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$conditional =
+const yieldFromClause$conditional =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$named =
+const yieldFromClause$named =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause$as =
+const yieldFromClause$as =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _yieldFromClause: {
+const yieldFromClause: {
 	comparison: {
 		strict: (...args: ArgsOf<typeof comparisonOperator.strict>) => ReturnType<typeof F.buildYieldFromClause>;
 		coerce: (...args: ArgsOf<typeof comparisonOperator.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
@@ -260,32 +260,32 @@ const _yieldFromClause: {
 	};
 } = {
 	comparison: {
-		strict: _yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.strict),
-		coerce: _yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.coerce)
+		strict: yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.strict),
+		coerce: yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.coerce)
 	},
 	not: {
-		strict: _yieldFromClause$not(F.buildYieldFromClause, F.buildNotOperator),
-		coerce: _yieldFromClause$not(F.buildYieldFromClause, C.coerceToNotOperator)
+		strict: yieldFromClause$not(F.buildYieldFromClause, F.buildNotOperator),
+		coerce: yieldFromClause$not(F.buildYieldFromClause, C.coerceToNotOperator)
 	},
 	boolean: {
-		strict: _yieldFromClause$boolean(F.buildYieldFromClause, F.buildBooleanOperator),
-		coerce: _yieldFromClause$boolean(F.buildYieldFromClause, C.coerceToBooleanOperator)
+		strict: yieldFromClause$boolean(F.buildYieldFromClause, F.buildBooleanOperator),
+		coerce: yieldFromClause$boolean(F.buildYieldFromClause, C.coerceToBooleanOperator)
 	},
 	lambda: {
-		strict: _yieldFromClause$lambda(F.buildYieldFromClause, F.buildLambda),
-		coerce: _yieldFromClause$lambda(F.buildYieldFromClause, C.coerceToLambda)
+		strict: yieldFromClause$lambda(F.buildYieldFromClause, F.buildLambda),
+		coerce: yieldFromClause$lambda(F.buildYieldFromClause, C.coerceToLambda)
 	},
 	conditional: {
-		strict: _yieldFromClause$conditional(F.buildYieldFromClause, F.buildConditionalExpression),
-		coerce: _yieldFromClause$conditional(F.buildYieldFromClause, C.coerceToConditionalExpression)
+		strict: yieldFromClause$conditional(F.buildYieldFromClause, F.buildConditionalExpression),
+		coerce: yieldFromClause$conditional(F.buildYieldFromClause, C.coerceToConditionalExpression)
 	},
 	named: {
-		strict: _yieldFromClause$named(F.buildYieldFromClause, F.buildNamedExpression),
-		coerce: _yieldFromClause$named(F.buildYieldFromClause, C.coerceToNamedExpression)
+		strict: yieldFromClause$named(F.buildYieldFromClause, F.buildNamedExpression),
+		coerce: yieldFromClause$named(F.buildYieldFromClause, C.coerceToNamedExpression)
 	},
 	as: {
-		strict: _yieldFromClause$as(F.buildYieldFromClause, F.buildAsPattern),
-		coerce: _yieldFromClause$as(F.buildYieldFromClause, C.coerceToAsPattern)
+		strict: yieldFromClause$as(F.buildYieldFromClause, F.buildAsPattern),
+		coerce: yieldFromClause$as(F.buildYieldFromClause, C.coerceToAsPattern)
 	}
 };
 
@@ -326,32 +326,32 @@ export const yield_: typeof B.yield_ & {
 		strict: (...args: ArgsOf<typeof F.buildYieldFromClause>) => ReturnType<typeof F.buildYield>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYieldFromClause>) => ReturnType<typeof F.buildYield>;
 		comparison: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.comparison.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.comparison.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.comparison.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.comparison.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		not: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.not.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.not.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.not.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.not.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		boolean: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.boolean.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.boolean.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.boolean.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.boolean.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		lambda: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.lambda.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.lambda.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.lambda.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.lambda.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		conditional: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.conditional.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.conditional.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.conditional.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.conditional.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		named: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.named.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.named.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.named.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.named.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 		as: {
-			strict: (...args: ArgsOf<typeof _yieldFromClause.as.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof _yieldFromClause.as.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: (...args: ArgsOf<typeof yieldFromClause.as.strict>) => ReturnType<typeof F.buildYield>;
+			coerce: (...args: ArgsOf<typeof yieldFromClause.as.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 	};
 } = {
@@ -360,32 +360,32 @@ export const yield_: typeof B.yield_ & {
 		strict: yield_$fromClause(F.buildYield, F.buildYieldFromClause),
 		coerce: yield_$fromClause(F.buildYield, C.coerceToYieldFromClause),
 		comparison: {
-			strict: yield_$fromClause$comparison(F.buildYield, _yieldFromClause.comparison.strict),
-			coerce: yield_$fromClause$comparison(F.buildYield, _yieldFromClause.comparison.coerce)
+			strict: yield_$fromClause$comparison(F.buildYield, yieldFromClause.comparison.strict),
+			coerce: yield_$fromClause$comparison(F.buildYield, yieldFromClause.comparison.coerce)
 		},
 		not: {
-			strict: yield_$fromClause$not(F.buildYield, _yieldFromClause.not.strict),
-			coerce: yield_$fromClause$not(F.buildYield, _yieldFromClause.not.coerce)
+			strict: yield_$fromClause$not(F.buildYield, yieldFromClause.not.strict),
+			coerce: yield_$fromClause$not(F.buildYield, yieldFromClause.not.coerce)
 		},
 		boolean: {
-			strict: yield_$fromClause$boolean(F.buildYield, _yieldFromClause.boolean.strict),
-			coerce: yield_$fromClause$boolean(F.buildYield, _yieldFromClause.boolean.coerce)
+			strict: yield_$fromClause$boolean(F.buildYield, yieldFromClause.boolean.strict),
+			coerce: yield_$fromClause$boolean(F.buildYield, yieldFromClause.boolean.coerce)
 		},
 		lambda: {
-			strict: yield_$fromClause$lambda(F.buildYield, _yieldFromClause.lambda.strict),
-			coerce: yield_$fromClause$lambda(F.buildYield, _yieldFromClause.lambda.coerce)
+			strict: yield_$fromClause$lambda(F.buildYield, yieldFromClause.lambda.strict),
+			coerce: yield_$fromClause$lambda(F.buildYield, yieldFromClause.lambda.coerce)
 		},
 		conditional: {
-			strict: yield_$fromClause$conditional(F.buildYield, _yieldFromClause.conditional.strict),
-			coerce: yield_$fromClause$conditional(F.buildYield, _yieldFromClause.conditional.coerce)
+			strict: yield_$fromClause$conditional(F.buildYield, yieldFromClause.conditional.strict),
+			coerce: yield_$fromClause$conditional(F.buildYield, yieldFromClause.conditional.coerce)
 		},
 		named: {
-			strict: yield_$fromClause$named(F.buildYield, _yieldFromClause.named.strict),
-			coerce: yield_$fromClause$named(F.buildYield, _yieldFromClause.named.coerce)
+			strict: yield_$fromClause$named(F.buildYield, yieldFromClause.named.strict),
+			coerce: yield_$fromClause$named(F.buildYield, yieldFromClause.named.coerce)
 		},
 		as: {
-			strict: yield_$fromClause$as(F.buildYield, _yieldFromClause.as.strict),
-			coerce: yield_$fromClause$as(F.buildYield, _yieldFromClause.as.coerce)
+			strict: yield_$fromClause$as(F.buildYield, yieldFromClause.as.strict),
+			coerce: yield_$fromClause$as(F.buildYield, yieldFromClause.as.coerce)
 		}
 	}
 };
@@ -728,6 +728,35 @@ export const matchStatement: typeof B.matchStatement & {
 	...B.matchStatement,
 	strict: matchStatement$seated,
 	coerce: matchStatement$seatedCoerce
+};
+
+const matchBlock$block =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const matchBlock$empty =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+export const matchBlock: typeof B.matchBlock & {
+	block: {
+		strict: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
+	};
+	empty: {
+		strict: (options?: OptionsArg<typeof F.buildMatchBlock>) => ReturnType<typeof F.buildMatchBlock>;
+		coerce: (options?: OptionsArg<typeof C.coerceToMatchBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
+	};
+} = {
+	...B.matchBlock,
+	block: {
+		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
+		coerce: matchBlock$block(F.buildMatchBlock, C.coerceToMatchBlockBlock)
+	},
+	empty: {
+		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
+		coerce: matchBlock$empty(C.coerceToMatchBlock, TSKindId.Newline)
+	}
 };
 
 const caseClause$casePatterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
@@ -1423,8 +1452,8 @@ const casePattern$keywordPattern =
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const casePattern: typeof B.casePattern & {
 	caseAsPattern: {
-		strict: (...args: ArgsOf<typeof F.build_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceTo_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
+		strict: (...args: ArgsOf<typeof F.buildCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
 	};
 	keywordPattern: {
 		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
@@ -1433,8 +1462,8 @@ export const casePattern: typeof B.casePattern & {
 } = {
 	...B.casePattern,
 	caseAsPattern: {
-		strict: casePattern$caseAsPattern(F.buildCasePattern, F.build_AsPattern),
-		coerce: casePattern$caseAsPattern(F.buildCasePattern, C.coerceTo_AsPattern)
+		strict: casePattern$caseAsPattern(F.buildCasePattern, F.buildCaseAsPattern),
+		coerce: casePattern$caseAsPattern(F.buildCasePattern, C.coerceToCaseAsPattern)
 	},
 	keywordPattern: {
 		strict: casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern),
@@ -1796,18 +1825,6 @@ export const compoundStatement: {
 	class: B.classDefinition,
 	decorated: B.decoratedDefinition,
 	match: matchStatement
-};
-
-export const matchBlock: {
-	readonly strict: typeof F.buildMatchBlockBlock;
-	readonly coerce: typeof C.coerceToMatchBlockBlock;
-	readonly block: { strict: typeof F.buildMatchBlockBlock; coerce: typeof C.coerceToMatchBlockBlock };
-	readonly empty: typeof TSKindId.Newline;
-} = {
-	strict: F.buildMatchBlockBlock,
-	coerce: C.coerceToMatchBlockBlock,
-	block: { strict: F.buildMatchBlockBlock, coerce: C.coerceToMatchBlockBlock },
-	empty: TSKindId.Newline
 };
 
 export const withClause: {

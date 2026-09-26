@@ -328,13 +328,16 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {
+function readTerminalFromOther<T = _NodeData | number>(
+	data: _NodeData,
+	allowedKindIds: readonly number[]
+): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
 	if (!Array.isArray(other)) return undefined;
 	for (const e of other) {
 		const id =
 			typeof e === 'number' ? e : typeof e === 'object' && e !== null ? (e as { $type?: unknown }).$type : undefined;
-		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as _NodeData | number;
+		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as T;
 	}
 	return undefined;
 }
@@ -342,10 +345,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_class_atom: new Set([
 		'class_character',
 		'bslash_dash',
+		'identity_escape',
 		'character_class_escape',
 		'control_escape',
 		'control_letter_escape',
-		'identity_escape',
 		'posix_character_class',
 		'class_range'
 	]),
@@ -611,7 +614,10 @@ export function wrapLookaheadAssertion(
 			$type: TSKindId.LookaheadAssertion as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._eq ?? data._bang ?? readTerminalFromOther(data, [TSKindId.Eq, TSKindId.Bang]),
+					data._content ??
+						data._eq ??
+						data._bang ??
+						readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
 					'content',
 					true,
 					data.$type,
@@ -657,7 +663,10 @@ export function wrapLookbehindAssertion(
 			$type: TSKindId.LookbehindAssertion as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._eq ?? data._bang ?? readTerminalFromOther(data, [TSKindId.Eq, TSKindId.Bang]),
+					data._content ??
+						data._eq ??
+						data._bang ??
+						readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
 					'content',
 					true,
 					data.$type,
@@ -857,7 +866,7 @@ export function wrapNamedCapturingGroup(
 					data._content ??
 						data._lparen_qmark_lt ??
 						data._lparen_qmarkp_lt ??
-						readTerminalFromOther(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkpLt]),
+						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkpLt]),
 					'content',
 					true,
 					data.$type,
@@ -1086,18 +1095,11 @@ export function wrapCharacterClassEscape(
 	return _node;
 }
 
-export function wrapUnicodePropertyValueExpression(
-	data: T.UnicodePropertyValueExpression & { readonly _unicode_property_value?: T.UnicodeProperty },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_unicode_property_value_expression_group',
-		'_unicode_property',
-		'_unicode_property_value'
-	]);
+export function wrapUnicodePropertyValueExpression(data: T.UnicodePropertyValueExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_unicode_property_value_expression_group', '_unicode_property_value']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_unicode_property_value']),
+			...data,
 			$type: TSKindId.UnicodePropertyValueExpression as const,
 			_unicode_property_value_expression_group: normalizeSingularWrapSlot(
 				data._unicode_property_value_expression_group,
@@ -1111,12 +1113,12 @@ export function wrapUnicodePropertyValueExpression(
 					span: (data as _NodeData).$span
 				}
 			),
-			_unicode_property: normalizeSingularWrapSlot(
-				data._unicode_property ?? data._unicode_property_value,
-				'unicode_property',
+			_unicode_property_value: normalizeSingularWrapSlot(
+				data._unicode_property_value,
+				'unicode_property_value',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'unicode_property', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'unicode_property_value', span: (data as _NodeData).$span }
 			),
 
 			unicodePropertyValueExpressionGroup() {
@@ -1125,16 +1127,16 @@ export function wrapUnicodePropertyValueExpression(
 					tree
 				);
 			},
-			unicodeProperty() {
-				return drillIn<T.UnicodeProperty>(this._unicode_property, tree);
+			unicodePropertyValue() {
+				return drillIn<T.UnicodePropertyValue>(this._unicode_property_value, tree);
 			},
 			$with: {
 				unicodePropertyValueExpressionGroup: (
 					v: NonNullable<T.UnicodePropertyValueExpression['_unicode_property_value_expression_group']>
 				) =>
 					wrapUnicodePropertyValueExpression({ ...$edited(data), _unicode_property_value_expression_group: v }, tree),
-				unicodeProperty: (v: NonNullable<T.UnicodePropertyValueExpression['_unicode_property']>) =>
-					wrapUnicodePropertyValueExpression({ ...$edited(data), _unicode_property: v }, tree)
+				unicodePropertyValue: (v: NonNullable<T.UnicodePropertyValueExpression['_unicode_property_value']>) =>
+					wrapUnicodePropertyValueExpression({ ...$edited(data), _unicode_property_value: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -1714,7 +1716,35 @@ export function wrapTermGroup(
 						data._non_capturing_group ??
 						data._inline_flags_group_enable ??
 						data._inline_flags_group_toggle ??
-						data._inline_flags_group_disable,
+						data._inline_flags_group_disable ??
+						readTerminalFromOther<
+							| TSKindId.StartAssertion
+							| TSKindId.EndAssertion
+							| TSKindId.BoundaryAssertion
+							| TSKindId.NonBoundaryAssertion
+							| T.LookaroundAssertion
+							| T.PatternCharacter
+							| T.CharacterClass
+							| T.PosixCharacterClass
+							| TSKindId.AnyCharacter
+							| T.DecimalEscape
+							| T.CharacterClassEscape
+							| T.ControlEscape
+							| T.ControlLetterEscape
+							| T.IdentityEscape
+							| T.BackreferenceEscape
+							| T.NamedGroupBackreference
+							| T.AnonymousCapturingGroup
+							| T.NamedCapturingGroup
+							| T.NonCapturingGroup
+							| T.InlineFlagsGroup
+						>(data, [
+							TSKindId.StartAssertion,
+							TSKindId.EndAssertion,
+							TSKindId.BoundaryAssertion,
+							TSKindId.NonBoundaryAssertion,
+							TSKindId.AnyCharacter
+						]),
 					'content',
 					true,
 					data.$type,
@@ -2024,19 +2054,18 @@ export function wrapInlineFlagsGroupDisable(data: T.InlineFlagsGroupDisable, tre
 
 export function wrapLazy(data: T.Lazy, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId._Lazy as const }, _treeEngine(tree));
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Lazy as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._Lazy as const,
+			$type: TSKindId.Lazy as const,
 			_content: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ?? readTerminalFromOther(data, [TSKindId.Qmark]),
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'content',
+					span: (data as _NodeData).$span
+				}),
 				{ '?': 26 }
 			),
 
@@ -2057,7 +2086,7 @@ export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeH
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._UnicodePropertyName as const,
+			$type: TSKindId.UnicodePropertyName as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -2066,7 +2095,7 @@ export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeH
 			}),
 
 			content() {
-				return drillIn<T.UnicodeProperty>(this._content, tree);
+				return drillIn<T.UnicodePropertyValue>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.UnicodePropertyName['_content']>) =>
@@ -2114,7 +2143,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.UnicodeCharacterEscape]: (d) => ({ ...d, $type: TSKindId.UnicodeCharacterEscape as const }),
 	[TSKindId.UnicodePropertyValueExpression]: (d, t) =>
 		wrapUnicodePropertyValueExpression(d as unknown as T.UnicodePropertyValueExpression, t),
-	[TSKindId.UnicodeProperty]: (d) => ({ ...d, $type: TSKindId.UnicodeProperty as const }),
+	[TSKindId.UnicodePropertyValue]: (d) => ({ ...d, $type: TSKindId.UnicodePropertyValue as const }),
 	[TSKindId.ControlEscape]: (d) => ({ ...d, $type: TSKindId.ControlEscape as const }),
 	[TSKindId.ControlLetterEscape]: (d) => ({ ...d, $type: TSKindId.ControlLetterEscape as const }),
 	[TSKindId.IdentityEscape]: (d, t) => wrapIdentityEscape(d as unknown as T.IdentityEscape, t),
@@ -2131,8 +2160,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
-	[TSKindId._Lazy]: (d, t) => wrapLazy(_aliasEnvelope(d, t) as unknown as T.Lazy, t),
-	[TSKindId._UnicodePropertyName]: (d, t) =>
+	[TSKindId.Lazy]: (d, t) => wrapLazy(_aliasEnvelope(d, t) as unknown as T.Lazy, t),
+	[TSKindId.UnicodePropertyName]: (d, t) =>
 		wrapUnicodePropertyName(_aliasEnvelope(d, t) as unknown as T.UnicodePropertyName, t)
 };
 
@@ -2202,7 +2231,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.CharacterClassEscape]: ReturnType<typeof wrapCharacterClassEscape>;
 	[TSKindId.UnicodeCharacterEscape]: _NodeData & { readonly $type: TSKindId.UnicodeCharacterEscape };
 	[TSKindId.UnicodePropertyValueExpression]: ReturnType<typeof wrapUnicodePropertyValueExpression>;
-	[TSKindId.UnicodeProperty]: _NodeData & { readonly $type: TSKindId.UnicodeProperty };
+	[TSKindId.UnicodePropertyValue]: _NodeData & { readonly $type: TSKindId.UnicodePropertyValue };
 	[TSKindId.ControlEscape]: _NodeData & { readonly $type: TSKindId.ControlEscape };
 	[TSKindId.ControlLetterEscape]: _NodeData & { readonly $type: TSKindId.ControlLetterEscape };
 	[TSKindId.IdentityEscape]: ReturnType<typeof wrapIdentityEscape>;
@@ -2216,8 +2245,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.InlineFlagsGroupEnable]: ReturnType<typeof wrapInlineFlagsGroupEnable>;
 	[TSKindId.InlineFlagsGroupToggle]: ReturnType<typeof wrapInlineFlagsGroupToggle>;
 	[TSKindId.InlineFlagsGroupDisable]: ReturnType<typeof wrapInlineFlagsGroupDisable>;
-	[TSKindId._Lazy]: ReturnType<typeof wrapLazy>;
-	[TSKindId._UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
+	[TSKindId.Lazy]: ReturnType<typeof wrapLazy>;
+	[TSKindId.UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

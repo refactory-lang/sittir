@@ -16,13 +16,15 @@ function readComplexPattern(pattern: string): ComplexPattern {
 	const module = createEngine().parse(`match x:\n    case ${pattern}:\n        pass\n`) as unknown as {
 		statements(): readonly {
 			body(): {
-				alternatives(): readonly {
-					casePatterns(): { casePatterns(): readonly { content(): ComplexPattern }[] };
-				}[];
+				content(): {
+					alternatives(): readonly {
+						casePatterns(): { casePatterns(): readonly { content(): ComplexPattern }[] };
+					}[];
+				};
 			};
 		}[];
 	};
-	return module.statements()[0]!.body().alternatives()[0]!.casePatterns().casePatterns()[0]!.content();
+	return module.statements()[0]!.body().content().alternatives()[0]!.casePatterns().casePatterns()[0]!.content();
 }
 
 describe('complex_pattern names its parts', () => {

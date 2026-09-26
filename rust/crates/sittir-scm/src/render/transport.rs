@@ -182,7 +182,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 34 => Ok(AnyTransport::String(
                     StringTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _immediate_string (_IMMEDIATE_STRING)
+                // kind: immediate_string (IMMEDIATE_STRING)
                 35 => Ok(AnyTransport::ImmediateString(
                     ImmediateStringTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1171,9 +1171,27 @@ impl ::sittir_core::render::Render for ListContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ListContentTransportSlot::Capture(inner) => inner.render(w),
-            ListContentTransportSlot::Literal1_73_74_61_72 => w.text("*"),
-            ListContentTransportSlot::Literal2_70_6c_75_73 => w.text("+"),
-            ListContentTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
+            ListContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            ListContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            ListContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -1293,9 +1311,27 @@ impl ::sittir_core::render::Render for GroupingContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             GroupingContentTransportSlot::Capture(inner) => inner.render(w),
-            GroupingContentTransportSlot::Literal1_73_74_61_72 => w.text("*"),
-            GroupingContentTransportSlot::Literal2_70_6c_75_73 => w.text("+"),
-            GroupingContentTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
+            GroupingContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            GroupingContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            GroupingContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -1533,9 +1569,27 @@ impl ::sittir_core::render::Render for MissingNodeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             MissingNodeContentTransportSlot::Capture(inner) => inner.render(w),
-            MissingNodeContentTransportSlot::Literal1_73_74_61_72 => w.text("*"),
-            MissingNodeContentTransportSlot::Literal2_70_6c_75_73 => w.text("+"),
-            MissingNodeContentTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
+            MissingNodeContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            MissingNodeContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            MissingNodeContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -1768,9 +1822,27 @@ impl ::sittir_core::render::Render for AnonymousNodeContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AnonymousNodeContentTransportSlot::Capture(inner) => inner.render(w),
-            AnonymousNodeContentTransportSlot::Literal1_73_74_61_72 => w.text("*"),
-            AnonymousNodeContentTransportSlot::Literal2_70_6c_75_73 => w.text("+"),
-            AnonymousNodeContentTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
+            AnonymousNodeContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            AnonymousNodeContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            AnonymousNodeContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -1993,9 +2065,27 @@ fn named_node_quantifier_transport_slot_to_any(t: NamedNodeQuantifierTransportSl
 impl ::sittir_core::render::Render for NamedNodeQuantifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeQuantifierTransportSlot::Literal1_73_74_61_72 => w.text("*"),
-            NamedNodeQuantifierTransportSlot::Literal2_70_6c_75_73 => w.text("+"),
-            NamedNodeQuantifierTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
+            NamedNodeQuantifierTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            NamedNodeQuantifierTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            NamedNodeQuantifierTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -2098,8 +2188,20 @@ fn predicate_type_transport_slot_to_any(t: PredicateTypeTransportSlot) -> AnyTra
 impl ::sittir_core::render::Render for PredicateTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PredicateTypeTransportSlot::Literal3_71_6d_61_72_6b => w.text("?"),
-            PredicateTypeTransportSlot::Literal7_62_61_6e_67 => w.text("!"),
+            PredicateTypeTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_PREDICATE_TYPE_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_PREDICATE_TYPE_QMARK_AFTER);
+                Ok(())
+            }
+            PredicateTypeTransportSlot::Literal7_62_61_6e_67 => {
+                w.site_at(options::SITE_PREDICATE_TYPE_BANG_BEFORE);
+                let written = w.text("!");
+                written?;
+                w.site_at(options::SITE_PREDICATE_TYPE_BANG_AFTER);
+                Ok(())
+            }
         }
     }
 }

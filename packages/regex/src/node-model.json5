@@ -28,7 +28,7 @@
       }
     },
     "lookaround_assertion": {
-      "definedBy": "enrich",
+      "definedBy": "override",
       "childKind": {
         "lookahead_assertion": "lookahead_assertion",
         "lookbehind_assertion": "lookbehind_assertion"
@@ -121,7 +121,7 @@
         ]
       }
     },
-    "_lookahead_assertion": {
+    "lookahead_assertion": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -141,7 +141,7 @@
         "nonEmpty": false
       }
     },
-    "_lookbehind_assertion": {
+    "lookbehind_assertion": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -292,15 +292,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "unicode_property": {
+      "unicode_property_value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_unicode_property_value"
-        ]
+        "nonEmpty": false
       }
     },
     "identity_escape": {
@@ -506,124 +503,6 @@
         "control_letter_escape",
         "identity_escape",
         "posix_character_class"
-      ]
-    },
-    {
-      "kind": "_lookahead_assertion",
-      "modelType": "branch",
-      "typeName": "LookaheadAssertion",
-      "factoryName": "lookaheadAssertion",
-      "irKey": "lookaheadAssertion",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "=",
-              "parseKind": "eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "!",
-              "parseKind": "bang"
-            }
-          ]
-        },
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "parseKind": "pattern"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "content",
-        "pattern"
-      ]
-    },
-    {
-      "kind": "_lookbehind_assertion",
-      "modelType": "branch",
-      "typeName": "LookbehindAssertion",
-      "factoryName": "lookbehindAssertion",
-      "irKey": "lookbehindAssertion",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "=",
-              "parseKind": "eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "!",
-              "parseKind": "bang"
-            }
-          ]
-        },
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "parseKind": "pattern"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "content",
-        "pattern"
       ]
     },
     {
@@ -1754,6 +1633,65 @@
       "text": "[:"
     },
     {
+      "kind": "lookahead_assertion",
+      "modelType": "branch",
+      "typeName": "LookaheadAssertion",
+      "factoryName": "lookaheadAssertion",
+      "irKey": "lookaheadAssertion",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=",
+              "parseKind": "eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!",
+              "parseKind": "bang"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "pattern"
+      ]
+    },
+    {
       "kind": "lookaround_assertion",
       "modelType": "polymorph",
       "typeName": "LookaroundAssertion",
@@ -1770,20 +1708,20 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_lookahead_assertion",
-            "_lookbehind_assertion"
+            "lookahead_assertion",
+            "lookbehind_assertion"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lookahead_assertion",
+              "name": "lookahead_assertion",
               "parseKind": "lookahead_assertion"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lookbehind_assertion",
+              "name": "lookbehind_assertion",
               "parseKind": "lookbehind_assertion"
             }
           ]
@@ -1794,8 +1732,67 @@
         "content"
       ],
       "bareAccepts": [
-        "_lookahead_assertion",
-        "_lookbehind_assertion"
+        "lookahead_assertion",
+        "lookbehind_assertion"
+      ]
+    },
+    {
+      "kind": "lookbehind_assertion",
+      "modelType": "branch",
+      "typeName": "LookbehindAssertion",
+      "factoryName": "lookbehindAssertion",
+      "irKey": "lookbehindAssertion",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=",
+              "parseKind": "eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!",
+              "parseKind": "bang"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "pattern"
       ]
     },
     {
@@ -2493,17 +2490,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "unicode_property",
-      "modelType": "pattern",
-      "typeName": "UnicodeProperty",
-      "factoryName": "unicodeProperty",
-      "irKey": "unicodeProperty",
-      "hidden": false,
-      "pattern": "[a-zA-Z_0-9]+",
-      "leafPattern": "/^(?:(?:[a-zA-Z_0-9]+))$/u",
-      "factoryShape": "text"
-    },
-    {
       "kind": "unicode_property_name",
       "modelType": "alias",
       "typeName": "UnicodePropertyName",
@@ -2520,14 +2506,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "unicode_property"
+            "unicode_property_value"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "unicode_property",
-              "parseKind": "unicode_property"
+              "name": "unicode_property_value",
+              "parseKind": "unicode_property_value"
             }
           ]
         }
@@ -2537,8 +2523,19 @@
         "content"
       ],
       "bareAccepts": [
-        "unicode_property"
+        "unicode_property_value"
       ]
+    },
+    {
+      "kind": "unicode_property_value",
+      "modelType": "pattern",
+      "typeName": "UnicodePropertyValue",
+      "factoryName": "unicodePropertyValue",
+      "irKey": "unicodePropertyValue",
+      "hidden": false,
+      "pattern": "[a-zA-Z_0-9]+",
+      "leafPattern": "/^(?:(?:[a-zA-Z_0-9]+))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "unicode_property_value_expression",
@@ -2569,21 +2566,21 @@
           ]
         },
         {
-          "name": "unicode_property",
-          "propertyName": "unicodeProperty",
-          "paramName": "unicodeProperty",
+          "name": "unicode_property_value",
+          "propertyName": "unicodePropertyValue",
+          "paramName": "unicodePropertyValue",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "unicode_property"
+            "unicode_property_value"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "unicode_property",
+              "name": "unicode_property_value",
               "parseKind": "unicode_property_value"
             }
           ]
@@ -2592,7 +2589,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "unicode_property_value_expression_group",
-        "unicode_property"
+        "unicode_property_value"
       ]
     },
     {
@@ -2634,8 +2631,8 @@
         "unicode_property_name"
       ],
       "bareAccepts": [
-        "unicode_property",
-        "unicode_property_name"
+        "unicode_property_name",
+        "unicode_property_value"
       ]
     },
     {

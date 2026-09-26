@@ -97,7 +97,7 @@
         "nonEmpty": false
       }
     },
-    "_immediate_string": {
+    "immediate_string": {
       "string_content": {
         "unnamed": false,
         "slotCount": 1,
@@ -432,44 +432,6 @@
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
       "factoryShape": "text"
-    },
-    {
-      "kind": "_immediate_string",
-      "modelType": "envelope",
-      "typeName": "ImmediateString",
-      "factoryName": "immediateString",
-      "irKey": "immediateString",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "string_content",
-          "propertyName": "stringContent",
-          "paramName": "stringContent",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "string_content"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "string_content",
-              "parseKind": "string_content"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "forwarded",
-      "forwardsTo": "string_content",
-      "factoryFields": [
-        "string_content"
-      ],
-      "bareAccepts": [
-        "string_content"
-      ]
     },
     {
       "kind": "_named_node_expression",
@@ -1060,6 +1022,44 @@
       "factoryShape": "text"
     },
     {
+      "kind": "immediate_string",
+      "modelType": "envelope",
+      "typeName": "ImmediateString",
+      "factoryName": "immediateString",
+      "irKey": "immediateString",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "string_content",
+          "propertyName": "stringContent",
+          "paramName": "stringContent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "string_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "string_content",
+              "parseKind": "string_content"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "forwarded",
+      "forwardsTo": "string_content",
+      "factoryFields": [
+        "string_content"
+      ],
+      "bareAccepts": [
+        "string_content"
+      ]
+    },
+    {
       "kind": "lbrack",
       "modelType": "punctuation",
       "typeName": "Lbrack",
@@ -1392,7 +1392,7 @@
           "storage": "verbatim",
           "kinds": [
             "_immediate_identifier",
-            "_immediate_string"
+            "immediate_string"
           ],
           "values": [
             {
@@ -1404,7 +1404,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_immediate_string",
+              "name": "immediate_string",
               "parseKind": "immediate_string"
             }
           ]

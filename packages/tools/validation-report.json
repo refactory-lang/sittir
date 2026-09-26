@@ -7,7 +7,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -46,63 +46,6 @@
       "literalText": "﷐\n"
     },
     "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_parameters",
-    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Parameters",
-      "newType": "_Parameters",
-      "visibleKinds": [
-        "parameters"
-      ]
-    },
-    "location": "_parameters"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_as_pattern",
-    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AsPattern",
-      "newType": "_AsPattern",
-      "visibleKinds": [
-        "as_pattern"
-      ]
-    },
-    "location": "_as_pattern"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_string_content",
-    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
-    "canProceed": true,
-    "details": {
-      "typeName": "StringContent",
-      "newType": "_StringContent",
-      "visibleKinds": [
-        "string_content"
-      ]
-    },
-    "location": "_string_content"
   },
   {
     "source": "grammar",
@@ -660,36 +603,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "parameters_elements",
-    "count": 1,
-    "entries": [
-      "Await expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "parameters_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "comparison_operator_comparator",
-    "count": 1,
-    "entries": [
-      "Await expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "comparison_operator_comparator"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "count": 1,
     "entries": [
       "Print used as an identifier"
@@ -699,111 +612,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "string_fragment",
-    "count": 1,
-    "entries": [
-      "Exec used as an identifier"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "string_fragment"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "print_arguments",
-    "count": 1,
-    "entries": [
-      "Async / await used as identifiers"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "print_arguments"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "yield_from_clause",
-    "count": 1,
-    "entries": [
-      "Yield expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "yield_from_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "patterns",
-    "count": 1,
-    "entries": [
-      "lambdas"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "patterns"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "collection_elements",
-    "count": 1,
-    "entries": [
-      "lambdas"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "collection_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "not_escape_sequence",
-    "count": 1,
-    "entries": [
-      "Strings"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "not_escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "match_block",
-    "count": 1,
-    "entries": [
-      "Matching specific values"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "match_block"
   },
   {
     "source": "validator",
@@ -819,111 +627,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "simple_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "wildcard_pattern",
-    "count": 1,
-    "entries": [
-      "Adding a wild card"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "wildcard_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "case_as_pattern",
-    "count": 1,
-    "entries": [
-      "As patterns"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "case_as_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "key_value_pattern",
-    "count": 1,
-    "entries": [
-      "Dict mappings"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "key_value_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "names",
-    "count": 1,
-    "entries": [
-      "Import statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "names"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "import_list",
-    "count": 1,
-    "entries": [
-      "Import-from statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "import_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "parenthesized_import_list",
-    "count": 1,
-    "entries": [
-      "Import-from statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "parenthesized_import_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "print_chevron_arguments",
-    "count": 1,
-    "entries": [
-      "Print statements with redirection"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "print_chevron_arguments"
   },
   {
     "source": "validator",
@@ -1466,7 +1169,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_comparison_operator_comparator",
+    "kind": "comparison_operator_comparator",
     "count": 14,
     "entries": [
       "Await expressions",
@@ -1476,7 +1179,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_comparison_operator_comparator"
+    "label": "comparison_operator_comparator"
   },
   {
     "source": "validator",
@@ -1700,7 +1403,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_arguments",
+    "kind": "print_arguments",
     "count": 16,
     "entries": [
       "Adding a wild card",
@@ -1716,7 +1419,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_arguments"
+    "label": "print_arguments"
   },
   {
     "source": "validator",
@@ -1931,7 +1634,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_yield_from_clause",
+    "kind": "yield_from_clause",
     "count": 3,
     "entries": [
       "Yield expressions"
@@ -1940,7 +1643,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_yield_from_clause"
+    "label": "yield_from_clause"
   },
   {
     "source": "validator",
@@ -2001,7 +1704,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_patterns",
+    "kind": "patterns",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -2013,13 +1716,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_patterns"
+    "label": "patterns"
   },
   {
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_collection_elements",
+    "kind": "collection_elements",
     "count": 35,
     "entries": [
       "Actually not match",
@@ -2045,7 +1748,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_collection_elements"
+    "label": "collection_elements"
   },
   {
     "source": "validator",
@@ -2378,6 +2081,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "match_block",
+    "count": 19,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "match_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -2607,7 +2343,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_as_pattern",
+    "kind": "case_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -2617,7 +2353,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_as_pattern"
+    "label": "case_as_pattern"
   },
   {
     "source": "validator",
@@ -2767,7 +2503,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_key_value_pattern",
+    "kind": "key_value_pattern",
     "count": 15,
     "entries": [
       "Builtin classes",
@@ -2777,7 +2513,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_key_value_pattern"
+    "label": "key_value_pattern"
   },
   {
     "source": "validator",
@@ -2813,7 +2549,22 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_import_list",
+    "kind": "names",
+    "count": 3,
+    "entries": [
+      "Import statements"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "names"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "import_list",
     "count": 13,
     "entries": [
       "Future import statements",
@@ -2824,7 +2575,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_import_list"
+    "label": "import_list"
   },
   {
     "source": "validator",
@@ -2860,7 +2611,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_parenthesized_import_list",
+    "kind": "parenthesized_import_list",
     "count": 2,
     "entries": [
       "Future import statements",
@@ -2870,7 +2621,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_parenthesized_import_list"
+    "label": "parenthesized_import_list"
   },
   {
     "source": "validator",
@@ -2936,7 +2687,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_chevron_arguments",
+    "kind": "print_chevron_arguments",
     "count": 1,
     "entries": [
       "Print statements with redirection"
@@ -2945,7 +2696,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_chevron_arguments"
+    "label": "print_chevron_arguments"
   },
   {
     "source": "validator",
@@ -3858,7 +3609,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_comparison_operator_comparator",
+    "kind": "comparison_operator_comparator",
     "count": 14,
     "entries": [
       "Await expressions",
@@ -3868,7 +3619,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_comparison_operator_comparator"
+    "label": "comparison_operator_comparator"
   },
   {
     "source": "validator",
@@ -4092,7 +3843,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_arguments",
+    "kind": "print_arguments",
     "count": 16,
     "entries": [
       "Adding a wild card",
@@ -4108,7 +3859,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_arguments"
+    "label": "print_arguments"
   },
   {
     "source": "validator",
@@ -4323,7 +4074,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_yield_from_clause",
+    "kind": "yield_from_clause",
     "count": 3,
     "entries": [
       "Yield expressions"
@@ -4332,7 +4083,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_yield_from_clause"
+    "label": "yield_from_clause"
   },
   {
     "source": "validator",
@@ -4393,7 +4144,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_patterns",
+    "kind": "patterns",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -4405,13 +4156,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_patterns"
+    "label": "patterns"
   },
   {
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_collection_elements",
+    "kind": "collection_elements",
     "count": 35,
     "entries": [
       "Actually not match",
@@ -4437,7 +4188,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_collection_elements"
+    "label": "collection_elements"
   },
   {
     "source": "validator",
@@ -4770,6 +4521,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "match_block",
+    "count": 19,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "match_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -4999,7 +4783,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_as_pattern",
+    "kind": "case_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -5009,7 +4793,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_as_pattern"
+    "label": "case_as_pattern"
   },
   {
     "source": "validator",
@@ -5159,7 +4943,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_key_value_pattern",
+    "kind": "key_value_pattern",
     "count": 15,
     "entries": [
       "Builtin classes",
@@ -5169,7 +4953,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_key_value_pattern"
+    "label": "key_value_pattern"
   },
   {
     "source": "validator",
@@ -5205,7 +4989,22 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_import_list",
+    "kind": "names",
+    "count": 3,
+    "entries": [
+      "Import statements"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "names"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "import_list",
     "count": 13,
     "entries": [
       "Future import statements",
@@ -5216,7 +5015,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_import_list"
+    "label": "import_list"
   },
   {
     "source": "validator",
@@ -5252,7 +5051,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_parenthesized_import_list",
+    "kind": "parenthesized_import_list",
     "count": 2,
     "entries": [
       "Future import statements",
@@ -5262,7 +5061,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_parenthesized_import_list"
+    "label": "parenthesized_import_list"
   },
   {
     "source": "validator",
@@ -5328,7 +5127,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_chevron_arguments",
+    "kind": "print_chevron_arguments",
     "count": 1,
     "entries": [
       "Print statements with redirection"
@@ -5337,7 +5136,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_chevron_arguments"
+    "label": "print_chevron_arguments"
   },
   {
     "source": "validator",
@@ -5741,66 +5540,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_case_as_pattern",
-    "count": 1,
-    "entries": [
-      "case_as_pattern"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_case_as_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_match_block",
-    "count": 1,
-    "entries": [
-      "match_block"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_match_block"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_names",
-    "count": 1,
-    "entries": [
-      "names"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_names"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_parameters_elements",
-    "count": 1,
-    "entries": [
-      "parameters_elements"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_parameters_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "_simple_pattern",
     "count": 1,
     "entries": [
@@ -5831,36 +5570,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "wildcard_pattern",
-    "count": 1,
-    "entries": [
-      "Async closure"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "wildcard_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_parameter",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "primitive_type",
     "count": 1,
     "entries": [
@@ -5871,36 +5580,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "primitive_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "non_special_token",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "non_special_token"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "string_open",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "string_open"
   },
   {
     "source": "validator",
@@ -5921,81 +5600,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "attributed_argument",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "tuple_type_elements",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "tuple_type_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "tuple_expression_elements",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "tuple_expression_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "type_argument",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_type_parameter",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_type_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "boolean_literal",
     "count": 1,
     "entries": [
@@ -6006,81 +5610,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "boolean_literal"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_field_declaration",
-    "count": 1,
-    "entries": [
-      "Structs"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_field_declaration"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_ordered_field",
-    "count": 1,
-    "entries": [
-      "Structs"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_ordered_field"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_enum_variant",
-    "count": 1,
-    "entries": [
-      "Enums"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_enum_variant"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "match_block_arms",
-    "count": 1,
-    "entries": [
-      "Inner attributes"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "match_block_arms"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "range_expression_bare",
-    "count": 1,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "range_expression_bare"
   },
   {
     "source": "validator",
@@ -6101,36 +5630,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "raw_string_literal_start",
-    "count": 1,
-    "entries": [
-      "Raw string literals"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "raw_string_literal_start"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "raw_string_literal_end",
-    "count": 1,
-    "entries": [
-      "Raw string literals"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "raw_string_literal_end"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "fragment_specifier",
     "count": 1,
     "entries": [
@@ -6146,81 +5645,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "outer_doc_comment_marker",
-    "count": 1,
-    "entries": [
-      "Block comments"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "outer_doc_comment_marker"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "doc_comment",
-    "count": 1,
-    "entries": [
-      "Block comments"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "doc_comment"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "inner_doc_comment_marker",
-    "count": 1,
-    "entries": [
-      "Block comments"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "inner_doc_comment_marker"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "outer_line_doc_comment_marker",
-    "count": 1,
-    "entries": [
-      "Line comments"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "outer_line_doc_comment_marker"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "inner_line_doc_comment_marker",
-    "count": 1,
-    "entries": [
-      "Line comments"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "inner_line_doc_comment_marker"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "entry": "Block comments",
     "reason": "native-read-dropped-extras",
     "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
@@ -6644,7 +6068,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_parameter",
+    "kind": "attributed_parameter",
     "count": 58,
     "entries": [
       "Array Constraint in Where Clause",
@@ -6677,7 +6101,35 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_parameter"
+    "label": "attributed_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "non_special_token",
+    "count": 126,
+    "entries": [
+      "Array expressions",
+      "Attribute macros",
+      "Attributes",
+      "Attributes and Expressions",
+      "Derive macro helper attributes",
+      "Function declarations",
+      "Immediate inner attribute",
+      "Inline const or Const blocks as pattern",
+      "Inner attributes",
+      "Key-Value Attribute Expressions",
+      "Macro definition",
+      "Macro invocation - arbitrary tokens",
+      "Match expressions",
+      "Struct patterns"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_special_token"
   },
   {
     "source": "validator",
@@ -6717,7 +6169,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_argument",
+    "kind": "attributed_argument",
     "count": 53,
     "entries": [
       "Array expressions",
@@ -6745,13 +6197,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_argument"
+    "label": "attributed_argument"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_type_elements",
+    "kind": "tuple_type_elements",
     "count": 8,
     "entries": [
       "Function declarations",
@@ -6767,13 +6219,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_type_elements"
+    "label": "tuple_type_elements"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_expression_elements",
+    "kind": "tuple_expression_elements",
     "count": 6,
     "entries": [
       "Attributes and Expressions",
@@ -6785,7 +6237,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_expression_elements"
+    "label": "tuple_expression_elements"
   },
   {
     "source": "validator",
@@ -6869,7 +6321,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_type_argument",
+    "kind": "type_argument",
     "count": 65,
     "entries": [
       "Array Constraint in Where Clause",
@@ -6902,7 +6354,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_argument"
+    "label": "type_argument"
   },
   {
     "source": "validator",
@@ -7010,7 +6462,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_type_parameter",
+    "kind": "attributed_type_parameter",
     "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
@@ -7036,7 +6488,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_type_parameter"
+    "label": "attributed_type_parameter"
   },
   {
     "source": "validator",
@@ -7394,7 +6846,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_field_declaration",
+    "kind": "attributed_field_declaration",
     "count": 15,
     "entries": [
       "Derive macro helper attributes",
@@ -7407,7 +6859,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_field_declaration"
+    "label": "attributed_field_declaration"
   },
   {
     "source": "validator",
@@ -7470,7 +6922,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_ordered_field",
+    "kind": "attributed_ordered_field",
     "count": 9,
     "entries": [
       "Const generics with default",
@@ -7483,7 +6935,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_ordered_field"
+    "label": "attributed_ordered_field"
   },
   {
     "source": "validator",
@@ -7540,7 +6992,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_enum_variant",
+    "kind": "attributed_enum_variant",
     "count": 8,
     "entries": [
       "Derive macro helper attributes",
@@ -7551,7 +7003,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_enum_variant"
+    "label": "attributed_enum_variant"
   },
   {
     "source": "validator",
@@ -7726,7 +7178,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_match_block_arms",
+    "kind": "match_block_arms",
     "count": 13,
     "entries": [
       "Captured patterns",
@@ -7743,7 +7195,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_match_block_arms"
+    "label": "match_block_arms"
   },
   {
     "source": "validator",
@@ -8796,7 +8248,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_parameter",
+    "kind": "attributed_parameter",
     "count": 58,
     "entries": [
       "Array Constraint in Where Clause",
@@ -8829,7 +8281,35 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_parameter"
+    "label": "attributed_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "non_special_token",
+    "count": 126,
+    "entries": [
+      "Array expressions",
+      "Attribute macros",
+      "Attributes",
+      "Attributes and Expressions",
+      "Derive macro helper attributes",
+      "Function declarations",
+      "Immediate inner attribute",
+      "Inline const or Const blocks as pattern",
+      "Inner attributes",
+      "Key-Value Attribute Expressions",
+      "Macro definition",
+      "Macro invocation - arbitrary tokens",
+      "Match expressions",
+      "Struct patterns"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_special_token"
   },
   {
     "source": "validator",
@@ -8869,7 +8349,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_argument",
+    "kind": "attributed_argument",
     "count": 53,
     "entries": [
       "Array expressions",
@@ -8897,13 +8377,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_argument"
+    "label": "attributed_argument"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_type_elements",
+    "kind": "tuple_type_elements",
     "count": 8,
     "entries": [
       "Function declarations",
@@ -8919,13 +8399,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_type_elements"
+    "label": "tuple_type_elements"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_expression_elements",
+    "kind": "tuple_expression_elements",
     "count": 6,
     "entries": [
       "Attributes and Expressions",
@@ -8937,7 +8417,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_expression_elements"
+    "label": "tuple_expression_elements"
   },
   {
     "source": "validator",
@@ -9021,7 +8501,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_type_argument",
+    "kind": "type_argument",
     "count": 65,
     "entries": [
       "Array Constraint in Where Clause",
@@ -9054,7 +8534,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_argument"
+    "label": "type_argument"
   },
   {
     "source": "validator",
@@ -9162,7 +8642,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_type_parameter",
+    "kind": "attributed_type_parameter",
     "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
@@ -9188,7 +8668,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_type_parameter"
+    "label": "attributed_type_parameter"
   },
   {
     "source": "validator",
@@ -9546,7 +9026,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_field_declaration",
+    "kind": "attributed_field_declaration",
     "count": 15,
     "entries": [
       "Derive macro helper attributes",
@@ -9559,7 +9039,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_field_declaration"
+    "label": "attributed_field_declaration"
   },
   {
     "source": "validator",
@@ -9622,7 +9102,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_ordered_field",
+    "kind": "attributed_ordered_field",
     "count": 9,
     "entries": [
       "Const generics with default",
@@ -9635,7 +9115,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_ordered_field"
+    "label": "attributed_ordered_field"
   },
   {
     "source": "validator",
@@ -9692,7 +9172,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_enum_variant",
+    "kind": "attributed_enum_variant",
     "count": 8,
     "entries": [
       "Derive macro helper attributes",
@@ -9703,7 +9183,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_enum_variant"
+    "label": "attributed_enum_variant"
   },
   {
     "source": "validator",
@@ -9878,7 +9358,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_match_block_arms",
+    "kind": "match_block_arms",
     "count": 13,
     "entries": [
       "Captured patterns",
@@ -9895,7 +9375,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_match_block_arms"
+    "label": "match_block_arms"
   },
   {
     "source": "validator",
@@ -10520,21 +10000,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "lifetimes"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "_non_special_token",
-    "count": 1,
-    "entries": [
-      "non_special_token"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_non_special_token"
   },
   {
     "source": "validator",
@@ -10615,21 +10080,6 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "extends_clause_single",
-    "count": 1,
-    "entries": [
-      "Classes with methods with and without trailing semicolons on one line"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "extends_clause_single"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
     "count": 2,
     "entries": [
       "Interface declarations",
@@ -10645,15 +10095,1230 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "type_query_member_expression",
+    "entry": "Object types with automatic semicolon insertion",
+    "reason": "parse-error",
+    "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
+    "stage": "read-render-parse-skip",
+    "code": "read-render-parse-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Object types with automatic semicolon insertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "entry": "Interface declarations",
+    "reason": "parse-error",
+    "input": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
+    "stage": "read-render-parse-skip",
+    "code": "read-render-parse-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Interface declarations"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_body_member",
+    "count": 31,
+    "entries": [
+      "Abstract classes",
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Classes with decorators",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Classes with property names as strings or numbers",
+      "Override modifier",
+      "Property signatures with accessibility modifiers",
+      "Typeof this",
+      "Typeof types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_body_member"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "public_field_definition",
+    "count": 19,
+    "entries": [
+      "Abstract classes",
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Classes with decorators",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Classes with property names as strings or numbers",
+      "Property signatures with accessibility modifiers",
+      "Typeof this",
+      "Typeof types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "public_field_definition"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "property_identifier",
+    "count": 121,
+    "entries": [
+      "Abstract classes",
+      "Accessibility modifiers as pair keywords",
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Ambient type alias declarations in namespaces",
+      "Assertion functions checking a type",
+      "Classes with decorator calls that have type arguments",
+      "Classes with decorators",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Classes with static blocks",
+      "Conditional types",
+      "Decorator with parenthesized expression",
+      "Enum declarations",
+      "Enum with trailing comma",
+      "Flow exact object types",
+      "Flow module.exports declarations",
+      "Flow-style ambient class declarations with commas",
+      "Function calls with array and tuple type arguments",
+      "Import aliases",
+      "Import aliases in modules",
+      "Import assert",
+      "Import in type",
+      "Method declarations with keywords as names",
+      "Nested type arguments",
+      "Object types",
+      "Object types with call signatures",
+      "Objects with reserved words as keys",
+      "Override modifier",
+      "Parenthesized types",
+      "Property signatures with accessibility modifiers",
+      "Semicolon is not automatically inserted for method definitions with a body",
+      "Subscript expressions in if statements",
+      "Super",
+      "Symbol types",
+      "The 'less than' operator",
+      "Type alias declarations",
+      "Type annotations in parenthesized expressions",
+      "Type assertions",
+      "Type query and index type query types",
+      "Typeof expressions",
+      "Typeof this",
+      "Typeof types",
+      "typeof in generic arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "property_identifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "formal_parameters_elements",
+    "count": 49,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Ambient export function declarations",
+      "Ambient exports",
+      "Ambient module declarations",
+      "Ambiguity between function signature and function declaration",
+      "Arrow functions and generators with call signatures",
+      "Assertion functions checking a type",
+      "Assertion functions checking a value",
+      "Classes with decorators",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Conditional types",
+      "Constructor types",
+      "Extends",
+      "Function types",
+      "Functions with destructured parameters",
+      "Functions with typed parameters",
+      "Method declarations with keywords as names",
+      "Object types with call signatures",
+      "Super",
+      "Type of an assertion function",
+      "Type predicate and predefined types",
+      "predefined types as identifiers"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "formal_parameters_elements"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "object_type_content",
+    "count": 35,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Ambient export function declarations",
+      "Ambiguity between function signature and function declaration",
+      "As expressions",
+      "Conditional types",
+      "Flow exact object types",
+      "Flow module.exports declarations",
+      "Flow-style ambient class declarations with commas",
+      "Import in type",
+      "Index signatures",
+      "Mapped type 'as' clauses",
+      "Mapped types",
+      "Nested type arguments",
+      "Object types",
+      "Object types with call signatures",
+      "Parenthesized types",
+      "Property signatures with accessibility modifiers",
+      "Satisfies expressions",
+      "Type alias declarations",
+      "Typeof this"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "object_type_content"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "method_signature",
+    "count": 14,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Classes with method signatures",
+      "Flow-style ambient class declarations with commas",
+      "Import in type",
+      "Nested type arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "method_signature"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "nested_identifier",
+    "count": 4,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Import aliases",
+      "Import aliases in modules"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "nested_identifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "for_header_lhs",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "for_header_lhs"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "else_clause",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "else_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "switch_body",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "switch_body"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "switch_case",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "switch_case"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "switch_default",
+    "count": 2,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "switch_default"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "catch_clause",
+    "count": 3,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Exception handling"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "catch_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "catch_clause_group",
+    "count": 3,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Exception handling"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "catch_clause_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "finally_clause",
+    "count": 3,
+    "entries": [
+      "Ambient declarations",
+      "Ambient declarations with for-let",
+      "Exception handling"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "finally_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_body_method_sig",
+    "count": 2,
+    "entries": [
+      "Flow-style ambient class declarations with commas"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_body_method_sig"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ambient_declaration_module",
     "count": 1,
     "entries": [
-      "Type query and index type query types"
+      "Flow module.exports declarations"
     ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
     "severity": "info",
-    "message": "no-from-function",
+    "message": "no-reparse-wrapper",
+    "label": "ambient_declaration_module"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_statement_default_declaration_default_kw",
+    "count": 6,
+    "entries": [
+      "Ambient exports",
+      "Function signature",
+      "Top-level exports"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_declaration_default_kw"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "shorthand_property_identifier",
+    "count": 4,
+    "entries": [
+      "Accessibility modifiers as pair keywords",
+      "Ambient exports"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "shorthand_property_identifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_arguments",
+    "count": 55,
+    "entries": [
+      "Ambient export function declarations",
+      "Ambient exports",
+      "Ambient module declarations",
+      "Ambient type declarations",
+      "Classes with decorator calls that have type arguments",
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with method signatures",
+      "Conditional types",
+      "Existential types",
+      "Function calls with array and tuple type arguments",
+      "Function calls with optional chaining and type arguments",
+      "Generic calls",
+      "Generic types",
+      "Index type queries",
+      "Instantiation expressions",
+      "Literal types and pre-defined types",
+      "Mapped type 'as' clauses",
+      "Nested type arguments",
+      "New object with type arguments",
+      "Property signatures with accessibility modifiers",
+      "Template literal types",
+      "Type assertions",
+      "Type casts",
+      "Type query and index type query types",
+      "Typeof instantiation expressions",
+      "typeof in generic arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "type_arguments"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "types",
+    "count": 55,
+    "entries": [
+      "Ambient export function declarations",
+      "Ambient exports",
+      "Ambient module declarations",
+      "Ambient type declarations",
+      "Classes with decorator calls that have type arguments",
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with method signatures",
+      "Conditional types",
+      "Existential types",
+      "Function calls with array and tuple type arguments",
+      "Function calls with optional chaining and type arguments",
+      "Generic calls",
+      "Generic types",
+      "Index type queries",
+      "Instantiation expressions",
+      "Literal types and pre-defined types",
+      "Mapped type 'as' clauses",
+      "Nested type arguments",
+      "New object with type arguments",
+      "Property signatures with accessibility modifiers",
+      "Template literal types",
+      "Type assertions",
+      "Type casts",
+      "Type query and index type query types",
+      "Typeof instantiation expressions",
+      "typeof in generic arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "types"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_parameters_elements",
+    "count": 32,
+    "entries": [
+      "Abstract",
+      "Ambient export function declarations",
+      "Ambient module declarations",
+      "Arrow functions and generators with call signatures",
+      "Assertion functions checking a type",
+      "Classes with generic parameters",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Conditional types",
+      "Constructor types",
+      "Extends",
+      "Flow type parameter constraint syntax",
+      "Functions with typed parameters",
+      "Generic types",
+      "Mapped type 'as' clauses",
+      "Mapped types",
+      "Template literal types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "type_parameters_elements"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_parameter",
+    "count": 46,
+    "entries": [
+      "Abstract",
+      "Ambient export function declarations",
+      "Ambient module declarations",
+      "Arrow functions and generators with call signatures",
+      "Assertion functions checking a type",
+      "Classes with generic parameters",
+      "Classes with method signatures",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Conditional types",
+      "Constructor types",
+      "Extends",
+      "Flow type parameter constraint syntax",
+      "Functions with typed parameters",
+      "Generic types",
+      "Mapped type 'as' clauses",
+      "Mapped types",
+      "Template literal types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "type_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "optional_parameter",
+    "count": 6,
+    "entries": [
+      "Ambient module declarations",
+      "Classes with decorators",
+      "Classes with method signatures",
+      "Function types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "optional_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "pair",
+    "count": 8,
+    "entries": [
+      "Accessibility modifiers as pair keywords",
+      "Import assert",
+      "Objects with reserved words as keys"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "pair"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "enum_body",
+    "count": 4,
+    "entries": [
+      "Ambient type alias declarations in namespaces",
+      "Enum declarations",
+      "Enum with trailing comma"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "enum_body"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "enum_body_elements",
+    "count": 4,
+    "entries": [
+      "Ambient type alias declarations in namespaces",
+      "Enum declarations",
+      "Enum with trailing comma"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "enum_body_elements"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_body_method",
+    "count": 15,
+    "entries": [
+      "Abstract classes",
+      "Assertion functions checking a type",
+      "Classes with decorator calls that have type arguments",
+      "Classes with decorators",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Decorator with parenthesized expression",
+      "Method declarations with keywords as names",
+      "Override modifier",
+      "Semicolon is not automatically inserted for method definitions with a body",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_body_method"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "method_definition",
+    "count": 15,
+    "entries": [
+      "Abstract classes",
+      "Assertion functions checking a type",
+      "Classes with decorator calls that have type arguments",
+      "Classes with decorators",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Decorator with parenthesized expression",
+      "Method declarations with keywords as names",
+      "Override modifier",
+      "Semicolon is not automatically inserted for method definitions with a body",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "method_definition"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "decorator",
+    "count": 11,
+    "entries": [
+      "Abstract classes",
+      "Classes with decorator calls that have type arguments",
+      "Classes with decorators",
+      "Decorator with parenthesized expression"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "decorator"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_heritage",
+    "count": 12,
+    "entries": [
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Generic types",
+      "Override modifier",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_heritage"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_heritage_extends_clause",
+    "count": 12,
+    "entries": [
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Generic types",
+      "Override modifier",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_heritage_extends_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "extends_clause",
+    "count": 12,
+    "entries": [
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Generic types",
+      "Override modifier",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "extends_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "extends_clause_single",
+    "count": 13,
+    "entries": [
+      "Classes with extensions",
+      "Classes with generic parameters",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Generic types",
+      "Override modifier",
+      "Super"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "extends_clause_single"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_static_block",
+    "count": 2,
+    "entries": [
+      "Classes with static blocks"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_static_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "private_property_identifier",
+    "count": 1,
+    "entries": [
+      "Classes with static blocks"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "private_property_identifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ambient_declaration_global",
+    "count": 1,
+    "entries": [
+      "Global namespace declarations"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ambient_declaration_global"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "abstract_method_signature",
+    "count": 4,
+    "entries": [
+      "Abstract classes",
+      "Override modifier"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "abstract_method_signature"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "implements_clause",
+    "count": 5,
+    "entries": [
+      "Classes with extensions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "implements_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "constraint",
+    "count": 6,
+    "entries": [
+      "Extends",
+      "Flow type parameter constraint syntax",
+      "Functions with typed parameters",
+      "Template literal types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "constraint"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "tuple_type_members",
+    "count": 7,
+    "entries": [
+      "Function calls with array and tuple type arguments",
+      "Tuple types",
+      "Typeof this"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "tuple_type_members"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "call_signature",
+    "count": 3,
+    "entries": [
+      "Arrow functions and generators with call signatures",
+      "Object types with call signatures"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "call_signature"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "arrow_function_parameter",
+    "count": 1,
+    "entries": [
+      "Arrow function with parameter named async"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "arrow_function_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "mapped_type_clause",
+    "count": 6,
+    "entries": [
+      "Mapped type 'as' clauses",
+      "Mapped types",
+      "Object types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "mapped_type_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "omitting_type_annotation",
+    "count": 1,
+    "entries": [
+      "Object types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "omitting_type_annotation"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "opting_type_annotation",
+    "count": 1,
+    "entries": [
+      "Object types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "opting_type_annotation"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "object_pattern",
+    "count": 1,
+    "entries": [
+      "Functions with destructured parameters"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "object_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "shorthand_property_identifier_pattern",
+    "count": 1,
+    "entries": [
+      "Functions with destructured parameters"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "shorthand_property_identifier_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_statement_clause_from",
+    "count": 13,
+    "entries": [
+      "Flow Import Types",
+      "Import assert"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_statement_clause_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_clause",
+    "count": 13,
+    "entries": [
+      "Flow Import Types",
+      "Import assert"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "named_imports",
+    "count": 11,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_imports"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_specifiers",
+    "count": 11,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_specifiers"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_specifier_name",
+    "count": 14,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_specifier_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_specifier_as",
+    "count": 3,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_specifier_as"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_clause_default_import",
+    "count": 5,
+    "entries": [
+      "Flow Import Types",
+      "Import assert"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_clause_default_import"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "import_clause_group",
+    "count": 3,
+    "entries": [
+      "Flow Import Types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "import_clause_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_clause",
+    "count": 3,
+    "entries": [
+      "Type-only Export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_clause"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_specifiers",
+    "count": 3,
+    "entries": [
+      "Type-only Export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_specifiers"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_specifier",
+    "count": 5,
+    "entries": [
+      "Type-only Export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_specifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "enum_assignment",
+    "count": 8,
+    "entries": [
+      "Enum declarations"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "enum_assignment"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "literal_type_negative_number",
+    "count": 2,
+    "entries": [
+      "Literal types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "literal_type_negative_number"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_query_member_expression",
+    "count": 3,
+    "entries": [
+      "Type query and index type query types",
+      "Typeof this",
+      "typeof in generic arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
     "label": "type_query_member_expression"
   },
   {
@@ -10665,11 +11330,153 @@
     "entries": [
       "Type query and index type query types"
     ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
     "severity": "info",
-    "message": "no-from-function",
+    "message": "no-reparse-wrapper",
     "label": "type_query_call_expression"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "asserts_annotation",
+    "count": 2,
+    "entries": [
+      "Assertion functions checking a type",
+      "Assertion functions checking a value"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "asserts_annotation"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "asserts",
+    "count": 4,
+    "entries": [
+      "Assertion functions checking a type",
+      "Assertion functions checking a value",
+      "Type of an assertion function"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "asserts"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_predicate",
+    "count": 6,
+    "entries": [
+      "Assertion functions checking a type",
+      "Type of an assertion function",
+      "Type predicate and predefined types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "type_predicate"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "type_predicate_annotation",
+    "count": 4,
+    "entries": [
+      "Assertion functions checking a type",
+      "Type predicate and predefined types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "type_predicate_annotation"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "optional_type",
+    "count": 1,
+    "entries": [
+      "Tuple types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "optional_type"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "rest_type",
+    "count": 1,
+    "entries": [
+      "Tuple types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "rest_type"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "tuple_parameter",
+    "count": 2,
+    "entries": [
+      "Tuple types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "tuple_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "optional_tuple_parameter",
+    "count": 1,
+    "entries": [
+      "Tuple types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "optional_tuple_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "template_type",
+    "count": 16,
+    "entries": [
+      "Mapped type 'as' clauses",
+      "Template literal types"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "template_type"
   },
   {
     "source": "validator",
@@ -10680,1448 +11487,16 @@
     "entries": [
       "Typeof instantiation expressions"
     ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
     "severity": "info",
-    "message": "no-from-function",
+    "message": "no-reparse-wrapper",
     "label": "type_query_instantiation_expression"
   },
   {
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "type_query_member_expression_in_type_annotation",
-    "count": 1,
-    "entries": [
-      "Import in type"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_member_expression_in_type_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_call_expression_in_type_annotation",
-    "count": 1,
-    "entries": [
-      "Import in type"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_call_expression_in_type_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "entry": "Object types with automatic semicolon insertion",
-    "reason": "parse-error",
-    "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
-    "stage": "read-render-parse-skip",
-    "code": "read-render-parse-skip",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "Object types with automatic semicolon insertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "entry": "Interface declarations",
-    "reason": "parse-error",
-    "input": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
-    "stage": "read-render-parse-skip",
-    "code": "read-render-parse-skip",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "Interface declarations"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_body_member",
-    "count": 31,
-    "entries": [
-      "Abstract classes",
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Classes with decorators",
-      "Classes with method signatures",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Classes with property names as strings or numbers",
-      "Override modifier",
-      "Property signatures with accessibility modifiers",
-      "Typeof this",
-      "Typeof types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_body_member"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "public_field_definition",
-    "count": 19,
-    "entries": [
-      "Abstract classes",
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Classes with decorators",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Classes with property names as strings or numbers",
-      "Property signatures with accessibility modifiers",
-      "Typeof this",
-      "Typeof types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "public_field_definition"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "property_identifier",
-    "count": 121,
-    "entries": [
-      "Abstract classes",
-      "Accessibility modifiers as pair keywords",
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Ambient type alias declarations in namespaces",
-      "Assertion functions checking a type",
-      "Classes with decorator calls that have type arguments",
-      "Classes with decorators",
-      "Classes with method signatures",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Classes with static blocks",
-      "Conditional types",
-      "Decorator with parenthesized expression",
-      "Enum declarations",
-      "Enum with trailing comma",
-      "Flow exact object types",
-      "Flow module.exports declarations",
-      "Flow-style ambient class declarations with commas",
-      "Function calls with array and tuple type arguments",
-      "Import aliases",
-      "Import aliases in modules",
-      "Import assert",
-      "Import in type",
-      "Method declarations with keywords as names",
-      "Nested type arguments",
-      "Object types",
-      "Object types with call signatures",
-      "Objects with reserved words as keys",
-      "Override modifier",
-      "Parenthesized types",
-      "Property signatures with accessibility modifiers",
-      "Semicolon is not automatically inserted for method definitions with a body",
-      "Subscript expressions in if statements",
-      "Super",
-      "Symbol types",
-      "The 'less than' operator",
-      "Type alias declarations",
-      "Type annotations in parenthesized expressions",
-      "Type assertions",
-      "Type query and index type query types",
-      "Typeof expressions",
-      "Typeof this",
-      "Typeof types",
-      "typeof in generic arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "property_identifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "formal_parameters_elements",
-    "count": 49,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Ambient export function declarations",
-      "Ambient exports",
-      "Ambient module declarations",
-      "Ambiguity between function signature and function declaration",
-      "Arrow functions and generators with call signatures",
-      "Assertion functions checking a type",
-      "Assertion functions checking a value",
-      "Classes with decorators",
-      "Classes with method signatures",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Conditional types",
-      "Constructor types",
-      "Extends",
-      "Function types",
-      "Functions with destructured parameters",
-      "Functions with typed parameters",
-      "Method declarations with keywords as names",
-      "Object types with call signatures",
-      "Super",
-      "Type of an assertion function",
-      "Type predicate and predefined types",
-      "predefined types as identifiers"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "formal_parameters_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "object_type_content",
-    "count": 35,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Ambient export function declarations",
-      "Ambiguity between function signature and function declaration",
-      "As expressions",
-      "Conditional types",
-      "Flow exact object types",
-      "Flow module.exports declarations",
-      "Flow-style ambient class declarations with commas",
-      "Import in type",
-      "Index signatures",
-      "Mapped type 'as' clauses",
-      "Mapped types",
-      "Nested type arguments",
-      "Object types",
-      "Object types with call signatures",
-      "Parenthesized types",
-      "Property signatures with accessibility modifiers",
-      "Satisfies expressions",
-      "Type alias declarations",
-      "Typeof this"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "object_type_content"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "method_signature",
-    "count": 14,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Classes with method signatures",
-      "Flow-style ambient class declarations with commas",
-      "Import in type",
-      "Nested type arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "method_signature"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "nested_identifier",
-    "count": 4,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Import aliases",
-      "Import aliases in modules"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "nested_identifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "for_header_lhs",
-    "count": 2,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "for_header_lhs"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "else_clause",
-    "count": 2,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "else_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "switch_body",
-    "count": 2,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "switch_body"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "switch_case",
-    "count": 2,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "switch_case"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "switch_default",
-    "count": 2,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "switch_default"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "catch_clause",
-    "count": 3,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Exception handling"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "catch_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "catch_clause_group",
-    "count": 3,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Exception handling"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "catch_clause_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "finally_clause",
-    "count": 3,
-    "entries": [
-      "Ambient declarations",
-      "Ambient declarations with for-let",
-      "Exception handling"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "finally_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_body_method_sig",
-    "count": 2,
-    "entries": [
-      "Flow-style ambient class declarations with commas"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_body_method_sig"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "ambient_declaration_module",
-    "count": 1,
-    "entries": [
-      "Flow module.exports declarations"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ambient_declaration_module"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "export_statement_default_declaration_default_kw",
-    "count": 6,
-    "entries": [
-      "Ambient exports",
-      "Function signature",
-      "Top-level exports"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "export_statement_default_declaration_default_kw"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "shorthand_property_identifier",
-    "count": 4,
-    "entries": [
-      "Accessibility modifiers as pair keywords",
-      "Ambient exports"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "shorthand_property_identifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_arguments",
-    "count": 55,
-    "entries": [
-      "Ambient export function declarations",
-      "Ambient exports",
-      "Ambient module declarations",
-      "Ambient type declarations",
-      "Classes with decorator calls that have type arguments",
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with method signatures",
-      "Conditional types",
-      "Existential types",
-      "Function calls with array and tuple type arguments",
-      "Function calls with optional chaining and type arguments",
-      "Generic calls",
-      "Generic types",
-      "Index type queries",
-      "Instantiation expressions",
-      "Literal types and pre-defined types",
-      "Mapped type 'as' clauses",
-      "Nested type arguments",
-      "New object with type arguments",
-      "Property signatures with accessibility modifiers",
-      "Template literal types",
-      "Type assertions",
-      "Type casts",
-      "Type query and index type query types",
-      "Typeof instantiation expressions",
-      "typeof in generic arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "type_arguments"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "types",
-    "count": 55,
-    "entries": [
-      "Ambient export function declarations",
-      "Ambient exports",
-      "Ambient module declarations",
-      "Ambient type declarations",
-      "Classes with decorator calls that have type arguments",
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with method signatures",
-      "Conditional types",
-      "Existential types",
-      "Function calls with array and tuple type arguments",
-      "Function calls with optional chaining and type arguments",
-      "Generic calls",
-      "Generic types",
-      "Index type queries",
-      "Instantiation expressions",
-      "Literal types and pre-defined types",
-      "Mapped type 'as' clauses",
-      "Nested type arguments",
-      "New object with type arguments",
-      "Property signatures with accessibility modifiers",
-      "Template literal types",
-      "Type assertions",
-      "Type casts",
-      "Type query and index type query types",
-      "Typeof instantiation expressions",
-      "typeof in generic arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "types"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_parameters_elements",
-    "count": 32,
-    "entries": [
-      "Abstract",
-      "Ambient export function declarations",
-      "Ambient module declarations",
-      "Arrow functions and generators with call signatures",
-      "Assertion functions checking a type",
-      "Classes with generic parameters",
-      "Classes with method signatures",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Conditional types",
-      "Constructor types",
-      "Extends",
-      "Flow type parameter constraint syntax",
-      "Functions with typed parameters",
-      "Generic types",
-      "Mapped type 'as' clauses",
-      "Mapped types",
-      "Template literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "type_parameters_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_parameter",
-    "count": 46,
-    "entries": [
-      "Abstract",
-      "Ambient export function declarations",
-      "Ambient module declarations",
-      "Arrow functions and generators with call signatures",
-      "Assertion functions checking a type",
-      "Classes with generic parameters",
-      "Classes with method signatures",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Conditional types",
-      "Constructor types",
-      "Extends",
-      "Flow type parameter constraint syntax",
-      "Functions with typed parameters",
-      "Generic types",
-      "Mapped type 'as' clauses",
-      "Mapped types",
-      "Template literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "type_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "optional_parameter",
-    "count": 6,
-    "entries": [
-      "Ambient module declarations",
-      "Classes with decorators",
-      "Classes with method signatures",
-      "Function types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "optional_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "pair",
-    "count": 8,
-    "entries": [
-      "Accessibility modifiers as pair keywords",
-      "Import assert",
-      "Objects with reserved words as keys"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "pair"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "enum_body",
-    "count": 4,
-    "entries": [
-      "Ambient type alias declarations in namespaces",
-      "Enum declarations",
-      "Enum with trailing comma"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "enum_body"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "enum_body_elements",
-    "count": 4,
-    "entries": [
-      "Ambient type alias declarations in namespaces",
-      "Enum declarations",
-      "Enum with trailing comma"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "enum_body_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_body_method",
-    "count": 15,
-    "entries": [
-      "Abstract classes",
-      "Assertion functions checking a type",
-      "Classes with decorator calls that have type arguments",
-      "Classes with decorators",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Decorator with parenthesized expression",
-      "Method declarations with keywords as names",
-      "Override modifier",
-      "Semicolon is not automatically inserted for method definitions with a body",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_body_method"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "method_definition",
-    "count": 15,
-    "entries": [
-      "Abstract classes",
-      "Assertion functions checking a type",
-      "Classes with decorator calls that have type arguments",
-      "Classes with decorators",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Decorator with parenthesized expression",
-      "Method declarations with keywords as names",
-      "Override modifier",
-      "Semicolon is not automatically inserted for method definitions with a body",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "method_definition"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "decorator",
-    "count": 11,
-    "entries": [
-      "Abstract classes",
-      "Classes with decorator calls that have type arguments",
-      "Classes with decorators",
-      "Decorator with parenthesized expression"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "decorator"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_heritage",
-    "count": 12,
-    "entries": [
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Generic types",
-      "Override modifier",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_heritage"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_heritage_extends_clause",
-    "count": 12,
-    "entries": [
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Generic types",
-      "Override modifier",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_heritage_extends_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "extends_clause",
-    "count": 12,
-    "entries": [
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Generic types",
-      "Override modifier",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "extends_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_extends_clause_single",
-    "count": 13,
-    "entries": [
-      "Classes with extensions",
-      "Classes with generic parameters",
-      "Classes with methods with and without trailing semicolons on one line",
-      "Generic types",
-      "Override modifier",
-      "Super"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_extends_clause_single"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "class_static_block",
-    "count": 2,
-    "entries": [
-      "Classes with static blocks"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_static_block"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "private_property_identifier",
-    "count": 1,
-    "entries": [
-      "Classes with static blocks"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "private_property_identifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "ambient_declaration_global",
-    "count": 1,
-    "entries": [
-      "Global namespace declarations"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "ambient_declaration_global"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "abstract_method_signature",
-    "count": 4,
-    "entries": [
-      "Abstract classes",
-      "Override modifier"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "abstract_method_signature"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "implements_clause",
-    "count": 5,
-    "entries": [
-      "Classes with extensions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "implements_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "constraint",
-    "count": 6,
-    "entries": [
-      "Extends",
-      "Flow type parameter constraint syntax",
-      "Functions with typed parameters",
-      "Template literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "constraint"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "tuple_type_members",
-    "count": 7,
-    "entries": [
-      "Function calls with array and tuple type arguments",
-      "Tuple types",
-      "Typeof this"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "tuple_type_members"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "call_signature",
-    "count": 3,
-    "entries": [
-      "Arrow functions and generators with call signatures",
-      "Object types with call signatures"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "call_signature"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "arrow_function_parameter",
-    "count": 1,
-    "entries": [
-      "Arrow function with parameter named async"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "arrow_function_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "mapped_type_clause",
-    "count": 6,
-    "entries": [
-      "Mapped type 'as' clauses",
-      "Mapped types",
-      "Object types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "mapped_type_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "omitting_type_annotation",
-    "count": 1,
-    "entries": [
-      "Object types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "omitting_type_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "opting_type_annotation",
-    "count": 1,
-    "entries": [
-      "Object types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "opting_type_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "object_pattern",
-    "count": 1,
-    "entries": [
-      "Functions with destructured parameters"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "object_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "shorthand_property_identifier_pattern",
-    "count": 1,
-    "entries": [
-      "Functions with destructured parameters"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "shorthand_property_identifier_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_statement_clause_from",
-    "count": 13,
-    "entries": [
-      "Flow Import Types",
-      "Import assert"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_statement_clause_from"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_clause",
-    "count": 13,
-    "entries": [
-      "Flow Import Types",
-      "Import assert"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "named_imports",
-    "count": 11,
-    "entries": [
-      "Flow Import Types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_imports"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_specifiers",
-    "count": 11,
-    "entries": [
-      "Flow Import Types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_specifiers"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_specifier_name",
-    "count": 14,
-    "entries": [
-      "Flow Import Types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_specifier_name"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_specifier_as",
-    "count": 3,
-    "entries": [
-      "Flow Import Types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_specifier_as"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_clause_default_import",
-    "count": 5,
-    "entries": [
-      "Flow Import Types",
-      "Import assert"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_clause_default_import"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "import_clause_group",
-    "count": 3,
-    "entries": [
-      "Flow Import Types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "import_clause_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "export_clause",
-    "count": 3,
-    "entries": [
-      "Type-only Export"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "export_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "export_specifiers",
-    "count": 3,
-    "entries": [
-      "Type-only Export"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "export_specifiers"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "export_specifier",
-    "count": 5,
-    "entries": [
-      "Type-only Export"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "export_specifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "enum_assignment",
-    "count": 8,
-    "entries": [
-      "Enum declarations"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "enum_assignment"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "literal_type_negative_number",
-    "count": 2,
-    "entries": [
-      "Literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "literal_type_negative_number"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_type_query_member_expression",
-    "count": 3,
-    "entries": [
-      "Type query and index type query types",
-      "Typeof this",
-      "typeof in generic arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_type_query_member_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_type_query_call_expression",
-    "count": 1,
-    "entries": [
-      "Type query and index type query types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_type_query_call_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "asserts_annotation",
-    "count": 2,
-    "entries": [
-      "Assertion functions checking a type",
-      "Assertion functions checking a value"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "asserts_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "asserts",
-    "count": 4,
-    "entries": [
-      "Assertion functions checking a type",
-      "Assertion functions checking a value",
-      "Type of an assertion function"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "asserts"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_predicate",
-    "count": 6,
-    "entries": [
-      "Assertion functions checking a type",
-      "Type of an assertion function",
-      "Type predicate and predefined types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "type_predicate"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_predicate_annotation",
-    "count": 4,
-    "entries": [
-      "Assertion functions checking a type",
-      "Type predicate and predefined types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "type_predicate_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "optional_type",
-    "count": 1,
-    "entries": [
-      "Tuple types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "optional_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "rest_type",
-    "count": 1,
-    "entries": [
-      "Tuple types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "rest_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "tuple_parameter",
-    "count": 2,
-    "entries": [
-      "Tuple types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "tuple_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "optional_tuple_parameter",
-    "count": 1,
-    "entries": [
-      "Tuple types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "optional_tuple_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "template_type",
-    "count": 16,
-    "entries": [
-      "Mapped type 'as' clauses",
-      "Template literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "template_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_type_query_instantiation_expression",
-    "count": 1,
-    "entries": [
-      "Typeof instantiation expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_type_query_instantiation_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
     "kind": "import_attribute",
     "count": 1,
     "entries": [
@@ -12944,7 +12319,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_extends_clause_single",
+    "kind": "extends_clause_single",
     "count": 13,
     "entries": [
       "Classes with extensions",
@@ -12958,7 +12333,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_extends_clause_single"
+    "label": "extends_clause_single"
   },
   {
     "source": "validator",
@@ -13381,7 +12756,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_member_expression",
+    "kind": "type_query_member_expression",
     "count": 3,
     "entries": [
       "Type query and index type query types",
@@ -13392,13 +12767,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_member_expression"
+    "label": "type_query_member_expression"
   },
   {
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_call_expression",
+    "kind": "type_query_call_expression",
     "count": 1,
     "entries": [
       "Type query and index type query types"
@@ -13407,7 +12782,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_call_expression"
+    "label": "type_query_call_expression"
   },
   {
     "source": "validator",
@@ -13555,7 +12930,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_instantiation_expression",
+    "kind": "type_query_instantiation_expression",
     "count": 1,
     "entries": [
       "Typeof instantiation expressions"
@@ -13564,7 +12939,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_instantiation_expression"
+    "label": "type_query_instantiation_expression"
   },
   {
     "source": "validator",
@@ -13611,36 +12986,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "template_substitution"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "debugger_statement",
-    "entry": "Ambient declarations",
-    "message": "root._terminator: value 20 ≠ undefined",
-    "input": "debugger;",
-    "start": 617,
-    "end": 626,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Ambient declarations (debugger_statement)"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "debugger_statement",
-    "entry": "Ambient declarations with for-let",
-    "message": "root._terminator: value 20 ≠ undefined",
-    "input": "debugger;",
-    "start": 617,
-    "end": 626,
-    "stage": "factory-render-parse-ast-mismatch",
-    "code": "factory-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Ambient declarations with for-let (debugger_statement)"
   },
   {
     "source": "validator",
@@ -13656,36 +13001,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "debugger_statement",
-    "entry": "Ambient declarations",
-    "message": "root._terminator: value 20 ≠ undefined",
-    "input": "debugger;",
-    "start": 617,
-    "end": 626,
-    "stage": "ir-render-parse-ast-mismatch",
-    "code": "ir-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Ambient declarations (debugger_statement)"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "debugger_statement",
-    "entry": "Ambient declarations with for-let",
-    "message": "root._terminator: value 20 ≠ undefined",
-    "input": "debugger;",
-    "start": 617,
-    "end": 626,
-    "stage": "ir-render-parse-ast-mismatch",
-    "code": "ir-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "Ambient declarations with for-let (debugger_statement)"
   },
   {
     "source": "validator",

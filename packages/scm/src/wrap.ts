@@ -392,13 +392,16 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {
+function readTerminalFromOther<T = _NodeData | number>(
+	data: _NodeData,
+	allowedKindIds: readonly number[]
+): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
 	if (!Array.isArray(other)) return undefined;
 	for (const e of other) {
 		const id =
 			typeof e === 'number' ? e : typeof e === 'object' && e !== null ? (e as { $type?: unknown }).$type : undefined;
-		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as _NodeData | number;
+		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as T;
 	}
 	return undefined;
 }
@@ -970,12 +973,17 @@ export function wrapList(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					data._content !== undefined
+					(data._content !== undefined
 						? _toArr(data._content)
 						: _interleaveBySlotOrder(data as _NodeData, [
 								['quantifier', data._quantifier],
 								['capture', data._capture]
-							]),
+							])) ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
 					false,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -1036,12 +1044,17 @@ export function wrapGrouping(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					data._content !== undefined
+					(data._content !== undefined
 						? _toArr(data._content)
 						: _interleaveBySlotOrder(data as _NodeData, [
 								['quantifier', data._quantifier],
 								['capture', data._capture]
-							]),
+							])) ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
 					false,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -1103,12 +1116,17 @@ export function wrapMissingNode(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					data._content !== undefined
+					(data._content !== undefined
 						? _toArr(data._content)
 						: _interleaveBySlotOrder(data as _NodeData, [
 								['quantifier', data._quantifier],
 								['capture', data._capture]
-							]),
+							])) ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
 					false,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -1172,12 +1190,17 @@ export function wrapAnonymousNode(
 			),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					data._content !== undefined
+					(data._content !== undefined
 						? _toArr(data._content)
 						: _interleaveBySlotOrder(data as _NodeData, [
 								['quantifier', data._quantifier],
 								['capture', data._capture]
-							]),
+							])) ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
 					false,
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -1251,12 +1274,12 @@ export function wrapNamedNode(
 				{ tree, nodeType: data.$type, slotName: 'named_node_group', span: (data as _NodeData).$span }
 			),
 			_quantifier: projectKindEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._quantifier ?? readTerminalFromOther(data, [TSKindId.Star, TSKindId.Plus, TSKindId.Qmark]),
-					false,
-					'quantifier',
-					{ tree, nodeType: data.$type, slotName: 'quantifier', span: (data as _NodeData).$span }
-				),
+				normalizeRepeatedWrapSlot(data._quantifier, false, 'quantifier', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'quantifier',
+					span: (data as _NodeData).$span
+				}),
 				{ '*': 2, '+': 3, '?': 4 }
 			),
 			_capture: normalizeRepeatedWrapSlot(data._capture, false, 'capture', {
@@ -1372,7 +1395,10 @@ export function wrapPredicate(
 			$type: TSKindId.Predicate as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._pound ?? data._dot ?? readTerminalFromOther(data, [TSKindId.Pound, TSKindId.Dot]),
+					data._content ??
+						data._pound ??
+						data._dot ??
+						readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
 					'content',
 					true,
 					data.$type,
@@ -1388,13 +1414,12 @@ export function wrapPredicate(
 				{ tree, nodeType: data.$type, slotName: 'immediate_identifier', span: (data as _NodeData).$span }
 			),
 			_type: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._type ?? readTerminalFromOther(data, [TSKindId.Qmark, TSKindId.Bang]),
-					'type',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'type',
+					span: (data as _NodeData).$span
+				}),
 				{ '?': 4, '!': 19 }
 			),
 			_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {

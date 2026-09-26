@@ -11,7 +11,7 @@ import {
 	SEQ,
 	STRING,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -33,7 +33,7 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -41,7 +41,7 @@ import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
-interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
+export interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 	readonly _ref?: SymbolRef;
 }
 
@@ -403,33 +403,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
 	return { grammar: grammarResult };
-}
-
-const canonicalWalker = new RuleWalker<Rule<'evaluate'>>({});
-
-function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
-	const inlineNames = new Set(raw.inline);
-	const supertypes = new Set(raw.supertypes);
-	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === ALIAS) {
-			return rule.content.type === SYMBOL && rule.content.inline !== false
-				? { ...rule, content: { ...rule.content, inline: false } }
-				: rule;
-		}
-		if (rule.type !== SYMBOL) return rule;
-		const hidden = isParserHiddenName(rule.name);
-		const target = raw.rules[rule.name];
-		const boundary =
-			supertypes.has(rule.name) ||
-			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
-		const inline = !boundary && (hidden || inlineNames.has(rule.name));
-		return rule.inline === inline ? rule : { ...rule, inline };
-	};
-	const rules: Record<string, Rule<'evaluate'>> = {};
-	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
-	}
-	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {
@@ -1044,7 +1017,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 		const g = globalThis as Record<string, unknown>;
 		const savedGlobals = saveAndInjectDslGlobals(g);
 		try {
-			return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+			return await importAndExtractGrammar(entryPath);
 		} finally {
 			restoreSavedGlobals(g, savedGlobals);
 		}

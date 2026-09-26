@@ -53,7 +53,7 @@ pub enum AnyTransport {
     CharacterClassEscape(CharacterClassEscapeTransport),
     UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
     UnicodePropertyValueExpression(UnicodePropertyValueExpressionTransport),
-    UnicodeProperty(UnicodePropertyTransport),
+    UnicodePropertyValue(UnicodePropertyValueTransport),
     ControlEscape(ControlEscapeTransport),
     ControlLetterEscape(ControlLetterEscapeTransport),
     IdentityEscape(IdentityEscapeTransport),
@@ -149,7 +149,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::CharacterClassEscape(t) => t.prepare(ctx),
             AnyTransport::UnicodeCharacterEscape(t) => t.prepare(ctx),
             AnyTransport::UnicodePropertyValueExpression(t) => t.prepare(ctx),
-            AnyTransport::UnicodeProperty(t) => t.prepare(ctx),
+            AnyTransport::UnicodePropertyValue(t) => t.prepare(ctx),
             AnyTransport::ControlEscape(t) => t.prepare(ctx),
             AnyTransport::ControlLetterEscape(t) => t.prepare(ctx),
             AnyTransport::IdentityEscape(t) => t.prepare(ctx),
@@ -264,11 +264,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 54 => Ok(AnyTransport::LookaroundAssertion(
                     LookaroundAssertionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _lookahead_assertion (_LOOKAHEAD_ASSERTION)
+                // kind: lookahead_assertion (LOOKAHEAD_ASSERTION)
                 55 => Ok(AnyTransport::LookaheadAssertion(
                     LookaheadAssertionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _lookbehind_assertion (_LOOKBEHIND_ASSERTION)
+                // kind: lookbehind_assertion (LOOKBEHIND_ASSERTION)
                 56 => Ok(AnyTransport::LookbehindAssertion(
                     LookbehindAssertionTransport::from_napi_value(env, napi_val)?
                 )),
@@ -352,9 +352,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 74 => Ok(AnyTransport::UnicodePropertyValueExpression(
                     UnicodePropertyValueExpressionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: unicode_property (UNICODE_PROPERTY)
-                38 => Ok(AnyTransport::UnicodeProperty(
-                    UnicodePropertyTransport::from_napi_value(env, napi_val)?
+                // kind: unicode_property_value (UNICODE_PROPERTY_VALUE)
+                38 => Ok(AnyTransport::UnicodePropertyValue(
+                    UnicodePropertyValueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: control_escape (CONTROL_ESCAPE)
                 75 => Ok(AnyTransport::ControlEscape(
@@ -5052,8 +5052,8 @@ pub struct UnicodePropertyValueExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value_expression_group"))]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property"))]
-    pub unicode_property: ::sittir_core::SlotValue<UnicodePropertyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unicode_property_value"))]
+    pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
 
 impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionTransport {
@@ -5078,7 +5078,7 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.unicode_property_value_expression_group.prepare(ctx)?;
-        self.unicode_property.prepare(ctx)?;
+        self.unicode_property_value.prepare(ctx)?;
         Ok(())
     }
 }
@@ -5104,38 +5104,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueExpression
 }
 
 #[derive(Debug, Clone)]
-pub struct UnicodePropertyTransport {
+pub struct UnicodePropertyValueTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for UnicodePropertyTransport {
+impl ::sittir_core::view::KindOf for UnicodePropertyValueTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodePropertyTransport {
+impl ::sittir_core::options::Edged for UnicodePropertyValueTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(38) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for UnicodePropertyTransport {
+impl ::sittir_core::render::Render for UnicodePropertyValueTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodePropertyTransport {
+impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -5158,7 +5158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyValueTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -5176,7 +5176,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnicodePropertyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnicodePropertyTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for UnicodePropertyValueTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -5186,22 +5186,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for UnicodePropertyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UnicodePropertyValueTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        UnicodePropertyTransport::from_napi_value(env, napi_val).map(Box::new)
+        UnicodePropertyValueTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UnicodePropertyValueTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        UnicodePropertyTransport::to_napi_value(env, *val)
+        UnicodePropertyValueTransport::to_napi_value(env, *val)
     }
 }
 
@@ -6520,7 +6520,7 @@ pub struct UnicodePropertyNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<UnicodePropertyTransport>,
+    pub content: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
 }
 
 impl ::sittir_core::view::KindOf for UnicodePropertyNameTransport {
@@ -7414,7 +7414,7 @@ impl ::sittir_core::view::KindOf for BslashDashTransport {
 }
 
 impl ::sittir_core::options::Edged for BslashDashTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(19) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(42) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -9557,16 +9557,16 @@ fn render_unicode_character_escape(t: &UnicodeCharacterEscapeTransport, w: &mut 
 }
 
 fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let unicode_property = &node.unicode_property;
+    let unicode_property_value = &node.unicode_property_value;
     let unicode_property_value_expression_group = View::new(&node.unicode_property_value_expression_group, "{}");
     w.edge(::sittir_core::types::KindId(74), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     unicode_property_value_expression_group.render(w)?;
-    unicode_property.render(w)?;
+    unicode_property_value.render(w)?;
     w.edge(::sittir_core::types::KindId(74), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
-fn render_unicode_property(t: &UnicodePropertyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_property_value(t: &UnicodePropertyValueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -9851,7 +9851,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(40, 63), (63, 60), (92, 45)]); // "(?" "?<" "\\-"
+.with_literal_merge_pairs(&[(40, 63), (63, 60)]); // "(?" "?<"
 
 /// Render a transport tree to text. Takes the trait rather than
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
@@ -9899,7 +9899,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
             Self::UnicodeCharacterEscape(inner) => inner.kind_in(kinds),
             Self::UnicodePropertyValueExpression(inner) => inner.kind_in(kinds),
-            Self::UnicodeProperty(inner) => inner.kind_in(kinds),
+            Self::UnicodePropertyValue(inner) => inner.kind_in(kinds),
             Self::ControlEscape(inner) => inner.kind_in(kinds),
             Self::ControlLetterEscape(inner) => inner.kind_in(kinds),
             Self::IdentityEscape(inner) => inner.kind_in(kinds),
@@ -9983,7 +9983,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::CharacterClassEscape(t) => t.render(w),
             AnyTransport::UnicodeCharacterEscape(t) => t.render(w),
             AnyTransport::UnicodePropertyValueExpression(t) => t.render(w),
-            AnyTransport::UnicodeProperty(t) => t.render(w),
+            AnyTransport::UnicodePropertyValue(t) => t.render(w),
             AnyTransport::ControlEscape(t) => t.render(w),
             AnyTransport::ControlLetterEscape(t) => t.render(w),
             AnyTransport::IdentityEscape(t) => t.render(w),

@@ -76,7 +76,7 @@ export enum TSKindId {
 	CharacterClassEscapeToken1 = 35,
 	UnicodeCharacterEscapeToken1 = 36,
 	UnicodeCharacterEscapeToken2 = 37,
-	UnicodeProperty = 38,
+	UnicodePropertyValue = 38,
 	ControlEscapeToken1 = 39,
 	ControlEscapeToken2 = 40,
 	ControlLetterEscape = 41,
@@ -125,8 +125,8 @@ export enum TSKindId {
 	AlternationRepeat1 = 84,
 	TermRepeat1 = 85,
 	CharacterClassRepeat1 = 86,
-	_Lazy = 87,
-	_UnicodePropertyName = 88
+	Lazy = 87,
+	UnicodePropertyName = 88
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -167,7 +167,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[35, 'character_class_escape_token1'],
 	[36, 'unicode_character_escape_token1'],
 	[37, 'unicode_character_escape_token2'],
-	[38, 'unicode_property'],
+	[38, 'unicode_property_value'],
 	[39, 'control_escape_token1'],
 	[40, 'control_escape_token2'],
 	[41, 'control_letter_escape'],
@@ -184,8 +184,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[52, 'term'],
 	[53, 'start_assertion'],
 	[54, 'lookaround_assertion'],
-	[55, '_lookahead_assertion'],
-	[56, '_lookbehind_assertion'],
+	[55, 'lookahead_assertion'],
+	[56, 'lookbehind_assertion'],
 	[57, 'character_class'],
 	[58, 'posix_character_class'],
 	[59, 'posix_class_name'],
@@ -391,8 +391,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnicodeCharacterEscapeToken1;
 		case 'unicode_character_escape_token2':
 			return TSKindId.UnicodeCharacterEscapeToken2;
-		case 'unicode_property':
-			return TSKindId.UnicodeProperty;
+		case 'unicode_property_value':
+			return TSKindId.UnicodePropertyValue;
 		case 'control_escape_token1':
 			return TSKindId.ControlEscapeToken1;
 		case 'control_escape_token2':
@@ -425,9 +425,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StartAssertion;
 		case 'lookaround_assertion':
 			return TSKindId.LookaroundAssertion;
-		case '_lookahead_assertion':
+		case 'lookahead_assertion':
 			return TSKindId.LookaheadAssertion;
-		case '_lookbehind_assertion':
+		case 'lookbehind_assertion':
 			return TSKindId.LookbehindAssertion;
 		case 'character_class':
 			return TSKindId.CharacterClass;
@@ -490,9 +490,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'character_class_repeat1':
 			return TSKindId.CharacterClassRepeat1;
 		case 'lazy':
-			return TSKindId._Lazy;
+			return TSKindId.Lazy;
 		case 'unicode_property_name':
-			return TSKindId._UnicodePropertyName;
+			return TSKindId.UnicodePropertyName;
 		case '|':
 			return TSKindId.Pipe;
 		case '^':
@@ -543,14 +543,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lt;
 		case '(?P=':
 			return TSKindId.LparenQmarkpEq;
-		case 'unicode_property_value':
-			return TSKindId.UnicodeProperty;
 		case ':':
 			return TSKindId.Colon;
-		case 'lookahead_assertion':
-			return TSKindId.LookaheadAssertion;
-		case 'lookbehind_assertion':
-			return TSKindId.LookbehindAssertion;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -766,12 +760,12 @@ export interface CharacterClassEscape {
 export interface UnicodePropertyValueExpression {
 	readonly $type: TSKindId.UnicodePropertyValueExpression;
 	readonly _unicode_property_value_expression_group?: UnicodePropertyValueExpressionGroup;
-	readonly _unicode_property: UnicodeProperty;
+	readonly _unicode_property_value: UnicodePropertyValue;
 	readonly __looseHints__?: {
-		readonly unicode_property_value_expression_group?: readonly UnicodeProperty[];
+		readonly unicode_property_value_expression_group?: readonly UnicodePropertyValue[];
 	};
 	unicodePropertyValueExpressionGroup(): UnicodePropertyValueExpressionGroup | undefined;
-	unicodeProperty(): UnicodeProperty;
+	unicodePropertyValue(): UnicodePropertyValue;
 }
 
 export interface IdentityEscape {
@@ -881,7 +875,7 @@ export interface UnicodePropertyValueExpressionGroup {
 	readonly $type: TSKindId.UnicodePropertyValueExpressionGroup;
 	readonly _unicode_property_name: UnicodePropertyName;
 	readonly __looseHints__?: {
-		readonly unicode_property_name: readonly UnicodeProperty[];
+		readonly unicode_property_name: readonly UnicodePropertyValue[];
 	};
 	unicodePropertyName(): UnicodePropertyName;
 }
@@ -922,7 +916,7 @@ export interface InlineFlagsGroupDisable {
 }
 
 export interface Lazy {
-	readonly $type: TSKindId._Lazy;
+	readonly $type: TSKindId.Lazy;
 	readonly _content: number;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'?', TSKindId.Qmark>;
@@ -932,10 +926,10 @@ export interface Lazy {
 }
 
 export interface UnicodePropertyName {
-	readonly $type: TSKindId._UnicodePropertyName;
-	readonly _content: UnicodeProperty;
+	readonly $type: TSKindId.UnicodePropertyName;
+	readonly _content: UnicodePropertyValue;
 	readonly __aliasContent__?: UnicodePropertyName.Types;
-	content(): UnicodeProperty;
+	content(): UnicodePropertyValue;
 }
 
 // Leaf node types
@@ -953,7 +947,7 @@ export type OneOrMore = Terminal<TSKindId.OneOrMore, string>;
 export type Optional = Terminal<TSKindId.Optional, string>;
 export type DecimalEscape = Terminal<TSKindId.DecimalEscape, string>;
 export type UnicodeCharacterEscape = Terminal<TSKindId.UnicodeCharacterEscape, string>;
-export type UnicodeProperty = Terminal<TSKindId.UnicodeProperty, string>;
+export type UnicodePropertyValue = Terminal<TSKindId.UnicodePropertyValue, string>;
 export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
 export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>;
 export type GroupName = Terminal<TSKindId.GroupName, string>;
@@ -964,12 +958,8 @@ export interface PatternTree extends TreeNode<'pattern'> {}
 export interface AlternationTree extends TreeNode<'alternation'> {}
 export interface TermTree extends TreeNode<'term'> {}
 export interface LookaroundAssertionTree extends TreeNode<'lookaround_assertion'> {}
-export interface LookaheadAssertionTree extends AnyTreeNode {
-	readonly type: '_lookahead_assertion';
-}
-export interface LookbehindAssertionTree extends AnyTreeNode {
-	readonly type: '_lookbehind_assertion';
-}
+export interface LookaheadAssertionTree extends TreeNode<'lookahead_assertion'> {}
+export interface LookbehindAssertionTree extends TreeNode<'lookbehind_assertion'> {}
 export interface CharacterClassTree extends TreeNode<'character_class'> {}
 export interface PosixCharacterClassTree extends TreeNode<'posix_character_class'> {}
 export interface ClassRangeTree extends TreeNode<'class_range'> {}
@@ -1016,9 +1006,7 @@ export interface OneOrMoreTree extends TreeNode<'one_or_more'> {}
 export interface OptionalTree extends TreeNode<'optional'> {}
 export interface DecimalEscapeTree extends TreeNode<'decimal_escape'> {}
 export interface UnicodeCharacterEscapeTree extends TreeNode<'unicode_character_escape'> {}
-export interface UnicodePropertyTree extends AnyTreeNode {
-	readonly type: 'unicode_property';
-}
+export interface UnicodePropertyValueTree extends TreeNode<'unicode_property_value'> {}
 export interface ControlEscapeTree extends TreeNode<'control_escape'> {}
 export interface ControlLetterEscapeTree extends TreeNode<'control_letter_escape'> {}
 export interface GroupNameTree extends TreeNode<'group_name'> {}
@@ -1465,7 +1453,7 @@ export interface LookaheadAssertionNs extends NodeNs<
 	LookaheadAssertion.BuildArgs,
 	LookaheadAssertion.LooseArgs,
 	never,
-	'_lookahead_assertion'
+	'lookahead_assertion'
 > {}
 export interface LookbehindAssertionNs extends NodeNs<
 	LookbehindAssertion,
@@ -1476,7 +1464,7 @@ export interface LookbehindAssertionNs extends NodeNs<
 	LookbehindAssertion.BuildArgs,
 	LookbehindAssertion.LooseArgs,
 	never,
-	'_lookbehind_assertion'
+	'lookbehind_assertion'
 > {}
 export interface CharacterClassNs extends NodeNs<
 	CharacterClass,
@@ -1779,12 +1767,12 @@ export interface UnicodeCharacterEscapeNs extends LeafNs<
 	UnicodeCharacterEscapeTree,
 	'unicode_character_escape'
 > {}
-export interface UnicodePropertyNs extends LeafNs<
-	UnicodeProperty,
+export interface UnicodePropertyValueNs extends LeafNs<
+	UnicodePropertyValue,
 	string,
-	UnicodeProperty.Built,
-	UnicodePropertyTree,
-	'unicode_property'
+	UnicodePropertyValue.Built,
+	UnicodePropertyValueTree,
+	'unicode_property_value'
 > {}
 export interface ControlEscapeNs extends LeafNs<
 	ControlEscape,
@@ -1836,8 +1824,8 @@ export interface NamespaceMap {
 	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnableNs;
 	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggleNs;
 	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisableNs;
-	[TSKindId._Lazy]: LazyNs;
-	[TSKindId._UnicodePropertyName]: UnicodePropertyNameNs;
+	[TSKindId.Lazy]: LazyNs;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyNameNs;
 	[TSKindId.AnyCharacter]: AnyCharacterNs;
 	[TSKindId.StartAssertion]: StartAssertionNs;
 	[TSKindId.EndAssertion]: EndAssertionNs;
@@ -1852,7 +1840,7 @@ export interface NamespaceMap {
 	[TSKindId.Optional]: OptionalNs;
 	[TSKindId.DecimalEscape]: DecimalEscapeNs;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscapeNs;
-	[TSKindId.UnicodeProperty]: UnicodePropertyNs;
+	[TSKindId.UnicodePropertyValue]: UnicodePropertyValueNs;
 	[TSKindId.ControlEscape]: ControlEscapeNs;
 	[TSKindId.ControlLetterEscape]: ControlLetterEscapeNs;
 	[TSKindId.GroupName]: GroupNameNs;
@@ -1954,7 +1942,7 @@ export namespace LookaheadAssertion {
 			| T.LookaheadAssertion
 	];
 	export type Tree = TreeFor<TSKindId.LookaheadAssertion>;
-	export type Kind = '_lookahead_assertion';
+	export type Kind = 'lookahead_assertion';
 }
 export namespace LookbehindAssertion {
 	export type Config = ConfigFor<TSKindId.LookbehindAssertion>;
@@ -1975,7 +1963,7 @@ export namespace LookbehindAssertion {
 			| T.LookbehindAssertion
 	];
 	export type Tree = TreeFor<TSKindId.LookbehindAssertion>;
-	export type Kind = '_lookbehind_assertion';
+	export type Kind = 'lookbehind_assertion';
 }
 export namespace CharacterClass {
 	export type Config = ConfigFor<TSKindId.CharacterClass>;
@@ -2202,7 +2190,7 @@ export namespace UnicodePropertyValueExpression {
 			unicodePropertyValueExpressionGroup(
 				value?: T.UnicodePropertyValueExpressionGroup
 			): T.UnicodePropertyValueExpression.Built;
-			unicodeProperty(value: T.UnicodeProperty): T.UnicodePropertyValueExpression.Built;
+			unicodePropertyValue(value: T.UnicodePropertyValue): T.UnicodePropertyValueExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpression>;
@@ -2399,7 +2387,7 @@ export namespace InlineFlagsGroupDisable {
 	export type Kind = 'inline_flags_group_disable';
 }
 export namespace Lazy {
-	export type Config = ConfigFor<TSKindId._Lazy>;
+	export type Config = ConfigFor<TSKindId.Lazy>;
 	export type Types = TSKindId.Qmark;
 	export interface Built extends T.Lazy, NodeMethodsOf {
 		readonly $source: 2;
@@ -2408,28 +2396,28 @@ export namespace Lazy {
 			content(value: NonNullable<TSKindId.Qmark>): T.Lazy.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._Lazy>;
-	export type LooseConfig = LooseConfigFor<TSKindId._Lazy>;
+	export type Loose = LooseFor<TSKindId.Lazy>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
 	export type BuildArgs = [value: TSKindId.Qmark];
 	export type LooseArgs = [value: LooseValue<TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._Lazy>;
+	export type Tree = TreeFor<TSKindId.Lazy>;
 	export type Kind = 'lazy';
 }
 export namespace UnicodePropertyName {
-	export type Config = ConfigFor<TSKindId._UnicodePropertyName>;
-	export type Types = UnicodeProperty;
+	export type Config = ConfigFor<TSKindId.UnicodePropertyName>;
+	export type Types = UnicodePropertyValue;
 	export interface Built extends T.UnicodePropertyName, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.UnicodeProperty): T.UnicodePropertyName.Built;
+			content(value: T.UnicodePropertyValue): T.UnicodePropertyName.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._UnicodePropertyName>;
-	export type LooseConfig = LooseConfigFor<TSKindId._UnicodePropertyName>;
-	export type BuildArgs = [value: T.UnicodeProperty];
-	export type LooseArgs = [value: LooseValue<T.UnicodeProperty, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._UnicodePropertyName>;
+	export type Loose = LooseFor<TSKindId.UnicodePropertyName>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyName>;
+	export type BuildArgs = [value: T.UnicodePropertyValue];
+	export type LooseArgs = [value: LooseValue<T.UnicodePropertyValue, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.UnicodePropertyName>;
 	export type Kind = 'unicode_property_name';
 }
 export namespace AnyCharacter {
@@ -2617,20 +2605,20 @@ export namespace UnicodeCharacterEscape {
 	export type Tree = UnicodeCharacterEscapeNs['Tree'];
 	export type Kind = 'unicode_character_escape';
 }
-export namespace UnicodeProperty {
-	export type Config = UnicodePropertyNs['Config'];
+export namespace UnicodePropertyValue {
+	export type Config = UnicodePropertyValueNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.UnicodeProperty;
+		readonly $type: TSKindId.UnicodePropertyValue;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = UnicodePropertyNs['Loose'];
-	export type LooseConfig = UnicodePropertyNs['LooseConfig'];
-	export type BuildArgs = UnicodePropertyNs['BuildArgs'];
-	export type LooseArgs = UnicodePropertyNs['LooseArgs'];
-	export type Tree = UnicodePropertyNs['Tree'];
-	export type Kind = 'unicode_property';
+	export type Loose = UnicodePropertyValueNs['Loose'];
+	export type LooseConfig = UnicodePropertyValueNs['LooseConfig'];
+	export type BuildArgs = UnicodePropertyValueNs['BuildArgs'];
+	export type LooseArgs = UnicodePropertyValueNs['LooseArgs'];
+	export type Tree = UnicodePropertyValueNs['Tree'];
+	export type Kind = 'unicode_property_value';
 }
 export namespace ControlEscape {
 	export type Config = ControlEscapeNs['Config'];

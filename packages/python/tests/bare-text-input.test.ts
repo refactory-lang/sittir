@@ -12,7 +12,7 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 	});
 
 	it('throws when no text kind accepts the text', () => {
-		expect(() => ir.stringContent.coerce('a"b')).toThrow(/matches none of \[.*_string_content/);
+		expect(() => ir.stringContent.coerce('a"b')).toThrow(/matches none of \[.*string_fragment/);
 	});
 	it('rejects bare text strictly in a node slot', () => {
 		// @ts-expect-error a strict node slot takes a built node, not text

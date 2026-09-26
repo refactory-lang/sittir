@@ -37,6 +37,15 @@ describe('identifier', () => {
 	});
 });
 
+describe('_immediate_identifier', () => {
+	it('factory produces correct type', () => {
+		const node = ir.immediateIdentifier('test');
+		expect(node.$type).toBe(TSKindId.ImmediateIdentifier);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
+	});
+});
+
 describe('capture', () => {
 	it('factory produces correct type', () => {
 		const node = ir.capture({ $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any);
@@ -59,6 +68,18 @@ describe('string', () => {
 	});
 	it('render does not throw on minimal config', () => {
 		const node = ir.string();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('immediate_string', () => {
+	it('factory produces correct type', () => {
+		const node = ir.immediateString();
+		expect(node.$type).toBe(TSKindId.ImmediateString);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.immediateString();
 		expect(() => node.$render!()).not.toThrow();
 	});
 });

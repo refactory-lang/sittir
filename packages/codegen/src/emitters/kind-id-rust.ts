@@ -1,11 +1,11 @@
 import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { findEntryForLiteralText, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { findEntryForLiteralText, modelKindOfEntry, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
-import { slotSeparatorTexts } from './shared.ts';
+import { reclaimsAnonymousChild, slotSeparatorTexts } from './shared.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -59,6 +59,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	for (const entry of entries) {
 		const displayStr = entry.symbolName ?? entry.kind;
 		lines.push(`        ${entry.id} => ${JSON.stringify(displayStr)}, // ${JSON.stringify(entry.kind)}`);
+		if (entry.parseId !== undefined && entry.parseId !== entry.id && entry.parseName !== undefined) {
+			lines.push(`        ${entry.parseId} => ${JSON.stringify(entry.parseName)}, // ${JSON.stringify(entry.kind)}`);
+		}
 	}
 	lines.push(`        _ => "<unknown>",`);
 	lines.push(`    }`);
@@ -68,7 +71,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		...new Set(
 			entries
 				.filter((entry) => {
-					const node = nodeMap.nodes.get(entry.kind);
+					const node = nodeMap.nodes.get(modelKindOfEntry(entry, entries));
 					return (
 						node?.modelType === 'pattern' ||
 						node?.modelType === 'enum' ||
@@ -99,6 +102,22 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
 	lines.push('pub fn is_alias_envelope(kind: KindId) -> bool {');
 	lines.push(`    matches!(kind.0, ${aliasEnvelopeIds.length > 0 ? aliasEnvelopeIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
+	const keepsAnonymousIds = [
+		...new Set(
+			[...nodeMap.nodes.values()]
+				.filter((node) => node.slots.some((slot) => reclaimsAnonymousChild(slot, nodeMap)))
+				.map((node) => findOwnKindEntry(entries, node.kind)?.id)
+				.filter((id): id is number => id !== undefined)
+		)
+	].sort((a, b) => a - b);
+	lines.push('');
+	lines.push('/// Whether a node of this kind keeps its anonymous children as `$other`');
+	lines.push('/// when it has no named child: an unnamed slot of the kind stores terminal');
+	lines.push("/// kinds, and the wrap layer reclaims that slot's value from `$other`.");
+	lines.push('pub fn keeps_anonymous_children(kind: KindId) -> bool {');
+	lines.push(`    matches!(kind.0, ${keepsAnonymousIds.length > 0 ? keepsAnonymousIds.join(' | ') : 'u16::MAX if false'})`);
 	lines.push('}');
 
 	const separatorRows: string[] = [];

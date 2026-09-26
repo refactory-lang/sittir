@@ -125,11 +125,11 @@ export function rebuildKeywordOpenersRustGenerated() {
 					pattern: ir.identifier("m"),
 					value: ir.macroInvocation.strict({
 						macro: ir.identifier("vec"),
-						arguments: ir.delimTokenTree.bracket.strict(ir.integerLiteral.decimal.strict({
+						arguments: ir.delimTokenTree.bracket.strict(ir.nonSpecialToken.strict(ir.integerLiteral.decimal.strict({
 							content: "1",
-						}), TSKindId.Comma, ir.integerLiteral.decimal.strict({
+						})), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.integerLiteral.decimal.strict({
 							content: "2",
-						})),
+						}))),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("c"),

@@ -28,9 +28,6 @@ export interface IsGuards {
 	string<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.String };
-	ImmediateString<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateString };
 	stringContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
@@ -85,7 +82,6 @@ export interface AssertGuards {
 	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	capture(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Capture };
 	string(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.String };
-	ImmediateString(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImmediateString };
 	stringContent(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StringContent };
 	parameters(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Parameters };
 	comment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Comment };
@@ -131,7 +127,6 @@ export const is = {
 	escapeSequence: _g(TSKindId.EscapeSequence),
 	capture: _g(TSKindId.Capture),
 	string: _g(TSKindId.String),
-	ImmediateString: _g(TSKindId.ImmediateString),
 	stringContent: _g(TSKindId.StringContent),
 	parameters: _g(TSKindId.Parameters),
 	comment: _g(TSKindId.Comment),
@@ -181,7 +176,6 @@ export const assert = {
 	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	capture: _makeAssert('capture', is.capture as _AnyGuard),
 	string: _makeAssert('string', is.string as _AnyGuard),
-	ImmediateString: _makeAssert('ImmediateString', is.ImmediateString as _AnyGuard),
 	stringContent: _makeAssert('stringContent', is.stringContent as _AnyGuard),
 	parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
 	comment: _makeAssert('comment', is.comment as _AnyGuard),

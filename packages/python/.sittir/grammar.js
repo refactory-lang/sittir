@@ -956,7 +956,7 @@ function separatorOf(resolved, symbols) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.rules, symbols);
+  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, (name) => terminalSymbolOf(name, symbols.rules, symbols));
   if (isToken(first) && !secondIsStr) return { content: second, separator: first };
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
@@ -1344,17 +1344,17 @@ function choiceArmsOf(content) {
   if (content.type !== CHOICE) return void 0;
   return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
-function terminalContentOf(content, rules, symbols) {
-  if (content.type === SYMBOL) return terminalSymbolOf(content.name, rules, symbols);
+function terminalContentOf(content, isTerminalSymbol) {
+  if (content.type === SYMBOL) return isTerminalSymbol(content.name);
   if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
   const arms = choiceArmsOf(content);
-  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, rules, symbols));
+  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, isTerminalSymbol));
 }
 function terminalSymbolOf(name, rules, symbols) {
   const cls = parserSymbolClassOf(name, symbols);
   if (cls !== "inlined") return cls === "terminal";
   const body = rules[name];
-  return body !== void 0 && terminalContentOf(body, rules, symbols);
+  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, rules, symbols));
 }
 function lexesAsOneToken(rule2) {
   return extractedToken(rule2) !== void 0;
@@ -1839,8 +1839,8 @@ function unaliasOverloadedDisplays(rules, ctx) {
     const alias2 = r;
     return alias2.type === ALIAS && alias2.named === true && alias2.value ? alias2 : void 0;
   };
-  const terminalContent = (content) => terminalContentOf(content, rules, ctx.symbols);
   const terminalSymbol = (name) => terminalSymbolOf(name, rules, ctx.symbols);
+  const terminalContent = (content) => terminalContentOf(content, terminalSymbol);
   const storageOf = (content) => {
     const symbol = content.type === SYMBOL ? content.name : void 0;
     return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };
@@ -5879,7 +5879,7 @@ var grammar_sittir_default = grammar(
         role($._indent, "indent");
         role($._dedent, "dedent");
         role($._newline, "newline");
-        return [...prev ?? [], $._tight, $._space, $._blankline, $._double_newline];
+        return [...prev ?? [], $._tight, $._space, $._blankline, $._double_blankline];
       },
       supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       conflicts: ($, previous) => [
@@ -5893,7 +5893,7 @@ var grammar_sittir_default = grammar(
       visibleExternals: (_$) => ({
         _newline: string("\n"),
         _blankline: string("\n\n"),
-        _double_newline: string("\n\n\n"),
+        _double_blankline: string("\n\n\n"),
         _tight: string(""),
         _space: string(" ")
       }),
@@ -5933,9 +5933,9 @@ var grammar_sittir_default = grammar(
         integer_binary: { "prefix:": preference("0b") },
         module: {
           "statements:/separator": preference("tight"),
-          "statements:/(function_definition)/after": preference("double_newline"),
-          "statements:/(class_definition)/after": preference("double_newline"),
-          "statements:/(decorated_definition)/after": preference("double_newline")
+          "statements:/(function_definition)/after": preference("double_blankline"),
+          "statements:/(class_definition)/after": preference("double_blankline"),
+          "statements:/(decorated_definition)/after": preference("double_blankline")
         },
         _: {
           '"("/before': preference("tight"),
@@ -6176,7 +6176,7 @@ var grammar_sittir_default = grammar(
         _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
       rules: {
-        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_newline, $._indent, $._dedent),
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent),
         // See docs/python-grammar-sittir-glossary.md::primary_expression
         primary_expression: ($, original) => {
           let base2 = original.members;

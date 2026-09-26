@@ -71,6 +71,15 @@ pub trait ReadModel {
         false
     }
 
+    /// Whether a node of this kind keeps its anonymous children as `$other`
+    /// even when it has no named child: the kind has an unnamed slot that
+    /// stores terminal kinds, so an anonymous child is that slot's value and
+    /// the wrap layer reclaims it from `$other`.
+    fn keeps_anonymous_children(&self, kind: KindId) -> bool {
+        let _ = kind;
+        false
+    }
+
     /// Whether this parse kind id is an alias envelope: a kind the model
     /// wraps around the storage node the parser shows under that id. The
     /// reader stamps both ids on such a node when it is the storage node
@@ -208,7 +217,8 @@ fn read_ts_node(
     let is_leaf = fields.is_none()
         && children
             .as_ref()
-            .is_none_or(|cs| cs.iter().all(|c| !c.named));
+            .is_none_or(|cs| cs.iter().all(|c| !c.named))
+        && !keeps_anonymous_children(&node, model);
     let text = if carries_text(&node, model) {
         source.get(byte_range.clone()).map(|s| s.to_string())
     } else {
@@ -478,6 +488,11 @@ fn read_children(
 /// shown as (`kind_id`, the alias target) — `print` used as an identifier
 /// parses as its own symbol and is shown as `identifier`, and it is the
 /// identifier's transport that takes the text.
+fn keeps_anonymous_children(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    model.keeps_anonymous_children(stamped_kind(node))
+        || model.keeps_anonymous_children(KindId(node.kind_id()))
+}
+
 fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
     !node.is_named()
         || model.is_text_kind(stamped_kind(node))

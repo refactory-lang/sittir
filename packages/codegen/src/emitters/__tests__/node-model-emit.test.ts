@@ -75,21 +75,21 @@ describe('seats', () => {
 		const header = model.nodes.find((n) => n.kind === 'header')!;
 		const content = (header as { slots: { name: string; values: { seat?: unknown }[] }[] }).slots.find((s) => s.name === 'content')!;
 		expect(content.values.map((v) => v.seat)).toEqual([
-			{ kind: '_header_lhs', shape: 'arm', mount: 'lhs', seated: true },
-			{ kind: '_header_kind', shape: 'arm', mount: 'kind', seated: true }
+			{ kind: 'header_lhs', shape: 'arm', mount: 'lhs', seated: true },
+			{ kind: 'header_kind', shape: 'arm', mount: 'kind', seated: true }
 		]);
 		const clause = buildNodeModel(clauseNodeMap()).nodes.find((n) => n.kind === 'clause')! as {
 			slots: { values: { seat?: unknown }[] }[];
 		};
 		expect(clause.slots.flatMap((s) => s.values).find((v) => v.seat)?.seat).toEqual({
-			kind: '_clause_group',
+			kind: 'clause_group',
 			shape: 'flatten'
 		});
 		const comparison = buildNodeModel(comparisonNodeMap()).nodes.find((n) => n.kind === 'comparison')! as {
 			slots: { name: string; values: { seat?: unknown }[] }[];
 		};
 		expect(comparison.slots.find((s) => s.name === 'comparators')!.values[0]!.seat).toEqual({
-			kind: '_comparison_comparator',
+			kind: 'comparison_comparator',
 			shape: 'elements'
 		});
 	});

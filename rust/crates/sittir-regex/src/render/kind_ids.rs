@@ -45,7 +45,7 @@ pub const DECIMAL_ESCAPE: KindId = KindId(34);
 pub const CHARACTER_CLASS_ESCAPE_TOKEN1: KindId = KindId(35);
 pub const UNICODE_CHARACTER_ESCAPE_TOKEN1: KindId = KindId(36);
 pub const UNICODE_CHARACTER_ESCAPE_TOKEN2: KindId = KindId(37);
-pub const UNICODE_PROPERTY: KindId = KindId(38);
+pub const UNICODE_PROPERTY_VALUE: KindId = KindId(38);
 pub const CONTROL_ESCAPE_TOKEN1: KindId = KindId(39);
 pub const CONTROL_ESCAPE_TOKEN2: KindId = KindId(40);
 pub const CONTROL_LETTER_ESCAPE: KindId = KindId(41);
@@ -205,6 +205,13 @@ pub fn is_text_kind(kind: KindId) -> bool {
 /// the alias, so the wrap layer can seat it as the envelope's content.
 pub fn is_alias_envelope(kind: KindId) -> bool {
     matches!(kind.0, 87 | 88)
+}
+
+/// Whether a node of this kind keeps its anonymous children as `$other`
+/// when it has no named child: an unnamed slot of the kind stores terminal
+/// kinds, and the wrap layer reclaims that slot's value from `$other`.
+pub fn keeps_anonymous_children(kind: KindId) -> bool {
+    matches!(kind.0, 55 | 56 | 62 | 76)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

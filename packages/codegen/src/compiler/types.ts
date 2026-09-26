@@ -68,6 +68,9 @@ export interface KindParserMetadata {
 	readonly hidden: boolean;
 	readonly keyword?: true;
 	readonly aliasedNonTerminal?: true;
+	readonly supertype?: true;
+	readonly terminal?: true;
+	readonly visibleExternal?: true;
 	readonly lexicalRank?: number;
 }
 
@@ -114,7 +117,6 @@ export interface RawGrammar {
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];
-	readonly visibleInlineNames?: readonly string[];
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];

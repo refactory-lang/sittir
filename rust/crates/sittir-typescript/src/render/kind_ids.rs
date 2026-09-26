@@ -729,7 +729,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         250 => "await_expression", // "await_expression"
         251 => "member_expression", // "member_expression"
         252 => "subscript_expression", // "subscript_expression"
-        253 => "lhs_expression", // "_lhs_expression"
+        253 => "_lhs_expression", // "_lhs_expression"
+        459 => "lhs_expression", // "_lhs_expression"
         254 => "assignment_expression", // "assignment_expression"
         255 => "_augmented_assignment_lhs", // "_augmented_assignment_lhs"
         256 => "augmented_assignment_expression", // "augmented_assignment_expression"
@@ -957,6 +958,13 @@ pub fn is_text_kind(kind: KindId) -> bool {
 /// the alias, so the wrap layer can seat it as the envelope's content.
 pub fn is_alias_envelope(kind: KindId) -> bool {
     matches!(kind.0, 458 | 460 | 461 | 462 | 463 | 465)
+}
+
+/// Whether a node of this kind keeps its anonymous children as `$other`
+/// when it has no named child: an unnamed slot of the kind stores terminal
+/// kinds, and the wrap layer reclaims that slot's value from `$other`.
+pub fn keeps_anonymous_children(kind: KindId) -> bool {
+    matches!(kind.0, 279 | 315 | 316 | 341 | 349 | 362 | 382 | 408 | 419 | 420 | 426)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

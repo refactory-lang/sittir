@@ -113,11 +113,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * The one symbol reference constructor: `{ type: SYMBOL, name, inline:
  * name.startsWith('_') }`. A reference never carries `hidden` — that fact
- * is rule-level only, stamped on top-level rules by evaluate's
- * `canonicalizeRawGrammar`, never on a SYMBOL. `inline` here is the
- * name's leading-underscore convention alone; `canonicalizeRawGrammar`
- * later corrects it for inline-array entries and supertype names, and
- * forces `inline:false` on a symbol wrapped by an alias. Used wherever a
+ * is rule-level only, stamped on top-level rules by link's
+ * `stampParserVisibility`, never on a SYMBOL. `inline` here is the
+ * name's leading-underscore convention alone; `stampParserVisibility`
+ * later restamps it from the parser catalog, the inline array and the
+ * supertype names, and forces `inline:false` on a symbol wrapped by an alias. Used wherever a
  * rule needs a plain reference built from a name rather than through the
  * DSL proxy: `createProxy`, `structuralBuilder.symbol`, pattern/external-ref
  * rewriting.
@@ -513,11 +513,11 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
-	 * Per-ref inline decision. Stamped once, at evaluate, by
-	 * `canonicalizeRawGrammar` (compiler/evaluate.ts):
-	 * `inline = !supertype && (hidden || name in the grammar's inline array)`,
+	 * Per-ref inline decision. Stamped once, at link, by
+	 * `stampParserVisibility` (compiler/link.ts):
+	 * `inline = !boundary && (parser-hidden || name in the grammar's inline array)`,
 	 * with one override — a symbol wrapped by `structuralAlias`
-	 * (`dsl/builders.ts`) or found under an ALIAS by `canonicalizeRawGrammar` is
+	 * (`dsl/builders.ts`) or found under an ALIAS by `stampParserVisibility` is
 	 * forced `inline:false`, because an alias confers a real visible CST kind
 	 * that must materialize, not flatten. Link only ever CONSUMES this stamp
 	 * (`resolveSymbolRoleOrPass`, `canonicalizeRuleLiterals`'s SYMBOL/SUPERTYPE
@@ -531,8 +531,8 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 ### `packages/codegen/src/types/rule.ts::hidden`
 
 ```text
-/** Grammar-hidden fact: `name.startsWith('_')` for every top-level rule,
- *  stamped once at evaluate (`canonicalizeRawGrammar`) and never
+/** Grammar-hidden fact: the parser's surface-hidden flag for every top-level
+ *  rule, stamped once at link (`stampParserVisibility`) and never
  *  re-derived from the name downstream — `dsl/rule-patterns.ts`'s
  *  `isHiddenRule(name, rules)` reads this stamp. A rule-level fact only:
  *  never stamped on a SYMBOL reference (`sym`'s constructed reference
@@ -543,9 +543,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  *  the stamp describes the SOURCE kind, not the host; flatten's
  *  `withKindFacts` re-carries the PRE-flatten rule's own `hidden` onto its
  *  flattened root, so a rule's OWN fact survives flattening even though a
- *  spliced-in body's does not. Link's `unhideAliasedTargets` flips a
- *  rule's `hidden` to `false` when some named alias wraps it (the parser
- *  now emits it as its own node, not folded into the alias); link's
+ *  spliced-in body's does not. Link's
  *  `stampLinkMintedVisibility` back-fills `hidden` (from the name) on any
  *  rule link minted that has no raw-grammar counterpart. */
 ```

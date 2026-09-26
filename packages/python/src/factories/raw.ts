@@ -28,7 +28,7 @@ const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/
 const _leafRe_buildIntegerDecimal = /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u;
 const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
-const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
+const _leafRe_buildStringFragment = /^(?:(?:[^"'\\{}\n]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
@@ -127,42 +127,39 @@ function _buildSimpleStatements(value: T.SimpleStatementsElements): T.SimpleStat
 	);
 }
 
+export function buildImportStatement(value: T.Names | T.Names.Types): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(value: T.ImportList): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement(
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildImportStatement(args[0] as T.ImportList);
+		return _buildImportStatement(args[0] as T.Names | T.Names.Types);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Names as const);
 	return prebuilt
-		? _buildImportStatement(args[0] as T.ImportList)
-		: _buildImportStatement((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+		? _buildImportStatement(args[0] as T.Names | T.Names.Types)
+		: _buildImportStatement((buildNames as (...a: unknown[]) => unknown)(...args) as T.Names | T.Names.Types);
 }
-function _buildImportStatement(value: T.ImportList): T.ImportStatement.Built {
-	const _import_list = rejectBareText(value, 'ImportStatement.importList', 'a built ImportList');
+function _buildImportStatement(value: T.Names | T.Names.Types): T.ImportStatement.Built {
+	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(
+		rejectBareText(value, 'ImportStatement.names', 'a built Names'),
+		[[[132], (v: unknown) => buildNames(v as never)]]
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_import_list,
+				_names,
 				$with: {
-					importList: (value: T.ImportList) => buildImportStatement(value)
+					names: (value: T.Names | T.Names.Types) => buildImportStatement(value)
 				}
 			},
 			{
-				importList: () => _import_list
+				names: () => _names
 			}
 		),
 		methodsEngine
@@ -296,7 +293,7 @@ function _buildImportList(
 	elements: NonEmptyArray<T.DottedName | T.AliasedImport>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportList.Built {
-	_assertNonEmpty(elements, '_import_list.elements');
+	_assertNonEmpty(elements, 'import_list.elements');
 	const _name = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -705,6 +702,31 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	);
 }
 
+export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.MatchBlock.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [['\n', TSKindId.Newline] as const]),
+		'MatchBlock.content',
+		'a built MatchBlockBlock'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MatchBlock as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: NonNullable<T.MatchBlockBlock | TSKindId.Newline>) => buildMatchBlock(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built {
 	const _case_patterns = rejectBareText(config.casePatterns, 'CaseClause.casePatterns', 'a built CasePatterns');
 	const _guard = rejectBareText(config.guard, 'CaseClause.guard', 'a built IfClause');
@@ -1003,7 +1025,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	);
 }
 
-export function buildParameters(value?: T._Parameters): ReturnType<typeof _buildParameters>;
+export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
@@ -1011,19 +1033,19 @@ export function buildParameters(
 export function buildParameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildParameters(args[0] as T._Parameters);
+		return _buildParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
 	return prebuilt
-		? _buildParameters(args[0] as T._Parameters)
-		: _buildParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+		? _buildParameters(args[0] as T.ParametersElements)
+		: _buildParameters((buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements);
 }
-function _buildParameters(value?: T._Parameters): T.Parameters.Built {
-	const _elements = rejectBareText(value, 'Parameters.elements', 'a built _Parameters');
+function _buildParameters(value?: T.ParametersElements): T.Parameters.Built {
+	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -1032,7 +1054,7 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 				$named: true as const,
 				_elements,
 				$with: {
-					elements: (value?: T._Parameters) => buildParameters(value)
+					elements: (value?: T.ParametersElements) => buildParameters(value)
 				}
 			},
 			{
@@ -1043,7 +1065,7 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 	);
 }
 
-export function buildLambdaParameters(value: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters(value: T.ParametersElements): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
@@ -1053,32 +1075,38 @@ export function buildLambdaParameters(
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLambdaParameters(args[0] as T._Parameters);
+		return _buildLambdaParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
 	return prebuilt
-		? _buildLambdaParameters(args[0] as T._Parameters)
-		: _buildLambdaParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+		? _buildLambdaParameters(args[0] as T.ParametersElements)
+		: _buildLambdaParameters(
+				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements
+			);
 }
-function _buildLambdaParameters(value: T._Parameters): T.LambdaParameters.Built {
-	const _parameters = rejectBareText(value, 'LambdaParameters.parameters', 'a built _Parameters');
+function _buildLambdaParameters(value: T.ParametersElements): T.LambdaParameters.Built {
+	const _parameters_elements = rejectBareText(
+		value,
+		'LambdaParameters.parametersElements',
+		'a built ParametersElements'
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.LambdaParameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_parameters,
+				_parameters_elements,
 				$with: {
-					parameters: (value: T._Parameters) => buildLambdaParameters(value)
+					parametersElements: (value: T.ParametersElements) => buildLambdaParameters(value)
 				}
 			},
 			{
-				parameters: () => _parameters
+				parametersElements: () => _parameters_elements
 			}
 		),
 		methodsEngine
@@ -1511,11 +1539,11 @@ export function buildDottedName(...children: T.Identifier[]): T.DottedName.Built
 	);
 }
 
-export function buildCasePattern(value: T._AsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built {
+export function buildCasePattern(value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built {
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, []),
 		'CasePattern.content',
-		'a built _AsPattern / KeywordPattern / SimplePattern'
+		'a built CaseAsPattern / KeywordPattern / SimplePattern'
 	);
 	return withMethods(
 		withAccessors(
@@ -1525,7 +1553,7 @@ export function buildCasePattern(value: T._AsPattern | T.KeywordPattern | T.Simp
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T._AsPattern | T.KeywordPattern | T.SimplePattern>) => buildCasePattern(value)
+					content: (value: NonNullable<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) => buildCasePattern(value)
 				}
 			},
 			{
@@ -1536,20 +1564,20 @@ export function buildCasePattern(value: T._AsPattern | T.KeywordPattern | T.Simp
 	);
 }
 
-export function build_AsPattern(config: T._AsPattern.Config): T._AsPattern.Built {
-	const _case_pattern = rejectBareText(config.casePattern, '_AsPattern.casePattern', 'a built CasePattern');
-	const _identifier = rejectBareText(config.identifier, '_AsPattern.identifier', 'buildIdentifier(…)');
+export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Built {
+	const _case_pattern = rejectBareText(config.casePattern, 'CaseAsPattern.casePattern', 'a built CasePattern');
+	const _identifier = rejectBareText(config.identifier, 'CaseAsPattern.identifier', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._AsPattern as const,
+				$type: TSKindId.CaseAsPattern as const,
 				$source: 2 as const,
 				$named: true as const,
 				_case_pattern,
 				_identifier,
 				$with: {
-					casePattern: (value: T.CasePattern) => build_AsPattern({ ...config, casePattern: value }),
-					identifier: (value: T.Identifier) => build_AsPattern({ ...config, identifier: value })
+					casePattern: (value: T.CasePattern) => buildCaseAsPattern({ ...config, casePattern: value }),
+					identifier: (value: T.Identifier) => buildCaseAsPattern({ ...config, identifier: value })
 				}
 			},
 			{
@@ -1834,12 +1862,16 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 	);
 }
 
-export function build_Parameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _build_Parameters>;
-export function build_Parameters(
+export function buildParametersElements(
+	...elements: NonEmptyArray<T.Parameter>
+): ReturnType<typeof _buildParametersElements>;
+export function buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
-): ReturnType<typeof _build_Parameters>;
-export function build_Parameters(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Parameter)[]) {
+): ReturnType<typeof _buildParametersElements>;
+export function buildParametersElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Parameter)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -1848,27 +1880,27 @@ export function build_Parameters(...args: ({ delimiter?: Delimiter.None | Delimi
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Parameter>;
-	return _build_Parameters(elements, options);
+	return _buildParametersElements(elements, options);
 }
-function _build_Parameters(
+function _buildParametersElements(
 	elements: NonEmptyArray<T.Parameter>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T._Parameters.Built {
-	_assertNonEmpty(elements, '_parameters.elements');
+): T.ParametersElements.Built {
+	_assertNonEmpty(elements, 'parameters_elements.elements');
 	const _parameter = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._Parameters as const,
+				$type: TSKindId.ParametersElements as const,
 				$source: 2 as const,
 				$named: true as const,
 				_parameter,
 				_delimiter,
 				$with: {
-					parameters: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(options, ...vs),
+					parameters: (...vs: NonEmptyArray<T.Parameter>) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						build_Parameters({ ...options, delimiter: v }, ...elements)
+						buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -1899,7 +1931,7 @@ function _buildPatterns(
 	elements: NonEmptyArray<T.Pattern>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Built {
-	_assertNonEmpty(elements, '_patterns.elements');
+	_assertNonEmpty(elements, 'patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -3331,7 +3363,7 @@ function _buildCollectionElements(
 	elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CollectionElements.Built {
-	_assertNonEmpty(elements, '_collection_elements.elements');
+	_assertNonEmpty(elements, 'collection_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -3514,12 +3546,12 @@ export function buildString(config: T.String.Config): T.String.Built {
 }
 
 export function buildStringContent(
-	...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+	...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
 ): T.StringContent.Built {
 	const _content = rejectBareText(
 		children,
 		'StringContent.content',
-		'buildEscapeInterpolation(…) / build_StringContent(…)'
+		'buildEscapeInterpolation(…) / buildStringFragment(…)'
 	);
 	return withMethods(
 		withAccessors(
@@ -3530,7 +3562,7 @@ export function buildStringContent(
 				_content,
 				$with: {
 					contents: (
-						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
 					) => buildStringContent(...vs)
 				}
 			},
@@ -3587,6 +3619,10 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		),
 		methodsEngine
 	);
+}
+
+export function buildNotEscapeSequence(): TSKindId.NotEscapeSequence {
+	return TSKindId.NotEscapeSequence;
 }
 
 export function buildFormatSpecifier(
@@ -4478,7 +4514,7 @@ function _buildPrintArguments(
 	elements: NonEmptyArray<T.Expression>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintArguments.Built {
-	_assertNonEmpty(elements, '_print_arguments.elements');
+	_assertNonEmpty(elements, 'print_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -4527,7 +4563,7 @@ function _buildPrintChevronArguments(
 	elements: NonEmptyArray<T.Expression>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintChevronArguments.Built {
-	_assertNonEmpty(elements, '_print_chevron_arguments.elements');
+	_assertNonEmpty(elements, 'print_chevron_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -4625,6 +4661,10 @@ function _buildPrintStatementPlain(value: T.PrintArguments): T.PrintStatementPla
 		),
 		methodsEngine
 	);
+}
+
+export function buildWildcardPattern(): TSKindId.WildcardPattern {
+	return TSKindId.WildcardPattern;
 }
 
 export function buildParenthesizedImportList(value: T.ImportList): ReturnType<typeof _buildParenthesizedImportList>;
@@ -5518,7 +5558,25 @@ function _buildSuiteBlock(value: T.Block): T.SuiteBlock.Built {
 	);
 }
 
-export function buildSuiteEmpty(value: TSKindId.Newline): T.SuiteEmpty.Built {
+export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
+export function buildSuiteEmpty(value: TSKindId.Newline): ReturnType<typeof _buildSuiteEmpty>;
+export function buildSuiteEmpty(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildSuiteEmpty(buildNewline() as TSKindId.Newline);
+	}
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildSuiteEmpty(args[0] as TSKindId.Newline);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
+	return prebuilt
+		? _buildSuiteEmpty(args[0] as TSKindId.Newline)
+		: _buildSuiteEmpty((buildNewline as (...a: unknown[]) => unknown)(...args) as TSKindId.Newline);
+}
+function _buildSuiteEmpty(value: TSKindId.Newline): T.SuiteEmpty.Built {
 	const _newline = coerceKindEnumStorage<NonNullable<T.SuiteEmpty['_newline']>>(value, [
 		['\n', TSKindId.Newline] as const
 	]);
@@ -5555,9 +5613,9 @@ export function buildComparisonOperatorComparator(
 			['>', TSKindId.Gt] as const,
 			['<>', TSKindId.LtGt] as const,
 			['in', TSKindId.InKeyword] as const,
-			['not in', TSKindId._NotIn] as const,
+			['not in', TSKindId.NotIn] as const,
 			['is', TSKindId.IsKeyword] as const,
-			['is not', TSKindId._IsNot] as const
+			['is not', TSKindId.IsNot] as const
 		]
 	);
 	const _primary_expression = rejectBareText(
@@ -5631,12 +5689,12 @@ export function buildStringStart(text: string): T.StringStart.Built {
 	);
 }
 
-export function build_StringContent(text: string): T._StringContent.Built {
-	if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
-	if (!_leafRe_build_StringContent.test(text)) throw new Error(`_string_content: text does not match pattern: ${text}`);
+export function buildStringFragment(text: string): T.StringFragment.Built {
+	if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
+	if (!_leafRe_buildStringFragment.test(text)) throw new Error(`string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId._StringContent as const,
+			$type: TSKindId.StringFragment as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5674,6 +5732,10 @@ export function buildStringEnd(text: string): T.StringEnd.Built {
 	);
 }
 
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
 export function buildIndent(text: string): T.Indent.Built {
 	if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
 	return withMethods(
@@ -5700,6 +5762,27 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
+export function buildNames(value: T.ImportList): T.Names.Built {
+	const _content = rejectBareText(value, 'Names.content', 'a built ImportList');
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Names as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.ImportList) => buildNames(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Built {
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []),
@@ -5709,7 +5792,7 @@ export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Bui
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._AsPatternTarget as const,
+				$type: TSKindId.AsPatternTarget as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -5730,7 +5813,7 @@ export function buildFormatExpression(value: T.Interpolation): T.FormatExpressio
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._FormatExpression as const,
+				$type: TSKindId.FormatExpression as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -5754,7 +5837,7 @@ export type FluentKindMap = {
 	relative_import: T.RelativeImport.Built;
 	future_import_statement: T.FutureImportStatement.Built;
 	import_from_statement: T.ImportFromStatement.Built;
-	_import_list: T.ImportList.Built;
+	import_list: T.ImportList.Built;
 	aliased_import: T.AliasedImport.Built;
 	wildcard_import: T.WildcardImport;
 	print_statement: T.PrintStatement.Built;
@@ -5772,6 +5855,7 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Built;
 	else_clause: T.ElseClause.Built;
 	match_statement: T.MatchStatement.Built;
+	match_block: T.MatchBlock.Built;
 	case_clause: T.CaseClause.Built;
 	for_statement: T.ForStatement.Built;
 	while_statement: T.WhileStatement.Built;
@@ -5799,16 +5883,16 @@ export type FluentKindMap = {
 	expression_list: T.ExpressionList.Built;
 	dotted_name: T.DottedName.Built;
 	case_pattern: T.CasePattern.Built;
-	_as_pattern: T._AsPattern.Built;
+	case_as_pattern: T.CaseAsPattern.Built;
 	union_pattern: T.UnionPattern.Built;
 	dict_pattern: T.DictPattern.Built;
-	_key_value_pattern: T.KeyValuePattern.Built;
+	key_value_pattern: T.KeyValuePattern.Built;
 	keyword_pattern: T.KeywordPattern.Built;
 	splat_pattern: T.SplatPattern.Built;
 	class_pattern: T.ClassPattern.Built;
 	complex_pattern: T.ComplexPattern.Built;
-	_parameters: T._Parameters.Built;
-	_patterns: T.Patterns.Built;
+	parameters_elements: T.ParametersElements.Built;
+	patterns: T.Patterns.Built;
 	tuple_pattern: T.TuplePattern.Built;
 	list_pattern: T.ListPattern.Built;
 	default_parameter: T.DefaultParameter.Built;
@@ -5849,7 +5933,7 @@ export type FluentKindMap = {
 	set_comprehension: T.SetComprehension.Built;
 	generator_expression: T.GeneratorExpression.Built;
 	parenthesized_expression: T.ParenthesizedExpression.Built;
-	_collection_elements: T.CollectionElements.Built;
+	collection_elements: T.CollectionElements.Built;
 	for_in_clause: T.ForInClause.Built;
 	if_clause: T.IfClause.Built;
 	conditional_expression: T.ConditionalExpression.Built;
@@ -5857,6 +5941,7 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	string_content: T.StringContent.Built;
 	interpolation: T.Interpolation.Built;
+	not_escape_sequence: T.NotEscapeSequence;
 	format_specifier: T.FormatSpecifier.Built;
 	type_conversion: T.TypeConversion;
 	identifier: T.Identifier;
@@ -5883,11 +5968,12 @@ export type FluentKindMap = {
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
-	_print_arguments: T.PrintArguments.Built;
-	_print_chevron_arguments: T.PrintChevronArguments.Built;
+	print_arguments: T.PrintArguments.Built;
+	print_chevron_arguments: T.PrintChevronArguments.Built;
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
-	_parenthesized_import_list: T.ParenthesizedImportList.Built;
+	wildcard_pattern: T.WildcardPattern;
+	parenthesized_import_list: T.ParenthesizedImportList.Built;
 	comprehension_clauses: T.ComprehensionClauses.Built;
 	integer_hex: T.IntegerHex.Built;
 	integer_octal: T.IntegerOctal.Built;
@@ -5918,14 +6004,16 @@ export type FluentKindMap = {
 	suite_inline: T.SuiteInline.Built;
 	suite_block: T.SuiteBlock.Built;
 	suite_empty: T.SuiteEmpty.Built;
-	_comparison_operator_comparator: T.ComparisonOperatorComparator.Built;
-	_yield_from_clause: T.YieldFromClause.Built;
+	comparison_operator_comparator: T.ComparisonOperatorComparator.Built;
+	yield_from_clause: T.YieldFromClause.Built;
 	string_start: T.StringStart;
-	_string_content: T._StringContent;
+	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
+	_newline: T.Newline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	names: T.Names.Built;
 	as_pattern_target: T.AsPatternTarget.Built;
 	format_expression: T.FormatExpression.Built;
 };
@@ -5938,7 +6026,7 @@ export const _factoryMap = {
 	relative_import: buildRelativeImport,
 	future_import_statement: buildFutureImportStatement,
 	import_from_statement: buildImportFromStatement,
-	_import_list: buildImportList,
+	import_list: buildImportList,
 	aliased_import: buildAliasedImport,
 	wildcard_import: buildWildcardImport,
 	print_statement: buildPrintStatement,
@@ -5956,6 +6044,7 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
+	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
@@ -5983,16 +6072,16 @@ export const _factoryMap = {
 	expression_list: buildExpressionList,
 	dotted_name: buildDottedName,
 	case_pattern: buildCasePattern,
-	_as_pattern: build_AsPattern,
+	case_as_pattern: buildCaseAsPattern,
 	union_pattern: buildUnionPattern,
 	dict_pattern: buildDictPattern,
-	_key_value_pattern: buildKeyValuePattern,
+	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
 	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
-	_parameters: build_Parameters,
-	_patterns: buildPatterns,
+	parameters_elements: buildParametersElements,
+	patterns: buildPatterns,
 	tuple_pattern: buildTuplePattern,
 	list_pattern: buildListPattern,
 	default_parameter: buildDefaultParameter,
@@ -6033,7 +6122,7 @@ export const _factoryMap = {
 	set_comprehension: buildSetComprehension,
 	generator_expression: buildGeneratorExpression,
 	parenthesized_expression: buildParenthesizedExpression,
-	_collection_elements: buildCollectionElements,
+	collection_elements: buildCollectionElements,
 	for_in_clause: buildForInClause,
 	if_clause: buildIfClause,
 	conditional_expression: buildConditionalExpression,
@@ -6041,6 +6130,7 @@ export const _factoryMap = {
 	string: buildString,
 	string_content: buildStringContent,
 	interpolation: buildInterpolation,
+	not_escape_sequence: buildNotEscapeSequence,
 	format_specifier: buildFormatSpecifier,
 	type_conversion: buildTypeConversion,
 	identifier: buildIdentifier,
@@ -6067,11 +6157,12 @@ export const _factoryMap = {
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
-	_print_arguments: buildPrintArguments,
-	_print_chevron_arguments: buildPrintChevronArguments,
+	print_arguments: buildPrintArguments,
+	print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
-	_parenthesized_import_list: buildParenthesizedImportList,
+	wildcard_pattern: buildWildcardPattern,
+	parenthesized_import_list: buildParenthesizedImportList,
 	comprehension_clauses: buildComprehensionClauses,
 	integer_hex: buildIntegerHex,
 	integer_octal: buildIntegerOctal,
@@ -6102,14 +6193,16 @@ export const _factoryMap = {
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,
-	_comparison_operator_comparator: buildComparisonOperatorComparator,
-	_yield_from_clause: buildYieldFromClause,
+	comparison_operator_comparator: buildComparisonOperatorComparator,
+	yield_from_clause: buildYieldFromClause,
 	string_start: buildStringStart,
-	_string_content: build_StringContent,
+	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
+	_newline: buildNewline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
 	format_expression: buildFormatExpression
 } as const;

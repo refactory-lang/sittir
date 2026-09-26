@@ -812,21 +812,21 @@ const literalType$single =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$true =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const literalType$false =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const literalType$null =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const literalType$undefined =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 export const literalType: typeof B.literalType & {
 	negativeNumber: {
 		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
@@ -873,20 +873,20 @@ export const literalType: typeof B.literalType & {
 		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	true: {
-		strict: (...args: ArgsOf<typeof F.buildTrue>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTrue>) => ReturnType<typeof F.buildLiteralType>;
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
 	};
 	false: {
-		strict: (...args: ArgsOf<typeof F.buildFalse>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFalse>) => ReturnType<typeof F.buildLiteralType>;
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
 	};
 	null: {
-		strict: (...args: ArgsOf<typeof F.buildNull>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNull>) => ReturnType<typeof F.buildLiteralType>;
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
 	};
 	undefined: {
-		strict: (...args: ArgsOf<typeof F.buildUndefined>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUndefined>) => ReturnType<typeof F.buildLiteralType>;
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
 	};
 } = {
 	...B.literalType,
@@ -935,20 +935,20 @@ export const literalType: typeof B.literalType & {
 		coerce: literalType$single(F.buildLiteralType, C.coerceToStringSingle)
 	},
 	true: {
-		strict: literalType$true(F.buildLiteralType, F.buildTrue),
-		coerce: literalType$true(F.buildLiteralType, C.coerceToTrue)
+		strict: literalType$true(F.buildLiteralType, TSKindId.True),
+		coerce: literalType$true(C.coerceToLiteralType, TSKindId.True)
 	},
 	false: {
-		strict: literalType$false(F.buildLiteralType, F.buildFalse),
-		coerce: literalType$false(F.buildLiteralType, C.coerceToFalse)
+		strict: literalType$false(F.buildLiteralType, TSKindId.False),
+		coerce: literalType$false(C.coerceToLiteralType, TSKindId.False)
 	},
 	null: {
-		strict: literalType$null(F.buildLiteralType, F.buildNull),
-		coerce: literalType$null(F.buildLiteralType, C.coerceToNull)
+		strict: literalType$null(F.buildLiteralType, TSKindId.Null),
+		coerce: literalType$null(C.coerceToLiteralType, TSKindId.Null)
 	},
 	undefined: {
-		strict: literalType$undefined(F.buildLiteralType, F.buildUndefined),
-		coerce: literalType$undefined(F.buildLiteralType, C.coerceToUndefined)
+		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
+		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
 	}
 };
 

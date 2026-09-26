@@ -1,176 +1,4 @@
 {
-	"_extends_clause_single": [
-		{
-			"kind": "seam",
-			"field": "extends_clause_single_before"
-		},
-		{
-			"kind": "slot",
-			"name": "value"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "type_arguments",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "type_arguments"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "extends_clause_single_after"
-		}
-	],
-	"_type_query_call_expression": [
-		{
-			"kind": "seam",
-			"field": "type_query_call_expression_before"
-		},
-		{
-			"kind": "slot",
-			"name": "function"
-		},
-		{
-			"kind": "slot",
-			"name": "arguments"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_call_expression_after"
-		}
-	],
-	"_type_query_call_expression_in_type_annotation": [
-		{
-			"kind": "seam",
-			"field": "type_query_call_expression_in_type_annotation_before"
-		},
-		{
-			"kind": "slot",
-			"name": "function"
-		},
-		{
-			"kind": "slot",
-			"name": "arguments"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_call_expression_in_type_annotation_after"
-		}
-	],
-	"_type_query_instantiation_expression": [
-		{
-			"kind": "seam",
-			"field": "type_query_instantiation_expression_before"
-		},
-		{
-			"kind": "slot",
-			"name": "function"
-		},
-		{
-			"kind": "slot",
-			"name": "type_arguments"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_instantiation_expression_after"
-		}
-	],
-	"_type_query_member_expression": [
-		{
-			"kind": "seam",
-			"field": "type_query_member_expression_before"
-		},
-		{
-			"kind": "slot",
-			"name": "object"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "slot",
-			"name": "property"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_member_expression_after"
-		}
-	],
-	"_type_query_member_expression_in_type_annotation": [
-		{
-			"kind": "seam",
-			"field": "type_query_member_expression_in_type_annotation_before"
-		},
-		{
-			"kind": "slot",
-			"name": "object"
-		},
-		{
-			"kind": "seam",
-			"field": "dot_before"
-		},
-		{
-			"kind": "text",
-			"text": "."
-		},
-		{
-			"kind": "seam",
-			"field": "dot_after"
-		},
-		{
-			"kind": "slot",
-			"name": "property"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_member_expression_in_type_annotation_after"
-		}
-	],
-	"_type_query_subscript_expression": [
-		{
-			"kind": "seam",
-			"field": "type_query_subscript_expression_before"
-		},
-		{
-			"kind": "slot",
-			"name": "object"
-		},
-		{
-			"kind": "seam",
-			"field": "lbrack_before"
-		},
-		{
-			"kind": "text",
-			"text": "["
-		},
-		{
-			"kind": "seam",
-			"field": "lbrack_after"
-		},
-		{
-			"kind": "slot",
-			"name": "index"
-		},
-		{
-			"kind": "seam",
-			"field": "rbrack_before"
-		},
-		{
-			"kind": "text",
-			"text": "]"
-		},
-		{
-			"kind": "seam",
-			"field": "type_query_subscript_expression_after"
-		}
-	],
 	"abstract_class_declaration": [
 		{
 			"kind": "seam",
@@ -2774,6 +2602,34 @@
 		{
 			"kind": "seam",
 			"field": "extends_clause_after"
+		}
+	],
+	"extends_clause_single": [
+		{
+			"kind": "seam",
+			"field": "extends_clause_single_before"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "extends_clause_single_after"
 		}
 	],
 	"extends_type_clause": [
@@ -7942,6 +7798,150 @@
 		{
 			"kind": "seam",
 			"field": "type_query_after"
+		}
+	],
+	"type_query_call_expression": [
+		{
+			"kind": "seam",
+			"field": "type_query_call_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_call_expression_after"
+		}
+	],
+	"type_query_call_expression_in_type_annotation": [
+		{
+			"kind": "seam",
+			"field": "type_query_call_expression_in_type_annotation_before"
+		},
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_call_expression_in_type_annotation_after"
+		}
+	],
+	"type_query_instantiation_expression": [
+		{
+			"kind": "seam",
+			"field": "type_query_instantiation_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "function"
+		},
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_instantiation_expression_after"
+		}
+	],
+	"type_query_member_expression": [
+		{
+			"kind": "seam",
+			"field": "type_query_member_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_member_expression_after"
+		}
+	],
+	"type_query_member_expression_in_type_annotation": [
+		{
+			"kind": "seam",
+			"field": "type_query_member_expression_in_type_annotation_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "property"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_member_expression_in_type_annotation_after"
+		}
+	],
+	"type_query_subscript_expression": [
+		{
+			"kind": "seam",
+			"field": "type_query_subscript_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "slot",
+			"name": "index"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "type_query_subscript_expression_after"
 		}
 	],
 	"types": [

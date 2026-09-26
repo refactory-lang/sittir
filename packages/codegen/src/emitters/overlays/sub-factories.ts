@@ -155,16 +155,17 @@ function derive(
 		const residual = node.configSlots.filter((f) => f !== slot);
 		for (const value of armValuesOf(slot, nodeMap)) {
 			const name = camelCase(value.variant);
+			const storage = textStorageOf(value, nodeMap);
+			if (storage !== undefined) {
+				direct.push({ name, slot, residual, arm: { via: 'value', storage }, depth: DIRECT, merges: false });
+				continue;
+			}
 			const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
 			if (child !== undefined && child.rawFactoryName !== undefined && isEmitted(child.kind)) {
 				if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
 				direct.push({ name, slot, residual, arm: { via: 'node', child, path: [] }, depth: DIRECT, merges: false });
 				continue;
 			}
-			if (isNodeRef(value) && child === undefined) continue;
-			const storage = textStorageOf(value, nodeMap);
-			if (storage === undefined) continue;
-			direct.push({ name, slot, residual, arm: { via: 'value', storage }, depth: DIRECT, merges: false });
 		}
 	}
 	const nested = direct.flatMap((host) => nestedArmsOf(host, nodeMap, isEmitted, nextVisiting));

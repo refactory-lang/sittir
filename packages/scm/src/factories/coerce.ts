@@ -16,7 +16,7 @@ export const _fromMap = {
 	_immediate_identifier: coerceToImmediateIdentifier,
 	capture: coerceToCapture,
 	string: coerceToString,
-	_immediate_string: coerceToImmediateString,
+	immediate_string: coerceToImmediateString,
 	string_content: coerceToStringContent,
 	parameters: coerceToParameters,
 	comment: coerceToComment,
@@ -113,7 +113,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
 	string: new Set([36]),
-	_immediate_string: new Set([36]),
+	immediate_string: new Set([36]),
 	negated_field: new Set([5]),
 	grouping_group: new Set([38, 39, 40, 41, 42, 44, 46, 47])
 };
@@ -282,7 +282,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	program: TSKindId.Program,
 	capture: TSKindId.Capture,
 	string: TSKindId.String,
-	_immediate_string: TSKindId.ImmediateString,
+	immediate_string: TSKindId.ImmediateString,
 	string_content: TSKindId.StringContent,
 	parameters: TSKindId.Parameters,
 	negated_field: TSKindId.NegatedField,
@@ -294,7 +294,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	program: 'definition',
 	capture: '_immediate_identifier',
 	string: 'string_content',
-	_immediate_string: 'string_content',
+	immediate_string: 'string_content',
 	string_content: 'escape_sequence',
 	negated_field: 'identifier'
 };
@@ -302,12 +302,12 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'capture',
 	'string',
-	'_immediate_string',
+	'immediate_string',
 	'negated_field',
 	'grouping_group'
 ]);
 
-const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set(['string', '_immediate_string']);
+const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set(['string', 'immediate_string']);
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
@@ -317,7 +317,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCapture(children[0] as Parameters<typeof F.buildCapture>[0]);
 		case 'string':
 			return F.buildString(children[0] as Parameters<typeof F.buildString>[0]);
-		case '_immediate_string':
+		case 'immediate_string':
 			return F.buildImmediateString(children[0] as Parameters<typeof F.buildImmediateString>[0]);
 		case 'string_content':
 			return (coerceToStringContent as (...args: unknown[]) => unknown)(...children);
@@ -477,7 +477,7 @@ const _K6: readonly string[] = [
 	'named_node_expression_arm'
 ];
 const _K7: readonly string[] = ['_immediate_identifier'];
-const _K8: readonly string[] = ['_immediate_string'];
+const _K8: readonly string[] = ['immediate_string'];
 
 export function coerceToProgram(
 	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]

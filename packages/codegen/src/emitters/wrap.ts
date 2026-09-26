@@ -26,6 +26,7 @@ import {
 	isNonEmpty,
 	isRequired,
 	resolveFieldStorageInfo,
+	reclaimsAnonymousChild,
 	wrapExposesChildren,
 	classifyWrapEmission,
 	isSlotBearingCompound,
@@ -178,8 +179,8 @@ function resolveSlotDrillExprs(
 			: slotStoreExpr;
 	const diagnosticContextExpr = `{ tree, nodeType: ${config.dataExpr}.$type, slotName: ${JSON.stringify(slot.name)}, span: (${config.dataExpr} as _NodeData).$span }`;
 	const reclaimedStoreExpr =
-		config.storageInfo?.kind === 'kindEnum' && config.reclaimKindIdsExpr
-			? `(${filteredStoreExpr} ?? readTerminalFromOther(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
+		config.reclaimKindIdsExpr !== undefined
+			? `(${filteredStoreExpr} ?? readTerminalFromOther<${config.elemType}>(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
 			: filteredStoreExpr;
 	const typeArg = config.forceUnknownElement ? '<unknown>' : '';
 	const normalizedStoreExpr =
@@ -584,7 +585,7 @@ function computeCollidedReclaimKinds(
 	const claimedBy = new Map<string, string[]>();
 	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		if (storageInfo.kind !== 'kindEnum') continue;
+		if (!reclaimsAnonymousChild(f, nodeMap)) continue;
 		for (const k of storageInfo.enumKinds) {
 			if (!hasCatalogEntry(kindEntries, k)) continue;
 			const slots = claimedBy.get(k) ?? [];
@@ -597,7 +598,7 @@ function computeCollidedReclaimKinds(
 		if (slots.length < 2) continue;
 		collided.add(k);
 		console.warn(
-			`[codegen] reclaim-ambiguous: kind '${ownerKind}' has kindEnum slots ` +
+			`[codegen] reclaim-ambiguous: kind '${ownerKind}' has unnamed slots ` +
 				`[${slots.join(', ')}] all reclaiming member '${k}' from $other; the token is ` +
 				`ambiguous between them — auto-reclaim suppressed. Field one operator (override) to resolve.`
 		);
@@ -618,7 +619,7 @@ function emitFieldStorageLines(
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
 		const reclaimKindIdsExpr =
-			storageInfo.kind === 'kindEnum'
+			reclaimsAnonymousChild(f, nodeMap)
 				? (() => {
 						const ids = storageInfo.enumKinds
 							.filter((k) => !collidedReclaimKinds.has(k))
@@ -1364,12 +1365,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// so there is no double-render. A final `?? readTerminalFromOther(...)` only',
 						'// fires when the nominal storage keys are all empty (the unfielded case);',
 						'// when the token IS field-tagged the chain short-circuits before reaching it.',
-						'function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {',
+						'function readTerminalFromOther<T = _NodeData | number>(data: _NodeData, allowedKindIds: readonly number[]): T | undefined {',
 						'  const other = (data as { $other?: readonly unknown[] }).$other;',
 						'  if (!Array.isArray(other)) return undefined;',
 						'  for (const e of other) {',
 						'    const id = typeof e === "number" ? e : (typeof e === "object" && e !== null ? (e as { $type?: unknown }).$type : undefined);',
-						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as _NodeData | number;',
+						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as T;',
 						'  }',
 						'  return undefined;',
 						'}'

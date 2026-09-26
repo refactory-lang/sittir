@@ -3569,8 +3569,8 @@ unwraps `prec` and a stamp on the wrapper is lost.
 // The tree-sitter ALIAS wrapper: `content` unchanged except a bare SYMBOL
 // content is stamped `inline: false` (an alias confers a real visible CST
 // kind, so its wrapped reference must materialize rather than fold away —
-// mirrors evaluate's own `canonicalizeRawGrammar`, which forces the same
-// stamp on any symbol it finds under an ALIAS built some other way). Evaluate never
+// link's `stampParserVisibility` forces the same stamp on any symbol it finds
+// under an ALIAS built some other way). Evaluate never
 // mints `aliasedTo`/`aliasedToId` here; those are wrapper-deletion facts
 // (`attributeAlias`), stamped once the ALIAS wrapper itself is consumed.
 ```
@@ -3847,6 +3847,8 @@ Predicts the parser class tree-sitter's extract_tokens gives a rule name, withou
 A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
 ```
 
+It is a DSL-phase prediction only. Once parser.c exists, the catalog's `terminal` fact (the symbol id below `TOKEN_COUNT`) is the answer; the prediction disagrees with it on rows the anchor test does not cover (variant children such as rust `integer_literal_decimal`, python `pass_statement`).
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::choiceArmsOf`
 
 The arms of a choice, nested choices flattened, or `undefined` for content
@@ -3855,16 +3857,22 @@ that is not a choice.
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalContentOf`
 
 Whether content the parser sees at a position is a terminal: a symbol by
-`terminalSymbolOf`, a string, pattern or token, or a choice whose every arm
-is terminal.
+the caller's `isTerminalSymbol`, a string, pattern or token, or a choice
+whose every arm is terminal. The symbol test is a parameter so the one body
+walk serves both phases: the DSL phase passes `terminalSymbolOf` (predicted
+from rule shape, since no parser.c exists yet) and the grammar diagnostics
+pass the parser catalog's `terminal` fact once one exists
+(`compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
 
-Whether a name is a terminal to the parser: its `parserSymbolClassOf`, except
-that an inlined rule is classified by its body, since the parser substitutes
-it. Shared by enrich's `unaliasOverloadedDisplays` and the
-`display-union-mixed` guard, so the pass and its guard use one
-classification.
+Whether a name is a terminal to the parser, predicted in the DSL phase: its
+`parserSymbolClassOf`, except that an inlined rule is classified by its body,
+since the parser substitutes it. Used by enrich's
+`unaliasOverloadedDisplays`, which runs before parser.c exists. After the
+catalog exists the parser's own fact is used instead
+(`compiler/diagnostics/alias-distributed.ts::SymbolSource`); before it, the
+grammar diagnostics use this prediction too (`predictedSymbolSource`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
@@ -4130,12 +4138,12 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
 ```text
 /**
  * The parser's own hiddenness rule: a symbol name beginning with `_`. The
- * single source for "the parser hides this symbol" — evaluate's
- * `canonicalizeRawGrammar` reads it for both the rule-level `hidden` stamp
- * and the reference-level `inline` computation, and `selfReferentialFoldOf`
- * reads it directly on a self-reference's name. Distinct from
- * `RuleBase.hidden` (sittir's own PUBLISHED visibility fact, which link's
- * `unhideAliasedTargets` may flip to `false` for an alias target): a
+ * DSL-phase answer to "the parser hides this symbol", used where no parser
+ * catalog exists yet (grammar.js runs before parser.c is generated):
+ * `selfReferentialFoldOf` reads it on a self-reference's name, and
+ * `parserHiddenOf` falls back to it for a name with no catalog row. Distinct from
+ * `RuleBase.hidden` (sittir's own PUBLISHED visibility fact, stamped by
+ * link from the parser catalog): a
  * symbol occurrence is parser-hidden purely by its name, independent of
  * whatever visibility sittir later publishes the rule under.
  */
@@ -4158,8 +4166,8 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
  * fielded under one name pair, or unfielded), where at least one arm's base field is a bare (non-alias-wrapped)
  * SYMBOL reference to THIS rule's own name whose name is
  * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
- * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
- * `unhideAliasedTargets` may flip for an alias target): tree-sitter
+ * not `RuleBase.hidden` (sittir's published-visibility fact, stamped by
+ * link from the parser catalog): tree-sitter
  * flattens an occurrence of a symbol whenever THAT occurrence's name is
  * hidden, regardless of whether sittir later publishes the target rule as
  * visible under an alias — an unaliased inner self-reference is still
@@ -4421,11 +4429,9 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
  *  Each of those is a whole leaf CLASS with its own catalog identity, not
  *  a single-use structural fragment — folding one into an inline SYMBOL
  *  reference would duplicate that class at every reference site instead of
- *  collapsing a single occurrence. Consumers: evaluate's
- *  `canonicalizeRawGrammar` gates a reference's `inline` stamp on this
- *  (unless the reference's own name is explicitly in the grammar's
- *  `inline:` array, which overrides the guard); `inline-sets.ts` and
- *  `assemble.ts` read the negation directly as an inlinability check.
+ *  collapsing a single occurrence. Consumer: `inline-sets.ts` reads the
+ *  negation as an inlinability check for grammar diagnostics. Link's
+ *  reference `inline` stamp does not read it (`inlinesAtReference`).
  */
 ```
 
@@ -4433,12 +4439,11 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
 
 ```text
 /**
- * Reads the `hidden` stamp `RuleBase.hidden` puts on a rule (evaluate's
- * `canonicalizeRawGrammar`, corrected by link's `unhideAliasedTargets` /
- * `stampLinkMintedVisibility`) instead of re-deriving hidden-ness from a
- * leading underscore. The stamp — not the name — is authoritative once a
- * rule has passed through evaluate: a rule some named alias wraps is
- * `hidden:false` even though its name starts with `_`.
+ * Reads the `hidden` stamp `RuleBase.hidden` puts on a rule (link's
+ * `stampParserVisibility` from the parser catalog, and
+ * `stampLinkMintedVisibility` for link's own mints) instead of re-deriving
+ * hidden-ness from a leading underscore. The stamp — not the name — is
+ * authoritative once a rule has passed through link.
  */
 ```
 

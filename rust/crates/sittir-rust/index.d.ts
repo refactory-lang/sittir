@@ -891,13 +891,13 @@ export interface LifetimeTransport {
 export interface LineCommentDocInnerTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _doc: SlotValue<LineDocContentTransport, true>
+  _doc: SlotValue<DocCommentTransport, true>
 }
 
 export interface LineCommentDocOuterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _doc: SlotValue<LineDocContentTransport, true>
+  _doc: SlotValue<DocCommentTransport, true>
 }
 
 export interface LineCommentTransport {
@@ -1034,6 +1034,12 @@ export interface NegativeLiteralTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _value: SlotValue<NegativeLiteralValueTransportSlot>
+}
+
+export interface NonSpecialTokenTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<NonSpecialTokenContentTransportSlot>
 }
 
 export interface OrderedFieldDeclarationListElementsTransport {

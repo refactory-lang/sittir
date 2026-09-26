@@ -2,8 +2,6 @@
 
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
-	'_lookahead_assertion',
-	'_lookbehind_assertion',
 	'alternation',
 	'anonymous_capturing_group',
 	'backreference_escape',
@@ -13,7 +11,9 @@ const NODE_KINDS = [
 	'count_quantifier',
 	'identity_escape',
 	'lazy',
+	'lookahead_assertion',
 	'lookaround_assertion',
+	'lookbehind_assertion',
 	'named_capturing_group',
 	'named_group_backreference',
 	'non_capturing_group',
@@ -44,7 +44,7 @@ const LEAF_KINDS = [
 	'posix_class_name',
 	'start_assertion',
 	'unicode_character_escape',
-	'unicode_property',
+	'unicode_property_value',
 	'zero_or_more'
 ] as const;
 
@@ -140,7 +140,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	character_class_escape_token1: 35,
 	unicode_character_escape_token1: 36,
 	unicode_character_escape_token2: 37,
-	unicode_property: 38,
+	unicode_property_value: 38,
 	control_escape_token1: 39,
 	control_escape_token2: 40,
 	control_letter_escape: 41,
@@ -157,8 +157,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	term: 52,
 	start_assertion: 53,
 	lookaround_assertion: 54,
-	_lookahead_assertion: 55,
-	_lookbehind_assertion: 56,
+	lookahead_assertion: 55,
+	lookbehind_assertion: 56,
 	character_class: 57,
 	posix_character_class: 58,
 	posix_class_name: 59,
@@ -189,8 +189,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	alternation_repeat1: 84,
 	term_repeat1: 85,
 	character_class_repeat1: 86,
-	_lazy: 87,
-	_unicode_property_name: 88
+	lazy: 87,
+	unicode_property_name: 88
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -231,7 +231,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[35]: 'character_class_escape_token1',
 	[36]: 'unicode_character_escape_token1',
 	[37]: 'unicode_character_escape_token2',
-	[38]: 'unicode_property',
+	[38]: 'unicode_property_value',
 	[39]: 'control_escape_token1',
 	[40]: 'control_escape_token2',
 	[41]: 'control_letter_escape',
@@ -248,8 +248,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[52]: 'term',
 	[53]: 'start_assertion',
 	[54]: 'lookaround_assertion',
-	[55]: '_lookahead_assertion',
-	[56]: '_lookbehind_assertion',
+	[55]: 'lookahead_assertion',
+	[56]: 'lookbehind_assertion',
 	[57]: 'character_class',
 	[58]: 'posix_character_class',
 	[59]: 'posix_class_name',
@@ -280,8 +280,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[84]: 'alternation_repeat1',
 	[85]: 'term_repeat1',
 	[86]: 'character_class_repeat1',
-	[87]: '_lazy',
-	[88]: '_unicode_property_name'
+	[87]: 'lazy',
+	[88]: 'unicode_property_name'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -342,7 +342,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AuxUnicodeCharacterEscapeToken2',
 		cName: 'aux_sym_unicode_character_escape_token2'
 	},
-	{ name: 'unicode_property', id: 38, enumName: 'UnicodeProperty', cName: 'sym_unicode_property' },
+	{ name: 'unicode_property_value', id: 38, enumName: 'UnicodeProperty', cName: 'sym_unicode_property' },
 	{ name: 'control_escape_token1', id: 39, enumName: 'AuxControlEscapeToken1', cName: 'aux_sym_control_escape_token1' },
 	{ name: 'control_escape_token2', id: 40, enumName: 'AuxControlEscapeToken2', cName: 'aux_sym_control_escape_token2' },
 	{ name: 'control_letter_escape', id: 41, enumName: 'ControlLetterEscape', cName: 'sym_control_letter_escape' },
@@ -364,8 +364,8 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'term', id: 52, enumName: 'Term', cName: 'sym_term' },
 	{ name: 'start_assertion', id: 53, enumName: 'StartAssertion', cName: 'sym_start_assertion' },
 	{ name: 'lookaround_assertion', id: 54, enumName: 'LookaroundAssertion', cName: 'sym_lookaround_assertion' },
-	{ name: '_lookahead_assertion', id: 55, enumName: 'LookaheadAssertion', cName: 'sym__lookahead_assertion' },
-	{ name: '_lookbehind_assertion', id: 56, enumName: 'LookbehindAssertion', cName: 'sym__lookbehind_assertion' },
+	{ name: 'lookahead_assertion', id: 55, enumName: 'LookaheadAssertion', cName: 'sym__lookahead_assertion' },
+	{ name: 'lookbehind_assertion', id: 56, enumName: 'LookbehindAssertion', cName: 'sym__lookbehind_assertion' },
 	{ name: 'character_class', id: 57, enumName: 'CharacterClass', cName: 'sym_character_class' },
 	{ name: 'posix_character_class', id: 58, enumName: 'PosixCharacterClass', cName: 'sym_posix_character_class' },
 	{ name: 'posix_class_name', id: 59, enumName: 'PosixClassName', cName: 'sym_posix_class_name' },
@@ -446,9 +446,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AuxCharacterClassRepeat1',
 		cName: 'aux_sym_character_class_repeat1'
 	},
-	{ name: '_lazy', id: 87, enumName: 'AliasLazy', cName: 'alias_sym_lazy' },
+	{ name: 'lazy', id: 87, enumName: 'AliasLazy', cName: 'alias_sym_lazy' },
 	{
-		name: '_unicode_property_name',
+		name: 'unicode_property_name',
 		id: 88,
 		enumName: 'AliasUnicodePropertyName',
 		cName: 'alias_sym_unicode_property_name'

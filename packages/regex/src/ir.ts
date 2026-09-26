@@ -70,7 +70,7 @@ export const ir: {
 	readonly optional: typeof F.buildOptional;
 	readonly decimalEscape: typeof F.buildDecimalEscape;
 	readonly unicodeCharacterEscape: typeof F.buildUnicodeCharacterEscape;
-	readonly unicodeProperty: typeof F.buildUnicodeProperty;
+	readonly unicodePropertyValue: typeof F.buildUnicodePropertyValue;
 	readonly controlEscape: typeof F.buildControlEscape;
 	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
 	readonly groupName: typeof F.buildGroupName;
@@ -123,7 +123,7 @@ export const ir: {
 	optional: F.buildOptional,
 	decimalEscape: F.buildDecimalEscape,
 	unicodeCharacterEscape: F.buildUnicodeCharacterEscape,
-	unicodeProperty: F.buildUnicodeProperty,
+	unicodePropertyValue: F.buildUnicodePropertyValue,
 	controlEscape: F.buildControlEscape,
 	controlLetterEscape: F.buildControlLetterEscape,
 	groupName: F.buildGroupName,

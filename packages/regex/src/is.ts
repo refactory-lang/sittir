@@ -20,12 +20,6 @@ export interface IsGuards {
 	lookaroundAssertion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaroundAssertion };
-	LookaheadAssertion<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaheadAssertion };
-	LookbehindAssertion<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookbehindAssertion };
 	characterClass<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClass };
@@ -80,12 +74,6 @@ export interface AssertGuards {
 	lookaroundAssertion(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.LookaroundAssertion };
-	LookaheadAssertion(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.LookaheadAssertion };
-	LookbehindAssertion(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.LookbehindAssertion };
 	characterClass(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CharacterClass };
 	posixCharacterClass(
 		v: { readonly $type: number } | number
@@ -139,8 +127,6 @@ export const is = {
 	alternation: _g(TSKindId.Alternation),
 	term: _g(TSKindId.Term),
 	lookaroundAssertion: _g(TSKindId.LookaroundAssertion),
-	LookaheadAssertion: _g(TSKindId.LookaheadAssertion),
-	LookbehindAssertion: _g(TSKindId.LookbehindAssertion),
 	characterClass: _g(TSKindId.CharacterClass),
 	posixCharacterClass: _g(TSKindId.PosixCharacterClass),
 	classRange: _g(TSKindId.ClassRange),
@@ -188,8 +174,6 @@ export const assert = {
 	alternation: _makeAssert('alternation', is.alternation as _AnyGuard),
 	term: _makeAssert('term', is.term as _AnyGuard),
 	lookaroundAssertion: _makeAssert('lookaroundAssertion', is.lookaroundAssertion as _AnyGuard),
-	LookaheadAssertion: _makeAssert('LookaheadAssertion', is.LookaheadAssertion as _AnyGuard),
-	LookbehindAssertion: _makeAssert('LookbehindAssertion', is.LookbehindAssertion as _AnyGuard),
 	characterClass: _makeAssert('characterClass', is.characterClass as _AnyGuard),
 	posixCharacterClass: _makeAssert('posixCharacterClass', is.posixCharacterClass as _AnyGuard),
 	classRange: _makeAssert('classRange', is.classRange as _AnyGuard),

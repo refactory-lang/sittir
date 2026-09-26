@@ -166,7 +166,7 @@ function slotGuardKey(kind: string, slot: string): string {
 }
 
 function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
-	if (node.parserHidden && isFixedTextLeaf(node)) return undefined;
+	if (node.surfaceHidden && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
 	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
 	if (literal === undefined) return undefined;
@@ -248,7 +248,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		const isHiddenGroup = node.parserHidden && !(node instanceof AssembledPunctuation);
+		const isHiddenGroup = node.surfaceHidden && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
@@ -395,7 +395,7 @@ export function childElementType(
 				parts.add(JSON.stringify(storage.kind));
 				continue;
 			}
-			if (ref.parserHidden && ref instanceof AssembledPunctuation) {
+			if (ref.surfaceHidden && ref instanceof AssembledPunctuation) {
 				const visible = nodeMap.nodes.get(storage.kind.slice(1));
 				if (visible) ref = visible;
 			}
@@ -1181,10 +1181,10 @@ function emitFieldCarryingFactory(
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
 		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
+		const overloadParams = [surface.params, ...targetOverloads].map(declarationParams);
 		const wrapper: string[] = [
-			`${exportKw}function ${fn}(${declarationParams(surface.params)}): ReturnType<typeof _${fn}>;`,
-			...targetOverloads.map(
-				(params) => `${exportKw}function ${fn}(${declarationParams(params)}): ReturnType<typeof _${fn}>;`
+			...[...overloadParams.filter((params) => params === ''), ...overloadParams.filter((params) => params !== '')].map(
+				(params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`
 			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		];
@@ -1571,7 +1571,6 @@ function emitSeparatedListFactory(
 	const contentAccessorName = canonical?.propertyName ?? 'content';
 	const surface = separatedListSurface(node, nodeMap, kindEntries);
 	const { elemTypeForArray, elementsType, separatorKindUnion, hasSeparatorKindOption, hasDelimiterOption } = surface;
-	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const delimiterUnion = delimiterUnionFor(node);
 	const hasOptions = surface.optionsType !== undefined;
 	const optionsType = surface.optionsType ?? '{  }';
@@ -1600,7 +1599,7 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
-	if (node.terminatedSeparator && hasTrailingOption) {
+	if (node.singleElementNeedsTrailing) {
 		lines.push(
 			`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`
 		);

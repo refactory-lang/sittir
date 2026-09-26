@@ -70,7 +70,7 @@ every spacing site from it (`whitespaceArmsOf`): a separator gap admits the
 members other than `_indent`/`_dedent`, a flank or seam all of them, and the
 generated `options.ts` unions and the writer's whitespace text are derived
 from the same list. Each member is written as the visible alias
-`visibleExternals` registers for it. Python's list adds `_double_newline`,
+`visibleExternals` registers for it. Python's list adds `_double_blankline`,
 the external that renders `'\n\n\n'` (two blank lines): the `module` rule's
 options put it after every top-level `function_definition`,
 `class_definition` and `decorated_definition`, and the writer ranks it

@@ -1,78 +1,4 @@
 {
-	"_lookahead_assertion": [
-		{
-			"kind": "seam",
-			"field": "lookahead_assertion_before"
-		},
-		{
-			"kind": "text",
-			"text": "(?"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "seam",
-			"field": "lparen_qmark_after"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "slot",
-			"name": "pattern"
-		},
-		{
-			"kind": "seam",
-			"field": "rparen_before"
-		},
-		{
-			"kind": "text",
-			"text": ")"
-		},
-		{
-			"kind": "seam",
-			"field": "lookahead_assertion_after"
-		}
-	],
-	"_lookbehind_assertion": [
-		{
-			"kind": "seam",
-			"field": "lookbehind_assertion_before"
-		},
-		{
-			"kind": "text",
-			"text": "(?<"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "seam",
-			"field": "lparen_qmark_lt_after"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		},
-		{
-			"kind": "slot",
-			"name": "pattern"
-		},
-		{
-			"kind": "seam",
-			"field": "rparen_before"
-		},
-		{
-			"kind": "text",
-			"text": ")"
-		},
-		{
-			"kind": "seam",
-			"field": "lookbehind_assertion_after"
-		}
-	],
 	"alternation": [
 		{
 			"kind": "slot",
@@ -589,10 +515,84 @@
 			"text": "?"
 		}
 	],
+	"lookahead_assertion": [
+		{
+			"kind": "seam",
+			"field": "lookahead_assertion_before"
+		},
+		{
+			"kind": "text",
+			"text": "(?"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_qmark_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "lookahead_assertion_after"
+		}
+	],
 	"lookaround_assertion": [
 		{
 			"kind": "slot",
 			"name": "content"
+		}
+	],
+	"lookbehind_assertion": [
+		{
+			"kind": "seam",
+			"field": "lookbehind_assertion_before"
+		},
+		{
+			"kind": "text",
+			"text": "(?<"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_qmark_lt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "lookbehind_assertion_after"
 		}
 	],
 	"named_capturing_group": [
@@ -803,7 +803,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "unicode_property"
+			"name": "unicode_property_value"
 		},
 		{
 			"kind": "seam",

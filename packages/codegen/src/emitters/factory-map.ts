@@ -41,7 +41,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const forwardsTo: Record<string, string> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.parserHidden && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
@@ -58,14 +58,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.parserHidden && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.parserHidden && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
@@ -88,7 +88,7 @@ function collectVariantAdoptedBranches(
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isAuthoredCompound(node) || node.variantChildKinds.length === 0) continue;
-		if (node.parserHidden && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
 			definedBy: node.variantChildKinds.every((child) => child.definedBy === 'enrich') ? 'enrich' : 'override',
 			childKind: mapVariantChildKindsToNames(node.variantChildKinds)

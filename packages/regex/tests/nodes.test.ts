@@ -512,6 +512,310 @@ describe('lookaround_assertion sub-factories', () => {
 	});
 });
 
+describe('lookahead_assertion', () => {
+	it('factory produces correct type', () => {
+		const node = ir.lookaheadAssertion({
+			content: '=',
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.lookaheadAssertion({
+			content: '=',
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('lookahead_assertion sub-factories', () => {
+	it('eq builds the parent', () => {
+		const node = ir.lookaheadAssertion.eq({
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.Eq);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('bang builds the parent', () => {
+		const node = ir.lookaheadAssertion.bang({
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.Bang);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('lookbehind_assertion', () => {
+	it('factory produces correct type', () => {
+		const node = ir.lookbehindAssertion({
+			content: '=',
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.lookbehindAssertion({
+			content: '=',
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('lookbehind_assertion sub-factories', () => {
+	it('eq builds the parent', () => {
+		const node = ir.lookbehindAssertion.eq({
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.Eq);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('bang builds the parent', () => {
+		const node = ir.lookbehindAssertion.bang({
+			pattern: {
+				$type: TSKindId.Pattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.Alternation,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_term: [
+						{
+							$type: TSKindId.Term,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_term_group: [
+								{
+									$type: TSKindId.TermGroup,
+									$text: 'test',
+									$source: 2,
+									$named: true,
+									_content: { $type: TSKindId.StartAssertion, $text: '^', $source: 2, $named: true } as any
+								} as any
+							]
+						} as any
+					]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.Bang);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('pattern_character', () => {
 	it('factory produces correct type', () => {
 		const node = ir.patternCharacter('a');
@@ -1031,7 +1335,12 @@ describe('character_class_escape sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_unicode_property: { $type: TSKindId.UnicodeProperty, $text: 'test', $source: 2, $named: true } as any
+				_unicode_property_value: {
+					$type: TSKindId.UnicodePropertyValue,
+					$text: 'test',
+					$source: 2,
+					$named: true
+				} as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CharacterClassEscape);
@@ -1058,24 +1367,24 @@ describe('unicode_character_escape', () => {
 describe('unicode_property_value_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.unicodePropertyValueExpression({
-			unicodeProperty: { $type: TSKindId.UnicodeProperty, $text: 'test', $source: 2, $named: true } as any
+			unicodePropertyValue: { $type: TSKindId.UnicodePropertyValue, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UnicodePropertyValueExpression);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.unicodePropertyValueExpression({
-			unicodeProperty: { $type: TSKindId.UnicodeProperty, $text: 'test', $source: 2, $named: true } as any
+			unicodePropertyValue: { $type: TSKindId.UnicodePropertyValue, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 
-describe('unicode_property', () => {
+describe('unicode_property_value', () => {
 	it('factory produces correct type', () => {
-		const node = ir.unicodeProperty('test');
-		expect(node.$type).toBe(TSKindId.UnicodeProperty);
+		const node = ir.unicodePropertyValue('test');
+		expect(node.$type).toBe(TSKindId.UnicodePropertyValue);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');
 	});
@@ -1151,25 +1460,29 @@ describe('term_group sub-factories', () => {
 	it('startAssertion builds the parent', () => {
 		const node = ir.termGroup.startAssertion({});
 		expect(node.$type).toBe(TSKindId.TermGroup);
-		expect((node as any).content()).toBe(TSKindId.StartAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.StartAssertion);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('endAssertion builds the parent', () => {
 		const node = ir.termGroup.endAssertion({});
 		expect(node.$type).toBe(TSKindId.TermGroup);
-		expect((node as any).content()).toBe(TSKindId.EndAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.EndAssertion);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('boundaryAssertion builds the parent', () => {
 		const node = ir.termGroup.boundaryAssertion({});
 		expect(node.$type).toBe(TSKindId.TermGroup);
-		expect((node as any).content()).toBe(TSKindId.BoundaryAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.BoundaryAssertion);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('nonBoundaryAssertion builds the parent', () => {
 		const node = ir.termGroup.nonBoundaryAssertion({});
 		expect(node.$type).toBe(TSKindId.TermGroup);
-		expect((node as any).content()).toBe(TSKindId.NonBoundaryAssertion);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.NonBoundaryAssertion);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('lookaroundAssertion builds the parent', () => {
@@ -1222,7 +1535,9 @@ describe('term_group sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('characterClass builds the parent', () => {
-		const node = ir.termGroup.characterClass({ content: [] });
+		const node = ir.termGroup.characterClass({
+			content: [{ $type: TSKindId.ClassCharacter, $text: 'test', $source: 2, $named: true } as any]
+		});
 		expect(node.$type).toBe(TSKindId.TermGroup);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1238,7 +1553,8 @@ describe('term_group sub-factories', () => {
 	it('anyCharacter builds the parent', () => {
 		const node = ir.termGroup.anyCharacter({});
 		expect(node.$type).toBe(TSKindId.TermGroup);
-		expect((node as any).content()).toBe(TSKindId.AnyCharacter);
+		const seated = (node as any).content();
+		expect(seated?.$text ?? seated).toBe(TSKindId.AnyCharacter);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('decimalEscape builds the parent', () => {
@@ -1658,7 +1974,12 @@ describe('term_group sub-factories', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_unicode_property: { $type: TSKindId.UnicodeProperty, $text: 'test', $source: 2, $named: true } as any
+						_unicode_property_value: {
+							$type: TSKindId.UnicodePropertyValue,
+							$text: 'test',
+							$source: 2,
+							$named: true
+						} as any
 					} as any
 				}
 			]

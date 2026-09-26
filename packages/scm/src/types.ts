@@ -131,7 +131,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[32, '_node_identifier'],
 	[33, 'capture'],
 	[34, 'string'],
-	[35, '_immediate_string'],
+	[35, 'immediate_string'],
 	[36, 'string_content'],
 	[37, 'parameters'],
 	[38, 'list'],
@@ -294,7 +294,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Capture;
 		case 'string':
 			return TSKindId.String;
-		case '_immediate_string':
+		case 'immediate_string':
 			return TSKindId.ImmediateString;
 		case 'string_content':
 			return TSKindId.StringContent;
@@ -376,8 +376,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dot;
 		case '/':
 			return TSKindId.Slash;
-		case 'immediate_string':
-			return TSKindId.ImmediateString;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -641,9 +639,7 @@ export interface ProgramTree extends TreeNode<'program'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface CaptureTree extends TreeNode<'capture'> {}
 export interface StringTree extends TreeNode<'string'> {}
-export interface ImmediateStringTree extends AnyTreeNode {
-	readonly type: '_immediate_string';
-}
+export interface ImmediateStringTree extends TreeNode<'immediate_string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface ParametersTree extends TreeNode<'parameters'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
@@ -1096,7 +1092,7 @@ export interface ImmediateStringNs extends NodeNs<
 	ImmediateString.BuildArgs,
 	ImmediateString.LooseArgs,
 	'string_content',
-	'_immediate_string'
+	'immediate_string'
 > {}
 export interface StringContentNs extends NodeNs<
 	StringContent,
@@ -1409,7 +1405,7 @@ export namespace ImmediateString {
 	export type BuildArgs = [value?: T.StringContent];
 	export type LooseArgs = [value?: LooseValue<T.StringContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ImmediateString>;
-	export type Kind = '_immediate_string';
+	export type Kind = 'immediate_string';
 }
 export namespace StringContent {
 	export type Config = ConfigFor<TSKindId.StringContent>;

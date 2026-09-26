@@ -232082,7 +232082,7 @@
   {
     "kind": "render",
     "grammar": "typescript",
-    "pattern": "_type_query_member_expression_in_type_annotation",
+    "pattern": "type_query_member_expression_in_type_annotation",
     "input": {
       "$type": 322,
       "$source": 0,
@@ -232203,7 +232203,7 @@
     "kind": "roundtrip",
     "grammar": "typescript",
     "sourceIn": "import('node:fs').ReadStream",
-    "pattern": "_type_query_member_expression_in_type_annotation",
+    "pattern": "type_query_member_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs').ReadStream",
     "expectedReparseTree": "(type_query_member_expression_in_type_annotation object: (type_query_call_expression_in_type_annotation function: (import) arguments: (arguments elements: (string_single elements: (string_fragment)))) property: (property_identifier))",
@@ -232213,7 +232213,7 @@
   {
     "kind": "render",
     "grammar": "typescript",
-    "pattern": "_type_query_call_expression_in_type_annotation",
+    "pattern": "type_query_call_expression_in_type_annotation",
     "input": {
       "$type": 323,
       "$source": 0,
@@ -232298,7 +232298,7 @@
     "kind": "roundtrip",
     "grammar": "typescript",
     "sourceIn": "import('node:fs')",
-    "pattern": "_type_query_call_expression_in_type_annotation",
+    "pattern": "type_query_call_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs')",
     "expectedReparseTree": "(type_query_call_expression_in_type_annotation function: (import) arguments: (arguments elements: (string_single elements: (string_fragment))))",

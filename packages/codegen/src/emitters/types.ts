@@ -485,7 +485,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		const kind = modelKindOfEntry(entry);
+		const kind = modelKindOfEntry(entry, entries);
 		lines.push(`  [${entry.id}, ${JSON.stringify(kind)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
 			lines.push(`  [${entry.parseId}, ${JSON.stringify(kind)}],`);
@@ -502,7 +502,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 		const displayName = entry.symbolName ?? entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
-			lines.push(`  [${entry.parseId}, ${JSON.stringify(displayName)}],`);
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.parseName ?? displayName)}],`);
 		}
 	}
 	lines.push(']);');
@@ -534,17 +534,18 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('  switch (kindName) {');
 	const seenCases = new Set<string>();
 	for (const entry of entries) {
-		const kind = modelKindOfEntry(entry);
+		const kind = modelKindOfEntry(entry, entries);
 		if (seenCases.has(kind)) continue;
 		seenCases.add(kind);
 		lines.push(`    case ${JSON.stringify(kind)}: return TSKindId.${entry.member};`);
 	}
 	for (const entry of entries) {
-		const parserTypeString = entry.symbolName;
-		if (!parserTypeString) continue;
-		if (seenCases.has(parserTypeString)) continue;
-		seenCases.add(parserTypeString);
-		lines.push(`    case ${JSON.stringify(parserTypeString)}: return TSKindId.${entry.member};`);
+		for (const parserTypeString of [entry.symbolName, entry.parseName]) {
+			if (!parserTypeString) continue;
+			if (seenCases.has(parserTypeString)) continue;
+			seenCases.add(parserTypeString);
+			lines.push(`    case ${JSON.stringify(parserTypeString)}: return TSKindId.${entry.member};`);
+		}
 	}
 	lines.push('    default: throw new TypeError(`unknown kind name ${kindName}`);');
 	lines.push('  }');

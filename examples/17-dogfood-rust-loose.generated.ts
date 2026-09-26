@@ -13,7 +13,7 @@ export function rebuildSpliceLoose() {
 			}),
 		}).$trivia.leading("//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"), ir.attributeItem(ir.attribute.input({
 			path: "derive",
-			arguments: ir.delimTokenTree.paren("Debug", TSKindId.Comma, "Clone", TSKindId.Comma, "PartialEq", TSKindId.Comma, "Eq"),
+			arguments: ir.delimTokenTree.paren(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
 		})).$trivia.leading("/// Error returned from [`apply_edits`] when an edit is invalid.\n"), ir.enumItem({
 			visibilityModifier: ir.visibilityModifier.pub(),
 			name: "SpliceError",
@@ -99,7 +99,7 @@ export function rebuildSpliceLoose() {
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
-									arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
+									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
 									})),
@@ -121,7 +121,7 @@ export function rebuildSpliceLoose() {
 								value: ir.block({
 									trailingExpression: ir.macroInvocation({
 										macro: "write",
-										arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
+										arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
 											stringOpen: "\"",
 											elements: ["invalid edit range: start={start}, end={end}"],
 										})),
@@ -141,7 +141,7 @@ export function rebuildSpliceLoose() {
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
-									arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
+									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit out of bounds: end={end} > source length={source_len}"],
 									})),

@@ -286,7 +286,7 @@ export interface TermTransport {
 export interface UnicodePropertyNameTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<UnicodePropertyTransport>
+  _content: SlotValue<UnicodePropertyValueTransport>
 }
 
 export interface UnicodePropertyValueExpressionGroupTransport {
@@ -299,5 +299,5 @@ export interface UnicodePropertyValueExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _unicode_property_value_expression_group?: SlotValue<UnicodePropertyValueExpressionGroupTransport>
-  _unicode_property: SlotValue<UnicodePropertyTransport>
+  _unicode_property_value: SlotValue<UnicodePropertyValueTransport>
 }

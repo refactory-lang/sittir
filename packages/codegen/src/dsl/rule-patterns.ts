@@ -161,7 +161,7 @@ export function separatorOf<R extends RuntimeRule>(
 	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
 	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	const isToken = (r: R): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as unknown as AnyRule, symbols.rules, symbols);
+	const isToken = (r: R): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as unknown as AnyRule, (name) => terminalSymbolOf(name, symbols.rules, symbols));
 	if (isToken(first) && !secondIsStr) return { content: second, separator: first };
 	if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
 
@@ -671,18 +671,18 @@ export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | unde
 	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
 
-export function terminalContentOf(content: AnyRule, rules: Readonly<Record<string, AnyRule>>, symbols: ParserSymbolCtx): boolean {
-	if (content.type === SYMBOL) return terminalSymbolOf((content as unknown as { name: string }).name, rules, symbols);
+export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: string) => boolean): boolean {
+	if (content.type === SYMBOL) return isTerminalSymbol((content as unknown as { name: string }).name);
 	if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
 	const arms = choiceArmsOf(content);
-	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, rules, symbols));
+	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }
 
 export function terminalSymbolOf(name: string, rules: Readonly<Record<string, AnyRule>>, symbols: ParserSymbolCtx): boolean {
 	const cls = parserSymbolClassOf(name, symbols);
 	if (cls !== 'inlined') return cls === 'terminal';
 	const body = rules[name];
-	return body !== undefined && terminalContentOf(body, rules, symbols);
+	return body !== undefined && terminalContentOf(body, (member) => terminalSymbolOf(member, rules, symbols));
 }
 
 export function lexesAsOneToken(rule: TokenShape): boolean {
@@ -1064,10 +1064,10 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	const candidates = new Set<string>();
 	for (const rule of Object.values(rules)) {
 		walker.fold(rule, candidates, (acc, r) => {
-			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
+			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && rules[r.content.name]?.hidden === true) {
 				acc.add(r.content.name);
 			}
-			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && r.name.startsWith('_')) {
+			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && rules[r.name]?.hidden === true) {
 				acc.add(r.name);
 			}
 			return acc;

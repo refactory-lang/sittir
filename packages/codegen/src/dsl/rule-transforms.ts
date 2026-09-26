@@ -155,8 +155,8 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 		const alias = r as unknown as NamedAliasShape<R>;
 		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;
 	};
-	const terminalContent = (content: R): boolean => terminalContentOf(content, rules, ctx.symbols);
 	const terminalSymbol = (name: string): boolean => terminalSymbolOf(name, rules, ctx.symbols);
+	const terminalContent = (content: R): boolean => terminalContentOf(content, terminalSymbol);
 	const storageOf = (content: R): StorageOf => {
 		const symbol = content.type === SYMBOL ? (content as unknown as { name: string }).name : undefined;
 		return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };

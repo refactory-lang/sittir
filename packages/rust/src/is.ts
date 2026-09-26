@@ -27,7 +27,6 @@ import type {
 	MatchArm,
 	ModItem,
 	NonDelimToken,
-	NonSpecialToken,
 	OrPattern,
 	Path,
 	Pattern,
@@ -478,12 +477,6 @@ export interface IsGuards {
 	useWildcardGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
-	TupleTypeElements<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleTypeElements };
-	TupleExpressionElements<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleExpressionElements };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
@@ -492,7 +485,6 @@ export interface IsGuards {
 	tokenTreePattern(v: { readonly $type: string | number } | number): v is TokenTreePattern;
 	tokens(v: { readonly $type: string | number } | number): v is Tokens;
 	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree;
-	nonSpecialToken(v: { readonly $type: string | number } | number): v is NonSpecialToken;
 	modItem(v: { readonly $type: string | number } | number): v is ModItem;
 	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem;
 	structItem(v: { readonly $type: string | number } | number): v is StructItem;
@@ -745,12 +737,6 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.StructPatternElements };
 	useWildcardGroup(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UseWildcardGroup };
-	TupleTypeElements(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TupleTypeElements };
-	TupleExpressionElements(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.TupleExpressionElements };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
@@ -759,7 +745,6 @@ export interface AssertGuards {
 	tokenTreePattern(v: { readonly $type: string | number } | number): asserts v is TokenTreePattern;
 	tokens(v: { readonly $type: string | number } | number): asserts v is Tokens;
 	tokenTree(v: { readonly $type: string | number } | number): asserts v is TokenTree;
-	nonSpecialToken(v: { readonly $type: string | number } | number): asserts v is NonSpecialToken;
 	modItem(v: { readonly $type: string | number } | number): asserts v is ModItem;
 	foreignModItem(v: { readonly $type: string | number } | number): asserts v is ForeignModItem;
 	structItem(v: { readonly $type: string | number } | number): asserts v is StructItem;
@@ -806,13 +791,10 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	200, 254, 173, 185, 186, 192, 193, 202, 203, 204, 209, 210, 218, 219, 199, 201
 ]);
 const _supertype_macroDefinition_ids = new Set<number>([417, 418, 419]);
-const _supertype_tokenPattern_ids = new Set<number>([
-	180, 179, 129, 327, 328, 331, 159, 1, 58, 126, 127, 128, 336, 365, 366
-]);
+const _supertype_tokenPattern_ids = new Set<number>([180, 179, 129]);
 const _supertype_tokenTreePattern_ids = new Set<number>([406, 407, 408]);
-const _supertype_tokens_ids = new Set<number>([183, 129, 327, 328, 331, 159, 1, 58, 126, 127, 128, 336, 365, 366]);
+const _supertype_tokens_ids = new Set<number>([183, 129]);
 const _supertype_tokenTree_ids = new Set<number>([409, 410, 411]);
-const _supertype_nonSpecialToken_ids = new Set<number>([327, 328, 331, 159, 1, 58, 126, 127, 128, 336, 365, 366]);
 const _supertype_modItem_ids = new Set<number>([387, 388]);
 const _supertype_foreignModItem_ids = new Set<number>([397, 398]);
 const _supertype_structItem_ids = new Set<number>([424, 425, 426]);
@@ -821,38 +803,30 @@ const _supertype_useClause_ids = new Set<number>([
 	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 258, 52, 33, 53, 223, 222,
 	221, 224
 ]);
-const _supertype_type_ids = new Set<number>([
-	250, 247, 129, 241, 260, 238, 239, 235, 237, 254, 249, 251, 243, 213, 336
-]);
+const _supertype_type_ids = new Set<number>([250, 247, 129, 241, 260, 238, 239, 235, 237, 254, 249, 251, 243, 213]);
 const _supertype_pointerType_ids = new Set<number>([391, 392]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
-	71, 72, 73, 74, 75, 52, 33, 53, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300, 301, 129, 274, 277, 304, 305, 306,
-	307, 308, 282, 287, 292, 293, 294, 295
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300, 301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287,
+	292, 293, 294, 295
 ]);
 const _supertype_expression_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
-	71, 72, 73, 74, 75, 52, 33, 53, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300, 301, 129, 274, 277, 304, 305, 306,
-	307, 308, 282, 287, 292, 293, 294, 295, 261
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300, 301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287,
+	292, 293, 294, 295, 261
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([412, 413, 414]);
-const _supertype_delimTokens_ids = new Set<number>([327, 328, 331, 159, 1, 58, 126, 127, 128, 336, 365, 366]);
-const _supertype_nonDelimToken_ids = new Set<number>([327, 328, 331, 159, 1, 58, 126, 127, 128, 336, 365, 366]);
 const _supertype_referenceExpression_ids = new Set<number>([374, 375, 376, 377]);
 const _supertype_arrayExpression_ids = new Set<number>([369, 370]);
-const _supertype_condition_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
-	71, 72, 73, 74, 75, 52, 33, 53, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300, 301, 129, 274, 277, 304, 305, 306,
-	307, 308, 282, 287, 292, 293, 294, 295, 261, 283, 284
-]);
+const _supertype_condition_ids = new Set<number>([283, 284]);
 const _supertype_matchArm_ids = new Set<number>([399, 400]);
 const _supertype_closureExpression_ids = new Set<number>([372, 373]);
 const _supertype_pattern_ids = new Set<number>([
-	327, 328, 331, 159, 325, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 258, 310, 311, 313,
-	314, 52, 33, 53, 319, 312, 320, 321, 316, 317, 295, 254, 427
+	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 258, 310, 311, 313, 314, 52, 33, 53, 319, 312,
+	320, 321, 316, 317, 295, 254
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([415, 416]);
 const _supertype_rangePattern_ids = new Set<number>([423, 420]);
@@ -1010,8 +984,6 @@ export const is = {
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
 	useWildcardGroup: _g(TSKindId.UseWildcardGroup),
-	TupleTypeElements: _g(TSKindId.TupleTypeElements),
-	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
@@ -1020,7 +992,6 @@ export const is = {
 	tokenTreePattern: _sg(_supertype_tokenTreePattern_ids),
 	tokens: _sg(_supertype_tokens_ids),
 	tokenTree: _sg(_supertype_tokenTree_ids),
-	nonSpecialToken: _sg(_supertype_nonSpecialToken_ids),
 	modItem: _sg(_supertype_modItem_ids),
 	foreignModItem: _sg(_supertype_foreignModItem_ids),
 	structItem: _sg(_supertype_structItem_ids),
@@ -1032,8 +1003,8 @@ export const is = {
 	expression: _sg(_supertype_expression_ids),
 	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
 	delimTokenTree: _sg(_supertype_delimTokenTree_ids),
-	delimTokens: _sg(_supertype_delimTokens_ids),
-	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
+	delimTokens: _sg(new Set<number>()),
+	nonDelimToken: _sg(new Set<number>()),
 	referenceExpression: _sg(_supertype_referenceExpression_ids),
 	arrayExpression: _sg(_supertype_arrayExpression_ids),
 	condition: _sg(_supertype_condition_ids),
@@ -1230,8 +1201,6 @@ export const assert = {
 	patterns: _makeAssert('patterns', is.patterns as _AnyGuard),
 	structPatternElements: _makeAssert('structPatternElements', is.structPatternElements as _AnyGuard),
 	useWildcardGroup: _makeAssert('useWildcardGroup', is.useWildcardGroup as _AnyGuard),
-	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
-	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
@@ -1240,7 +1209,6 @@ export const assert = {
 	tokenTreePattern: _makeAssert('tokenTreePattern', is.tokenTreePattern as _AnyGuard),
 	tokens: _makeAssert('tokens', is.tokens as _AnyGuard),
 	tokenTree: _makeAssert('tokenTree', is.tokenTree as _AnyGuard),
-	nonSpecialToken: _makeAssert('nonSpecialToken', is.nonSpecialToken as _AnyGuard),
 	modItem: _makeAssert('modItem', is.modItem as _AnyGuard),
 	foreignModItem: _makeAssert('foreignModItem', is.foreignModItem as _AnyGuard),
 	structItem: _makeAssert('structItem', is.structItem as _AnyGuard),

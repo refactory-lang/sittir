@@ -13,7 +13,7 @@ export function rebuildSpliceGenerated() {
 			}),
 		}).$trivia.leading("//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"), ir.attributeItem.strict(ir.attribute.input.strict({
 			path: ir.identifier("derive"),
-			arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
+			arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("Debug")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.identifier("Clone")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.identifier("PartialEq")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.identifier("Eq"))),
 		})).$trivia.leading("/// Error returned from [`apply_edits`] when an edit is invalid.\n"), ir.enumItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("SpliceError"),
@@ -123,10 +123,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+									arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("f")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.stringLiteral.strict({
 										stringOpen: ir.stringOpen("\""),
 										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
-									})),
+									}))),
 								}),
 								comma: true,
 							}),
@@ -145,10 +145,10 @@ export function rebuildSpliceGenerated() {
 								value: ir.block.strict({
 									trailingExpression: ir.macroInvocation.strict({
 										macro: ir.identifier("write"),
-										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+										arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("f")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.stringLiteral.strict({
 											stringOpen: ir.stringOpen("\""),
 											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
-										})),
+										}))),
 									}),
 								}),
 							}), ir.matchArm.withComma.strict({
@@ -165,10 +165,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+									arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("f")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.stringLiteral.strict({
 										stringOpen: ir.stringOpen("\""),
 										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
-									})),
+									}))),
 								}),
 							})],
 						}),

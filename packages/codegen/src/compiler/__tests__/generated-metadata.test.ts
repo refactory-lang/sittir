@@ -3,6 +3,7 @@ import {
 	collectGeneratedKindEntries,
 	deriveGeneratedIdTablesFromLanguage,
 	deriveGeneratedIdTablesFromParserCSource,
+	findEntryForLiteralText,
 	type TreeSitterLanguageMetadata
 } from '../generated-metadata.ts';
 
@@ -137,9 +138,11 @@ static const char * const ts_field_names[] = {
 		expect(newlineEntry).toBeDefined();
 		expect(newlineEntry?.id).toBe(101);
 		// The alias's display name ("newline") survives on the surviving
-		// `_newline` row instead of being dropped — this is what lets
-		// `kindIdFromName('newline')` resolve at runtime.
-		expect(newlineEntry?.symbolName).toBe('newline');
+		// `_newline` row as the parse name beside the parse id, instead of
+		// being dropped — this is what lets `kindIdFromName('newline')`
+		// resolve at runtime.
+		expect(newlineEntry?.parseName).toBe('newline');
+		expect(newlineEntry?.parseId).toBe(291);
 
 		// No separate `alias_sym_newline`-derived entry — it was merged
 		// into `_newline`, not kept as its own catalog row.
@@ -214,6 +217,41 @@ static const char * const ts_field_names[] = {
 		expect(byId.get(22)?.aliasedNonTerminal).toBeUndefined();
 		expect(byId.get(30)?.aliasedNonTerminal).toBeUndefined();
 		expect(byId.get(31)?.aliasedNonTerminal).toBeUndefined();
+	});
+
+	it('marks a symbol whose id is below TOKEN_COUNT as a terminal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 3
+
+enum ts_symbol_identifiers {
+  sym_identifier = 1,
+  sym__block_comment_content = 2,
+  sym__let_chain = 3,
+  sym_let_condition = 4,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym_identifier] = "identifier",
+  [sym__block_comment_content] = "_block_comment_content",
+  [sym__let_chain] = "_let_chain",
+  [sym_let_condition] = "let_condition",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c'
+		);
+		const byId = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, entry]));
+		expect(byId.get(1)?.terminal).toBe(true);
+		expect(byId.get(2)?.terminal).toBe(true);
+		expect(byId.get(3)?.terminal).toBeUndefined();
+		expect(byId.get(4)?.terminal).toBeUndefined();
 	});
 
 	it('leaves a symbolic (non-keyword-shaped) anonymous token under its plain derived name', async () => {
@@ -295,6 +333,21 @@ static const char * const ts_symbol_names[] = {
   [anon_sym__] = "_",
 };
 
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym__wildcard_pattern] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__kw_pass] = {
+    .visible = false,
+    .named = true,
+  },
+  [anon_sym__] = {
+    .visible = true,
+    .named = false,
+  },
+};
+
 enum ts_field_identifiers {
 };
 
@@ -328,6 +381,48 @@ static const char * const ts_field_names[] = {
 		const underscoreEntry = entries.find((entry) => entry.kind === 'underscore');
 		expect(underscoreEntry?.id).toBe(12);
 		expect(underscoreEntry?.anon).toBe(true);
+	});
+
+	it('finds a string token by its text when every use aliases it to a named kind', async () => {
+		const grammarJson = {
+			rules: {
+				atom: { type: 'ALIAS', content: { type: 'STRING', value: 'x' }, named: true, value: 'identity_escape' }
+			}
+		};
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 6
+
+enum ts_symbol_identifiers {
+  anon_sym_x = 5,
+};
+
+static const char * const ts_symbol_names[] = {
+  [anon_sym_x] = "identity_escape",
+};
+
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [anon_sym_x] = {
+    .visible = true,
+    .named = true,
+  },
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c',
+			grammarJson
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		const token = entries.find((entry) => entry.id === 5);
+		expect(token?.anon).toBeUndefined();
+		expect(token?.terminal).toBe(true);
+		expect(findEntryForLiteralText(entries, 'x')).toBe(token);
 	});
 
 	it('stamps a literal rule whose display name differs from its rule name via an UNNAMED alias site elsewhere (no named-alias claimant)', async () => {
@@ -403,6 +498,17 @@ enum ts_symbol_identifiers {
 static const char * const ts_symbol_names[] = {
   [sym_true_keyword] = "true_keyword",
   [anon_sym_true] = "true",
+};
+
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym_true_keyword] = {
+    .visible = true,
+    .named = true,
+  },
+  [anon_sym_true] = {
+    .visible = true,
+    .named = false,
+  },
 };
 
 enum ts_field_identifiers {

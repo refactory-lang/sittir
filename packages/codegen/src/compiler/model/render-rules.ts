@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../generated-metadata.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -488,7 +488,7 @@ function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig
 
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
 	const entry = findEntryForLiteralText(config.kindEntries, text);
-	const node = entry === undefined ? undefined : config.nodeMap.nodes.get(entry.kind);
+	const node = entry === undefined ? undefined : config.nodeMap.nodes.get(modelKindOfEntry(entry, config.kindEntries));
 	return node instanceof AssembledKeyword;
 }
 

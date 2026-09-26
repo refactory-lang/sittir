@@ -937,7 +937,7 @@ a choice over the six whitespace externals (`_tight`, `_space`, `_newline`,
 `options.ts` unions and the whitespace text the render crate writes are
 read from this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in
 codegen names a whitespace kind. A grammar that wants another gap width
-adds an external here, as python does with `_double_newline`.
+adds an external here, as python does with `_double_blankline`.
 
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 

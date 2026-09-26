@@ -263,21 +263,21 @@ export const namedCapturingGroup: typeof B.namedCapturingGroup & {
 };
 
 const termGroup$startAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const termGroup$endAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const termGroup$boundaryAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const termGroup$nonBoundaryAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const termGroup$lookaroundAssertion =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -309,9 +309,9 @@ const termGroup$posixCharacterClass =
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
 const termGroup$anyCharacter =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const termGroup$decimalEscape =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -846,20 +846,20 @@ export const termGroup: typeof B.termGroup & {
 } = {
 	...B.termGroup,
 	startAssertion: {
-		strict: termGroup$startAssertion(F.buildTermGroup, F.buildStartAssertion),
-		coerce: termGroup$startAssertion(C.coerceToTermGroup, C.coerceToStartAssertion)
+		strict: termGroup$startAssertion(F.buildTermGroup, TSKindId.StartAssertion),
+		coerce: termGroup$startAssertion(C.coerceToTermGroup, TSKindId.StartAssertion)
 	},
 	endAssertion: {
-		strict: termGroup$endAssertion(F.buildTermGroup, F.buildEndAssertion),
-		coerce: termGroup$endAssertion(C.coerceToTermGroup, C.coerceToEndAssertion)
+		strict: termGroup$endAssertion(F.buildTermGroup, TSKindId.EndAssertion),
+		coerce: termGroup$endAssertion(C.coerceToTermGroup, TSKindId.EndAssertion)
 	},
 	boundaryAssertion: {
-		strict: termGroup$boundaryAssertion(F.buildTermGroup, F.buildBoundaryAssertion),
-		coerce: termGroup$boundaryAssertion(C.coerceToTermGroup, C.coerceToBoundaryAssertion)
+		strict: termGroup$boundaryAssertion(F.buildTermGroup, TSKindId.BoundaryAssertion),
+		coerce: termGroup$boundaryAssertion(C.coerceToTermGroup, TSKindId.BoundaryAssertion)
 	},
 	nonBoundaryAssertion: {
-		strict: termGroup$nonBoundaryAssertion(F.buildTermGroup, F.buildNonBoundaryAssertion),
-		coerce: termGroup$nonBoundaryAssertion(C.coerceToTermGroup, C.coerceToNonBoundaryAssertion)
+		strict: termGroup$nonBoundaryAssertion(F.buildTermGroup, TSKindId.NonBoundaryAssertion),
+		coerce: termGroup$nonBoundaryAssertion(C.coerceToTermGroup, TSKindId.NonBoundaryAssertion)
 	},
 	lookaroundAssertion: {
 		strict: termGroup$lookaroundAssertion(F.buildTermGroup, F.buildLookaroundAssertion),
@@ -938,8 +938,8 @@ export const termGroup: typeof B.termGroup & {
 		coerce: termGroup$posixCharacterClass(C.coerceToTermGroup, C.coerceToPosixCharacterClass)
 	},
 	anyCharacter: {
-		strict: termGroup$anyCharacter(F.buildTermGroup, F.buildAnyCharacter),
-		coerce: termGroup$anyCharacter(C.coerceToTermGroup, C.coerceToAnyCharacter)
+		strict: termGroup$anyCharacter(F.buildTermGroup, TSKindId.AnyCharacter),
+		coerce: termGroup$anyCharacter(C.coerceToTermGroup, TSKindId.AnyCharacter)
 	},
 	decimalEscape: {
 		strict: termGroup$decimalEscape(F.buildTermGroup, F.buildDecimalEscape),

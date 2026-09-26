@@ -28,7 +28,7 @@ const _leafRe_buildOneOrMore = /^(?:\+(?:\?)?)$/u;
 const _leafRe_buildOptional = /^(?:\?(?:\?)?)$/u;
 const _leafRe_buildDecimalEscape = /^(?:(?:\\[1-9][0-9]*))$/u;
 const _leafRe_buildUnicodeCharacterEscape = /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u;
-const _leafRe_buildUnicodeProperty = /^(?:(?:[a-zA-Z_0-9]+))$/u;
+const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
 const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u;
 const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
@@ -678,10 +678,10 @@ export function buildUnicodePropertyValueExpression(
 		'UnicodePropertyValueExpression.unicodePropertyValueExpressionGroup',
 		'a built UnicodePropertyValueExpressionGroup'
 	);
-	const _unicode_property = rejectBareText(
-		config.unicodeProperty,
-		'UnicodePropertyValueExpression.unicodeProperty',
-		'buildUnicodeProperty(…)'
+	const _unicode_property_value = rejectBareText(
+		config.unicodePropertyValue,
+		'UnicodePropertyValueExpression.unicodePropertyValue',
+		'buildUnicodePropertyValue(…)'
 	);
 	return withMethods(
 		withAccessors(
@@ -690,30 +690,30 @@ export function buildUnicodePropertyValueExpression(
 				$source: 2 as const,
 				$named: true as const,
 				_unicode_property_value_expression_group,
-				_unicode_property,
+				_unicode_property_value,
 				$with: {
 					unicodePropertyValueExpressionGroup: (value?: T.UnicodePropertyValueExpressionGroup) =>
 						buildUnicodePropertyValueExpression({ ...config, unicodePropertyValueExpressionGroup: value }),
-					unicodeProperty: (value: T.UnicodeProperty) =>
-						buildUnicodePropertyValueExpression({ ...config, unicodeProperty: value })
+					unicodePropertyValue: (value: T.UnicodePropertyValue) =>
+						buildUnicodePropertyValueExpression({ ...config, unicodePropertyValue: value })
 				}
 			},
 			{
 				unicodePropertyValueExpressionGroup: () => _unicode_property_value_expression_group,
-				unicodeProperty: () => _unicode_property
+				unicodePropertyValue: () => _unicode_property_value
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildUnicodeProperty(text: string): T.UnicodeProperty.Built {
-	if (text.length === 0) throw new Error(`unicode_property: text must be non-empty`);
-	if (!_leafRe_buildUnicodeProperty.test(text))
-		throw new Error(`unicode_property: text does not match pattern: ${text}`);
+export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Built {
+	if (text.length === 0) throw new Error(`unicode_property_value: text must be non-empty`);
+	if (!_leafRe_buildUnicodePropertyValue.test(text))
+		throw new Error(`unicode_property_value: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.UnicodeProperty as const,
+			$type: TSKindId.UnicodePropertyValue as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -949,7 +949,7 @@ export function buildUnicodePropertyValueExpressionGroup(
 	value: T.UnicodePropertyName | T.UnicodePropertyName.Types
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(
-	value: T.UnicodeProperty
+	value: T.UnicodePropertyValue
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -959,7 +959,7 @@ export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._UnicodePropertyName as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.UnicodePropertyName as const);
 	return prebuilt
 		? _buildUnicodePropertyValueExpressionGroup(args[0] as T.UnicodePropertyName | T.UnicodePropertyName.Types)
 		: _buildUnicodePropertyValueExpressionGroup(
@@ -1082,7 +1082,7 @@ export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._Lazy as const,
+				$type: TSKindId.Lazy as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -1098,17 +1098,17 @@ export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 	);
 }
 
-export function buildUnicodePropertyName(value: T.UnicodeProperty): T.UnicodePropertyName.Built {
-	const _content = rejectBareText(value, 'UnicodePropertyName.content', 'buildUnicodeProperty(…)');
+export function buildUnicodePropertyName(value: T.UnicodePropertyValue): T.UnicodePropertyName.Built {
+	const _content = rejectBareText(value, 'UnicodePropertyName.content', 'buildUnicodePropertyValue(…)');
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._UnicodePropertyName as const,
+				$type: TSKindId.UnicodePropertyName as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.UnicodeProperty) => buildUnicodePropertyName(value)
+					content: (value: T.UnicodePropertyValue) => buildUnicodePropertyName(value)
 				}
 			},
 			{
@@ -1129,8 +1129,8 @@ export type FluentKindMap = {
 	boundary_assertion: T.BoundaryAssertion;
 	non_boundary_assertion: T.NonBoundaryAssertion;
 	lookaround_assertion: T.LookaroundAssertion.Built;
-	_lookahead_assertion: T.LookaheadAssertion.Built;
-	_lookbehind_assertion: T.LookbehindAssertion.Built;
+	lookahead_assertion: T.LookaheadAssertion.Built;
+	lookbehind_assertion: T.LookbehindAssertion.Built;
 	pattern_character: T.PatternCharacter;
 	character_class: T.CharacterClass.Built;
 	posix_character_class: T.PosixCharacterClass.Built;
@@ -1151,7 +1151,7 @@ export type FluentKindMap = {
 	character_class_escape: T.CharacterClassEscape.Built;
 	unicode_character_escape: T.UnicodeCharacterEscape;
 	unicode_property_value_expression: T.UnicodePropertyValueExpression.Built;
-	unicode_property: T.UnicodeProperty;
+	unicode_property_value: T.UnicodePropertyValue;
 	control_escape: T.ControlEscape;
 	control_letter_escape: T.ControlLetterEscape;
 	identity_escape: T.IdentityEscape.Built;
@@ -1179,8 +1179,8 @@ export const _factoryMap = {
 	boundary_assertion: buildBoundaryAssertion,
 	non_boundary_assertion: buildNonBoundaryAssertion,
 	lookaround_assertion: buildLookaroundAssertion,
-	_lookahead_assertion: buildLookaheadAssertion,
-	_lookbehind_assertion: buildLookbehindAssertion,
+	lookahead_assertion: buildLookaheadAssertion,
+	lookbehind_assertion: buildLookbehindAssertion,
 	pattern_character: buildPatternCharacter,
 	character_class: buildCharacterClass,
 	posix_character_class: buildPosixCharacterClass,
@@ -1201,7 +1201,7 @@ export const _factoryMap = {
 	character_class_escape: buildCharacterClassEscape,
 	unicode_character_escape: buildUnicodeCharacterEscape,
 	unicode_property_value_expression: buildUnicodePropertyValueExpression,
-	unicode_property: buildUnicodeProperty,
+	unicode_property_value: buildUnicodePropertyValue,
 	control_escape: buildControlEscape,
 	control_letter_escape: buildControlLetterEscape,
 	identity_escape: buildIdentityEscape,

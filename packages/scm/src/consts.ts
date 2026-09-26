@@ -2,7 +2,6 @@
 
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
-	'_immediate_string',
 	'anonymous_node',
 	'capture',
 	'comment',
@@ -10,6 +9,7 @@ const NODE_KINDS = [
 	'field_definition',
 	'group_expression_arm',
 	'grouping',
+	'immediate_string',
 	'list',
 	'missing_node',
 	'named_node',
@@ -103,7 +103,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_node_identifier: 32,
 	capture: 33,
 	string: 34,
-	_immediate_string: 35,
+	immediate_string: 35,
 	string_content: 36,
 	parameters: 37,
 	list: 38,
@@ -165,7 +165,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[32]: '_node_identifier',
 	[33]: 'capture',
 	[34]: 'string',
-	[35]: '_immediate_string',
+	[35]: 'immediate_string',
 	[36]: 'string_content',
 	[37]: 'parameters',
 	[38]: 'list',
@@ -227,7 +227,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_node_identifier', id: 32, enumName: 'NodeIdentifier', cName: 'sym__node_identifier' },
 	{ name: 'capture', id: 33, enumName: 'Capture', cName: 'sym_capture' },
 	{ name: 'string', id: 34, enumName: 'String', cName: 'sym_string' },
-	{ name: '_immediate_string', id: 35, enumName: 'ImmediateString', cName: 'sym__immediate_string' },
+	{ name: 'immediate_string', id: 35, enumName: 'ImmediateString', cName: 'sym__immediate_string' },
 	{ name: 'string_content', id: 36, enumName: 'StringContent', cName: 'sym_string_content' },
 	{ name: 'parameters', id: 37, enumName: 'Parameters', cName: 'sym_parameters' },
 	{ name: 'list', id: 38, enumName: 'List', cName: 'sym_list' },
