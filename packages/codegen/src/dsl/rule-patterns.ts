@@ -148,7 +148,7 @@ export function leadingLiteralOf(r: RuntimeRule): string | null {
 
 export function separatorOf<R extends RuntimeRule>(
 	resolved: R,
-	symbols: ParserSymbolCtx
+	symbols: SymbolSource
 ): { content: R; separator: R; trailing?: boolean } | null {
 	if (!typeEq(resolved.type, 'SEQ')) return null;
 	const members = (resolved as { members?: R[] }).members;
@@ -161,7 +161,7 @@ export function separatorOf<R extends RuntimeRule>(
 	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
 	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	const isToken = (r: R): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as unknown as AnyRule, (name) => terminalSymbolOf(name, symbols.rules, symbols));
+	const isToken = (r: R): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as unknown as AnyRule, symbols.isTerminal);
 	if (isToken(first) && !secondIsStr) return { content: second, separator: first };
 	if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
 
@@ -223,7 +223,7 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 	return slots;
 }
 
-export function isMultiSlotRepeatElement(content: unknown, symbols: ParserSymbolCtx): boolean {
+export function isMultiSlotRepeatElement(content: unknown, symbols: SymbolSource): boolean {
 	const core = unwrapPrec(content) as RuntimeRule | undefined;
 	if (!core || typeof core !== 'object' || !isSeqType(core.type)) return false;
 	if (separatorOf(core, symbols) !== null) return false;
@@ -278,7 +278,7 @@ function isNonterminalSeparatorType(t: string): boolean {
 	return isChoiceType(t) || isSymbolType(t) || typeEq(t, 'PATTERN');
 }
 
-function repeatHasNonterminalSeparator(repeatRule: RuntimeRule, symbols: ParserSymbolCtx): boolean {
+function repeatHasNonterminalSeparator(repeatRule: RuntimeRule, symbols: SymbolSource): boolean {
 	const content = (repeatRule as { content?: unknown }).content;
 	if (!content || typeof content !== 'object') return false;
 	const detected = separatorOf(content as RuntimeRule, symbols);
@@ -319,7 +319,7 @@ function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
 	return false;
 }
 
-function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, siblings: unknown[], symbols: ParserSymbolCtx): boolean {
+function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, siblings: unknown[], symbols: SymbolSource): boolean {
 	if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
 
 	const content = (repeatRule as { content?: unknown }).content;
@@ -332,11 +332,11 @@ function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, sib
 	return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
 }
 
-function repeatHasGenuineSeparatorVariability(repeatRule: RuntimeRule, symbols: ParserSymbolCtx): boolean {
+function repeatHasGenuineSeparatorVariability(repeatRule: RuntimeRule, symbols: SymbolSource): boolean {
 	return repeatHasNonterminalSeparator(repeatRule, symbols);
 }
 
-function seqHasGenuineSeparatorVariability(members: unknown[], symbols: ParserSymbolCtx): boolean {
+function seqHasGenuineSeparatorVariability(members: unknown[], symbols: SymbolSource): boolean {
 	const flat = flattenSeqMembers(members);
 	const repeatMembers: RuntimeRule[] = [];
 	for (const m of flat) {
@@ -353,7 +353,7 @@ function seqHasGenuineSeparatorVariability(members: unknown[], symbols: ParserSy
 	return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0]!, flat, symbols);
 }
 
-export function isInlineSafe(seqBody: unknown, symbols: ParserSymbolCtx): boolean {
+export function isInlineSafe(seqBody: unknown, symbols: SymbolSource): boolean {
 	if (!seqBody || typeof seqBody !== 'object') return false;
 	const r = seqBody as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
@@ -596,9 +596,16 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
-export type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
+type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
 
-export interface ParserSymbolCtx {
+export interface SymbolSource {
+	readonly rules: Readonly<Record<string, AnyRule>>;
+	readonly externals: ReadonlySet<string>;
+	readonly isTerminal: (name: string) => boolean;
+	readonly isInlined: (name: string) => boolean;
+}
+
+interface ParserSymbolCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
@@ -642,7 +649,7 @@ function stripRuleAnnotations(rule: unknown): unknown {
 	return out;
 }
 
-export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<string, number> {
+function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<string, number> {
 	const counts = new Map<string, number>();
 	const visit = (rule: TokenShape | undefined): void => {
 		if (rule === undefined || rule === null || typeof rule !== 'object') return;
@@ -658,12 +665,18 @@ export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<st
 	return counts;
 }
 
-export function parserSymbolCtxOf(
+export function predictedSymbolSource(
 	rules: Readonly<Record<string, AnyRule>>,
 	externals: Iterable<string>,
 	inline: Iterable<string>
-): ParserSymbolCtx {
-	return { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+): SymbolSource {
+	const ctx: ParserSymbolCtx = { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+	return {
+		rules,
+		externals: ctx.externals,
+		isTerminal: (name) => terminalSymbolOf(name, ctx),
+		isInlined: (name) => parserSymbolClassOf(name, ctx) === 'inlined'
+	};
 }
 
 export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
@@ -678,18 +691,18 @@ export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: str
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }
 
-export function terminalSymbolOf(name: string, rules: Readonly<Record<string, AnyRule>>, symbols: ParserSymbolCtx): boolean {
-	const cls = parserSymbolClassOf(name, symbols);
+function terminalSymbolOf(name: string, ctx: ParserSymbolCtx): boolean {
+	const cls = parserSymbolClassOf(name, ctx);
 	if (cls !== 'inlined') return cls === 'terminal';
-	const body = rules[name];
-	return body !== undefined && terminalContentOf(body, (member) => terminalSymbolOf(member, rules, symbols));
+	const body = ctx.rules[name];
+	return body !== undefined && terminalContentOf(body, (member) => terminalSymbolOf(member, ctx));
 }
 
 export function lexesAsOneToken(rule: TokenShape): boolean {
 	return extractedToken(rule) !== undefined;
 }
 
-export function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {
+function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {
 	if (ctx.externals.has(name)) return 'terminal';
 	if (ctx.inline.has(name)) return 'inlined';
 	const rule = ctx.rules[name] as unknown as TokenShape | undefined;
@@ -810,7 +823,7 @@ export function peelOptionalSeq<P extends PhaseName>(
 	return null;
 }
 
-export function listSeparatorOfOptionalSeq<P extends PhaseName>(rule: Rule<P>, symbols: ParserSymbolCtx): string | null {
+export function listSeparatorOfOptionalSeq<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource): string | null {
 	const peeled = peelOptionalSeq(rule);
 	if (peeled === null) return null;
 	const seqMembers = (peeled.seqBody as unknown as { members?: Rule<P>[] }).members;
@@ -880,7 +893,7 @@ export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
 	flatMembers: Rule<P>[];
 }
 
-export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbols: ParserSymbolCtx): SeparatedListBodyInfo<P> | null {
+export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbols: SymbolSource): SeparatedListBodyInfo<P> | null {
 	if (!isSeqType((body as { type?: string }).type)) return null;
 	const members = (body as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(members) || members.length === 0) return null;

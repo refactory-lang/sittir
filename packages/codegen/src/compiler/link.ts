@@ -98,8 +98,8 @@ import {
 	isNamedArmChoice,
 	rulesEqual,
 	separatorOf,
-	parserSymbolCtxOf,
-	type ParserSymbolCtx
+	predictedSymbolSource,
+	type SymbolSource
 } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -148,10 +148,10 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		return this.grammar.rules;
 	}
 
-	#sourceSymbols?: ParserSymbolCtx;
+	#sourceSymbols?: SymbolSource;
 
-	get sourceSymbols(): ParserSymbolCtx {
-		this.#sourceSymbols ??= parserSymbolCtxOf(this.grammar.rules, this.grammar.externals, this.grammar.inline);
+	get sourceSymbols(): SymbolSource {
+		this.#sourceSymbols ??= predictedSymbolSource(this.grammar.rules, this.grammar.externals, this.grammar.inline);
 		return this.#sourceSymbols;
 	}
 }

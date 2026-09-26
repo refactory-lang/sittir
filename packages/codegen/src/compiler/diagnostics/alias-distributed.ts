@@ -4,23 +4,10 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import {
-	parserSymbolClassOf,
-	terminalContentOf,
-	terminalSymbolOf,
-	tokenUseCounts,
-	type ParserSymbolCtx
-} from '../../dsl/rule-patterns.ts';
+import { predictedSymbolSource, terminalContentOf, type SymbolSource } from '../../dsl/rule-patterns.ts';
 import { findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
 
 type R = Rule<'evaluate'>;
-
-export interface SymbolSource {
-	readonly rules: Readonly<Record<string, AnyRule>>;
-	readonly externals: ReadonlySet<string>;
-	isTerminal(name: string): boolean;
-	isInlined(name: string): boolean;
-}
 
 export interface SymbolFacts {
 	readonly rules: Readonly<Record<string, AnyRule>>;
@@ -30,7 +17,7 @@ export interface SymbolFacts {
 }
 
 export function symbolSourceOf(facts: SymbolFacts): SymbolSource {
-	return facts.kindEntries.length > 0 ? catalogSymbolSource(facts) : predictedSymbolSource(facts);
+	return facts.kindEntries.length > 0 ? catalogSymbolSource(facts) : predictedSymbolSource(facts.rules, facts.externals, facts.inline);
 }
 
 function catalogSymbolSource(facts: SymbolFacts): SymbolSource {
@@ -42,21 +29,6 @@ function catalogSymbolSource(facts: SymbolFacts): SymbolSource {
 		return body !== undefined && terminalContentOf(body, isTerminal);
 	};
 	return { rules: facts.rules, externals: facts.externals, isTerminal, isInlined };
-}
-
-function predictedSymbolSource(facts: SymbolFacts): SymbolSource {
-	const ctx: ParserSymbolCtx = {
-		rules: facts.rules,
-		externals: facts.externals,
-		inline: facts.inline,
-		tokenUses: tokenUseCounts(facts.rules)
-	};
-	return {
-		rules: facts.rules,
-		externals: facts.externals,
-		isTerminal: (name) => terminalSymbolOf(name, facts.rules, ctx),
-		isInlined: (name) => parserSymbolClassOf(name, ctx) === 'inlined'
-	};
 }
 
 function distributedShape(content: R, symbols: SymbolSource, seen: ReadonlySet<string>): string | undefined {

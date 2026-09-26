@@ -10737,5 +10737,5 @@ Rule types that wrap a literal without changing the token it lexes.
 
 ### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
 
-The `ParserSymbolCtx` over the evaluated grammar's rules, externals and inline names, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
+The predicted `SymbolSource` (`dsl/rule-patterns.ts::predictedSymbolSource`) over the evaluated grammar's rules, externals and inline names, built on first use and shared by the phase. It is the prediction even when a catalog exists, because link must recognize the separators enrich recognized. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 

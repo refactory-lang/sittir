@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
-import { symbolSourceOf, type SymbolSource } from '../alias-distributed.ts';
+import { symbolSourceOf } from '../alias-distributed.ts';
+import type { SymbolSource } from '../../../dsl/rule-patterns.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { AnyRule } from '../../../types/rule.ts';
 

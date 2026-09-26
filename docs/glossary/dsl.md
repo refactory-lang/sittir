@@ -3827,11 +3827,19 @@ How tree-sitter's extract_tokens step files a rule: `terminal` (a token, id belo
 `inlined` (no symbol at all).
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::SymbolSource`
+
+The one interface every phase asks about a grammar's symbols: whether a name is a terminal to the parser (`isTerminal`) and whether the parser inlines it (`isInlined`), beside the rule bodies and external names. The source is chosen by what exists: while grammar.js evaluates no catalog ever exists, so enrich, its separator detection and link's separator lift use `predictedSymbolSource`; the grammar diagnostics choose with `compiler/diagnostics/alias-distributed.ts::symbolSourceOf` (the catalog once parser.c exists).
+
+### `packages/codegen/src/dsl/rule-patterns.ts::predictedSymbolSource`
+
+Builds the DSL-phase `SymbolSource` from a rule set and its `externals`/`inline` names: `isTerminal` is `terminalSymbolOf`, `isInlined` is `parserSymbolClassOf`'s `inlined` class, both over one private `ParserSymbolCtx` whose token-use counts come from the same rules. The only way to build the prediction, so its facts are always derived together from one rule set.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::ParserSymbolCtx`
 
 ```text
 The grammar facts `parserSymbolClassOf` needs: rule bodies, the `externals` and `inline` names, and how many times each
-extracted token occurs across all rules (`tokenUseCounts`).
+extracted token occurs across all rules (`tokenUseCounts`). Private to rule-patterns: callers get a `SymbolSource`.
 ```
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolClassOf`
@@ -3859,20 +3867,16 @@ that is not a choice.
 Whether content the parser sees at a position is a terminal: a symbol by
 the caller's `isTerminalSymbol`, a string, pattern or token, or a choice
 whose every arm is terminal. The symbol test is a parameter so the one body
-walk serves both phases: the DSL phase passes `terminalSymbolOf` (predicted
-from rule shape, since no parser.c exists yet) and the grammar diagnostics
-pass the parser catalog's `terminal` fact once one exists
+walk serves every `SymbolSource`: the predicted source's `terminalSymbolOf`
+and the catalog source's `terminal` fact
 (`compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
 
 Whether a name is a terminal to the parser, predicted in the DSL phase: its
 `parserSymbolClassOf`, except that an inlined rule is classified by its body,
-since the parser substitutes it. Used by enrich's
-`unaliasOverloadedDisplays`, which runs before parser.c exists. After the
-catalog exists the parser's own fact is used instead
-(`compiler/diagnostics/alias-distributed.ts::SymbolSource`); before it, the
-grammar diagnostics use this prediction too (`predictedSymbolSource`).
+since the parser substitutes it. It answers `predictedSymbolSource`'s
+`isTerminal`.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
@@ -6275,7 +6279,7 @@ symbol.
 ### `packages/codegen/src/dsl/rule-transforms.ts::OverloadedDisplayCtx`
 
 ```text
-The parser-symbol facts `unaliasOverloadedDisplays` classifies storages with (see `ParserSymbolCtx`).
+The `SymbolSource` `unaliasOverloadedDisplays` classifies storages with (enrich passes the predicted source over the enriched rules).
 ```
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::unaliasOverloadedDisplays`
@@ -6283,7 +6287,7 @@ The parser-symbol facts `unaliasOverloadedDisplays` classifies storages with (se
 ```text
 Gives every display name one parser identity. A display is overloaded when named alias sites put storages of
 different parser classes under it. Each storage is keyed by its symbol, or by its content when inline, and marked
-terminal when tree-sitter would give it a token (`parserSymbolClassOf`; an inlined symbol is judged by its body).
+terminal when tree-sitter would give it a token (`SymbolSource.isTerminal`; an inlined symbol is judged by its body).
 
 - Display that is a rule of its own: sites over the rule itself stay. When the display rule is terminal, terminal
   storages stay too — tree-sitter reuses the display's symbol for them (a keyword aliased to `identifier` is
@@ -6307,7 +6311,7 @@ The content under a chain of named aliases.
 
 The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
-`sourceSymbols` is the `ParserSymbolCtx` over the base rules — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
+`sourceSymbols` is the predicted `SymbolSource` over the base rules — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
 `hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
 
@@ -6327,7 +6331,4 @@ State that exists only while the clause hoist runs. `separatedListNameCounts` is
 
 The grammar-level inputs of an `enrich()` call: the base rules, the supertype, external and inline names, and the compiled word matcher.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolCtxOf`
-
-Builds a `ParserSymbolCtx` from a rule set and its `externals`/`inline` names, counting token uses over the same rules. The one constructor for every phase's symbol context, so the four fields are always derived together from one rule set.
 

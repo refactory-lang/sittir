@@ -48,8 +48,8 @@ import {
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
 	throughPrec,
-	parserSymbolCtxOf,
-	type ParserSymbolCtx
+	predictedSymbolSource,
+	type SymbolSource
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
@@ -121,7 +121,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
 		});
 	}
-	const enrichedSymbols = parserSymbolCtxOf(enrichedRules, ctx.externals, ctx.inline);
+	const enrichedSymbols = predictedSymbolSource(enrichedRules, ctx.externals, ctx.inline);
 	Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -620,7 +620,7 @@ function deriveElementFieldName(elementRule: Rule): string {
 	return 'element';
 }
 
-function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string, symbols: ParserSymbolCtx): Rule | null {
+function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string, symbols: SymbolSource): Rule | null {
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	for (let i = 0; i < members.length - 1; i++) {
@@ -1480,7 +1480,7 @@ interface InlineSeparatedListRun {
 	size: number;
 }
 
-function detectInlineSeparatedListRuns(members: Rule[], symbols: ParserSymbolCtx): InlineSeparatedListRun[] {
+function detectInlineSeparatedListRuns(members: Rule[], symbols: SymbolSource): InlineSeparatedListRun[] {
 	const carriesRepeat = (m: Rule): boolean => {
 		if (isRepeatType((m as { type?: string }).type)) return true;
 		if (!isSeqType((m as { type?: string }).type)) return false;
@@ -1519,7 +1519,7 @@ function detectInlineSeparatedListRuns(members: Rule[], symbols: ParserSymbolCtx
 	return runs;
 }
 
-function collectSeparatedListNameProposals(rules: Record<string, Rule>, symbols: ParserSymbolCtx): Map<string, number> {
+function collectSeparatedListNameProposals(rules: Record<string, Rule>, symbols: SymbolSource): Map<string, number> {
 	const keysByName = new Map<string, Set<string>>();
 	const record = (info: SeparatedListBodyInfo, key: string) => {
 		if (info.elementName === null) return;
@@ -1582,7 +1582,7 @@ function promoteHiddenListRef(member: Rule, ctx: EnrichCtx): Rule {
 	return makeVisibleGroupAlias(member, visibleName);
 }
 
-function absorbTrailingListSeparators(members: Rule[], symbols: ParserSymbolCtx): Rule[] | null {
+function absorbTrailingListSeparators(members: Rule[], symbols: SymbolSource): Rule[] | null {
 	let changed = false;
 	const out: Rule[] = [];
 	for (let i = 0; i < members.length; i++) {

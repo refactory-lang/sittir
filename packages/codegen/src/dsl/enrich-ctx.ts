@@ -1,5 +1,5 @@
 import type { Rule } from '../types/rule.ts';
-import { parserSymbolCtxOf, type ParserSymbolCtx } from './rule-patterns.ts';
+import { predictedSymbolSource, type SymbolSource } from './rule-patterns.ts';
 
 export interface EnrichCtxInit {
 	readonly rulesBag: Record<string, Rule>;
@@ -15,7 +15,7 @@ export interface ClauseHoistState {
 }
 
 interface EnrichCtxFields extends EnrichCtxInit {
-	readonly sourceSymbols: ParserSymbolCtx;
+	readonly sourceSymbols: SymbolSource;
 	readonly kwRules: Record<string, Rule>;
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
@@ -31,7 +31,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
 	readonly wordMatcher: RegExp | undefined;
-	readonly sourceSymbols: ParserSymbolCtx;
+	readonly sourceSymbols: SymbolSource;
 	readonly kwRules: Record<string, Rule>;
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
@@ -59,7 +59,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	static create(init: EnrichCtxInit): EnrichCtx {
 		return new EnrichCtx({
 			...init,
-			sourceSymbols: parserSymbolCtxOf(init.rulesBag, init.externals, init.inline),
+			sourceSymbols: predictedSymbolSource(init.rulesBag, init.externals, init.inline),
 			kwRules: {},
 			clauseGroupRules: {},
 			clauseDedupeMap: {},

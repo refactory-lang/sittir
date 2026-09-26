@@ -1065,7 +1065,7 @@ function separatorOf(resolved, symbols) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, (name) => terminalSymbolOf(name, symbols.rules, symbols));
+  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.isTerminal);
   if (isToken(first) && !secondIsStr) return { content: second, separator: first };
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
@@ -1446,8 +1446,14 @@ function tokenUseCounts(rules) {
   for (const rule of Object.values(rules)) visit(rule);
   return counts;
 }
-function parserSymbolCtxOf(rules, externals, inline) {
-  return { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+function predictedSymbolSource(rules, externals, inline) {
+  const ctx = { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+  return {
+    rules,
+    externals: ctx.externals,
+    isTerminal: (name) => terminalSymbolOf(name, ctx),
+    isInlined: (name) => parserSymbolClassOf(name, ctx) === "inlined"
+  };
 }
 function choiceArmsOf(content) {
   if (content.type !== CHOICE) return void 0;
@@ -1459,11 +1465,11 @@ function terminalContentOf(content, isTerminalSymbol) {
   const arms = choiceArmsOf(content);
   return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, isTerminalSymbol));
 }
-function terminalSymbolOf(name, rules, symbols) {
-  const cls = parserSymbolClassOf(name, symbols);
+function terminalSymbolOf(name, ctx) {
+  const cls = parserSymbolClassOf(name, ctx);
   if (cls !== "inlined") return cls === "terminal";
-  const body = rules[name];
-  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, rules, symbols));
+  const body = ctx.rules[name];
+  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, ctx));
 }
 function lexesAsOneToken(rule) {
   return extractedToken(rule) !== void 0;
@@ -1819,7 +1825,7 @@ var EnrichCtx = class _EnrichCtx {
   static create(init) {
     return new _EnrichCtx({
       ...init,
-      sourceSymbols: parserSymbolCtxOf(init.rulesBag, init.externals, init.inline),
+      sourceSymbols: predictedSymbolSource(init.rulesBag, init.externals, init.inline),
       kwRules: {},
       clauseGroupRules: {},
       clauseDedupeMap: {},
@@ -1948,8 +1954,7 @@ function unaliasOverloadedDisplays(rules, ctx) {
     const alias3 = r;
     return alias3.type === ALIAS && alias3.named === true && alias3.value ? alias3 : void 0;
   };
-  const terminalSymbol = (name) => terminalSymbolOf(name, rules, ctx.symbols);
-  const terminalContent = (content) => terminalContentOf(content, terminalSymbol);
+  const terminalContent = (content) => terminalContentOf(content, ctx.symbols.isTerminal);
   const storageOf = (content) => {
     const symbol = content.type === SYMBOL ? content.name : void 0;
     return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };
@@ -1992,7 +1997,7 @@ function unaliasOverloadedDisplays(rules, ctx) {
   for (const display of [...storagesByDisplay.keys()].sort()) {
     const members = [...storagesByDisplay.get(display).values()];
     if (Object.hasOwn(rules, display)) {
-      const terminalDisplay = terminalSymbol(display);
+      const terminalDisplay = ctx.symbols.isTerminal(display);
       for (const storage of members) {
         if (storage.symbol === display || terminalDisplay && storage.terminal) continue;
         split({ display, storage });
@@ -2229,7 +2234,7 @@ function enrich(baseInput) {
       inlineBodyOf: (target) => inlineNames.has(target) ? enrichedRules[target] ?? rulesBag[target] : void 0
     });
   }
-  const enrichedSymbols = parserSymbolCtxOf(enrichedRules, ctx.externals, ctx.inline);
+  const enrichedSymbols = predictedSymbolSource(enrichedRules, ctx.externals, ctx.inline);
   Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];

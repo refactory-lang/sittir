@@ -400,28 +400,20 @@ no single model node to be wrong about. The known unnamed case is
 typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
 'unique symbol')`.
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolSource`
-
-The one answer the alias diagnostics ask about a grammar's symbols: whether a name is a terminal to the parser (`isTerminal`) and whether the parser inlines it (`isInlined`), beside the rule bodies and external names. Which facts answer it is chosen once, by `symbolSourceOf`, so each diagnostic has a single code path:
-
-- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
-- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`predictedSymbolSource`), so the diagnostics still fire in that phase.
-
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolFacts`
 
 The grammar facts `symbolSourceOf` builds a source from: rule bodies, external and `inline:` names, and the catalog rows (empty before the first generate).
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
 
-Chooses the `SymbolSource`: the catalog source when there are catalog rows, the predicted source otherwise.
+Chooses the grammar diagnostics' `SymbolSource` (`dsl/rule-patterns.ts::SymbolSource`) once, so each alias diagnostic has a single code path:
+
+- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
+- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`dsl/rule-patterns.ts::predictedSymbolSource`), so the diagnostics still fire in that phase.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`
 
 Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
-
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::predictedSymbolSource`
-
-Answers from the DSL-phase prediction, for the phase before parser.c exists: `parserSymbolClassOf` (inlined means its `inlined` class) and `terminalSymbolOf`.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
 
@@ -442,9 +434,9 @@ rather than defaulted, since defaulting would make the guard guess.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
-Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `ParserSymbolCtx` from it (rules, externals, inline,
-token use counts), the same inputs enrich classifies with, and hands it to
-both alias diagnostics so they cannot disagree with the pass they guard.
+Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from it (`symbolSourceOf`: the
+catalog's facts once parser.c exists, else the same prediction enrich
+classifies with), and hands it to both alias diagnostics.
 
 
 #### body
