@@ -63,7 +63,7 @@
   - `distributeTokenForms(rule: RuntimeRule, kind: string): RuntimeRule` — returns the rule unchanged when its (prec-peeled) core is not a `TOKEN`/`IMMEDIATE_TOKEN` or holds no form alternation; otherwise a `CHOICE` whose members are token-wrapped arms, re-wrapped in the original prec stack. Throws `Error` on a hazard.
   - `isTokenWrapper(rule: RuntimeRule): boolean` — `TOKEN` or `IMMEDIATE_TOKEN`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // packages/codegen/src/dsl/__tests__/token-forms.test.ts
@@ -152,12 +152,12 @@ describe('distributeTokenForms', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pnpm exec vitest run packages/codegen/src/dsl/__tests__/token-forms.test.ts`
 Expected: FAIL, module `../transform/token-forms.ts` not found.
 
-- [ ] **Step 3: Write the algebra**
+- [x] **Step 3: Write the algebra**
 
 ```ts
 // packages/codegen/src/dsl/transform/token-forms.ts
@@ -280,12 +280,12 @@ export function distributeTokenForms(rule: RuntimeRule, kind: string): RuntimeRu
 
 If `contentOf`, `membersOf`, `isPrecWrapper`, `isChoiceType`, `isSeqType` are not exported from `runtime-shapes.ts` under those names, use the names `transform.ts` imports for the same jobs (they appear in `registerIfPureVariantChoice` and `planSiblingVariantHoist`) and keep the algebra module free of `transform.ts` imports.
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pnpm exec vitest run packages/codegen/src/dsl/__tests__/token-forms.test.ts`
 Expected: PASS, 11 tests.
 
-- [ ] **Step 5: Glossary entries**
+- [x] **Step 5: Glossary entries**
 
 Append to `docs/glossary/dsl-transform.md`:
 
@@ -299,7 +299,7 @@ What a choice under a token is, by its arms: `presence` when an arm is blank, `s
 The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (descending through seqs and through a presence choice whose live arm is a form alternation, in which case the blank is one more arm) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into; it stays one lexeme. Two hazards are diagnostics: an arm that matches the empty string, and two arms with identical bodies. Any other rule shape is returned as is.
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -- packages/codegen/src/dsl/transform/token-forms.ts packages/codegen/src/dsl/__tests__/token-forms.test.ts docs/glossary/dsl-transform.md
@@ -327,7 +327,7 @@ The pre-commit hook may demand a regen because `packages/codegen/src/**` changed
   - `enrich.ts::hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners): { rule: Rule; hoisted: boolean }`.
   - `enrich.ts::addSupertypes(result, names: readonly string[]): void` — appends to the grammar's `supertypes` whether it is an array of names or a `$ => [...]` function.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // packages/codegen/src/dsl/__tests__/transform-token-forms.test.ts
@@ -453,12 +453,12 @@ describe('enrich: token forms', () => {
 
 If `enrich` needs more grammar fields than `name`, `rules`, `supertypes`, `extras` to run (read `GrammarResult` in `enrich.ts` and how `enrich.test.ts` builds its input), copy that test's minimal input builder instead of `grammarWith`.
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pnpm exec vitest run packages/codegen/src/dsl/__tests__/transform-token-forms.test.ts packages/codegen/src/dsl/__tests__/enrich-token-forms.test.ts`
 Expected: FAIL. Transform throws `not a seq led by a string`; enrich leaves `number` a `TOKEN`.
 
-- [ ] **Step 3: Transform stamps names and stops hoisting**
+- [x] **Step 3: Transform stamps names and stops hoisting**
 
 In `packages/codegen/src/types/rule.ts` add to `RuleAnnotations`:
 
@@ -508,7 +508,7 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 
 The annotation goes on the outermost rule object (the prec wrapper if there is one); `withAnnotations` already places it there. Enrich peels prec the same way and reads it from the rule it receives.
 
-- [ ] **Step 4: The enrich pass**
+- [x] **Step 4: The enrich pass**
 
 In `packages/codegen/src/dsl/enrich.ts`, import `distributeTokenForms`, `isTokenWrapper` from `./transform/token-forms.ts` and add:
 
@@ -605,12 +605,12 @@ addSupertypes((hasWrapper ? (result as { grammar: Record<string, unknown> }).gra
 
 The pass is also what typescript's `comment` now goes through: its two `variant()` names arrive as `tokenFormNames`, so `comment_line` and `comment_block` are minted here instead of as wire deposits. Their generated output is expected to differ only in mint bookkeeping (owner, visible-group source); Task 4 reviews that diff explicitly.
 
-- [ ] **Step 5: Run the dsl suite**
+- [x] **Step 5: Run the dsl suite**
 
 Run: `pnpm exec vitest run packages/codegen/src/dsl/`
 Expected: PASS. A pre-existing test that pinned the old throw (`not a seq led by a string`) or expected `transform` to mint `comment_line`/`comment_block` as wire deposits is updated to the new split: transform stamps names, enrich mints.
 
-- [ ] **Step 6: Glossary**
+- [x] **Step 6: Glossary**
 
 Replace the `hoistTokenChoiceForVariants` entry in `docs/glossary/dsl-transform.md` with:
 
@@ -632,7 +632,7 @@ The unconditional token-form hoist, one pass over every rule before clause hoist
 Appends rule names to the grammar's `supertypes`, whether it is an array of names or a `$ => [...]` function, skipping names already listed. The token-form parents go through here so tree-sitter treats each as the supertype of its minted arms.
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "feat(dsl): enrich hoists every token rule's outermost form alternation and mints the arms; variant() only names them" -- packages/codegen/src/types/rule.ts packages/codegen/src/dsl/transform/transform.ts packages/codegen/src/dsl/enrich.ts packages/codegen/src/dsl/__tests__/transform-token-forms.test.ts packages/codegen/src/dsl/__tests__/enrich-token-forms.test.ts docs/glossary/dsl-transform.md docs/glossary/dsl.md
@@ -656,7 +656,7 @@ If the hook forces a regen here, regenerate all three, commit the manifests only
 - Consumes: `AbstractAssembledCompound.lexedInterior` (node-map.ts), `FieldStorageInfo` (node-map.ts), `interiorOf(node)` (`emitters/interior.ts`), `enumArmsOf` (shared.ts).
 - Produces: `classifyFieldStorageInfo(field, nodeMap, owner?: AssembledNode)`; a text-enum slot is `{ kind: 'verbatim', texts: [...spellings], enumKinds: [], enumKindsById: new Map(), collapsesMultiplicity: false }`. The helper `isTextEnum(info: FieldStorageInfo): boolean` (`info.kind === 'verbatim' && info.texts.length > 0`) exported from shared.ts.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Build the fixture the way `packages/codegen/src/emitters/__tests__/enum-leaf-kind-id-storage.test.ts` builds its node map (read that file first and reuse its `makeNodeMapWith` or equivalent helper): one lexed compound `integer_literal` whose render rule is `SEQ[ FIELD content: PATTERN '[0-9]+', FIELD suffix: OPTIONAL(CHOICE['u8','i8']) ]` with `lexed: true`, plus two keyword leaves `u8` and `i8` that carry kind ids (so the old path would have borrowed them). Then:
 
@@ -714,12 +714,12 @@ describe('an enum slot inside a lexed compound is text', () => {
 
 Adjust the emitter entry names and option shapes to what those emitters actually export (read each emitter's `export function emit...` signature and how `enum-leaf-kind-id-storage.test.ts` calls them). The assertions are the contract; the call shapes follow the codebase.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/lexed-enum-text-storage.test.ts`
 Expected: FAIL on `classifies as verbatim` (`kindEnum` today) and on every emitter assertion.
 
-- [ ] **Step 3: Classify by owner**
+- [x] **Step 3: Classify by owner**
 
 In `packages/codegen/src/emitters/shared.ts`:
 
@@ -750,7 +750,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap,
 
 `resolveFieldStorageInfo` reads the stamp first (`field.storageInfo ??= ...`), so every emitter that runs after `computeFieldStorageInfo` sees the owner-aware answer. Confirm `computeFieldStorageInfo` runs before emission in `packages/codegen/src/emitters/emit.ts`; if an emitter is reached without the stamp for a lexed owner's slot, thread the owner into that call site rather than re-deriving.
 
-- [ ] **Step 4: Types**
+- [x] **Step 4: Types**
 
 In `packages/codegen/src/emitters/factories.ts::fieldElementType`, before the existing verbatim/node handling:
 
@@ -761,7 +761,7 @@ if (isTextEnum(info)) return stringUnion(info.texts);
 
 `stringUnion` is the helper `types.ts` already uses for `BooleanKeyword<...>`; if it lives in types.ts, move it to shared.ts and import it from both. In `types.ts::storageFieldTypeExpr` the verbatim branch already returns `typeExpr`, which now is the union. In `fieldInputHintTypeExpr` no hint is needed for a text enum (return `undefined` as for other verbatim slots).
 
-- [ ] **Step 5: Factory guard**
+- [x] **Step 5: Factory guard**
 
 In `factories.ts::buildLeafReConsts`, extend the interior loop so enum entries get a guard too:
 
@@ -783,7 +783,7 @@ for (const entry of interior.entries) {
 
 Use the regex-escaping helper `interior.ts` already has (`escapeRegex`; export it) rather than a second one. Then confirm the raw builder's existing guard emission (the site that tests `_slotRe_<fn>_<slot>` against the stored value) keys on `slotGuardKey(kind, slotName)` and therefore picks the enum guard up with no further change; if it iterates only pattern entries, widen that loop the same way.
 
-- [ ] **Step 6: Coercer**
+- [x] **Step 6: Coercer**
 
 In `from.ts::resolveFieldCall`, the `kindEnum` branch no longer fires for a text enum (it is `verbatim` now), so the value takes the base path. Verify by generating the fixture that the base path for a slot whose values are keyword refs does not try to resolve `'u8'` to a keyword kind: if `classifyKindsForResolver` yields the keyword kinds as `leafKinds` and emits a `_resolveLeafString` call, add before the `storageInfo?.kind === 'kindEnum'` check:
 
@@ -793,7 +793,7 @@ if (storageInfo !== undefined && isTextEnum(storageInfo)) return prop;
 
 so the coercer hands the text to the raw builder, whose guard from Step 5 rejects a misspelling.
 
-- [ ] **Step 7: Run the test to verify it passes**
+- [x] **Step 7: Run the test to verify it passes**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/lexed-enum-text-storage.test.ts`
 Expected: PASS, 6 tests. Then the whole emitter suite:
@@ -801,7 +801,7 @@ Expected: PASS, 6 tests. Then the whole emitter suite:
 Run: `pnpm exec vitest run packages/codegen/src/emitters`
 Expected: PASS. A test pinning `_suffix?: number` or `coerceKindEnumStorage` for a lexed fixture is updated to the text contract (that is the intended change), never preserved.
 
-- [ ] **Step 8: Glossary**
+- [x] **Step 8: Glossary**
 
 In `docs/glossary/emitters.md` amend `classifyFieldStorageInfo` and add `isTextEnum`:
 
@@ -817,7 +817,7 @@ and append to the `classifyFieldStorageInfo` entry:
 The owner decides one case: when it is a lexed compound, an enum-shaped slot classifies as `verbatim` with its texts (`isTextEnum`) instead of `kindEnum`, because its members are literals inside the token and have no symbol of their own.
 ```
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git commit -m "feat(emitters): an enum inside a lexed compound is text-stored and typed as its spellings" -- packages/codegen/src/emitters/shared.ts packages/codegen/src/emitters/factories.ts packages/codegen/src/emitters/types.ts packages/codegen/src/emitters/from.ts packages/codegen/src/emitters/interior.ts packages/codegen/src/emitters/__tests__/lexed-enum-text-storage.test.ts packages/codegen/src/emitters/__tests__/_lexed-fixture.ts docs/glossary/emitters.md
@@ -837,12 +837,12 @@ Plus manifests if the hook demands them. Rust's generated `integer_literal` surf
 - Consumes: Tasks 1–3.
 - Produces: the committed typescript package with `number_arm1..5`, `escape_sequence_arm1..6`, `regex_pattern_arm1..3` and the three parents as supertypes.
 
-- [ ] **Step 1: Record the baseline numbers**
+- [x] **Step 1: Record the baseline numbers**
 
 Run: `pnpm run validate:history | tail -4`
 Copy the last typescript/native row into the commit message draft. Baseline at the time of writing: `from=173/173 cov=189/189 read-render-parse=112/114 factory-render-parse=1142/1142 ir-render-parse=998/998`.
 
-- [ ] **Step 2: Regenerate typescript**
+- [x] **Step 2: Regenerate typescript**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src`
 Expected: completes; `packages/typescript/.sittir/src/grammar.json` now has rules `number_arm1` … `number_arm5`, `escape_sequence_arm1` … `_arm6`, `regex_pattern_arm1` … `_arm3`, and `number`, `escape_sequence`, `regex_pattern` listed under `supertypes`. Confirm with:
@@ -857,7 +857,7 @@ EOF
 
 If `gen` fails inside tree-sitter with a lexical conflict, that is a finding about the equivalence argument for that rule: stop, keep the failing state, and report which arms conflict.
 
-- [ ] **Step 3: Inspect the minted interiors and the comment diff**
+- [x] **Step 3: Inspect the minted interiors and the comment diff**
 
 Run: `git diff --stat -- packages/typescript/src | sed -n '/comment/p'` and read any `comment_line` / `comment_block` change: only mint bookkeeping (owner, visible-group source, hoisted annotation placement) may differ; a change to their factories, types, wrap or render output is a stop-and-report.
 
@@ -865,30 +865,30 @@ Run: `git diff --stat -- packages/typescript/src | sed -n '/comment/p'` and read
 Run: `sed -n '/^export const TOKEN_INTERIORS/,/satisfies/p' packages/typescript/src/consts.ts`
 Expected: entries for `number_arm1` (`prefix` enum + `content`), `number_arm3`, `number_arm4` (same shape), `number_arm5` (`content` + `n` template), `escape_sequence_arm1..6` (content), and no entry for `number_arm2` (its body is a choice, so it stays a text leaf). Types: `packages/typescript/src/types.ts` has `_prefix: '0x' | '0X'` on `NumberArm1`, no `TSKindId` for it.
 
-- [ ] **Step 4: Generated node tests**
+- [x] **Step 4: Generated node tests**
 
 Run: `pnpm exec vitest run packages/typescript/tests/nodes.test.ts`
 Expected: PASS, with new `describe` blocks for every minted kind and a render test in each.
 
-- [ ] **Step 5: Type-check and lint**
+- [x] **Step 5: Type-check and lint**
 
 Run: `pnpm run type-check && pnpm run lint`
 Expected: type-check green; lint's only errors are the six under `.specify/extensions/security-review/`.
 
-- [ ] **Step 6: Validation**
+- [x] **Step 6: Validation**
 
 Run: `pnpm run validate:native` then `pnpm run validate:history | tail -4`
 Expected for typescript/native: `read-render-parse` pass and total unchanged at `112/114`; `factory-render-parse` and `ir-render-parse` totals rise by the minted kinds' fixtures with pass equal to total; `cov` rises with pass equal to total. Any pass count below its previous value is a stop-and-report, not a re-pin.
 
-- [ ] **Step 7: Corpus round-trip for the hoisted rules**
+- [x] **Step 7: Corpus round-trip for the hoisted rules**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts tool --help | sed -n '/round\|corpus\|probe-kind/p'` and use the listed round-trip tool on the typescript corpus filtered to `number`, `escape_sequence`, `regex_pattern` (the fixture files `packages/codegen/fixtures/typescript-*.txt` hold numbers in every base, bigints, escapes and regexes). Expected: every entry parses to the same tree it did before, now with the arm kind under the supertype; zero new mismatches.
 
-- [ ] **Step 8: Phantom ratchet and bindings**
+- [x] **Step 8: Phantom ratchet and bindings**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts tool --help | sed -n '/phantom/p'` and run the phantom census; expected count unchanged. Then `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --grammar typescript --emit packages/types/src/vocabulary` and `git status --short packages/types/src/vocabulary`; a diff there is reviewed (the supertypes still answer the `(number)` queries) and committed with this task if it is only the new arm kinds appearing.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add -- packages/typescript packages/codegen/src rust/crates/sittir-typescript packages/types/src/vocabulary
@@ -909,12 +909,12 @@ git commit -m "feat(typescript): number, escape_sequence and regex_pattern are s
 - Consumes: Task 4 green.
 - Produces: rust `integer_literal_arm1..4`, `char_literal_arm1..3`, `escape_sequence_arm1..4`; python `integer_arm1..4`, `float_arm1..3`, `escape_sequence_arm1..7`, `line_continuation_arm1..2`; rust `IntegerLiteralArmN._suffix?: 'u8' | ... | 'f64'`.
 
-- [ ] **Step 1: Baseline rows**
+- [x] **Step 1: Baseline rows**
 
 Run: `pnpm run validate:history | tail -4`
 Rust baseline: `from=204/204 cov=207/207 read-render-parse=135/137 factory-render-parse=1521/1521 ir-render-parse=1217/1217`. Python: `from=151/151 cov=142/142 read-render-parse=115/116 factory-render-parse=1374/1374 ir-render-parse=1266/1266`.
 
-- [ ] **Step 2: Regenerate both**
+- [x] **Step 2: Regenerate both**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -923,29 +923,29 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packag
 
 Expected: both complete. Check `rust/crates/sittir-rust/src/render/transport.rs` for `pub suffix: Option<String>,` inside each `IntegerLiteralArm<N>Transport`, and `packages/rust/src/types.ts` for `readonly _suffix?: 'u8' | 'i8' | ...` with no `U8Keyword` in that interface.
 
-- [ ] **Step 3: Rebuild native and run the node suites**
+- [x] **Step 3: Rebuild native and run the node suites**
 
 Run: `cargo build --release -p sittir-rust-napi` (or the workspace's napi build script from `DEVELOPMENT.md`), then as its own call:
 
 Run: `pnpm exec vitest run packages/rust/tests/nodes.test.ts packages/python/tests/nodes.test.ts`
 Expected: PASS.
 
-- [ ] **Step 4: Dogfood examples**
+- [x] **Step 4: Dogfood examples**
 
 Run: `pnpm run gen:examples` then `pnpm exec vitest run packages/tools/tests/emit/`
 Expected: PASS; the render-bytes fixtures are byte-identical. A rust example that spelled `suffix: TSKindId.U8Keyword` now spells `suffix: 'u8'` in its regenerated source; that source change is expected, the rendered bytes are not allowed to change.
 
-- [ ] **Step 5: Gates**
+- [x] **Step 5: Gates**
 
 Run: `pnpm run type-check && pnpm run lint`, then `pnpm run validate:native`, then `pnpm run validate:history | tail -4`.
 Expected: as in Task 4 for each grammar: read-render-parse rows unchanged (`135/137`, `115/116`), other totals rise with pass equal to total.
 
-- [ ] **Step 6: Full suite**
+- [x] **Step 6: Full suite**
 
 Run: `pnpm exec vitest run`
 Expected: only the `.specify/extensions/security-review` files fail (missing `js-yaml`).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "feat(rust,python): numeric, char and escape literals are supertypes over minted form kinds; integer_literal.suffix is text" -- packages/rust packages/python rust/crates/sittir-rust rust/crates/sittir-python examples packages/codegen/src
@@ -960,7 +960,7 @@ git commit -m "feat(rust,python): numeric, char and escape literals are supertyp
 - Modify: `docs/superpowers/specs/2026-09-21-token-form-hoist-design.md` (status line)
 - Modify: `docs/compiler-phase-glossary.md` (one sentence in the DSL-layer narrative)
 
-- [ ] **Step 1: Amend the token-interior spec**
+- [x] **Step 1: Amend the token-interior spec**
 
 Append under its `## Amendments` heading:
 
@@ -969,11 +969,11 @@ Append under its `## Amendments` heading:
 - A token whose body holds an alternation of forms is not one lexed compound: the DSL layer hoists the outermost alternation into one token kind per arm (see the token-form hoist design), and each arm is then a lexed compound of its own.
 ```
 
-- [ ] **Step 2: Mark the design implemented and add the narrative sentence**
+- [x] **Step 2: Mark the design implemented and add the narrative sentence**
 
 Change `Status: Approved design, not implemented.` to `Status: Implemented.` in the token-form spec. In `docs/compiler-phase-glossary.md`, in the paragraph describing what the DSL layer synthesizes before tree-sitter runs, add: "A whole-rule token whose body alternates between forms is distributed into one token kind per form (`hoistTokenFormArms`), so the parser lexes the forms as distinct symbols and the rule is their supertype."
 
-- [ ] **Step 3: Type-check, then commit and push**
+- [x] **Step 3: Type-check, then commit and push**
 
 ```bash
 pnpm run type-check
@@ -981,7 +981,7 @@ git commit -m "docs: token-form hoist landed; token-interior spec amended for te
 git push -u origin HEAD
 ```
 
-- [ ] **Step 4: Open the PR against feat/bindings-vocabulary**
+- [x] **Step 4: Open the PR against feat/bindings-vocabulary**
 
 Title: `feat(dsl): token forms — a lexeme's outermost alternation becomes parser kinds`. Body: link the spec, list the minted kinds per grammar (the table in the spec's "Effect" section), the validation rows before and after for all three grammars, and the rust `suffix` storage change. Never `--delete-branch`.
 

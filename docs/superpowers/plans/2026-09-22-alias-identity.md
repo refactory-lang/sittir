@@ -827,16 +827,16 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Provenance.** A node-model childKind descriptor built from enrich-stamped labels reads `definedBy: 'enrich'` (from `author: 'enrich'` on the stamp), `'override'` otherwise; the descriptor's value is `'enrich'` only when every labelled arm of the kind is enrich-authored. It is a label; nothing branches on it.
 
-- [ ] Enrich stamp and sidecar record.
-- [ ] Wire strip on field(); alias() writes the label.
-- [ ] Overlay arm set = variant-labelled members; deletions above.
-- [ ] definedBy 'enrich'.
-- [ ] Test: an upstream-fielded choice gets no automatic stamp.
-- [ ] Test: a patch-added field() strips enrich's automatic variants on that slot, while an authored variant() on it survives.
-- [ ] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
-- [ ] Report the arm diff per grammar before committing, with every ir-path change named.
-- [ ] Nested arms recurse: each arm's child carries its own arms under it, with no depth cap; only a kind-keyed cycle guard stops it. The tools' printing surface mounts arm printers at every depth too.
-- [ ] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
+- [x] Enrich stamp and sidecar record.
+- [x] Wire strip on field(); alias() writes the label.
+- [x] Overlay arm set = variant-labelled members; deletions above.
+- [x] definedBy 'enrich'.
+- [x] Test: an upstream-fielded choice gets no automatic stamp.
+- [x] Test: a patch-added field() strips enrich's automatic variants on that slot, while an authored variant() on it survives.
+- [x] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
+- [x] Report the arm diff per grammar before committing, with every ir-path change named.
+- [x] Nested arms recurse: each arm's child carries its own arms under it, with no depth cap; only a kind-keyed cycle guard stops it. The tools' printing surface mounts arm printers at every depth too.
+- [x] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
 
 **Follow-up:** a patch path should reach through a mint that `variant()` renamed. Today rust `visibility_modifier` works only because of patch order: the `in`/`in_path` patches apply first, then `'1/1/0': variant('scope')`, then `crate`/`pub`. With the scope patch first, the `in_path` path descends into the renamed group-lift symbol, which the lift map does not know. With it last, `'1'` is already minted as `pub`, so `'1/1/0'` cannot descend.
 
@@ -872,9 +872,9 @@ Every alias site is an envelope (the user's rule), and the read materializes it:
 
 Instances: python `_simple_pattern` at case_pattern (alias `simple_pattern`); typescript `_lhs_expression` at assignment_expression and for_header_lhs (alias `lhs_expression`); rust `_non_special_token` at the eleven token-tree kinds (alias `non_special_token`).
 
-- [ ] A composer or factory at an aliased site builds the AssembledAlias envelope, so a built node equals the read node.
-- [ ] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
-- [ ] Gates as Task 7.
+- [x] A composer or factory at an aliased site builds the AssembledAlias envelope, so a built node equals the read node.
+- [x] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
+- [x] Gates as Task 7.
 
 ### Task 7c: An absent registered choice option renders its default
 

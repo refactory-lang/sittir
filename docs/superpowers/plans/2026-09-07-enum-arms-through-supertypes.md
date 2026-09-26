@@ -34,7 +34,7 @@
 - Consumes: nothing.
 - Produces: `pnpm run type-check:examples` covers `16-dogfooding.ts`, `17-dogfood-rust.ts`, `17-dogfood-rust-strict.ts`, `18-dogfood-typescript.ts`, `18-dogfood-typescript-strict.ts`, `19-dogfood-python.ts`, `19-dogfood-python-strict.ts`.
 
-- [ ] **Step 1: Add the dogfood files to the examples project**
+- [x] **Step 1: Add the dogfood files to the examples project**
 
 Replace the `include` array in `examples/tsconfig.json` with:
 
@@ -55,12 +55,12 @@ Replace the `include` array in `examples/tsconfig.json` with:
 ]
 ```
 
-- [ ] **Step 2: Run the type-check to see the one pre-existing error**
+- [x] **Step 2: Run the type-check to see the one pre-existing error**
 
 Run: `pnpm run type-check:examples`
 Expected: exactly one error, `16-dogfooding.ts(20,5): error TS2322 … Property 'kind' is missing in type '{ members: PropertySignature.Built[]; }' but required in type '{ kind: "object_type"; }'`.
 
-- [ ] **Step 3: Tag the interface body's kind**
+- [x] **Step 3: Tag the interface body's kind**
 
 In `examples/16-dogfooding.ts` the `body` value of `ir.interfaceDeclaration({ … })` is a config on a multi-kind slot; a config on such a slot names its kind. Change
 
@@ -77,7 +77,7 @@ to
 					members: grammar.kinds.map((kind) =>
 ```
 
-- [ ] **Step 4: Make the strict headers state what they build**
+- [x] **Step 4: Make the strict headers state what they build**
 
 In `examples/18-dogfood-typescript-strict.ts` replace the paragraph beginning `// The whole file rebuilds here:` with:
 
@@ -113,17 +113,17 @@ In `examples/17-dogfood-rust-strict.ts` replace the paragraph beginning `// All 
 // `sort_by` comparator, both of which are constructible below.
 ```
 
-- [ ] **Step 5: Run the type-check to verify zero errors**
+- [x] **Step 5: Run the type-check to verify zero errors**
 
 Run: `pnpm run type-check:examples`
 Expected: no output, exit 0.
 
-- [ ] **Step 6: Run the example verification suites**
+- [x] **Step 6: Run the example verification suites**
 
 Run: `pnpm exec vitest run packages/rust/tests/examples-verify.test.ts packages/typescript/tests/examples-verify.test.ts packages/python/tests/examples-verify.test.ts`
 Expected: all pass (the `it.fails` cases still fail as expected).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "chore(examples): type-check the dogfood examples; the strict headers state what they build" -- examples/tsconfig.json examples/16-dogfooding.ts examples/17-dogfood-rust-strict.ts examples/18-dogfood-typescript-strict.ts examples/19-dogfood-python-strict.ts
@@ -504,7 +504,7 @@ Reclassified slots: <list from Step 3>" -- packages/rust/.sittir packages/rust/s
 - Consumes: `AssembledNodeBase.userFacing` (assemble stamps it: a hidden kind is user-facing when it is an alias source or a variant child).
 - Produces: `ir.stringLiteralOpen('"')`, `ir.fieldIdentifier('x')`, `ir.typeIdentifier('T')` and every other user-facing aliased pattern leaf on `ir`; enum leaves stay off `ir` (their values are kind ids).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `packages/codegen/src/emitters/__tests__/ir-leaf-exposure.test.ts`:
 
@@ -552,12 +552,12 @@ describe('ir leaf exposure follows userFacing, not the name prefix', () => {
 
 If `emitIr`'s exported name or config shape differs, read the top of `packages/codegen/src/emitters/ir.ts` and use the exported entry point that returns the module source (the ir emitter's `emit*` function taking `{ grammar, nodeMap, generatedIdTables? }`); the assertions stand.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/ir-leaf-exposure.test.ts`
 Expected: FAIL on `stringLiteralOpen: F.` (the `_` prefix drops it today).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `packages/codegen/src/emitters/ir.ts` replace `isFlatLeafOrKeyword` with:
 
@@ -576,12 +576,12 @@ function isFlatLeafOrKeyword(
 
 and in the leaf loop (`irValueLines.push('  // Leaf node factories')`) change the class test to `if (!(node instanceof AssembledPattern)) continue;`. Remove `AssembledEnum` from the import if it is no longer referenced in the file.
 
-- [ ] **Step 4: Run the test**
+- [x] **Step 4: Run the test**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/ir-leaf-exposure.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Regenerate and raise the ratchets deliberately**
+- [x] **Step 5: Regenerate and raise the ratchets deliberately**
 
 Regenerate all three grammars (Task 3 Step 2). Then count the callable `ir` builders per grammar:
 
@@ -591,11 +591,11 @@ for g in rust typescript python; do pnpm exec tsx -e "import { ir } from '@sitti
 
 In each package's `tests/examples-verify.test.ts` `ir entry ratchet` block, set `toBeLessThanOrEqual(<new count>)` and update the comment's numbers to the new totals; the commit message names the leaves that appeared (`stringLiteralOpen`, `fieldIdentifier`, `typeIdentifier`, …) and the ones that left (enum leaves such as `compoundAssignmentExprOperator`, which never had a node slot to feed).
 
-- [ ] **Step 6: Gates**
+- [x] **Step 6: Gates**
 
 Byte gate identical; `validate counts` identical; the six vitest suites, cargo, type-check, scope boundaries as in Task 3 Step 5.
 
-- [ ] **Step 7: Glossary and commits**
+- [x] **Step 7: Glossary and commits**
 
 Replace the `isFlatLeafOrKeyword` entry text in `docs/glossary/emitters.md` with:
 
@@ -626,7 +626,7 @@ git commit -m "chore(generated): regenerate for the ir leaf exposure" -- package
 - Consumes: Task 3 (`delimTokens` admits `TSKindId.Comma`), Task 4 (`ir.stringLiteralOpen`).
 - Produces: a strict example with no coercing call.
 
-- [ ] **Step 1: Add the token helpers and make both token-tree sites strict**
+- [x] **Step 1: Add the token helpers and make both token-tree sites strict**
 
 After the `scopedTy` const add:
 
@@ -664,12 +664,12 @@ writeCall('edit range not at UTF-8 char boundary: start={start}, end={end}')
 
 Add `TSKindId` to the `@sittir/rust` import.
 
-- [ ] **Step 2: Type-check and render**
+- [x] **Step 2: Type-check and render**
 
 Run: `pnpm run type-check:examples` — expected: 0 errors.
 Run the byte-gate script and read `rust-strict`: expected `#[derive(Debug,Clone,PartialEq,Eq)]` (tight by declared default) and `write!(f,"invalid edit range: start={start}, end={end}")`; the render re-parses clean (`pnpm exec vitest run packages/rust/tests/examples-verify.test.ts`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "chore(examples): the rust strict dogfood spells its token trees strictly with kind-id punctuation and the source's format strings" -- examples/17-dogfood-rust-strict.ts
@@ -679,7 +679,7 @@ git commit -m "chore(examples): the rust strict dogfood spells its token trees s
 
 ### Task 6: Spec status — DONE
 
-- [ ] **Step 1:** In `docs/superpowers/specs/2026-09-07-strict-rebuild-from-source-design.md` change the status line to `> **Status:** Storage and exposure landed (2026-09-07); the emitter follows its own plan.` and commit:
+- [x] **Step 1:** In `docs/superpowers/specs/2026-09-07-strict-rebuild-from-source-design.md` change the status line to `> **Status:** Storage and exposure landed (2026-09-07); the emitter follows its own plan.` and commit:
 
 ```bash
 git commit -m "docs(spec): record the storage and exposure slice as landed" -- docs/superpowers/specs/2026-09-07-strict-rebuild-from-source-design.md

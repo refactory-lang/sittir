@@ -122,7 +122,7 @@ nonterminal separator).
   `_content`/`_delimiter`; `tuple_type` becomes a single-slot parent
   (forwarded factory surface).
 
-- [ ] **Step 1: Replace the patch override with an extraction rewrite.**
+- [x] **Step 1: Replace the patch override with an extraction rewrite.**
   Mirror `_tuple_pattern_elements`' shape (fielded elements, optional
   trailing separator); reproduce the base rule's structure verbatim inside
   the new hidden rule:
@@ -141,23 +141,23 @@ tuple_type: ($) => seq('(', alias($._tuple_type_elements, 'tuple_type_elements')
   Delete the old `tuple_type: { '(_type)': field('type') }` patch entry and
   update the header comment that cites it.
 
-- [ ] **Step 2: Regenerate rust + rebuild the crate.**
+- [x] **Step 2: Regenerate rust + rebuild the crate.**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 cd rust/crates/sittir-rust && pnpm run build && cd -
 ```
 
-- [ ] **Step 3: Verify classification took.** `packages/rust/src/factories.ts`
+- [x] **Step 3: Verify classification took.** `packages/rust/src/factories.ts`
   must contain a spread-shaped `buildTupleTypeElements` (overload pair +
   `_optsFirst` dispatch, storage `_content` + `const _delimiter =
   options.delimiter ?? 0`) and `buildTupleType` must be a forwarded wrapper
   (`...args: Parameters<typeof buildTupleTypeElements>`). `rg
   '_type_delimiter' packages/rust/src` must return zero.
-- [ ] **Step 4: Verify parser shape.** Diff
+- [x] **Step 4: Verify parser shape.** Diff
   `packages/rust/.sittir/src/grammar.json` — `tuple_type` shows only the new
   alias member; `_tuple_type_elements` matches the base list verbatim.
-- [ ] **Step 5: Targeted probes (wrap AND render).**
+- [x] **Step 5: Targeted probes (wrap AND render).**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts tool probe-kind -g rust -t tuple_type
@@ -165,11 +165,11 @@ pnpm exec tsx packages/cli/src/cli.ts tool probe-kind -g rust -t tuple_type_elem
 ```
 
   Round-trip `(A, B)`, `(A, B,)`, single `(A,)` through render-parse.
-- [ ] **Step 6: Gate battery.** `pnpm run validate:native` + `pnpm exec tsx
+- [x] **Step 6: Gate battery.** `pnpm run validate:native` + `pnpm exec tsx
   packages/cli/src/cli.ts validate history 2` — floors byte-identical except
   tuple_type-family rows (each moved row explained); full suite 0 failed
   (stash-isolate anything new); baseline compare unchanged.
-- [ ] **Step 7: Commit.**
+- [x] **Step 7: Commit.**
 
 ```bash
 git commit -m "feat(rust): realify tuple_type elements as separatedList kind — slice 3b" -- packages/rust packages/codegen rust/crates/sittir-rust docs
@@ -191,7 +191,7 @@ git commit -m "feat(rust): realify tuple_type elements as separatedList kind —
   comma-leading list); parents keep `'print'`/`chevron` as template
   text/slot and hold the list node.
 
-- [ ] **Step 1: Rewrite group2 (clean sepBy1 shape).** Language-equality is
+- [x] **Step 1: Rewrite group2 (clean sepBy1 shape).** Language-equality is
   exact:
 
 ```ts
@@ -204,7 +204,7 @@ _print_arguments: ($) =>
 print_statement_group2: ($) => seq('print', alias($._print_arguments, 'print_arguments')),
 ```
 
-- [ ] **Step 2: Rewrite group1 preserving the bare-comma arm.** Original
+- [x] **Step 2: Rewrite group1 preserving the bare-comma arm.** Original
   post-chevron language is `{ε, ',', (',' arg)+, (',' arg)+ ','}`; the
   rewrite must keep all four:
 
@@ -231,12 +231,12 @@ print_statement_group1: ($) =>
   dropped the leading comma), and the extracted kind is the structure
   Task 3d's widening converts in place. Task 3e no longer includes
   group1.
-- [ ] **Step 4: Targeted probes.** `print 1, 2`, `print 1, 2,`, `print >>f`,
+- [x] **Step 4: Targeted probes.** `print 1, 2`, `print 1, 2,`, `print >>f`,
   `print >>f, 1`, `print >>f,` through render-parse
   (`tool probe-kind -g python -t print_statement`).
-- [ ] **Step 5: Gate battery** (same as Task 3b Step 6; python floors;
+- [x] **Step 5: Gate battery** (same as Task 3b Step 6; python floors;
   restore `grammar.js` if the diff is reorder-only).
-- [ ] **Step 6: Commit** (pathspec commit as in Task 3b).
+- [x] **Step 6: Commit** (pathspec commit as in Task 3b).
 
 ---
 
@@ -264,7 +264,7 @@ print_statement_group1: ($) =>
   `_expression_delimiter` gone. The widened lift also recognizes the shapes
   Task 3e needs (comma-terminated; comma-leading if deferred from 3c).
 
-- [ ] **Step 1: Diagnose the comparison pair.** Trace
+- [x] **Step 1: Diagnose the comparison pair.** Trace
   `_tuple_pattern_elements` (classifies separatedList) vs
   `_expression_statement_tuple` (classifies branch) through evaluate →
   link → assemble: find exactly which producer stamps
@@ -273,7 +273,7 @@ print_statement_group1: ($) =>
   bails on FIELD-wrapped elements — the S3 "inner slots hardcode
   trailing:false" diagnosis). Write the finding into the task commit
   message, not code comments.
-- [ ] **Step 2: Write failing unit pins** in the compiler tests for the
+- [x] **Step 2: Write failing unit pins** in the compiler tests for the
   three shapes, using minimal RenderRule fixtures:
   (i) `seq(field(f, sym), repeat(seq(',', field(f, sym))), optional(','))`
   → separatedList, separator `,`, trailing optional;
@@ -283,32 +283,32 @@ print_statement_group1: ($) =>
   (iii) the comma-terminated shape `seq(seq(elem, ','), repeat(seq(elem,
   ',')), optional(elem))` → separatedList, trailing delimiter present ⟺
   final element absent (the rust tuple shape, for Task 3e).
-- [ ] **Step 3: Run the pins — all three must FAIL** (classify branch /
+- [x] **Step 3: Run the pins — all three must FAIL** (classify branch /
   no separator lifted).
-- [ ] **Step 4: Widen at the identified root.** Fix the ONE producer Step 1
+- [x] **Step 4: Widen at the identified root.** Fix the ONE producer Step 1
   identified — do not patch classification downstream of it (stamped facts
   over re-derivation). If the fix requires knowledge only link has, the
   lift moves to link (the sanctioned end-state per the casing/lift
   architecture decision) — that move becomes part of this task, not a
   parallel heuristic.
-- [ ] **Step 5: Pins pass; regenerate ALL THREE grammars; rebuild all three
+- [x] **Step 5: Pins pass; regenerate ALL THREE grammars; rebuild all three
   crates.**
-- [ ] **Step 6: Verify the two B-sites converted.** Spread-shaped
+- [x] **Step 6: Verify the two B-sites converted.** Spread-shaped
   `buildEnumBodyElements` / `buildExpressionStatementTuple` with kind-level
   `_delimiter`; `rg '_content_delimiter|_expression_delimiter'
   packages/*/src` returns zero; `enum_body`'s forwarded wrapper now hoists
   the spread surface (`enumBody({ delimiter: 2 }, e1, e2)` type-checks —
   add a factory probe).
-- [ ] **Step 7: Re-check the enum_body_elements #170 pin per standard 4.**
+- [x] **Step 7: Re-check the enum_body_elements #170 pin per standard 4.**
   Stash the widening → generated test still fails; reapply → passes; then
   remove the pin from `expectTestFailures` (and the stale "#170" mechanism
   comments at `packages/typescript/grammar.sittir.ts:23-31` referencing the
   old single-field-storage gap).
-- [ ] **Step 8: Full gate battery, all three grammars.** Classifier changes
+- [x] **Step 8: Full gate battery, all three grammars.** Classifier changes
   are cross-grammar: floors byte-identical outside the two touched kinds'
   rows; any OTHER kind newly classifying separatedList is a STOP-and-review
   finding (5b), not a silent accept.
-- [ ] **Step 9: Commit.**
+- [x] **Step 9: Commit.**
 
 ---
 
@@ -326,7 +326,7 @@ print_statement_group1: ($) =>
   hoisting): `buildTupleExpression({ attributes, elements:
   buildTupleExpressionElements({ delimiter: 2 }, e1, e2) })`.
 
-- [ ] **Step 1: Extraction rewrite.** Confirm the base rule's tail from
+- [x] **Step 1: Extraction rewrite.** Confirm the base rule's tail from
   `packages/rust/.sittir/src/grammar.json` first (the dump at design time
   showed `'(' attrs (elem ',')+ … ` — verify the optional final element
   member), then mirror it verbatim inside the hidden rule:
@@ -349,7 +349,7 @@ tuple_expression: ($) =>
 
   (replaces the `tuple_expression: { 1: field('attributes'),
   '(_expression)': field('elements') }` patch entry).
-- [ ] **Step 2: Single-element validity invariant.** With the comma-
+- [x] **Step 2: Single-element validity invariant.** With the comma-
   terminated shape classified, `emitSeparatedListFactory` must emit the
   spec's asserted invariant for this kind: one element REQUIRES the
   trailing delimiter (`(1,)` vs parenthesized `(1)`). Emit the assert in
@@ -364,11 +364,11 @@ if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {
 
   Driven by a model fact stamped at classification (the shape class), not a
   kind-name special case.
-- [ ] **Step 3: Regenerate, rebuild, probe.** `(1,)`, `(1, 2)`, `(1, 2,)`,
+- [x] **Step 3: Regenerate, rebuild, probe.** `(1,)`, `(1, 2)`, `(1, 2,)`,
   `(#[attr] 1, 2)` through render-parse; the `(1,)` corpus row is EXPECTED
   to flip green — closes the deferred single-element-tuple regression;
   floors ratchet up only, movement explained.
-- [ ] **Step 4: Gate battery + commit.**
+- [x] **Step 4: Gate battery + commit.**
 
 ---
 
@@ -381,7 +381,7 @@ if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {
   `docs/KNOWN_ISSUES.md`, the spec's status line
 - Regenerate: all three grammars (codegen edits)
 
-- [ ] **Step 1: Delete the per-field flank machinery — now occupant-free.**
+- [x] **Step 1: Delete the per-field flank machinery — now occupant-free.**
   `flankOptionField` / `hasFlankOptions` / `flankOptionsType` /
   `delimiterSourceFor` and the `options` threading in
   `emitFieldCarryingFactory` (factories.ts:646-650, 711-732, 741-786,
@@ -389,28 +389,28 @@ if (elements.length === 1 && ((options.delimiter ?? 0) & 2) === 0) {
   `delimiterUnionFor` stays (used by `emitSeparatedListFactory`). Verify
   first: `rg 'delimiter\?' packages/*/src/factories.ts` shows only
   spread-shaped kinds.
-- [ ] **Step 2: Prove the sittir-core anon-matching fallback dead, then
+- [x] **Step 2: Prove the sittir-core anon-matching fallback dead, then
   delete it.** `flank_match` / `trailing_anon` / `leading_anon` in
   `rust/crates/sittir-core/src/filters.rs` (~12 sites) + the `FlankValues`
   anon arm: instrument or trace that `xs.trailing()` from the
   `_delimiter`-populated view wins at every call site across a full
   `validate:native` run of all three grammars, THEN delete. A hit is a
   STOP-and-review finding (5b).
-- [ ] **Step 3: Delete `separatedListFactoryOptions`** (validator suffix
+- [x] **Step 3: Delete `separatedListFactoryOptions`** (validator suffix
   discovery) and any remaining `_<field>_delimiter` handling in
   validate/common + exercise/roundtrip.
-- [ ] **Step 4: Audits at zero.**
+- [x] **Step 4: Audits at zero.**
 
 ```bash
 rg '_\w+_(trailing|leading)_sep' packages/*/src/wrap.ts   # → zero
 rg '_\w+_delimiter' packages/*/src                        # → zero
 ```
 
-- [ ] **Step 5: Docs.** Delete `ki-perfield-flank-residual` from
+- [x] **Step 5: Docs.** Delete `ki-perfield-flank-residual` from
   `docs/KNOWN_ISSUES.md`; update the spec's status to realized; sweep
   `docs/` for `_<field>_delimiter` / flank-vocabulary stragglers (spec-DRY
   audit rule).
-- [ ] **Step 6: Full battery (all grammars) + commit.**
+- [x] **Step 6: Full battery (all grammars) + commit.**
 
 ---
 
