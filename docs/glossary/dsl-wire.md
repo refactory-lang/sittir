@@ -923,6 +923,39 @@ Every `patches:` entry applied under this wire context, keyed by
 owner|path|form so an entry recorded by a rule function that runs more than
 once counts once.
 
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
+
+The rule bodies of the base `wire()` received (the enriched grammar's
+rules), read-only. The lift overlay falls back to them.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
+
+The lift overlay: every enrich group-lift body a patch rewrote, by lift
+name. Patches write here, never into the base, so the upstream grammar and
+its enriched form stay untouched.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetLiftBody`
+
+A lift's current body: the overlay's patched body, else the base body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireSetLiftBody`
+
+Records a patched lift body in the active wire context's overlay.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseRuleBodiesOf`
+
+The rules of a `wire()` base, wrapped or bare; an empty record without one.
+
+### `packages/codegen/src/dsl/wire/wire.ts::enrichLiftNames`
+
+Every rule enrich lifted out of a parent body: its clause groups and its
+visible-group sources. `wire()` gives each one still in the base, and not
+adopted by a declared group, a `passthroughBaseRuleFn`, inserted after the
+authored and patched-parent rule fns. Both tree-sitter's `grammar()` and
+sittir's `grammarFn` run rule fns in key insertion order, so a lift's fn
+runs after every fn whose patch can descend into it and returns the patched
+body in both pipelines.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordPatchSite`
 
 Records a `PatchSite` on the active wire context; a no-op outside one.
@@ -1427,8 +1460,9 @@ are what the shape-free half of the load-time check can promise.
 
 ```text
 /**
- * Passthrough rule fn for base rules that wire couldn't otherwise reach.
- * Returns `previous` unchanged; the pattern-replacement pass wraps this
+ * Rule fn for a base rule wire doesn't otherwise author: returns the rule's
+ * patched lift body from the active wire context when a patch descended
+ * into it, and `previous` otherwise. The pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
 ```
@@ -1778,6 +1812,14 @@ replaced inside the minted group as usual.
 This is a bridge until enrich sees the authored config directly (a combined
 `sittirGrammar(base, cfg)` entry point); enrich then declines the mint instead
 of wire undoing it.
+
+The delete is the one remaining write into a grammar wire did not create. The
+enriched base is shared with the upstream diagnostic stage, so a grammar that
+adopts a minted group (python: `comparison_operator_group`, `_not_in`,
+`_is_not`) has an enriched stage that already lacks those rules; its
+enriched-stage diagnostics are provisional. For the same reason the
+upstream-immutability test freezes only the raw upstream base, not the
+enriched base at `wire()` entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
 

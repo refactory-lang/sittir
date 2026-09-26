@@ -2551,18 +2551,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 #### body
 
 ```text
-// Apply group-lift write-backs BEFORE body-pattern injection and
-// applyPatternReplacement so that transforms (e.g. `field('last_arm')` added
-// via groupLiftRuleMap write-back during match_block's rule-fn evaluation)
-// are visible when patterns are matched. Without this, body-patterns that
-// include FIELD wrappers would fail to match because the FIELD is written
-// back to baseGrammar.rules DURING evaluateRuleFunctions, but the sittir
-// fork (rules) doesn't see it until adoptFinalBaseRules runs.
-```
-
-#### body
-
-```text
 // Evaluate body-pattern group fns and inject hidden rule bodies into
 // `rules` so that `applyPatternReplacement` Path B can find them. The wire
 // path registers these via `applyWirePatternReplacement`, but the sittir
@@ -2584,58 +2572,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 
 ```text
 // body fn failed to evaluate in sittir context — skip; wire path handles it
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::adoptFinalBaseRules`
-
-```text
-/**
- * Make `grammarFn`'s view of the base rules identical to tree-sitter's.
- *
- * @remarks
- * tree-sitter's native `grammar(base, ext)` reads the FINAL `base.grammar.rules`
- * (`mergedRules`) — the object that all of enrich's injected hidden rules AND every
- * `transform()` group-lift write-back mutate. An authored path-patch that descends
- * through an enrich group-lift symbol writes the patched body via
- * `groupLiftRuleMap.set(name, newBody)`, which mutates that same `mergedRules`; the
- * parser therefore sees the patch (e.g. rust `match_block`'s `field('last_arm')`
- * reaches grammar.json).
- *
- * `grammarFn` (this shim) instead forks `baseGrammar.rules` into a private `rules`
- * map at entry — `baseRules = {…baseGrammar.rules}`, `rules = {…baseRules}` — BEFORE
- * any rule fn runs, so a group-lift write-back lands in `baseGrammar.rules` but not
- * in the fork. Left alone, the IR reads a stale, pre-patch copy of the very rule
- * tree-sitter reads patched — a sittir-vs-tree-sitter divergence in how the SAME
- * input is consumed.
- *
- * Reconcile the fork with the final base state so both consumers read the one
- * `mergedRules`. Scoped to avoid clobbering: adopt the final body only for base
- * rules that (a) actually diverged from the entry snapshot — the write-back signal,
- * since nothing else mutates `baseGrammar.rules` mid-evaluation — and (b) the IR
- * still holds as that untouched entry snapshot (an authored rule fn / synthetic
- * injection / pattern-replacement that produced its own body replaced `rules[name]`,
- * so this stays false for them and is never overwritten). This is not consumer
- * branching — it makes `grammarFn`'s read of its inputs equal to tree-sitter's.
- */
-```
-
-```text
-// no write-back touched this base rule
-```
-
-#### body
-
-```text
-// `rules[name] !== entry` alone doesn't mean `rules[name]` is authored,
-// injected, or pattern-replaced — a rule with its own wire rule-fn (e.g. a
-// group-lift host like `_visibility_modifier_group1`) is ALSO re-evaluated
-// from the fn during `evaluateRuleFunctions`, landing a DIFFERENT object in
-// `rules[name]` that is stale relative to the group-lift write-back that
-// happened concurrently in `finalBase`/`baseGrammar.rules` (the SAME bag
-// `groupLiftRuleMap` writes through). Only a genuinely user-authored
-// `rules:` override should veto the write-back — anything else re-deriving
-// `rules[name]` independently must lose to the write-back, matching what
-// the wire/parser side already does.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::prunePlaceholderOrphans`
@@ -8370,14 +8306,6 @@ carried through a side channel.
 
 ```text
 // Extract metadata
-```
-
-#### body
-
-```text
-// adoptFinalBaseRules is now called inside evaluateRulesAndInjectSynthetics,
-// before applyPatternReplacement, so body-patterns can match FIELD-wrapped
-// bodies that were written back via group-lift during rule evaluation.
 ```
 
 #### body

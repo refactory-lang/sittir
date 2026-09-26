@@ -4671,6 +4671,9 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
 
 ### `packages/codegen/src/dsl/enrich.ts::enrich`
 
+Works on a copy of its input's rules: the input grammar is never written,
+so the upstream module stays as published for every later evaluation.
+
 #### body
 
 ```text

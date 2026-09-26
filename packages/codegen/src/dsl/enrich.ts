@@ -52,7 +52,6 @@ import {
 	type SymbolSource
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
-import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
@@ -80,10 +79,11 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
 	const hasWrapper = 'grammar' in base;
-	const rulesBag = (hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as
+	const baseRules = (hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as
 		| Record<string, Rule>
 		| undefined;
-	if (!rulesBag) return base as unknown as EnrichedGrammar<B>;
+	if (!baseRules) return base as unknown as EnrichedGrammar<B>;
+	const rulesBag: Record<string, Rule> = { ...baseRules };
 	const grammarMeta = (hasWrapper ? base.grammar : base) as
 		| { word?: string | null | ((dollar: unknown) => unknown) }
 		| undefined;
@@ -162,12 +162,6 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	}
 	synthesizeFieldEnumRules(mergedRules);
 	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
-	setGroupLiftRuleMap({
-		get: (n) => mergedRules[n] as unknown as RuntimeRule | undefined,
-		set: (n, b) => {
-			mergedRules[n] = b as unknown as Rule;
-		}
-	});
 	const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }

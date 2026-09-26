@@ -5,8 +5,6 @@ import {
 	reconstructPrec,
 	reconstructContainer,
 	wrapInPrecStack,
-	getGroupLiftRuleBody,
-	setGroupLiftRuleBody,
 	isEnrichGroupLiftSymbol,
 	ApplyPathSkip
 } from './transform-path.ts';
@@ -41,6 +39,8 @@ import {
 	wireDeclareRuleBody,
 	wireAutomaticVariants,
 	wireRecordPatchSite,
+	wireGetLiftBody,
+	wireSetLiftBody,
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
@@ -451,7 +451,7 @@ function buildHoistedVariants(
 		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
 	}
 	for (const { altIdx, lift } of lifted) {
-		setGroupLiftRuleBody(lift.liftName, hoist(lift.body));
+		wireSetLiftBody(lift.liftName, hoist(lift.body));
 		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
@@ -505,7 +505,7 @@ function enrichLiftArmOf(
 	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
 		return null;
 	}
-	const body = getGroupLiftRuleBody(symbol.name);
+	const body = wireGetLiftBody(symbol.name);
 	return body === undefined ? null : { body, liftName: symbol.name, symbol };
 }
 
@@ -806,7 +806,7 @@ function relabelUniformFieldSet(content: unknown, newName: string): unknown | nu
 		}
 		if (isEnrichGroupLiftSymbol(n as RuntimeRule) && isHiddenKind((n as { name?: string }).name ?? '')) {
 			const liftName = (n as { name?: string }).name;
-			const body = liftName === undefined ? undefined : getGroupLiftRuleBody(liftName);
+			const body = liftName === undefined ? undefined : wireGetLiftBody(liftName);
 			if (liftName !== undefined && body !== undefined && !liftBodies.has(liftName)) {
 				liftBodies.set(liftName, body);
 				collect(body, inRepeat);
@@ -840,7 +840,7 @@ function relabelUniformFieldSet(content: unknown, newName: string): unknown | nu
 		return n;
 	};
 	for (const [liftName, body] of liftBodies) {
-		setGroupLiftRuleBody(liftName, rewrite(body) as RuntimeRule);
+		wireSetLiftBody(liftName, rewrite(body) as RuntimeRule);
 	}
 	return rewrite(content);
 }

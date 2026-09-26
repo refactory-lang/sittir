@@ -81,6 +81,8 @@ export interface WireContext {
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
 	readonly adoptedGroups: ReadonlyMap<string, string>;
+	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
+	readonly liftBodies: Map<string, RuntimeRule>;
 }
 
 export interface RefineForm {
@@ -179,6 +181,18 @@ export function wireIsExtraRule(name: string): boolean {
 	return currentContext?.extraRuleNames.has(name) ?? false;
 }
 
+export function wireGetLiftBody(name: string): RuntimeRule | undefined {
+	return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
+}
+
+export function wireSetLiftBody(name: string, body: RuntimeRule): void {
+	currentContext?.liftBodies.set(name, body);
+}
+
+function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, RuntimeRule>> {
+	return (base?.grammar?.rules ?? base?.rules ?? {}) as unknown as Readonly<Record<string, RuntimeRule>>;
+}
+
 export function withWireContext<T>(
 	ruleKind: string | null,
 	fn: (ctx: WireContext) => T,
@@ -206,7 +220,9 @@ export function withWireContext<T>(
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: new Map()
+		adoptedGroups: new Map(),
+		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
+		liftBodies: new Map()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -385,7 +401,9 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base, cfg.groups) : new Map()
+		adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base, cfg.groups) : new Map(),
+		baseRuleBodies: baseRuleBodiesOf(baseArg),
+		liftBodies: new Map()
 	};
 
 	const patches = cfg.patches ?? {};
@@ -399,6 +417,10 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 			if (baseName in outRules) continue;
 			outRules[baseName] = passthroughBaseRuleFn;
 		}
+	}
+	for (const liftName of enrichLiftNames(base)) {
+		if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+		outRules[liftName] = passthroughBaseRuleFn;
 	}
 	wrapAllRuleFns(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
@@ -885,8 +907,13 @@ function hasBodyPatternGroups(groups: GroupsConfig): boolean {
 }
 
 const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
-	return previous;
+	const name = currentContext?.currentRuleKind;
+	return (name === null || name === undefined ? undefined : currentContext?.liftBodies.get(name)) ?? previous;
 };
+
+function enrichLiftNames(base: unknown): Set<string> {
+	return new Set([...getEnrichClauseGroups(base), ...getEnrichVisibleGroupSources(base)]);
+}
 
 interface WirePatternCandidate {
 	readonly name: string;

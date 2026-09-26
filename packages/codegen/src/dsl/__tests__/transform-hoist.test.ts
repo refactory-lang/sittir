@@ -6,7 +6,6 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { transform } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
-import { setGroupLiftRuleMap } from '../transform/transform-path.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 describe('tryHoistSiblingVariants (via transform)', () => {
@@ -70,37 +69,31 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 	});
 
 	it('carries an unnamed arm that enrich already lifted: the lift keeps its name and takes the scaffolding', () => {
-		const lifts = new Map<string, unknown>([['_lifted_arm', { type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'Y' }] }]]);
-		setGroupLiftRuleMap({
-			get: (n) => lifts.get(n) as never,
-			set: (n, b) => void lifts.set(n, b)
-		});
-		try {
-			const { ctx, result } = withWireContext('lifted', () => {
-				const g = globalThis as any;
-				const liftArm = {
-					type: 'ALIAS',
-					content: { type: 'SYMBOL', name: '_lifted_arm', metadata: { symbolSource: 'group-lift' } },
-					named: true,
-					value: 'lifted_arm'
-				};
-				const original = g.seq(
-					{ type: 'STRING', value: '[' } as any,
-					g.choice({ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'X' }] } as any, liftArm as any),
-					{ type: 'STRING', value: ']' } as any
-				);
-				return transform(original, { '1/0': variant('x') });
-			});
-			expect([...ctx.deposits.keys()]).toEqual(['lifted_x']);
-			const lift = lifts.get('_lifted_arm') as { members: { type: string; value?: string; name?: string }[] };
-			expect(lift.members.map((m) => m.value ?? m.name ?? m.type)).toEqual(['[', 'SEQ', ']']);
-			expect((result as unknown as { type: string; members: { name?: string; value?: string }[] }).members.map((m) => m.name ?? m.value)).toEqual([
-				'lifted_x',
-				'lifted_arm'
-			]);
-		} finally {
-			setGroupLiftRuleMap(undefined);
-		}
+		const liftedArm = Object.freeze({ type: 'SEQ', members: Object.freeze([{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'Y' }]) });
+		const baseRules = Object.freeze({ _lifted_arm: liftedArm });
+		const { ctx, result } = withWireContext('lifted', () => {
+			const g = globalThis as any;
+			const liftArm = {
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_lifted_arm', metadata: { symbolSource: 'group-lift' } },
+				named: true,
+				value: 'lifted_arm'
+			};
+			const original = g.seq(
+				{ type: 'STRING', value: '[' } as any,
+				g.choice({ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'X' }] } as any, liftArm as any),
+				{ type: 'STRING', value: ']' } as any
+			);
+			return transform(original, { '1/0': variant('x') });
+		}, Object.freeze({ grammar: Object.freeze({ rules: baseRules }) }));
+		expect([...ctx.deposits.keys()]).toEqual(['lifted_x']);
+		const lift = ctx.liftBodies.get('_lifted_arm') as unknown as { members: { type: string; value?: string; name?: string }[] };
+		expect(lift.members.map((m) => m.value ?? m.name ?? m.type)).toEqual(['[', 'SEQ', ']']);
+		expect((result as unknown as { type: string; members: { name?: string; value?: string }[] }).members.map((m) => m.name ?? m.value)).toEqual([
+			'lifted_x',
+			'lifted_arm'
+		]);
+		expect(baseRules._lifted_arm).toBe(liftedArm);
 	});
 
 	it('keeps the per-arm form when an unnamed arm has no enrich lift to carry it', () => {

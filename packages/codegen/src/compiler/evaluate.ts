@@ -568,7 +568,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 	const wireCtx = getWireContext(opts);
 	if (wireCtx) {
 		injectSyntheticRules(rules, ctx, wireCtx.deposits);
-		adoptFinalBaseRules(rules, ctx, wireCtx);
 		if (wireCtx.groups) {
 			for (const [key, value] of Object.entries(wireCtx.groups)) {
 				if (typeof value !== 'function') continue;
@@ -590,22 +589,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 	}
 }
 
-function adoptFinalBaseRules(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	wireCtx: WireContext | undefined
-): void {
-	const { baseGrammar, baseRules } = ctx;
-	if (baseGrammar === null || baseGrammar === undefined) return;
-	const finalBase = (baseGrammar as { rules: Record<string, Rule<'evaluate'>> }).rules;
-	for (const name of Object.keys(finalBase)) {
-		const finalRule = finalBase[name];
-		const entry = baseRules[name];
-		if (finalRule === entry) continue;
-		if (rules[name] !== entry && wireCtx?.authoredRuleNames.has(name)) continue;
-		rules[name] = coerceToRule(finalRule as Input);
-	}
-}
 
 function prunePlaceholderOrphans(
 	rules: Record<string, Rule<'evaluate'>>,
