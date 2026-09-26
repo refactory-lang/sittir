@@ -29,6 +29,7 @@ import {
 	getChildFactoryArgs,
 	nodeToConfig,
 	loadNodeModel,
+	type TSNode,
 	type TSTree,
 	type ValidatorSkip
 } from './common.ts';
@@ -187,6 +188,11 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
+	trivia: ValidatorSkip[];
+}
+
+function insideExtra(node: TSNode | null): boolean {
+	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
 
 export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
@@ -277,7 +283,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			divergentCount: 0,
 			errors,
 			skips: [],
-			excluded: []
+			excluded: [],
+			trivia: []
 		};
 	}
 
@@ -287,6 +294,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let total = 0;
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
+	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const excludedKinds = new Set<string>();
 	let undefinedCount = 0;
 	let divergentCount = 0;
@@ -360,6 +368,18 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 								message: `leaf text route throws: ${(e as Error).message}`
 							});
 						}
+						continue;
+					}
+					if (insideExtra(node1)) {
+						total--;
+						testedKinds.delete(kind);
+						if (!orphanedExtras.has(kind))
+							orphanedExtras.set(kind, {
+								entry: entry.name,
+								kind,
+								reason: 'native-read-dropped-extra',
+								input: entry.source
+							});
 						continue;
 					}
 					errors.push({
@@ -552,6 +572,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		}
 	}
 
+	const trivia = [...orphanedExtras.values()].filter((s) => !testedKinds.has(s.kind!));
 	emitValidatorMetrics();
 	return {
 		grammar,
@@ -563,7 +584,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		divergentCount,
 		errors,
 		skips,
-		excluded
+		excluded,
+		trivia
 	};
 }
 
@@ -571,7 +593,7 @@ export function formatFromReport(result: FromValidationResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(
-		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`
+		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped, ${result.trivia.length} trivia)`
 	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {

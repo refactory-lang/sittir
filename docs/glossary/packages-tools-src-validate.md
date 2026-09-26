@@ -115,45 +115,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/tools/src/validate/common.ts::parseCorpus`
 
-```text
-/**
- * Parse a tree-sitter test corpus file.
- * Format: `====` header, test name, `====`, source, `----`, expected tree.
- */
-```
+Splits a tree-sitter test corpus file into entries exactly as the
+`tree-sitter test` harness (cli/src/test.rs) does, so the validators see the
+bytes the parser was tested on:
 
-#### body
+- A header is a `===` line, the name line (plus attribute lines), and a
+  closing `===` line. Only headers whose suffix (text after the `=` run)
+  equals the first header's suffix count, and only dividers with that
+  suffix split input from expected tree.
+- When a body holds several matching `---` dividers, the longest one splits
+  it; on a tie, the last.
+- The input is the bytes from the header's end to the divider, minus one
+  trailing `\n` (and a `\r` before it). A typical entry therefore reads as
+  `"\n<source>\n"`; the leading newline stays, and a token that needs its
+  line end (a shebang) keeps it.
 
-```text
-// Capture optional `:language(...)` directive lines that may appear
-// between the name and the closing `====` (e.g. `:language(tsx)`).
-// The directive selects which sub-grammar variant to use; when it
-// names a grammar other than the one being validated, the entry is
-// skipped entirely (sittir's validator loads a single parser per
-// grammar — it cannot parse TSX-only entries with the TS parser, so
-// counting them as failures would skew the numbers).
-```
+Entries are dropped, not counted, when they carry `:error`, when their
+expected tree holds `(ERROR` or `(MISSING` (intentional error tests), when
+`:language(x)` names a grammar other than `grammar` (the validator loads a
+single parser per grammar), or when the input is blank.
 
-#### body
+### `packages/tools/src/validate/common.ts::loadCorpusEntries`
 
-```text
-// Entry is declared for a different sub-grammar (e.g.
-// `:language(tsx)` when validating `typescript`). Skip it
-// entirely — don't include in totals.
-```
-
-### `packages/tools/src/validate/common.ts::FIXTURES_DIR`
-
-```text
-// ---------------------------------------------------------------------------
-// Fixtures directory + loader
-// ---------------------------------------------------------------------------
-```
-
-```text
-// The corpus fixtures live in the codegen package; resolve them there explicitly
-// (this validator was relocated from codegen/src/validate to tools/src/validate — R9c).
-```
+A grammar's corpus: every `upstream/*.txt` under
+`packages/codegen/fixtures/<grammar>/` in name order, then that directory's
+`local.txt` (sittir-authored entries). A grammar with no entries throws,
+naming `sittir tool fetch-corpus --grammar <grammar>`; an empty corpus
+would otherwise report a passing 0/0 run.
 
 ### `packages/tools/src/validate/common.ts::treeHandle`
 
@@ -884,7 +872,7 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 ```text
 /**
  * One untested item, named, with the reason it went untested. Every
- * validator result carries two lists of these, so that no item leaves a
+ * validator result carries these lists, so that no item leaves a
  * validator without a record:
  *
  * - `skips`: items counted in `total` but neither passed nor failed. The
@@ -893,6 +881,11 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
  * - `excluded`: in-domain items dropped before counting (a corpus entry
  *   that does not parse, a candidate with no reparse wrapper or an empty
  *   render, a kind with no from/factory function or no render rule).
+ * - `trivia` (from and read-render-parse only): items lost because the
+ *   native read dropped an extra (a comment with no named non-extra
+ *   sibling to attach to). Kept out of `total`, `pass`, `fail` and `skip`,
+ *   and reported as `<stage>-trivia` at severity `warning`, classified
+ *   `trivia` with its own shrink-only ceiling.
  *
  * Items outside a validator's domain (anonymous nodes, supertypes, pure
  * leaves, kinds outside the grammar's rule set) are not in either list.
