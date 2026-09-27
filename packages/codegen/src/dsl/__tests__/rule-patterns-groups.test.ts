@@ -11,7 +11,7 @@ const opt = (c: any) => ({ type: 'OPTIONAL', content: c });
 const symbols = predictedSymbolSource(
 	symbolFactsOf({
 		rules: { _semicolon: choice(sym('_automatic_semicolon'), str(';')) } as never,
-		externals: ['_automatic_semicolon'],
+		externals: [{ type: 'SYMBOL', name: '_automatic_semicolon' }],
 		inline: ['_semicolon'],
 		supertypes: [],
 		extras: []

@@ -40,7 +40,7 @@ function makeMinimalNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }
@@ -60,7 +60,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }
@@ -85,7 +85,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }
@@ -110,7 +110,7 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }
@@ -138,7 +138,7 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }
@@ -155,7 +155,7 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 		grammarSha: 'test-sha',
 		rules: {},
 		nodes,
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} as unknown as NodeMap;
 }

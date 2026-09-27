@@ -9,9 +9,24 @@
     "inline_flags_group"
   ],
   "externals": [
-    "_newline",
-    "_space",
-    "_tight"
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    }
+  ],
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
   ],
   "polymorphVariants": {
     "pattern": {

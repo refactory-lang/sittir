@@ -3538,9 +3538,21 @@ Builds the DSL-phase `SymbolSource` from a grammar's `SymbolFacts`: `isTerminal`
 
 The declared grammar facts a `SymbolSource` is built from: rule bodies, and the `externals`, `inline`, `supertypes`, `extras` and `visibleExternals` names. The rule order matters: the first rule is the start rule `predictedRenames` walks from.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListEntry`
+
+One entry of a grammar's `extras` or `externals` list, in grammar.json's own shape: a SYMBOL (a rule or scanner token by name), a STRING (a literal text), or a PATTERN (a regex source). Externals hold SYMBOL and STRING entries; extras hold all three. The lists stay rule lists from evaluate to the serialized node model, in declaration order, so every reader sees each entry's rule type rather than a name-or-text string.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListParts`
+
+The three views of a rule list that `ruleListParts` returns: `names` (SYMBOL entries), `literals` (STRING values) and `patterns` (PATTERN sources), each in list order.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleListParts`
+
+The one derivation of names, literals and patterns from an `extras` or `externals` rule list. A consumer that asks by name (prune roots, synthetic external rules, renames, inline-at-reference, trivia) reads `names`; nothing stores a split copy of the list.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::symbolFactsOf`
 
-Reads a grammar's `SymbolFacts`, as sets, off anything shaped like an evaluated grammar; `visibleExternals` is the keys of the grammar's declared record (none when it declares none).
+Reads a grammar's `SymbolFacts`, as sets, off anything shaped like an evaluated grammar; its `externals` and `extras` are the SYMBOL names of the grammar's rule lists (`ruleListParts`), and `visibleExternals` is the keys of the grammar's declared record (none when it declares none).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::InlineAtReferenceCtx`
 

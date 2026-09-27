@@ -78,7 +78,7 @@ describe('the predicted symbol source agrees with the generated parser at every 
 			const symbols = predictedSymbolSource(
 				symbolFactsOf({
 					rules: json.rules,
-					externals: (json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : [])),
+					externals: (json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [{ type: 'SYMBOL' as const, name: e.name }] : [])),
 					inline: json.inline ?? [],
 					supertypes: [],
 					extras: []

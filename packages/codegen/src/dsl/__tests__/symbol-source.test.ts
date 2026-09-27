@@ -9,7 +9,7 @@ import {
 } from '../rule-patterns.ts';
 import type { AnyRule } from '../../types/rule.ts';
 
-const sym = (name: string) => ({ type: 'SYMBOL', name });
+const sym = (name: string) => ({ type: 'SYMBOL' as const, name });
 const str = (value: string) => ({ type: 'STRING', value });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
 const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
@@ -22,10 +22,10 @@ function sourceOf(
 	return predictedSymbolSource(
 		symbolFactsOf({
 			rules: rules as Record<string, AnyRule>,
-			externals: opts.externals ?? [],
+			externals: (opts.externals ?? []).map(sym),
 			inline: [],
 			supertypes: [],
-			extras: opts.extras ?? [],
+			extras: (opts.extras ?? []).map(sym),
 			visibleExternals: Object.fromEntries((opts.visibleExternals ?? []).map((name) => [name, true]))
 		})
 	);

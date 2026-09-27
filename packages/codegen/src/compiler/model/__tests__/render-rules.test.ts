@@ -59,7 +59,7 @@ function nodeMapOf(
 		nodes,
 		normalizedRules: rules,
 		slotByRuleId,
-		externals: new Set(opts.externals ?? [])
+		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name }))
 	} as unknown as NodeMap;
 }
 

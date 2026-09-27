@@ -61,7 +61,7 @@ describe('buildSupertypeTransportSet', () => {
 			signatures: { signatures: new Map() },
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
-			externals: new Set(),
+			externals: [],
 			word: undefined
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);

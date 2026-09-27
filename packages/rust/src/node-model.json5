@@ -41,22 +41,84 @@
     "token_tree_pattern"
   ],
   "externals": [
-    "_blankline",
-    "_block_comment_content",
-    "_dedent",
-    "_error_sentinel",
-    "_indent",
-    "_newline",
-    "_space",
-    "_tight",
-    "doc_comment",
-    "float_literal",
-    "inner_doc_comment_marker",
-    "outer_doc_comment_marker",
-    "raw_string_literal_content",
-    "raw_string_literal_end",
-    "raw_string_literal_start",
-    "string_content"
+    {
+      "type": "SYMBOL",
+      "name": "string_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "float_literal"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "outer_doc_comment_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inner_doc_comment_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_block_comment_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "doc_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_error_sentinel"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
+    }
+  ],
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "block_comment"
+    }
   ],
   "polymorphVariants": {
     "expression_statement": {

@@ -1,7 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
-import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
+import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
@@ -183,7 +183,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				}
 				return { mergePairClassCombos: combos, mergePairLeftChars: lefts, mergePairRightChars: rights };
 			})(),
-			externals: [...(config.nodeMap.externals ?? [])],
+			externals: ruleListParts(config.nodeMap.externals ?? []).names,
 			rules: config.renderRules?.rules ?? config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
 			emittedSlotNames: new Set<string>(),

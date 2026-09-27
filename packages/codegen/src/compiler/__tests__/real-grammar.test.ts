@@ -5,6 +5,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 
 // Raw base grammars (no override() / variant() applied) still contain
 // non-canonical shapes that would trip the derive-audit default. Switch
@@ -50,7 +51,7 @@ describe('Evaluate — real tree-sitter grammars', () => {
 		['typescript', (): string => resolveOverridesPath('typescript'), ['||']]
 	])('%s keeps literal-text externals but mints no rule for them', async (_name, grammar, literals) => {
 		const raw = await evaluate(grammar());
-		expect(literals.every((t) => raw.externals.includes(t))).toBe(true);
+		expect(literals.every((t) => ruleListParts(raw.externals).literals.includes(t))).toBe(true);
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
 		expect(literals.filter((t) => linked.rules[t] !== undefined)).toEqual([]);
 	});

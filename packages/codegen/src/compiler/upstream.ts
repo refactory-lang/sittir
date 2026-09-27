@@ -1,3 +1,4 @@
+import { ruleListParts } from '../dsl/rule-patterns.ts';
 import { collectGrammarDiagnosticsForGrammar } from './diagnostics/grammar-diagnostics.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { UpstreamEvaluation } from './types.ts';
@@ -14,7 +15,7 @@ export function compileUpstream(evaluation: UpstreamEvaluation): UpstreamCompila
 	const { raw, ruleNames } = evaluation;
 	try {
 		const { diagnostics } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
-		return { ruleNames: new Set(ruleNames), externalNames: new Set(raw.externals), diagnostics };
+		return { ruleNames: new Set(ruleNames), externalNames: new Set(ruleListParts(raw.externals).names), diagnostics };
 	} catch (error) {
 		return failedUpstream(error instanceof Error ? error.message : String(error));
 	}

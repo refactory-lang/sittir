@@ -17,7 +17,7 @@ function symbolsOf(
 	return symbolSourceOf({
 		...symbolFactsOf({
 			rules: rules as Record<string, AnyRule>,
-			externals: opts.externals ?? [],
+			externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
 			inline: opts.inline ?? [],
 			supertypes: [],
 			extras: []

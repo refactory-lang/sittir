@@ -49,7 +49,6 @@ import { runToFixpoint } from './fixpoint.ts';
 import {
 	collectGeneratedKindEntries,
 	findEntryForKindName,
-	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	findEntryForPatternValue,
 	isParserHiddenKind,
@@ -101,7 +100,9 @@ import {
 	assertPredictionAgrees,
 	symbolFactsOf,
 	type InlineAtReferenceCtx,
-	type SymbolSource
+	type SymbolSource,
+	ruleListParts,
+	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
 import { catalogSymbolSource } from './diagnostics/alias-distributed.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
@@ -208,7 +209,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 
 	stripResolvedRoleRules(rules);
-	createSyntheticExternalRules(rules, raw.externals, kindEntries);
+	createSyntheticExternalRules(rules, ruleListParts(raw.externals).names);
 	const visibleInlineNames = raw.inline.filter((name) => !isParserHiddenKind(name, kindEntries));
 	if (visibleInlineNames.length > 0) {
 		linkCtx.diagnostics.warn({
@@ -345,12 +346,10 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 
 function createSyntheticExternalRules(
 	rules: Record<string, Rule<'link'>>,
-	externals: readonly string[],
-	kindEntries: readonly GeneratedKindEntry[]
+	externals: readonly string[]
 ): void {
 	for (const ext of externals) {
 		if (rules[ext]) continue;
-		if (findAnonEntryForLiteralText(kindEntries, ext)) continue;
 		rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
 	}
 }
@@ -748,7 +747,7 @@ const renameWalker = new RuleWalker<Rule<'evaluate'>>({});
 
 function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<string, string> {
 	const renames = new Map<string, string>();
-	for (const name of [...Object.keys(raw.rules), ...raw.externals]) {
+	for (const name of [...Object.keys(raw.rules), ...ruleListParts(raw.externals).names]) {
 		const entry = findEntryForKindName(ctx.kindEntries, name);
 		if (
 			entry === undefined ||
@@ -793,7 +792,8 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 	const targets = new Map<string, string>();
 	for (const [from, to] of renames) {
 		const taken =
-			targets.get(to) ?? ((to in raw.rules || raw.externals.includes(to)) && !renames.has(to) ? to : undefined);
+			targets.get(to) ??
+			((to in raw.rules || ruleListParts(raw.externals).names.includes(to)) && !renames.has(to) ? to : undefined);
 		if (taken !== undefined)
 			throw new Error(`link: '${from}' collapses into its tree name '${to}', which '${taken}' already names`);
 		targets.set(to, from);
@@ -834,14 +834,16 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 	}
 	const supertypes = raw.supertypes.map(rename);
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes });
+	const renameEntry = (entry: RuleListEntry): RuleListEntry =>
+		entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry;
 	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });
 	return {
 		...raw,
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		references,
-		extras: raw.extras.map(rename),
-		externals: raw.externals.map(rename),
+		extras: raw.extras.map(renameEntry),
+		externals: raw.externals.map(renameEntry),
 		supertypes,
 		factoryInline: raw.factoryInline.map(rename),
 		inline: raw.inline.map(rename),
@@ -929,7 +931,8 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	const rootName = rootRuleName(rules);
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
-	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras, ...ctx.supertypes]) {
+	const externals = ruleListParts(ctx.grammar.externals);
+	for (const keep of [...externals.names, ...externals.literals, ...ruleListParts(ctx.grammar.extras).names, ...ctx.supertypes]) {
 		for (const name of computeReachableFromRoot({ rules, rootName: keep })) reachable.add(name);
 	}
 	for (const name of Object.keys(rules)) {
@@ -939,7 +942,7 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	const cyclic = cyclicInlineTargets(rules);
-	const externals = new Set(ctx.grammar.externals);
+	const externals = new Set(ruleListParts(ctx.grammar.externals).names);
 	const inlineOne = (r: Rule<'link'>): Rule<'link'> => {
 		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name) || externals.has(r.name)) return r;
 		const body = rules[r.name];

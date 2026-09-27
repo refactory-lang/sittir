@@ -31,6 +31,11 @@ import {
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, PhaseName, RenderRule, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
+import type {
+	PatternRule as GrammarPatternRule,
+	StringRule as GrammarStringRule,
+	SymbolRule as GrammarSymbolRule
+} from '../grammar-shapes/grammar-json.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -616,20 +621,48 @@ export interface SymbolFacts {
 	readonly visibleExternals: ReadonlySet<string>;
 }
 
+export type RuleListEntry = GrammarSymbolRule | GrammarStringRule | GrammarPatternRule;
+
+export interface RuleListParts {
+	readonly names: string[];
+	readonly literals: string[];
+	readonly patterns: string[];
+}
+
+export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
+	const parts: RuleListParts = { names: [], literals: [], patterns: [] };
+	for (const rule of rules) {
+		switch (rule.type) {
+			case SYMBOL:
+				parts.names.push(rule.name);
+				break;
+			case STRING:
+				parts.literals.push(rule.value);
+				break;
+			case PATTERN:
+				parts.patterns.push(rule.value);
+				break;
+			default:
+				assertNever(rule);
+		}
+	}
+	return parts;
+}
+
 export function symbolFactsOf(grammar: {
 	readonly rules: Readonly<Record<string, AnyRule>>;
-	readonly externals: Iterable<string>;
+	readonly externals: readonly RuleListEntry[];
 	readonly inline: Iterable<string>;
 	readonly supertypes: Iterable<string>;
-	readonly extras: Iterable<string>;
+	readonly extras: readonly RuleListEntry[];
 	readonly visibleExternals?: Readonly<Record<string, unknown>>;
 }): SymbolFacts {
 	return {
 		rules: grammar.rules,
-		externals: new Set(grammar.externals),
+		externals: new Set(ruleListParts(grammar.externals).names),
 		inline: new Set(grammar.inline),
 		supertypes: new Set(grammar.supertypes),
-		extras: new Set(grammar.extras),
+		extras: new Set(ruleListParts(grammar.extras).names),
 		visibleExternals: new Set(Object.keys(grammar.visibleExternals ?? {}))
 	};
 }

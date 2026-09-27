@@ -1,3 +1,4 @@
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../generated-metadata.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
@@ -191,7 +192,7 @@ function labelsOf(gap: { readonly token?: string }): readonly { readonly label: 
 const walker = new RuleWalker<RenderRule>();
 
 function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, RenderRule>>): Map<RuleId, Gap> {
-	const externals = config.nodeMap.externals ?? new Set<string>();
+	const externals = new Set(ruleListParts(config.nodeMap.externals ?? []).names);
 	const gaps = new Map<RuleId, Gap>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		walker.fold(rule, undefined, (_, r) => {

@@ -1,3 +1,4 @@
+import { type RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
@@ -132,7 +133,8 @@ interface SerializedNodeModel {
 	nodeCount: number;
 	word: string | null;
 	supertypes: string[];
-	externals: string[];
+	externals: readonly RuleListEntry[];
+	extras: readonly RuleListEntry[];
 	polymorphVariants: PolymorphVariantMap;
 	variantRoutes: Readonly<Record<string, string>>;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
@@ -184,7 +186,8 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		nodeCount: nodeMap.nodes.size,
 		word: nodeMap.word ?? null,
 		supertypes,
-		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
+		externals: nodeMap.externals ?? [],
+		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
 		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,

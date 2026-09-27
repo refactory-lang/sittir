@@ -1,3 +1,4 @@
+import { ruleListParts } from '../dsl/rule-patterns.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
@@ -2567,7 +2568,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		if (node instanceof AssembledSupertype) node.subtypeNames.forEach(addExtra);
 		else if (node !== undefined) extrasNodes.push(node);
 	};
-	(nodeMap.extras ?? new Set<string>()).forEach(addExtra);
+	ruleListParts(nodeMap.extras ?? []).names.forEach(addExtra);
 
 	const lines: string[] = [];
 	lines.push('#[derive(Debug, Clone)]');

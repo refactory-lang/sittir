@@ -2753,6 +2753,22 @@ The grammar's `rules:` entries with a bare body, sorted.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::MetadataRuleListCtx`
+
+What `appendMetadataRules` needs for one list: its name for the error, the rule types the list accepts (externals: SYMBOL and STRING; extras: SYMBOL, STRING and PATTERN), and the sink it appends to.
+
+### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
+
+Appends the rules an `extras` or `externals` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryOf`
+
+The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
+
+The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
+
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
 
 ```text
@@ -2767,8 +2783,8 @@ The grammar's `rules:` entries with a bare body, sorted.
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property. Extras entries can be bare names (the base's
- * own spelling in this pass) as well as rules; both land in the extras sink.
+ * version of that property. The base's extras and externals are handed back
+ * as the rule lists evaluate stored for them.
  * The base `supertypes`, `inline` and `conflicts` (group-wise) arrive as
  * SYMBOL rules (`baseNameSymbols`), exactly as the tree-sitter CLI hands
  * them, so a wired callback's removals, renames and dedupe act the same in
@@ -3391,19 +3407,16 @@ The whole-text regex of every linked rule that composes to one (`composeTokenTex
  * Create synthetic pattern rules for external tokens that have no grammar rule.
  *
  * @param rules - Mutable resolved rules map; missing entries are added in place.
- * @param externals - External token entries declared in `grammar.externals`,
- *   which hold SYMBOL names and literal token texts in one list.
- * @param kindEntries - Generated kind catalog, consulted for anon-token identity.
+ * @param externals - The SYMBOL names of `grammar.externals` (`ruleListParts`).
  * @remarks
  *   A scanner SYMBOL is declared at the grammar level with no rule body, so
  *   Link creates an empty pattern leaf rule for it and downstream phases
  *   (Assemble, codegen) see it as a known leaf kind.
  *
- *   A literal-text external (`externals: $ => [..., '||']`) is NOT that: the
- *   grammar already lexes it as an anonymous token under the catalog's own
- *   spelling (`||` is `pipe_pipe`). Minting a rule keyed by the raw text
- *   would give one parser symbol a second kind competing for its id, so a
- *   text the catalog already knows anonymously is skipped and defers to it.
+ *   A literal-text external (`externals: $ => [..., '||']`) is a STRING entry
+ *   and never reaches this function: the grammar already lexes it as an
+ *   anonymous token under the catalog's own spelling (`||` is `pipe_pipe`),
+ *   so it needs no rule.
  */
 ```
 
@@ -3483,7 +3496,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /** Drops every rule not reachable from the grammar's root, nor from any
- *  external, extra or declared supertype (each of those is its own
+ *  external (a SYMBOL name or a STRING literal's text), extra (a SYMBOL
+ *  name) or declared supertype (each of those is its own
  *  reachability root — an external/extra can be referenced only
  *  indirectly, e.g. through a dialect-only production, and the
  *  `_whitespace` supertype by nothing at all). Dialect filtering: a rule that exists in the
@@ -5806,6 +5820,8 @@ collector parameter.
 /** Metadata accumulator sinks filled by grammar() metadata callbacks. */
 ```
 
+`extras` and `externals` are rule lists (`RuleListEntry`), kept as grammar.json holds them; the other sinks hold names.
+
 ### `packages/codegen/src/compiler/evaluate.ts::EvaluateCtx`
 
 ```text
@@ -5856,7 +5872,7 @@ collector parameter.
 ### `packages/codegen/src/compiler/evaluate.ts::externals`
 
 ```text
-/** The externals metadata sink (same live array as sinks.externals). */
+/** The externals metadata sink (same live array as sinks.externals): the grammar's `externals` rule list. */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::isExtension`

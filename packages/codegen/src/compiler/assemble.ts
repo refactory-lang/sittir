@@ -26,7 +26,7 @@ import type {
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
 import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
-import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -319,8 +319,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		normalizedRules: normalized.normalizedRules,
 		word: normalized.word,
 		wordMatcher: normalized.wordMatcher,
-		externals: normalized.externals ? new Set(normalized.externals) : undefined,
-		extras: normalized.extras ? new Set(normalized.extras) : undefined,
+		externals: normalized.externals,
+		extras: normalized.extras,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		deriveShapeDiagnostics: assembleDiagnostics.deriveShapeDiagnostics.all,
@@ -626,7 +626,7 @@ export interface HydrateSlotRefsConfig {
 }
 
 export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {}): void {
-	const externals = nodeMap.externals ?? new Set<string>();
+	const externals = new Set(ruleListParts(nodeMap.externals ?? []).names);
 	const inline = cfg.inline ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node instanceof AbstractAssembledCompound) {

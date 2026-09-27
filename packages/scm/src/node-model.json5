@@ -11,9 +11,28 @@
     "named_node_group"
   ],
   "externals": [
-    "_newline",
-    "_space",
-    "_tight"
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    }
+  ],
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    },
+    {
+      "type": "PATTERN",
+      "value": "\\s+"
+    }
   ],
   "polymorphVariants": {
     "string_content": {
