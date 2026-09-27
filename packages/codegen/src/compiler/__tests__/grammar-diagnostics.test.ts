@@ -11,6 +11,8 @@ import type { DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { AssembledEnum } from '../model/node-map.ts';
+import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
@@ -70,6 +72,13 @@ describe('grammar diagnostics preflight', () => {
 		);
 		expect(result.nodeMap.nodes.has('meta_property')).toBe(false);
 		expect(result.nodeMap.droppedKinds).toEqual(new Set(['meta_property']));
+	});
+
+	it('an AssembledEnum with fewer than two values is unreachable past the record, so its constructor still refuses one', () => {
+		const tail = (head: string, last: string) => ({ type: SEQ, members: [head, '.', last].map((value) => ({ type: STRING, value })) });
+		expect(() => new AssembledEnum('meta_property', { type: CHOICE, members: [tail('new', 'target'), tail('import', 'meta')] })).toThrow(
+			/assemble records single-literal-choice before constructing one/
+		);
 	});
 
 	it('records groups-config-invalid for a lift that does not resolve and applies the others', () => {
