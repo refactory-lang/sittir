@@ -5477,14 +5477,14 @@ pub struct PredicateTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<ParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_immediate_identifier"))]
-    pub immediate_identifier: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
 }
 
 impl ::sittir_core::view::KindOf for PredicateTransport {
@@ -5508,10 +5508,10 @@ impl ::sittir_core::render::Render for PredicateTransport {
 impl ::sittir_core::prepare::Prepare for PredicateTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.parameters.prepare(ctx)?;
         self.content.prepare(ctx)?;
-        self.immediate_identifier.prepare(ctx)?;
         Ok(())
     }
 }
@@ -8721,7 +8721,7 @@ fn render_negated_field(node: &NegatedFieldTransport, w: &mut dyn ::sittir_core:
 
 fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let immediate_identifier = &node.immediate_identifier;
+    let name = &node.name;
     let parameters = View::new(&node.parameters, "{}");
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(46), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -8730,7 +8730,7 @@ fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render
     w.site_at(options::SITE_PREDICATE_LPAREN_AFTER);
     content.render(w)?;
     w.adjacent();
-    immediate_identifier.render(w)?;
+    name.render(w)?;
     w.adjacent();
     type_.render(w)?;
     parameters.render(w)?;

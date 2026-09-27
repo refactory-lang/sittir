@@ -215,6 +215,7 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
 /// back the same slot contents.
 static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (44, "name", &[18]),
+    (46, "name", &[20, 21]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

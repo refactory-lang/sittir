@@ -10790,3 +10790,7 @@ Stamps `grammarRoot` on the node of the root rule link recorded (`NodeMap.root`)
 ### `packages/codegen/src/compiler/link.ts::LinkCtx.root`
 
 The grammar's root rule (`rootRuleName`, the first rule), read once when the link context is built. Link prunes and reports reachability from it and records it on the linked grammar, from where normalize and assemble carry it to `NodeMap.root`; no later phase re-derives it.
+
+### `packages/codegen/src/compiler/collect-slots.ts::withFieldNamedChild`
+
+A field over a sequence names that sequence's one named child: tree-sitter puts the field on every child of the sequence, and the one child that is a slot, is not literal text, and carries no field of its own is what the field holds (scm `predicate.name` is its identifier, beside the `#`/`.` sigil). With no such child, or several, the sequence is left as it is and its members derive their own slots.

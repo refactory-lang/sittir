@@ -857,9 +857,7 @@ export function resolvePredicate_content(value: T.Predicate.LooseConfig['content
 	);
 }
 
-export function resolvePredicate_immediateIdentifier(
-	value: T.Predicate.LooseConfig['immediateIdentifier']
-): T.Predicate['_immediate_identifier'] {
+export function resolvePredicate_name(value: T.Predicate.LooseConfig['name']): T.Predicate['_name'] {
 	return _resolveOneLeaf<T.ImmediateIdentifier>(value, '_immediate_identifier');
 }
 
@@ -878,11 +876,7 @@ export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F
 	if (!_isLooseConfig<T.Predicate.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildPredicate>;
 	return F.buildPredicate({
 		content: _requireField('predicate', 'content', resolvePredicate_content(input.content)),
-		immediateIdentifier: _requireField(
-			'predicate',
-			'immediateIdentifier',
-			resolvePredicate_immediateIdentifier(input.immediateIdentifier)
-		),
+		name: _requireField('predicate', 'name', resolvePredicate_name(input.name)),
 		type: _requireField('predicate', 'type', resolvePredicate_type(input.type)),
 		parameters: resolvePredicate_parameters(input.parameters)
 	});

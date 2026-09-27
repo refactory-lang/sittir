@@ -1167,7 +1167,7 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle) {
 }
 
 export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_content', '_immediate_identifier', '_type', '_parameters']);
+	data = _keepModelledSlots(data, ['_content', '_name', '_type', '_parameters']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Predicate as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
@@ -1183,13 +1183,12 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
 				),
 				{ '#': 20, '.': 21 }
 			),
-			_immediate_identifier: normalizeSingularWrapSlot(
-				data._immediate_identifier,
-				'immediate_identifier',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'immediate_identifier', span: (data as _NodeData).$span }
-			),
+			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _NodeData).$span
+			}),
 			_type: projectKindEnumStorage(
 				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 					tree,
@@ -1209,8 +1208,8 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
 			content() {
 				return this._content;
 			},
-			immediateIdentifier() {
-				return drillIn<T.ImmediateIdentifier>(this._immediate_identifier, tree);
+			name() {
+				return drillIn<T.ImmediateIdentifier>(this._name, tree);
 			},
 			type() {
 				return this._type;
@@ -1220,8 +1219,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
 			},
 			$with: {
 				content: (v: NonNullable<T.Predicate['_content']>) => wrapPredicate({ ...$edited(data), _content: v }, tree),
-				immediateIdentifier: (v: NonNullable<T.Predicate['_immediate_identifier']>) =>
-					wrapPredicate({ ...$edited(data), _immediate_identifier: v }, tree),
+				name: (v: NonNullable<T.Predicate['_name']>) => wrapPredicate({ ...$edited(data), _name: v }, tree),
 				type: (v: NonNullable<T.Predicate['_type']>) => wrapPredicate({ ...$edited(data), _type: v }, tree),
 				parameters: (v: NonNullable<T.Predicate['_parameters']>) =>
 					wrapPredicate({ ...$edited(data), _parameters: v }, tree)

@@ -563,7 +563,7 @@ export interface NegatedField {
 export interface Predicate {
 	readonly $type: TSKindId.Predicate;
 	readonly _content: number;
-	readonly _immediate_identifier: ImmediateIdentifier;
+	readonly _name: ImmediateIdentifier;
 	readonly _type: number;
 	readonly _parameters?: Parameters;
 	readonly __inputHints__?: {
@@ -574,7 +574,7 @@ export interface Predicate {
 		readonly parameters?: readonly (Capture | String | Identifier)[];
 	};
 	content(): number;
-	immediateIdentifier(): ImmediateIdentifier;
+	name(): ImmediateIdentifier;
 	type(): number;
 	parameters(): Parameters | undefined;
 }
@@ -1622,7 +1622,7 @@ export namespace Predicate {
 		readonly $named: true;
 		readonly $with: {
 			content(value: NonNullable<T.Predicate.Config>['content']): T.Predicate.Built;
-			immediateIdentifier(value: T.ImmediateIdentifier): T.Predicate.Built;
+			name(value: T.ImmediateIdentifier): T.Predicate.Built;
 			type(value: NonNullable<T.Predicate.Config>['type']): T.Predicate.Built;
 			parameters(value?: T.Parameters): T.Predicate.Built;
 		};

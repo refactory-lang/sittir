@@ -225,7 +225,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "immediate_identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1779,9 +1779,9 @@
           ]
         },
         {
-          "name": "immediate_identifier",
-          "propertyName": "immediateIdentifier",
-          "paramName": "immediateIdentifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1842,7 +1842,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "content",
-        "immediate_identifier",
+        "name",
         "type",
         "parameters"
       ]

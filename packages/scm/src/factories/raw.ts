@@ -473,11 +473,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 		['#', TSKindId.Pound] as const,
 		['.', TSKindId.Dot] as const
 	]);
-	const _immediate_identifier = rejectBareText(
-		config.immediateIdentifier,
-		'Predicate.immediateIdentifier',
-		'buildImmediateIdentifier(…)'
-	);
+	const _name = rejectBareText(config.name, 'Predicate.name', 'buildImmediateIdentifier(…)');
 	const _type = coerceKindEnumStorage<NonNullable<T.Predicate['_type']>>(config.type, [
 		['?', TSKindId.Qmark] as const,
 		['!', TSKindId.Bang] as const
@@ -490,20 +486,19 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_immediate_identifier,
+				_name,
 				_type,
 				_parameters,
 				$with: {
 					content: (value: NonNullable<T.Predicate.Config>['content']) => buildPredicate({ ...config, content: value }),
-					immediateIdentifier: (value: T.ImmediateIdentifier) =>
-						buildPredicate({ ...config, immediateIdentifier: value }),
+					name: (value: T.ImmediateIdentifier) => buildPredicate({ ...config, name: value }),
 					type: (value: NonNullable<T.Predicate.Config>['type']) => buildPredicate({ ...config, type: value }),
 					parameters: (value?: T.Parameters) => buildPredicate({ ...config, parameters: value })
 				}
 			},
 			{
 				content: () => _content,
-				immediateIdentifier: () => _immediate_identifier,
+				name: () => _name,
 				type: () => _type,
 				parameters: () => _parameters
 			}

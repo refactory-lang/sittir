@@ -361,7 +361,7 @@ describe('predicate', () => {
 	it('factory produces correct type', () => {
 		const node = ir.predicate({
 			content: '#',
-			immediateIdentifier: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});
 		expect(node.$type).toBe(TSKindId.Predicate);
@@ -370,7 +370,7 @@ describe('predicate', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.predicate({
 			content: '#',
-			immediateIdentifier: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});
 		const rendered = node.$render!();
