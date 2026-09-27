@@ -7,7 +7,7 @@ import { collectGrammarDiagnosticsForGrammar, GrammarDiagnosticError } from './d
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
-import { stampVisibleExternals, type GeneratedIdTables } from './generated-metadata.ts';
+import { stampVisibleExternals, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
 import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';

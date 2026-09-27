@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { snakeToCamel } from '../compiler/model/node-map.ts';
 import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
-import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../dsl/symbol-table.ts';
 import { supertypeMembersByDisplayName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
 import { displayedKinds } from '../compiler/model/display-name.ts';
 import {

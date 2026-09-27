@@ -3,7 +3,7 @@ import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,

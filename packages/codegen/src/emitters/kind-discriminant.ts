@@ -1,6 +1,6 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
 import { compareOrdinal } from './shared.ts';
 
 export function toPascal(kind: string): string {

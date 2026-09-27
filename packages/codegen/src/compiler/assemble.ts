@@ -30,14 +30,7 @@ import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patte
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
-import {
-	collectGeneratedKindEntries,
-	findEntryForKindName,
-	findEntryForLiteralText,
-	type GeneratedIdTables,
-	type GeneratedKindEntry,
-	isSurfaceHiddenKind
-} from './generated-metadata.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind } from '../dsl/symbol-table.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,

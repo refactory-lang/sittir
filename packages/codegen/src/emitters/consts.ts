@@ -7,8 +7,8 @@ import {
 	AssembledPattern,
 	AssembledEnum
 } from '../compiler/model/node-map.ts';
-import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables, GeneratedKindEntry } from '../compiler/generated-metadata.ts';
-import { collectGeneratedKindEntries, modelKindOfEntry } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables, GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import {
 	keywordPresenceKind,
 	keywordPresenceValues,

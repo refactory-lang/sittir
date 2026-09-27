@@ -46,20 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import {
-	collectGeneratedKindEntries,
-	findEntryForKindName,
-	findEntryForLiteralText,
-	findEntryForPatternValue,
-	isParserHiddenKind,
-	isRenamedEntry,
-	isSurfaceHiddenKind,
-	isAliasedHiddenStorage,
-	stampVisibleExternals,
-	modelKindOfEntry,
-	type GeneratedIdTables,
-	type GeneratedKindEntry
-} from './generated-metadata.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isRenamedEntry, isSurfaceHiddenKind, isAliasedHiddenStorage, stampVisibleExternals, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -104,7 +91,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { catalogSymbolSource } from './diagnostics/alias-distributed.ts';
+import { catalogSymbolSource } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';

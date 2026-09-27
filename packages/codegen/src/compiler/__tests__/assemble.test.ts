@@ -28,7 +28,7 @@ import {
 	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
 import { makeNormalized } from './make-normalized.ts';
-import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
+import type { GeneratedIdTables, GeneratedIdEntry } from '../../dsl/symbol-table.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived

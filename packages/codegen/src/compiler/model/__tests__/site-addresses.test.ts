@@ -5,7 +5,7 @@ import { assemble, AssembleCtx } from '../../assemble.ts';
 import { makeNormalized } from '../../__tests__/make-normalized.ts';
 import { supertypeMembersByDisplayName } from '../supertype-members.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
-import type { KindEntryLike } from '../../generated-metadata.ts';
+import type { KindEntryLike } from '../../../dsl/symbol-table.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
 import { makeSiteKindsNodeMap } from '../../../__tests__/helpers/node-map-fixtures.ts';
 

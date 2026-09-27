@@ -10,7 +10,7 @@ import {
 	AssembledPattern,
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';

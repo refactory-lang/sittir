@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
 import { undisplayedKindAddress } from '../../dsl/arm-names.ts';

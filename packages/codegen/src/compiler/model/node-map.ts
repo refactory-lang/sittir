@@ -24,14 +24,8 @@ import {
 } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
-import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import {
-	findEntryForKindName,
-	findEntryForLiteralText,
-	findOwnKindEntry,
-	isAliasedHiddenStorage,
-	surfaceHiddenOf
-} from '../generated-metadata.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';

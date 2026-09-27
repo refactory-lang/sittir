@@ -24,7 +24,7 @@ import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
 import { emitRefinesOverlay } from '../overlays/refines.ts';
-import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms

@@ -11,7 +11,7 @@ import type { AssembleWarning } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
-import { collectGeneratedKindEntries, type GeneratedIdTables } from '../generated-metadata.ts';
+import { collectGeneratedKindEntries, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
 import { symbolFactsOf } from '../../dsl/rule-patterns.ts';

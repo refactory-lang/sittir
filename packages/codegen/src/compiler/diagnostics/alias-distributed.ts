@@ -4,37 +4,13 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import { predictedSymbolSource, terminalContentOf, type SymbolFacts, type SymbolSource } from '../../dsl/rule-patterns.ts';
-import { findOwnKindEntry, parserHiddenOf, parserSupertypeOf, type KindEntryLike } from '../generated-metadata.ts';
+import { predictedSymbolSource, type SymbolSource } from '../../dsl/rule-patterns.ts';
+import { catalogSymbolSource, type CatalogSymbolFacts } from '../../dsl/symbol-table.ts';
 
 type R = Rule<'evaluate'>;
 
-export interface CatalogSymbolFacts extends SymbolFacts {
-	readonly kindEntries: readonly KindEntryLike[];
-}
-
 export function symbolSourceOf(facts: CatalogSymbolFacts): SymbolSource {
 	return facts.kindEntries.length > 0 ? catalogSymbolSource(facts) : predictedSymbolSource(facts);
-}
-
-export function catalogSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
-	const entryOf = (name: string): KindEntryLike | undefined => findOwnKindEntry(facts.kindEntries, name);
-	const isInlined = (name: string): boolean =>
-		facts.inline.has(name) && entryOf(name) === undefined;
-	const isTerminal = (name: string): boolean => {
-		if (!isInlined(name)) return entryOf(name)?.terminal === true;
-		const body = facts.rules[name];
-		return body !== undefined && terminalContentOf(body, isTerminal);
-	};
-	return {
-		rules: facts.rules,
-		externals: facts.externals,
-		isTerminal,
-		isInlined,
-		isHidden: (name) => parserHiddenOf(entryOf(name), name),
-		isSupertype: (name) => parserSupertypeOf(entryOf(name), name, facts.supertypes),
-		isVisibleExternal: (name) => entryOf(name)?.visibleExternal === true
-	};
 }
 
 function distributedShape(content: R, symbols: SymbolSource, seen: ReadonlySet<string>): string | undefined {

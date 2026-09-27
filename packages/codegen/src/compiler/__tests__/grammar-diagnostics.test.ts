@@ -10,7 +10,7 @@ import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
 import type { DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GeneratedIdTables } from '../generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);

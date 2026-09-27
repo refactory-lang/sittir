@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../../../codegen/src/compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../../codegen/src/dsl/symbol-table.ts';
 import type { RenderRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
 import { emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';

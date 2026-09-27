@@ -1,4 +1,4 @@
-import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
@@ -11,7 +11,7 @@ import {
 	numericSlotShape,
 	optionalGroupPeers
 } from './interior.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	kindDiscriminantExprForId,
 	kindDiscriminantExprForLiteral,

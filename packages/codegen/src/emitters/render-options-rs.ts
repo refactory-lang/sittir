@@ -1,6 +1,6 @@
 import type { SeamOrigin } from '../types/rule.ts';
-import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import type { KindEntryLike } from '../dsl/symbol-table.ts';
+import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';

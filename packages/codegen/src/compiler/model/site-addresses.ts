@@ -4,7 +4,7 @@ import {
 	parsePreferencePath,
 	type PreferenceSegment
 } from '../../dsl/primitives/preference-path.ts';
-import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.ts';
+import { findEntryForKindName, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import type { NodeMap } from '../types.ts';
 import { displayNameOf } from './display-name.ts';
 import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';

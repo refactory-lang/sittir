@@ -38,7 +38,7 @@ import {
 	spacedSeparatorOf,
 	type RenderRules
 } from '../compiler/model/render-rules.ts';
-import type { KindEntryLike } from '../compiler/generated-metadata.ts';
+import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import {
 	ADJACENT,
 	adjacentInto,

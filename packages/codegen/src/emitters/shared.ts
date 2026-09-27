@@ -47,7 +47,7 @@ import {
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
-import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
 import type { RenderRule } from '../types/rule.ts';
 

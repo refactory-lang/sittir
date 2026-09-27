@@ -909,7 +909,7 @@ export async function emitFactorySourceText(
 	const memberOf = (table: Record<number, string | number>, id: number): string | undefined =>
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
-	const { findEntryForLiteralText } = await load('generatedMetadata');
+	const { findEntryForLiteralText } = await load('symbolTable');
 	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const leafFindings: string[] = [];

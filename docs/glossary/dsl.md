@@ -6304,3 +6304,201 @@ The literals a named alias wraps. Tree-sitter applies an alias to every step of 
 ### `packages/codegen/src/dsl/symbol-table.ts::LITERAL_WRAPPERS`
 
 Rule types that wrap a literal without changing the token it lexes.
+
+### `packages/codegen/src/dsl/symbol-table.ts::findEntryForKindName`
+
+```text
+/**
+ * THE kind-name resolution chain — for callers holding a KIND / RULE NAME
+ * (never a bare literal token text; those go through
+ * {@link findEntryForLiteralText}).
+ *
+ * 1. Exact catalog key (the canonical case).
+ * 2. `_`-prefixed key — visible variant-child kinds emitted from hidden
+ *    alias sources (`closure_expression_expr` → `_closure_expression_expr`).
+ * 3. ANON-scoped symbolName — anonymous tokens whose display string differs
+ *    from their key (`anon_sym_PLUS` → key `plus`, symbolName `"+"`).
+ *    Anon-scoping is load-bearing: a general symbolName match at this
+ *    position caused the `_as_pattern` shadowing bug (hidden `_as_pattern`
+ *    symbolName `"as_pattern"` shadowing the real `as_pattern` entry).
+ * 4. Named symbolName — hidden NAMED compound tokens whose display string
+ *    is not a valid key spelling (`sym__is_not` → key `_is_not`, symbolName
+ *    `"is not"`). Ordered AFTER the anon step so an anon twin always wins
+ *    for texts both could match; reachable only when steps 1-3 all miss.
+ */
+```
+
+#### body
+
+```text
+An `alias_sym` row is never claimed by an exact parser-name match: its
+parser name is `_<display>`, which collides with hidden rules and minted
+content unions of that name. The row resolves only through its display name.
+modelKindOfEntry (kind-discriminant.ts) is the inverse.
+
+The exclusion covers the exact-name step only: the symbol-name steps (3, 4)
+still return an alias row whose display string matches. A caller that must
+never land on another kind's row resolves through `findOwnKindEntry`
+(kind-discriminant.ts), which keeps this chain's answer only when its
+`modelKindOfEntry` is the requested kind.
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::findAnonEntryForLiteralText`
+
+```text
+/**
+ * The ANONYMOUS token whose verbatim literal text (`literalText`, never
+ * `symbolName` — that is the parser's display name, which for an aliased
+ * anon token differs from the text it lexes) is exactly this string, or
+ * `undefined`. The strict half of the literal-text chain: it answers "does
+ * the grammar already lex this text as an anonymous token?" and never falls
+ * back to the kind-name chain.
+ *
+ * Callers deciding whether a literal-text spelling already HAS an identity
+ * must use this rather than {@link findEntryForLiteralText} — the fallback
+ * there matches named symbols too, so a scanner symbol whose name happens to
+ * read as text (`_template_chars`) would answer yes and lose its own rule.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::findEntryForLiteralText`
+
+```text
+/**
+ * THE literal-text resolution chain — for callers holding a LITERAL TOKEN
+ * TEXT (a `STRING` rule's value / enum member text), matched against each
+ * entry's `literalText` (its verbatim text, distinct from `symbolName`, the
+ * parser's display name). The anon-scoped match runs FIRST: the caller holds
+ * a literal, so the anonymous token is the correct identity even when a
+ * NAMED rule shares the spelling (python's `'type'` keyword vs the `type`
+ * rule). Falls back to the literal-rule chain for literals with no anon
+ * twin — a named rule whose body is exactly a bare STRING or an unnamed
+ * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`). The last
+ * arm is the lexical fact: a terminal row carrying `literalText` is a string
+ * token whatever its namedness, which catches a token every use aliases to a
+ * named kind (regex `'\-'` under `alias('\-', $.identity_escape)`): tree-sitter
+ * stamps it `.named`, so it has no `anon` and the first arm misses it.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::findEntryForPatternValue`
+
+```text
+/**
+ * A PATTERN rule's value may name either a literal token's text or a kind
+ * directly by name (unlike a STRING, whose value is always literal text).
+ * Tries the literal-text chain first, then falls back to the kind-name
+ * chain.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedIdEntry`
+
+```text
+/**
+ * One row of the parser symbol catalog (KindID runtime migration design,
+ * 2026-04-30). When `id` / `parser` are absent, the kind exists in the
+ * codegen rule set but tree-sitter inlined it during parser compilation —
+ * presence is `TSGrammar` only, not `TSInternals`. A row's mere existence
+ * here is the canonical record of "this kind is reachable from the
+ * grammar"; downstream code reads `parser` to discover whether it also
+ * surfaces at runtime.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::KindEntryLike`
+
+```text
+/**
+ * Minimal structural shape shared by every catalog-entry type that the kind
+ * resolution chain operates on (`GeneratedKindEntry` here, `KindEnumEntry`
+ * in emitters/kind-discriminant.ts). PR-K1 (KindId-NodeRefs design,
+ * docs/superpowers/specs/2026-07-20-kindid-noderefs-design.md §2.2): there
+ * is exactly ONE resolution chain pair in the codebase — the two modules
+ * previously carried parallel chains whose step-3 scopes disagreed, and
+ * every divergence between them was a latent bug of the #129 class.
+ */
+```
+
+`aliasedNonTerminal` is the parser's fact that some `alias()` shows the nonterminal under another name; `isAliasedHiddenStorage` reads it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::isRenamedEntry`
+
+Whether a catalog row is a hidden rule the parser shows under another name: not an alias, anonymous or literal row, not declared in the grammar's `visibleExternals` (`visibleExternal`, so a declared whitespace external keeps its own kind), visible in the parser, not an alias fold (`parseId` unset, so its `symbolName` is its own symbol's), its `symbolName` differs from its grammar name, and exactly one visible row carries that tree name (`visibleTreeNameCount`). Such a row's model kind is its tree name.
+
+### `packages/codegen/src/dsl/symbol-table.ts::visibleTreeNameCount`
+
+How many visible, named rows show a tree name, counted once per entry list (cached by list identity).
+
+### `packages/codegen/src/dsl/symbol-table.ts::modelKindOfEntry`
+
+The model kind a catalog row names: an alias row's display name, a renamed row's tree name (`isRenamedEntry`), otherwise its grammar name. The inverse of `findEntryForKindName`; the id → name tables and the `TSKindId` member names read it so both directions agree.
+
+### `packages/codegen/src/dsl/symbol-table.ts::parserHiddenOf`
+
+Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never for an alias row). The leading-underscore spelling decides only for a name with no catalog row: a phantom kind (a sittir mint with no parser symbol, held to the phantom-kind ceilings) or an `inline:` entry, which the parser never gives a symbol. A name the catalog owns never reaches that fallback (`findOwnKindEntry` throws instead).
+
+### `packages/codegen/src/dsl/symbol-table.ts::isParserHiddenKind`
+
+`parserHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::parserSupertypeOf`
+
+Whether a kind is a supertype: its catalog row's `supertype` flag. For a name with no catalog row it is the grammar's `supertypes:` declaration, because tree-sitter issues no symbol for a hidden supertype (rust `_declaration_statement`, python `_suite`, every grammar's `_whitespace`); this is the same rowless-only class as `parserHiddenOf`'s spelling fallback.
+
+### `packages/codegen/src/dsl/symbol-table.ts::surfaceHiddenOf`
+
+Whether a kind is hidden on the generated surface, from the two parser symbol flags in `ts_symbol_metadata`:
+
+- parser-hidden (`.visible = false`, `parserHiddenOf`) and not a supertype. Tree-sitter compiles every supertype as an invisible symbol, but a supertype is the user-facing polymorph parent, so it keeps its namespace, `ir` key and type;
+- or a grammar rule the parser issues as an anonymous token (`.named = false`, the row's `anon`, on a `literalRule` row): typescript `_ternary_qmark`, python `_not_in`/`_is_not`. Its node stays in the model, so an enum slot keeps its own kind id, but it has no factory or `ir` key. Keyword and punctuation leaves minted from anonymous literals are not rules and stay on the surface. This is the one predicate every surface emitter and the link `hidden` stamps read; link's inline decision reads the plain parser fact.
+
+### `packages/codegen/src/dsl/symbol-table.ts::isAliasedHiddenStorage`
+
+Whether a kind is hidden storage the parser shows under an alias: its own row (`findOwnKindEntry`) is an `aliasedNonTerminal` and `surfaceHiddenOf` holds. Supertypes fail the second test, so an aliased supertype (python `expression` under `as_pattern_target`) stays a supertype. Link and assemble ask it to make such a kind an envelope rather than a supertype or polymorph.
+
+### `packages/codegen/src/dsl/symbol-table.ts::isSurfaceHiddenKind`
+
+`surfaceHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::findOwnKindEntry`
+
+The catalog row whose model kind is exactly `kind` (`findEntryForKindName`, then `modelKindOfEntry` must agree), or `undefined` for a name with no row. Whether any row owns `kind` is one lookup in a per-catalog `modelKind → row` index (`modelKindOwner`), so a rowless name returns without scanning the catalog. A kind that some row names as its model kind but that the resolution chain misses throws: a rowless fallback (the leading-underscore name rule) is only for synthetic grammars and sittir mints, never for a kind the catalog owns.
+
+### `packages/codegen/src/dsl/symbol-table.ts::modelKindOwner`
+
+The first catalog row whose `modelKindOfEntry` is `kind`, from an index built once per catalog array and cached in a WeakMap keyed by that array (the same scheme as `visibleTreeNameCount`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::stampVisibleExternals`
+
+Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExternal`, returning new tables (idempotent; tables without such rows pass through). `compileGrammar` stamps once and hands the stamped tables to generation on `Compilation.generatedIdTables`; link stamps again at entry so a caller that passes raw tables sees the same fact. Consumers read the stamp, never the grammar's list: `isRenamedEntry` excludes the rows, so `collapseRenamedRules` keeps their kinds, and the slot-preservation check accepts a declared token written as a seam (`rendersAsDeclaredTokenSeam`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedKindEntry`
+
+One catalog row. Beyond the id tables, it carries:
+
+- `parseName`: set only on an alias fold (`joinIdNames`), the display name tree-sitter issues under `parseId`. The row keeps its own `symbolName`, so the storage id still names the row's own symbol and the parse id names the display;
+- `supertype`: the symbol is a tree-sitter supertype (`collectSymbolFlags`), read by `surfaceHiddenOf` and `parserSupertypeOf`;
+- `terminal`: the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`), so the parser issues it as a token;
+- `visibleExternal`: the row is declared in the grammar's `visibleExternals` (`stampVisibleExternals`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::symbolNameIsNotable`
+
+```text
+/**
+ * Whether a catalog row's `symbolName` is worth emitting alongside `kind`:
+ * either it differs from the kind's own catalog key, or the row is a
+ * literal rule (whose `symbolName` can legitimately equal `kind` while its
+ * `literalText` still differs and needs to travel with the entry). Shared
+ * between `collectGeneratedKindEntries` and `collectKindEntries` so the
+ * exemption is decided once, not re-derived per emitter.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::CatalogSymbolFacts`
+
+The grammar's `dsl/rule-patterns.ts::SymbolFacts` plus the catalog rows (empty before the first generate): what `symbolSourceOf` and `catalogSymbolSource` build a source from.
+
+### `packages/codegen/src/dsl/symbol-table.ts::catalogSymbolSource`
+
+Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal. It is hidden when its own row is hidden and not an alias row (`parserHiddenOf`), a supertype when the row or the declared `supertypes:` say so (`parserSupertypeOf`), and a visible external when its row carries `visibleExternal`. Link stamps inlining through this source and asserts the prediction agrees with it.

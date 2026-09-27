@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-	collectGeneratedKindEntries,
-	deriveGeneratedIdTablesFromLanguage,
-	deriveGeneratedIdTablesFromParserCSource,
-	findEntryForLiteralText,
-	type TreeSitterLanguageMetadata
-} from '../generated-metadata.ts';
+import { deriveGeneratedIdTablesFromLanguage, deriveGeneratedIdTablesFromParserCSource, type TreeSitterLanguageMetadata } from '../generated-metadata.ts';
+import { collectGeneratedKindEntries, findEntryForLiteralText } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
 	it('derives generated kind and field IDs from the tree-sitter language API', () => {

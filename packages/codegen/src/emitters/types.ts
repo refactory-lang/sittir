@@ -1,9 +1,9 @@
-import { findOwnKindEntry, modelKindOfEntry } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
 import {

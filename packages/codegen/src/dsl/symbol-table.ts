@@ -1,5 +1,5 @@
+import { isParserHiddenName, terminalContentOf, type SymbolFacts, type SymbolSource } from './rule-patterns.ts';
 import type { KindParserMetadata } from '../compiler/types.ts';
-import type { GeneratedIdEntry } from '../compiler/generated-metadata.ts';
 
 export interface ParserSymbolTable {
 	readonly symbols: ReadonlyMap<string, CEnumEntry>;
@@ -369,4 +369,258 @@ function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, number> 
 	}
 	const ordered = [...keys].sort(([a, ka], [b, kb]) => compareLexicalKeys(ka, kb) || (a < b ? -1 : a > b ? 1 : 0));
 	return new Map(ordered.map(([name], rank) => [name, rank]));
+}
+
+export interface GeneratedIdEntry {
+	readonly id?: number;
+	readonly parseId?: number;
+	readonly parseName?: string;
+	readonly parser?: KindParserMetadata;
+}
+
+export type GeneratedIdTable =
+	| ReadonlyMap<string, number | GeneratedIdEntry>
+	| Record<string, number | GeneratedIdEntry>;
+
+export interface GeneratedIdTables {
+	readonly kindIds?: GeneratedIdTable;
+	readonly fieldIds?: GeneratedIdTable;
+	readonly sourceArtifact: string;
+}
+
+export interface GeneratedKindEntry {
+	readonly kind: string;
+	readonly id: number;
+	readonly parseId?: number;
+	readonly parseName?: string;
+	readonly symbolName?: string;
+	readonly literalText?: string;
+	readonly anon?: boolean;
+	readonly literalRule?: boolean;
+	readonly alias?: boolean;
+	readonly hidden?: boolean;
+	readonly keyword?: boolean;
+	readonly aliasedNonTerminal?: boolean;
+	readonly supertype?: boolean;
+	readonly terminal?: boolean;
+	readonly visibleExternal?: boolean;
+	readonly lexicalRank?: number;
+}
+
+export function stampVisibleExternals(
+	tables: GeneratedIdTables | undefined,
+	grammar: { readonly visibleExternals?: Readonly<Record<string, unknown>> }
+): GeneratedIdTables | undefined {
+	const declared = Object.keys(grammar.visibleExternals ?? {});
+	if (tables?.kindIds === undefined || declared.length === 0) return tables;
+	const stamped = new Map(toEntries(tables.kindIds));
+	for (const name of declared) {
+		const row = stamped.get(name);
+		if (row?.parser === undefined || row.parser.visibleExternal === true) continue;
+		stamped.set(name, { ...row, parser: { ...row.parser, visibleExternal: true } });
+	}
+	return { ...tables, kindIds: stamped };
+}
+
+export function symbolNameIsNotable(
+	symbolName: string | undefined,
+	kind: string,
+	literalRule: boolean | undefined
+): boolean {
+	return symbolName !== undefined && (symbolName !== kind || literalRule === true);
+}
+
+export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefined): readonly GeneratedKindEntry[] {
+	if (!tables?.kindIds) return [];
+	return toEntries(tables.kindIds)
+		.filter(([, entry]) => entry.id !== undefined)
+		.map(([kind, entry]) => ({
+			kind,
+			id: entry.id!,
+			parseId: entry.parseId,
+			parseName: entry.parseName,
+			symbolName: symbolNameIsNotable(entry.parser?.symbolName, kind, entry.parser?.literalRule)
+				? entry.parser?.symbolName
+				: undefined,
+			literalText: entry.parser?.literalText,
+			anon: entry.parser?.anon || undefined,
+			literalRule: entry.parser?.literalRule || undefined,
+			alias: entry.parser?.alias || undefined,
+			hidden: entry.parser?.hidden || undefined,
+			keyword: entry.parser?.keyword || undefined,
+			aliasedNonTerminal: entry.parser?.aliasedNonTerminal || undefined,
+			supertype: entry.parser?.supertype || undefined,
+			terminal: entry.parser?.terminal || undefined,
+			visibleExternal: entry.parser?.visibleExternal || undefined,
+			lexicalRank: entry.parser?.lexicalRank
+		}));
+}
+
+export interface KindEntryLike {
+	readonly kind: string;
+	readonly symbolName?: string;
+	readonly literalText?: string;
+	readonly anon?: boolean;
+	readonly literalRule?: boolean;
+	readonly alias?: boolean;
+	readonly hidden?: boolean;
+	readonly supertype?: boolean;
+	readonly terminal?: boolean;
+	readonly visibleExternal?: boolean;
+	readonly aliasedNonTerminal?: boolean;
+	readonly parseId?: number;
+	readonly parseName?: string;
+}
+
+export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
+	return (
+		entries.find((entry) => entry.kind === name && entry.alias !== true) ??
+		entries.find((entry) => entry.kind === `_${name}`) ??
+		entries.find((entry) => entry.anon === true && entry.symbolName === name) ??
+		entries.find((entry) => entry.anon !== true && (entry.symbolName === name || entry.parseName === name)) ??
+		undefined
+	);
+}
+
+const visibleTreeNameCounts = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, number>>();
+
+function visibleTreeNameCount(entries: readonly KindEntryLike[], name: string): number {
+	let counts = visibleTreeNameCounts.get(entries);
+	if (counts === undefined) {
+		const tally = new Map<string, number>();
+		for (const entry of entries) {
+			if (entry.anon === true || entry.hidden === true) continue;
+			const treeName = entry.symbolName ?? entry.kind;
+			tally.set(treeName, (tally.get(treeName) ?? 0) + 1);
+		}
+		counts = tally;
+		visibleTreeNameCounts.set(entries, counts);
+	}
+	return counts.get(name) ?? 0;
+}
+
+export function isRenamedEntry(entry: KindEntryLike, entries: readonly KindEntryLike[]): boolean {
+	return (
+		entry.alias !== true &&
+		entry.anon !== true &&
+		entry.literalRule !== true &&
+		entry.visibleExternal !== true &&
+		entry.hidden !== true &&
+		entry.parseId === undefined &&
+		entry.symbolName !== undefined &&
+		entry.symbolName !== entry.kind &&
+		visibleTreeNameCount(entries, entry.symbolName) === 1
+	);
+}
+
+export function modelKindOfEntry(entry: KindEntryLike, entries: readonly KindEntryLike[]): string {
+	return entry.symbolName !== undefined && (entry.alias === true || isRenamedEntry(entry, entries))
+		? entry.symbolName
+		: entry.kind;
+}
+
+export function parserHiddenOf(entry: KindEntryLike | undefined, kind: string): boolean {
+	return entry === undefined ? isParserHiddenName(kind) : entry.alias !== true && entry.hidden === true;
+}
+
+export function surfaceHiddenOf(entry: KindEntryLike | undefined, kind: string): boolean {
+	return (
+		(parserHiddenOf(entry, kind) && entry?.supertype !== true) || (entry?.anon === true && entry.literalRule === true)
+	);
+}
+
+export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
+	return surfaceHiddenOf(findOwnKindEntry(entries, kind), kind);
+}
+
+export function isAliasedHiddenStorage(kind: string, entries: readonly KindEntryLike[]): boolean {
+	const entry = findOwnKindEntry(entries, kind);
+	return entry?.aliasedNonTerminal === true && surfaceHiddenOf(entry, kind);
+}
+
+export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
+	return parserHiddenOf(findOwnKindEntry(entries, kind), kind);
+}
+
+export function parserSupertypeOf(
+	entry: KindEntryLike | undefined,
+	kind: string,
+	declaredSupertypes: ReadonlySet<string>
+): boolean {
+	return entry === undefined ? declaredSupertypes.has(kind) : entry.supertype === true;
+}
+
+const modelKindOwners = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, KindEntryLike>>();
+
+function modelKindOwner(entries: readonly KindEntryLike[], kind: string): KindEntryLike | undefined {
+	let owners = modelKindOwners.get(entries);
+	if (owners === undefined) {
+		const index = new Map<string, KindEntryLike>();
+		for (const entry of entries) {
+			const modelKind = modelKindOfEntry(entry, entries);
+			if (!index.has(modelKind)) index.set(modelKind, entry);
+		}
+		owners = index;
+		modelKindOwners.set(entries, owners);
+	}
+	return owners.get(kind);
+}
+
+export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
+	const owner = modelKindOwner(entries, kind);
+	if (owner === undefined) return undefined;
+	const entry = findEntryForKindName(entries, kind);
+	if (entry !== undefined && modelKindOfEntry(entry, entries) === kind) return entry;
+	throw new Error(
+		`generated-metadata: kind '${kind}' has catalog row '${owner.kind}' but resolves to ${entry === undefined ? 'no row' : `'${entry.kind}'`}`
+	);
+}
+
+export function findAnonEntryForLiteralText<T extends KindEntryLike>(
+	entries: readonly T[],
+	text: string
+): T | undefined {
+	return entries.find((entry) => entry.anon === true && entry.literalText === text);
+}
+
+export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
+	return (
+		findAnonEntryForLiteralText(entries, text) ??
+		entries.find((entry) => entry.literalRule === true && entry.literalText === text) ??
+		entries.find((entry) => entry.terminal === true && entry.literalText === text)
+	);
+}
+
+export function findEntryForPatternValue<T extends KindEntryLike>(entries: readonly T[], value: string): T | undefined {
+	return findEntryForLiteralText(entries, value) ?? findEntryForKindName(entries, value);
+}
+
+function toEntries(input: GeneratedIdTable | undefined): readonly (readonly [string, GeneratedIdEntry])[] {
+	if (!input) return [];
+	const entries = input instanceof Map ? [...input.entries()] : Object.entries(input);
+	return entries.map(([name, entry]) => [name, typeof entry === 'number' ? { id: entry } : entry]);
+}
+
+export interface CatalogSymbolFacts extends SymbolFacts {
+	readonly kindEntries: readonly KindEntryLike[];
+}
+
+export function catalogSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
+	const entryOf = (name: string): KindEntryLike | undefined => findOwnKindEntry(facts.kindEntries, name);
+	const isInlined = (name: string): boolean =>
+		facts.inline.has(name) && entryOf(name) === undefined;
+	const isTerminal = (name: string): boolean => {
+		if (!isInlined(name)) return entryOf(name)?.terminal === true;
+		const body = facts.rules[name];
+		return body !== undefined && terminalContentOf(body, isTerminal);
+	};
+	return {
+		rules: facts.rules,
+		externals: facts.externals,
+		isTerminal,
+		isInlined,
+		isHidden: (name) => parserHiddenOf(entryOf(name), name),
+		isSupertype: (name) => parserSupertypeOf(entryOf(name), name, facts.supertypes),
+		isVisibleExternal: (name) => entryOf(name)?.visibleExternal === true
+	};
 }
