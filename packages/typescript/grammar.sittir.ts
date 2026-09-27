@@ -706,26 +706,10 @@ export default sittirGrammar(base, {
 			'1/2': variant('let_const_kind')
 		}
 	},
-	externals: ($, previous) => [
-		...(previous ?? []),
-		$._tight,
-		$._space,
-		$._newline,
-		$._blankline,
-		$._indent,
-		$._dedent
-	],
-	supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 	extras: ($, previous) => [...(previous ?? [])],
 	visibleExternals: (_$) => ({
 		_automatic_semicolon: string('\n'),
 		_function_signature_automatic_semicolon: string('\n'),
-		_tight: string(''),
-		_space: string(' '),
-		_newline: string('\n'),
-		_blankline: string('\n\n'),
-		_indent: indent(),
-		_dedent: dedent()
 	}),
 
 	expectTestFailures: {
@@ -740,8 +724,6 @@ export default sittirGrammar(base, {
 		'rule-reauthored-without-cause': ['object_type']
 	},
 	rules: {
-		_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
-
 		// `template_substitution` sits only in string-interior contexts
 		// (template_string / template_literal_type elements), where any
 		// preceding characters are absorbed into a fragment token — no

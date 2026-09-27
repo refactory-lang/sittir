@@ -15,13 +15,6 @@ that enriched base; `grammar()` receives both. There is no separate enriched
 binding to hand to two places, so the base wire sees and the base tree-sitter
 compiles cannot drift apart.
 
-### `externals` / `supertypes` / `visibleExternals` / `_whitespace` (`packages/regex/grammar.sittir.ts:11`)
-
-The structural-whitespace vocabulary every sittir grammar carries: `_tight`,
-`_space` and `_newline` are external tokens that render as `''`, `' '` and
-`'\n'`, grouped under the `_whitespace` supertype. The renderer uses them
-for seams between tokens; upstream regex has no externals of its own.
-
 ### `class_range` (`packages/regex/grammar.sittir.ts:19`)
 
 Upstream `class_range` is `seq(bound, '-', bound)` with both bounds drawn from

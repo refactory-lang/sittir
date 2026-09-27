@@ -1,6 +1,6 @@
 {
   "name": "regex",
-  "nodeCount": 80,
+  "nodeCount": 81,
   "word": null,
   "supertypes": [
     "_character_escape",
@@ -15,11 +15,15 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_space"
+      "name": "_newline"
     },
     {
       "type": "SYMBOL",
-      "name": "_newline"
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
     }
   ],
   "extras": [
@@ -438,6 +442,16 @@
   },
   "nodes": [
     {
+      "kind": "_blankline",
+      "modelType": "punctuation",
+      "typeName": "Blankline",
+      "irKey": "blankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "text": "\n\n"
+    },
+    {
       "kind": "_character_escape",
       "modelType": "supertype",
       "typeName": "CharacterEscape",
@@ -469,6 +483,16 @@
       ]
     },
     {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n"
+    },
+    {
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
@@ -477,16 +501,6 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n"
-    },
-    {
-      "kind": "_space",
-      "modelType": "punctuation",
-      "typeName": "Space",
-      "irKey": "space",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\" \" as const",
-      "text": " "
     },
     {
       "kind": "_tight",
@@ -506,8 +520,9 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_blankline",
+        "_double_blankline",
         "_newline",
-        "_space",
         "_tight"
       ]
     },

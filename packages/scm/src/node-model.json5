@@ -1,6 +1,6 @@
 {
   "name": "scm",
-  "nodeCount": 51,
+  "nodeCount": 55,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -22,6 +22,22 @@
     {
       "type": "SYMBOL",
       "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
     }
   ],
   "extras": [
@@ -414,6 +430,36 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_blankline",
+      "modelType": "punctuation",
+      "typeName": "Blankline",
+      "irKey": "blankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "text": "\n\n"
+    },
+    {
+      "kind": "_dedent",
+      "modelType": "punctuation",
+      "typeName": "Dedent",
+      "irKey": "dedent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷑\\n\" as const",
+      "text": "﷑\n"
+    },
+    {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n"
+    },
+    {
       "kind": "_group_expression",
       "modelType": "supertype",
       "typeName": "GroupExpression",
@@ -435,6 +481,16 @@
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "_indent",
+      "modelType": "punctuation",
+      "typeName": "Indent",
+      "irKey": "indent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷐\\n\" as const",
+      "text": "﷐\n"
     },
     {
       "kind": "_named_node_expression",
@@ -498,6 +554,10 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_double_blankline",
+        "_indent",
         "_newline",
         "_space",
         "_tight"

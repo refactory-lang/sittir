@@ -356,7 +356,22 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	_node_identifier: new Set(['identifier']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
-	_whitespace: new Set(['_tight', 'tight', '_space', 'space', '_newline', 'newline'])
+	_whitespace: new Set([
+		'_tight',
+		'tight',
+		'_space',
+		'space',
+		'_newline',
+		'newline',
+		'_blankline',
+		'blankline',
+		'_double_blankline',
+		'double_blankline',
+		'_indent',
+		'indent',
+		'_dedent',
+		'dedent'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -878,7 +893,7 @@ export function wrapList(data: T.List, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			definitions() {
@@ -928,7 +943,7 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			groupingGroups() {
@@ -979,7 +994,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			name() {
@@ -1032,7 +1047,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			name() {

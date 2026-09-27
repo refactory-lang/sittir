@@ -524,8 +524,16 @@
 	],
 	"parameters": [
 		{
+			"kind": "seam",
+			"field": "parameters_before"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "parameters_after"
 		}
 	],
 	"predicate": [
@@ -591,8 +599,16 @@
 	],
 	"program": [
 		{
+			"kind": "seam",
+			"field": "program_before"
+		},
+		{
 			"kind": "slot",
 			"name": "definitions"
+		},
+		{
+			"kind": "seam",
+			"field": "program_after"
 		}
 	],
 	"string": [

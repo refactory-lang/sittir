@@ -246,8 +246,7 @@ diagnostics judge the declaration against the enriched stage.
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
 
 `vocabulary(body)` declares a `rules:` entry sittir adds and that replaces no
-upstream rule: the `_whitespace` vocabulary and every helper rule a
-re-authoring introduces. It returns `body` itself, tagged.
+upstream rule: every helper rule a re-authoring introduces. It returns `body` itself, tagged.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::ruleCauseOf`
 
@@ -457,13 +456,14 @@ Builds the placeholder; `options.absent` and `options.default` are carried only 
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
-`_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
-and as a rule) listing the whitespace kinds it renders: each member is a
-never-scanned external with a kind id, `tight` renders nothing, and a
-grammar may add its own — python's `_double_blankline` leaves two blank
-lines. The model reads the arms of every spacing site from it
-(`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
-The supertype is protected from unreachable-rule pruning like any other.
+`_whitespace`, the hidden supertype enrich mints for every grammar
+(`enrichWhitespace`) listing the whitespace kinds it renders: the members
+its extras admit, each a never-scanned external with a kind id unless the
+upstream grammar already scans one of that name, and `tight`, which renders
+nothing, always. The model reads the arms of every spacing site from it
+(`whitespace-arms.ts`); nothing outside `dsl/whitespace.ts` lists whitespace
+kinds by name. The supertype is protected from unreachable-rule pruning
+like any other.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_ARMS`
 

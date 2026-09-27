@@ -683,6 +683,10 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::withEnrichedWhitespace`
+
+The `visibleExternals:` config `wire()` runs with, and the whitespace collisions it stamps on the wire context. The whitespace-member bodies enrich minted (`getEnrichWhitespace`) merge over the grammar's own entries, so every consumer (the wire context sittir's `evaluate()` drains, the base-rule passthrough, the visible-name rewrite) sees one record. Enrich owns the whitespace vocabulary and a grammar's `visibleExternals:` holds only its own scanned externals (typescript's automatic semicolons), so a key that redeclares a minted member is a `visibleExternals` collision: the minted body wins and the collision, with enrich's upstream ones, reaches the gate as `whitespace-mint-collision`. With no minted bodies the config is unchanged.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
 ```text
@@ -845,7 +849,7 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`automaticVariants` is the context's one automatic-variant record, made when
+`whitespaceCollisions` holds the whitespace names the grammar also defines (`withEnrichedWhitespace`), which evaluate carries to the gate. `automaticVariants` is the context's one automatic-variant record, made when
 the context is built and never at a read site (`seedAutomaticVariants`): a
 copy of the base's record when the base went through `enrich`, otherwise an
 empty record, because without an enrich pass no label is automatic. A

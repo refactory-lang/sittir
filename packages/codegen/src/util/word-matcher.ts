@@ -94,6 +94,6 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 	}
 }
 
-function escapeRegexLiteral(s: string): string {
+export function escapeRegexLiteral(s: string): string {
 	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

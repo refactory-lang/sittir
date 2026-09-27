@@ -263,6 +263,12 @@ function preference(arm2) {
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
+var WHITESPACE_SUPERTYPE = "_whitespace";
+var INDENT_TEXT = "\uFDD0\n";
+var DEDENT_TEXT = "\uFDD1\n";
+function isDepthText(text) {
+  return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var LABEL_TOKEN = "[A-Za-z][A-Za-z0-9_]*?";
 var SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
@@ -753,6 +759,14 @@ function ruleListParts(rules) {
     }
   }
   return parts;
+}
+function extrasRun(extras) {
+  const { literals, patterns } = ruleListParts(extras);
+  const sources = [...patterns, ...literals.map(escapeRegexLiteral)];
+  if (sources.length === 0) return void 0;
+  const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join("|")})+`);
+  if ("error" in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
+  return compiled.regex;
 }
 function symbolFactsOf(grammar) {
   return {
@@ -2417,6 +2431,44 @@ function baseRulesOf(base2) {
   return grammar.rules;
 }
 
+// packages/codegen/src/dsl/whitespace.ts
+var TIGHT_MEMBER = "_tight";
+var SPACE_MEMBER = "_space";
+var HORIZONTAL_SPACE = " ";
+var WHITESPACE_MEMBERS = [
+  { name: TIGHT_MEMBER, body: { type: STRING, value: "" }, alwaysAdmitted: true },
+  { name: SPACE_MEMBER, body: { type: STRING, value: " " } },
+  { name: "_newline", body: { type: STRING, value: "\n" } },
+  { name: "_blankline", body: { type: STRING, value: "\n\n" } },
+  { name: "_double_blankline", body: { type: STRING, value: "\n\n\n" } },
+  { name: "_indent", body: { type: STRING, value: INDENT_TEXT } },
+  { name: "_dedent", body: { type: STRING, value: DEDENT_TEXT } }
+];
+function admittedTextOf(body) {
+  return isDepthText(body.value) ? HORIZONTAL_SPACE : body.value;
+}
+function enrichWhitespace(externals, extras, rules) {
+  const run = extrasRun(extras);
+  const upstream = new Set(ruleListParts(externals).names);
+  const members = WHITESPACE_MEMBERS.filter(
+    (member) => member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)
+  );
+  const rule2 = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
+  const minted = [
+    [WHITESPACE_SUPERTYPE, rule2],
+    ...members.filter((member) => !upstream.has(member.name)).map((member) => [member.name, member.body])
+  ];
+  return {
+    members: members.map((member) => member.name),
+    addedExternals: members.filter((member) => !upstream.has(member.name)).map((member) => member.name),
+    bodies: Object.fromEntries(
+      members.filter((member) => !isDepthText(member.body.value) || !upstream.has(member.name)).map((member) => [member.name, member.body])
+    ),
+    rule: rule2,
+    collisions: minted.filter(([name, body]) => rules[name] !== void 0 && !rulesEqual(rules[name], body)).map(([name]) => ({ name, site: "upstream" }))
+  };
+}
+
 // packages/codegen/src/dsl/transform/token-forms.ts
 var typeOf2 = (rule2) => rule2.type ?? "";
 var membersOf = (rule2) => rule2.members ?? [];
@@ -2811,10 +2863,21 @@ function enrich(baseInput, authored = {}) {
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+  const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
+  for (const { name } of whitespace.collisions) delete mergedRules[name];
+  mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
-  addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
-  replaceExtras(hasWrapper ? result.grammar : result, tokenFormArms(mergedRules, tokenFormParents));
+  const resultGrammar = hasWrapper ? result.grammar : result;
+  appendGrammarNames(resultGrammar, "supertypes", [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
+  appendGrammarNames(resultGrammar, "externals", whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
+  replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
+  Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
+    value: { bodies: whitespace.bodies, collisions: whitespace.collisions },
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
@@ -2848,6 +2911,10 @@ function enrich(baseInput, authored = {}) {
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
+var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
+function getEnrichWhitespace(grammar) {
+  return grammar?.[ENRICH_WHITESPACE_KEY] ?? { bodies: {}, collisions: [] };
+}
 function getEnrichClauseGroups(grammar) {
   if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
   const names = grammar[ENRICH_CLAUSE_GROUPS_KEY];
@@ -2988,12 +3055,12 @@ function defaultTokenFormArm(members, rules) {
   });
   return best < 0 ? 0 : best;
 }
-function addSupertypes(result, names) {
+function appendGrammarNames(result, key, names, entryOf) {
   if (names.length === 0) return;
-  const current = result.supertypes;
+  const current = result[key];
   if (typeof current === "function") {
     const fn = current;
-    result.supertypes = (dollar, previous) => {
+    result[key] = (dollar, previous) => {
       const base3 = fn(dollar, previous);
       const listed2 = harvestSupertypeNames(base3);
       return [...base3, ...names.filter((n) => !listed2.has(n)).map((n) => dollar[n])];
@@ -3002,7 +3069,7 @@ function addSupertypes(result, names) {
   }
   const base2 = Array.isArray(current) ? current : [];
   const listed = harvestSupertypeNames(base2);
-  result.supertypes = [...base2, ...names.filter((n) => !listed.has(n))];
+  result[key] = [...base2, ...names.filter((n) => !listed.has(n)).map(entryOf)];
 }
 function grammarListOf(base2, hasWrapper, key) {
   const root = hasWrapper ? base2.grammar : base2;
@@ -4822,6 +4889,7 @@ function baseRuleBodiesOf(base2) {
 function wire(config, base2, source = base2) {
   const cfg = config;
   const baseArg = base2;
+  const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base2);
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
   const context = {
@@ -4835,7 +4903,8 @@ function wire(config, base2, source = base2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     renderAs: cfg.renderAs,
-    visibleExternals: cfg.visibleExternals,
+    visibleExternals,
+    whitespaceCollisions,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
@@ -4858,7 +4927,7 @@ function wire(config, base2, source = base2) {
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
-  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || visibleExternals)) {
     const baseRules = baseRulesOf(baseArg) ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -4871,7 +4940,7 @@ function wire(config, base2, source = base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
-  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
+  applyWireVisibleExternalsRewrite(outRules, visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
@@ -5395,6 +5464,16 @@ function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
     const result = fn($, previous);
     return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
   };
+}
+function withEnrichedWhitespace(config, base2) {
+  const { bodies, collisions } = getEnrichWhitespace(base2);
+  const declared = config === void 0 ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
+  const whitespaceCollisions = [
+    ...collisions,
+    ...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: "visibleExternals" }))
+  ];
+  if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
+  return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
 }
 function applyWireVisibleExternalsRewrite(rules, config) {
   if (!config) return;
@@ -6673,9 +6752,8 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
     role($._indent, "indent");
     role($._dedent, "dedent");
     role($._newline, "newline");
-    return [...prev ?? [], $._tight, $._space, $._blankline, $._double_blankline];
+    return prev ?? [];
   },
-  supertypes: ($, previous) => [...previous ?? [], $._whitespace],
   conflicts: ($, previous) => [
     ...previous ?? [],
     [$.expression_statement, $.expression_statement_tuple],
@@ -6684,13 +6762,6 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
     [$._expressions, $.expression_list]
   ],
   inline: ($, previous) => [...previous ?? [], $._except_clause_exception_as_optional1],
-  visibleExternals: (_$) => ({
-    _newline: string("\n"),
-    _blankline: string("\n\n"),
-    _double_blankline: string("\n\n\n"),
-    _tight: string(""),
-    _space: string(" ")
-  }),
   // See docs/python-grammar-sittir-glossary.md::renderAs
   renderAs: (_$) => ({
     string_start: /[a-zA-Z]*["']+/,
@@ -6986,9 +7057,6 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
     ]
   },
   rules: {
-    _whitespace: vocabulary(
-      ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent)
-    ),
     // See docs/python-grammar-sittir-glossary.md::primary_expression
     primary_expression: reauthored("ambiguity", ($, original) => {
       let base2 = original.members;

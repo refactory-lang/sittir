@@ -1,4 +1,5 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import type { WhitespaceCollision } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
@@ -119,6 +120,7 @@ export interface RawGrammar {
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 
-const CEILINGS: Record<string, number> = { typescript: 6, rust: 13, python: 14, scm: 1, regex: 1 };
+const CEILINGS: Record<string, number> = { typescript: 5, rust: 12, python: 13, scm: 0, regex: 0 };
 
 describe('hand-written rule ratchet', () => {
 	for (const [grammar, ceiling] of Object.entries(CEILINGS)) {

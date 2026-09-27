@@ -334,7 +334,16 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	inline_flags_group: new Set(['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable']),
 	_character_escape: new Set(['control_escape', 'control_letter_escape', 'identity_escape']),
-	_whitespace: new Set(['_tight', 'tight', '_space', 'space', '_newline', 'newline'])
+	_whitespace: new Set([
+		'_tight',
+		'tight',
+		'_newline',
+		'newline',
+		'_blankline',
+		'blankline',
+		'_double_blankline',
+		'double_blankline'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -1149,8 +1158,8 @@ export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '^': 53, $: 4, '\\b': 5, '\\B': 6, '.': 2 },
-				{ 3: 53 }
+				{ '^': 54, $: 4, '\\b': 5, '\\B': 6, '.': 2 },
+				{ 3: 54 }
 			),
 			_quantifier: normalizeSingularWrapSlot(data._quantifier, 'quantifier', false, data.$type, {
 				tree,

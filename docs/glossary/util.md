@@ -106,6 +106,10 @@ matcher the class is `\w+`.
 			   without additional context. */
 ```
 
+### `packages/codegen/src/util/word-matcher.ts::escapeRegexLiteral`
+
+A literal's text as a RegExp source that matches exactly that text: every RegExp metacharacter is backslash-escaped. `ruleToRegexSource` spells a STRING through it, and `extrasRun` spells a grammar's literal extras through it.
+
 ### `packages/codegen/src/util/word-matcher.ts::module`
 
 ```text

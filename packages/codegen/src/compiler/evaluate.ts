@@ -288,6 +288,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		renderAs,
 		visibleExternals,
+		whitespaceCollisions: wireCtx?.whitespaceCollisions?.length ? wireCtx.whitespaceCollisions : undefined,
 		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,

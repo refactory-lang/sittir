@@ -86,47 +86,48 @@ export enum TSKindId {
 	Colon = 45,
 	CharacterClassEscapeArmToken1 = 46,
 	Tight = 47,
-	Space = 48,
-	Newline = 49,
-	Pattern = 50,
-	Alternation = 51,
-	Term = 52,
-	StartAssertion = 53,
-	LookaroundAssertion = 54,
-	LookaheadAssertion = 55,
-	LookbehindAssertion = 56,
-	CharacterClass = 57,
-	PosixCharacterClass = 58,
-	PosixClassName = 59,
-	ClassRange = 60,
-	AnonymousCapturingGroup = 61,
-	NamedCapturingGroup = 62,
-	NonCapturingGroup = 63,
-	InlineFlagsGroup = 64,
-	Flags = 65,
-	ZeroOrMore = 66,
-	OneOrMore = 67,
-	Optional = 68,
-	CountQuantifier = 69,
-	BackreferenceEscape = 70,
-	NamedGroupBackreference = 71,
-	CharacterClassEscape = 72,
-	UnicodeCharacterEscape = 73,
-	UnicodePropertyValueExpression = 74,
-	ControlEscape = 75,
-	TermGroup = 76,
-	CountQuantifierGroup = 77,
-	CountQuantifierArm = 78,
-	CharacterClassEscapeArm = 79,
-	UnicodePropertyValueExpressionGroup = 80,
-	InlineFlagsGroupEnable = 81,
-	InlineFlagsGroupToggle = 82,
-	InlineFlagsGroupDisable = 83,
-	AlternationRepeat1 = 84,
-	TermRepeat1 = 85,
-	CharacterClassRepeat1 = 86,
-	Lazy = 87,
-	UnicodePropertyName = 88
+	Newline = 48,
+	Blankline = 49,
+	DoubleBlankline = 50,
+	Pattern = 51,
+	Alternation = 52,
+	Term = 53,
+	StartAssertion = 54,
+	LookaroundAssertion = 55,
+	LookaheadAssertion = 56,
+	LookbehindAssertion = 57,
+	CharacterClass = 58,
+	PosixCharacterClass = 59,
+	PosixClassName = 60,
+	ClassRange = 61,
+	AnonymousCapturingGroup = 62,
+	NamedCapturingGroup = 63,
+	NonCapturingGroup = 64,
+	InlineFlagsGroup = 65,
+	Flags = 66,
+	ZeroOrMore = 67,
+	OneOrMore = 68,
+	Optional = 69,
+	CountQuantifier = 70,
+	BackreferenceEscape = 71,
+	NamedGroupBackreference = 72,
+	CharacterClassEscape = 73,
+	UnicodeCharacterEscape = 74,
+	UnicodePropertyValueExpression = 75,
+	ControlEscape = 76,
+	TermGroup = 77,
+	CountQuantifierGroup = 78,
+	CountQuantifierArm = 79,
+	CharacterClassEscapeArm = 80,
+	UnicodePropertyValueExpressionGroup = 81,
+	InlineFlagsGroupEnable = 82,
+	InlineFlagsGroupToggle = 83,
+	InlineFlagsGroupDisable = 84,
+	AlternationRepeat1 = 85,
+	TermRepeat1 = 86,
+	CharacterClassRepeat1 = 87,
+	Lazy = 88,
+	UnicodePropertyName = 89
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -177,47 +178,48 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[45, 'colon'],
 	[46, 'character_class_escape_arm_token1'],
 	[47, '_tight'],
-	[48, '_space'],
-	[49, '_newline'],
-	[50, 'pattern'],
-	[51, 'alternation'],
-	[52, 'term'],
-	[53, 'start_assertion'],
-	[54, 'lookaround_assertion'],
-	[55, 'lookahead_assertion'],
-	[56, 'lookbehind_assertion'],
-	[57, 'character_class'],
-	[58, 'posix_character_class'],
-	[59, 'posix_class_name'],
-	[60, 'class_range'],
-	[61, 'anonymous_capturing_group'],
-	[62, 'named_capturing_group'],
-	[63, 'non_capturing_group'],
-	[64, 'inline_flags_group'],
-	[65, 'flags'],
-	[66, 'zero_or_more'],
-	[67, 'one_or_more'],
-	[68, 'optional'],
-	[69, 'count_quantifier'],
-	[70, 'backreference_escape'],
-	[71, 'named_group_backreference'],
-	[72, 'character_class_escape'],
-	[73, 'unicode_character_escape'],
-	[74, 'unicode_property_value_expression'],
-	[75, 'control_escape'],
-	[76, 'term_group'],
-	[77, 'count_quantifier_group'],
-	[78, 'count_quantifier_arm'],
-	[79, 'character_class_escape_arm'],
-	[80, 'unicode_property_value_expression_group'],
-	[81, 'inline_flags_group_enable'],
-	[82, 'inline_flags_group_toggle'],
-	[83, 'inline_flags_group_disable'],
-	[84, 'alternation_repeat1'],
-	[85, 'term_repeat1'],
-	[86, 'character_class_repeat1'],
-	[87, 'lazy'],
-	[88, 'unicode_property_name']
+	[48, '_newline'],
+	[49, '_blankline'],
+	[50, '_double_blankline'],
+	[51, 'pattern'],
+	[52, 'alternation'],
+	[53, 'term'],
+	[54, 'start_assertion'],
+	[55, 'lookaround_assertion'],
+	[56, 'lookahead_assertion'],
+	[57, 'lookbehind_assertion'],
+	[58, 'character_class'],
+	[59, 'posix_character_class'],
+	[60, 'posix_class_name'],
+	[61, 'class_range'],
+	[62, 'anonymous_capturing_group'],
+	[63, 'named_capturing_group'],
+	[64, 'non_capturing_group'],
+	[65, 'inline_flags_group'],
+	[66, 'flags'],
+	[67, 'zero_or_more'],
+	[68, 'one_or_more'],
+	[69, 'optional'],
+	[70, 'count_quantifier'],
+	[71, 'backreference_escape'],
+	[72, 'named_group_backreference'],
+	[73, 'character_class_escape'],
+	[74, 'unicode_character_escape'],
+	[75, 'unicode_property_value_expression'],
+	[76, 'control_escape'],
+	[77, 'term_group'],
+	[78, 'count_quantifier_group'],
+	[79, 'count_quantifier_arm'],
+	[80, 'character_class_escape_arm'],
+	[81, 'unicode_property_value_expression_group'],
+	[82, 'inline_flags_group_enable'],
+	[83, 'inline_flags_group_toggle'],
+	[84, 'inline_flags_group_disable'],
+	[85, 'alternation_repeat1'],
+	[86, 'term_repeat1'],
+	[87, 'character_class_repeat1'],
+	[88, 'lazy'],
+	[89, 'unicode_property_name']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -269,47 +271,48 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[45, ':'],
 	[46, 'character_class_escape_arm_token1'],
 	[47, '_tight'],
-	[48, '_space'],
-	[49, '_newline'],
-	[50, 'pattern'],
-	[51, 'alternation'],
-	[52, 'term'],
-	[53, 'start_assertion'],
-	[54, 'lookaround_assertion'],
-	[55, 'lookahead_assertion'],
-	[56, 'lookbehind_assertion'],
-	[57, 'character_class'],
-	[58, 'posix_character_class'],
-	[59, 'posix_class_name'],
-	[60, 'class_range'],
-	[61, 'anonymous_capturing_group'],
-	[62, 'named_capturing_group'],
-	[63, 'non_capturing_group'],
-	[64, 'inline_flags_group'],
-	[65, 'flags'],
-	[66, 'zero_or_more'],
-	[67, 'one_or_more'],
-	[68, 'optional'],
-	[69, 'count_quantifier'],
-	[70, 'backreference_escape'],
-	[71, 'named_group_backreference'],
-	[72, 'character_class_escape'],
-	[73, 'unicode_character_escape'],
-	[74, 'unicode_property_value_expression'],
-	[75, 'control_escape'],
-	[76, 'term_group'],
-	[77, 'count_quantifier_group'],
-	[78, 'count_quantifier_arm'],
-	[79, 'character_class_escape_arm'],
-	[80, 'unicode_property_value_expression_group'],
-	[81, 'inline_flags_group_enable'],
-	[82, 'inline_flags_group_toggle'],
-	[83, 'inline_flags_group_disable'],
-	[84, 'alternation_repeat1'],
-	[85, 'term_repeat1'],
-	[86, 'character_class_repeat1'],
-	[87, 'lazy'],
-	[88, 'unicode_property_name']
+	[48, '_newline'],
+	[49, '_blankline'],
+	[50, '_double_blankline'],
+	[51, 'pattern'],
+	[52, 'alternation'],
+	[53, 'term'],
+	[54, 'start_assertion'],
+	[55, 'lookaround_assertion'],
+	[56, 'lookahead_assertion'],
+	[57, 'lookbehind_assertion'],
+	[58, 'character_class'],
+	[59, 'posix_character_class'],
+	[60, 'posix_class_name'],
+	[61, 'class_range'],
+	[62, 'anonymous_capturing_group'],
+	[63, 'named_capturing_group'],
+	[64, 'non_capturing_group'],
+	[65, 'inline_flags_group'],
+	[66, 'flags'],
+	[67, 'zero_or_more'],
+	[68, 'one_or_more'],
+	[69, 'optional'],
+	[70, 'count_quantifier'],
+	[71, 'backreference_escape'],
+	[72, 'named_group_backreference'],
+	[73, 'character_class_escape'],
+	[74, 'unicode_character_escape'],
+	[75, 'unicode_property_value_expression'],
+	[76, 'control_escape'],
+	[77, 'term_group'],
+	[78, 'count_quantifier_group'],
+	[79, 'count_quantifier_arm'],
+	[80, 'character_class_escape_arm'],
+	[81, 'unicode_property_value_expression_group'],
+	[82, 'inline_flags_group_enable'],
+	[83, 'inline_flags_group_toggle'],
+	[84, 'inline_flags_group_disable'],
+	[85, 'alternation_repeat1'],
+	[86, 'term_repeat1'],
+	[87, 'character_class_repeat1'],
+	[88, 'lazy'],
+	[89, 'unicode_property_name']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -411,10 +414,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CharacterClassEscapeArmToken1;
 		case '_tight':
 			return TSKindId.Tight;
-		case '_space':
-			return TSKindId.Space;
 		case '_newline':
 			return TSKindId.Newline;
+		case '_blankline':
+			return TSKindId.Blankline;
+		case '_double_blankline':
+			return TSKindId.DoubleBlankline;
 		case 'pattern':
 			return TSKindId.Pattern;
 		case 'alternation':
@@ -550,8 +555,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
-export type SpacingArm = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-export type WhitespaceArm = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type SpacingArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
+export type WhitespaceArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
@@ -588,8 +593,9 @@ export enum CharacterEscapeKind {
 
 export enum WhitespaceKind {
 	Tight = '_tight',
-	Space = '_space',
-	Newline = '_newline'
+	Newline = '_newline',
+	Blankline = '_blankline',
+	DoubleBlankline = '_double_blankline'
 }
 
 // Node types — concrete interfaces
@@ -1043,7 +1049,7 @@ export type CharacterEscape = ControlEscape | ControlLetterEscape | IdentityEsca
 
 export type CharacterEscapeTree = ControlEscapeTree | ControlLetterEscapeTree | IdentityEscapeTree;
 
-export type Whitespace = Tight | Space | Newline;
+export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
 
 export namespace ClassAtom {
 	export type Kind = '_class_atom';
@@ -1069,13 +1075,17 @@ export type Tight = TSKindId.Tight;
 export interface TightTree extends AnyTreeNode {
 	readonly type: '_tight';
 }
-export type Space = TSKindId.Space;
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
 export type Newline = TSKindId.Newline;
 export interface NewlineTree extends AnyTreeNode {
 	readonly type: '_newline';
+}
+export type Blankline = TSKindId.Blankline;
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export type DoubleBlankline = TSKindId.DoubleBlankline;
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
 }
 export type BslashDash = TSKindId.BslashDash;
 export interface BslashDashTree extends AnyTreeNode {

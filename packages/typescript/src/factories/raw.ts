@@ -4547,7 +4547,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[356], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[357], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	return withMethods(
 		withAccessors(

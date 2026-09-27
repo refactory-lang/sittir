@@ -24,9 +24,6 @@ import {
 	sittirGrammar
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-declare const string: (value: string) => unknown;
-
-
 export default sittirGrammar(base, {
 	name: 'rust',
 	conflicts: ($, previous) => [
@@ -42,24 +39,6 @@ export default sittirGrammar(base, {
 		[$._attributed_type_parameter, $._type],
 		[$._attributed_argument]
 	],
-	externals: ($, previous) => [
-		...(previous ?? []),
-		$._tight,
-		$._space,
-		$._newline,
-		$._blankline,
-		$._indent,
-		$._dedent
-	],
-	supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-	visibleExternals: (_$) => ({
-		_tight: string(''),
-		_space: string(' '),
-		_newline: string('\n'),
-		_blankline: string('\n\n'),
-		_indent: indent(),
-		_dedent: dedent()
-	}),
 
 	groups: {
 		visibility_modifier_in_path: ($) => seq('in', $._path),
@@ -560,7 +539,6 @@ export default sittirGrammar(base, {
 		]
 	},
 	rules: {
-		_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
 		// tuple_type's separated list realized as its own kind — the
 		// delimiter is a fact of the list, so the list is a top-level
 		// rule carrying it (hidden rule + visible alias, matching the

@@ -15,13 +15,6 @@ that enriched base; `grammar()` receives both. There is no separate enriched
 binding to hand to two places, so the base wire sees and the base tree-sitter
 compiles cannot drift apart.
 
-### `externals` / `supertypes` / `visibleExternals` / `_whitespace` (`packages/scm/grammar.sittir.ts:11`)
-
-The structural-whitespace vocabulary every sittir grammar carries: `_tight`,
-`_space` and `_newline` are external tokens that render as `''`, `' '` and
-`'\n'`, grouped under the `_whitespace` supertype. The renderer uses them
-for seams between tokens.
-
 ### `_group_expression` / `_named_node_expression` (`packages/scm/grammar.sittir.ts:19`)
 
 Both are left-recursive anchor chains, `prec.left(seq(expr, '.', expr))`

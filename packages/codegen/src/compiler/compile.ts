@@ -102,7 +102,7 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
 		...evaluatedRecords,
-		...(stages === undefined ? [] : diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages.enriched }))
+		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched })
 	];
 	const evaluateBlocked = blockedRecords(evaluateDiagnostics, evaluated.expectDiagnostics, allowDiagnostics);
 	if (evaluateBlocked.length > 0) return { passed: false, generatedIdTables, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };

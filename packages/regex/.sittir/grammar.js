@@ -254,6 +254,12 @@ function isPreference(v) {
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
+var WHITESPACE_SUPERTYPE = "_whitespace";
+var INDENT_TEXT = "\uFDD0\n";
+var DEDENT_TEXT = "\uFDD1\n";
+function isDepthText(text) {
+  return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var LABEL_TOKEN = "[A-Za-z][A-Za-z0-9_]*?";
 var SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
@@ -744,6 +750,14 @@ function ruleListParts(rules) {
     }
   }
   return parts;
+}
+function extrasRun(extras) {
+  const { literals, patterns } = ruleListParts(extras);
+  const sources = [...patterns, ...literals.map(escapeRegexLiteral)];
+  if (sources.length === 0) return void 0;
+  const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join("|")})+`);
+  if ("error" in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
+  return compiled.regex;
 }
 function symbolFactsOf(grammar) {
   return {
@@ -2208,12 +2222,12 @@ function distributeInlineAliasChoices(rule2, ctx) {
   };
   const armsOf = (content) => choiceArmsOf(inlineChoiceOf(content) ?? content)?.flatMap((arm2) => armsOf(arm2) ?? [arm2]);
   const visit = (r) => {
-    const choice2 = r;
-    if (choice2.type === CHOICE && choice2.members?.some((m) => distributed.has(m))) {
-      const members = choice2.members.flatMap(
+    const choice = r;
+    if (choice.type === CHOICE && choice.members?.some((m) => distributed.has(m))) {
+      const members = choice.members.flatMap(
         (m) => distributed.has(m) ? m.members : [m]
       );
-      return { ...choice2, members };
+      return { ...choice, members };
     }
     const alias2 = r;
     if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value) return r;
@@ -2387,6 +2401,44 @@ function baseRulesOf(base2) {
   return grammar.rules;
 }
 
+// packages/codegen/src/dsl/whitespace.ts
+var TIGHT_MEMBER = "_tight";
+var SPACE_MEMBER = "_space";
+var HORIZONTAL_SPACE = " ";
+var WHITESPACE_MEMBERS = [
+  { name: TIGHT_MEMBER, body: { type: STRING, value: "" }, alwaysAdmitted: true },
+  { name: SPACE_MEMBER, body: { type: STRING, value: " " } },
+  { name: "_newline", body: { type: STRING, value: "\n" } },
+  { name: "_blankline", body: { type: STRING, value: "\n\n" } },
+  { name: "_double_blankline", body: { type: STRING, value: "\n\n\n" } },
+  { name: "_indent", body: { type: STRING, value: INDENT_TEXT } },
+  { name: "_dedent", body: { type: STRING, value: DEDENT_TEXT } }
+];
+function admittedTextOf(body) {
+  return isDepthText(body.value) ? HORIZONTAL_SPACE : body.value;
+}
+function enrichWhitespace(externals, extras, rules) {
+  const run = extrasRun(extras);
+  const upstream = new Set(ruleListParts(externals).names);
+  const members = WHITESPACE_MEMBERS.filter(
+    (member) => member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)
+  );
+  const rule2 = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
+  const minted = [
+    [WHITESPACE_SUPERTYPE, rule2],
+    ...members.filter((member) => !upstream.has(member.name)).map((member) => [member.name, member.body])
+  ];
+  return {
+    members: members.map((member) => member.name),
+    addedExternals: members.filter((member) => !upstream.has(member.name)).map((member) => member.name),
+    bodies: Object.fromEntries(
+      members.filter((member) => !isDepthText(member.body.value) || !upstream.has(member.name)).map((member) => [member.name, member.body])
+    ),
+    rule: rule2,
+    collisions: minted.filter(([name, body]) => rules[name] !== void 0 && !rulesEqual(rules[name], body)).map(([name]) => ({ name, site: "upstream" }))
+  };
+}
+
 // packages/codegen/src/dsl/transform/token-forms.ts
 var typeOf2 = (rule2) => rule2.type ?? "";
 var membersOf = (rule2) => rule2.members ?? [];
@@ -2396,8 +2448,8 @@ var isString = (rule2) => typeOf2(rule2) === "STRING";
 function isTokenWrapper(rule2) {
   return isTokenWrapperType(typeOf2(rule2));
 }
-function classifyTokenChoice(choice2) {
-  const arms = membersOf(choice2);
+function classifyTokenChoice(choice) {
+  const arms = membersOf(choice);
   if (arms.some(isBlank)) return "presence";
   if (arms.every(isString)) return "spelling";
   return "forms";
@@ -2781,10 +2833,21 @@ function enrich(baseInput, authored = {}) {
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+  const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
+  for (const { name } of whitespace.collisions) delete mergedRules[name];
+  mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
-  addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
-  replaceExtras(hasWrapper ? result.grammar : result, tokenFormArms(mergedRules, tokenFormParents));
+  const resultGrammar = hasWrapper ? result.grammar : result;
+  appendGrammarNames(resultGrammar, "supertypes", [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
+  appendGrammarNames(resultGrammar, "externals", whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
+  replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
+  Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
+    value: { bodies: whitespace.bodies, collisions: whitespace.collisions },
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
@@ -2818,6 +2881,10 @@ function enrich(baseInput, authored = {}) {
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
+var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
+function getEnrichWhitespace(grammar) {
+  return grammar?.[ENRICH_WHITESPACE_KEY] ?? { bodies: {}, collisions: [] };
+}
 function getEnrichClauseGroups(grammar) {
   if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
   const names = grammar[ENRICH_CLAUSE_GROUPS_KEY];
@@ -2958,12 +3025,12 @@ function defaultTokenFormArm(members, rules) {
   });
   return best < 0 ? 0 : best;
 }
-function addSupertypes(result, names) {
+function appendGrammarNames(result, key, names, entryOf) {
   if (names.length === 0) return;
-  const current = result.supertypes;
+  const current = result[key];
   if (typeof current === "function") {
     const fn = current;
-    result.supertypes = (dollar, previous) => {
+    result[key] = (dollar, previous) => {
       const base3 = fn(dollar, previous);
       const listed2 = harvestSupertypeNames(base3);
       return [...base3, ...names.filter((n) => !listed2.has(n)).map((n) => dollar[n])];
@@ -2972,7 +3039,7 @@ function addSupertypes(result, names) {
   }
   const base2 = Array.isArray(current) ? current : [];
   const listed = harvestSupertypeNames(base2);
-  result.supertypes = [...base2, ...names.filter((n) => !listed.has(n))];
+  result[key] = [...base2, ...names.filter((n) => !listed.has(n)).map(entryOf)];
 }
 function grammarListOf(base2, hasWrapper, key) {
   const root = hasWrapper ? base2.grammar : base2;
@@ -4672,13 +4739,6 @@ function resolveToEnumMembersOneLevelDeep(target) {
 
 // packages/codegen/src/dsl/primitives/rule-cause.ts
 var RULE_CAUSE = /* @__PURE__ */ Symbol.for("sittir.ruleCause");
-function tag(body, declaration) {
-  Object.defineProperty(body, RULE_CAUSE, { value: declaration, enumerable: false, writable: false });
-  return body;
-}
-function vocabulary(body) {
-  return tag(body, { kind: "vocabulary" });
-}
 function ruleCauseOf(fn) {
   if (typeof fn !== "function") return void 0;
   return fn[RULE_CAUSE];
@@ -4789,6 +4849,7 @@ function baseRuleBodiesOf(base2) {
 function wire(config, base2, source = base2) {
   const cfg = config;
   const baseArg = base2;
+  const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base2);
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
   const context = {
@@ -4802,7 +4863,8 @@ function wire(config, base2, source = base2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     renderAs: cfg.renderAs,
-    visibleExternals: cfg.visibleExternals,
+    visibleExternals,
+    whitespaceCollisions,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
@@ -4825,7 +4887,7 @@ function wire(config, base2, source = base2) {
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
-  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || visibleExternals)) {
     const baseRules = baseRulesOf(baseArg) ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -4838,7 +4900,7 @@ function wire(config, base2, source = base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
-  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
+  applyWireVisibleExternalsRewrite(outRules, visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
@@ -5362,6 +5424,16 @@ function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
     const result = fn($, previous);
     return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
   };
+}
+function withEnrichedWhitespace(config, base2) {
+  const { bodies, collisions } = getEnrichWhitespace(base2);
+  const declared = config === void 0 ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
+  const whitespaceCollisions = [
+    ...collisions,
+    ...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: "visibleExternals" }))
+  ];
+  if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
+  return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
 }
 function applyWireVisibleExternalsRewrite(rules, config) {
   if (!config) return;
@@ -6063,7 +6135,7 @@ function planSiblingVariantHoist(rule2, variantEntries, onBail = () => {
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], throughOptional);
   if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
-  const { choice: choice2, choiceMembers, absentIdx } = hoistChoice;
+  const { choice, choiceMembers, absentIdx } = hoistChoice;
   const armCount = throughOptional ? choiceMembers.length - 1 : choiceMembers.length;
   for (const p of parsed) if (p.altIdx < 0) p.altIdx += armCount;
   if (absentEntries.length > 1) return bail(`more than one absent variant declared (${absentEntries.map(([k]) => k).join(", ")})`);
@@ -6100,7 +6172,7 @@ function planSiblingVariantHoist(rule2, variantEntries, onBail = () => {
     (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
   );
   if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
-  return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted };
+  return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted };
 }
 function hoistChoiceOf(rule2, throughOptional) {
   if (!rule2) return null;
@@ -6120,13 +6192,13 @@ function tryHoistSiblingVariants(rule2, variantEntries) {
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   const plan = planSiblingVariantHoist(rule2, variantEntries, (reason) => bail(reason));
   if (plan === null) return null;
-  const { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted } = plan;
+  const { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted } = plan;
   if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
   if (wireIsPrecedenceRankedRule(parentKind))
     return bail(`'${parentKind}' is ranked by name in the grammar's precedences; its variants would reduce unranked`);
   const authored = parsed.map((p) => polymorphVisibleName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
   if (authored !== void 0) return bail(`'${authored}' is an authored rule and would not carry the hoisted scaffolding`);
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, lifted, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule2) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -6160,7 +6232,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, lifted, parentKind, precStack) {
   const hoist = (altContent) => {
     const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
     return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
@@ -6184,7 +6256,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   refs.sort((a, b) => a.altIdx - b.altIdx);
   registerHoistedVariantConflicts(refs.map((r) => r.name));
   const newChoice = reconstructContainer(
-    choice2,
+    choice,
     refs.map((r) => r.ref)
   );
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
@@ -6612,13 +6684,6 @@ function sittirGrammar(base2, config) {
 // packages/regex/grammar.sittir.ts
 var grammar_sittir_default = sittirGrammar(import_grammar.default, {
   name: "regex",
-  externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline],
-  supertypes: ($, previous) => [...previous ?? [], $._whitespace],
-  visibleExternals: (_$) => ({
-    _tight: string(""),
-    _space: string(" "),
-    _newline: string("\n")
-  }),
   patches: {
     class_range: { 0: field("start"), 2: field("end") },
     term: { "0/1": field("quantifier") },
@@ -6631,9 +6696,6 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
       },
       { "1/0": variant("enable"), "1/1": variant("toggle"), "1/2": variant("disable") }
     ]
-  },
-  rules: {
-    _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
   }
 });
 if (module.exports && module.exports.default) module.exports = module.exports.default;

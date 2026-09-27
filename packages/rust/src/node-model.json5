@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 437,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -96,6 +96,10 @@
     {
       "type": "SYMBOL",
       "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
     },
     {
       "type": "SYMBOL",
@@ -3904,6 +3908,16 @@
       ]
     },
     {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n"
+    },
+    {
       "kind": "_error_sentinel",
       "modelType": "pattern",
       "typeName": "ErrorSentinel",
@@ -4615,6 +4629,7 @@
       "subtypes": [
         "_blankline",
         "_dedent",
+        "_double_blankline",
         "_indent",
         "_newline",
         "_space",

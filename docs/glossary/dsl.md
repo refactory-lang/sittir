@@ -3544,6 +3544,42 @@ The three views of a rule list that `ruleListParts` returns: `names` (SYMBOL ent
 
 The one derivation of names, literals and patterns from an `extras` or `externals` rule list. A consumer that asks by name (prune roots, synthetic external rules, renames, inline-at-reference, trivia) reads `names`; nothing stores a split copy of the list.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::extrasRun`
+
+The anchored RegExp matching a whole run of a grammar's lexical extras: one or more of its PATTERN sources and escaped STRING literals, in any order. It answers whether the grammar lexes a given text as nothing but extras, which is how enrich decides the whitespace members a grammar admits. A grammar with no lexical extras has no run; an extra that does not compile as a JavaScript RegExp is an error, not a silent miss.
+
+### `packages/codegen/src/dsl/whitespace.ts::WhitespaceBody`
+
+The render body of a whitespace member: a STRING, whose value is the member's text or, for `_indent`/`_dedent`, the writer's depth mark (`INDENT_TEXT`/`DEDENT_TEXT`), the same body the `indent()`/`dedent()` builders make.
+
+### `packages/codegen/src/dsl/whitespace.ts::TIGHT_MEMBER`
+
+`_tight`, the whitespace member that renders nothing. Every grammar admits it, since joining two tokens with nothing between them needs no lexing; it is the default arm of a grammar that admits no space (`defaultWhitespaceArmOf`).
+
+### `packages/codegen/src/dsl/whitespace.ts::SPACE_MEMBER`
+
+`_space`, the whitespace member that renders one space, and the default arm of every grammar that admits it.
+
+### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
+
+Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
+
+### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
+
+The text a member must lex as extras for the grammar to admit it: its own text, except that `_indent` and `_dedent` ride on the horizontal space an indented line starts with, so they are admitted exactly when a space is.
+
+### `packages/codegen/src/dsl/whitespace.ts::EnrichedWhitespace`
+
+What `enrichWhitespace` derives: the admitted `members` in `WHITESPACE_MEMBERS` order, the `addedExternals` the upstream grammar does not already declare, the render `bodies` wire makes visible, the `_whitespace` rule (a CHOICE of the members), and the upstream `collisions`.
+
+### `packages/codegen/src/dsl/whitespace.ts::WhitespaceCollision`
+
+A name enrich mints for the whitespace vocabulary that the grammar also defines, with where the definition sits: `upstream` (a rule of the upstream grammar) or `visibleExternals` (a key the grammar's config declares). Enrich and wire stamp these where they find them; evaluate carries them to the compile gate as `whitespace-mint-collision` records.
+
+### `packages/codegen/src/dsl/whitespace.ts::enrichWhitespace`
+
+Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`extrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A member whose name the upstream grammar already declares as an external is reused rather than added (python's scanned `_newline`, `_indent`, `_dedent`); such a member keeps a body only when it is text, since a scanned depth token renders through its role, not a fixed body. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_whitespace` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::symbolFactsOf`
 
 Reads a grammar's `SymbolFacts`, as sets, off anything shaped like an evaluated grammar; its `externals` and `extras` are the SYMBOL names of the grammar's rule lists (`ruleListParts`), and `visibleExternals` is the keys of the grammar's declared record (none when it declares none).
@@ -5930,9 +5966,21 @@ any `PREC` wrappers (`throughPrec`).
 
 The arm a token-form parent's own factory builds from a bare value. Among the arms whose body holds at least one pattern, the one with the fewest enum choices (a choice of literals is a slot the caller must fill), then the fewest leaves; ties go to the first arm, and a parent with no pattern arm defaults to its first. It is a heuristic and the author overrides it with `variant(name, { default: true })`.
 
-### `packages/codegen/src/dsl/enrich.ts::addSupertypes`
+### `packages/codegen/src/dsl/enrich.ts::appendGrammarNames`
 
-Appends rule names to the grammar's `supertypes`, whether it is an array of names or a `$ => [...]` function, skipping names already listed. The token-form parents go through here so tree-sitter treats each as the supertype of its minted arms.
+Appends rule names to one of the grammar's name lists (`supertypes` or `externals`), whether it is an array or a `$ => [...]` function, skipping names already listed. An array takes each name through `entryOf` (a bare name for `supertypes`, a SYMBOL entry for `externals`, matching how the base grammar holds each list); a function appends `$[name]`. The token-form parents and `_whitespace` join `supertypes` here so tree-sitter treats each as a supertype, and the whitespace members the upstream grammar lacks join `externals`.
+
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_WHITESPACE_KEY`
+
+The non-enumerable key under which enrich leaves its whitespace sidecar (`EnrichWhitespaceSidecar`) on the enriched grammar, for `wire()` to merge into `visibleExternals` and the wire context.
+
+### `packages/codegen/src/dsl/enrich.ts::EnrichWhitespaceSidecar`
+
+The part of `EnrichedWhitespace` wire reads: the members' render `bodies` and the upstream `collisions`.
+
+### `packages/codegen/src/dsl/enrich.ts::getEnrichWhitespace`
+
+Reads the sidecar enrich left under `ENRICH_WHITESPACE_KEY`; a grammar enrich did not produce has no bodies and no collisions.
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 

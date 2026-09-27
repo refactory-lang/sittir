@@ -68,8 +68,9 @@ pub enum AnyTransport {
     InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
     InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
     Tight(TightTransport),
-    Space(SpaceTransport),
     Newline(NewlineTransport),
+    Blankline(BlanklineTransport),
+    DoubleBlankline(DoubleBlanklineTransport),
     Lazy(LazyTransport),
     UnicodePropertyName(UnicodePropertyNameTransport),
     Caret(CaretTransport),
@@ -164,8 +165,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::InlineFlagsGroupToggle(t) => t.prepare(ctx),
             AnyTransport::InlineFlagsGroupDisable(t) => t.prepare(ctx),
             AnyTransport::Tight(t) => t.prepare(ctx),
-            AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
+            AnyTransport::Blankline(t) => t.prepare(ctx),
+            AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
             AnyTransport::Lazy(t) => t.prepare(ctx),
             AnyTransport::UnicodePropertyName(t) => t.prepare(ctx),
             AnyTransport::Caret(t) => t.prepare(ctx),
@@ -229,15 +231,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 // kind: pattern (PATTERN)
-                50 => Ok(AnyTransport::Pattern(
+                51 => Ok(AnyTransport::Pattern(
                     PatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: alternation (ALTERNATION)
-                51 => Ok(AnyTransport::Alternation(
+                52 => Ok(AnyTransport::Alternation(
                     AlternationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: term (TERM)
-                52 => Ok(AnyTransport::Term(
+                53 => Ok(AnyTransport::Term(
                     TermTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: any_character (ANY_CHARACTER)
@@ -245,7 +247,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     AnyCharacterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: start_assertion (START_ASSERTION)
-                53 => Ok(AnyTransport::StartAssertion(
+                54 => Ok(AnyTransport::StartAssertion(
                     StartAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: end_assertion (END_ASSERTION)
@@ -261,15 +263,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     NonBoundaryAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lookaround_assertion (LOOKAROUND_ASSERTION)
-                54 => Ok(AnyTransport::LookaroundAssertion(
+                55 => Ok(AnyTransport::LookaroundAssertion(
                     LookaroundAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lookahead_assertion (LOOKAHEAD_ASSERTION)
-                55 => Ok(AnyTransport::LookaheadAssertion(
+                56 => Ok(AnyTransport::LookaheadAssertion(
                     LookaheadAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lookbehind_assertion (LOOKBEHIND_ASSERTION)
-                56 => Ok(AnyTransport::LookbehindAssertion(
+                57 => Ok(AnyTransport::LookbehindAssertion(
                     LookbehindAssertionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pattern_character (PATTERN_CHARACTER)
@@ -277,19 +279,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     PatternCharacterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: character_class (CHARACTER_CLASS)
-                57 => Ok(AnyTransport::CharacterClass(
+                58 => Ok(AnyTransport::CharacterClass(
                     CharacterClassTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: posix_character_class (POSIX_CHARACTER_CLASS)
-                58 => Ok(AnyTransport::PosixCharacterClass(
+                59 => Ok(AnyTransport::PosixCharacterClass(
                     PosixCharacterClassTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: posix_class_name (POSIX_CLASS_NAME)
-                59 => Ok(AnyTransport::PosixClassName(
+                60 => Ok(AnyTransport::PosixClassName(
                     PosixClassNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_range (CLASS_RANGE)
-                60 => Ok(AnyTransport::ClassRange(
+                61 => Ok(AnyTransport::ClassRange(
                     ClassRangeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_character (CLASS_CHARACTER)
@@ -297,43 +299,43 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ClassCharacterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: anonymous_capturing_group (ANONYMOUS_CAPTURING_GROUP)
-                61 => Ok(AnyTransport::AnonymousCapturingGroup(
+                62 => Ok(AnyTransport::AnonymousCapturingGroup(
                     AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_capturing_group (NAMED_CAPTURING_GROUP)
-                62 => Ok(AnyTransport::NamedCapturingGroup(
+                63 => Ok(AnyTransport::NamedCapturingGroup(
                     NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: non_capturing_group (NON_CAPTURING_GROUP)
-                63 => Ok(AnyTransport::NonCapturingGroup(
+                64 => Ok(AnyTransport::NonCapturingGroup(
                     NonCapturingGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: flags (FLAGS)
-                65 => Ok(AnyTransport::Flags(
+                66 => Ok(AnyTransport::Flags(
                     FlagsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: zero_or_more (ZERO_OR_MORE)
-                66 => Ok(AnyTransport::ZeroOrMore(
+                67 => Ok(AnyTransport::ZeroOrMore(
                     ZeroOrMoreTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: one_or_more (ONE_OR_MORE)
-                67 => Ok(AnyTransport::OneOrMore(
+                68 => Ok(AnyTransport::OneOrMore(
                     OneOrMoreTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: optional (OPTIONAL)
-                68 => Ok(AnyTransport::Optional(
+                69 => Ok(AnyTransport::Optional(
                     OptionalTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: count_quantifier (COUNT_QUANTIFIER)
-                69 => Ok(AnyTransport::CountQuantifier(
+                70 => Ok(AnyTransport::CountQuantifier(
                     CountQuantifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: backreference_escape (BACKREFERENCE_ESCAPE)
-                70 => Ok(AnyTransport::BackreferenceEscape(
+                71 => Ok(AnyTransport::BackreferenceEscape(
                     BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_group_backreference (NAMED_GROUP_BACKREFERENCE)
-                71 => Ok(AnyTransport::NamedGroupBackreference(
+                72 => Ok(AnyTransport::NamedGroupBackreference(
                     NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decimal_escape (DECIMAL_ESCAPE)
@@ -341,15 +343,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     DecimalEscapeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: character_class_escape (CHARACTER_CLASS_ESCAPE)
-                72 => Ok(AnyTransport::CharacterClassEscape(
+                73 => Ok(AnyTransport::CharacterClassEscape(
                     CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unicode_character_escape (UNICODE_CHARACTER_ESCAPE)
-                73 => Ok(AnyTransport::UnicodeCharacterEscape(
+                74 => Ok(AnyTransport::UnicodeCharacterEscape(
                     UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unicode_property_value_expression (UNICODE_PROPERTY_VALUE_EXPRESSION)
-                74 => Ok(AnyTransport::UnicodePropertyValueExpression(
+                75 => Ok(AnyTransport::UnicodePropertyValueExpression(
                     UnicodePropertyValueExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unicode_property_value (UNICODE_PROPERTY_VALUE)
@@ -357,7 +359,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     UnicodePropertyValueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: control_escape (CONTROL_ESCAPE)
-                75 => Ok(AnyTransport::ControlEscape(
+                76 => Ok(AnyTransport::ControlEscape(
                     ControlEscapeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: control_letter_escape (CONTROL_LETTER_ESCAPE)
@@ -377,55 +379,59 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     DecimalDigitsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: term_group (TERM_GROUP)
-                76 => Ok(AnyTransport::TermGroup(
+                77 => Ok(AnyTransport::TermGroup(
                     TermGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: count_quantifier_group (COUNT_QUANTIFIER_GROUP)
-                77 => Ok(AnyTransport::CountQuantifierGroup(
+                78 => Ok(AnyTransport::CountQuantifierGroup(
                     CountQuantifierGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: count_quantifier_arm (COUNT_QUANTIFIER_ARM)
-                78 => Ok(AnyTransport::CountQuantifierArm(
+                79 => Ok(AnyTransport::CountQuantifierArm(
                     CountQuantifierArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: character_class_escape_arm (CHARACTER_CLASS_ESCAPE_ARM)
-                79 => Ok(AnyTransport::CharacterClassEscapeArm(
+                80 => Ok(AnyTransport::CharacterClassEscapeArm(
                     CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unicode_property_value_expression_group (UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP)
-                80 => Ok(AnyTransport::UnicodePropertyValueExpressionGroup(
+                81 => Ok(AnyTransport::UnicodePropertyValueExpressionGroup(
                     UnicodePropertyValueExpressionGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: inline_flags_group_enable (INLINE_FLAGS_GROUP_ENABLE)
-                81 => Ok(AnyTransport::InlineFlagsGroupEnable(
+                82 => Ok(AnyTransport::InlineFlagsGroupEnable(
                     InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: inline_flags_group_toggle (INLINE_FLAGS_GROUP_TOGGLE)
-                82 => Ok(AnyTransport::InlineFlagsGroupToggle(
+                83 => Ok(AnyTransport::InlineFlagsGroupToggle(
                     InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: inline_flags_group_disable (INLINE_FLAGS_GROUP_DISABLE)
-                83 => Ok(AnyTransport::InlineFlagsGroupDisable(
+                84 => Ok(AnyTransport::InlineFlagsGroupDisable(
                     InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tight (_TIGHT)
                 47 => Ok(AnyTransport::Tight(
                     TightTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _space (_SPACE)
-                48 => Ok(AnyTransport::Space(
-                    SpaceTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _newline (_NEWLINE)
-                49 => Ok(AnyTransport::Newline(
+                48 => Ok(AnyTransport::Newline(
                     NewlineTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _blankline (_BLANKLINE)
+                49 => Ok(AnyTransport::Blankline(
+                    BlanklineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _double_blankline (_DOUBLE_BLANKLINE)
+                50 => Ok(AnyTransport::DoubleBlankline(
+                    DoubleBlanklineTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: lazy (LAZY)
-                87 => Ok(AnyTransport::Lazy(
+                88 => Ok(AnyTransport::Lazy(
                     LazyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unicode_property_name (UNICODE_PROPERTY_NAME)
-                88 => Ok(AnyTransport::UnicodePropertyName(
+                89 => Ok(AnyTransport::UnicodePropertyName(
                     UnicodePropertyNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: caret (CARET)
@@ -731,10 +737,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    51 => Ok(Self::Alternation(
+                    52 => Ok(Self::Alternation(
                         AlternationTransport::from_napi_value(env, napi_val)?
                     )),
-                    52 => Ok(Self::Term(
+                    53 => Ok(Self::Term(
                         TermTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -748,10 +754,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    51 => Ok(Self::Alternation(
+                    52 => Ok(Self::Alternation(
                         AlternationTransport::from_napi_value(env, napi_val)?
                     )),
-                    52 => Ok(Self::Term(
+                    53 => Ok(Self::Term(
                         TermTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -843,10 +849,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for LookaroundAssertionContentTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    55 => Ok(Self::LookaheadAssertion(
+                    56 => Ok(Self::LookaheadAssertion(
                         LookaheadAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    56 => Ok(Self::LookbehindAssertion(
+                    57 => Ok(Self::LookbehindAssertion(
                         LookbehindAssertionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -860,10 +866,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for LookaroundAssertionContentTransp
                     ::napi::Error::from_reason("$type property missing in LookaroundAssertionContentTransportSlot")
                 )?;
                 match kind_id {
-                    55 => Ok(Self::LookaheadAssertion(
+                    56 => Ok(Self::LookaheadAssertion(
                         LookaheadAssertionTransport::from_napi_value(env, napi_val)?
                     )),
-                    56 => Ok(Self::LookbehindAssertion(
+                    57 => Ok(Self::LookbehindAssertion(
                         LookbehindAssertionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1194,7 +1200,7 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
             Self::PosixCharacterClass(inner) => inner.kind_in(kinds),
             Self::ClassRange(inner) => inner.kind_in(kinds),
             Self::Literal2_62_73_6c_61_73_68_5f_64_61_73_68 => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(41), ::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(41), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1215,10 +1221,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTranspor
                     14 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     41 => Ok(Self::ControlLetterEscape(
@@ -1227,10 +1233,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTranspor
                     42 => Ok(Self::IdentityEscape(
                         IdentityEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    58 => Ok(Self::PosixCharacterClass(
+                    59 => Ok(Self::PosixCharacterClass(
                         PosixCharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    60 => Ok(Self::ClassRange(
+                    61 => Ok(Self::ClassRange(
                         ClassRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1251,10 +1257,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTranspor
                     14 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     41 => Ok(Self::ControlLetterEscape(
@@ -1263,10 +1269,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassClassAtomsTranspor
                     42 => Ok(Self::IdentityEscape(
                         IdentityEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    58 => Ok(Self::PosixCharacterClass(
+                    59 => Ok(Self::PosixCharacterClass(
                         PosixCharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    60 => Ok(Self::ClassRange(
+                    61 => Ok(Self::ClassRange(
                         ClassRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1368,7 +1374,7 @@ impl ::sittir_core::view::KindOf for ClassRangeStartTransportSlot {
             Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
             Self::ControlEscape(inner) => inner.kind_in(kinds),
             Self::Literal3_64_61_73_68 => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1386,10 +1392,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeStartTransportSlot {
                     20 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1407,10 +1413,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeStartTransportSlot {
                     20 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1510,7 +1516,7 @@ impl ::sittir_core::view::KindOf for ClassRangeEndTransportSlot {
             Self::CharacterClassEscape(inner) => inner.kind_in(kinds),
             Self::ControlEscape(inner) => inner.kind_in(kinds),
             Self::Literal3_64_61_73_68 => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(20), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1528,10 +1534,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeEndTransportSlot {
                     20 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1549,10 +1555,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassRangeEndTransportSlot {
                     20 => Ok(Self::ClassCharacter(
                         ClassCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1774,7 +1780,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CountQuantifierContentTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    78 => Ok(Self::CountQuantifierArm(
+                    79 => Ok(Self::CountQuantifierArm(
                         CountQuantifierArmTransport::from_napi_value(env, napi_val)?
                     )),
                     44 => Ok(Self::DecimalDigits(
@@ -1791,7 +1797,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CountQuantifierContentTransportS
                     ::napi::Error::from_reason("$type property missing in CountQuantifierContentTransportSlot")
                 )?;
                 match kind_id {
-                    78 => Ok(Self::CountQuantifierArm(
+                    79 => Ok(Self::CountQuantifierArm(
                         CountQuantifierArmTransport::from_napi_value(env, napi_val)?
                     )),
                     44 => Ok(Self::DecimalDigits(
@@ -1881,7 +1887,7 @@ impl ::sittir_core::view::KindOf for CharacterClassEscapeContentTransportSlot {
             Self::CharacterClassEscapeArm(inner) => inner.kind_in(kinds),
             Self::UnicodeCharacterEscape(inner) => inner.kind_in(kinds),
             Self::Literal6_5c_5c_5b_64_44_73_53_77_57_5d => false,
-            Self::Verbatim(_) => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1895,10 +1901,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeContentTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    79 => Ok(Self::CharacterClassEscapeArm(
+                    80 => Ok(Self::CharacterClassEscapeArm(
                         CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
                     )),
-                    73 => Ok(Self::UnicodeCharacterEscape(
+                    74 => Ok(Self::UnicodeCharacterEscape(
                         UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1912,10 +1918,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharacterClassEscapeContentTrans
                     ::napi::Error::from_reason("$type property missing in CharacterClassEscapeContentTransportSlot")
                 )?;
                 match kind_id {
-                    79 => Ok(Self::CharacterClassEscapeArm(
+                    80 => Ok(Self::CharacterClassEscapeArm(
                         CharacterClassEscapeArmTransport::from_napi_value(env, napi_val)?
                     )),
-                    73 => Ok(Self::UnicodeCharacterEscape(
+                    74 => Ok(Self::UnicodeCharacterEscape(
                         UnicodeCharacterEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2007,7 +2013,7 @@ impl ::sittir_core::view::KindOf for TermGroupQuantifierTransportSlot {
             Self::OneOrMore(inner) => inner.kind_in(kinds),
             Self::Optional(inner) => inner.kind_in(kinds),
             Self::CountQuantifier(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(66), ::sittir_core::types::KindId(67), ::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(67), ::sittir_core::types::KindId(68), ::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -2021,16 +2027,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupQuantifierTransportSlot
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    66 => Ok(Self::ZeroOrMore(
+                    67 => Ok(Self::ZeroOrMore(
                         ZeroOrMoreTransport::from_napi_value(env, napi_val)?
                     )),
-                    67 => Ok(Self::OneOrMore(
+                    68 => Ok(Self::OneOrMore(
                         OneOrMoreTransport::from_napi_value(env, napi_val)?
                     )),
-                    68 => Ok(Self::Optional(
+                    69 => Ok(Self::Optional(
                         OptionalTransport::from_napi_value(env, napi_val)?
                     )),
-                    69 => Ok(Self::CountQuantifier(
+                    70 => Ok(Self::CountQuantifier(
                         CountQuantifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2044,16 +2050,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupQuantifierTransportSlot
                     ::napi::Error::from_reason("$type property missing in TermGroupQuantifierTransportSlot")
                 )?;
                 match kind_id {
-                    66 => Ok(Self::ZeroOrMore(
+                    67 => Ok(Self::ZeroOrMore(
                         ZeroOrMoreTransport::from_napi_value(env, napi_val)?
                     )),
-                    67 => Ok(Self::OneOrMore(
+                    68 => Ok(Self::OneOrMore(
                         OneOrMoreTransport::from_napi_value(env, napi_val)?
                     )),
-                    68 => Ok(Self::Optional(
+                    69 => Ok(Self::Optional(
                         OptionalTransport::from_napi_value(env, napi_val)?
                     )),
-                    69 => Ok(Self::CountQuantifier(
+                    70 => Ok(Self::CountQuantifier(
                         CountQuantifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2196,12 +2202,12 @@ impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
             Self::InlineFlagsGroupEnable(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupToggle(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupDisable(inner) => inner.kind_in(kinds),
-            Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
             Self::Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
             Self::Literal9_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
             Self::Literal10_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
             Self::Literal11_61_6e_79_5f_63_68_61_72_61_63_74_65_72 => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(12), ::sittir_core::types::KindId(34), ::sittir_core::types::KindId(41), ::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(12), ::sittir_core::types::KindId(34), ::sittir_core::types::KindId(41), ::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -2215,30 +2221,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    53 => Ok(Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e),
+                    54 => Ok(Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e),
                     4 => Ok(Self::Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e),
                     5 => Ok(Self::Literal9_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e),
                     6 => Ok(Self::Literal10_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e),
                     2 => Ok(Self::Literal11_61_6e_79_5f_63_68_61_72_61_63_74_65_72),
-                    54 => Ok(Self::LookaroundAssertion(
+                    55 => Ok(Self::LookaroundAssertion(
                         LookaroundAssertionTransport::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::PatternCharacter(
                         PatternCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    57 => Ok(Self::CharacterClass(
+                    58 => Ok(Self::CharacterClass(
                         CharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    58 => Ok(Self::PosixCharacterClass(
+                    59 => Ok(Self::PosixCharacterClass(
                         PosixCharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
                     34 => Ok(Self::DecimalEscape(
                         DecimalEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     41 => Ok(Self::ControlLetterEscape(
@@ -2250,28 +2256,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
                     19 => Ok(Self::IdentityEscape(
                         IdentityEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    70 => Ok(Self::BackreferenceEscape(
+                    71 => Ok(Self::BackreferenceEscape(
                         BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    71 => Ok(Self::NamedGroupBackreference(
+                    72 => Ok(Self::NamedGroupBackreference(
                         NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    61 => Ok(Self::AnonymousCapturingGroup(
+                    62 => Ok(Self::AnonymousCapturingGroup(
                         AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    62 => Ok(Self::NamedCapturingGroup(
+                    63 => Ok(Self::NamedCapturingGroup(
                         NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    63 => Ok(Self::NonCapturingGroup(
+                    64 => Ok(Self::NonCapturingGroup(
                         NonCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    81 => Ok(Self::InlineFlagsGroupEnable(
+                    82 => Ok(Self::InlineFlagsGroupEnable(
                         InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
                     )),
-                    82 => Ok(Self::InlineFlagsGroupToggle(
+                    83 => Ok(Self::InlineFlagsGroupToggle(
                         InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
                     )),
-                    83 => Ok(Self::InlineFlagsGroupDisable(
+                    84 => Ok(Self::InlineFlagsGroupDisable(
                         InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2285,30 +2291,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in TermGroupContentTransportSlot")
                 )?;
                 match kind_id {
-                    53 => Ok(Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e),
+                    54 => Ok(Self::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e),
                     4 => Ok(Self::Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e),
                     5 => Ok(Self::Literal9_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e),
                     6 => Ok(Self::Literal10_6e_6f_6e_5f_62_6f_75_6e_64_61_72_79_5f_61_73_73_65_72_74_69_6f_6e),
                     2 => Ok(Self::Literal11_61_6e_79_5f_63_68_61_72_61_63_74_65_72),
-                    54 => Ok(Self::LookaroundAssertion(
+                    55 => Ok(Self::LookaroundAssertion(
                         LookaroundAssertionTransport::from_napi_value(env, napi_val)?
                     )),
                     12 => Ok(Self::PatternCharacter(
                         PatternCharacterTransport::from_napi_value(env, napi_val)?
                     )),
-                    57 => Ok(Self::CharacterClass(
+                    58 => Ok(Self::CharacterClass(
                         CharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
-                    58 => Ok(Self::PosixCharacterClass(
+                    59 => Ok(Self::PosixCharacterClass(
                         PosixCharacterClassTransport::from_napi_value(env, napi_val)?
                     )),
                     34 => Ok(Self::DecimalEscape(
                         DecimalEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    72 => Ok(Self::CharacterClassEscape(
+                    73 => Ok(Self::CharacterClassEscape(
                         CharacterClassEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    75 => Ok(Self::ControlEscape(
+                    76 => Ok(Self::ControlEscape(
                         ControlEscapeTransport::from_napi_value(env, napi_val)?
                     )),
                     41 => Ok(Self::ControlLetterEscape(
@@ -2320,28 +2326,28 @@ impl ::napi::bindgen_prelude::FromNapiValue for TermGroupContentTransportSlot {
                     19 => Ok(Self::IdentityEscape(
                         IdentityEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    70 => Ok(Self::BackreferenceEscape(
+                    71 => Ok(Self::BackreferenceEscape(
                         BackreferenceEscapeTransport::from_napi_value(env, napi_val)?
                     )),
-                    71 => Ok(Self::NamedGroupBackreference(
+                    72 => Ok(Self::NamedGroupBackreference(
                         NamedGroupBackreferenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    61 => Ok(Self::AnonymousCapturingGroup(
+                    62 => Ok(Self::AnonymousCapturingGroup(
                         AnonymousCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    62 => Ok(Self::NamedCapturingGroup(
+                    63 => Ok(Self::NamedCapturingGroup(
                         NamedCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    63 => Ok(Self::NonCapturingGroup(
+                    64 => Ok(Self::NonCapturingGroup(
                         NonCapturingGroupTransport::from_napi_value(env, napi_val)?
                     )),
-                    81 => Ok(Self::InlineFlagsGroupEnable(
+                    82 => Ok(Self::InlineFlagsGroupEnable(
                         InlineFlagsGroupEnableTransport::from_napi_value(env, napi_val)?
                     )),
-                    82 => Ok(Self::InlineFlagsGroupToggle(
+                    83 => Ok(Self::InlineFlagsGroupToggle(
                         InlineFlagsGroupToggleTransport::from_napi_value(env, napi_val)?
                     )),
-                    83 => Ok(Self::InlineFlagsGroupDisable(
+                    84 => Ok(Self::InlineFlagsGroupDisable(
                         InlineFlagsGroupDisableTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2674,12 +2680,12 @@ pub struct PatternTransport {
 
 impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(50) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(51) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -2734,12 +2740,12 @@ pub struct AlternationTransport {
 
 impl ::sittir_core::view::KindOf for AlternationTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AlternationTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(51) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(52) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -2800,12 +2806,12 @@ pub struct TermTransport {
 
 impl ::sittir_core::view::KindOf for TermTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TermTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(52) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(53) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -2964,12 +2970,12 @@ pub struct StartAssertionTransport {
 
 impl ::sittir_core::view::KindOf for StartAssertionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StartAssertionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(53) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(54) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3384,12 +3390,12 @@ pub struct LookaroundAssertionTransport {
 
 impl ::sittir_core::view::KindOf for LookaroundAssertionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LookaroundAssertionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(54) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(55) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3442,12 +3448,12 @@ pub struct LookaheadAssertionTransport {
 
 impl ::sittir_core::view::KindOf for LookaheadAssertionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LookaheadAssertionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(55) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(56) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3502,12 +3508,12 @@ pub struct LookbehindAssertionTransport {
 
 impl ::sittir_core::view::KindOf for LookbehindAssertionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LookbehindAssertionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(56) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(57) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3662,12 +3668,12 @@ pub struct CharacterClassTransport {
 
 impl ::sittir_core::view::KindOf for CharacterClassTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CharacterClassTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(57) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(58) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3719,12 +3725,12 @@ pub struct PosixCharacterClassTransport {
 
 impl ::sittir_core::view::KindOf for PosixCharacterClassTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PosixCharacterClassTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(58) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(59) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3772,12 +3778,12 @@ pub struct PosixClassNameTransport {
 
 impl ::sittir_core::view::KindOf for PosixClassNameTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PosixClassNameTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(59) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(60) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3880,12 +3886,12 @@ pub struct ClassRangeTransport {
 
 impl ::sittir_core::view::KindOf for ClassRangeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ClassRangeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(60) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(61) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4040,12 +4046,12 @@ pub struct AnonymousCapturingGroupTransport {
 
 impl ::sittir_core::view::KindOf for AnonymousCapturingGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AnonymousCapturingGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(61) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(62) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4101,12 +4107,12 @@ pub struct NamedCapturingGroupTransport {
 
 impl ::sittir_core::view::KindOf for NamedCapturingGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedCapturingGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(62) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(63) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4160,12 +4166,12 @@ pub struct NonCapturingGroupTransport {
 
 impl ::sittir_core::view::KindOf for NonCapturingGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NonCapturingGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(63) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(64) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4213,12 +4219,12 @@ pub struct FlagsTransport {
 
 impl ::sittir_core::view::KindOf for FlagsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FlagsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(65) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(66) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4315,12 +4321,12 @@ pub struct ZeroOrMoreTransport {
 
 impl ::sittir_core::view::KindOf for ZeroOrMoreTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ZeroOrMoreTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(66) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(67) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4417,12 +4423,12 @@ pub struct OneOrMoreTransport {
 
 impl ::sittir_core::view::KindOf for OneOrMoreTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for OneOrMoreTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(67) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(68) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4519,12 +4525,12 @@ pub struct OptionalTransport {
 
 impl ::sittir_core::view::KindOf for OptionalTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for OptionalTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(68) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(69) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4625,12 +4631,12 @@ pub struct CountQuantifierTransport {
 
 impl ::sittir_core::view::KindOf for CountQuantifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CountQuantifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(69) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(70) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4682,12 +4688,12 @@ pub struct BackreferenceEscapeTransport {
 
 impl ::sittir_core::view::KindOf for BackreferenceEscapeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BackreferenceEscapeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(70) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(71) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4739,12 +4745,12 @@ pub struct NamedGroupBackreferenceTransport {
 
 impl ::sittir_core::view::KindOf for NamedGroupBackreferenceTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedGroupBackreferenceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(71) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(72) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4898,12 +4904,12 @@ pub struct CharacterClassEscapeTransport {
 
 impl ::sittir_core::view::KindOf for CharacterClassEscapeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CharacterClassEscapeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(72) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(73) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4950,12 +4956,12 @@ pub struct UnicodeCharacterEscapeTransport {
 
 impl ::sittir_core::view::KindOf for UnicodeCharacterEscapeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnicodeCharacterEscapeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(73) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(74) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5058,12 +5064,12 @@ pub struct UnicodePropertyValueExpressionTransport {
 
 impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(74) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(75) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5214,12 +5220,12 @@ pub struct ControlEscapeTransport {
 
 impl ::sittir_core::view::KindOf for ControlEscapeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ControlEscapeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(75) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(76) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5684,12 +5690,12 @@ pub struct TermGroupTransport {
 
 impl ::sittir_core::view::KindOf for TermGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TermGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(76) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(77) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5742,12 +5748,12 @@ pub struct CountQuantifierGroupTransport {
 
 impl ::sittir_core::view::KindOf for CountQuantifierGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CountQuantifierGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(77) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(78) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5801,12 +5807,12 @@ pub struct CountQuantifierArmTransport {
 
 impl ::sittir_core::view::KindOf for CountQuantifierArmTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CountQuantifierArmTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(78) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(79) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5861,12 +5867,12 @@ pub struct CharacterClassEscapeArmTransport {
 
 impl ::sittir_core::view::KindOf for CharacterClassEscapeArmTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CharacterClassEscapeArmTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(79) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(80) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5919,12 +5925,12 @@ pub struct UnicodePropertyValueExpressionGroupTransport {
 
 impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(80) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(81) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5978,12 +5984,12 @@ pub struct InlineFlagsGroupEnableTransport {
 
 impl ::sittir_core::view::KindOf for InlineFlagsGroupEnableTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for InlineFlagsGroupEnableTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(81) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(82) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -6040,12 +6046,12 @@ pub struct InlineFlagsGroupToggleTransport {
 
 impl ::sittir_core::view::KindOf for InlineFlagsGroupToggleTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for InlineFlagsGroupToggleTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(82) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(83) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -6101,12 +6107,12 @@ pub struct InlineFlagsGroupDisableTransport {
 
 impl ::sittir_core::view::KindOf for InlineFlagsGroupDisableTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for InlineFlagsGroupDisableTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(83) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(84) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -6249,110 +6255,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct SpaceTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for SpaceTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for SpaceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(48) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for SpaceTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SpaceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => " ".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| " ".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| " ".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SpaceTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SpaceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SpaceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SpaceTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -6361,12 +6263,12 @@ pub struct NewlineTransport {
 
 impl ::sittir_core::view::KindOf for NewlineTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NewlineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(49) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(48) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -6456,6 +6358,214 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct BlanklineTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for BlanklineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for BlanklineTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(49) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for BlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for BlanklineTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BlanklineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BlanklineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BlanklineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DoubleBlanklineTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(50) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for DoubleBlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n\n\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DoubleBlanklineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DoubleBlanklineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DoubleBlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DoubleBlanklineTransport::to_napi_value(env, *val)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LazyTransport {
@@ -6469,12 +6579,12 @@ pub struct LazyTransport {
 
 impl ::sittir_core::view::KindOf for LazyTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LazyTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(87) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(88) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -6525,12 +6635,12 @@ pub struct UnicodePropertyNameTransport {
 
 impl ::sittir_core::view::KindOf for UnicodePropertyNameTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnicodePropertyNameTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(88) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(89) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -9274,7 +9384,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
 
 impl ::sittir_core::prepare::SeatTarget for TermGroupTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(76)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(77)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -9360,7 +9470,7 @@ fn render_lookaround_assertion(node: &LookaroundAssertionTransport, w: &mut dyn 
 fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let pattern = &node.pattern;
-    w.edge(::sittir_core::types::KindId(55), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?")?;
     w.adjacent();
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
@@ -9368,14 +9478,14 @@ fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::
     pattern.render(w)?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(55), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let pattern = &node.pattern;
-    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?<")?;
     w.adjacent();
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
@@ -9383,7 +9493,7 @@ fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn 
     pattern.render(w)?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9403,26 +9513,26 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_CHARACTER_CLASS_LBRACK_AFTER);
     class_atoms.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_posix_character_class(node: &PosixCharacterClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let posix_class_name = &node.posix_class_name;
-    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[:")?;
     w.adjacent();
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER);
     posix_class_name.render(w)?;
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE);
     w.text(":]")?;
-    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9433,13 +9543,13 @@ fn render_posix_class_name(t: &PosixClassNameTransport, w: &mut dyn ::sittir_cor
 fn render_class_range(node: &ClassRangeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let end = &node.end;
     let start = &node.start;
-    w.edge(::sittir_core::types::KindId(60), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     start.render(w)?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
     end.render(w)?;
-    w.edge(::sittir_core::types::KindId(60), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9449,13 +9559,13 @@ fn render_class_character(t: &ClassCharacterTransport, w: &mut dyn ::sittir_core
 
 fn render_anonymous_capturing_group(node: &AnonymousCapturingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
-    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_LPAREN_AFTER);
     pattern.render(w)?;
     w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9463,7 +9573,7 @@ fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn
     let content = &node.content;
     let group_name = &node.group_name;
     let pattern = &node.pattern;
-    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
     w.adjacent();
     group_name.render(w)?;
@@ -9473,19 +9583,19 @@ fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn
     pattern.render(w)?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_non_capturing_group(node: &NonCapturingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
-    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?:")?;
     w.site_at(options::SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER);
     pattern.render(w)?;
     w.site_at(options::SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9507,15 +9617,15 @@ fn render_optional(t: &OptionalTransport, w: &mut dyn ::sittir_core::render::Ren
 
 fn render_count_quantifier(node: &CountQuantifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = &node.group_name;
-    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("\\k")?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_BSLASHK_AFTER);
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_BEFORE);
@@ -9525,20 +9635,20 @@ fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn 
     group_name.render(w)?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_GT_BEFORE);
     w.text(">")?;
-    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = &node.group_name;
-    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?P=")?;
     w.adjacent();
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER);
     group_name.render(w)?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9559,10 +9669,10 @@ fn render_unicode_character_escape(t: &UnicodeCharacterEscapeTransport, w: &mut 
 fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let unicode_property_value = &node.unicode_property_value;
     let unicode_property_value_expression_group = View::new(&node.unicode_property_value_expression_group, "{}");
-    w.edge(::sittir_core::types::KindId(74), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(75), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     unicode_property_value_expression_group.render(w)?;
     unicode_property_value.render(w)?;
-    w.edge(::sittir_core::types::KindId(74), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(75), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9597,37 +9707,37 @@ fn render_decimal_digits(t: &DecimalDigitsTransport, w: &mut dyn ::sittir_core::
 fn render_term_group(node: &TermGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let quantifier = View::new(&node.quantifier, "{}");
-    w.edge(::sittir_core::types::KindId(76), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
     quantifier.render(w)?;
-    w.edge(::sittir_core::types::KindId(76), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_count_quantifier_group(node: &CountQuantifierGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let decimal_digits = View::new(&node.decimal_digits, "{}");
-    w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(",")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER);
     decimal_digits.render(w)?;
-    w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_count_quantifier_arm(node: &CountQuantifierArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let count_quantifier_group = View::new(&node.count_quantifier_group, "{}");
     let decimal_digits = &node.decimal_digits;
-    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     decimal_digits.render(w)?;
     count_quantifier_group.render(w)?;
-    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let unicode_property_value_expression = &node.unicode_property_value_expression;
-    w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_BEFORE);
     w.text("{")?;
@@ -9635,24 +9745,24 @@ fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w:
     unicode_property_value_expression.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_unicode_property_value_expression_group(node: &UnicodePropertyValueExpressionGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let unicode_property_name = &node.unicode_property_name;
-    w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     unicode_property_name.render(w)?;
     w.site_at(options::SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE);
     w.text("=")?;
-    w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let enabled = &node.enabled;
     let pattern = View::new(&node.pattern, "{}");
-    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(82), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?")?;
     w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER);
@@ -9665,7 +9775,7 @@ fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(82), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9673,7 +9783,7 @@ fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &
     let disabled = &node.disabled;
     let enabled = &node.enabled;
     let pattern = View::new(&node.pattern, "{}");
-    w.edge(::sittir_core::types::KindId(82), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?")?;
     w.adjacent();
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER);
@@ -9691,14 +9801,14 @@ fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(82), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let disabled = &node.disabled;
     let pattern = View::new(&node.pattern, "{}");
-    w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER);
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE);
@@ -9714,7 +9824,7 @@ fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w:
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -9722,11 +9832,15 @@ fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSin
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_double_blankline(t: &DoubleBlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
@@ -9914,8 +10028,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::InlineFlagsGroupToggle(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupDisable(inner) => inner.kind_in(kinds),
             Self::Tight(inner) => inner.kind_in(kinds),
-            Self::Space(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
+            Self::Blankline(inner) => inner.kind_in(kinds),
+            Self::DoubleBlankline(inner) => inner.kind_in(kinds),
             Self::Lazy(inner) => inner.kind_in(kinds),
             Self::UnicodePropertyName(inner) => inner.kind_in(kinds),
             Self::Caret(inner) => inner.kind_in(kinds),
@@ -9998,8 +10113,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::InlineFlagsGroupToggle(t) => t.render(w),
             AnyTransport::InlineFlagsGroupDisable(t) => t.render(w),
             AnyTransport::Tight(t) => t.render(w),
-            AnyTransport::Space(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
+            AnyTransport::Blankline(t) => t.render(w),
+            AnyTransport::DoubleBlankline(t) => t.render(w),
             AnyTransport::Lazy(t) => t.render(w),
             AnyTransport::UnicodePropertyName(t) => t.render(w),
             AnyTransport::Caret(t) => t.render(w),

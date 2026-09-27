@@ -201,7 +201,8 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'rule-cause-missing',
 	'rule-cause-mismatch',
 	'render-only-not-external',
-	'vocabulary-replaces-upstream'
+	'vocabulary-replaces-upstream',
+	'whitespace-mint-collision'
 ]);
 
 export function unexpectableExpectEntries(

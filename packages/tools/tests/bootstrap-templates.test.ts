@@ -4,8 +4,6 @@ import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { allGrammars, grammarPackageDir, grammarRequire } from '@sittir/codegen/grammars';
 import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
-import { diagnoseEvaluationStage } from '../../codegen/src/compiler/stage.ts';
-import { diagnoseRuleCauses } from '../../codegen/src/compiler/diagnostics/rule-causes.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
 
 const python = grammarPackageFiles({
@@ -44,8 +42,8 @@ describe('grammar composition goes through sittirGrammar, which enriches and wir
 	}
 });
 
-describe('a bootstrapped grammar declares every hand-written rule', () => {
-	it('the template grammar passes the rule-cause judgement', async () => {
+describe('a bootstrapped grammar hand-writes no rule', () => {
+	it('the template grammar compiles the upstream rules as is, with the whitespace supertype minted by enrich', async () => {
 		const template = grammarPackageFiles({
 			name: 'regex',
 			Name: 'Regex',
@@ -60,9 +58,10 @@ describe('a bootstrapped grammar declares every hand-written rule', () => {
 		writeFileSync(entry, source, 'utf8');
 		try {
 			const raw = await evaluate(entry);
-			expect(raw.stages).toBeDefined();
-			const enriched = diagnoseEvaluationStage(raw.stages!.enriched);
-			expect(diagnoseRuleCauses({ grammar: 'regex', raw, enriched })).toEqual([]);
+			expect(raw.stages).toBeUndefined();
+			expect(raw.ruleCauses ?? {}).toEqual({});
+			expect(raw.undeclaredRules ?? []).toEqual([]);
+			expect(raw.supertypes).toContain('_whitespace');
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

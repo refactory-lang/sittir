@@ -216,6 +216,7 @@ gate, per code and per owner, and only shrink.
 | --- | --- | --- |
 | evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
 | causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
+| whitespace vocabulary | `whitespace-mint-collision` (new; unexpectable) | the collisions enrich and wire stamp: a `visibleExternals:` key or an upstream rule defining a name enrich mints for `_whitespace` differently |
 | alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
 | slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-unaddressable`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
 | token interiors | `token-interior-unstructurable` (new) | the token-interior pass over the linked rules: an opaque token's named parts and the patterns beside them |

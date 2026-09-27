@@ -3834,10 +3834,10 @@ under, so the two can never name it differently.
 Resolves each site's default: the arm the `options:` block declares for it
 (`declaredOptionArms`, keyed by kind and address, with supertype and
 wildcard declarations already matched to the sites they reach), otherwise
-the fallback — `space` for a separator gap, `tight` for a flank, and for a
-token seam the arm the seam-stamping dry run baked (`space` where the body
-had a static space, `tight` otherwise). A site's label is its address; a
-seam's resolved arm must be one its site admits.
+the grammar's default arm, derived once in the constructor
+(`defaultWhitespaceArmOf`) and the same for a separator gap, a flank and a
+seam. A site's label is its address; a seam's resolved arm must be one its
+site admits.
 
 `declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
 `origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
@@ -3854,7 +3854,7 @@ to be nameable there without importing back up from this module.
 separator gaps and flanks are outside the seam census's origin tracking.
 
 A `'word-default'` origin marks a seam on a keyword that no row reaches:
-`resolveSeam` gives it the fallback arm (`space`) but at the declared
+`resolveSeam` gives it the grammar's default arm but at the declared
 strength, so a keyword never loses its space to a cascaded tight — `return
 (x)`, `typeof (x)`, `case (1)` — while a declared tight (`return;`,
 `pub(crate)`) still wins by rank. It applies to token seams, literal and
@@ -4121,6 +4121,15 @@ union, whitespace text and choice member symbol is read from here.
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
 
 The arms of `whitespaceSymbolsOf`, in declaration order.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::defaultWhitespaceArmOf`
+
+The arm every site falls back to when no declaration reaches it: the arm of
+`_space` when the grammar's `_whitespace` supertype lists it, otherwise the
+arm of `_tight`. Enrich admits `_space` only when the grammar's extras accept
+a space, so a grammar that cannot lex one between tokens (regex) renders
+tight by default instead of emitting text its parser rejects. `_tight` is
+always a member; a supertype listing neither is an error.
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
 

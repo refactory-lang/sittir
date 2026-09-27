@@ -200,20 +200,20 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 45, 47,
-	48, 49, 53
+	48, 49, 50, 54
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	pattern: new Set([51, 52]),
-	lookaround_assertion: new Set([55, 56]),
-	posix_character_class: new Set([59]),
-	anonymous_capturing_group: new Set([50, 51, 52]),
-	non_capturing_group: new Set([50, 51, 52]),
-	count_quantifier: new Set([44, 78]),
+	pattern: new Set([52, 53]),
+	lookaround_assertion: new Set([56, 57]),
+	posix_character_class: new Set([60]),
+	anonymous_capturing_group: new Set([51, 52, 53]),
+	non_capturing_group: new Set([51, 52, 53]),
+	count_quantifier: new Set([44, 79]),
 	backreference_escape: new Set([43]),
 	named_group_backreference: new Set([43]),
-	character_class_escape: new Set([73, 79]),
+	character_class_escape: new Set([74, 80]),
 	count_quantifier_group: new Set([44]),
-	unicode_property_value_expression_group: new Set([38, 88]),
+	unicode_property_value_expression_group: new Set([38, 89]),
 	unicode_property_name: new Set([38])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};

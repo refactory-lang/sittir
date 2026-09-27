@@ -22,6 +22,7 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
+import { SYMBOL } from '../types/rule-types.ts';
 
 function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
@@ -57,6 +58,8 @@ import {
 	unwrapPrec
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
+import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
+import { WHITESPACE_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
@@ -172,12 +175,23 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	synthesizeFieldEnumRules(mergedRules);
 	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+	const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
+	for (const { name } of whitespace.collisions) delete mergedRules[name];
+	mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
 	const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
-	addSupertypes((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormParents);
-	replaceExtras((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormArms(mergedRules, tokenFormParents));
+	const resultGrammar = (hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>;
+	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
+	appendGrammarNames(resultGrammar, 'externals', whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
+	replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
+	Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
+		value: { bodies: whitespace.bodies, collisions: whitespace.collisions },
+		enumerable: false,
+		writable: false,
+		configurable: true
+	});
 	if (clauseGroupNames.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
 			value: clauseGroupNames,
@@ -212,6 +226,14 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 }
 
 export const ENRICH_CLAUSE_GROUPS_KEY = '__enrichedClauseGroups__' as const;
+
+export const ENRICH_WHITESPACE_KEY = '__enrichedWhitespace__' as const;
+
+export type EnrichWhitespaceSidecar = Pick<EnrichedWhitespace, 'bodies' | 'collisions'>;
+
+export function getEnrichWhitespace(grammar: unknown): EnrichWhitespaceSidecar {
+	return ((grammar as Record<string, unknown> | null)?.[ENRICH_WHITESPACE_KEY] as EnrichWhitespaceSidecar | undefined) ?? { bodies: {}, collisions: [] };
+}
 
 export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
 	if (!grammar || typeof grammar !== 'object') return new Set();
@@ -375,12 +397,17 @@ function defaultTokenFormArm(members: readonly Rule[], rules: Record<string, Rul
 	return best < 0 ? 0 : best;
 }
 
-function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {
+function appendGrammarNames(
+	result: Record<string, unknown>,
+	key: 'supertypes' | 'externals',
+	names: readonly string[],
+	entryOf: (name: string) => unknown
+): void {
 	if (names.length === 0) return;
-	const current = result.supertypes;
+	const current = result[key];
 	if (typeof current === 'function') {
 		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
-		result.supertypes = (dollar: Record<string, unknown>, previous?: unknown) => {
+		result[key] = (dollar: Record<string, unknown>, previous?: unknown) => {
 			const base = fn(dollar, previous);
 			const listed = harvestSupertypeNames(base);
 			return [...base, ...names.filter((n) => !listed.has(n)).map((n) => dollar[n])];
@@ -389,7 +416,7 @@ function addSupertypes(result: Record<string, unknown>, names: readonly string[]
 	}
 	const base = Array.isArray(current) ? current : [];
 	const listed = harvestSupertypeNames(base);
-	result.supertypes = [...base, ...names.filter((n) => !listed.has(n))];
+	result[key] = [...base, ...names.filter((n) => !listed.has(n)).map(entryOf)];
 }
 
 function grammarListOf(

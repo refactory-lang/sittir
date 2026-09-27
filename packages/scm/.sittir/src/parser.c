@@ -9,10 +9,10 @@
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 96
 #define LARGE_STATE_COUNT 2
-#define SYMBOL_COUNT 60
+#define SYMBOL_COUNT 64
 #define ALIAS_COUNT 0
-#define TOKEN_COUNT 27
-#define EXTERNAL_TOKEN_COUNT 3
+#define TOKEN_COUNT 31
+#define EXTERNAL_TOKEN_COUNT 7
 #define FIELD_COUNT 14
 #define MAX_ALIAS_SEQUENCE_LENGTH 6
 #define MAX_RESERVED_WORD_SET_SIZE 0
@@ -46,39 +46,43 @@ enum ts_symbol_identifiers {
   sym__tight = 24,
   sym__space = 25,
   sym__newline = 26,
-  sym_program = 27,
-  sym_definition = 28,
-  sym__group_expression = 29,
-  sym__named_node_expression = 30,
-  sym_quantifier = 31,
-  sym__node_identifier = 32,
-  sym_capture = 33,
-  sym_string = 34,
-  sym__immediate_string = 35,
-  sym_string_content = 36,
-  sym_parameters = 37,
-  sym_list = 38,
-  sym_grouping = 39,
-  sym_missing_node = 40,
-  sym_anonymous_node = 41,
-  sym_named_node = 42,
-  sym__field_name = 43,
-  sym_field_definition = 44,
-  sym_negated_field = 45,
-  sym_predicate = 46,
-  sym_group_expression_arm = 47,
-  sym_named_node_expression_arm = 48,
-  sym_grouping_group = 49,
-  sym_named_node_arm = 50,
-  sym_named_node_group = 51,
-  sym_named_node_group_children = 52,
-  sym_named_node_group_anchored_last = 53,
-  aux_sym_program_repeat1 = 54,
-  aux_sym_string_content_repeat1 = 55,
-  aux_sym_parameters_repeat1 = 56,
-  aux_sym_list_repeat1 = 57,
-  aux_sym_grouping_repeat1 = 58,
-  aux_sym_named_node_group_children_repeat1 = 59,
+  sym__blankline = 27,
+  sym__double_blankline = 28,
+  sym__indent = 29,
+  sym__dedent = 30,
+  sym_program = 31,
+  sym_definition = 32,
+  sym__group_expression = 33,
+  sym__named_node_expression = 34,
+  sym_quantifier = 35,
+  sym__node_identifier = 36,
+  sym_capture = 37,
+  sym_string = 38,
+  sym__immediate_string = 39,
+  sym_string_content = 40,
+  sym_parameters = 41,
+  sym_list = 42,
+  sym_grouping = 43,
+  sym_missing_node = 44,
+  sym_anonymous_node = 45,
+  sym_named_node = 46,
+  sym__field_name = 47,
+  sym_field_definition = 48,
+  sym_negated_field = 49,
+  sym_predicate = 50,
+  sym_group_expression_arm = 51,
+  sym_named_node_expression_arm = 52,
+  sym_grouping_group = 53,
+  sym_named_node_arm = 54,
+  sym_named_node_group = 55,
+  sym_named_node_group_children = 56,
+  sym_named_node_group_anchored_last = 57,
+  aux_sym_program_repeat1 = 58,
+  aux_sym_string_content_repeat1 = 59,
+  aux_sym_parameters_repeat1 = 60,
+  aux_sym_list_repeat1 = 61,
+  aux_sym_grouping_repeat1 = 62,
+  aux_sym_named_node_group_children_repeat1 = 63,
 };
 
 static const char * const ts_symbol_names[] = {
@@ -109,6 +113,10 @@ static const char * const ts_symbol_names[] = {
   [sym__tight] = "_tight",
   [sym__space] = "_space",
   [sym__newline] = "_newline",
+  [sym__blankline] = "_blankline",
+  [sym__double_blankline] = "_double_blankline",
+  [sym__indent] = "_indent",
+  [sym__dedent] = "_dedent",
   [sym_program] = "program",
   [sym_definition] = "definition",
   [sym__group_expression] = "_group_expression",
@@ -172,6 +180,10 @@ static const TSSymbol ts_symbol_map[] = {
   [sym__tight] = sym__tight,
   [sym__space] = sym__space,
   [sym__newline] = sym__newline,
+  [sym__blankline] = sym__blankline,
+  [sym__double_blankline] = sym__double_blankline,
+  [sym__indent] = sym__indent,
+  [sym__dedent] = sym__dedent,
   [sym_program] = sym_program,
   [sym_definition] = sym_definition,
   [sym__group_expression] = sym__group_expression,
@@ -313,6 +325,22 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__newline] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__blankline] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__double_blankline] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__indent] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__dedent] = {
     .visible = false,
     .named = true,
   },
@@ -1217,6 +1245,10 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [sym__tight] = ACTIONS(1),
     [sym__space] = ACTIONS(1),
     [sym__newline] = ACTIONS(1),
+    [sym__blankline] = ACTIONS(1),
+    [sym__double_blankline] = ACTIONS(1),
+    [sym__indent] = ACTIONS(1),
+    [sym__dedent] = ACTIONS(1),
   },
   [STATE(1)] = {
     [sym_program] = STATE(85),
@@ -3357,12 +3389,20 @@ enum ts_external_scanner_symbol_identifiers {
   ts_external_token__tight = 0,
   ts_external_token__space = 1,
   ts_external_token__newline = 2,
+  ts_external_token__blankline = 3,
+  ts_external_token__double_blankline = 4,
+  ts_external_token__indent = 5,
+  ts_external_token__dedent = 6,
 };
 
 static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
   [ts_external_token__tight] = sym__tight,
   [ts_external_token__space] = sym__space,
   [ts_external_token__newline] = sym__newline,
+  [ts_external_token__blankline] = sym__blankline,
+  [ts_external_token__double_blankline] = sym__double_blankline,
+  [ts_external_token__indent] = sym__indent,
+  [ts_external_token__dedent] = sym__dedent,
 };
 
 static const bool ts_external_scanner_states[2][EXTERNAL_TOKEN_COUNT] = {
@@ -3370,6 +3410,10 @@ static const bool ts_external_scanner_states[2][EXTERNAL_TOKEN_COUNT] = {
     [ts_external_token__tight] = true,
     [ts_external_token__space] = true,
     [ts_external_token__newline] = true,
+    [ts_external_token__blankline] = true,
+    [ts_external_token__double_blankline] = true,
+    [ts_external_token__indent] = true,
+    [ts_external_token__dedent] = true,
   },
 };
 

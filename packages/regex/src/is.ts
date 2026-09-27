@@ -118,9 +118,9 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_classAtom_ids = new Set<number>([20, 72, 75, 41, 42, 58, 60]);
-const _supertype_inlineFlagsGroup_ids = new Set<number>([81, 82, 83]);
-const _supertype_characterEscape_ids = new Set<number>([75, 41, 42]);
+const _supertype_classAtom_ids = new Set<number>([20, 73, 76, 41, 42, 59, 61]);
+const _supertype_inlineFlagsGroup_ids = new Set<number>([82, 83, 84]);
+const _supertype_characterEscape_ids = new Set<number>([76, 41, 42]);
 
 export const is = {
 	pattern: _g(TSKindId.Pattern),

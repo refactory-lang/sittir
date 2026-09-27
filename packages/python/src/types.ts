@@ -5170,14 +5170,6 @@ export namespace Whitespace {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Blankline = TSKindId.Blankline;
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export type DoubleBlankline = TSKindId.DoubleBlankline;
-export interface DoubleBlanklineTree extends AnyTreeNode {
-	readonly type: '_double_blankline';
-}
 export type Tight = TSKindId.Tight;
 export interface TightTree extends AnyTreeNode {
 	readonly type: '_tight';
@@ -5185,6 +5177,14 @@ export interface TightTree extends AnyTreeNode {
 export type Space = TSKindId.Space;
 export interface SpaceTree extends AnyTreeNode {
 	readonly type: '_space';
+}
+export type Blankline = TSKindId.Blankline;
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export type DoubleBlankline = TSKindId.DoubleBlankline;
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
 }
 
 export type PythonNode =
