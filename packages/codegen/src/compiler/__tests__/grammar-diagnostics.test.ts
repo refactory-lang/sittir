@@ -115,6 +115,19 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
+	it('rejects floors on the declaration codes, and keeps the debt codes floorable', () => {
+		const declarationCodes = ['rule-cause-missing', 'rule-cause-mismatch', 'render-only-not-external', 'vocabulary-replaces-upstream'];
+		const debtCodes = ['rule-reauthored-without-cause', 'patch-without-cause'];
+		const rawGrammar = {
+			...collisionGrammar(),
+			expectDiagnostics: Object.fromEntries([...declarationCodes, ...debtCodes].map((code) => [code, ['host']]))
+		};
+		const invalid = evaluateRecords(rawGrammar)
+			.filter((d) => d.code === 'expect-diagnostics-invalid')
+			.map((d) => (d.details as { code: string }).code);
+		expect(invalid.sort()).toEqual([...declarationCodes].sort());
+	});
+
 	it('keeps aliased arms injective by their storage ids under the predicted catalog, and trips display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
 

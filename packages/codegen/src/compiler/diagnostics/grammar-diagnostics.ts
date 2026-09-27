@@ -196,7 +196,11 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'groups-config-invalid',
-	'refine-config-invalid'
+	'refine-config-invalid',
+	'rule-cause-missing',
+	'rule-cause-mismatch',
+	'render-only-not-external',
+	'vocabulary-replaces-upstream'
 ]);
 
 export function unexpectableExpectEntries(
