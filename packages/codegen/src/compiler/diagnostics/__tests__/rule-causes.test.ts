@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { blockedRecords } from '../grammar-diagnostics.ts';
 import { diagnoseRuleCauses } from '../rule-causes.ts';
 import type { UpstreamCompilation } from '../../upstream.ts';
 import type { GrammarDiagnostic } from '../../../types/diagnostics.ts';
@@ -14,7 +15,6 @@ function diagnose(input: {
 	ruleCauses?: Record<string, RuleCauseDeclaration>;
 	undeclaredRules?: readonly string[];
 	renderAs?: readonly string[];
-	expectDiagnostics?: Record<string, readonly string[]>;
 	upstream: UpstreamCompilation;
 }): GrammarDiagnostic[] {
 	return diagnoseRuleCauses({
@@ -22,8 +22,7 @@ function diagnose(input: {
 		raw: {
 			ruleCauses: input.ruleCauses,
 			undeclaredRules: input.undeclaredRules,
-			renderAs: input.renderAs === undefined ? undefined : Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never])),
-			expectDiagnostics: input.expectDiagnostics
+			renderAs: input.renderAs === undefined ? undefined : Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never]))
 		},
 		upstream: input.upstream
 	});
@@ -48,13 +47,13 @@ describe('diagnoseRuleCauses', () => {
 		expect(ds[0]!.canProceed).toBe(false);
 	});
 
-	it('rule-reauthored-without-cause is accepted when the owner is floor-listed for that code', () => {
+	it('rule-reauthored-without-cause is accepted at the gate when the owner is floor-listed for that code', () => {
 		const ds = diagnose({
 			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
-			expectDiagnostics: { 'rule-reauthored-without-cause': ['a'] },
 			upstream: upstream({ ruleNames: new Set(['a']) })
 		});
-		expect(ds).toEqual([expect.objectContaining({ code: 'rule-reauthored-without-cause', canProceed: true })]);
+		expect(ds).toEqual([expect.objectContaining({ code: 'rule-reauthored-without-cause', canProceed: false })]);
+		expect(blockedRecords(ds, { 'rule-reauthored-without-cause': ['a'] })).toEqual([]);
 	});
 
 	it('a provoked rule whose declared cause does not match the provoking code is rule-cause-mismatch', () => {
@@ -98,16 +97,5 @@ describe('diagnoseRuleCauses', () => {
 		expect(ds.every((d) => d.canProceed === false)).toBe(true);
 		expect(ds.find((d) => d.ownerKind === 'string')!.message).toMatch(/reauthored\(cause, body\)/);
 		expect(ds.find((d) => d.ownerKind === 'helper')!.message).toMatch(/vocabulary\(body\)/);
-	});
-
-	it('an upstream failure yields one warning and no judgement that needs the upstream', () => {
-		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
-			undeclaredRules: ['b'],
-			renderAs: ['_x'],
-			upstream: upstream({ failure: 'boom' })
-		});
-		expect(codesOf(ds)).toEqual(['rule-cause-missing:b', 'upstream-compile-failed:undefined']);
-		expect(ds.find((d) => d.code === 'upstream-compile-failed')!.canProceed).toBe(true);
 	});
 });

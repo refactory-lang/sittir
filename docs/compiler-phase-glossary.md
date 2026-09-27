@@ -332,16 +332,29 @@ Reference: [glossary/emitters.md](glossary/emitters.md).
 
 ## Diagnostics
 
-Compiler diagnostics flow through a shared sink
-(`compiler/diagnostics/grammar-diagnostics.ts`) and are persisted per
-grammar to `packages/<lang>/.sittir/grammar-diagnostics.json` (committed,
-so drift shows up in review). Notable codes: `kindid-unstamped-*` (the
-phantom-kind inventory — see Link), `parsekind-noninjective`,
-`seq-with-nested-seq`, `typename-collision`. Inspect via
-`sittir tool grammar-diagnostics`.
+Two vocabularies, kept apart. **Grammar diagnostics**
+(`compiler/diagnostics/grammar-diagnostics.ts`) report shapes and
+declarations the grammar's author resolves; each carries its code's
+intrinsic `canProceed`, and they are persisted per grammar to
+`packages/<lang>/.sittir/grammar-diagnostics.json` (committed, so drift
+shows up in review). `compile.ts::compileGrammar` gates them twice through
+`assertGatePasses`: the evaluate-time records before link, so a grammar
+tree-sitter rejects is never linked, and the shape records after assemble.
+The grammar's `expectDiagnostics:` floors, per code and per owner, apply
+only at the gate. Inspect via `sittir tool grammar-diagnostics`.
+
+**Compiler diagnostics** go to the phase sink (`DiagnosticSink`) and print
+in the gen log. A compiler invariant (a fixpoint that never converges, an
+alias target the parser never mints, a `factoryInline` kind with nowhere
+to nest, a hydrate-time reference to an absent kind) is a throw in the
+phase that owns it, not a diagnostic. An automatic type-name rename is a
+naming event (`AssembledNodeMap.namingEvents`), printed in the gen log as
+`[naming]` lines.
 
 `kindid-unstamped-symbols`/`kindid-unstamped-literals` (`link.ts`'s
-`reportKindIdStampMisses`) are `warning`-severity, promoted from `info`: a
+`reportKindIdStampMisses`) are compiler warnings, not grammar diagnostics:
+they compare sittir's kinds with the parser's ids, and the phantom-kind
+ratchet gates the count. A
 stamp miss means a referenced kind or literal never resolved a parser
 kindId — visible now instead of deferring the gap to a native "unknown
 kind id" render error, per the invariant's end-state goal. They report the

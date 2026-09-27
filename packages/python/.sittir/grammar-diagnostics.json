@@ -1,6 +1,110 @@
 [
   {
     "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "primary_expression",
+    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "string_content",
+    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "print_statement",
+    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_simple_pattern",
+    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "dictionary_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'dictionary_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "generator_expression",
+    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'generator_expression'. Delete the patch so the upstream shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "list_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'list_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "set_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'set_comprehension'. Delete the patch so the upstream shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "python",
@@ -12,198 +116,6 @@
       "degenerateFields": [
         "wildcard_import"
       ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    }
-  },
-  {
-    "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "code": "kindid-unstamped-literals",
-    "message": "5 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "code": "kindid-inline-excluded-symbols",
-    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "primary_expression",
-    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "ambiguity"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "string_content",
-    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "alias-shape"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "print_statement",
-    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "alias-shape"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "_simple_pattern",
-    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "alias-shape"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "patch-without-cause",
-    "severity": "warning",
-    "ownerKind": "dictionary_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'dictionary_comprehension'. Delete the patch so the upstream shape stands",
-    "canProceed": true,
-    "details": {
-      "path": "2",
-      "form": "rule",
-      "name": "comprehension_clauses"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "patch-without-cause",
-    "severity": "warning",
-    "ownerKind": "generator_expression",
-    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'generator_expression'. Delete the patch so the upstream shape stands",
-    "canProceed": true,
-    "details": {
-      "path": "2",
-      "form": "rule",
-      "name": "comprehension_clauses"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "patch-without-cause",
-    "severity": "warning",
-    "ownerKind": "list_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'list_comprehension'. Delete the patch so the upstream shape stands",
-    "canProceed": true,
-    "details": {
-      "path": "2",
-      "form": "rule",
-      "name": "comprehension_clauses"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "patch-without-cause",
-    "severity": "warning",
-    "ownerKind": "set_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'set_comprehension'. Delete the patch so the upstream shape stands",
-    "canProceed": true,
-    "details": {
-      "path": "2",
-      "form": "rule",
-      "name": "comprehension_clauses"
     }
   }
 ]

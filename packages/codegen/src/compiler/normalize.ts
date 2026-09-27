@@ -234,11 +234,10 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
-	const normalizedRules = flattenRules(rules, linked.wordMatcher, ctx?.diagnostics);
+	const normalizedRules = flattenRules(rules, linked.wordMatcher);
 	runToFixpoint({
 		name: 'normalize.inlineHiddenSeqRefs',
 		cap: 8,
-		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 		step: () => {
 			const keepRef = computeKeepRef(normalizedRules);
 			return inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
@@ -281,7 +280,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			ctx,
 			preserveKinds.size > 0 ? preserveKinds : undefined
 		);
-		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher, ctx?.diagnostics);
+		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender
@@ -482,7 +481,6 @@ function iterateInliningToFixedPoint(
 	runToFixpoint({
 		name: 'normalize.iterateInliningToFixedPoint',
 		cap: 4,
-		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 		step: () => {
 			const refCounts = countReferences(work);
 			let changed = false;

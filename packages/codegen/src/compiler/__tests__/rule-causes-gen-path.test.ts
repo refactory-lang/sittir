@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../compile.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
+import { blockedRecords } from '../diagnostics/grammar-diagnostics.ts';
 
 const RULE_CAUSE_CODES = /^(rule-|render-only|vocabulary-|upstream-)/;
 
@@ -10,7 +11,7 @@ describe('rule-cause diagnostics on the gen path (with generated id tables)', ()
 			const compilation = await compileGrammar({ grammar, generatedIdTables: await loadGeneratedIdTables(grammar) });
 			const ruleCauses = compilation.grammarDiagnostics.filter((d) => RULE_CAUSE_CODES.test(d.code));
 			expect(ruleCauses.filter((d) => d.code === 'render-only-not-external')).toEqual([]);
-			expect(ruleCauses.filter((d) => d.canProceed === false)).toEqual([]);
+			expect(blockedRecords(ruleCauses, compilation.raw.expectDiagnostics)).toEqual([]);
 		}, 120_000);
 	}
 });

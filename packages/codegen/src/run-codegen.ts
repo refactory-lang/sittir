@@ -11,6 +11,7 @@ import { compileGrammar, type Compilation } from './compiler/compile.ts';
 import { loadGeneratedIdTables } from './compiler/generated-metadata.ts';
 import {
 	GrammarDiagnosticError,
+	blockedRecords,
 	formatGrammarDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
@@ -94,47 +95,61 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 	}
 }
 
+export interface PreflightOutcome {
+	readonly allowDiagnostics: ReadonlySet<string>;
+	readonly compilation?: Compilation;
+}
+
 export async function runGrammarDiagnosticsPreflight(input: {
 	grammar: string;
 	allowDiagnostics: ReadonlySet<string>;
 	isTTY: boolean;
 	injectedDiagnostics?: readonly GrammarDiagnostic[];
-	compilation?: Compilation;
 	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
-}): Promise<ReadonlySet<string>> {
-	let diagnostics: readonly GrammarDiagnostic[];
-	if (input.injectedDiagnostics !== undefined) {
-		diagnostics = input.injectedDiagnostics;
-	} else {
-		const compilation =
-			input.compilation ??
-			(await compileGrammar({ grammar: input.grammar, generatedIdTables: await loadGeneratedIdTables(input.grammar) }));
-		diagnostics = compilation.grammarDiagnostics;
-	}
+}): Promise<PreflightOutcome> {
+	let allowDiagnostics = input.allowDiagnostics;
+	for (;;) {
+		const gated =
+			input.injectedDiagnostics === undefined
+				? await gatedCompilation(input.grammar, allowDiagnostics)
+				: {
+						records: input.injectedDiagnostics,
+						blocked: blockedRecords(input.injectedDiagnostics, undefined, allowDiagnostics)
+					};
+		const blockedSet = new Set(gated.blocked);
+		const nonBlocking = gated.records.filter((d) => !blockedSet.has(d));
+		if (nonBlocking.length > 0) process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		if (gated.blocked.length === 0) return { allowDiagnostics, compilation: gated.compilation };
 
-	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
-	const blocked = [...blockedSet];
-
-	const nonBlocking = diagnostics.filter((d) => !blockedSet.has(d));
-	if (nonBlocking.length > 0) {
-		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		process.stderr.write(formatGrammarDiagnostics(gated.blocked) + '\n');
+		if (!input.isTTY || !(await (input.confirm ?? confirmProceed)(gated.blocked))) {
+			throw new GrammarDiagnosticError(gated.blocked, gated.records);
+		}
+		allowDiagnostics = new Set([...allowDiagnostics, ...gated.blocked.map((d) => d.code)]);
+		if (input.injectedDiagnostics !== undefined) return { allowDiagnostics };
 	}
-	if (input.injectedDiagnostics === undefined) {
-		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
-	}
+}
 
-	if (blocked.length === 0) return input.allowDiagnostics;
+interface GatedCompilation {
+	readonly records: readonly GrammarDiagnostic[];
+	readonly blocked: readonly GrammarDiagnostic[];
+	readonly compilation?: Compilation;
+}
 
-	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
-
-	if (!input.isTTY) {
-		throw new GrammarDiagnosticError(blocked);
-	}
-	const proceed = await (input.confirm ?? confirmProceed)(blocked);
-	if (!proceed) {
-		throw new GrammarDiagnosticError(blocked);
-	}
-	return new Set([...input.allowDiagnostics, ...blocked.map((d) => d.code)]);
+async function gatedCompilation(grammar: string, allowDiagnostics: ReadonlySet<string>): Promise<GatedCompilation> {
+	const gated = await compileGrammar({
+		grammar,
+		generatedIdTables: await loadGeneratedIdTables(grammar),
+		allowDiagnostics
+	}).then(
+		(compilation): GatedCompilation => ({ records: compilation.grammarDiagnostics, blocked: [], compilation }),
+		(error: unknown): GatedCompilation => {
+			if (!(error instanceof GrammarDiagnosticError)) throw error;
+			return { records: error.records, blocked: error.diagnostics };
+		}
+	);
+	writeGrammarDiagnosticsJson(gated.records, resolve('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
+	return gated;
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
@@ -194,16 +209,10 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
 	}
 
-	const compilation = await compileGrammar({
-		grammar,
-		generatedIdTables: await loadGeneratedIdTables(grammar)
-	});
-
-	const allowDiagnostics = await runGrammarDiagnosticsPreflight({
+	const { allowDiagnostics, compilation } = await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
-		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY),
-		compilation
+		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
 	});
 
 	console.log(`Generating ${grammar} IR...`);
@@ -398,7 +407,6 @@ Done! Generated:
   .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
-	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
 
 	return result.nodeMap;
 }

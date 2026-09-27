@@ -30,14 +30,12 @@ import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './di
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
-import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
-import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
@@ -49,15 +47,22 @@ function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string
 	].join(' ');
 }
 
-function deriveShapeKey(d: DeriveShapeDiagnostic): string {
-	return `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
-}
-
 export interface AssembleWarning {
 	readonly code: string;
 	readonly message: string;
 	readonly ownerKind?: string;
 	readonly details?: Record<string, unknown>;
+}
+
+export interface NamingEvent {
+	readonly kind: string;
+	readonly from: string;
+	readonly to: string;
+	readonly message: string;
+}
+
+function namingEventKey(e: NamingEvent): string {
+	return `${e.kind}|${e.to}`;
 }
 
 function assembleWarningKey(w: AssembleWarning): string {
@@ -83,18 +88,10 @@ export class DedupedCollector<T> {
 	}
 }
 
-/**
- * One instance per `assemble()` call — created locally by `assemble()` and
- * threaded through the `DeriveCtx`/`CompoundOpts` chain the node
- * constructors already receive, replacing the three module-level `let`
- * accumulators (`_parseKindCollisionDiagnostics`, `_deriveShapeDiagnostics`,
- * `_assembleWarnings`) that made concurrent `assemble()` calls unsafe to
- * interleave.
- */
 export class AssembleDiagnosticsCollector {
 	readonly parseKindCollisions = new DedupedCollector<ParseKindCollisionDiagnostic>(parseKindCollisionKey);
-	readonly deriveShapeDiagnostics = new DedupedCollector<DeriveShapeDiagnostic>(deriveShapeKey);
 	readonly assembleWarnings = new DedupedCollector<AssembleWarning>(assembleWarningKey);
+	readonly namingEvents = new DedupedCollector<NamingEvent>(namingEventKey);
 }
 
 export { type Multiplicity } from '../../types/rule.ts';
@@ -372,145 +369,35 @@ export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
 }
 
-const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
-function deriveAuditMode(): 'strict' | 'report' | 'off' {
-	const v = process.env.SITTIR_AUDIT_DERIVE;
-	if (v === '1') return 'report';
-	if (v === 'off') return 'off';
-	return 'strict';
-}
-const auditCounts = new Map<string, number>();
-const auditKindsByShape = new Map<string, string[]>();
-let currentAuditKind: string | undefined;
-export function setAuditKindContext(kind: string | undefined): void {
-	currentAuditKind = kind;
-}
-function auditDerivationShape(
-	rule: SimplifiedRule,
-	context: 'fields' | 'children',
-	diagnostics?: AssembleDiagnosticsCollector
-): void {
-	const mode = deriveAuditMode();
-	if (mode === 'off') return;
-	const shape = classifyTopLevelShape(rule);
-	if (shape === 'canonical') return;
-	diagnostics?.deriveShapeDiagnostics.record(
-		describeDeriveShape({
-			rawShape: shape,
-			ruleType: rule.type,
-			context,
-			ownerKind: currentAuditKind,
-			ruleId: rule.id
-		})
-	);
-	const key = `${context}:${shape}`;
-	auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1);
-	if (currentAuditKind !== undefined) {
-		const kinds = auditKindsByShape.get(key) ?? [];
-		if (!kinds.includes(currentAuditKind)) kinds.push(currentAuditKind);
-		auditKindsByShape.set(key, kinds);
-		if (process.env.SITTIR_AUDIT_DUMP === currentAuditKind) {
-			console.error(`[audit-dump] ${currentAuditKind} (${key}):`);
-			console.error(JSON.stringify(rule, null, 2));
-		}
-	}
-}
-function classifyTopLevelShape(rule: SimplifiedRule): string {
-	switch (rule.type) {
-		case SEQ: {
-			for (const m of rule.members) {
-				if (m.type === SEQ) {
-					if (m.multiplicity !== undefined || m.separator !== undefined) continue;
-					return 'seq-with-nested-seq';
-				}
-				const inner = classifyTopLevelShape(m);
-				if (inner !== 'canonical') return `seq-member-${inner}`;
-			}
-			return 'canonical';
-		}
-		case SYMBOL:
-		case STRING:
-		case PATTERN:
-		case SUPERTYPE:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return 'canonical';
-		case CHOICE: {
-			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
-			if (allTokenLike) return 'canonical';
-			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
-			if (allFlatSymbolSeq) return 'canonical';
-			return 'choice-needs-variant-or-merge';
-		}
-		default:
-			return assertNever(rule);
-	}
-}
-function isTokenLikeChoiceMember(m: SimplifiedRule): boolean {
-	const core = m;
-	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
-	if (core.type === STRING || core.type === PATTERN) return true;
-	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
-	return false;
-}
-
-function isFlatSymbolSeqOrTokenLike(m: SimplifiedRule): boolean {
-	if (m.type === SEQ) {
-		return m.members.every(isTokenLikeChoiceMember);
-	}
-	return isTokenLikeChoiceMember(m);
-}
-
-export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
-	if (!DERIVE_AUDIT || auditCounts.size === 0) return;
-	const sorted = [...auditCounts.entries()].sort((a, b) => b[1] - a[1]);
-	console.error(`[${label}] non-canonical shapes reaching derivation:`);
-	for (const [key, n] of sorted) {
-		const kinds = auditKindsByShape.get(key) ?? [];
-		console.error(`  ${n.toString().padStart(5)} ${key}  [${kinds.join(', ')}]`);
-	}
-	auditCounts.clear();
-	auditKindsByShape.clear();
-}
-
 function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const prevAuditKind = currentAuditKind;
-	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
-	try {
-		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields', ctx?.diagnostics);
-		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
-		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
-		if (unionChoiceIds.size > 0) {
-			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
-			const colliding = slots.filter(
-				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
-			);
-			if (colliding.length > 0) {
-				ctx?.diagnostics?.assembleWarnings.record({
-					code: 'union-slot-content-collision',
-					ownerKind: kindName,
-					message:
-						`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
-						`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
-						`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
-						`field() naming in overrides (named slots bypass the claim).`
-				});
-				const prev = setUnionSlotRouting(false);
-				try {
-					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
-				} finally {
-					setUnionSlotRouting(prev);
-					drainSynthesizedUnionChoiceIds();
-				}
+	const kindName = ctx?.kindName;
+	let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+	const unionChoiceIds = drainSynthesizedUnionChoiceIds();
+	if (unionChoiceIds.size > 0) {
+		const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
+		const colliding = slots.filter(
+			(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
+		);
+		if (colliding.length > 0) {
+			ctx?.diagnostics?.assembleWarnings.record({
+				code: 'union-slot-content-collision',
+				ownerKind: kindName,
+				message:
+					`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
+					`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
+					`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
+					`field() naming in overrides (named slots bypass the claim).`
+			});
+			const prev = setUnionSlotRouting(false);
+			try {
+				slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+			} finally {
+				setUnionSlotRouting(prev);
+				drainSynthesizedUnionChoiceIds();
 			}
 		}
-		return slots;
-	} finally {
-		setAuditKindContext(prevAuditKind);
 	}
+	return slots;
 }
 
 export function mergeDelimiterMode(
@@ -555,7 +442,6 @@ export interface ParseKindCollisionContext {
 export interface DeriveCtx {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly kindName?: string;
-	readonly shapeAudit?: false;
 	readonly collision?: ParseKindCollisionContext;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;

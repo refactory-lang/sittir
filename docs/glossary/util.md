@@ -203,5 +203,18 @@ references outside rule bodies). A visible rule whose body is empty
 (`isBlank`: a pre-registered placeholder nothing deposited into) is not
 a root, so it survives only while something references or protects it.
 Reachability rather than reference counting, so a rule kept alive only by
-other dead rules (or by itself) is still reported. Callers delete the
-returned names.
+other dead rules (or by itself) is still reported.
+
+### `packages/codegen/src/util/reachable-rules.ts::pruneOrphanedRules`
+
+A grammar without its orphaned rules (`collectOrphanedRules`): the rules
+map, and the `inline` and `conflicts` lists without the dead names, plus the
+pruned names. `compiler/canonical-rules.ts::canonicalGrammar` and
+`transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` both call
+it, so the evaluated grammar and grammar.json drop the same names from the
+same lists. `inline` and `conflicts` do not root: an orphaned mint would
+otherwise keep itself alive through its own entries.
+
+### `packages/codegen/src/util/reachable-rules.ts::OrphanPrune`
+
+`pruneOrphanedRules`' result.

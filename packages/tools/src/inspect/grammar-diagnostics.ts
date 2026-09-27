@@ -11,7 +11,7 @@
  * Exit codes:
  *   0  no diagnostics
  *   1  diagnostics present
- *   2  --upstream and the upstream compile failed or was not evaluated
+ *   2  --upstream and no upstream was evaluated
  */
 
 // Codegen phases/loaders + their real types come from the shared codegen-surface
@@ -37,9 +37,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	const entryPath = await resolveEntryPath(grammar);
 	const rawGrammar = await invoke('evaluate', 'evaluate', entryPath);
 	if (opts.upstream === true) return runUpstream(grammar, rawGrammar.upstream);
-	const { diagnostics } = await invoke('grammarDiagnostics', 'collectGrammarDiagnosticsForGrammar', {
-		rawGrammar
-	});
+	const diagnostics = await invoke('grammarDiagnostics', 'diagnoseStage', rawGrammar);
 
 	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnostics)) + '\n');
 	return diagnostics.length > 0 ? 1 : 0;
@@ -51,10 +49,6 @@ async function runUpstream(grammar: string, evaluation: RawGrammar['upstream']):
 		return 2;
 	}
 	const upstream = await invoke('upstream', 'compileUpstream', evaluation);
-	if (upstream.failure !== undefined) {
-		process.stderr.write(`${grammar}: upstream compile failed: ${upstream.failure}\n`);
-		return 2;
-	}
 	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', upstream.diagnostics)) + '\n');
 	return upstream.diagnostics.length > 0 ? 1 : 0;
 }

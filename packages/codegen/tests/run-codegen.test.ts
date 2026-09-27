@@ -39,23 +39,23 @@ const blockedDiagnostic: GrammarDiagnostic = {
 
 describe('the preflight decision reaches the generation gate', () => {
 	it('returns the allowed codes when nothing is blocked', async () => {
-		const allowed = await runGrammarDiagnosticsPreflight({
+		const { allowDiagnostics } = await runGrammarDiagnosticsPreflight({
 			grammar: 'rust',
 			allowDiagnostics: new Set(['x']),
 			isTTY: false,
 			injectedDiagnostics: []
 		});
-		expect([...allowed]).toEqual(['x']);
+		expect([...allowDiagnostics]).toEqual(['x']);
 	});
 
 	it('adds the blocked codes a confirmed interactive run proceeds past', async () => {
-		const allowed = await runGrammarDiagnosticsPreflight({
+		const { allowDiagnostics } = await runGrammarDiagnosticsPreflight({
 			grammar: 'rust',
 			allowDiagnostics: new Set(),
 			isTTY: true,
 			injectedDiagnostics: [blockedDiagnostic],
 			confirm: async () => true
 		});
-		expect(allowed.has('parsekind-noninjective')).toBe(true);
+		expect(allowDiagnostics.has('parsekind-noninjective')).toBe(true);
 	});
 });

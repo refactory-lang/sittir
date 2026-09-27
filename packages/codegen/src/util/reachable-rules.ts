@@ -38,3 +38,28 @@ export function collectOrphanedRules(
 	}
 	return Object.keys(rules).filter((name) => !isRoot(name) && !reachable.has(name));
 }
+
+export interface OrphanPrune<R> {
+	readonly rules: Record<string, R>;
+	readonly inline: string[];
+	readonly conflicts: string[][];
+	readonly pruned: readonly string[];
+}
+
+export function pruneOrphanedRules<R>(
+	grammar: {
+		readonly rules: Readonly<Record<string, R>>;
+		readonly inline?: readonly string[];
+		readonly conflicts?: readonly (readonly string[])[];
+	},
+	protectedNames: ReadonlySet<string>
+): OrphanPrune<R> {
+	const pruned = collectOrphanedRules(grammar.rules, protectedNames);
+	const dead = new Set(pruned);
+	return {
+		rules: Object.fromEntries(Object.entries(grammar.rules).filter(([name]) => !dead.has(name))),
+		inline: (grammar.inline ?? []).filter((name) => !dead.has(name)),
+		conflicts: (grammar.conflicts ?? []).filter((pair) => !pair.some((name) => dead.has(name))).map((pair) => [...pair]),
+		pruned
+	};
+}

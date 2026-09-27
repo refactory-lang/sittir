@@ -1,3 +1,4 @@
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -1007,7 +1008,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(nodeMap.nodes.has(',')).toBe(false);
 	});
 
-	it('does not mint a literal with no anonymous parser symbol and records a diagnosable warning', () => {
+	it('does not mint a literal with no anonymous parser symbol and warns in the compiler sink', () => {
 		const normalized = makeNormalized({
 			root: {
 				type: SEQ,
@@ -1019,9 +1020,10 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ unrelated: anonEntry(9, '@@') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const diagnostics = new DiagnosticSink();
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
 		expect(nodeMap.nodes.has('::=')).toBe(false);
-		expect(nodeMap.assembleWarnings.some((w) => w.code === 'kindid-unstamped-anon-literal')).toBe(true);
+		expect(diagnostics.all().some((d) => d.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
 
 	it('skips minting an anonymous node when the catalog-resolved kind name is already a named node', () => {

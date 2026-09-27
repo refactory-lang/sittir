@@ -116,117 +116,10 @@ generated enum and the enum's own variants cannot disagree.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isTokenLikeChoiceMember`
-
-```text
-/**
- * Test a single `choice` member for being structurally "token-like" — a
- * bare kind reference (symbol / supertype / enum) or a repeat1 of
- * strings / enums. Both forms surface at parse time as a SINGLE child
- * with one typed union, not as a heterogeneous structure the trivial
- * derive walk would need to branch on.
- *
- * @remarks
- * Peels transparent wrappers (`alias`, `token`) before classifying — an
- * alias's surface kind lives in its target, and a `token` wrapper marks
- * a lexeme-level production that behaves like a terminal for derivation
- * purposes. `repeat1(enum(...))` / `repeat1(choice(string, string,
- * ...))` captures the `_non_special_token` pattern in tree-sitter
- * grammars — a run of operator punctuation tokens that tree-sitter
- * lexes as a single token stream; the derive walker treats this as a
- * single-value child slot just like a symbol member.
- */
-```
-
-#### body
-
-```text
-// Bare `string` / `pattern` members — token-literal alternatives.
-// `_non_special_token` has a choice containing dozens of bare
-// keyword strings alongside symbol refs; each contributes a
-// single-token alternative to the union, not a structural branch.
-```
-
-#### body
-
-```text
-// Structural-whitespace tokens (python-style indent/dedent/newline).
-// These behave as anonymous token separators — they don't surface
-// as addressable children, so they never contribute structural
-// branching to a choice arm.
-```
-
-#### body
-
-```text
-// TERMINAL case removed — terminal-shaped rules now arrive as their original unwrapped
-// type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
-// `optional(token-like)` preserves the union shape — the branch contributes either the
-// wrapped token or nothing. Rust's `reference_expression` has `choice(choice-of-syms,
-// optional(sym))` for the raw-pointer-modifier spot; both arms are union-safe even though
-// one is an optional. Recurse to classify the inner.
-```
-
-#### body
-
-```text
-// Nested choice of token-like members — simplify should have
-// flattened this, but when flattening is blocked (e.g. by a
-// variant wrapper on the inner choice), the nested shape is still
-// structurally a union of tokens. `_lhs_expression` hits this
-// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isFlatSymbolSeqOrTokenLike`
-
-```text
-/**
- * Test a choice member for being a flat seq of token-like atoms — the
- * canonical shape for left-recursive operator chains and similar
- * "scalar list" productions.
- *
- * @remarks
- * `_let_chain` expands to `choice(seq(_let_chain, '&&', let_condition),
- * ...)` — every branch is a fixed-length seq of symbol/literal
- * references with no fields and no nested structure. Each branch
- * contributes a flat alternative to the union; the walker enumerates
- * each alternative's symbols as child values, which is a canonical
- * shape even though the raw rule.type is `seq`, not `symbol`. Falls
- * through to `isTokenLikeChoiceMember` for non-seq members so a mixed
- * choice `(seq(X, '&&', Y), bareY)` still qualifies.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::dumpDerivationAudit`
-
-```text
-/** Log accumulated audit counts. Called by codegen entry points. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
-```text
-/**
- * Internal — fields-side walk over the SIMPLIFIED rule. The exported
- * derivation surface is `deriveSlots`; this helper is its fields-portion.
- *
- * Consumes the simplified tree exactly as `computeSimplifiedRules` produced
- * it — no re-flattening. A nested bare seq that simplify left behind reaches
- * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
- * derive-audit is there to surface); re-splicing it here would mask that.
- * `DeriveCtx.shapeAudit` lets a caller opt a rule out of the audit
- * (`shapeAudit: false`); every current caller derives slots straight from
- * the simplified tree and leaves the audit on.
- */
-```
-
-#### body
-
-```text
-// Set the audit kind context for the duration of this derivation so
-// auditDerivationShape() can attribute shapes to their originating kind.
-// Save/restore guards against cross-kind bleed if derivations nest.
-```
+The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
+`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`.
 
 #### body
 
@@ -1656,32 +1549,6 @@ The regex source the kind's whole text must match: the pattern composed from the
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DERIVE_AUDIT`
-
-```text
-/**
- * Dev audit — log shapes that reach derivation in a non-canonical form.
- * Simplify's canonicalization should produce a top-level `seq` (or a
- * single atomic member) with members that are
- * fields / literals / repeats / symbols. Anything else means simplify
- * didn't finish normalizing, and the trivialized `projectFields` /
- * `projectChildren` walks won't see the content.
- *
- * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
- * normal codegen runs). Captures per-kind shape signatures so we can
- * count distinct non-canonical patterns across the corpus and decide
- * which simplify passes still need work.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::currentAuditKind`
-
-```text
-/** Transient — each AssembledNode's constructor sets this before the lazy
- * `fields` / `children` getters fire, so the audit can attribute shapes
- * to their originating kind. */
-```
-
 ---
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.keywordConstructibleText`
@@ -1725,8 +1592,8 @@ The regex source the kind's whole text must match: the pattern composed from the
  * co-located rather than forming a cyclic two-file pair. Major sections are
  * delimited by `// ===` banners:
  *
- *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the audit-context module pointer.
+ *   1. Diagnostics — the parse-kind, assemble-warning and naming-event
+ *      collectors.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
  *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
@@ -1761,11 +1628,18 @@ The regex source the kind's whole text must match: the pattern composed from the
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::NamingEvent`
+
+An automatic type-name rename assemble applied to resolve a collision: `kind` was renamed from `from` to `to`, and
+`message` names the siblings it collided with. A naming event is codegen output, not a grammar diagnostic:
+`generate()` prints it in the gen log (`formatNamingEvents`). Deduped per kind and new name
+(`namingEventKey`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembleDiagnosticsCollector`
 
 ```text
-The assemble phase's three diagnostic streams (parse-kind collisions,
-derive-shape diagnostics, assemble warnings) live on one collector per
+The assemble phase's record streams (parse-kind collisions, assemble
+warnings, naming events) live on one collector per
 `assemble()` call, never at module scope, so two grammars compiling in one
 process cannot see each other's. One `AssembleDiagnosticsCollector`
 instance is born with each `AssembleCtx` (`ctx.assembleDiagnostics`) and
@@ -1774,7 +1648,7 @@ threaded down through `CompoundOpts.assembleDiagnostics` →
 `AbstractAssembledCompound`'s constructor already builds for `deriveSlots`/
 `resolveParseKindCollisions` — reaching collect-slots.ts's `resolveMember`/
 `buildSlot`/`recordUnclassifiableShape` and node-map.ts's own
-`auditDerivationShape`/`resolveParseKindCollisionsInSlot` call sites.
+`resolveParseKindCollisionsInSlot` call sites.
 
 `AssembledList` is the one class that does NOT forward this transparently:
 its constructor builds its OWN opts object for the `super()` call into
@@ -1786,8 +1660,7 @@ choice-shaped as often as branch/envelope kinds are, so this is not a
 theoretical case; a real grammar's `enum_body_elements` list caught it).
 
 `DedupedCollector<T>` is the shared generic underneath: a keyed
-record-once-then-push, replacing the three near-identical
-key/seen-Set/push trios. `record()` returns whether the item was newly
+record-once-then-push. `record()` returns whether the item was newly
 added (not already deduped), which the slot-grouping caller
 (`simplify.ts`'s `computeSimplifiedRules`) uses to gate a one-time
 `ctx.diagnostics.info()` emission per distinct diagnostic.
@@ -2033,117 +1906,6 @@ from the model instead of recovering them from the subtype's name.
 
 ```text
 // TypeScript reserved words that must be avoided as parameter names.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::deriveAuditMode`
-
-```text
-// Audit default is now 'strict' — every non-canonical shape across the
-// curated grammars has been drained via variant adoption + inline
-// (`rust`, `python`, `typescript` all audit clean). Any non-canonical
-// rule reaching derivation throws with a diagnostic so the walker can
-// safely assume canonical input.
-//
-// Opt-outs:
-//   SITTIR_AUDIT_DERIVE=1        → 'report' mode (log + accumulate,
-//                                   don't throw). Used by tests that
-//                                   consume raw base grammars without
-//                                   override() / variant() applied.
-//   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::auditDerivationShape`
-
-#### body
-
-```text
-// Record a structured diagnostic and continue — the old strict-mode throw
-// is replaced by accumulation so codegen completes and the preflight can
-// surface all derive-shape issues in a single pass. drainDeriveShapeDiagnostics()
-// is called by assemble() to attach them to AssembledNodeMap.
-```
-
-#### body
-
-```text
-// SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::classifyTopLevelShape`
-
-#### body
-
-```text
-// Canonical for the trivial walk: the tree rooted at `rule`
-// — traversed through the structural wrappers the walker descends
-// (seq, optional, repeat, repeat1, choice, clause) — must
-// satisfy:
-//
-//  - Every choice encountered during the traversal is "union-shaped"
-//    (token-like or flat-symbol-seq). No choice anywhere in the
-//    field/child-finding path has heterogeneous structural branches.
-//    A heterogeneous choice is a polymorph by any other name; the
-//    walker would have to case-analyze it, so flag it for variant()
-//    adoption (or hoisting into a proper polymorph parent).
-//  - Field contents are opaque to this classifier — `deriveValuesForRule`
-//    owns that subtree and its own simplification.
-//
-// Non-canonical shapes:
-//
-//  - `seq-with-nested-seq`: flattening gap (should be caught by the
-//     simplify fixpoint + flatten).
-//  - `*-with-heterogeneous-choice`: an inner choice with field-bearing
-//     branches. Needs variant() adoption at the parent kind or the
-//     branches hoisted / merged.
-//  - `group` / `alias` / `token` wrappers mid-tree: simplify should
-//     peel them.
-//  - `polymorph` anywhere: the PolymorphRule IR type (and its
-//     AssembledPolymorph node class) are retired. Reaching derivation
-//     with one means a legacy/synthetic rule object leaked in.
-```
-
-#### body
-
-```text
-// A nested seq that carries its OWN cardinality
-// (multiplicity / separator) is a canonical repeated /
-// optional GROUP, not a flattening gap. simplify deliberately
-// does NOT splice such a seq (splicing would lose the shared
-// cardinality and hoist any inner choice to this seq's
-// position). `deriveSlotsRaw` threads the group's multiplicity
-// into its members and handles an inner choice via its own
-// choice case, so we accept it here WITHOUT recursing.
-```
-
-#### body
-
-```text
-// ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above. PR-P Task 2:
-// TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-#### body
-
-```text
-// Every choice in the traversal must be a simple union — no
-// structural branches with fields. Flag heterogeneous
-// choices here instead of leaving the walker to merge them:
-// they are polymorphs in all but declaration.
-```
-
-#### body
-
-```text
-// Distinct-named-fields choice: every branch is either a
-// `field(A, ...)` with its own name or a token-like atom.
-// Rust's `function_modifiers` (`choice(field('async', …),
-// field('const', …), field('unsafe', …), extern_modifier)`)
-// is the canonical example — the branches contribute
-// different fields to the enclosing kind rather than
-// different kinds themselves, so this is a legitimate
-// "one-of-these-fields" shape, NOT a polymorph. The walker's
-// choice case enumerates each branch and downgrades every
-// field to `optional` multiplicity; that's correct behavior.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`

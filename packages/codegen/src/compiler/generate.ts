@@ -13,9 +13,9 @@ import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
-import { loadGrammarJsonInlineList, assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
+import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
-import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
+import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 
@@ -78,7 +78,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	try {
 		const compilation =
 			cfg.compilation ??
-			(await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables: await loadGeneratedIdTables(cfg.grammar) }));
+			(await compileGrammar({
+				grammar: cfg.grammar,
+				include: cfg.include,
+				generatedIdTables: await loadGeneratedIdTables(cfg.grammar),
+				allowDiagnostics: cfg.allowDiagnostics
+			}));
 		const { generatedIdTables } = compilation;
 		const { raw, linked, normalized, nodeMap } = compilation;
 		tracePhaseRules('evaluate', raw.rules);
@@ -87,10 +92,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		traceAssembleNodes('assemble', nodeMap.nodes);
 
 		assertGrammarJsonInlineIntegrity(cfg.grammar);
-		const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
-		const inlineKinds = new Set(inlineKindsArray ?? []);
+		const inlineKinds = new Set(raw.inline);
 
-		assertCompilation(compilation, { allowDiagnostics: cfg.allowDiagnostics });
+		assertCompilation(compilation);
 
 		const compilerWarnings = compilation.diagnostics
 			.all()
@@ -99,6 +103,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			);
 		if (compilerWarnings.length > 0) {
 			process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
+		}
+		if (nodeMap.namingEvents.length > 0) {
+			process.stderr.write(formatNamingEvents(nodeMap.namingEvents) + '\n');
 		}
 
 		const rootKind = rootRuleName(normalized.rules)!;

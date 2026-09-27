@@ -1,8 +1,6 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { PatchForm, PatchSite } from '../../dsl/wire/wire.ts';
-import type { RawGrammar } from '../types.ts';
 import type { UpstreamCompilation } from '../upstream.ts';
-import { isExpectedDiagnostic } from './grammar-diagnostics.ts';
 
 export type PatchSiteLabel = 'authoring' | 'resolving';
 
@@ -28,21 +26,17 @@ export function labelPatchSites(sites: readonly PatchSite[], upstream: UpstreamC
 export function diagnosePatchSites(input: {
 	readonly grammar: string;
 	readonly sites: readonly LabelledPatchSite[];
-	readonly expectDiagnostics?: RawGrammar['expectDiagnostics'];
 }): GrammarDiagnostic[] {
 	return input.sites
 		.filter((site) => site.label === 'authoring' && RESOLVING_ONLY.has(site.form))
-		.map((site) => {
-			const floored = isExpectedDiagnostic(input.expectDiagnostics, 'patch-without-cause', site.ownerKind);
-			return {
-				scope: 'grammar' as const,
-				grammar: input.grammar,
-				code: 'patch-without-cause',
-				severity: floored ? ('warning' as const) : ('error' as const),
-				ownerKind: site.ownerKind,
-				message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: no diagnostic blocks the upstream shape of '${site.ownerKind}'. Delete the patch so the upstream shape stands`,
-				canProceed: floored,
-				details: { path: site.path, form: site.form, name: site.name }
-			};
-		});
+		.map((site) => ({
+			scope: 'grammar' as const,
+			grammar: input.grammar,
+			code: 'patch-without-cause',
+			severity: 'error' as const,
+			ownerKind: site.ownerKind,
+			message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: no diagnostic blocks the upstream shape of '${site.ownerKind}'. Delete the patch so the upstream shape stands`,
+			canProceed: false,
+			details: { path: site.path, form: site.form, name: site.name }
+		}));
 }

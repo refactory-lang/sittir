@@ -1,12 +1,24 @@
 [
   {
     "scope": "grammar",
+    "grammar": "typescript",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "object_type",
+    "message": "rules: 'object_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "unclassifiable-shape",
-    "severity": "warning",
+    "severity": "error",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
     "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[2]",
@@ -16,20 +28,20 @@
   {
     "scope": "grammar",
     "code": "union-slot-mixed-row",
-    "severity": "warning",
+    "severity": "error",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
     "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in patches: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
-    "canProceed": true
+    "canProceed": false
   },
   {
     "scope": "grammar",
     "code": "unclassifiable-shape",
-    "severity": "warning",
+    "severity": "error",
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
     "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[4]",
@@ -107,108 +119,6 @@
       "degenerateFields": [
         "declaration"
       ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "#!"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Identifier",
-      "newType": "_Identifier",
-      "visibleKinds": [
-        "identifier"
-      ]
-    }
-  },
-  {
-    "code": "kindid-unstamped-literals",
-    "message": "7 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "object_type",
-    "message": "rules: 'object_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "ambiguity"
     }
   }
 ]

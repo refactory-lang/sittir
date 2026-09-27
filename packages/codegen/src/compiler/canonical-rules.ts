@@ -3,7 +3,7 @@ import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { collectOrphanedRules } from '../util/reachable-rules.ts';
+import { pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import type { EvaluatedGrammar, RawGrammar, UpstreamEvaluation } from './types.ts';
 import { predictedKindsOf, type PredictedKinds } from '../dsl/symbol-table.ts';
@@ -107,19 +107,20 @@ function canonicalRuleBodies(bodies: Readonly<Record<string, EvalRule>>): Record
 }
 
 function canonicalUpstream(upstream: UpstreamEvaluation<EvaluatedGrammar> | undefined): UpstreamEvaluation | undefined {
-	if (upstream === undefined || 'failure' in upstream) return upstream;
+	if (upstream === undefined) return upstream;
 	return { ...upstream, raw: canonicalGrammar(upstream.raw) };
 }
 
 export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
 	const { provenanceByKind, protectedRuleNames, upstream, renderAs, visibleExternals, ...rest } = evaluated;
-	const rules = canonicalRuleBodies(evaluated.rules);
-	if (protectedRuleNames !== undefined) {
-		for (const name of collectOrphanedRules(rules, new Set(protectedRuleNames))) delete rules[name];
-	}
+	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
+	const { rules, inline, conflicts } =
+		protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(protectedRuleNames));
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: evaluated.supertypes });
 	return {
 		...rest,
+		inline,
+		conflicts,
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),

@@ -131,9 +131,10 @@ export interface RawGrammar {
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
 
-export type UpstreamEvaluation<G = RawGrammar> =
-	| { readonly raw: G; readonly ruleNames: readonly string[] }
-	| { readonly failure: string };
+export interface UpstreamEvaluation<G = RawGrammar> {
+	readonly raw: G;
+	readonly ruleNames: readonly string[];
+}
 
 export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'upstream'> {
 	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;

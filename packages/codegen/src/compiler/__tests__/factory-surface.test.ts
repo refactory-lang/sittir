@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -16,16 +16,6 @@ import {
 	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
-
-let _prevAudit: string | undefined;
-beforeAll(() => {
-	_prevAudit = process.env.SITTIR_AUDIT_DERIVE;
-	process.env.SITTIR_AUDIT_DERIVE = '1';
-});
-afterAll(() => {
-	if (_prevAudit === undefined) delete process.env.SITTIR_AUDIT_DERIVE;
-	else process.env.SITTIR_AUDIT_DERIVE = _prevAudit;
-});
 
 let nodeMap: NodeMap;
 let typescriptNodeMap: NodeMap;

@@ -1,22 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "grammar": "scm",
-    "ownerKind": "predicate",
-    "ruleId": "rule:predicate:root",
-    "message": "Kind 'predicate' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "scm",
@@ -118,45 +102,15 @@
   {
     "scope": "grammar",
     "code": "unclassifiable-shape",
-    "severity": "warning",
+    "severity": "error",
     "grammar": "scm",
     "ownerKind": "predicate",
     "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "bucket": "nested-seq",
       "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
       "ruleId": "rule:predicate:members.1"
     }
-  },
-  {
-    "code": "kindid-unstamped-literals",
-    "message": "3 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        " "
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "scm"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "3 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        " "
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "scm"
   }
 ]

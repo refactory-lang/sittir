@@ -7,7 +7,6 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
-import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
 
@@ -20,7 +19,7 @@ async function emittedKindIds(grammar: GrammarName) {
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const nodeMap = assemble(
-		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
+		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables)
 	);
 	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const idOf = (kind: string): number => {

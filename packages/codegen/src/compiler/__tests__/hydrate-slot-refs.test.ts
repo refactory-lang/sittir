@@ -6,64 +6,53 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from '../assemble.ts';
-import { assertCompilation } from '../compile.ts';
-import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
-import { undefinedNamesOf } from '../../dsl/symbol-table.ts';
+import { predictionRecords } from '../diagnostics/grammar-diagnostics.ts';
+import type { RawGrammar } from '../types.ts';
 
-async function compileGrammarSource(source: string): Promise<DiagnosticSink> {
+async function evaluateSource(source: string): Promise<RawGrammar> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-hydrate-slot-refs-'));
 	const entry = resolve(dir, 'grammar.js');
 	writeFileSync(entry, source, 'utf8');
 	try {
-		const diagnostics = new DiagnosticSink();
-		const raw = await evaluate(entry);
-		const linked = link(raw, { diagnostics });
-		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
-		hydrateSlotRefs(nodeMap, {
-			inline: new Set(raw.inline),
-			reportedAbsentNames: new Set(undefinedNamesOf(raw.predictedKinds)),
-			diagnostics,
-			grammar: 'dr'
-		});
-		return diagnostics;
+		return await evaluate(entry);
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}
 }
 
-describe('hydrateSlotRefs — dangling internal refs', () => {
-	it('fails assertCompilation, naming the unresolvable target kind', async () => {
-		const diagnostics = await compileGrammarSource(
-			`module.exports = grammar({
+const containerGrammar = (members: string) => `module.exports = grammar({
   name: "dr",
   supertypes: ($) => [$._container],
   rules: {
     root: ($) => $._container,
-    _container: ($) => choice($.visible, $.ghost),
-    visible: ($) => "v"
+    _container: ($) => choice(${members}),
+    visible: ($) => "v",
+    other: ($) => "o"
   }
-});\n`
-		);
+});\n`;
 
-		let thrown: unknown;
-		try {
-			assertCompilation({
-				grammar: 'dr',
-				raw: undefined as never,
-				linked: undefined as never,
-				normalized: undefined as never,
-				nodeMap: undefined as never,
-				diagnostics,
-				slotGroupingDiagnostics: [],
-				grammarDiagnostics: []
-			});
-		} catch (e) {
-			thrown = e;
-		}
-		expect(thrown).toBeInstanceOf(EmitHaltedError);
-		const message = (thrown as EmitHaltedError).message;
-		expect(message).toContain('dangling-internal-ref');
-		expect(message).toContain('ghost');
+describe('dangling internal refs', () => {
+	it('a name the grammar never defines is a prediction record, and link refuses the grammar', async () => {
+		const raw = await evaluateSource(containerGrammar('$.visible, $.ghost'));
+		expect(predictionRecords(raw)).toEqual([
+			expect.objectContaining({ code: 'dangling-internal-ref', canProceed: false, details: { targetName: 'ghost' } })
+		]);
+		expect(() => link(raw)).toThrow(/no predicted symbol table/);
+	});
+
+	it('hydrate throws on a reference to a kind absent from the node map, naming it', async () => {
+		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		nodeMap.nodes.delete('other');
+		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), grammar: 'dr' })).toThrow(/'other'/);
+	});
+
+	it('hydrate skips a kind assemble dropped with a shape record', async () => {
+		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		nodeMap.nodes.delete('other');
+		expect(() =>
+			hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), reportedAbsentNames: new Set(['other']), grammar: 'dr' })
+		).not.toThrow();
 	});
 });

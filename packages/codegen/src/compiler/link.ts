@@ -63,7 +63,6 @@ import type {
 } from './types.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import { structureTokenInterior } from './token-interior.ts';
-import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -181,7 +180,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		hiddenNamedArmChoices,
 		kindEntries
 	});
-	reportUnpredictedKinds(linkCtx);
+	assertPredictedKinds(linkCtx);
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		rules[name] = resolveRule(rule as Rule<'link'>, linkCtx, name);
@@ -266,10 +265,9 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
 		stampCtx
 	);
-	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
 	const rootName = rootRuleName(raw.rules);
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline), reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
 	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
@@ -529,7 +527,13 @@ export function reportKindIdStampMisses(
 	inlineKinds: ReadonlySet<string>,
 	reachableFromRoot: ReadonlySet<string>
 ): void {
-	if (kindEntries.length === 0 || !diagnostics) return;
+	if (kindEntries.length === 0) return;
+	if (stampMisses.aliasTargets.size > 0) {
+		throw new Error(
+			`link: alias target(s) [${[...stampMisses.aliasTargets].sort().join(', ')}] resolved no named parser kindId; the parser never mints the aliased node`
+		);
+	}
+	if (!diagnostics) return;
 	if (stampMisses.symbols.size > 0) {
 		diagnostics.warn({
 			code: 'kindid-unstamped-symbols',
@@ -544,14 +548,6 @@ export function reportKindIdStampMisses(
 			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
 			canProceed: true,
 			details: { texts: [...stampMisses.literals].sort() }
-		});
-	}
-	if (stampMisses.aliasTargets.size > 0) {
-		diagnostics.warn({
-			code: 'alias-target-unminted',
-			message: `${stampMisses.aliasTargets.size} alias target(s) resolved no named parser kindId — the parser never mints the aliased node`,
-			canProceed: true,
-			details: { kinds: [...stampMisses.aliasTargets].sort() }
 		});
 	}
 	reportVaporizedKinds(stampMisses, inlineKinds, reachableFromRoot, diagnostics);
@@ -749,29 +745,12 @@ function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<stri
 	return catalogRenames([...Object.keys(raw.rules), ...ruleListParts(raw.externals).names], ctx.kindEntries);
 }
 
-function reportUnpredictedKinds(ctx: LinkCtx): void {
-	const { grammar: raw, diagnostics } = ctx;
-	const kinds = raw.predictedKinds;
+function assertPredictedKinds(ctx: LinkCtx): void {
+	const kinds = ctx.grammar.predictedKinds;
 	if (kinds === undefined || 'entries' in kinds) return;
-	if (kinds.undefinedNames.length === 0) {
-		diagnostics.fail({
-			code: 'unpredictable-symbol-table',
-			scope: 'compiler',
-			phase: 'evaluate',
-			message: `the parser's symbol table cannot be predicted from the grammar: ${kinds.failure}`,
-			details: { grammar: raw.name, message: kinds.failure }
-		});
-		return;
-	}
-	for (const targetName of kinds.undefinedNames) {
-		diagnostics.fail({
-			code: 'dangling-internal-ref',
-			scope: 'compiler',
-			phase: 'evaluate',
-			message: `the grammar references '${targetName}', which names no rule and no external`,
-			details: { grammar: raw.name, targetName }
-		});
-	}
+	throw new Error(
+		`link: '${ctx.grammar.name}' has no predicted symbol table (${kinds.failure}); a grammar tree-sitter rejects is recorded before link and never linked`
+	);
 }
 
 export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
@@ -954,7 +933,6 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 	runToFixpoint({
 		name: 'link.inlineReferences',
 		cap: 64,
-		diagnostics: ctx.diagnostics,
 		step: () => {
 			let changed = false;
 			for (const [name, rule] of Object.entries(rules)) {

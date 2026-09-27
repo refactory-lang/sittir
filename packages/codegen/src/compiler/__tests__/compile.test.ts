@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from '../types.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
 import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
-import { GrammarDiagnosticError } from '../diagnostics/grammar-diagnostics.ts';
 import { assertCompilation, type Compilation } from '../compile.ts';
 
 function makeCompilation(overrides: Partial<Compilation> = {}): Compilation {
@@ -24,10 +23,10 @@ describe('assertCompilation', () => {
 		expect(() => assertCompilation(makeCompilation())).not.toThrow();
 	});
 
-	it('does not throw for grammarDiagnostics with only canProceed:true items', () => {
+	it('leaves grammar diagnostics to the compile gate', () => {
 		const compilation = makeCompilation({
 			grammarDiagnostics: [
-				{ scope: 'grammar', code: 'W1', severity: 'warning', grammar: 'synth', message: 'a warning', canProceed: true }
+				{ scope: 'grammar', code: 'B1', severity: 'error', grammar: 'synth', message: 'a blocking record', canProceed: false }
 			]
 		});
 		expect(() => assertCompilation(compilation)).not.toThrow();
@@ -38,39 +37,5 @@ describe('assertCompilation', () => {
 		diagnostics.fail({ code: 'HALT', message: 'fatal problem' });
 		const compilation = makeCompilation({ diagnostics });
 		expect(() => assertCompilation(compilation)).toThrow(EmitHaltedError);
-	});
-
-	it('throws GrammarDiagnosticError when a grammarDiagnostics entry has canProceed:false', () => {
-		const compilation = makeCompilation({
-			grammarDiagnostics: [
-				{
-					scope: 'grammar',
-					code: 'parsekind-noninjective',
-					severity: 'warning',
-					grammar: 'synth',
-					message: 'collision',
-					canProceed: false
-				}
-			]
-		});
-		expect(() => assertCompilation(compilation)).toThrow(GrammarDiagnosticError);
-	});
-
-	it('does not throw when a blocking grammarDiagnostics code is in the allow list', () => {
-		const compilation = makeCompilation({
-			grammarDiagnostics: [
-				{
-					scope: 'grammar',
-					code: 'parsekind-noninjective',
-					severity: 'warning',
-					grammar: 'synth',
-					message: 'collision',
-					canProceed: false
-				}
-			]
-		});
-		expect(() =>
-			assertCompilation(compilation, { allowDiagnostics: new Set(['parsekind-noninjective']) })
-		).not.toThrow();
 	});
 });

@@ -1,120 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[5]",
-      "ruleId": "rule:_let_chain:root"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "#!"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    }
-  },
-  {
-    "code": "kindid-unstamped-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_declaration_statement"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-unstamped-literals",
-    "message": "7 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_declaration_statement"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "scope": "grammar",
     "code": "body-pattern-zero-match",
     "severity": "warning",
     "grammar": "rust",
@@ -127,10 +13,10 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "tuple_type",
     "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "alias-shape"
     }
@@ -139,10 +25,10 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "tuple_expression",
     "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "alias-shape"
     }
@@ -151,10 +37,10 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "_non_special_token",
     "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "alias-shape"
     }
@@ -163,10 +49,10 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "_primitive_type",
     "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "ambiguity"
     }
@@ -175,10 +61,10 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "reference_expression",
     "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "ambiguity"
     }
@@ -187,12 +73,26 @@
     "scope": "grammar",
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "impl_item",
     "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
+    "canProceed": false,
     "details": {
       "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
     }
   }
 ]

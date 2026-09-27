@@ -4,10 +4,9 @@ import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { collapseRenamedRules, link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { loadGrammarJsonInlineList, loadGrammarJsonAliasMap, buildInlinableKinds } from '../inline-sets.ts';
+import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
-import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
-import type { AssembleWarning } from '../model/node-map.ts';
+import type { AssembleWarning, NamingEvent } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
@@ -21,11 +20,36 @@ export type { GrammarDiagnostic };
 export class GrammarDiagnosticError extends Error {
 	readonly codes: readonly string[];
 
-	constructor(readonly diagnostics: readonly GrammarDiagnostic[]) {
+	constructor(
+		readonly diagnostics: readonly GrammarDiagnostic[],
+		readonly records: readonly GrammarDiagnostic[] = diagnostics
+	) {
 		super(diagnostics.map((diagnostic) => `${diagnostic.code}: ${diagnostic.message}`).join('\n'));
 		this.name = 'GrammarDiagnosticError';
 		this.codes = diagnostics.map((diagnostic) => diagnostic.code);
 	}
+}
+
+export type DiagnosticFloors = Readonly<Record<string, readonly string[]>> | undefined;
+
+export function blockedRecords(
+	records: readonly GrammarDiagnostic[],
+	floors: DiagnosticFloors,
+	allow: ReadonlySet<string> = new Set()
+): GrammarDiagnostic[] {
+	return records.filter(
+		(record) =>
+			record.canProceed === false && !allow.has(record.code) && !isExpectedDiagnostic(floors, record.code, record.ownerKind)
+	);
+}
+
+export function assertGatePasses(
+	records: readonly GrammarDiagnostic[],
+	floors: DiagnosticFloors,
+	allow: ReadonlySet<string> = new Set()
+): void {
+	const blocked = blockedRecords(records, floors, allow);
+	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, records);
 }
 
 export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCollisionDiagnostic): GrammarDiagnostic {
@@ -46,31 +70,16 @@ export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCol
 	};
 }
 
-export function fromDeriveShape(grammar: string, diagnostic: DeriveShapeDiagnostic): GrammarDiagnostic {
-	return {
-		scope: 'grammar',
-		code: diagnostic.code,
-		severity: diagnostic.severity,
-		grammar,
-		ownerKind: diagnostic.ownerKind ?? '(no-kind-context)',
-		ruleId: diagnostic.ruleId,
-		message: diagnostic.message,
-		proposal: diagnostic.proposal,
-		canProceed: true,
-		details: diagnostic.details
-	};
-}
-
 export function fromAssembleWarning(grammar: string, warning: AssembleWarning): GrammarDiagnostic {
-	const severity = warning.code === 'typename-collision' ? 'info' : 'warning';
+	const blocking = BLOCKING_SHAPE_CODES.has(warning.code);
 	return {
 		scope: 'grammar',
 		code: warning.code,
-		severity,
+		severity: blocking ? 'error' : 'warning',
 		grammar,
 		ownerKind: warning.ownerKind,
 		message: warning.message,
-		canProceed: true,
+		canProceed: !blocking,
 		details: warning.details
 	};
 }
@@ -89,16 +98,15 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 	};
 }
 
-function isBlockingAssembleWarningCode(code: string): boolean {
-	return (
-		code === 'storagename-collision' ||
-		code === 'nonterminal-separator-unstamped' ||
-		code === 'unclassifiable-shape' ||
-		code === 'kind-shape-mismatch' ||
-		code === 'single-literal-choice' ||
-		code === 'union-slot-mixed-row'
-	);
-}
+const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
+	'storagename-collision',
+	'nonterminal-separator-unstamped',
+	'unclassifiable-shape',
+	'kind-shape-mismatch',
+	'single-literal-choice',
+	'union-slot-mixed-row',
+	'union-slot-unaddressable'
+]);
 
 export function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
@@ -142,47 +150,21 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
-	deriveShapeDiagnostics?: readonly DeriveShapeDiagnostic[];
 	assembleWarnings?: readonly AssembleWarning[];
 	slotGroupingDiagnostics?: readonly SlotGroupingDiagnostic[];
-	expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
 		...fromParseKindCollision(input.grammar, diagnostic),
 		canProceed: false
 	}));
-	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
-		fromDeriveShape(input.grammar, diagnostic)
+	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => fromAssembleWarning(input.grammar, warning));
+	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) =>
+		fromSlotGrouping(input.grammar, diagnostic)
 	);
-	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
-		const mapped = fromAssembleWarning(input.grammar, warning);
-		if (!isBlockingAssembleWarningCode(warning.code)) return mapped;
-		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
-		return { ...mapped, canProceed: false };
-	});
-	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
-		const mapped = fromSlotGrouping(input.grammar, diagnostic);
-		if (
-			(diagnostic.code === 'content-collision' || diagnostic.code === 'multi-slot-nested-seq') &&
-			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
-		) {
-			return { ...mapped, canProceed: true };
-		}
-		return mapped;
-	});
-	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
+	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODE_PREFIXES = [
-	'kindid-unstamped',
-	'kindid-vaporized',
-	'kindid-inline-excluded',
-	'kindid-unclassified',
-	'dangling-internal-ref',
-	'unpredictable-symbol-table',
-	'groups-config-invalid',
-	'refine-config-invalid'
-] as const;
+const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
@@ -230,7 +212,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});
-	const inlineKinds = buildInlinableKinds(new Set(loadGrammarJsonInlineList(rawGrammar.name) ?? []), linked);
+	const inlineKinds = buildInlinableKinds(new Set(rawGrammar.inline), linked);
 	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
 	const normalized = normalizeGrammar(
 		linked,
@@ -246,7 +228,6 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			normalized,
 			input.generatedIdTables,
 			compilerDiagnostics,
-			loadGrammarJsonAliasMap(rawGrammar.name),
 			kindEntries
 		)
 	);
@@ -255,37 +236,14 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const predictionFailed = rawGrammar.predictedKinds !== undefined && 'failure' in rawGrammar.predictedKinds;
 	const symbols = renameAwareSymbolSource({
 		...symbolFactsOf(rawGrammar),
 		kindEntries: predictedEntriesOf(rawGrammar.predictedKinds)
 	});
-	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
 	const surfacedCompilerDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()
-		.filter((d) => SURFACED_COMPILER_CODE_PREFIXES.some((prefix) => d.code.startsWith(prefix)))
+		.filter((d) => SURFACED_COMPILER_CODES.has(d.code))
 		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: rawGrammar.name }));
-	const allDiagnostics = [
-		...collectGrammarDiagnostics({
-			grammar: rawGrammar.name,
-			parseKindCollisions: nodeMap.parseKindCollisions,
-			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
-			assembleWarnings: nodeMap.assembleWarnings,
-			slotGroupingDiagnostics,
-			expectDiagnostics: rawGrammar.expectDiagnostics
-		}).diagnostics,
-		...contentAliasDiagnostics,
-		...(predictionFailed
-			? []
-			: [
-					...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
-					...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols })
-				]),
-		...surfacedCompilerDiagnostics,
-		...unexpectableExpectEntries(rawGrammar.name, rawGrammar.expectDiagnostics),
-		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
-		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
-	];
 	return {
 		raw: rawGrammar,
 		linked,
@@ -293,11 +251,70 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		nodeMap,
 		compilerDiagnostics,
 		slotGroupingDiagnostics,
-		diagnostics:
-			orphanedSyntheticGroups.size === 0
-				? allDiagnostics
-				: allDiagnostics.filter((d) => d.ownerKind === undefined || !orphanedSyntheticGroups.has(d.ownerKind))
+		diagnostics: withoutOrphanedGroups(rawGrammar, [
+			...collectGrammarDiagnostics({
+				grammar: rawGrammar.name,
+				parseKindCollisions: nodeMap.parseKindCollisions,
+				assembleWarnings: nodeMap.assembleWarnings,
+				slotGroupingDiagnostics
+			}).diagnostics,
+			...contentAliasDiagnostics,
+			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
+			...surfacedCompilerDiagnostics
+		])
 	};
+}
+
+export function predictionFailed(raw: Pick<RawGrammar, 'predictedKinds'>): boolean {
+	return raw.predictedKinds !== undefined && 'failure' in raw.predictedKinds;
+}
+
+export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
+	const kinds = raw.predictedKinds;
+	if (kinds === undefined || 'entries' in kinds) return [];
+	if (kinds.undefinedNames.length === 0) {
+		return [
+			{
+				scope: 'grammar',
+				code: 'unpredictable-symbol-table',
+				severity: 'error',
+				grammar: raw.name,
+				message: `the parser's symbol table cannot be predicted from the grammar: ${kinds.failure}`,
+				canProceed: false,
+				details: { message: kinds.failure }
+			}
+		];
+	}
+	return kinds.undefinedNames.map((targetName) => ({
+		scope: 'grammar',
+		code: 'dangling-internal-ref',
+		severity: 'error',
+		grammar: raw.name,
+		message: `the grammar references '${targetName}', which names no rule and no external`,
+		canProceed: false,
+		details: { targetName }
+	}));
+}
+
+export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
+	return withoutOrphanedGroups(raw, [
+		...predictionRecords(raw),
+		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
+		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
+		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))
+	]);
+}
+
+export function diagnoseStage(raw: RawGrammar): GrammarDiagnostic[] {
+	const records = evaluateRecords(raw);
+	if (predictionFailed(raw)) return records;
+	return [...records, ...collectGrammarDiagnosticsForGrammar({ rawGrammar: raw }).diagnostics];
+}
+
+function withoutOrphanedGroups(raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>, records: GrammarDiagnostic[]): GrammarDiagnostic[] {
+	const orphaned = new Set(raw.orphanedSyntheticGroups ?? []);
+	return orphaned.size === 0 ? records : records.filter((d) => d.ownerKind === undefined || !orphaned.has(d.ownerKind));
 }
 
 export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic[]): string {
@@ -308,6 +325,10 @@ export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic
 				`[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`
 		)
 		.join('\n');
+}
+
+export function formatNamingEvents(events: readonly NamingEvent[]): string {
+	return events.map((e) => `[naming] ${e.kind}: type name '${e.from}' → '${e.to}' (${e.message})`).join('\n');
 }
 
 export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnostic[]): string {

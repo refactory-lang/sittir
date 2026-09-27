@@ -467,8 +467,7 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
 // 026's alias-materialization pass (assemble()'s main loop, right
 // after the kind-classification switch) registers a real
 // `AssembledSupertype` node for exactly that case, so the alias
-// resolves to a real node (confirmed via grammar.json — see
-// `loadGrammarJsonAliasMap`). A non-SUPERTYPE member with a
+// resolves to a real node. A non-SUPERTYPE member with a
 // parse-name entry (e.g. `_primitive_type`, an all-STRING ENUM
 // aliased to `primitive_type` at this occurrence) has no such
 // separately registered node — only the hidden ENUM kind itself
@@ -724,6 +723,12 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
 // Hidden — user-facing when any of the conditions above hold (b/c/d).
 ```
 
+### `packages/codegen/src/compiler/assemble.ts::FactoryInlineUnnestableError`
+
+A `factoryInline:` kind with nowhere to nest: absent from the grammar, the root, referenced by no slot, or a
+supertype member referenced from outside its own parents. The config names a kind the grammar cannot carry; assemble
+throws rather than emit an unreachable builder.
+
 ### `packages/codegen/src/compiler/assemble.ts::renameCollidingHiddenKinds`
 
 ```text
@@ -765,7 +770,7 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
  *   Two visible kinds collapse to the same typeName when grammar symbols differ only
  *   in case (e.g. python's `true` keyword + `True` named node). The first kind (sorted
  *   by kind string) keeps the original name; subsequent ones receive a numeric suffix.
- *   A warning is emitted so the situation is visible in the run log.
+ *   Each rename is recorded as a naming event, printed in the gen log.
  */
 ```
 
@@ -780,7 +785,7 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
  * @param typeName - The shared `typeName` string before disambiguation.
  * @remarks
  *   Two hidden kinds both normalized to the same name receive numeric suffixes on every
- *   node after the first. A warning is emitted for each rename.
+ *   node after the first. Each rename is recorded as a naming event.
  */
 ```
 
@@ -1666,54 +1671,27 @@ The classification left after every structural check: an all-text subtree is `'p
 
 ### `packages/codegen/src/compiler/compile.ts::Compilation`
 
-```text
-One evaluate→link→normalize→assemble pass and everything derived from it:
-the raw/linked/normalized grammars, the assembled NodeMap, the
-compiler-internal severity-based sink (`diagnostics` — the same one
-threaded through link/normalize/assemble, e.g. `assemble.ts`'s
-`emitUnnestable` fail), and the grammar-authoring canProceed-based list
-(`grammarDiagnostics` — parse-kind collisions, derive-shape, assemble
-warnings, slot-grouping, content-alias, kindid-stamp misses, body-pattern
-zero-matches, desugar divergences). These two diagnostic vocabularies stay
-separate rather than merged into one severity scale — `grammarDiagnostics`
-entries are `canProceed:false` without ever being `severity:'fail'` — but
-both are now reachable from ONE compile instead of two independent ones.
-```
+One gated compile and everything derived from it: the raw, linked and normalized grammars, the assembled node
+map, the compiler's severity sink (`diagnostics`, threaded through link, normalize and assemble), and the grammar
+diagnostics (`grammarDiagnostics`: the evaluate-time records, then the front half's shape records). The two
+vocabularies stay separate: a grammar diagnostic blocks through `canProceed: false` at the gate, never through
+`severity: 'fail'`.
 
 `generatedIdTables` is the id tables after `stampVisibleExternals`; generation reads them from the compilation instead of loading and stamping a second copy.
 
 ### `packages/codegen/src/compiler/compile.ts::compileGrammar`
 
-```text
-Runs evaluate→link→normalize→assemble exactly once and computes both
-diagnostic vocabularies — the compiler sink and the grammar-authoring
-diagnostics (parse-kind collisions, storage-name collisions, derive
-shapes, slots, content aliases, kind ids) — from that single pass. The CLI
-preflight and a library call to `generate()` consume the same
-`Compilation`, so both see the same checks and `evaluate()` (which
-installs the DSL on `globalThis`) runs once per generation.
-
-The `raw` it returns is the grammar `collectGrammarDiagnosticsForGrammar`
-handed on, with renamed rules already collapsed.
-
-Calls `hydrateSlotRefs` (assemble.ts) before returning — the last mutation
-performed on the graph (UnresolvedRef → AssembledNode), so
-`assertCompilation` sees a dangling internal reference the same way it
-sees every other grammar-authoring diagnostic, and `generate()` receives an
-already-hydrated `nodeMap` ahead of `emitNodeModel`: node-model.json5
-carries an `unresolved: true` entry only for a reference that is
-legitimately external or inline.
-```
+Evaluates the grammar and gates it twice through `assertGatePasses`, each call with the floors its records are
+named against. Before link it checks the evaluate-time records (`evaluateRecords`, and when the grammar departs
+from upstream, `diagnoseRuleCauses` and `diagnosePatchSites` over the upstream stage), with the evaluated
+grammar's `expectDiagnostics`. A grammar tree-sitter rejects therefore never reaches link. After assemble it
+checks the front half's records with the collapsed grammar's `expectDiagnostics`. `allowDiagnostics` is the
+caller's override at both. Hydrate then runs with `droppedKinds` as the names whose absence is already reported.
 
 ### `packages/codegen/src/compiler/compile.ts::assertCompilation`
 
-```text
-The single Assemble→Project boundary check. Throws `EmitHaltedError` for
-a compiler-internal fail diagnostic, or `GrammarDiagnosticError` for a
-grammar-authoring diagnostic whose code is `canProceed:false` and not in
-the caller's `allowDiagnostics`. One gate, reached by the CLI preflight and
-by a plain `generate()` call alike.
-```
+Refuses a compilation whose compiler sink holds a `fail` (`EmitHaltedError`). Grammar diagnostics are not its
+concern: `compileGrammar` gated them before returning.
 
 ### `packages/codegen/src/compiler/evaluate.ts::seq`
 
@@ -2236,14 +2214,12 @@ departures to judge, so only it pays for an upstream evaluation.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateUpstream`
 
-Evaluates the base `grammar()` received (the same object `wire()` received,
-the grammar's `enrichedBase`) a second time with no wire config, inside the
-same DSL-globals scope, so the upstream is never located by package path. It
-also records every rule name the upstream declares: the base's rules plus the
-enrich overrides merged into the upstream options. The evaluated rules alone
-are not that list, because the rule catalog omits hidden rules it finds
-unreachable (typescript's `_reserved_identifier`). A throw becomes a
-`failure` record rather than failing the grammar's own evaluation.
+Evaluates the enriched base `grammar()` received (`sittirGrammar`'s `enrich` output, the same object `wire()`
+read) a second time with no wire config, inside the same DSL-globals scope, so the upstream is never located by
+package path. It also records every rule name the upstream declares: the base's rules plus the enrich overrides
+merged into the upstream options. The evaluated rules alone are not that list, because the rule catalog omits
+hidden rules it finds unreachable (typescript's `_reserved_identifier`). A throw fails the evaluation: an upstream
+grammar tree-sitter accepts always evaluates, and one it rejects is reported by its prediction records.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.upstream`
 
@@ -2253,9 +2229,8 @@ from its base (`departsFromUpstream`).
 
 ### `packages/codegen/src/compiler/types.ts::UpstreamEvaluation`
 
-`{ raw, ruleNames }` or `{ failure }`: the outcome of `evaluateUpstream`. The
-`raw` grammar is an `EvaluatedGrammar` until the compile boundary
-canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
+`{ raw, ruleNames }`: the outcome of `evaluateUpstream`. The `raw` grammar is an `EvaluatedGrammar` until the
+compile boundary canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
@@ -2268,17 +2243,14 @@ receives as its base.
 
 ### `packages/codegen/src/compiler/upstream.ts::compileUpstream`
 
-Runs the evaluated upstream through `collectGrammarDiagnosticsForGrammar`
-and returns its declared rule names (post-enrich, so enrich mints count as
-upstream), its externals and its diagnostics. A throw anywhere in link, normalize or
-assemble becomes a `failure` record. The upstream has no generated parser, so
-no id tables are passed and `kindid-unstamped-anon-literal` fires on every
-anonymous literal: that code says nothing about the upstream shape.
+Diagnoses the evaluated upstream stage (`diagnoseStage`) and returns its declared rule names (post-enrich, so
+enrich mints count as upstream), its externals and its records. The stage runs the id-free front half over the
+predicted catalog: no generate, no parser tables, no generate output. A throw in link, normalize or assemble is a
+compiler invariant and propagates.
 
 ### `packages/codegen/src/compiler/upstream.ts::UpstreamCompilation`
 
-The upstream compile's rule names, external names, diagnostics, and
-`failure` when it did not complete.
+The upstream stage's rule names, external names and grammar diagnostics.
 
 ### `packages/codegen/src/compiler/compile.ts::Compilation.upstream`
 
@@ -3005,9 +2977,6 @@ fallback an unstamped list reports.
 ```text
 // Phase 4: Assemble — caller-owned ctx: built from `normalized` via the
 // canonical factory, threading the pipeline's live DiagnosticSink.
-// `grammarJsonAliasMap` corrects nested-supertype-arm naming divergence
-// between enrich's two per-grammar evaluations — see AssembleCtx's doc
-// comment on the field and inline-sets.ts's loadGrammarJsonAliasMap.
 ```
 
 #### body
@@ -3170,23 +3139,6 @@ The grammar's generated id tables, read from its own package
 neither exists. The location never depends on the working directory, so a
 test or tool run from any package reads the same tables.
 
-### `packages/codegen/src/compiler/inline-sets.ts::loadGrammarJsonInlineList`
-
-```text
-/**
- * Load the `inline` array from the compiled grammar.json (if present).
- *
- * `raw.inline` only contains what the overrides callback explicitly returns —
- * base-grammar string items in `previous` are silently dropped by evaluate's
- * normalize() pass (which only handles symbol-ref objects). Reading
- * grammar.json directly gives the full merged inline list that tree-sitter
- * itself used when compiling the parser.
- *
- * @param grammar - Grammar name (e.g. `'rust'`, `'typescript'`, `'python'`).
- * @returns The `inline` string array from grammar.json, or `undefined`.
- */
-```
-
 ### `packages/codegen/src/compiler/inline-sets.ts::danglingInlineNames`
 
 ```text
@@ -3217,34 +3169,6 @@ test or tool run from any package reads the same tables.
  * compiled rule bag. Called by generate() right before the inline list is
  * consumed; a missing or unparseable grammar.json is not this gate's
  * concern and passes silently.
- */
-```
-
-### `packages/codegen/src/compiler/inline-sets.ts::loadGrammarJsonAliasMap`
-
-```text
-/**
- * Read back the REAL hidden-symbol → visible-alias-name mapping tree-sitter
- * actually compiled, from grammar.json's rule bodies.
- *
- * Needed because enrich's clause-hoist/choice-arm promotion
- * (`promoteExistingHiddenRuleName`, dsl/enrich.ts) runs TWICE per grammar —
- * once building the wire config tree-sitter's native `grammar()` call
- * compiles, once inside sittir's own evaluate() pipeline — each with its own
- * fresh, order-dependent dedup state ("whichever parent asks first wins the
- * name"). When one hidden rule is referenced from multiple parents (rust's
- * `_non_special_token`, referenced from `_tokens`/`_non_delim_token`/
- * `_token_pattern`), the two runs can settle on DIFFERENT winning names for
- * the identical shared target. Only the wire-config run's name is real —
- * it's what tree-sitter actually compiled into the parser — so this reads
- * it back from grammar.json rather than trusting sittir's own guess
- * (`SupertypeRule.subtypeParseNames`, computed by the OTHER run).
- *
- * @returns Map of hidden symbol name (`_foo`) → its real compiled alias
- *   name, or an empty map if grammar.json is absent/unreadable. A hidden
- *   name aliased to different names at different reference sites (not
- *   observed in practice — tree-sitter dedupes identical anonymous content
- *   to one shared alias) keeps whichever alias is encountered first.
  */
 ```
 
@@ -3407,8 +3331,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  not the host occurrence site, and simplify's single-member collapse
  *  would otherwise hoist that fact onto the host. Runs via `fixpoint.ts`'s
  *  `runToFixpoint` to a fixed point (no rule changed in a pass) or a
- *  64-pass cap, whichever comes first; hitting the cap raises the blocking
- *  `fixpoint-cap-reached` diagnostic naming this pass, rather than looping
+ *  64-pass cap, whichever comes first; hitting the cap throws, naming
+ *  this pass, rather than looping
  *  forever on a mutually-inlining cycle `cyclicInlineTargets` failed to
  *  catch. */
 ```
@@ -4427,8 +4351,8 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  * One pass is usually enough; up to four iterations catch cascading
  * opportunities where a parent being inlined exposes a new single-use child.
  * Runs via `fixpoint.ts`'s `runToFixpoint`, which returns as soon as a pass
- * produces no changes, or raises the blocking `fixpoint-cap-reached`
- * diagnostic naming this pass if the four-pass cap is reached first.
+ * produces no changes, or throws, naming this pass, if the four-pass cap
+ * is reached first.
  */
 ```
 
@@ -7281,8 +7205,8 @@ source, one derivation.
  * per-build phantom-kind signal. Symbols are keyed by storage name
  * (`.name`, always storage under the alias form); literals by their text;
  * `aliasTargets` separately holds an alias NAME (`aliasedTo`/an ALIAS
- * node's own `value`) that resolved no named parser kindId — reported as the
- * `alias-target-unminted` diagnostic. Fixed-literal PATTERN misses are NOT
+ * node's own `value`) that resolved no named parser kindId — link throws on
+ * any. Fixed-literal PATTERN misses are NOT
  * recorded (a real regex body has no anon token by design).
  */
 ```
@@ -7469,25 +7393,11 @@ the stamp with the terminal default.
 
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
-```text
-/**
- * The unstampable-leaf report — the per-build phantom-kind inventory. One row
- * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
- * lists live in `details`. Expected members today: kinds synthesized after
- * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
- * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
- * bug (every OTHER kind name should carry one — that's the invariant this
- * report ratchets against).
- */
-```
-
-#### body
-
-```text
-// warning severity, reports the FULL miss set — see "Diagnostics" in
-// docs/compiler-phase-glossary.md for the severity/exclusion-class
-// rationale.
-```
+The unstampable-leaf report, the per-build phantom-kind inventory, as compiler warnings; they are not grammar
+diagnostics, and the phantom-kind ratchet gates the count. One row per class keeps the report readable; the
+sorted name lists live in `details`. Expected members: `inline:`-listed rules and vaporized rules, which lack a
+parser-issued kindId by construction. An alias target with no named parser kindId is an invariant: link throws,
+since the parser never mints the aliased node.
 
 ### `packages/codegen/src/compiler/link.ts::foldAliasLiteralsIntoEnumRules`
 
@@ -7889,24 +7799,24 @@ own facts.
 
 Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads:
 canonicalizes every rule body, the `renderAs` and `visibleExternals` records,
-and the evaluated upstream; removes orphaned rules; then builds the rule
+and the evaluated upstream; removes orphaned rules and their `inline` and `conflicts` entries; then builds the rule
 catalog and the reference list over the canonical rules. The predicted kind
 catalog (`predictKinds`) is taken from the evaluated rules before any of
 this, since canonicalization peels wrappers the parser's symbol table
 depends on.
 
 The orphan pass removes the rules wire pre-registered for a placeholder that
-never deposited, and any other rule nothing reaches (`collectOrphanedRules`).
+never deposited, and any other rule nothing reaches (`util/reachable-rules.ts::pruneOrphanedRules`).
 Wire has to register every name a placeholder might mint before tree-sitter
 walks the rule map, so an unfired `field('x')`, `alias()` or `variant()` —
 including an absent-case `bare` whose hoist did not fire — leaves an empty
 rule behind. The roots besides visible rules with a body are the grammar's
 `protectedRuleNames`: wire's deposit names, the declared supertypes
 (`_whitespace` is referenced by nothing but `supertypes:`) and the
-`renderAs` / `visibleExternals` names. It is the twin of
-`transpile/prune-grammar-json.ts` over the same reachability traversal: rules
-nothing reaches must vanish from the sittir-evaluated map exactly as they
-vanish from grammar.json, or the model carries kinds the parser never emits.
+`renderAs` / `visibleExternals` names. `transpile/prune-grammar-json.ts` calls
+the same prune: rules nothing reaches must vanish from the sittir-evaluated
+grammar exactly as they vanish from grammar.json, rules and inline list alike,
+or the model carries kinds the parser never emits.
 Inline and conflict bookkeeping deliberately does not root (an orphaned mint
 would keep itself alive through its own entries). A grammar evaluated without
 wire has no protected names and prunes nothing.
@@ -9684,32 +9594,6 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 // import it from this module.
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::AssembleCtx.grammarJsonAliasMap`
-
-```text
-/**
-	 * Hidden symbol name → its REAL compiled alias name, read back from the
-	 * compiled `grammar.json` (see `loadGrammarJsonAliasMap`, inline-sets.ts).
-	 *
-	 * Needed because enrich's clause-hoist/choice-arm promotion
-	 * (`promoteExistingHiddenRuleName`, enrich.ts) is evaluated TWICE per
-	 * grammar — once building the wire config tree-sitter's native
-	 * `grammar()` call compiles, once inside sittir's own evaluate()
-	 * pipeline — each with its OWN fresh `groupDedupeMap`/counter state.
-	 * The promotion is order-dependent ("whichever parent asks first wins
-	 * the name"), so when a single hidden rule is referenced from multiple
-	 * parents (e.g. rust's `_non_special_token`, referenced from `_tokens`,
-	 * `_non_delim_token`, AND `_token_pattern`), the two invocations can —
-	 * and in this exact case do — settle on DIFFERENT winning names
-	 * ("token_pattern_group1" vs "non_delim_token_group1") depending on
-	 * which parent each invocation happens to visit first. Only the
-	 * wire-config invocation's name is real (it's what tree-sitter actually
-	 * compiled); sittir's own `subtypeParseNames` guess can be wrong. This
-	 * map lets `resolveHiddenSubtypes` correct for that divergence rather
-	 * than trusting the guess.
-	 */
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::stampFactoryInline`
 
 ```text
@@ -9766,21 +9650,12 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 
 ### `packages/codegen/src/compiler/assemble.ts::hydrateValues`
 
-#### body
-
-```text
-// A ref resolves by its canonical name in the primary lookup. Two
-// categories legitimately have no assembled target and keep their
-// `UnresolvedRef`: external tokens (lexer-callback symbols, tracked in
-// `nodeMap.externals`) and the grammar's declared inline kinds
-// (`cfg.inline`) — the parser issues a node for neither, and every
-// consumer that walks `slot.values[*]` handles `isUnresolvedRef`. Any
-// other absent target is a dangling internal reference: a codegen gap, not
-// data, reported to the sink as `dangling-internal-ref` and refused by
-// `assertCompilation`. All three grammars carry zero.
-```
-
-A name whose absence is already reported (`HydrateValuesCtx.reportedAbsentNames`) is skipped: an undefined name link records as `dangling-internal-ref` (`dsl/symbol-table.ts::undefinedNamesOf`), or a kind assemble left out with a shape record (`AssembledNodeMap.droppedKinds`). Hydrate does not record the same absence again.
+A ref resolves by its canonical name in the primary lookup. Two categories legitimately have no assembled target
+and keep their `UnresolvedRef`: external tokens (lexer-callback symbols, tracked in `nodeMap.externals`) and the
+grammar's declared inline kinds (`cfg.inline`). The parser issues a node for neither, and every consumer that
+walks `slot.values[*]` handles `isUnresolvedRef`. A kind assemble left out with a shape record
+(`HydrateValuesCtx.reportedAbsentNames`, the node map's `droppedKinds`) is skipped. Any other absent target is an
+invariant violation and throws: an undefined name is a failed prediction, recorded and gated before link.
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 
@@ -9844,7 +9719,7 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 // literals under a different name (`,` → `comma`) — keying by raw text mints
 // a phantom name with no id row even though the token already has one. This
 // is the ONLY path to minting: a literal with no catalog row is
-// never minted (see the `kindid-unstamped-anon-literal` warning below)
+// never minted (see the `kindid-unstamped-anon-literal` compiler warning below)
 // rather than falling back to raw-text keying.
 ```
 
@@ -9855,8 +9730,8 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 #### body
 
 ```text
-// No catalog row for this literal — record the
-// kindid-unstamped-anon-literal warning and do NOT mint it. This is the
+// No catalog row for this literal — warn `kindid-unstamped-anon-literal` in
+// the compiler sink and do NOT mint it. This is the
 // literal's own body as a NAMED rule (e.g. python's `True`/`False`/`None`/
 // `...`, rust's `mut`) or a literal outside the reachable rules — in both
 // cases the kind already exists (or will) under its own name, never under
@@ -10111,29 +9986,14 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 
 ### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
 
-```text
-The one iterate-to-a-fixed-point helper for the compiler passes
-(`simplify.simplifyToFixpoint`, `normalize.inlineHiddenSeqRefs`,
-`normalize.iterateInliningToFixedPoint`, `flatten.factorChoiceArmsToFixpoint`,
-`link.inlineReferences`): one cap per pass, one on-cap behavior for all of
-them, so no pass can loop silently or merely warn. `step()` runs one
-pass and reports whether anything changed; the loop returns as soon as a
-pass reports no change, and raises the blocking `fixpoint-cap-reached`
-diagnostic — naming the pass via `cfg.name` — if `cap` is reached first.
-Callers whose own `step` mutates shared state in place (most of them) fold
-their per-pass "did anything change" signal directly into the boolean
-`step` returns; callers with an immutable return value (`simplifyToFixpoint`,
-`factorChoiceArmsToFixpoint`) close over an outer `current` variable and
-compare it against `step`'s result themselves. Every real caller has a
-`DiagnosticSink` in scope (each phase's `ctx.diagnostics`); the few
-call sites whose own `ctx` parameter is optional (kept for isolated
-rule-level unit tests) fall back to a throwaway `new DiagnosticSink()`
-whose `fail()` is never read — consistent with the same fallback already
-used for `SimplifyCtx`/`NormalizeCtx` construction elsewhere in this file.
-Measured against all three real grammars (rust, typescript, python), every
-caller converges in at most 3 passes — well under its cap in every case.
-```
-
+The one iterate-to-a-fixed-point helper for the compiler passes (`simplify.simplifyToFixpoint`,
+`normalize.inlineHiddenSeqRefs`, `normalize.iterateInliningToFixedPoint`, `flatten.factorChoiceArmsToFixpoint`,
+`link.inlineReferences`): one cap per pass, one on-cap behavior for all of them. `step()` runs one pass and
+reports whether anything changed; the loop returns as soon as a pass reports no change, and throws, naming the
+pass via `cfg.name`, if `cap` is reached first. A pass that never converges is a compiler defect, not a grammar
+diagnostic. Callers whose `step` mutates shared state fold their per-pass change signal into the boolean it
+returns; callers with an immutable result (`simplifyToFixpoint`, `factorChoiceArmsToFixpoint`) close over an outer
+`current` and compare it themselves.
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureTokenInterior`
 
@@ -10303,6 +10163,9 @@ The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar
 
 The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its rules without the evaluate-synthesized ones. A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
 
-### `packages/codegen/src/compiler/link.ts::reportUnpredictedKinds`
+### `packages/codegen/src/compiler/link.ts::assertPredictedKinds`
 
-Records a failed catalog prediction in link's sink, once per grammar: each undefined name as `dangling-internal-ref`, any other cause as `unpredictable-symbol-table`. Both fail; neither is a grammar diagnostic, so no `expectDiagnostics` entry can excuse one.
+Link runs only on a grammar whose catalog prediction built: a failed prediction is recorded before link
+(`grammar-diagnostics.ts::predictionRecords`) and gated, or, for the upstream stage, stops at its records
+(`diagnoseStage`). Reaching link with a failed prediction throws.
+

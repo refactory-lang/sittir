@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import {
+	blockedRecords,
 	collectGrammarDiagnostics,
 	collectGrammarDiagnosticsForGrammar,
+	evaluateRecords,
 	GrammarDiagnosticError
 } from '../diagnostics/grammar-diagnostics.ts';
 import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
-import type { DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
@@ -109,7 +110,7 @@ describe('grammar diagnostics preflight', () => {
 
 	it('rejects an expectDiagnostics entry that names a code no entry can expect', () => {
 		const rawGrammar = { ...collisionGrammar(), expectDiagnostics: { 'refine-config-invalid': ['host'] } };
-		expect(collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics).toContainEqual(
+		expect(evaluateRecords(rawGrammar)).toContainEqual(
 			expect.objectContaining({ code: 'expect-diagnostics-invalid', canProceed: false, details: { code: 'refine-config-invalid' } })
 		);
 	});
@@ -147,32 +148,6 @@ describe('grammar diagnostics preflight', () => {
 		expect(result.nodeMap.parseKindCollisions).toEqual([]);
 		expect(result.diagnostics).toEqual([]);
 		expect(slot?.values).toHaveLength(1);
-	});
-
-	it('includes derive-shape diagnostics in the shared batch', () => {
-		const deriveD: DeriveShapeDiagnostic = {
-			code: 'seq-with-nested-seq',
-			severity: 'error',
-			ownerKind: 'host',
-			message:
-				"Kind 'host' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-			canProceed: false,
-			details: { rawShape: 'seq-with-nested-seq', ruleType: 'seq', context: 'fields' }
-		};
-		const result = collectGrammarDiagnostics({
-			grammar: 'synth',
-			parseKindCollisions: [],
-			deriveShapeDiagnostics: [deriveD]
-		});
-		expect(result.diagnostics).toEqual([
-			expect.objectContaining({
-				scope: 'grammar',
-				code: 'seq-with-nested-seq',
-				grammar: 'synth',
-				ownerKind: 'host',
-				canProceed: true
-			})
-		]);
 	});
 
 	it('captures diagnostic codes in GrammarDiagnosticError', () => {
@@ -296,27 +271,24 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
-	it('typename-collision stays non-blocking (regression guard on the shared fromAssembleWarning mapper)', () => {
-		// typename-collision is the ONLY other code sharing fromAssembleWarning
-		// with storagename-collision (confirmed this session: fromAssembleWarning's
-		// own severity branch names it explicitly). seq-with-nested-seq is a
-		// DeriveShapeDiagnostic mapped by the separate fromDeriveShape function
-		// (see the 'includes derive-shape diagnostics in the shared batch' test
-		// above, which already pins its canProceed: true unchanged) — untouched by
-		// Step 4's edit, so it needs no separate guard here.
-		const result = collectGrammarDiagnostics({
-			grammar: 'synth',
-			parseKindCollisions: [],
-			assembleWarnings: [
-				{ code: 'typename-collision', ownerKind: 'host', message: 'auto-resolved rename', details: {} }
-			]
+	it('an automatic type-name rename is a naming event, not a grammar diagnostic', () => {
+		const rawGrammar = buildRawGrammar({
+			host: {
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'foo' },
+					{ type: 'SYMBOL', name: 'Foo' }
+				]
+			},
+			foo: { type: 'PATTERN', value: 'f' },
+			Foo: { type: 'PATTERN', value: 'F' }
 		});
-		expect(result.diagnostics).toEqual([
-			expect.objectContaining({ code: 'typename-collision', ownerKind: 'host', severity: 'info', canProceed: true })
-		]);
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		expect(result.nodeMap.namingEvents).toEqual([expect.objectContaining({ kind: 'foo', from: 'Foo', to: 'Foo2' })]);
+		expect(result.diagnostics.map((d) => d.code)).not.toContain('typename-collision');
 	});
 
-	it("collectGrammarDiagnosticsForGrammar surfaces link's kindid-inline-excluded-symbols and kindid-unclassified-symbols diagnostics", () => {
+	it("keeps link's kindid-* stamp-miss reports out of the grammar diagnostics", () => {
 		// 'known' has a kindId; 'inline_only_kind' is a stamp miss declared in
 		// the grammar's own inline: array and as a supertype, so its reference
 		// stays a boundary instead of splicing; 'gap_kind' is a stamp miss that is
@@ -341,26 +313,13 @@ describe('grammar diagnostics preflight', () => {
 		);
 		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, sourceArtifact: 'test' };
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables });
-		expect(result.diagnostics).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({
-					scope: 'grammar',
-					code: 'kindid-inline-excluded-symbols',
-					grammar: 'synth',
-					details: { kinds: ['inline_only_kind'] }
-				}),
-				expect.objectContaining({
-					scope: 'grammar',
-					code: 'kindid-unclassified-symbols',
-					grammar: 'synth',
-					severity: 'warning',
-					details: { kinds: ['gap_kind'] }
-				})
-			])
+		expect(result.compilerDiagnostics.all().map((d) => d.code)).toEqual(
+			expect.arrayContaining(['kindid-inline-excluded-symbols', 'kindid-unclassified-symbols'])
 		);
+		expect(result.diagnostics.filter((d) => d.code.startsWith('kindid-'))).toEqual([]);
 	});
 
-	it('collectGrammarDiagnosticsForGrammar surfaces desugarDivergences (evaluate-only mints with no wire-side deposit)', () => {
+	it('evaluateRecords surfaces desugarDivergences (evaluate-only mints with no wire-side deposit)', () => {
 		const rawGrammar: RawGrammar = {
 			...buildRawGrammar({
 				host: { type: 'SYMBOL', name: 'known' },
@@ -370,8 +329,7 @@ describe('grammar diagnostics preflight', () => {
 				{ site: 'body-pattern-group', name: '_orphan_group' }
 			]
 		};
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
-		expect(result.diagnostics).toEqual(
+		expect(evaluateRecords(rawGrammar)).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({
 					scope: 'grammar',
@@ -455,113 +413,54 @@ describe('grammar diagnostics preflight', () => {
 			]);
 		});
 
-		it('content-collision stays canProceed: true for _object_type_group1 when expectDiagnostics declares it (the accepted floor)', () => {
-			const result = collectGrammarDiagnostics({
+		const contentCollision = (kind: string) =>
+			collectGrammarDiagnostics({
 				grammar: 'typescript',
 				parseKindCollisions: [],
-				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule }),
-				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: true })
-			]);
-		});
-
-		it('content-collision becomes canProceed: false for a different kind with the same slotCount, even with expectDiagnostics declared', () => {
-			const result = collectGrammarDiagnostics({
-				grammar: 'typescript',
-				parseKindCollisions: [],
-				slotGroupingDiagnostics: diagnoseSlotGrouping({ host: twoContentSlotRule }),
-				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'content-collision', ownerKind: 'host', canProceed: false })
-			]);
-		});
-
-		it('content-collision becomes canProceed: false for _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
-			// Same kind name, same shape, but the calling grammar's own grammar.sittir.ts
-			// never declared the exception — scoping is achieved by presence of the
-			// grammar's OWN expectDiagnostics declaration, not a grammar-name string
-			// comparison, so omitting it must not silently inherit the floor.
-			const result = collectGrammarDiagnostics({
-				grammar: 'rust',
-				parseKindCollisions: [],
-				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule })
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: false })
-			]);
-		});
-
-		it('storagename-collision stays canProceed: true for _object_type_group1 when expectDiagnostics declares it (the accepted floor)', () => {
-			const result = collectGrammarDiagnostics({
+				slotGroupingDiagnostics: diagnoseSlotGrouping({ [kind]: twoContentSlotRule })
+			}).diagnostics;
+		const storageCollision = (kind: string) =>
+			collectGrammarDiagnostics({
 				grammar: 'typescript',
 				parseKindCollisions: [],
 				assembleWarnings: [
 					{
 						code: 'storagename-collision',
-						ownerKind: '_object_type_group1',
-						message: "storageName collision: kind '_object_type_group1' has 2 slots with storageName 'content'",
-						details: {}
-					}
-				],
-				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'storagename-collision', ownerKind: '_object_type_group1', canProceed: true })
-			]);
-		});
-
-		it('storagename-collision becomes canProceed: false for a different kind, even with expectDiagnostics declared', () => {
-			const result = collectGrammarDiagnostics({
-				grammar: 'typescript',
-				parseKindCollisions: [],
-				assembleWarnings: [
-					{
-						code: 'storagename-collision',
-						ownerKind: 'host',
-						message: "storageName collision: kind 'host' has 2 slots with storageName 'content'",
-						details: {}
-					}
-				],
-				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })
-			]);
-		});
-
-		it('storagename-collision becomes canProceed: false for _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
-			const result = collectGrammarDiagnostics({
-				grammar: 'rust',
-				parseKindCollisions: [],
-				assembleWarnings: [
-					{
-						code: 'storagename-collision',
-						ownerKind: '_object_type_group1',
-						message: "storageName collision: kind '_object_type_group1' has 2 slots with storageName 'content'",
+						ownerKind: kind,
+						message: `storageName collision: kind '${kind}' has 2 slots with storageName 'content'`,
 						details: {}
 					}
 				]
-			});
-			expect(result.diagnostics).toEqual([
+			}).diagnostics;
+
+		it('both codes record canProceed: false; the floor applies only at the gate', () => {
+			expect(contentCollision('_object_type_group1')).toEqual([
+				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: false })
+			]);
+			expect(storageCollision('_object_type_group1')).toEqual([
 				expect.objectContaining({ code: 'storagename-collision', ownerKind: '_object_type_group1', canProceed: false })
 			]);
 		});
 
-		it('content-collision becomes canProceed: false when expectDiagnostics declares a DIFFERENT code for the kind', () => {
-			// expectDiagnostics is keyed per diagnostic code, not just per kind — a
-			// kind exempted from storagename-collision alone must still block on
-			// content-collision.
-			const result = collectGrammarDiagnostics({
-				grammar: 'typescript',
-				parseKindCollisions: [],
-				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule }),
-				expectDiagnostics: { 'storagename-collision': ['_object_type_group1'] }
-			});
-			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: false })
+		it('the gate accepts _object_type_group1 for both codes when expectDiagnostics declares it (the accepted floor)', () => {
+			expect(blockedRecords(contentCollision('_object_type_group1'), objectTypeGroup1ExpectDiagnostics)).toEqual([]);
+			expect(blockedRecords(storageCollision('_object_type_group1'), objectTypeGroup1ExpectDiagnostics)).toEqual([]);
+		});
+
+		it('the gate blocks a different kind with the same shape, even with expectDiagnostics declared', () => {
+			expect(blockedRecords(contentCollision('host'), objectTypeGroup1ExpectDiagnostics)).toHaveLength(1);
+			expect(blockedRecords(storageCollision('host'), objectTypeGroup1ExpectDiagnostics)).toHaveLength(1);
+		});
+
+		it('the gate blocks _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
+			expect(blockedRecords(contentCollision('_object_type_group1'), undefined)).toHaveLength(1);
+			expect(blockedRecords(storageCollision('_object_type_group1'), undefined)).toHaveLength(1);
+		});
+
+		it('the gate blocks content-collision when expectDiagnostics declares a DIFFERENT code for the kind', () => {
+			const floors = { 'storagename-collision': ['_object_type_group1'] };
+			expect(blockedRecords(contentCollision('_object_type_group1'), floors)).toEqual([
+				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1' })
 			]);
 		});
 	});
@@ -570,14 +469,14 @@ describe('grammar diagnostics preflight', () => {
 describe('unsupported shapes block unless floor-listed for their own code', () => {
 	const warning = (code: string) => ({ code, ownerKind: 'k', message: 'm', details: {} });
 
-	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row']) {
+	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row', 'union-slot-unaddressable']) {
 		it(`${code} blocks, is accepted when the owner is floor-listed for it, and still blocks when listed for another code`, () => {
-			const run = (expectDiagnostics?: Record<string, readonly string[]>) =>
-				collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], assembleWarnings: [warning(code)], expectDiagnostics })
-					.diagnostics[0];
-			expect(run()).toEqual(expect.objectContaining({ code, canProceed: false }));
-			expect(run({ [code]: ['k'] })).toEqual(expect.objectContaining({ code, canProceed: true }));
-			expect(run({ 'union-slot-routed': ['k'] })).toEqual(expect.objectContaining({ code, canProceed: false }));
+			const records = collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], assembleWarnings: [warning(code)] })
+				.diagnostics;
+			expect(records).toEqual([expect.objectContaining({ code, canProceed: false })]);
+			expect(blockedRecords(records, undefined)).toHaveLength(1);
+			expect(blockedRecords(records, { [code]: ['k'] })).toEqual([]);
+			expect(blockedRecords(records, { 'union-slot-routed': ['k'] })).toHaveLength(1);
 		});
 	}
 
@@ -600,11 +499,10 @@ describe('unsupported shapes block unless floor-listed for their own code', () =
 			slotCount: 2,
 			proposal: 'p'
 		};
-		const run = (expectDiagnostics?: Record<string, readonly string[]>) =>
-			collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], slotGroupingDiagnostics: [record], expectDiagnostics })
-				.diagnostics[0];
-		expect(run()).toEqual(expect.objectContaining({ canProceed: false }));
-		expect(run({ 'multi-slot-nested-seq': ['k'] })).toEqual(expect.objectContaining({ canProceed: true }));
-		expect(run({ 'content-collision': ['k'] })).toEqual(expect.objectContaining({ canProceed: false }));
+		const records = collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], slotGroupingDiagnostics: [record] })
+			.diagnostics;
+		expect(blockedRecords(records, undefined)).toHaveLength(1);
+		expect(blockedRecords(records, { 'multi-slot-nested-seq': ['k'] })).toEqual([]);
+		expect(blockedRecords(records, { 'content-collision': ['k'] })).toHaveLength(1);
 	});
 });

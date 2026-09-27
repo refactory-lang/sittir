@@ -13,7 +13,6 @@ describe('upstream evaluation and compile', () => {
 		const raw = await evaluate(fixture('rule-cause-grammar.ts'));
 		expect(raw.upstream).toBeDefined();
 		const upstream = compileUpstream(raw.upstream!);
-		expect(upstream.failure).toBeUndefined();
 		expect([...upstream.ruleNames].sort()).toEqual(['a', 'b', 'c']);
 		expect(Array.isArray(upstream.diagnostics)).toBe(true);
 	});
@@ -21,7 +20,6 @@ describe('upstream evaluation and compile', () => {
 	it('the rule names are every name the base declares, including ones the catalog prunes as unreachable', async () => {
 		const raw = await evaluate(resolveOverridesPath('typescript'));
 		const evaluation = raw.upstream!;
-		if ('failure' in evaluation) throw new Error(evaluation.failure);
 		expect(Object.keys(evaluation.raw.rules)).not.toContain('_reserved_identifier');
 		expect(compileUpstream(evaluation).ruleNames.has('_reserved_identifier')).toBe(true);
 	}, 60_000);
@@ -29,12 +27,5 @@ describe('upstream evaluation and compile', () => {
 	it('a grammar with no wire config has no upstream', async () => {
 		const raw = await evaluate(fixture('test-grammar.js'));
 		expect(raw.upstream).toBeUndefined();
-	});
-
-	it('an upstream evaluation failure becomes a failure record, not a throw', () => {
-		const upstream = compileUpstream({ failure: 'boom' });
-		expect(upstream.failure).toBe('evaluate: boom');
-		expect(upstream.diagnostics).toEqual([]);
-		expect(upstream.ruleNames.size).toBe(0);
 	});
 });

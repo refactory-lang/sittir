@@ -151,7 +151,7 @@ that an audit's findings are the work list.
 
 ## 3. Shape diagnostics block
 
-The three collect-slots codes that report a fallback flip to
+The collect-slots codes that report a fallback are
 `canProceed: false`:
 
 | code | shape | resolving form |
@@ -159,6 +159,7 @@ The three collect-slots codes that report a fallback flip to
 | `unclassifiable-shape` | a slot member that is neither a leaf nor a choice of leaves | `rule(...)` naming the structured arm |
 | `union-slot-mixed-row` | a mixed row: structured named arm beside union arms | `variant(...)` splitting the row, until the structured-arm enrich mint gives each structured arm its own kind in the union slot |
 | `multi-slot-nested-seq` | a multi-slot seq in a repeat position | a visible `groups:` entry making each repetition one node |
+| `union-slot-unaddressable` | a fieldless structural choice that qualifies for union routing but carries no rule id, so its union slot cannot be addressed | fires only in upstream stages today (rust `function_type`, typescript `for_in_statement`); both wired grammars resolve it |
 
 `union-slot-routed` stays a warning: it reports the union-slot design's
 supported routing (unnamed nonterminal arms, with any label-routed arms, in
@@ -179,21 +180,27 @@ floor.
 
 ### 4.1 Checks over the evaluated rules; link is gated
 
-A grammar diagnostic is a check over the **evaluated rule tree**. No check
-reads link, normalize or assemble output, and no check needs the parser's
-generated id tables. A compile runs in this order:
+A grammar diagnostic is a check over an **evaluated stage**: raw (the
+upstream grammar as written), enriched (after enrich, before wire), final
+(after wire). No check needs the parser: each stage runs the id-free front
+half (link, normalize, simplify, slot collection, assemble) over its
+predicted kind catalog (§4.3), with no tree-sitter generate, no parser tables
+and no generate output. A compile runs in this order:
 
-1. evaluate each stage: raw (the upstream grammar as written), enriched
-   (after enrich, before wire), final (after wire);
-2. run the rule checks on each stage and derive the diagnostic records (§5);
-3. **gate:** if any final-stage record with a blocking code
-   (`canProceed: false`) is unresolved and not covered by `expectDiagnostics`,
-   the compile stops. Link does not run.
+1. evaluate each stage and derive its records (§5);
+2. **gate before link:** if any final-stage record answerable from the
+   evaluated grammar alone (a failed catalog prediction, an invalid
+   `expectDiagnostics` entry, a cause or patch-site judgement against the
+   upstream stage) blocks (`canProceed: false`) and is not covered by
+   `expectDiagnostics`, the compile stops. Link does not run;
+3. run the final stage's front half;
+4. **gate after assemble:** the same test over the front half's records.
 
-Link, normalize and assemble only ever see a grammar that passed the gate. A
-shape they cannot model has already been reported, so they never throw on a
-grammar shape; where one re-meets such a shape, it asserts the gate's
-verdict. A non-blocking code (`union-slot-routed`) is recorded and never
+One gate function serves both points. A grammar tree-sitter rejects never
+reaches link. A shape the front half cannot model is reported, not thrown;
+a phase that meets an impossible state asserts (§4.4).
+
+A non-blocking code (`union-slot-routed`) is recorded and never
 gated: it reports supported routing, and the gate's target of zero applies to
 blocking codes. `expectDiagnostics` floors stay the only exception to the
 gate, per code and per owner, and only shrink.
@@ -205,7 +212,7 @@ gate, per code and per owner, and only shrink.
 | evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
 | causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
 | alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
-| slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
+| slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-unaddressable`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
 | literal sets | `single-literal-choice` (new) | a choice whose literal arms reduce to one value, which assemble today rejects by throwing (typescript `meta_property` upstream) |
 | inline list | `inline-array-visible-name` | the `inline:` list and predicted visibility |
 | symbol table | `dangling-internal-ref` (a reference that names no rule and no external), `unpredictable-symbol-table` (new) | the catalog prediction (§4.3); tree-sitter rejects either grammar, so neither is expectable |
@@ -246,17 +253,18 @@ not thrown.
   parser's ids, so they are answerable only after tree-sitter generates the
   parser. They stay the post-generate phantom-kind ratchet: ceilings that
   only shrink, outside the gate.
-- **Compiler invariants**: `alias-target-unminted`, `fixpoint-cap-reached`,
-  `dangling-internal-ref`, `factory-inline-unnestable`,
-  `union-slot-unaddressable`, and the derive-shape postconditions
-  (`seq-with-nested-seq`, `choice-with-multiple-arm-shapes`,
-  `seq-member-collision`, `polymorph-classification-gap`, `rule-unexpected`).
-  Each is an assertion in the phase that owns it and is unreachable once the
-  gate passes. An invariant that fires is a missing rule check: its
-  grammar-level cause gets a check in §4.2, and the invariant stays an
-  assertion.
-- **Naming events**: `typename-collision` reports an automatic rename. It is
-  a codegen naming event, recorded with codegen output, not a diagnostic.
+- **Compiler invariants**: a fixpoint that never converges, an alias target
+  the parser never mints, a `factoryInline` kind with nowhere to nest, and a
+  hydrate-time reference to a kind absent from the node map. Each throws in
+  the phase that owns it and is unreachable once the gate passes. An
+  invariant that fires is a missing rule check: its grammar-level cause gets
+  a check in §4.2, and the invariant stays an assertion. A reference that
+  names no rule and no external is not one of them: it is a failed catalog
+  prediction, recorded as `dangling-internal-ref` (§4.2). `unclassifiable-shape`
+  is the one verdict for a top-level or member shape the slot model has no
+  place for; no second postcondition audit re-derives it.
+- **Naming events**: an automatic type-name rename. It is codegen output,
+  printed in the gen log (`[naming]` lines), not a diagnostic.
 - **Emit-level reports** (`seam-word-hazard`, `unnamed-choice-slot`) are out
   of scope for this gate.
 

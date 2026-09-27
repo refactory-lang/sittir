@@ -22,7 +22,6 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
-import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -137,7 +136,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
+		AssembleCtx.from(normalized, generatedIdTables)
 	);
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);

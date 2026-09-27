@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { blockedRecords } from '../grammar-diagnostics.ts';
 import { diagnosePatchSites, labelPatchSites } from '../patch-sites.ts';
 import type { UpstreamCompilation } from '../../upstream.ts';
 import type { PatchSite } from '../../../dsl/wire/wire.ts';
@@ -54,12 +55,9 @@ describe('diagnosePatchSites', () => {
 		expect(diagnosePatchSites({ grammar: 'synth', sites: labelled })).toEqual([]);
 	});
 
-	it('patch-without-cause is accepted when the owner is floor-listed for it', () => {
-		const ds = diagnosePatchSites({
-			grammar: 'synth',
-			sites: labelPatchSites([site('rule')], upstream([])),
-			expectDiagnostics: { 'patch-without-cause': ['host'] }
-		});
-		expect(ds).toEqual([expect.objectContaining({ code: 'patch-without-cause', canProceed: true })]);
+	it('patch-without-cause is accepted at the gate when the owner is floor-listed for it', () => {
+		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelPatchSites([site('rule')], upstream([])) });
+		expect(ds).toEqual([expect.objectContaining({ code: 'patch-without-cause', canProceed: false })]);
+		expect(blockedRecords(ds, { 'patch-without-cause': ['host'] })).toEqual([]);
 	});
 });

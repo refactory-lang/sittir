@@ -1182,7 +1182,7 @@ narrowing guard.
  *  NAME's mint), stamped by link's `canonicalizeRuleLiterals` ALIAS case —
  *  resolved by `rule.value` (the alias name), never by the wrapped
  *  content's identity. A missing entry (or an anonymous one) is reported
- *  as the `alias-target-unminted` diagnostic via
+ *  by link, which throws, via
  *  `KindIdStampMisses.aliasTargets`. */
 ```
 

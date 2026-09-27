@@ -20,15 +20,6 @@ function readGrammarJson(grammar: string): GrammarJsonFile | undefined {
 	}
 }
 
-export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
-	const parsed = readGrammarJson(grammar);
-	if (parsed === undefined) return undefined;
-	if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
-		return parsed.inline as string[];
-	}
-	return undefined;
-}
-
 export function danglingInlineNames(parsed: GrammarJsonFile): string[] {
 	if (!Array.isArray(parsed.inline)) return [];
 	const rules = new Set(Object.keys(parsed.rules ?? {}));
@@ -54,31 +45,6 @@ interface GrammarJsonNode {
 	readonly named?: boolean;
 	readonly content?: GrammarJsonNode;
 	readonly members?: readonly GrammarJsonNode[];
-}
-
-export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, string> {
-	const out = new Map<string, string>();
-	const parsed = readGrammarJson(grammar);
-	if (parsed === undefined) return out;
-	const walk = (node: GrammarJsonNode | undefined): void => {
-		if (!node) return;
-		if (
-			node.type === 'ALIAS' &&
-			node.named === true &&
-			typeof node.value === 'string' &&
-			node.content?.type === 'SYMBOL' &&
-			typeof node.content.name === 'string'
-		) {
-			const hiddenName = node.content.name;
-			if (!out.has(hiddenName)) out.set(hiddenName, node.value);
-		}
-		walk(node.content);
-		if (Array.isArray(node.members)) {
-			for (const m of node.members) walk(m);
-		}
-	};
-	for (const rule of Object.values(parsed.rules ?? {})) walk(rule);
-	return out;
 }
 
 export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: LinkedGrammar): Set<string> {

@@ -2,7 +2,6 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { RuleCause } from '../../dsl/primitives/rule-cause.ts';
 import type { RawGrammar } from '../types.ts';
 import type { UpstreamCompilation } from '../upstream.ts';
-import { isExpectedDiagnostic } from './grammar-diagnostics.ts';
 
 export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	'alias-shape': [
@@ -20,7 +19,7 @@ const ANY_PROVOKING: ReadonlySet<string> = new Set(Object.values(PROVOKING_CODES
 
 export interface RuleCausesInput {
 	readonly grammar: string;
-	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'expectDiagnostics'>;
+	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs'>;
 	readonly upstream: UpstreamCompilation;
 }
 
@@ -34,17 +33,6 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 			`rules: '${name}' has a bare body. Declare it with reauthored(cause, body) when it replaces the upstream rule of that name, or vocabulary(body) when sittir adds it`
 		)
 	);
-	if (upstream.failure !== undefined) {
-		out.push({
-			scope: 'grammar',
-			grammar,
-			code: 'upstream-compile-failed',
-			severity: 'warning',
-			message: `the upstream compile did not complete, so no hand-written rule or renderAs entry was judged against it: ${upstream.failure}`,
-			canProceed: true
-		});
-		return out;
-	}
 	for (const name of Object.keys(raw.renderAs ?? {})) {
 		if (upstream.externalNames.has(name)) continue;
 		out.push(
@@ -75,7 +63,7 @@ function judgeVocabulary(grammar: string, name: string, upstream: UpstreamCompil
 }
 
 function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
-	const { grammar, raw, upstream } = input;
+	const { grammar, upstream } = input;
 	if (!upstream.ruleNames.has(name)) {
 		return blocking(
 			grammar,
@@ -87,17 +75,13 @@ function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause)
 	}
 	const provoking = [...new Set(upstream.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))].sort();
 	if (provoking.length === 0) {
-		const floored = isExpectedDiagnostic(raw.expectDiagnostics, 'rule-reauthored-without-cause', name);
-		return {
-			scope: 'grammar',
+		return blocking(
 			grammar,
-			code: 'rule-reauthored-without-cause',
-			severity: floored ? 'warning' : 'error',
-			ownerKind: name,
-			message: `rules: '${name}' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause '${cause}'). Delete the entry so the upstream rule compiles as is`,
-			canProceed: floored,
-			details: { cause }
-		};
+			'rule-reauthored-without-cause',
+			name,
+			`rules: '${name}' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause '${cause}'). Delete the entry so the upstream rule compiles as is`,
+			{ cause }
+		);
 	}
 	if (provoking.some((code) => PROVOKING_CODES[cause].includes(code))) return undefined;
 	return blocking(

@@ -18,7 +18,6 @@ import {
 import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
-import { DiagnosticSink } from '../types/diagnostics.ts';
 import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
@@ -101,17 +100,13 @@ export function flatten(rule: Input): Output {
 	return rebuild(rule);
 }
 
-export function flattenRules(
-	rules: Record<string, Rule<'link'>>,
-	wordMatcher?: RegExp,
-	diagnostics?: DiagnosticSink
-): Record<string, RenderRule> {
+export function flattenRules(rules: Record<string, Rule<'link'>>, wordMatcher?: RegExp): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
 		result[name] = withKindFacts(flat, rule);
 	}
-	return stampTerminality(factorChoiceArmsToFixpoint(result, diagnostics ?? new DiagnosticSink()), wordMatcher);
+	return stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
 }
 
 function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
@@ -227,17 +222,13 @@ function foldPermutationArms(rule: RenderRule): RenderRule {
 	return folded;
 }
 
-function factorChoiceArmsToFixpoint(
-	rules: Record<string, RenderRule>,
-	diagnostics: DiagnosticSink
-): Record<string, RenderRule> {
+function factorChoiceArmsToFixpoint(rules: Record<string, RenderRule>): Record<string, RenderRule> {
 	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		let current = rule;
 		runToFixpoint({
 			name: 'flatten.factorChoiceArmsToFixpoint',
 			cap: 16,
-			diagnostics,
 			step: () => {
 				const step = (r: RenderRule): RenderRule => foldPermutationArms(factorChoiceArms(r));
 				const next = step(ruleWalker.map(current, step));

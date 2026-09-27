@@ -56,6 +56,7 @@ import {
 	isUnresolvedRef,
 	buildParseKindRuleSignatures,
 	type AssembleWarning,
+	type NamingEvent,
 	AssembledAlias,
 	branchClassFor,
 	aliasEnvelopeOf,
@@ -65,7 +66,6 @@ import {
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
-import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { stampSupertypeClosures } from './supertype-closure.ts';
@@ -76,7 +76,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
 	readonly leafTextPatterns: ReadonlyMap<string, string>;
-	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	readonly assembleDiagnostics = new AssembleDiagnosticsCollector();
 	private readonly _nodes: Map<string, AssembledNode>;
 
@@ -86,7 +85,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
 			leafTextPatterns?: ReadonlyMap<string, string>;
-			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
@@ -95,7 +93,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
 		this.leafTextPatterns = init.leafTextPatterns ?? new Map();
-		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
 
@@ -115,7 +112,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink(),
-		grammarJsonAliasMap?: ReadonlyMap<string, string>,
 		kindEntries?: readonly GeneratedKindEntry[]
 	): AssembleCtx {
 		return new AssembleCtx({
@@ -125,16 +121,15 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			generatedIdTables,
 			kindEntries,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
-			leafTextPatterns: normalized.leafTextPatterns,
-			grammarJsonAliasMap
+			leafTextPatterns: normalized.leafTextPatterns
 		});
 	}
 }
 
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
-	readonly deriveShapeDiagnostics: readonly DeriveShapeDiagnostic[];
 	readonly assembleWarnings: readonly AssembleWarning[];
+	readonly namingEvents: readonly NamingEvent[];
 	readonly droppedKinds: ReadonlySet<string>;
 }
 
@@ -289,7 +284,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 	}
 
-	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, assembleDiagnostics);
+	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, ctx.diagnostics);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -349,8 +344,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		extras: normalized.extras,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
-		deriveShapeDiagnostics: assembleDiagnostics.deriveShapeDiagnostics.all,
 		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
+		namingEvents: assembleDiagnostics.namingEvents.all,
 		droppedKinds
 	};
 	computeFieldStorageInfo(assembled);
@@ -434,39 +429,34 @@ function stampFactoryInline(
 	for (const kind of declared) {
 		const node = nodes.get(kind);
 		if (!node) {
-			emitUnnestable(kind, ctx, 'no kind by that name exists in the grammar');
+			throw new FactoryInlineUnnestableError(kind, 'no kind by that name exists in the grammar');
 			continue;
 		}
 		node.factoryInline = true;
 		if (kind === rootKind) {
-			emitUnnestable(kind, ctx, 'it is the grammar root, so no slot can carry its config');
+			throw new FactoryInlineUnnestableError(kind, 'it is the grammar root, so no slot can carry its config');
 			continue;
 		}
 		const parents = parentsByKind.get(kind);
 		if (parents === undefined || parents.size === 0) {
-			emitUnnestable(kind, ctx, 'no slot references it');
+			throw new FactoryInlineUnnestableError(kind, 'no slot references it');
 			continue;
 		}
 		const escaped = (supertypesByMember.get(kind) ?? []).filter((supertype) =>
 			[...(parentsByKind.get(supertype) ?? [])].some((referrer) => !parents.has(referrer))
 		);
 		if (escaped.length > 0) {
-			emitUnnestable(
-				kind,
-				ctx,
-				`it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
+			throw new FactoryInlineUnnestableError(kind, `it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
 			);
 		}
 	}
 }
 
-function emitUnnestable(kind: string, ctx: AssembleCtx, reason: string): void {
-	ctx.diagnostics.fail({
-		code: 'factory-inline-unnestable',
-		scope: 'compiler',
-		phase: 'assemble',
-		message: `factoryInline kind '${kind}' has nowhere to nest: ${reason}.`
-	});
+export class FactoryInlineUnnestableError extends Error {
+	constructor(kind: string, reason: string) {
+		super(`assemble: factoryInline kind '${kind}' has nowhere to nest: ${reason}.`);
+		this.name = 'FactoryInlineUnnestableError';
+	}
 }
 
 function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
@@ -668,7 +658,6 @@ function resolveHiddenRuleContent(
 export interface HydrateSlotRefsConfig {
 	readonly inline?: ReadonlySet<string>;
 	readonly reportedAbsentNames?: ReadonlySet<string>;
-	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
 
@@ -687,7 +676,6 @@ export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {
 				externals,
 				inline,
 				reportedAbsentNames: cfg.reportedAbsentNames,
-				diagnostics: cfg.diagnostics,
 				grammar: cfg.grammar
 			});
 		}
@@ -710,7 +698,6 @@ function hydrateSlots(
 			externals,
 			inline,
 			reportedAbsentNames: cfg.reportedAbsentNames,
-			diagnostics: cfg.diagnostics,
 			grammar: cfg.grammar
 		});
 	}
@@ -723,12 +710,11 @@ interface HydrateValuesCtx {
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
 	readonly reportedAbsentNames?: ReadonlySet<string>;
-	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals, inline, reportedAbsentNames, diagnostics, grammar } = ctx;
+	const { parentKind, siteLabel, nodes, externals, inline, reportedAbsentNames, grammar } = ctx;
 	for (const v of values) {
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
@@ -741,14 +727,10 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		if (externals.has(targetName)) continue;
 		if (inline.has(targetName)) continue;
 		if (reportedAbsentNames?.has(targetName)) continue;
-		diagnostics?.fail({
-			code: 'dangling-internal-ref',
-			message:
-				`hydrateSlotRefs: unresolved slot reference — kind '${parentKind}' ${siteLabel} ` +
-				`references kind '${targetName}' which is absent from the assembled node map, ` +
-				`is not external, and is not in the grammar's inline: array.`,
-			details: { grammar, parentKind, siteLabel, targetName }
-		});
+		throw new Error(
+			`hydrateSlotRefs: kind '${parentKind}' ${siteLabel} references kind '${targetName}', which is absent from ` +
+				`the ${grammar ?? ''} node map, is not external, and is not in the grammar's inline: array`
+		);
 	}
 }
 
@@ -802,13 +784,11 @@ function renameCollidingHiddenKinds(
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message:
-				`[assemble] typeName collision: kind '${h.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')})`,
-			ownerKind: h.kind,
-			details: { typeName, newType, visibleKinds: visible.map((v) => v.kind) }
+		diagnostics.namingEvents.record({
+			kind: h.kind,
+			from: typeName,
+			to: newType,
+			message: `visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')}`
 		});
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
@@ -826,16 +806,14 @@ function renameCollidingVisibleKinds(
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
 		const newType = `${typeName}${i + 1}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message:
-				`[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (siblings: ${sorted
-					.slice(0, i)
-					.map((s) => `'${s.kind}'`)
-					.join(', ')})`,
-			ownerKind: n.kind,
-			details: { typeName, newType, siblingKinds: sorted.slice(0, i).map((s) => s.kind) }
+		diagnostics.namingEvents.record({
+			kind: n.kind,
+			from: typeName,
+			to: newType,
+			message: `visible siblings: ${sorted
+				.slice(0, i)
+				.map((s) => `'${s.kind}'`)
+				.join(', ')}`
 		});
 		n.typeName = newType;
 		if (n.factoryName !== undefined) {
@@ -852,12 +830,7 @@ function renameCollidingHiddenOnlyKinds(
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
 		const newType = `${typeName}${i + 1}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message: `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
-			ownerKind: h.kind,
-			details: { typeName, newType }
-		});
+		diagnostics.namingEvents.record({ kind: h.kind, from: typeName, to: newType, message: 'hidden siblings' });
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
 			h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
@@ -933,7 +906,7 @@ function collectAnonymousNodes(
 	nodes: Map<string, AssembledNode>,
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[],
-	diagnostics: AssembleDiagnosticsCollector
+	diagnostics: DiagnosticSink
 ): void {
 	const seen = new Set<string>();
 	for (const rule of Object.values(rules)) {
@@ -945,10 +918,10 @@ function collectAnonymousNodes(
 		if (literalText === '' || /^\s+$/.test(literalText)) continue;
 		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
 		if (catalogEntry === undefined) {
-			diagnostics.assembleWarnings.record({
+			diagnostics.warn({
 				code: 'kindid-unstamped-anon-literal',
 				message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
-				ownerKind: literalText,
+				canProceed: true,
 				details: { literalText }
 			});
 			continue;

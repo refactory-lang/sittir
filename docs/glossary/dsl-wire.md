@@ -1489,7 +1489,7 @@ are what the shape-free half of the load-time check can promise.
 	 * Kinds with no top-level `ir.*` builder: constructed only through nested
 	 * config on the slot(s) that reference them. Assemble stamps the names
 	 * listed here onto `AssembledNodeBase.factoryInline`; a listed kind with
-	 * nowhere to nest fails the `factory-inline-unnestable` diagnostic.
+	 * nowhere to nest makes assemble throw (`FactoryInlineUnnestableError`).
 	 */
 ```
 

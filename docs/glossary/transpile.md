@@ -211,15 +211,15 @@ build fails with "Missing symbols" for the
 
 ### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
 
-Prune the rules nothing reaches from `grammar.json` (`collectOrphanedRules`).
+Prune the rules nothing reaches from `grammar.json`, with their `inline` and `conflicts` entries
+(`util/reachable-rules.ts::pruneOrphanedRules`).
 Two populations land here: rules `injectPlaceholderHiddenRules` pre-registered
 for a placeholder that never deposited (a blank `_kw_<name>`, or a visible
 variant rule such as an unhoisted absent case), and enrich mints whose owner
 rule an override fully redeclares. Neither reaches parser.c/node-types.json;
 pruning keeps grammar.json, sittir's view of the parser, in agreement.
-`compiler/canonical-rules.ts`'s `canonicalGrammar` orphan pass is the sittir-pipeline twin
-over the same traversal, and the two must stay in lockstep or the model
-diverges from the parser.
+`compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same prune, so the
+model and the parser drop the same names.
 
 Called after every `tree-sitter generate` invocation
 (`run-codegen.ts::runTreeSitterGenerate` and `compile-parser.ts::compileParser`).
