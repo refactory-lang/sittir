@@ -105,6 +105,16 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 }
 
 /**
+ * `markEdited` for a node edited in place: the node keeps its identity and
+ * methods, and loses the coordinate that would fold it back to its pre-edit
+ * bytes. A write of inner trivia is such an edit, since the coordinate's span
+ * already covers the gap the new entries sit in.
+ */
+export function detachCoordinate(data: object): void {
+	for (const key of COORDINATE_KEYS) delete (data as Record<string, unknown>)[key];
+}
+
+/**
  * Reshape one node's own storage into what the transport declares.
  *
  * The reader is grammar-agnostic: it spells an untagged named child by its

@@ -2707,6 +2707,29 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	arguments: ['elements'],
+	array: ['elements'],
+	array_pattern: ['elements'],
+	class_body: ['content'],
+	enum_body: ['enum_body_elements'],
+	enum_body_elements: ['content'],
+	export_clause: ['export_specifiers'],
+	formal_parameters: ['formal_parameters_elements'],
+	named_imports: ['import_specifiers'],
+	object: ['properties'],
+	object_pattern: ['properties'],
+	program: ['statements'],
+	statement_block: ['statements'],
+	string_double: ['elements'],
+	string_single: ['elements'],
+	switch_body: ['cases'],
+	template_literal_type: ['elements'],
+	template_string: ['elements'],
+	tuple_type: ['tuple_type_members']
+};
+
 /** Valid values for `__for_header_operator` nodes. */
 export const __FOR_HEADER_OPERATORS = ['in', 'of'] as const;
 export type ForHeaderOperatorValue = (typeof __FOR_HEADER_OPERATORS)[number];

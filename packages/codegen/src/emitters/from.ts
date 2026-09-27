@@ -22,6 +22,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
+import { defaultTriviaForm } from '../compiler/model/trivia.ts';
 import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
@@ -393,7 +394,10 @@ function emitBranchFrom(
 			}
 		}
 		if (canDirectFactoryCall) {
-			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
+			const triviaForm = defaultTriviaForm(nodeMap);
+			const spelled = triviaForm?.kind === node.kind ? triviaForm : undefined;
+			const bare = spelled === undefined ? 'input' : `(typeof input === 'string' ? spelledInterior(input, ${JSON.stringify(spelled.open)}, ${JSON.stringify(spelled.close)}) : input)`;
+			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
 			const numeric = numericSlotShape(soleField) !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
 			const resolved = resolveFieldCall(
@@ -1839,8 +1843,13 @@ export class FromEmitter implements CodegenEmitter<string> {
 			if (l === `import * as F from './raw.js';`) {
 				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
 				const usesNumberText = /\bnumberText\(/.test(body);
-				if (usesInterior || usesNumberText) {
-					const common = [...(usesInterior ? ['lexedConfig'] : []), ...(usesNumberText ? ['numberText'] : [])];
+				const usesSpelled = /\bspelledInterior\(/.test(body);
+				if (usesInterior || usesNumberText || usesSpelled) {
+					const common = [
+						...(usesInterior ? ['lexedConfig'] : []),
+						...(usesNumberText ? ['numberText'] : []),
+						...(usesSpelled ? ['spelledInterior'] : [])
+					];
 					return [
 						l,
 						...(usesInterior ? [`import { TOKEN_INTERIORS } from '../consts.js';`] : []),

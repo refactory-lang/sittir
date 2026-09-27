@@ -331,6 +331,35 @@ it('wraps trivia entries like slot children', () => {
 
 ### Task 5: Runtime `$trivia`: getters, inner, refusals, loose strings
 
+**As landed:**
+- Grammar facts reach the runtime as `methodsEngine.trivia`, typed as
+  `TriviaFacts`: `kindName`, `innerGaps` (the emitted `INNER_GAPS`, from the
+  node map's `innerGaps` rows) and `comment(text)`. The comment builder is
+  registered by `provideCommentBuilder(comment)` at the end of
+  `factories/index.ts`, because a direct import from `utils.ts` would be a
+  cycle.
+- A loose string means `ir.comment`'s default arm (`defaultTriviaForm`: rust
+  `line_comment`, python `comment`, typescript `comment_line`). The arm's
+  coercer strips the full spelling through `spelledInterior`; any other text
+  is the interior and goes through the leaf guard. There is no rank walk, and
+  `_TEXT_KINDS_BY_RANK` is not consumed. Rust `ir.comment` is the upstream
+  `comment` rule declared as a supertype with `arm.default` on its line arm.
+- The trivia predicate is `extrasClosure`, the one closure of "is an extra"
+  that wire and the compiler both use. A supertype whose members are all
+  trivia is trivia too, so python `line_continuation` joins.
+- Runtime `$trivia`: getters for each position, `inner` (the first gap) and
+  `innerAt(gap)`. Refusals: a kind with no inner gap, a node that is not empty
+  (`isEmptyNode`), an unknown gap, and `$with` adding a child to a node that
+  holds inner entries. Writing an inner entry detaches the node from its read
+  coordinate (`detachCoordinate`). `TriviaEntry` no longer allows `string`.
+- The rust `_line_doc_content` renderAs is `/.*\n?/`, because the scanner
+  includes the newline in a doc comment's content.
+- The source-emitter part of Task 7b was pulled forward (see Task 7b), because
+  once strings built line comments, the dogfood examples no longer rebuilt
+  without it.
+- The test lives in `packages/rust/tests/trivia-setter.test.ts`, since the
+  runtime needs a grammar's facts.
+
 **Files:**
 - Modify: `packages/common/src/utils.ts`:
   - `TriviaSetterRuntime` gains getters, `inner`, `innerAt`;
@@ -540,6 +569,13 @@ it('renders a built trailing line comment followed by the next statement on a ne
   grammar. If a row regresses, stop and report old/new/where.
 
 ### Task 7b: The source emitter prints trivia as kinds
+
+**As landed (with Task 5):** `triviaSuffix` prints every entry through
+`printValue`, so a comment prints as its kind's builder
+(`ir.lineComment.strict(ir.lineCommentRegular(" x"))`), and an inner entry
+prints as `.$trivia.innerAt("<gap>", ...)`. The validator's `carryTrivia`
+resolves entries through `resolveChild`. Still open: whitespace entries
+(after Task 5w), and printing through `.inner` when the gap is the first one.
 
 **Files:**
 - Modify: `packages/tools/src/emit/factory-source.ts` (`triviaSuffix` and the

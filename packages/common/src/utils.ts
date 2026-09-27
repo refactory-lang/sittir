@@ -1,4 +1,6 @@
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry } from '@sittir/types';
+import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { detachCoordinate } from './transport-data.ts';
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
@@ -14,17 +16,36 @@ export interface WithMethodsRuntime<T extends object = AnyNodeData> {
 
 export interface TriviaSetterRuntime<Self> {
 	(...args: unknown[]): Self;
+	leading(): readonly TriviaEntry[];
 	leading(...items: unknown[]): Self;
+	trailing(): readonly TriviaEntry[];
 	trailing(...items: unknown[]): Self;
+	inner(): readonly TriviaEntry[];
+	inner(...items: unknown[]): Self;
+	innerAt(gap: string): readonly TriviaEntry[];
+	innerAt(gap: string, ...items: unknown[]): Self;
+}
+
+/**
+ * The grammar facts `$trivia` checks against: each kind's name, the gaps an
+ * empty node of each kind holds inner trivia in, and `ir.comment`, which
+ * builds a loose string into its default arm (taking either the full
+ * spelling or the interior).
+ */
+export interface TriviaFacts {
+	kindName(type: AnyNodeData['$type']): string | undefined;
+	readonly innerGaps: { readonly [kind: string]: readonly string[] };
+	comment?(text: string): AnyNodeData;
 }
 
 export interface WithMethodsEngine {
 	render(node: AnyNodeData): string;
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
+	readonly trivia: TriviaFacts;
 }
 
 export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
-	carryTriviaThroughWith(node);
+	carryTriviaThroughWith(node, engine.trivia);
 	Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return engine.render(this);
@@ -38,7 +59,7 @@ export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsE
 	});
 	Object.defineProperty(node, '$trivia', {
 		get(this: AnyNodeData) {
-			return triviaSetterOf(this);
+			return triviaSetterOf(this, engine.trivia);
 		},
 		enumerable: false,
 		configurable: true
@@ -47,27 +68,81 @@ export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsE
 }
 
 /**
- * `$trivia` as a callable that also carries `leading` and `trailing`, each
- * bound to its node: `node.$trivia.leading('// a', '// b')` sets that side
- * from a spread and keeps the other, so the two chain. Called directly it is
- * the earlier form: rest args are leading, one `{ leading, trailing }` object
- * is taken as it is, and the last call wins.
+ * Whether no slot of the node holds a value: every `_`-keyed storage entry is
+ * absent or an empty list. Only such a node can hold inner trivia, since a
+ * comment beside any child has that child to lead or trail.
  */
-function triviaSetterOf<Self extends AnyNodeData>(node: Self): TriviaSetterRuntime<Self> {
-	const setSide = (side: 'leading' | 'trailing', items: readonly unknown[]): Self => {
-		setTriviaData(node, { ...node.$_trivia, [side]: items as readonly TriviaEntry[] });
+export function isEmptyNode(node: AnyNodeData): boolean {
+	return Object.entries(node).every(
+		([key, value]) => !key.startsWith('_') || value == null || (Array.isArray(value) && value.length === 0)
+	);
+}
+
+/**
+ * `$trivia` as a callable that also carries each position, bound to its node.
+ * Called with items, a position sets its entries and returns the node, so the
+ * calls chain; called with none, it returns the entries it holds. Called
+ * directly it replaces the node's trivia: rest args are leading, one
+ * `{ leading, trailing, inner }` object is taken whole.
+ *
+ * An item is an extra kind's node, or a loose string built through
+ * `ir.comment`: its full spelling (`'// note'`) or its interior (`' note'`).
+ * `inner` and `innerAt` write only to an empty node of a kind with inner
+ * gaps, and a write detaches the node's coordinate.
+ */
+function triviaSetterOf<Self extends AnyNodeData>(node: Self, facts: TriviaFacts): TriviaSetterRuntime<Self> {
+	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
+	const entriesOf = (items: readonly unknown[]): readonly TriviaEntry[] => items.map((item) => triviaEntryOf(item, facts));
+	const gapsOf = (): readonly string[] => {
+		const gaps = facts.innerGaps[kind()] ?? [];
+		if (gaps.length === 0) throw new Error(`trivia: ${kind()} has no inner gap; attach to a child with leading/trailing`);
+		return gaps;
+	};
+	const writeInner = (inner: NonNullable<NodeTrivia['inner']>): NodeTrivia['inner'] => {
+		const gaps = gapsOf();
+		for (const gap of Object.keys(inner)) {
+			if (!gaps.includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
+		}
+		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
+		detachCoordinate(node);
+		return inner;
+	};
+	const store = (trivia: NodeTrivia): Self => {
+		setTriviaData(node, trivia);
 		return node;
+	};
+	const side =
+		(position: 'leading' | 'trailing') =>
+		(...items: unknown[]): Self | readonly TriviaEntry[] =>
+			items.length === 0 ? (node.$_trivia?.[position] ?? []) : store({ ...node.$_trivia, [position]: entriesOf(items) });
+	const innerAt = (gap: string, ...items: unknown[]): Self | readonly TriviaEntry[] => {
+		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
+		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
+		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) });
 	};
 	return Object.assign(
 		(...args: unknown[]): Self => {
-			setTriviaData(node, toTriviaData(args));
-			return node;
+			const given = args.length === 1 && isTriviaObject(args[0]) ? args[0] : { leading: args };
+			const trivia = mapTriviaEntries(given as TriviaSides<unknown>, entriesOf);
+			return store(trivia.inner === undefined ? trivia : { ...trivia, inner: writeInner(trivia.inner) });
 		},
 		{
-			leading: (...items: unknown[]): Self => setSide('leading', items),
-			trailing: (...items: unknown[]): Self => setSide('trailing', items)
+			leading: side('leading'),
+			trailing: side('trailing'),
+			inner: (...items: unknown[]) => innerAt(gapsOf()[0]!, ...items),
+			innerAt
 		}
-	);
+	) as TriviaSetterRuntime<Self>;
+}
+
+/** One trivia item as its entry: a node as it is, a string through the grammar's `ir.comment`. */
+function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
+	if (typeof item !== 'string') {
+		if (isNodeData(item)) return item;
+		throw new Error(`trivia: an entry is a node or a comment's text, not ${JSON.stringify(item)}`);
+	}
+	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(item)} is text, and this grammar has no ir.comment`);
+	return facts.comment(item);
 }
 
 /**
@@ -146,15 +221,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-function toTriviaData(args: readonly unknown[]): NodeTrivia {
-	if (args.length === 1 && isTriviaObject(args[0])) {
-		return args[0];
-	}
-	return { leading: args as readonly TriviaEntry[] };
-}
-
-function isTriviaObject(value: unknown): value is NodeTrivia {
-	return isRecord(value) && ('leading' in value || 'trailing' in value);
+function isTriviaObject(value: unknown): value is TriviaSides<unknown> {
+	return isRecord(value) && !isNodeData(value) && ('leading' in value || 'trailing' in value || 'inner' in value);
 }
 
 function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
@@ -166,9 +234,11 @@ function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
  * the config — the trivia attached to the node being edited is not config.
  * The comment a declaration carries belongs to the declaration, not to the
  * field that changed, so every setter hands the source node's trivia on to
- * the node it returns.
+ * the node it returns. Inner entries can only travel to a node that is still
+ * empty: once the rebuild gives the node a child, the comment would sit beside
+ * it, so the setter refuses.
  */
-function carryTriviaThroughWith(node: AnyNodeData): void {
+function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts): void {
 	const setters = (node as { $with?: Record<string, unknown> }).$with;
 	if (setters === undefined) return;
 	for (const key of Object.keys(setters)) {
@@ -178,7 +248,12 @@ function carryTriviaThroughWith(node: AnyNodeData): void {
 		setters[key] = (...args: unknown[]): unknown => {
 			const rebuilt = rebuild(...args);
 			const trivia = node.$_trivia;
-			if (trivia !== undefined && isNodeData(rebuilt)) setTriviaData(rebuilt, trivia);
+			if (trivia === undefined || !isNodeData(rebuilt)) return rebuilt;
+			if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(rebuilt)) {
+				const kind = facts.kindName(node.$type) ?? String(node.$type);
+				throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
+			}
+			setTriviaData(rebuilt, trivia);
 			return rebuilt;
 		};
 	}

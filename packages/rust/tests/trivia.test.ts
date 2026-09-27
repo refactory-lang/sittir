@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import * as F from '../src/factories/index.js';
 import { createEngine } from '../src/engine.js';
-import type { LineComment } from '../src/types.js';
+import { TSKindId, type LineComment } from '../src/types.js';
 
 function makeFn(name: string) {
 	return F.buildFunctionItem({
@@ -67,10 +67,14 @@ describe('$trivia() integration', () => {
 		expect(triviaDataOf(rebuilt)).toBe(triviaDataOf(fn));
 	});
 
-	it('accepts verbatim text as a trivia entry', () => {
+	it('builds loose text into line comments', () => {
 		const fn = makeFn('main');
 		fn.$trivia('// hello', '// a');
-		expect(triviaDataOf(fn)?.leading).toEqual(['// hello', '// a']);
+		expect((triviaDataOf(fn)?.leading as { $type: unknown }[] | undefined)?.map((entry) => entry.$type)).toEqual([
+			TSKindId.LineComment,
+			TSKindId.LineComment
+		]);
+		expect(fn.$render()).toBe('// hello\n// a\nfn main() {}');
 	});
 
 	// `line_comment.jinja` renders `//{{ content }}` — content is the text
@@ -98,7 +102,7 @@ describe('$trivia() integration', () => {
 		expect(fn.$render()).toBe('fn main() {}\n// bye\n');
 	});
 
-	it('verbatim text renders as written, before and after the node', () => {
+	it('loose text renders as the comment it spells, before and after the node', () => {
 		const fn = makeFn('main');
 		fn.$trivia({ leading: ['// top'], trailing: ['// bottom'] });
 		const out = fn.$render();

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { lineTerminated, triviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lineTerminated, triviaKinds } from '../trivia.ts';
 import type { NodeMap } from '../../types.ts';
 
 async function nodeMapOf(grammar: string): Promise<NodeMap> {
@@ -51,5 +51,11 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(rust, 'function_item')).toEqual([]);
 		expect(innerGapsOf(rust, 'source_file')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
+	});
+
+	it("takes the loose trivia form from ir.comment's default arm: its kind and literal delimiters", async () => {
+		expect(defaultTriviaForm(await nodeMapOf('rust'))).toEqual({ kind: 'line_comment', open: '//', close: '' });
+		expect(defaultTriviaForm(await nodeMapOf('python'))).toEqual({ kind: 'comment', open: '#', close: '' });
+		expect(defaultTriviaForm(await nodeMapOf('typescript'))).toEqual({ kind: 'comment_line', open: '//', close: '' });
 	});
 });

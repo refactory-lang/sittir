@@ -9,7 +9,6 @@ import {
 } from '../validate/common.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia } from '@sittir/types';
-import { sliceSpan } from '@sittir/common';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -55,11 +54,6 @@ export interface PrintedFacts {
 	readonly config?: string;
 }
 
-export interface NodeTrivia {
-	readonly leading: readonly string[];
-	readonly trailing: readonly string[];
-}
-
 export class Printed {
 	readonly $named = true as const;
 	$_trivia?: ReadTrivia;
@@ -90,11 +84,18 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 	return v !== null && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Printed);
 }
 
-function triviaSuffix(trivia: NodeTrivia | undefined, ctx: PrintContext): string {
+function triviaSuffix(trivia: ReadTrivia | undefined, ctx: PrintContext): string {
 	if (trivia === undefined) return '';
-	const side = (name: 'leading' | 'trailing'): string =>
-		trivia[name].length === 0 ? '' : `.$trivia.${name}(${trivia[name].map((entry) => printValue(entry, ctx, 0)).join(', ')})`;
-	return side('leading') + side('trailing');
+	const args = (entries: readonly unknown[]): string => entries.map((entry) => printValue(entry, ctx, 0)).join(', ');
+	const side = (name: 'leading' | 'trailing'): string => {
+		const entries = trivia[name] ?? [];
+		return entries.length === 0 ? '' : `.$trivia.${name}(${args(entries)})`;
+	};
+	const inner = Object.entries(trivia.inner ?? {})
+		.filter(([, entries]) => (entries?.length ?? 0) > 0)
+		.map(([gap, entries]) => `.$trivia.innerAt(${JSON.stringify(gap)}, ${args(entries!)})`)
+		.join('');
+	return side('leading') + side('trailing') + inner;
 }
 
 function reindent(source: string, depth: number): string {
@@ -129,7 +130,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
-		return reindent(value.source, depth) + triviaSuffix(triviaOf(value, ctx.source), ctx);
+		return reindent(value.source, depth) + triviaSuffix(value.$_trivia, ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -171,20 +172,6 @@ function printListOptions(options: Record<string, unknown>, ctx: PrintContext): 
 	}
 	if (typeof options.separator === 'number') parts.push(`separator: ${printValue(options.separator, ctx, 0)}`);
 	return `{ ${parts.join(', ')} }`;
-}
-
-export function triviaOf(node: ReadNodeLike | undefined, source?: string): NodeTrivia | undefined {
-	const trivia = node?.$_trivia;
-	if (!trivia) return undefined;
-	const textOf = (entry: ReadNodeLike): string | undefined => {
-		if (typeof entry.$text === 'string') return entry.$text;
-		return entry.$span !== undefined && source !== undefined ? sliceSpan(source, entry.$span) : undefined;
-	};
-	const texts = (list: readonly unknown[] | undefined): string[] =>
-		(list ?? []).map((t) => textOf(t as ReadNodeLike)).filter((t): t is string => typeof t === 'string');
-	const leading = texts(trivia.leading);
-	const trailing = texts(trivia.trailing);
-	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
 }
 
 function leafKindsForText(kinds: readonly string[], text: string, ctx: PrintContext): string[] {
@@ -717,7 +704,7 @@ export function printFactorySource(
 	if (!(printed instanceof Printed)) {
 		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
 	}
-	return printed.source + triviaSuffix(triviaOf(printed, ctx.source), ctx);
+	return printed.source + triviaSuffix(printed.$_trivia, ctx);
 }
 
 import { readFileSync, writeFileSync } from 'node:fs';

@@ -212,6 +212,7 @@ function _treeEngine(tree: TreeHandle): typeof methodsEngine {
 		const render = (node: AnyNodeData) =>
 			tree.render === undefined ? methodsEngine.render(project(node)) : tree.render(project(node));
 		engine = {
+			...methodsEngine,
 			render,
 			toEdit: (node, startOrRange, endPos) => toEditAt(render(node), startOrRange, endPos)
 		};

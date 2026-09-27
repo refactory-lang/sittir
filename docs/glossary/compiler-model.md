@@ -4527,7 +4527,19 @@ The single predicate for which kinds can be trivia entries: the kinds the gramma
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineTerminated`
 
-Whether a kind's text always ends its line, so the next token must start on a new line: `true` when every arm ends in an open pattern (`lineEnds`, with symbol arms resolved through the node map), `false` when any arm ends in a literal, a closed pattern or nothing, and `undefined` when an arm ends in a kind with no rule to read. An external token is read through its render-only rule. Examples: rust `line_comment` reaches `_line_doc_content` (`.*`) through its doc arms and is true; block comments, typescript `html_comment` and both python line continuations are false. Memoised per node map and kind. An undetermined trivia kind is the `trivia-line-end-undetermined` grammar diagnostic.
+Whether a kind's text always ends its line, so the next token must start on a new line: `true` when every arm ends in an open pattern (`lineEnds`, with symbol arms resolved through the node map), `false` when any arm ends in a literal, a closed pattern or nothing, and `undefined` when an arm ends in a kind with no rule to read. An external token is read through its render-only rule. Examples: rust `line_comment` reaches `_line_doc_content` (`.*\n?`) through its doc arms and is true; block comments, typescript `html_comment` and both python line continuations are false. Memoised per node map and kind. An undetermined trivia kind is the `trivia-line-end-undetermined` grammar diagnostic.
+
+### `packages/codegen/src/compiler/model/trivia.ts::COMMENT_IR_KEY`
+
+The `ir` key a loose trivia string is built through: every grammar's `comment`.
+
+### `packages/codegen/src/compiler/model/trivia.ts::TriviaForm`
+
+The kind a loose trivia string builds, and the literal delimiters its full spelling carries (`open`, `close`; empty when the arm has none on that side).
+
+### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
+
+The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are the literal STRING runs at the two ends of that kind's render SEQ. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm whose render rule is not a SEQ throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 

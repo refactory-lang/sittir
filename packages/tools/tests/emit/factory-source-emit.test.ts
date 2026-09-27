@@ -19,9 +19,10 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		expect(source).not.toContain('Delimiter');
 	});
 
-	it('prints a leading comment as verbatim trivia', async () => {
+	it('prints a leading comment through its kind builder', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia.leading("// hello")');
+		expect(source).toContain('$trivia.leading(ir.lineComment.strict(ir.lineCommentRegular(" hello")))');
+		expect(source).not.toMatch(/\$trivia\.leading\("/);
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');

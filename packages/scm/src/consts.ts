@@ -360,6 +360,15 @@ export const TOKEN_INTERIORS = {
 	escape_sequence: { regex: '^\\\\(?<content>(?:.))$', slots: [{ name: 'content', configKey: 'content' }] }
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	immediate_string: ['string_content'],
+	missing_node: ['name'],
+	named_node: ['name'],
+	string: ['string_content'],
+	string_content: ['content']
+};
+
 /** Valid values for `predicate_type` nodes. */
 export const PREDICATE_TYPES = ['?', '!'] as const;
 export type PredicateTypeValue = (typeof PREDICATE_TYPES)[number];

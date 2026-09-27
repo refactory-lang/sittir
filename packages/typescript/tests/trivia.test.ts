@@ -10,10 +10,14 @@ function makeFn(name: string) {
 }
 
 describe('$trivia() on the typescript surface', () => {
-	it('takes a comment node or its verbatim text, leading and trailing', () => {
+	it('takes comment builders, and reads loose text as a line comment, leading and trailing', () => {
 		const fn = makeFn('f');
-		fn.$trivia({ leading: ['/** doc */', ir.comment.line(' second')], trailing: ['// tail'] });
+		fn.$trivia({ leading: [ir.comment.block('* doc '), ir.comment.line(' second')], trailing: ['// tail'] });
 		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
+	});
+
+	it('reads a loose block spelling as line-comment text, never as a block comment', () => {
+		expect(makeFn('f').$trivia('/* x */').$render()).toBe('///* x */\nfunction f() {}');
 	});
 
 	it('leading rest arguments render before the node', () => {

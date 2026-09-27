@@ -1513,6 +1513,10 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 (`_cfg`) after the NodeData passthrough, and every slot resolver reads that binding.
 ```
 
+#### loose trivia
+
+The coercer of `ir.comment`'s default arm (`defaultTriviaForm`) passes a bare string through `spelledInterior`: text spelled with the arm's literal delimiters sheds them, and any other text is the interior as it stands, checked by the content leaf's guard. `'// TODO'` and `' TODO'` both build rust `// TODO`.
+
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
 ```text
@@ -11116,16 +11120,11 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
 
-```text
-/** The parameter type of a grammar's `$trivia`: one of the grammar's trivia
- *  kinds (its `trivia` role, e.g. `Comment`), or a bare string, or the
- *  `{ leading, trailing }` object of the same. A string is verbatim text —
- *  trivia lives outside the node model, so its literal form needs no kind —
- *  and the render engine already takes it as such: every trivia entry
- *  crosses as a `SlotValue<TriviaTransport>`, whose decoder turns a JS
- *  string into `SlotValue::Verbatim`. The type only had to stop forbidding
- *  what the transport accepted. */
-```
+The parameter type of a grammar's `$trivia`: one of the grammar's trivia kinds (`triviaKinds`, e.g. `Comment`), or a string, or the `{ leading, trailing }` object of the same. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
+
+### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
+
+The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. `buildTriviaEntryType` adds `string` for input.
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
@@ -11141,6 +11140,10 @@ that kind was left alone.
 Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 `hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
+
+### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
+
+Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia` — `kindName` (from `KIND_NAMES`), `innerGaps` (`INNER_GAPS`), and `comment(text)`, which builds a loose trivia string through the builder `provideCommentBuilder` registered, and throws if the factories were never imported. A grammar with no default trivia form (`defaultTriviaForm`) emits no `comment`, and a loose trivia string there is refused.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
 
@@ -14696,6 +14699,8 @@ Emits `factories/index.ts`, the dynamic final chain step: re-exports the top ove
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
 
+A grammar with a default trivia form ends the module with `provideCommentBuilder(comment)`, handing the hoisted `ir.comment` to `methodsEngine.trivia.comment`. The engine lives in `utils.ts`, which the factories import, so the builder is registered from this side instead of imported there.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
 Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
@@ -16355,6 +16360,10 @@ The leaf entries of an interior tree in order, the flat list consumers read.
 ```text
 Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kind, typed by `TokenInterior`.
 ```
+
+### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
+
+Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
 
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 

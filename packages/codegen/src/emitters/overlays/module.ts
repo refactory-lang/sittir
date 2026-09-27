@@ -15,6 +15,7 @@ import {
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
 import { camelCase } from '../refine-emit.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
+import { COMMENT_IR_KEY, defaultTriviaForm } from '../../compiler/model/trivia.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
@@ -211,10 +212,11 @@ export function emitFactoriesIndex(
 	config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }
 ): string {
 	const source = `./overlays/${head}.js`;
+	const form = defaultTriviaForm(config.nodeMap);
 	const lines: string[] = [
 		HEADER,
 		`import * as O from '${source}';`,
-		"import { hoist, hoistRoutes, type Hoisted } from '../utils.js';",
+		`import { hoist, hoistRoutes, ${form === undefined ? '' : 'provideCommentBuilder, '}type Hoisted } from '../utils.js';`,
 		`export * from '${source}';`,
 		''
 	];
@@ -224,6 +226,7 @@ export function emitFactoriesIndex(
 	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
 	}
+	if (form !== undefined) lines.push('', `provideCommentBuilder(${COMMENT_IR_KEY});`);
 	lines.push('');
 	return lines.join('\n');
 }

@@ -40,3 +40,14 @@ export function lexedConfig(text: string, interior: TokenInterior, kind: string)
 	}
 	return out;
 }
+
+/**
+ * The interior of a token spelled out in full: `text` without the literal
+ * delimiters it opens and closes with, or `text` itself when it does not carry
+ * both. A builder that takes its kind's interior uses this to accept the full
+ * spelling as well (`'// note'` as much as `' note'`).
+ */
+export function spelledInterior(text: string, open: string, close: string): string {
+	const spelled = text.length >= open.length + close.length && text.startsWith(open) && text.endsWith(close);
+	return spelled ? text.slice(open.length, text.length - close.length) : text;
+}

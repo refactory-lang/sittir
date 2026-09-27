@@ -1263,14 +1263,18 @@ function projectElements(
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = drillReadNode(item as ReadNodeLike, opts);
-		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)));
+		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
 	});
 }
 
-function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknown>): Record<string, unknown> {
+function carryElementTrivia(
+	element: ReadNodeLike,
+	config: Record<string, unknown>,
+	opts: NodeToConfigOpts
+): Record<string, unknown> {
 	if (element.$_trivia === undefined) return config;
 	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
-	if (built.length === 1) carryTrivia(element, built[0]);
+	if (built.length === 1) carryTrivia(element, built[0], opts);
 	return config;
 }
 
@@ -1455,19 +1459,21 @@ function buildWithFactory(
 	if (shape === 'text') {
 		return carryTrivia(
 			referenceData,
-			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts))
+			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)),
+			opts
 		);
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
-	return carryTrivia(referenceData, built);
+	return carryTrivia(referenceData, built, opts);
 }
 
-function carryTrivia(source: ReadNodeLike, built: unknown): unknown {
+function carryTrivia(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
 	const trivia = source.$_trivia;
 	if (trivia === undefined || built === null || typeof built !== 'object') return built;
-	if (trivia.leading === undefined && trivia.trailing === undefined) return built;
-	(built as Record<string, unknown>).$_trivia = trivia;
+	(built as Record<string, unknown>).$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) =>
+		entries.map((entry) => resolveChild(entry, childOpts(opts)))
+	);
 	return built;
 }
 

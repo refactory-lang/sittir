@@ -8784,8 +8784,8 @@
       "factoryName": "docComment",
       "irKey": "docComment",
       "hidden": false,
-      "pattern": ".*",
-      "leafPattern": "/^(?:(?:.*))$/u",
+      "pattern": ".*\\n?",
+      "leafPattern": "/^(?:(?:.*\\n?))$/u",
       "factoryShape": "text"
     },
     {

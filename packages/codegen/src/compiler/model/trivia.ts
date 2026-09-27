@@ -1,8 +1,42 @@
 import type { NodeMap } from '../types.ts';
-import { AssembledSupertype } from './node-map.ts';
+import type { RenderRule } from '../../types/rule.ts';
+import { AbstractAssembledCompound, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
 import { extrasClosure } from '../../dsl/extras.ts';
 
 const triviaKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
+export const COMMENT_IR_KEY = 'comment';
+
+export interface TriviaForm {
+	readonly kind: string;
+	readonly open: string;
+	readonly close: string;
+}
+
+export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
+	const comment = [...nodeMap.nodes.values()].find((node) => node.irKey === COMMENT_IR_KEY);
+	if (comment === undefined) return undefined;
+	const defaultRef =
+		comment instanceof AssembledSupertype ? comment.subtypes.filter(isNodeRef).find((ref) => ref.default === true) : undefined;
+	const arm = defaultRef === undefined ? comment : nodeMap.nodes.get(storageKindOfRef(defaultRef.node));
+	if (!(arm instanceof AbstractAssembledCompound) || arm.renderRule.type !== 'SEQ') {
+		throw new Error(`trivia: ir.${COMMENT_IR_KEY} has no default arm whose rule is a sequence to take delimiters from`);
+	}
+	const members = arm.renderRule.members;
+	const literalRun = (from: readonly RenderRule[]): string[] => {
+		const run: string[] = [];
+		for (const member of from) {
+			if (member.type !== 'STRING') break;
+			run.push(member.value);
+		}
+		return run;
+	};
+	return {
+		kind: arm.kind,
+		open: literalRun(members).join(''),
+		close: literalRun([...members].reverse()).reverse().join('')
+	};
+}
+
 const lineTerminatedByNodeMap = new WeakMap<NodeMap, Map<string, boolean | undefined>>();
 
 export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {

@@ -11,14 +11,13 @@
 /**
  * Trivia metadata attached to a node via `$trivia()`.
  *
- * Leading trivia renders before the node's own text; trailing trivia
- * renders after. An entry is either a fully-formed NodeData of one of the
- * grammar's trivia kinds (e.g. a `line_comment` factory node), which renders
- * through its own template, or a bare string, which the render engine writes
- * verbatim — trivia is text outside the grammar's node model, so its literal
- * form needs no kind.
+ * Leading trivia renders before the node's own text, trailing trivia after
+ * it, and inner trivia inside an empty node, at the gap it is keyed by. An
+ * entry is the NodeData of one of the grammar's trivia kinds (e.g. a
+ * `line_comment`), rendered through its own kind; a loose string given to
+ * `$trivia` is built into one through the grammar's `ir.comment`.
  */
-export type TriviaEntry = AnyNodeData | string;
+export type TriviaEntry = AnyNodeData;
 
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];

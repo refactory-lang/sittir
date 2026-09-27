@@ -15,6 +15,8 @@ import type {
 } from '@sittir/types';
 import type { NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
+import { KIND_NAMES } from './types.js';
+import { INNER_GAPS } from './consts.js';
 import {
 	withMethods as withCommonMethods,
 	isNodeData as _isNodeData,
@@ -51,6 +53,10 @@ export const methodsEngine = {
 	},
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) {
 		return toEdit(node, startOrRange, endPos);
+	},
+	trivia: {
+		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
+		innerGaps: INNER_GAPS
 	}
 } satisfies WithMethodsEngine;
 
@@ -63,7 +69,9 @@ export interface TriviaSetterOf<Self> {
 	(
 		...args: ((AnyNodeData | string) | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
 	): Self;
+	leading(): readonly AnyNodeData[];
 	leading(...items: (AnyNodeData | string)[]): Self;
+	trailing(): readonly AnyNodeData[];
 	trailing(...items: (AnyNodeData | string)[]): Self;
 }
 
