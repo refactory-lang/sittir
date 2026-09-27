@@ -166,3 +166,13 @@ export const structPatternElements = bundle(F.buildStructPatternElements, C.coer
 export const useWildcardGroup = bundle(F.buildUseWildcardGroup, C.coerceToUseWildcardGroup);
 export const tupleTypeElements = bundle(F.buildTupleTypeElements, C.coerceToTupleTypeElements);
 export const tupleExpressionElements = bundle(F.buildTupleExpressionElements, C.coerceToTupleExpressionElements);
+export const escapeSequenceSimple = bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple);
+export const escapeSequenceUnicodeFixed = bundle(
+	F.buildEscapeSequenceUnicodeFixed,
+	C.coerceToEscapeSequenceUnicodeFixed
+);
+export const escapeSequenceUnicodeBraced = bundle(
+	F.buildEscapeSequenceUnicodeBraced,
+	C.coerceToEscapeSequenceUnicodeBraced
+);
+export const escapeSequenceHex = bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex);

@@ -174,6 +174,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (42, None, "named_node_group_anchored_last") => Some("named_node_group"),
         (42, None, "named_node_group_children") => Some("named_node_group"),
         (46, None, "dot") => Some("content"),
+        (46, None, "identifier") => Some("immediate_identifier"),
         (46, None, "pound") => Some("content"),
         (49, None, "anonymous_node") => Some("group_expression"),
         (49, None, "field_definition") => Some("group_expression"),

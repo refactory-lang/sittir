@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 437,
+  "nodeCount": 434,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -4176,45 +4176,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "__number_operator",
-      "modelType": "enum",
-      "typeName": "NumberOperator",
-      "factoryName": "numberOperator",
-      "irKey": "numberOperator",
-      "hidden": false,
-      "values": [
-        "-",
-        "+"
-      ],
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_augmented_assignment_expression_operator",
-      "modelType": "enum",
-      "typeName": "AugmentedAssignmentExpressionOperator",
-      "factoryName": "augmentedAssignmentExpressionOperator",
-      "irKey": "augmentedAssignmentExpressionOperator",
-      "hidden": false,
-      "values": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "^=",
-        "&=",
-        "|=",
-        ">>=",
-        ">>>=",
-        "<<=",
-        "**=",
-        "&&=",
-        "||=",
-        "??="
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_lhs",
       "modelType": "supertype",
       "typeName": "AugmentedAssignmentLhs",
@@ -4879,24 +4840,6 @@
         "tuple_parameter",
         "type"
       ]
-    },
-    {
-      "kind": "_unary_expression_operator",
-      "modelType": "enum",
-      "typeName": "UnaryExpressionOperator",
-      "factoryName": "unaryExpressionOperator",
-      "irKey": "unaryExpressionOperator",
-      "hidden": false,
-      "values": [
-        "!",
-        "~",
-        "-",
-        "+",
-        "typeof",
-        "void",
-        "delete"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_whitespace",
@@ -6795,15 +6738,97 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_augmented_assignment_expression_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_augmented_assignment_expression_operator",
-              "parseKind": "_augmented_assignment_expression_operator"
+              "value": "+=",
+              "parseKind": "plus_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-=",
+              "parseKind": "dash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*=",
+              "parseKind": "star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/=",
+              "parseKind": "slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%=",
+              "parseKind": "percent_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^=",
+              "parseKind": "caret_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&=",
+              "parseKind": "amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|=",
+              "parseKind": "pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>>=",
+              "parseKind": "gt_gt_gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**=",
+              "parseKind": "star_star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&&=",
+              "parseKind": "amp_amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "||=",
+              "parseKind": "pipe_pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "??=",
+              "parseKind": "qmark_qmark_eq"
             }
           ]
         },
@@ -16486,15 +16511,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__number_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__number_operator",
-              "parseKind": "__number_operator"
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+",
+              "parseKind": "plus"
             }
           ]
         },
@@ -26975,15 +27004,49 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_unary_expression_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_unary_expression_operator",
-              "parseKind": "_unary_expression_operator"
+              "value": "!",
+              "parseKind": "bang"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "~",
+              "parseKind": "tilde"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "typeof",
+              "parseKind": "typeof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "void",
+              "parseKind": "void_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "delete",
+              "parseKind": "delete_keyword"
             }
           ]
         },

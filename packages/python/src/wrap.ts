@@ -783,6 +783,14 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	integer: new Set(['integer_hex', 'integer_octal', 'integer_binary', 'integer_decimal']),
 	float: new Set(['float_point', 'float_leading_point', 'float_scientific']),
+	keyword_identifier: new Set([
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword'
+	]),
 	line_continuation: new Set(['line_continuation_newline', 'line_continuation_nul']),
 	_whitespace: new Set([
 		'_tight',

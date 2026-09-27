@@ -36,6 +36,7 @@ import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { baseRulesOf, DSL_RULES_KEY } from '../dsl/shared.ts';
 import type { PatchSite, WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -169,7 +170,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 		t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
 	const peel = (r: Rule<'evaluate'>): Rule<'evaluate'> => {
 		let out = r;
-		while (isPrecType(out.type)) out = (out as unknown as { content: Rule<'evaluate'> }).content;
+		while (isPrecType(out.type)) out = peelPrecWrapper(out);
 		return out;
 	};
 	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
@@ -179,6 +180,26 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 		const stripped = peel(walker.map(rule, peel));
 		if (stripped !== rule) rules[name] = stripped;
 	}
+}
+
+const WRAPPER_FACT_KEYS = ['annotations', 'metadata'] as const;
+
+export function peelPrecWrapper(wrapper: Rule<'evaluate'>): Rule<'evaluate'> {
+	let out = (wrapper as unknown as { content: Rule<'evaluate'> }).content;
+	for (const key of WRAPPER_FACT_KEYS) {
+		const outer = (wrapper as unknown as Record<string, Record<string, unknown> | undefined>)[key];
+		if (outer === undefined) continue;
+		const inner = (out as unknown as Record<string, Record<string, unknown> | undefined>)[key] ?? {};
+		for (const [fact, value] of Object.entries(outer)) {
+			if (fact in inner && JSON.stringify(inner[fact]) !== JSON.stringify(value)) {
+				throw new Error(
+					`stripPrecedenceWrappers: ${key}.${fact} conflicts between a ${wrapper.type} wrapper (${JSON.stringify(value)}) and its content (${JSON.stringify(inner[fact])})`
+				);
+			}
+		}
+		out = { ...out, [key]: { ...inner, ...outer } } as Rule<'evaluate'>;
+	}
+	return out;
 }
 
 function foldImmediateTokenRule(rule: Rule<'evaluate'>): Rule<'evaluate'> {
@@ -265,7 +286,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		opts = optionsOrBase as GrammarOptions;
 	} else {
 		baseGrammar = (optionsOrBase as { grammar: any }).grammar;
-		baseRules = { ...baseGrammar.rules };
+		baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
 		opts = options;
 	}
 
@@ -300,8 +321,10 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		desugarDivergences: []
 	};
 
+	let dslRules: Record<string, Rule<'evaluate'>> = {};
 	const { roles: collectedRoles } = withRoleScope(() => {
 		evaluateRulesAndInjectSynthetics(rules, ctx);
+		dslRules = { ...rules };
 		stripPrecedenceWrappers(rules);
 		normalizeImmediateTokens(rules);
 		evaluateMetadataCallbacksInScope(opts, ctx);
@@ -356,6 +379,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
+	Object.defineProperty(grammarResult, DSL_RULES_KEY, { value: dslRules, enumerable: false });
 	return { grammar: grammarResult };
 }
 

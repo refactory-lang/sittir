@@ -537,6 +537,14 @@ function canonicalizeSeparator(separator) {
     canonicalize(sep.value)
   ];
 }
+var DSL_RULES_KEY = /* @__PURE__ */ Symbol.for("sittir.dslRules");
+function baseRulesOf(base2) {
+  if (!base2 || typeof base2 !== "object") return void 0;
+  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
+  if (!grammar2 || typeof grammar2 !== "object") return void 0;
+  const dslRules = grammar2[DSL_RULES_KEY];
+  return dslRules ?? grammar2.rules;
+}
 
 // packages/codegen/src/dsl/rule-patterns.ts
 function isEnumChoiceRule(rule2) {
@@ -1845,7 +1853,7 @@ function enrich(baseInput) {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
   const hasWrapper = "grammar" in base2;
-  const baseRules = hasWrapper ? base2.grammar?.rules : base2.rules;
+  const baseRules = baseRulesOf(base2);
   if (!baseRules) return base2;
   const rulesBag = { ...baseRules };
   const grammarMeta = hasWrapper ? base2.grammar : base2;
@@ -3933,7 +3941,7 @@ function wireSetLiftBody(name, body) {
   currentContext?.liftBodies.set(name, body);
 }
 function baseRuleBodiesOf(base2) {
-  return base2?.grammar?.rules ?? base2?.rules ?? {};
+  return baseRulesOf(base2) ?? {};
 }
 function wire(config, base2) {
   const cfg = config;
@@ -3973,7 +3981,7 @@ function wire(config, base2) {
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
-    const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
+    const baseRules = baseRulesOf(baseArg) ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
       outRules[baseName] = passthroughBaseRuleFn;
@@ -4066,7 +4074,7 @@ function renamingCallback(user, rename, context) {
   };
 }
 function knownRuleNames(cfg, base2) {
-  const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
+  const baseRules = baseRulesOf(base2) ?? {};
   return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 function isRetiredAddressKey(key, rules) {
@@ -4403,7 +4411,7 @@ function adoptMintedGroups(baseArg, base2, groups) {
   const adopted = /* @__PURE__ */ new Map();
   const authored = declaredPatterns(groups, void 0);
   if (authored.length === 0) return adopted;
-  const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
+  const baseRules = baseRulesOf(baseArg) ?? {};
   for (const minted of getEnrichVisibleGroupSources(base2)) {
     const body = baseRules[minted];
     if (body === void 0) continue;

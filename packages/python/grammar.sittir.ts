@@ -129,6 +129,7 @@ export default grammar(
 				slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
 				splat_pattern: { 'operator:/after': preference('tight') },
 				splat_type: { 'operator:/after': preference('tight') },
+				unary_operator: { 'operator:/after': preference('tight') },
 				interpolation: { before: preference('tight'), after: preference('tight') },
 				comprehension_clauses: { 'content:/separator': preference('space') },
 

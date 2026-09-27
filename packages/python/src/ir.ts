@@ -354,6 +354,13 @@ export const ir: {
 	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly escapeSequenceUnicodeFixed: typeof F.escapeSequenceUnicodeFixed;
+	readonly escapeSequenceUnicodeWide: typeof F.escapeSequenceUnicodeWide;
+	readonly escapeSequenceHex: typeof F.escapeSequenceHex;
+	readonly escapeSequenceOctal: typeof F.escapeSequenceOctal;
+	readonly escapeSequenceLineBreak: typeof F.escapeSequenceLineBreak;
+	readonly escapeSequenceSimple: typeof F.escapeSequenceSimple;
+	readonly escapeSequenceNamed: typeof F.escapeSequenceNamed;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClause: typeof F.withClause;
@@ -402,23 +409,29 @@ export const ir: {
 	readonly futureImport: typeof F.futureImportStatement;
 	readonly generator: typeof F.generatorExpression;
 	readonly global: typeof F.globalStatement;
+	readonly hex: typeof F.escapeSequenceHex;
 	readonly if: typeof F.ifStatement;
 	readonly import: typeof F.importStatement;
 	readonly importFrom: typeof F.importFromStatement;
+	readonly lineBreak: typeof F.escapeSequenceLineBreak;
 	readonly match: typeof F.matchStatement;
 	readonly named: typeof F.namedExpression;
 	readonly nonlocal: typeof F.nonlocalStatement;
 	readonly not: typeof F.notOperator;
+	readonly octal: typeof F.escapeSequenceOctal;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly pass: typeof F.buildPassStatement;
 	readonly print: typeof F.printStatement;
 	readonly raise: typeof F.raiseStatement;
 	readonly return: typeof F.returnStatement;
+	readonly simple: typeof F.escapeSequenceSimple;
 	readonly try: typeof F.tryStatement;
 	readonly typeAlias: typeof F.typeAliasStatement;
 	readonly typed: typeof F.typedParameter;
 	readonly typedDefault: typeof F.typedDefaultParameter;
 	readonly unary: typeof F.unaryOperator;
+	readonly unicodeFixed: typeof F.escapeSequenceUnicodeFixed;
+	readonly unicodeWide: typeof F.escapeSequenceUnicodeWide;
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
 	readonly statement: typeof statement;
@@ -568,6 +581,13 @@ export const ir: {
 	printStatementPlain: F.printStatementPlain,
 	parenthesizedImportList: F.parenthesizedImportList,
 	comprehensionClauses: F.comprehensionClauses,
+	escapeSequenceUnicodeFixed: F.escapeSequenceUnicodeFixed,
+	escapeSequenceUnicodeWide: F.escapeSequenceUnicodeWide,
+	escapeSequenceHex: F.escapeSequenceHex,
+	escapeSequenceOctal: F.escapeSequenceOctal,
+	escapeSequenceLineBreak: F.escapeSequenceLineBreak,
+	escapeSequenceSimple: F.escapeSequenceSimple,
+	escapeSequenceNamed: F.escapeSequenceNamed,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClause: F.withClause,
@@ -622,23 +642,29 @@ export const ir: {
 	futureImport: F.futureImportStatement,
 	generator: F.generatorExpression,
 	global: F.globalStatement,
+	hex: F.escapeSequenceHex,
 	if: F.ifStatement,
 	import: F.importStatement,
 	importFrom: F.importFromStatement,
+	lineBreak: F.escapeSequenceLineBreak,
 	match: F.matchStatement,
 	named: F.namedExpression,
 	nonlocal: F.nonlocalStatement,
 	not: F.notOperator,
+	octal: F.escapeSequenceOctal,
 	parenthesized: F.parenthesizedExpression,
 	pass: F.buildPassStatement,
 	print: F.printStatement,
 	raise: F.raiseStatement,
 	return: F.returnStatement,
+	simple: F.escapeSequenceSimple,
 	try: F.tryStatement,
 	typeAlias: F.typeAliasStatement,
 	typed: F.typedParameter,
 	typedDefault: F.typedDefaultParameter,
 	unary: F.unaryOperator,
+	unicodeFixed: F.escapeSequenceUnicodeFixed,
+	unicodeWide: F.escapeSequenceUnicodeWide,
 	while: F.whileStatement,
 	with: F.withStatement,
 

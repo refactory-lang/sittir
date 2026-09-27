@@ -51,7 +51,6 @@ export type LeafStringMap = {
 	[TSKindId.PositionalSeparator]: '/';
 	[TSKindId.KeywordSeparator]: '*';
 	[TSKindId.KwAsyncMarker]: 'async';
-	['_unary_operator_operator']: '+' | '-' | '~';
 	[TSKindId.AugmentedAssignmentOperator]:
 		| '+='
 		| '-='
@@ -2196,6 +2195,15 @@ export enum FloatKind {
 	FloatScientific = 'float_scientific'
 }
 
+export enum KeywordIdentifierKind {
+	PrintKeyword = 'print_keyword',
+	ExecKeyword = 'exec_keyword',
+	AsyncKeyword = 'async_keyword',
+	AwaitKeyword = 'await_keyword',
+	TypeKeyword = 'type_keyword',
+	MatchKeyword = 'match_keyword'
+}
+
 export enum LineContinuationKind {
 	LineContinuationNewline = 'line_continuation_newline',
 	LineContinuationNul = 'line_continuation_nul'
@@ -3849,15 +3857,6 @@ export interface FormatSpecifier {
 	elements(): readonly ('[^{}\\n]+' | FormatExpression)[];
 }
 
-export interface KeywordIdentifier {
-	readonly $type: 'keyword_identifier';
-	readonly _identifier: number;
-	readonly __inputHints__?: {
-		readonly identifier: KindEnum<'print', TSKindId.Identifier | TSKindId.PrintKeyword>;
-	};
-	identifier(): number;
-}
-
 export interface Await {
 	readonly $type: TSKindId.Await;
 	readonly _expression: PrimaryExpression;
@@ -4367,7 +4366,6 @@ export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type KwAsyncMarker = TSKindId.KwAsyncMarker;
-export type UnaryOperatorOperator = TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde;
 export type AugmentedAssignmentOperator =
 	| TSKindId.PlusEq
 	| TSKindId.DashEq
@@ -4512,9 +4510,6 @@ export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
-export interface KeywordIdentifierTree extends AnyTreeNode {
-	readonly type: 'keyword_identifier';
-}
 export interface AwaitTree extends TreeNode<'await'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface SimpleStatementsElementsTree extends TreeNode<'simple_statements_elements'> {}
@@ -4610,9 +4605,6 @@ export interface KeywordSeparatorTree extends AnyTreeNode {
 }
 export interface KwAsyncMarkerTree extends AnyTreeNode {
 	readonly type: '_kw_async_marker';
-}
-export interface UnaryOperatorOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_operator_operator';
 }
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
 	readonly type: '_augmented_assignment_operator';
@@ -5049,6 +5041,16 @@ export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
 export type FloatTree = FloatPointTree | FloatLeadingPointTree | FloatScientificTree;
 
+export type KeywordIdentifier = PrintKeyword | ExecKeyword | AsyncKeyword | AwaitKeyword | TypeKeyword | MatchKeyword;
+
+export type KeywordIdentifierTree =
+	| PrintKeywordTree
+	| ExecKeywordTree
+	| AsyncKeywordTree
+	| AwaitKeywordTree
+	| TypeKeywordTree
+	| MatchKeywordTree;
+
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
 export type LineContinuationTree = LineContinuationNewlineTree | LineContinuationNulTree;
@@ -5150,6 +5152,11 @@ export namespace Integer {
 export namespace Float {
 	export type Kind = 'float';
 	export type Tree = FloatTree;
+}
+
+export namespace KeywordIdentifier {
+	export type Kind = 'keyword_identifier';
+	export type Tree = KeywordIdentifierTree;
 }
 
 export namespace LineContinuation {
@@ -5288,7 +5295,6 @@ export type PythonNode =
 	| StringContent
 	| Interpolation
 	| FormatSpecifier
-	| KeywordIdentifier
 	| Await
 	| Comment
 	| SimpleStatementsElements
@@ -5480,7 +5486,6 @@ export interface OptionsHintMap {
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
-	unaryOperatorOperator: UnaryOperatorOperator.Hints;
 	augmentedAssignmentOperator: AugmentedAssignmentOperator.Hints;
 	lineContinuationNewline: LineContinuationNewline.Hints;
 	lineContinuationNul: LineContinuationNul.Hints;
@@ -6254,7 +6259,11 @@ export namespace BinaryOperator {
 
 export namespace UnaryOperator {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm };
+		};
 	}
 }
 
@@ -7334,16 +7343,6 @@ export namespace YieldFromClause {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly fromKeyword?: { readonly after?: SpacingArm };
-		};
-	}
-}
-
-export namespace UnaryOperatorOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly plus?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly tilde?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }

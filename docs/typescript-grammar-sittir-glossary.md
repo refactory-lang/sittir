@@ -939,6 +939,23 @@ read from this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in
 codegen names a whitespace kind. A grammar that wants another gap width
 adds an external here, as python does with `_double_blankline`.
 
+### `options` — `literal_type_negative_number` (`packages/typescript/grammar.sittir.ts`)
+
+The sign of a negative-number literal type binds tight to its number
+(`-1`, not `- 1`). The site is the variant's `operator:/after` seam: the
+upstream `_number` rule is hidden and spliced into the variant, so its
+operator field is addressed there.
+
+### `options` — `unary_expression`
+
+`operator:/after` is tight, so a factory-built `unary_expression` renders
+`!x`, `-x`, `~x`. The preference addresses the slot's punctuation values
+only: a keyword operator keeps its word seam (`typeof x`, `typeof (x)`,
+`typeof -x`, `void 0`). A repeated sign stays spaced (`- -x`, `+ +x`,
+`- --x`): the render crate guards the `-|-` and `+|+` seams, because `--` and
+`++` can begin what directly follows a unary `-` or `+`, and a tight site
+still takes that lexical space.
+
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 
 ```text

@@ -8185,6 +8185,26 @@ carried through a side channel.
 // `visibleGroupSynthName`'s `ambientPrec` re-wrap).
 ```
 
+Peeling a wrapper never drops a fact: each peeled wrapper's `annotations` and
+`metadata` move onto its content through `peelPrecWrapper`. Enrich and wire
+stamp facts on the outermost node of a rule body, which is the PREC wrapper
+whenever the body carries precedence — the same place tree-sitter's run of
+the bundled grammar puts them in `.sittir/src/grammar.json`.
+
+### `packages/codegen/src/compiler/evaluate.ts::WRAPPER_FACT_KEYS`
+
+The rule properties that carry facts rather than structure — `annotations` and
+`metadata`. They are the only properties of a precedence wrapper that survive
+`stripPrecedenceWrappers`.
+
+### `packages/codegen/src/compiler/evaluate.ts::peelPrecWrapper`
+
+Removes one precedence wrapper: returns the wrapper's content with the
+wrapper's `annotations` and `metadata` unioned into its own. The union is key-by-key: a fact present on both sides must be equal
+(compared structurally), and a conflicting value throws, naming the key, the
+wrapper type and both values — neither side silently wins. A wrapper with no
+facts returns its content unchanged (same object).
+
 ### `packages/codegen/src/compiler/evaluate.ts::foldImmediateTokenRule`
 
 ```text

@@ -578,6 +578,10 @@ export const ir: {
 	readonly useWildcardGroup: typeof F.useWildcardGroup;
 	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
+	readonly escapeSequenceSimple: typeof F.escapeSequenceSimple;
+	readonly escapeSequenceUnicodeFixed: typeof F.escapeSequenceUnicodeFixed;
+	readonly escapeSequenceUnicodeBraced: typeof F.escapeSequenceUnicodeBraced;
+	readonly escapeSequenceHex: typeof F.escapeSequenceHex;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -651,6 +655,7 @@ export const ir: {
 	readonly functionSignature: typeof F.functionSignatureItem;
 	readonly gen: typeof F.genBlock;
 	readonly generic: typeof F.genericType;
+	readonly hex: typeof F.escapeSequenceHex;
 	readonly if: typeof F.ifExpression;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
@@ -671,6 +676,7 @@ export const ir: {
 	readonly repetition: typeof F.tokenRepetitionPattern;
 	readonly return: typeof F.returnExpression;
 	readonly scopedList: typeof F.scopedUseList;
+	readonly simple: typeof F.escapeSequenceSimple;
 	readonly slice: typeof F.slicePattern;
 	readonly special: typeof F.nonSpecialToken;
 	readonly static: typeof F.staticItem;
@@ -682,6 +688,8 @@ export const ir: {
 	readonly tupleStruct: typeof F.tupleStructPattern;
 	readonly typeCast: typeof F.typeCastExpression;
 	readonly unary: typeof F.unaryExpression;
+	readonly unicodeBraced: typeof F.escapeSequenceUnicodeBraced;
+	readonly unicodeFixed: typeof F.escapeSequenceUnicodeFixed;
 	readonly union: typeof F.unionItem;
 	readonly unit: typeof F.buildUnitType;
 	readonly unsafe: typeof F.unsafeBlock;
@@ -854,6 +862,10 @@ export const ir: {
 	useWildcardGroup: F.useWildcardGroup,
 	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,
+	escapeSequenceSimple: F.escapeSequenceSimple,
+	escapeSequenceUnicodeFixed: F.escapeSequenceUnicodeFixed,
+	escapeSequenceUnicodeBraced: F.escapeSequenceUnicodeBraced,
+	escapeSequenceHex: F.escapeSequenceHex,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
 	tokenTree: F.tokenTree,
@@ -933,6 +945,7 @@ export const ir: {
 	functionSignature: F.functionSignatureItem,
 	gen: F.genBlock,
 	generic: F.genericType,
+	hex: F.escapeSequenceHex,
 	if: F.ifExpression,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
@@ -953,6 +966,7 @@ export const ir: {
 	repetition: F.tokenRepetitionPattern,
 	return: F.returnExpression,
 	scopedList: F.scopedUseList,
+	simple: F.escapeSequenceSimple,
 	slice: F.slicePattern,
 	special: F.nonSpecialToken,
 	static: F.staticItem,
@@ -964,6 +978,8 @@ export const ir: {
 	tupleStruct: F.tupleStructPattern,
 	typeCast: F.typeCastExpression,
 	unary: F.unaryExpression,
+	unicodeBraced: F.escapeSequenceUnicodeBraced,
+	unicodeFixed: F.escapeSequenceUnicodeFixed,
 	union: F.unionItem,
 	unit: F.buildUnitType,
 	unsafe: F.unsafeBlock,

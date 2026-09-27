@@ -31,6 +31,7 @@ import { polymorphVisibleName } from '../arm-names.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
+import { baseRulesOf } from '../shared.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -190,7 +191,7 @@ export function wireSetLiftBody(name: string, body: RuntimeRule): void {
 }
 
 function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, RuntimeRule>> {
-	return (base?.grammar?.rules ?? base?.rules ?? {}) as unknown as Readonly<Record<string, RuntimeRule>>;
+	return baseRulesOf<RuntimeRule>(base) ?? {};
 }
 
 export function withWireContext<T>(
@@ -412,7 +413,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
-		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
+		const baseRules = baseRulesOf<RuleFn>(baseArg) ?? {};
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
 			outRules[baseName] = passthroughBaseRuleFn;
@@ -523,7 +524,7 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
+	const baseRules = baseRulesOf<unknown>(base) ?? {};
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
@@ -968,7 +969,7 @@ function adoptMintedGroups(baseArg: BaseArg, base: unknown, groups: GroupsConfig
 	const adopted = new Map<string, string>();
 	const authored = declaredPatterns(groups, undefined);
 	if (authored.length === 0) return adopted;
-	const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, unknown>;
+	const baseRules = baseRulesOf<unknown>(baseArg) ?? {};
 	for (const minted of getEnrichVisibleGroupSources(base)) {
 		const body = baseRules[minted];
 		if (body === undefined) continue;

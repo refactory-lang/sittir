@@ -40,14 +40,13 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
+    "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
         "_simple_statement",
-        "_suite",
-        "_unary_operator_operator"
+        "_suite"
       ]
     },
     "severity": "warning",
@@ -98,19 +97,6 @@
         "\n\n",
         "\n\n\n",
         " "
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "python"
-  },
-  {
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_unary_operator_operator"
       ]
     },
     "scope": "grammar",

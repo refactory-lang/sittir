@@ -2610,12 +2610,6 @@
 			"field": "keyword_argument_after"
 		}
 	],
-	"keyword_identifier": [
-		{
-			"kind": "text",
-			"text": "print"
-		}
-	],
 	"keyword_pattern": [
 		{
 			"kind": "seam",
@@ -4184,6 +4178,10 @@
 		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",

@@ -477,6 +477,18 @@ export interface IsGuards {
 	useWildcardGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
+	escapeSequenceSimple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceUnicodeFixed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeBraced<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeBraced };
+	escapeSequenceHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
@@ -737,6 +749,18 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.StructPatternElements };
 	useWildcardGroup(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UseWildcardGroup };
+	escapeSequenceSimple(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceUnicodeFixed(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeBraced(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeBraced };
+	escapeSequenceHex(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceHex };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
@@ -984,6 +1008,10 @@ export const is = {
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
 	useWildcardGroup: _g(TSKindId.UseWildcardGroup),
+	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
+	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	escapeSequenceUnicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
+	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
@@ -1201,6 +1229,10 @@ export const assert = {
 	patterns: _makeAssert('patterns', is.patterns as _AnyGuard),
 	structPatternElements: _makeAssert('structPatternElements', is.structPatternElements as _AnyGuard),
 	useWildcardGroup: _makeAssert('useWildcardGroup', is.useWildcardGroup as _AnyGuard),
+	escapeSequenceSimple: _makeAssert('escapeSequenceSimple', is.escapeSequenceSimple as _AnyGuard),
+	escapeSequenceUnicodeFixed: _makeAssert('escapeSequenceUnicodeFixed', is.escapeSequenceUnicodeFixed as _AnyGuard),
+	escapeSequenceUnicodeBraced: _makeAssert('escapeSequenceUnicodeBraced', is.escapeSequenceUnicodeBraced as _AnyGuard),
+	escapeSequenceHex: _makeAssert('escapeSequenceHex', is.escapeSequenceHex as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

@@ -3742,6 +3742,14 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
+### `packages/codegen/src/dsl/shared.ts::DSL_RULES_KEY`
+
+The non-enumerable key under which sittir's `grammar()` result carries its rules as the DSL built them, before sittir's compile-time canonicalization (precedence stripping, the immediate-token fold). Tree-sitter's `grammar()` result never carries it.
+
+### `packages/codegen/src/dsl/shared.ts::baseRulesOf`
+
+The rules a grammar object offers when it is used as a base: the `DSL_RULES_KEY` rules when present, else `.rules`, through a `{ grammar }` wrapper or not. Every reader that treats a grammar as a base (enrich, wire, an extending `grammar()`) reads through it, so the bundled DSL code sees the same rule shapes under sittir's evaluation as under tree-sitter's; a base read that sees canonicalized rules makes enrich decide differently in the two executions and mints kinds the parser never has.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::module`
 
 ```text

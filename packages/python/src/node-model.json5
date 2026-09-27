@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 304,
+  "nodeCount": 303,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -19,6 +19,7 @@
     "expression",
     "float",
     "integer",
+    "keyword_identifier",
     "line_continuation",
     "parameter",
     "pattern",
@@ -1709,15 +1710,6 @@
         "nonEmpty": false
       }
     },
-    "keyword_identifier": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "await": {
       "expression": {
         "unnamed": false,
@@ -2954,20 +2946,6 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": ""
-    },
-    {
-      "kind": "_unary_operator_operator",
-      "modelType": "enum",
-      "typeName": "UnaryOperatorOperator",
-      "factoryName": "unaryOperatorOperator",
-      "irKey": "unaryOperatorOperator",
-      "hidden": false,
-      "values": [
-        "+",
-        "-",
-        "~"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_whitespace",
@@ -6887,10 +6865,6 @@
       "factoryName": "escapeSequenceHex",
       "irKey": "escapeSequenceHex",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -6909,7 +6883,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -6940,10 +6913,6 @@
       "factoryName": "escapeSequenceLineBreak",
       "irKey": "escapeSequenceLineBreak",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -6962,7 +6931,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_line_break",
       "interior": {
         "entries": [
           {
@@ -6993,10 +6961,6 @@
       "factoryName": "escapeSequenceNamed",
       "irKey": "escapeSequenceNamed",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -7015,7 +6979,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_named",
       "interior": {
         "entries": [
           {
@@ -7046,10 +7009,6 @@
       "factoryName": "escapeSequenceOctal",
       "irKey": "escapeSequenceOctal",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -7068,7 +7027,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_octal",
       "interior": {
         "entries": [
           {
@@ -7099,10 +7057,6 @@
       "factoryName": "escapeSequenceSimple",
       "irKey": "escapeSequenceSimple",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -7121,7 +7075,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_simple",
       "interior": {
         "entries": [
           {
@@ -7152,10 +7105,6 @@
       "factoryName": "escapeSequenceUnicodeFixed",
       "irKey": "escapeSequenceUnicodeFixed",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -7174,7 +7123,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_unicode_fixed",
       "interior": {
         "entries": [
           {
@@ -7205,10 +7153,6 @@
       "factoryName": "escapeSequenceUnicodeWide",
       "irKey": "escapeSequenceUnicodeWide",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -7227,7 +7171,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_unicode_wide",
       "interior": {
         "entries": [
           {
@@ -10272,34 +10215,18 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "envelope",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
-      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "identifier"
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "async_keyword",
+        "await_keyword",
+        "exec_keyword",
+        "match_keyword",
+        "print_keyword",
+        "type_keyword"
       ]
     },
     {
@@ -15224,15 +15151,25 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_unary_operator_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_unary_operator_operator",
-              "parseKind": "_unary_operator_operator"
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "~",
+              "parseKind": "tilde"
             }
           ]
         },

@@ -91,7 +91,6 @@ export type LeafStringMap = {
 	[TSKindId.KwDefault]: 'default';
 	[TSKindId.KwConst]: 'const';
 	[TSKindId.KwUnsafe]: 'unsafe';
-	['_compound_assignment_expr_operator']: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
 	[TSKindId.TokenTreePunctuation]:
 		| '+'
 		| '-'
@@ -9837,17 +9836,6 @@ export type KwAsync = TSKindId.KwAsync;
 export type KwDefault = TSKindId.KwDefault;
 export type KwConst = TSKindId.KwConst;
 export type KwUnsafe = TSKindId.KwUnsafe;
-export type CompoundAssignmentExprOperator =
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.PercentEq
-	| TSKindId.AmpEq
-	| TSKindId.PipeEq
-	| TSKindId.CaretEq
-	| TSKindId.LtLtEq
-	| TSKindId.GtGtEq;
 export type TokenTreePunctuation =
 	| TSKindId.Plus
 	| TSKindId.Dash
@@ -10251,9 +10239,6 @@ export interface KwConstTree extends AnyTreeNode {
 }
 export interface KwUnsafeTree extends AnyTreeNode {
 	readonly type: '_kw_unsafe';
-}
-export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode {
-	readonly type: '_compound_assignment_expr_operator';
 }
 export interface TokenTreePunctuationTree extends TreeNode<'token_tree_punctuation'> {}
 export interface TokenKeywordsTree extends AnyTreeNode {
@@ -11883,7 +11868,6 @@ export interface OptionsHintMap {
 	matchBlockArms: MatchBlockArms.Hints;
 	unitType: UnitType.Hints;
 	unitExpression: UnitExpression.Hints;
-	compoundAssignmentExprOperator: CompoundAssignmentExprOperator.Hints;
 	tokenTreePunctuation: TokenTreePunctuation.Hints;
 	tokenKeywords: TokenKeywords.Hints;
 	charLiteralEmpty: CharLiteralEmpty.Hints;
@@ -12759,7 +12743,11 @@ export namespace AssignmentExpression {
 
 export namespace CompoundAssignmentExpr {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
 	}
 }
 
@@ -14620,23 +14608,6 @@ export namespace UnitExpression {
 		readonly __optionsHint__?: {
 			readonly lparen?: { readonly after?: WhitespaceArm };
 			readonly rparen?: { readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace CompoundAssignmentExprOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly ampEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly caretEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly dashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly gtGtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly ltLtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly percentEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly pipeEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly plusEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly slashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly starEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }

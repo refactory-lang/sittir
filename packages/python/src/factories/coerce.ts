@@ -691,9 +691,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	format_expression: new Set([246])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
-	49: ['_unary_operator_operator'],
-	50: ['_unary_operator_operator'],
-	60: ['_unary_operator_operator'],
 	77: ['_augmented_assignment_operator'],
 	78: ['_augmented_assignment_operator'],
 	79: ['_augmented_assignment_operator'],
@@ -4202,7 +4199,7 @@ export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
 ): T.UnaryOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'+' | '-' | '~'>(value, '_unary_operator_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '-' | '~'>(value, _K0, _K0)),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const, ['~', TSKindId.Tilde] as const]
 	);
 }

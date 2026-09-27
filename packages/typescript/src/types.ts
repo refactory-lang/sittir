@@ -72,24 +72,6 @@ export type LeafStringMap = {
 	[TSKindId.KwConstMarker]: 'const';
 	[TSKindId.Kind]: 'let' | 'const';
 	[TSKindId.ForHeaderOperator]: 'in' | 'of';
-	['_augmented_assignment_expression_operator']:
-		| '+='
-		| '-='
-		| '*='
-		| '/='
-		| '%='
-		| '^='
-		| '&='
-		| '|='
-		| '>>='
-		| '>>>='
-		| '<<='
-		| '**='
-		| '&&='
-		| '||='
-		| '??=';
-	['_unary_expression_operator']: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
-	['__number_operator']: '-' | '+';
 	['_operator']: '++' | '--';
 	[TSKindId.EmptyMember]: ';';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
@@ -145,6 +127,8 @@ export type LeafStringMap = {
 	[TSKindId.FunctionKeyword]: 'function';
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.InstanceofKeyword]: 'instanceof';
+	[TSKindId.VoidKeyword]: 'void';
+	[TSKindId.DeleteKeyword]: 'delete';
 	[TSKindId.AbstractKeyword]: 'abstract';
 	[TSKindId.ConstKeyword]: 'const';
 	[TSKindId.SatisfiesKeyword]: 'satisfies';
@@ -158,13 +142,11 @@ export type LeafStringMap = {
 	[TSKindId.IsKeyword]: 'is';
 	[TSKindId.KeyofKeyword]: 'keyof';
 	[TSKindId.InKeyword]: 'in';
-	[TSKindId.VoidKeyword]: 'void';
 	[TSKindId.UnknownKeyword]: 'unknown';
 	[TSKindId.NeverKeyword]: 'never';
 	[TSKindId.UsingKeyword]: 'using';
 	[TSKindId.AccessorKeyword]: 'accessor';
 	[TSKindId.OfKeyword]: 'of';
-	[TSKindId.DeleteKeyword]: 'delete';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.FromKeyword]: 'from';
 	[TSKindId.TargetKeyword]: 'target';
@@ -9809,31 +9791,6 @@ export type KwAccessorMarker = TSKindId.KwAccessorMarker;
 export type KwConstMarker = TSKindId.KwConstMarker;
 export type Kind = TSKindId.LetKeyword | TSKindId.ConstKeyword;
 export type ForHeaderOperator = TSKindId.InKeyword | TSKindId.OfKeyword;
-export type AugmentedAssignmentExpressionOperator =
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.PercentEq
-	| TSKindId.CaretEq
-	| TSKindId.AmpEq
-	| TSKindId.PipeEq
-	| TSKindId.GtGtEq
-	| TSKindId.GtGtGtEq
-	| TSKindId.LtLtEq
-	| TSKindId.StarStarEq
-	| TSKindId.AmpAmpEq
-	| TSKindId.PipePipeEq
-	| TSKindId.QmarkQmarkEq;
-export type UnaryExpressionOperator =
-	| TSKindId.Bang
-	| TSKindId.Tilde
-	| TSKindId.Dash
-	| TSKindId.Plus
-	| TSKindId.TypeofKeyword
-	| TSKindId.VoidKeyword
-	| TSKindId.DeleteKeyword;
-export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type EmptyMember = TSKindId.EmptyMember;
@@ -10163,15 +10120,6 @@ export interface KindTree extends AnyTreeNode {
 export interface ForHeaderOperatorTree extends AnyTreeNode {
 	readonly type: '__for_header_operator';
 }
-export interface AugmentedAssignmentExpressionOperatorTree extends AnyTreeNode {
-	readonly type: '_augmented_assignment_expression_operator';
-}
-export interface UnaryExpressionOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_expression_operator';
-}
-export interface NumberOperatorTree extends AnyTreeNode {
-	readonly type: '__number_operator';
-}
 export interface OperatorTree extends AnyTreeNode {
 	readonly type: '_operator';
 }
@@ -10351,6 +10299,12 @@ export interface AwaitKeywordTree extends AnyTreeNode {
 export interface InstanceofKeywordTree extends AnyTreeNode {
 	readonly type: 'instanceof_keyword';
 }
+export interface VoidKeywordTree extends AnyTreeNode {
+	readonly type: 'void_keyword';
+}
+export interface DeleteKeywordTree extends AnyTreeNode {
+	readonly type: 'delete_keyword';
+}
 export interface AbstractKeywordTree extends AnyTreeNode {
 	readonly type: 'abstract_keyword';
 }
@@ -10390,9 +10344,6 @@ export interface KeyofKeywordTree extends AnyTreeNode {
 export interface InKeywordTree extends AnyTreeNode {
 	readonly type: 'in_keyword';
 }
-export interface VoidKeywordTree extends AnyTreeNode {
-	readonly type: 'void_keyword';
-}
 export interface UnknownKeywordTree extends AnyTreeNode {
 	readonly type: 'unknown_keyword';
 }
@@ -10407,9 +10358,6 @@ export interface AccessorKeywordTree extends AnyTreeNode {
 }
 export interface OfKeywordTree extends AnyTreeNode {
 	readonly type: 'of_keyword';
-}
-export interface DeleteKeywordTree extends AnyTreeNode {
-	readonly type: 'delete_keyword';
 }
 export interface GlobalKeywordTree extends AnyTreeNode {
 	readonly type: 'global_keyword';
@@ -11444,9 +11392,6 @@ export interface OptionsHintMap {
 	forHeaderLetConstKind: ForHeaderLetConstKind.Hints;
 	regexPattern: RegexPattern.Hints;
 	predefinedType: PredefinedType.Hints;
-	augmentedAssignmentExpressionOperator: AugmentedAssignmentExpressionOperator.Hints;
-	unaryExpressionOperator: UnaryExpressionOperator.Hints;
-	numberOperator: NumberOperator.Hints;
 	operator: Operator.Hints;
 	metaPropertyNewTarget: MetaPropertyNewTarget.Hints;
 	metaPropertyImportMeta: MetaPropertyImportMeta.Hints;
@@ -12284,7 +12229,11 @@ export namespace AssignmentExpression {
 
 export namespace AugmentedAssignmentExpression {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
 	}
 }
 
@@ -12319,7 +12268,11 @@ export namespace BinaryExpression {
 
 export namespace UnaryExpression {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm };
+		};
 	}
 }
 
@@ -13659,7 +13612,11 @@ export namespace ExportStatementEqualsExport {
 
 export namespace LiteralTypeNegativeNumber {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm };
+		};
 	}
 }
 
@@ -14012,51 +13969,6 @@ export namespace PredefinedType {
 			readonly unique?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly unknownKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly voidKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace AugmentedAssignmentExpressionOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly ampAmpEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly ampEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly caretEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly dashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly gtGtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly gtGtGtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly ltLtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly percentEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly pipeEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly pipePipeEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly plusEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly qmarkQmarkEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly slashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly starEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly starStarEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace UnaryExpressionOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly dash?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly deleteKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly plus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly tilde?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly typeofKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly voidKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace NumberOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly dash?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly plus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 438,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -3772,27 +3772,6 @@
       "hidden": false,
       "pattern": "[^]*",
       "leafPattern": "/^(?:(?:[^]*))$/u",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_compound_assignment_expr_operator",
-      "modelType": "enum",
-      "typeName": "CompoundAssignmentExprOperator",
-      "factoryName": "compoundAssignmentExprOperator",
-      "irKey": "compoundAssignmentExprOperator",
-      "hidden": false,
-      "values": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "&=",
-        "|=",
-        "^=",
-        "<<=",
-        ">>="
-      ],
       "factoryShape": "text"
     },
     {
@@ -8178,15 +8157,67 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_compound_assignment_expr_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_compound_assignment_expr_operator",
-              "parseKind": "_compound_assignment_expr_operator"
+              "value": "+=",
+              "parseKind": "plus_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-=",
+              "parseKind": "dash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*=",
+              "parseKind": "star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/=",
+              "parseKind": "slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%=",
+              "parseKind": "percent_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&=",
+              "parseKind": "amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|=",
+              "parseKind": "pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^=",
+              "parseKind": "caret_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
             }
           ]
         },
@@ -9381,10 +9412,6 @@
       "factoryName": "escapeSequenceHex",
       "irKey": "escapeSequenceHex",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -9403,7 +9430,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -9434,10 +9460,6 @@
       "factoryName": "escapeSequenceSimple",
       "irKey": "escapeSequenceSimple",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -9456,7 +9478,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_simple",
       "interior": {
         "entries": [
           {
@@ -9487,10 +9508,6 @@
       "factoryName": "escapeSequenceUnicodeBraced",
       "irKey": "escapeSequenceUnicodeBraced",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -9509,7 +9526,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_unicode_braced",
       "interior": {
         "entries": [
           {
@@ -9540,10 +9556,6 @@
       "factoryName": "escapeSequenceUnicodeFixed",
       "irKey": "escapeSequenceUnicodeFixed",
       "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "content",
@@ -9562,7 +9574,6 @@
           ]
         }
       ],
-      "name": "escape_sequence_unicode_fixed",
       "interior": {
         "entries": [
           {
@@ -11778,6 +11789,7 @@
       "irKey": "functionTypeTraitForm",
       "hidden": false,
       "annotations": {
+        "variantOf": "function_type",
         "hoisted": true
       },
       "slots": [
@@ -16125,6 +16137,7 @@
       "irKey": "orPatternPrefix",
       "hidden": false,
       "annotations": {
+        "variantOf": "or_pattern",
         "hoisted": true
       },
       "slots": [
@@ -17384,6 +17397,7 @@
       "irKey": "rangeExpressionBinary",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [
@@ -17474,6 +17488,7 @@
       "irKey": "rangeExpressionPostfix",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [
@@ -17596,6 +17611,7 @@
       "irKey": "rangeExpressionPrefix",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [

@@ -163,14 +163,11 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
+    "message": "1 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
+        "_operator"
       ]
     },
     "severity": "warning",
@@ -217,15 +214,12 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
+        "_operator"
       ]
     },
     "scope": "grammar",

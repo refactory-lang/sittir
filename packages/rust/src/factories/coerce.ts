@@ -862,16 +862,16 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	86: ['token_tree_punctuation'],
 	87: ['token_tree_punctuation'],
 	88: ['token_tree_punctuation'],
-	89: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	90: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	91: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	92: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	93: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	94: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	95: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	96: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	97: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
-	98: ['_compound_assignment_expr_operator', 'token_tree_punctuation'],
+	89: ['token_tree_punctuation'],
+	90: ['token_tree_punctuation'],
+	91: ['token_tree_punctuation'],
+	92: ['token_tree_punctuation'],
+	93: ['token_tree_punctuation'],
+	94: ['token_tree_punctuation'],
+	95: ['token_tree_punctuation'],
+	96: ['token_tree_punctuation'],
+	97: ['token_tree_punctuation'],
+	98: ['token_tree_punctuation'],
 	99: ['_token_keywords'],
 	101: ['token_tree_punctuation'],
 	102: ['_token_keywords'],
@@ -5711,10 +5711,7 @@ export function resolveCompoundAssignmentExpr_operator(
 ): T.CompoundAssignmentExpr['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='>(
-				value,
-				'_compound_assignment_expr_operator'
-			)
+			_resolveOne<'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='>(value, _K2, _K2)
 		),
 		[
 			['+=', TSKindId.PlusEq] as const,

@@ -15,6 +15,7 @@ import type {
 	FExpression,
 	Float,
 	Integer,
+	KeywordIdentifier,
 	LeftHandSide,
 	LineContinuation,
 	NamedExpressionLhs,
@@ -391,6 +392,27 @@ export interface IsGuards {
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
+	escapeSequenceUnicodeFixed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeWide<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
+	escapeSequenceHex<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
+	escapeSequenceOctal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceOctal };
+	escapeSequenceLineBreak<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceLineBreak };
+	escapeSequenceSimple<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceNamed<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
 	expressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -417,6 +439,7 @@ export interface IsGuards {
 	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
 	integer(v: { readonly $type: string | number } | number): v is Integer;
 	float(v: { readonly $type: string | number } | number): v is Float;
+	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
@@ -605,6 +628,27 @@ export interface AssertGuards {
 	comprehensionClauses(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
+	escapeSequenceUnicodeFixed(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
+	escapeSequenceUnicodeWide(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
+	escapeSequenceHex(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceHex };
+	escapeSequenceOctal(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceOctal };
+	escapeSequenceLineBreak(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceLineBreak };
+	escapeSequenceSimple(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceSimple };
+	escapeSequenceNamed(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.EscapeSequenceNamed };
 	expressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -631,6 +675,7 @@ export interface AssertGuards {
 	escapeSequence(v: { readonly $type: string | number } | number): asserts v is EscapeSequence;
 	integer(v: { readonly $type: string | number } | number): asserts v is Integer;
 	float(v: { readonly $type: string | number } | number): asserts v is Float;
+	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): asserts v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
@@ -667,6 +712,7 @@ const _supertype_fExpression_ids = new Set<number>([177, 214, 216]);
 const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
 const _supertype_float_ids = new Set<number>([94, 95, 96]);
+const _supertype_keywordIdentifier_ids = new Set<number>([68, 38, 69, 70, 39, 22]);
 const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
 const _supertype_whitespace_ids = new Set<number>([113]);
 
@@ -791,6 +837,13 @@ export const is = {
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
+	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
+	escapeSequenceUnicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
+	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
+	escapeSequenceOctal: _g(TSKindId.EscapeSequenceOctal),
+	escapeSequenceLineBreak: _g(TSKindId.EscapeSequenceLineBreak),
+	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
+	escapeSequenceNamed: _g(TSKindId.EscapeSequenceNamed),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
@@ -813,6 +866,7 @@ export const is = {
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	integer: _sg(_supertype_integer_ids),
 	float: _sg(_supertype_float_ids),
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	lineContinuation: _sg(_supertype_lineContinuation_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
@@ -960,6 +1014,13 @@ export const assert = {
 	printStatementChevron: _makeAssert('printStatementChevron', is.printStatementChevron as _AnyGuard),
 	printStatementPlain: _makeAssert('printStatementPlain', is.printStatementPlain as _AnyGuard),
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
+	escapeSequenceUnicodeFixed: _makeAssert('escapeSequenceUnicodeFixed', is.escapeSequenceUnicodeFixed as _AnyGuard),
+	escapeSequenceUnicodeWide: _makeAssert('escapeSequenceUnicodeWide', is.escapeSequenceUnicodeWide as _AnyGuard),
+	escapeSequenceHex: _makeAssert('escapeSequenceHex', is.escapeSequenceHex as _AnyGuard),
+	escapeSequenceOctal: _makeAssert('escapeSequenceOctal', is.escapeSequenceOctal as _AnyGuard),
+	escapeSequenceLineBreak: _makeAssert('escapeSequenceLineBreak', is.escapeSequenceLineBreak as _AnyGuard),
+	escapeSequenceSimple: _makeAssert('escapeSequenceSimple', is.escapeSequenceSimple as _AnyGuard),
+	escapeSequenceNamed: _makeAssert('escapeSequenceNamed', is.escapeSequenceNamed as _AnyGuard),
 	expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
 	withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
@@ -982,6 +1043,7 @@ export const assert = {
 	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	integer: _makeAssert('integer', is.integer as _AnyGuard),
 	float: _makeAssert('float', is.float as _AnyGuard),
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
 	lineContinuation: _makeAssert('lineContinuation', is.lineContinuation as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;

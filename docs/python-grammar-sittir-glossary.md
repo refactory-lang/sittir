@@ -692,6 +692,13 @@ they need no entry in `transforms`.
 				// non-word '{'/'}' flanks.)
 ```
 
+### `options` — `unary_operator`
+
+`operator:/after` is tight, overriding the `_` cascade's space, so a
+factory-built `unary_operator` renders `-x`, `+x`, `~x`. Python has no `--`
+or `++` token, so a repeated sign renders tight too (`--x`), and it parses
+as the nested negation it is.
+
 ### `expectDiagnostics` (`packages/python/grammar.sittir.ts`)
 
 The departure floors: `rules:` entries that replace an upstream rule

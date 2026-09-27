@@ -372,7 +372,7 @@ export interface CompoundAssignmentExprTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _left: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<CompoundAssignmentExprOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 

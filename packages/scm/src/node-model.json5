@@ -59,7 +59,17 @@
     "named_node_group_anchored_last": "namedNodeGroup.anchoredLast",
     "named_node_group_children": "namedNodeGroup.children"
   },
-  "fieldAliasMap": {},
+  "fieldAliasMap": {
+    "capture.name": {
+      "identifier": "_immediate_identifier"
+    },
+    "predicate.immediate_identifier": {
+      "identifier": "_immediate_identifier"
+    },
+    "named_node_arm.name": {
+      "identifier": "_immediate_identifier"
+    }
+  },
   "factorySlots": {
     "program": {
       "definitions": {
@@ -575,7 +585,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             }
           ]
         }
@@ -1362,7 +1372,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -1768,7 +1778,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             }
           ]
         },

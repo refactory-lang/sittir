@@ -735,8 +735,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -4668,6 +4676,10 @@
 			"name": "operator"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
 			"kind": "slot",
 			"name": "argument"
 		},
@@ -8110,6 +8122,30 @@
 		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "operator",
+					"kinds": [
+						"typeof_keyword",
+						"void_keyword",
+						"delete_keyword"
+					],
+					"body": [
+						{
+							"kind": "wordSeam"
+						}
+					]
+				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "operator_after"
+				}
+			]
 		},
 		{
 			"kind": "slot",

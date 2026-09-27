@@ -180,8 +180,6 @@ const NODE_KINDS = [
 const LEAF_KINDS = [
 	'__error_recovery',
 	'__for_header_operator',
-	'__number_operator',
-	'_augmented_assignment_expression_operator',
 	'_automatic_semicolon',
 	'_function_signature_automatic_semicolon',
 	'_kind',
@@ -196,7 +194,6 @@ const LEAF_KINDS = [
 	'_operator',
 	'_template_chars',
 	'_ternary_qmark',
-	'_unary_expression_operator',
 	'abstract_keyword',
 	'accessibility_modifier',
 	'accessor_keyword',
@@ -2711,30 +2708,6 @@ export const TOKEN_INTERIORS = {
 export const __FOR_HEADER_OPERATORS = ['in', 'of'] as const;
 export type ForHeaderOperatorValue = (typeof __FOR_HEADER_OPERATORS)[number];
 
-/** Valid values for `__number_operator` nodes. */
-export const __NUMBER_OPERATORS = ['-', '+'] as const;
-export type NumberOperatorValue = (typeof __NUMBER_OPERATORS)[number];
-
-/** Valid values for `_augmented_assignment_expression_operator` nodes. */
-export const _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS = [
-	'+=',
-	'-=',
-	'*=',
-	'/=',
-	'%=',
-	'^=',
-	'&=',
-	'|=',
-	'>>=',
-	'>>>=',
-	'<<=',
-	'**=',
-	'&&=',
-	'||=',
-	'??='
-] as const;
-export type AugmentedAssignmentExpressionOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS)[number];
-
 /** Valid values for `_kind` nodes. */
 export const _KINDS = ['let', 'const'] as const;
 export type KindValue = (typeof _KINDS)[number];
@@ -2742,10 +2715,6 @@ export type KindValue = (typeof _KINDS)[number];
 /** Valid values for `_operator` nodes. */
 export const _OPERATORS = ['++', '--'] as const;
 export type OperatorValue = (typeof _OPERATORS)[number];
-
-/** Valid values for `_unary_expression_operator` nodes. */
-export const _UNARY_EXPRESSION_OPERATORS = ['!', '~', '-', '+', 'typeof', 'void', 'delete'] as const;
-export type UnaryExpressionOperatorValue = (typeof _UNARY_EXPRESSION_OPERATORS)[number];
 
 /** Valid values for `accessibility_modifier` nodes. */
 export const ACCESSIBILITY_MODIFIERS = ['public', 'private', 'protected'] as const;

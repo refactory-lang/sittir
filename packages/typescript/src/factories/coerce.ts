@@ -760,7 +760,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	interface_body: new Set([356])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
-	8: ['_unary_expression_operator'],
 	32: ['accessibility_modifier'],
 	33: ['accessibility_modifier'],
 	34: ['accessibility_modifier'],
@@ -771,27 +770,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	42: ['predefined_type'],
 	44: ['predefined_type'],
 	50: ['_kind'],
-	66: ['_augmented_assignment_expression_operator'],
-	67: ['_augmented_assignment_expression_operator'],
-	68: ['_augmented_assignment_expression_operator'],
-	69: ['_augmented_assignment_expression_operator'],
-	70: ['_augmented_assignment_expression_operator'],
-	71: ['_augmented_assignment_expression_operator'],
-	72: ['_augmented_assignment_expression_operator'],
-	73: ['_augmented_assignment_expression_operator'],
-	74: ['_augmented_assignment_expression_operator'],
-	75: ['_augmented_assignment_expression_operator'],
-	76: ['_augmented_assignment_expression_operator'],
-	77: ['_augmented_assignment_expression_operator'],
-	78: ['_augmented_assignment_expression_operator'],
-	79: ['_augmented_assignment_expression_operator'],
-	80: ['_augmented_assignment_expression_operator'],
-	90: ['_unary_expression_operator', '__number_operator'],
-	91: ['_unary_expression_operator', '__number_operator'],
-	105: ['_unary_expression_operator'],
-	106: ['_unary_expression_operator'],
-	107: ['predefined_type', '_unary_expression_operator'],
-	108: ['_unary_expression_operator'],
+	107: ['predefined_type'],
 	128: ['_kind'],
 	142: ['__for_header_operator'],
 	143: ['predefined_type'],
@@ -4703,9 +4682,9 @@ export function resolveAugmentedAssignmentExpression_operator(
 ): T.AugmentedAssignmentExpression['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<
+			_resolveOne<
 				'+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??='
-			>(value, '_augmented_assignment_expression_operator')
+			>(value, _K2, _K2)
 		),
 		[
 			['+=', TSKindId.PlusEq] as const,
@@ -4944,7 +4923,7 @@ export function resolveUnaryExpression_operator(
 ): T.UnaryExpression['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete'>(value, '_unary_expression_operator')
+			_resolveOne<'!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete'>(value, _K2, _K2)
 		),
 		[
 			['!', TSKindId.Bang] as const,
@@ -9713,7 +9692,7 @@ export function resolveLiteralTypeNegativeNumber_operator(
 	value: T.LiteralTypeNegativeNumber.LooseConfig['operator']
 ): T.LiteralTypeNegativeNumber['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'-' | '+'>(value, '__number_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
 		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
 	);
 }

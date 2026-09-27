@@ -51,7 +51,7 @@ import {
 	predictedSymbolSource,
 	type SymbolSource
 } from './rule-patterns.ts';
-import { ruleKey } from './shared.ts';
+import { baseRulesOf, ruleKey } from './shared.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
@@ -79,9 +79,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
 	const hasWrapper = 'grammar' in base;
-	const baseRules = (hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as
-		| Record<string, Rule>
-		| undefined;
+	const baseRules = baseRulesOf<Rule>(base);
 	if (!baseRules) return base as unknown as EnrichedGrammar<B>;
 	const rulesBag: Record<string, Rule> = { ...baseRules };
 	const grammarMeta = (hasWrapper ? base.grammar : base) as

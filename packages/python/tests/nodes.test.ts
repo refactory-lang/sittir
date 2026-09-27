@@ -4343,6 +4343,97 @@ describe('comprehension_clauses', () => {
 	});
 });
 
+describe('escape_sequence_unicode_fixed', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceUnicodeFixed('uaaaa');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeFixed);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceUnicodeFixed('uaaaa');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_unicode_wide', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceUnicodeWide('Uaaaaaaaa');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeWide);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceUnicodeWide('Uaaaaaaaa');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_hex', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceHex('xaa');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceHex);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceHex('xaa');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_octal', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceOctal('1');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceOctal);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceOctal('1');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_line_break', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceLineBreak('\n');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceLineBreak);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceLineBreak('\n');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_simple', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceSimple('a');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceSimple);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceSimple('a');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('escape_sequence_named', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequenceNamed('N{a}');
+		expect(node.$type).toBe(TSKindId.EscapeSequenceNamed);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.escapeSequenceNamed('N{a}');
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('expression_statement_tuple', () => {
 	it('factory produces correct type', () => {
 		const node = ir.expressionStatementTuple(

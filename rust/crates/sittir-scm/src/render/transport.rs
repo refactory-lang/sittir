@@ -3271,6 +3271,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeArmNameTransportSlot {
                     6 => Ok(Self::ImmediateIdentifier(
                         ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    5 => Ok(Self::ImmediateIdentifier(
+                        ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     35 => Ok(Self::ImmediateString(
                         ImmediateStringTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3286,6 +3289,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeArmNameTransportSlot {
                 )?;
                 match kind_id {
                     6 => Ok(Self::ImmediateIdentifier(
+                        ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::ImmediateIdentifier(
                         ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     35 => Ok(Self::ImmediateString(

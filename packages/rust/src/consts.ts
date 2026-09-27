@@ -35,6 +35,10 @@ const NODE_KINDS = [
 	'enum_variant',
 	'enum_variant_list',
 	'enum_variant_list_elements',
+	'escape_sequence_hex',
+	'escape_sequence_simple',
+	'escape_sequence_unicode_braced',
+	'escape_sequence_unicode_fixed',
 	'expression_statement',
 	'extern_crate_declaration',
 	'extern_modifier',
@@ -156,7 +160,6 @@ const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
 	'_block_comment_content',
-	'_compound_assignment_expr_operator',
 	'_error_sentinel',
 	'_impl_item_unsafe_marker',
 	'_kw_async',
@@ -2643,21 +2646,6 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', configKey: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
-
-/** Valid values for `_compound_assignment_expr_operator` nodes. */
-export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
-	'+=',
-	'-=',
-	'*=',
-	'/=',
-	'%=',
-	'&=',
-	'|=',
-	'^=',
-	'<<=',
-	'>>='
-] as const;
-export type CompoundAssignmentExprOperatorValue = (typeof _COMPOUND_ASSIGNMENT_EXPR_OPERATORS)[number];
 
 /** Valid values for `_token_keywords` nodes. */
 export const _TOKEN_KEYWORDSS = [

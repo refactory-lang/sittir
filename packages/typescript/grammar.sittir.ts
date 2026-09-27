@@ -255,14 +255,8 @@ export default grammar(
 				template_substitution: { after: preference('tight') },
 				template_type: { after: preference('tight') },
 
-				// Unary `!` is a normal token seam (`! x` compiles fine), and
-				// the undeclared default is space — confirmed via a factory
-				// construction probe (`ir.unaryExpression({operator:'!',...})`
-				// renders "! y", not "!y"; read-render of parsed `!y` masks
-				// this because unedited content slices verbatim source bytes
-				// rather than consulting this site at all).
-				unary_expression_operator: { '"!"/after': preference('tight') },
-				number_operator: { '"-"/after': preference('tight'), '"+"/after': preference('tight') },
+				literal_type_negative_number: { 'operator:/after': preference('tight') },
+				unary_expression: { 'operator:/after': preference('tight') },
 
 				object_type_content: {
 					'members:/separator/before': preference('tight'),

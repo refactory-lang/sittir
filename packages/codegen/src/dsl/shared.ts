@@ -34,3 +34,13 @@ function canonicalizeSeparator(separator: unknown): CanonicalForm {
 		canonicalize(sep.value)
 	];
 }
+
+export const DSL_RULES_KEY = Symbol.for('sittir.dslRules');
+
+export function baseRulesOf<R>(base: unknown): Record<string, R> | undefined {
+	if (!base || typeof base !== 'object') return undefined;
+	const grammar = 'grammar' in base ? (base as { grammar?: unknown }).grammar : base;
+	if (!grammar || typeof grammar !== 'object') return undefined;
+	const dslRules = (grammar as Record<symbol, unknown>)[DSL_RULES_KEY];
+	return (dslRules ?? (grammar as { rules?: unknown }).rules) as Record<string, R> | undefined;
+}
