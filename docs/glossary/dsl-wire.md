@@ -247,7 +247,11 @@ Whether `name` is a rule the grammar's `precedences` table ranks by symbol (tree
 
 ### `packages/codegen/src/dsl/wire/wire.ts::precedenceRankedNames`
 
-The symbol names in the grammar's `precedences` groups: the base grammar's table, or the override's `precedences` callback applied to it, evaluated through the simple `$` proxy like `extraRuleNames`. Named (string) precedences carry no symbol and are skipped.
+The symbol names in the grammar's `precedences` groups, read through `overriddenList`. Named (string) precedences carry no symbol and are skipped.
+
+### `packages/codegen/src/dsl/wire/wire.ts::overriddenList`
+
+One grammar list as the override sees it: the base grammar's list (its callback evaluated through the simple `$` proxy), or the override's callback applied to that list, or the override's literal list. The one reader of `extras`, `precedences` and `supertypes`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsExtraRule`
 
@@ -255,7 +259,7 @@ Whether `name` is one of the grammar's `extras` rules in the active wire context
 
 ### `packages/codegen/src/dsl/wire/wire.ts::extraRuleNames`
 
-The symbol names of the grammar's `extras`: the base grammar's list, or the override's `extras` callback applied to it, evaluated through the simple `$` proxy the way `baseExternalNames` evaluates externals. Patterns in the list carry no name and are skipped.
+The names of the grammar's extra rules: the `extras` list read through `overriddenList`, closed over supertypes by `extrasClosure` — a supertype listed in `extras` contributes each member of its choice body, transitively. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 

@@ -4240,6 +4240,18 @@ function resolveToEnumMembersOneLevelDeep(target) {
   }
 }
 
+// packages/codegen/src/dsl/extras.ts
+function extrasClosure(extras, subtypesOf) {
+  const names = /* @__PURE__ */ new Set();
+  const add = (name) => {
+    if (names.has(name)) return;
+    names.add(name);
+    for (const subtype of subtypesOf(name) ?? []) add(subtype);
+  };
+  for (const name of extras) add(name);
+  return names;
+}
+
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -4523,41 +4535,43 @@ function symbolNamesOf(entries) {
   }
   return names;
 }
-function precedenceRankedNames(cfg, base2) {
-  const basePrecedences = base2?.grammar?.precedences ?? base2?.precedences;
+function overriddenList(baseValue, own) {
   const previous = withStringGlobalShim(
-    () => typeof basePrecedences === "function" ? basePrecedences(makeSimpleDollarProxy(), []) : basePrecedences
+    () => typeof baseValue === "function" ? baseValue(makeSimpleDollarProxy(), []) : baseValue
   );
-  const own = cfg.precedences;
-  const groups = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous ?? [])) : own ?? previous;
+  return typeof own === "function" ? withStringGlobalShim(
+    () => own(makeSimpleDollarProxy(), previous ?? [])
+  ) : own ?? previous;
+}
+function precedenceRankedNames(cfg, base2) {
+  const groups = overriddenList(
+    base2?.grammar?.precedences ?? base2?.precedences,
+    cfg.precedences
+  );
   const names = /* @__PURE__ */ new Set();
   for (const group2 of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group2)) names.add(name);
   return names;
 }
 function extraRuleNames(cfg, base2) {
-  const baseExtras = base2?.grammar?.extras ?? base2?.extras;
-  const previous = withStringGlobalShim(
-    () => typeof baseExtras === "function" ? baseExtras(makeSimpleDollarProxy()) : baseExtras
+  const extras = symbolNamesOf(
+    overriddenList(base2?.grammar?.extras ?? base2?.extras, cfg.extras)
   );
-  const own = cfg.extras;
-  const entries = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous)) : own ?? previous;
-  return symbolNamesOf(entries);
+  const supertypes = symbolNamesOf(
+    overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, cfg.supertypes)
+  );
+  return extrasClosure(extras, (name) => {
+    if (!supertypes.has(name)) return void 0;
+    const body = cfg.rules?.[name] ?? base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
+    if (body === void 0) return void 0;
+    const rule2 = withStringGlobalShim(() => body(makeSimpleDollarProxy()));
+    return rule2?.type === "CHOICE" ? symbolNamesOf(rule2.members) : void 0;
+  });
 }
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
-  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
-  const names = /* @__PURE__ */ new Set();
-  for (const external of Array.isArray(entries) ? entries : []) {
-    if (typeof external === "string") {
-      names.add(external);
-      continue;
-    }
-    const symbol = external;
-    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
-      names.add(symbol.name);
-    }
-  }
-  return names;
+  return symbolNamesOf(
+    typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals
+  );
 }
 function injectPlaceholderHiddenRules(rules, patches, context, externals, known) {
   const declared = /* @__PURE__ */ new Set();

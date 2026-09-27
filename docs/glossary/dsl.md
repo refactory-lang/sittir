@@ -11,6 +11,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+### `packages/codegen/src/dsl/extras.ts::extrasClosure`
+
+The extras of a grammar closed over supertypes: each listed name, and for every name that is a supertype, its members, transitively and once each. `subtypesOf` answers a name's members, or `undefined` when the name is not a supertype. The one rule both readings of "is this an extra" use: wire's `extraRuleNames` over the DSL rules and the compiler's `triviaKinds` over the node map.
+
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroups`
 
 ```text
