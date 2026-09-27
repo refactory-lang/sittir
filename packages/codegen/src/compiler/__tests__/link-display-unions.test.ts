@@ -9,7 +9,6 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
-		extraPatterns: [],
 		externals: [],
 		supertypes: [],
 		factoryInline: [],

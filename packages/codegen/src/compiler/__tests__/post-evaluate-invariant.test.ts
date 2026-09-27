@@ -122,9 +122,6 @@ describe('post-evaluate invariant', () => {
 				'name',
 				'rules',
 				'extras',
-				// The lexical extras (patterns and literal strings, as regex
-				// sources) — read by triviaKinds for whitespace eligibility.
-				'extraPatterns',
 				'externals',
 				'supertypes',
 				// Kinds with no top-level `ir.*` builder, declared by

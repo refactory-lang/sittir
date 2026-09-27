@@ -25,7 +25,6 @@ function makeMinimalFixture(): {
 			rules,
 			ruleCatalog,
 			extras: [],
-			extraPatterns: [],
 			externals: [],
 			supertypes: [],
 			factoryInline: [],

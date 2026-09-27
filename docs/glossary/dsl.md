@@ -994,6 +994,18 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 // survives only as the collision fallback.
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListEntry`
+
+One entry of a grammar's `extras` list, in grammar.json's own shape: a SYMBOL (a rule or scanner token by name), a STRING (a literal text), or a PATTERN (a regex source). The list stays a rule list from evaluate to the node map, in declaration order, so every reader sees each entry's rule type rather than a name-or-text string.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListParts`
+
+The three views of a rule list that `ruleListParts` returns: `names` (SYMBOL entries), `literals` (STRING values) and `patterns` (PATTERN sources), each in list order.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleListParts`
+
+The one derivation of names, literals and patterns from an `extras` rule list. A consumer that asks by name (prune roots, renames, trivia) reads `names`; nothing stores a split copy of the list.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::armLeadingSymbolName`
 
 ```text

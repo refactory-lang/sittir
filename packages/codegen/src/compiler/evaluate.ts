@@ -14,7 +14,6 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
-import { escapeRegexLiteral } from '../util/word-matcher.ts';
 import type {
 	AliasRule,
 	ChoiceRule,
@@ -34,7 +33,7 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody } from '../dsl/rule-patterns.ts';
+import { isComplexBody, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -285,8 +284,7 @@ interface GrammarOptions {
 }
 
 interface MetadataSinks {
-	extras: string[];
-	extraPatterns: string[];
+	extras: RuleListEntry[];
 	externals: string[];
 	supertypes: string[];
 	factoryInline: string[];
@@ -330,8 +328,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
 	const provenanceByKind = new Map<string, RuleProvenance>();
 
-	const extras: string[] = [];
-	const extraPatterns: string[] = [];
+	const extras: RuleListEntry[] = [];
 	const externals: string[] = [];
 	const supertypes: string[] = [];
 	const factoryInline: string[] = [];
@@ -343,7 +340,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const sinks: MetadataSinks = {
 		extras,
-		extraPatterns,
 		externals,
 		supertypes,
 		factoryInline,
@@ -396,7 +392,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		name: opts.name,
 		rules: identified.rules,
 		extras,
-		extraPatterns,
 		externals,
 		supertypes,
 		factoryInline,
@@ -872,8 +867,7 @@ function injectSyntheticRules(
 function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { sinks, setWord } = ctx;
 	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ?? ctx.baseGrammar) as {
-		extras?: string[];
-		extraPatterns?: string[];
+		extras?: RuleListEntry[];
 		externals?: string[];
 		supertypes?: string[];
 		factoryInline?: string[];
@@ -886,7 +880,6 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 	if (inherited) {
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
 		if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras);
-		if (!opts.extras && Array.isArray(inherited.extraPatterns)) sinks.extraPatterns.push(...inherited.extraPatterns);
 		if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes);
 		if (!opts.factoryInline && Array.isArray(inherited.factoryInline)) {
 			sinks.factoryInline.push(...inherited.factoryInline);
@@ -899,12 +892,39 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 	}
 }
 
-function appendExtra(rule: Rule<'evaluate'>, ctx: EvaluateCtx): void {
-	const { sinks } = ctx;
-	if (rule.type === SYMBOL) appendDedup(sinks.extras, rule.name);
-	else if (rule.type === PATTERN) appendDedup(sinks.extraPatterns, rule.value);
-	else if (rule.type === STRING) appendDedup(sinks.extraPatterns, escapeRegexLiteral(rule.value));
-	else throw new Error(`evaluate: an extra is a symbol, a pattern or a string, not ${rule.type}`);
+interface MetadataRuleListCtx {
+	readonly list: string;
+	readonly accepts: readonly RuleListEntry['type'][];
+	readonly sink: RuleListEntry[];
+}
+
+function appendMetadataRules(result: unknown, ctx: MetadataRuleListCtx): void {
+	if (!Array.isArray(result)) return;
+	for (const entry of result) {
+		const accepted = ruleListEntryOf(coerceToRule(entry));
+		if (accepted === undefined || !ctx.accepts.includes(accepted.type)) {
+			throw new Error(`evaluate: an entry of ${ctx.list} is a ${ctx.accepts.join(', ')}, not a ${coerceToRule(entry).type}`);
+		}
+		const key = ruleListEntryKey(accepted);
+		if (!ctx.sink.some((existing) => ruleListEntryKey(existing) === key)) ctx.sink.push(accepted);
+	}
+}
+
+function ruleListEntryOf(rule: Rule<'evaluate'>): RuleListEntry | undefined {
+	switch (rule.type) {
+		case SYMBOL:
+			return { type: SYMBOL, name: rule.name };
+		case STRING:
+			return { type: STRING, value: rule.value };
+		case PATTERN:
+			return { type: PATTERN, value: rule.value };
+		default:
+			return undefined;
+	}
+}
+
+function ruleListEntryKey(rule: RuleListEntry): string {
+	return rule.type === SYMBOL ? `${rule.type}:${rule.name}` : `${rule.type}:${rule.value}`;
 }
 
 function appendDedup(sink: string[], value: string): void {
@@ -930,8 +950,7 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { refs, sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
-		extras?: string[];
-		extraPatterns?: string[];
+		extras?: RuleListEntry[];
 		externals?: string[];
 		supertypes?: string[];
 		factoryInline?: string[];
@@ -943,12 +962,11 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	} | null;
 	if (opts.extras) {
 		const $ = createProxy('_extras_', refs);
-		const baseExtras = [
-			...baseNameSymbols(baseGrammar?.extras),
-			...(baseGrammar?.extraPatterns ?? []).map((value) => ({ type: PATTERN, value }))
-		];
-		const result = opts.extras.call($, $, baseExtras);
-		if (Array.isArray(result)) for (const e of result) appendExtra(coerceToRule(e), ctx);
+		appendMetadataRules(opts.extras.call($, $, baseGrammar?.extras ?? []), {
+			list: 'extras',
+			accepts: [SYMBOL, STRING, PATTERN],
+			sink: sinks.extras
+		});
 	}
 
 	if (opts.externals) {

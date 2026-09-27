@@ -13,6 +13,11 @@ import {
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import type {
+	PatternRule as GrammarPatternRule,
+	StringRule as GrammarStringRule,
+	SymbolRule as GrammarSymbolRule
+} from '../grammar-shapes/grammar-json.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -1290,4 +1295,32 @@ export function composeTokenText(
 		default:
 			return undefined;
 	}
+}
+
+export type RuleListEntry = GrammarSymbolRule | GrammarStringRule | GrammarPatternRule;
+
+export interface RuleListParts {
+	readonly names: string[];
+	readonly literals: string[];
+	readonly patterns: string[];
+}
+
+export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
+	const parts: RuleListParts = { names: [], literals: [], patterns: [] };
+	for (const rule of rules) {
+		switch (rule.type) {
+			case SYMBOL:
+				parts.names.push(rule.name);
+				break;
+			case STRING:
+				parts.literals.push(rule.value);
+				break;
+			case PATTERN:
+				parts.patterns.push(rule.value);
+				break;
+			default:
+				assertNever(rule);
+		}
+	}
+	return parts;
 }

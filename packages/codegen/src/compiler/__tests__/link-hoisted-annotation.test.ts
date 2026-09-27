@@ -10,7 +10,6 @@ function raw(rules: Record<string, Rule<'evaluate'>>): RawGrammar {
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
-		extraPatterns: [],
 		externals: [],
 		supertypes: [],
 		factoryInline: [],

@@ -100,7 +100,8 @@ import {
 	rulesEqual,
 	separatorOf,
 	predictedSymbolSource,
-	type SymbolSource
+	type SymbolSource,
+	ruleListParts
 } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -304,7 +305,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		externalRoles,
 		externals: raw.externals,
 		extras: raw.extras,
-		extraPatterns: raw.extraPatterns,
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
@@ -821,7 +821,7 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		references,
-		extras: raw.extras.map(rename),
+		extras: raw.extras.map((entry) => (entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry)),
 		externals: raw.externals.map(rename),
 		supertypes,
 		factoryInline: raw.factoryInline.map(rename),
@@ -953,7 +953,7 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	const rootName = rootRuleName(rules);
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
-	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras, ...ctx.supertypes]) {
+	for (const keep of [...ctx.grammar.externals, ...ruleListParts(ctx.grammar.extras).names, ...ctx.supertypes]) {
 		for (const name of computeReachableFromRoot({ rules, rootName: keep })) reachable.add(name);
 	}
 	for (const name of Object.keys(rules)) {

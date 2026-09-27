@@ -2843,9 +2843,21 @@ runs once the metadata callbacks have been evaluated.
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::appendExtra`
+### `packages/codegen/src/compiler/evaluate.ts::MetadataRuleListCtx`
 
-One entry of an `extras` callback's result, recorded by what it is: a symbol's name in `extras`, a pattern's source in `extraPatterns`, and a literal string escaped into `extraPatterns` too, so the lexical extras are one list of regex sources. Any other rule is refused, since tree-sitter's extras are only these.
+What `appendMetadataRules` needs for one list: its name for the error, the rule types the list accepts (extras: SYMBOL, STRING and PATTERN), and the sink it appends to.
+
+### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
+
+Appends the rules an `extras` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryOf`
+
+The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
+
+The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
 
 ### `packages/codegen/src/compiler/evaluate.ts::appendDedup`
 
@@ -2867,7 +2879,7 @@ One entry of an `extras` callback's result, recorded by what it is: a symbol's n
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
 
-An `extras` callback receives the base grammar's extras as rules, its names as symbols and its patterns as `PATTERN` rules, and each entry of its result goes through `appendExtra`. Symbol extras and lexical extras stay two lists from here on (`extras`, `extraPatterns`).
+An `extras` callback receives the base grammar's extras as the rule list evaluate stored for them, and its result is appended through `appendMetadataRules`. `extras` stays that rule list (`RuleListEntry`) to the node map; readers derive names, literals and patterns with `ruleListParts`.
 
 Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
 
@@ -2883,8 +2895,8 @@ Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` 
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property. Extras entries can be bare names (the base's
- * own spelling in this pass) as well as rules; both land in the extras sink.
+ * version of that property. The base's extras are handed back as the rule
+ * list evaluate stored for them.
  * The base `supertypes`, `inline` and `conflicts` (group-wise) arrive as
  * SYMBOL rules (`baseNameSymbols`), exactly as the tree-sitter CLI hands
  * them, so a wired callback's removals, renames and dedupe act the same in
@@ -9847,10 +9859,6 @@ same kinds, so the name and the fact cannot disagree.
 ### `packages/codegen/src/compiler/types.ts::ReservedWordsets`
 
 The grammar's `reserved` field as tree-sitter has it: each wordset name mapped to its members as rules, in declaration order. `evaluate` records it verbatim (a member written as a string is a STRING rule), and it equals `.sittir/src/grammar.json`'s `reserved`, which is `{}` for a grammar that declares none. It is carried unchanged through link, normalize and simplify to the node map.
-
-### `packages/codegen/src/compiler/types.ts::RawGrammar.extraPatterns`
-
-The grammar's lexical extras as regex sources: its pattern extras, and any literal-string extra escaped. `extras` holds only symbol names. The two are threaded side by side to the node map, where `triviaKinds` reads the patterns.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
 

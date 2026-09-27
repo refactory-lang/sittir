@@ -14,6 +14,7 @@ import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 
 const triviaKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
 export const COMMENT_IR_KEY = 'comment';
@@ -88,7 +89,7 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = triviaKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;
 	const kinds = extrasClosure(
-		[...(nodeMap.extras ?? []), ...whitespaceTriviaKinds(nodeMap)],
+		[...ruleListParts(nodeMap.extras ?? []).names, ...whitespaceTriviaKinds(nodeMap)],
 		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AssembledSupertype ? [kind] : [])),
 		(kind) => {
 			const node = nodeMap.nodes.get(kind);
@@ -102,7 +103,8 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 }
 
 export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {
-	const patterns = nodeMap.extraPatterns ?? [];
+	const { literals, patterns: sources } = ruleListParts(nodeMap.extras ?? []);
+	const patterns = [...sources, ...literals.map(escapeRegexLiteral)];
 	if (patterns.length === 0) return undefined;
 	return anchoredLeafRegex('extras', `(?:${patterns.map((pattern) => `(?:${pattern})`).join('|')})+`);
 }

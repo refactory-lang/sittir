@@ -464,8 +464,8 @@ it('classifies loose strings against comment kinds and rejects others', () => {
   extras (`whitespaceTriviaKinds`, one clause in `triviaKinds`). That gives
   space/newline/blankline (and python's double_blankline). tight, indent
   and dedent are refused for that one reason: "<kind> is not an extra".
-- Lexical extras are stamped at evaluate as `extraPatterns` (patterns, and
-  literal-string extras escaped), apart from `extras` (symbol names only).
+- `extras` stays the grammar's rule list (SYMBOL, STRING, PATTERN), and
+  readers take names, literals and patterns from it with `ruleListParts`.
 - Loose whitespace text resolves to the kind whose literal it is exactly
   (`'\n\n'` → blankline), or is refused. It never falls back to a comment.
 - Render: a whitespace entry replaces the spacing of the gap it sits in

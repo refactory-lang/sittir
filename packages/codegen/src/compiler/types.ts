@@ -1,4 +1,5 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -101,8 +102,7 @@ export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
-	readonly extras: string[];
-	readonly extraPatterns: string[];
+	readonly extras: RuleListEntry[];
 	readonly externals: string[];
 	readonly supertypes: string[];
 	readonly factoryInline: string[];
@@ -186,8 +186,7 @@ export interface LinkedGrammar {
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
-	readonly extras?: readonly string[];
-	readonly extraPatterns?: readonly string[];
+	readonly extras?: readonly RuleListEntry[];
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
@@ -220,8 +219,7 @@ export interface NormalizedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
-	readonly extras?: readonly string[];
-	readonly extraPatterns?: readonly string[];
+	readonly extras?: readonly RuleListEntry[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -250,8 +248,7 @@ export interface SimplifiedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
-	readonly extras?: readonly string[];
-	readonly extraPatterns?: readonly string[];
+	readonly extras?: readonly RuleListEntry[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
@@ -289,8 +286,7 @@ export interface NodeMap {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: ReadonlySet<string>;
-	readonly extras?: ReadonlySet<string>;
-	readonly extraPatterns?: readonly string[];
+	readonly extras?: readonly RuleListEntry[];
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 }

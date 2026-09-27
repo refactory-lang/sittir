@@ -45,10 +45,12 @@ describe('trivia model facts', () => {
 		]);
 	});
 
-	it('keeps symbol extras and lexical extras apart', async () => {
-		const rust = await nodeMapOf('rust');
-		expect([...(rust.extras ?? [])]).toEqual(['line_comment', 'block_comment']);
-		expect(rust.extraPatterns).toEqual(['\\s']);
+	it('keeps the extras as the rule list the grammar declares', async () => {
+		expect((await nodeMapOf('rust')).extras).toEqual([
+			{ type: 'PATTERN', value: '\\s' },
+			{ type: 'SYMBOL', name: 'line_comment' },
+			{ type: 'SYMBOL', name: 'block_comment' }
+		]);
 	});
 
 	it('makes a whitespace kind trivia exactly when its literal is one or more lexical extras', async () => {

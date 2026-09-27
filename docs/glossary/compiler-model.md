@@ -4564,7 +4564,7 @@ The single predicate for which kinds can be trivia entries: the kinds the gramma
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
 
-A text made of one or more of the grammar's lexical extras: `^(?:p1|p2|…)+$` over `extraPatterns`, compiled as a leaf guard is. Undefined for a grammar with no lexical extra.
+A text made of one or more of the grammar's lexical extras: `^(?:p1|p2|…)+$` over the PATTERN extras and the escaped STRING extras (`ruleListParts`), compiled as a leaf guard is. Undefined for a grammar with no lexical extra.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
 
