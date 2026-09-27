@@ -15,6 +15,8 @@ import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
+import { RuleWalker } from '../../dsl/rule-walker.ts';
+import type { RenderRule } from '../../types/rule.ts';
 
 const triviaKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
 export const COMMENT_IR_KEY = 'comment';
@@ -168,4 +170,29 @@ function verdict(ends: readonly ResolvedLineEnd[]): boolean | undefined {
 	if (ends.includes('closed') || ends.includes('empty')) return false;
 	if (ends.includes('unknown')) return undefined;
 	return ends.length > 0;
+}
+
+const referenceWalker = new RuleWalker<RenderRule>();
+
+export function stampTriviaInterior(nodeMap: NodeMap): void {
+	const referencers = new Map<string, Set<string>>();
+	for (const [kind, rule] of Object.entries(nodeMap.normalizedRules ?? {})) {
+		referenceWalker.fold(rule, undefined, (_, r) => {
+			if (r.type === SYMBOL && r.name !== kind) referencers.set(r.name, (referencers.get(r.name) ?? new Set()).add(kind));
+			return undefined;
+		});
+	}
+	const interior = new Set(triviaKinds(nodeMap));
+	for (let grew = true; grew; ) {
+		grew = false;
+		for (const [kind, from] of referencers) {
+			if (interior.has(kind) || ![...from].every((referencer) => interior.has(referencer))) continue;
+			interior.add(kind);
+			grew = true;
+		}
+	}
+	for (const kind of interior) {
+		const node = nodeMap.nodes.get(kind);
+		if (node !== undefined) node.triviaInterior = true;
+	}
 }

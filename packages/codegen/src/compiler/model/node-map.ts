@@ -22,7 +22,7 @@ import {
 	aliasRestampRequired,
 	transitiveParseKinds
 } from '../../types/rule.ts';
-import { isStringType } from '../../types/runtime-shapes.ts';
+import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import {
@@ -1151,6 +1151,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
+	triviaInterior: boolean = false;
+
 	get annotations(): RuleAnnotations | undefined {
 		return this.rule.annotations;
 	}
@@ -1661,6 +1663,23 @@ interface GapWalkCtx {
 	readonly conditional: boolean;
 }
 
+interface SlotEmptinessCtx {
+	readonly slotById: ReadonlyMap<RuleId, AssembledNonterminal>;
+}
+
+function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): EmptinessCtx<RenderRule> {
+	return {
+		settled(rule) {
+			if (rule.multiplicity === 'optional' || rule.multiplicity === 'array' || rule.optionalElement === true) return true;
+			const slot = rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined && (rule !== root || isRequired(slot))) return false;
+			return renderRuleWalker.childrenOf(rule).length === 0 ? true : undefined;
+		},
+		children: (rule) => renderRuleWalker.childrenOf(rule),
+		isChoice: (rule) => rule.type === CHOICE
+	};
+}
+
 export interface InnerGap {
 	readonly key: string;
 	readonly precedingTokens: number;
@@ -1792,19 +1811,20 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get innerGaps(): readonly InnerGap[] {
-		if (this._slots.some(isRequired)) return [];
+		if (this.triviaInterior) return [];
 		const root = this.renderRule;
 		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+		if (!realizesEmpty(root, slotEmptiness(root, { slotById }))) return [];
 		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
-		let tokens = 0;
+		const immediateTokens: boolean[] = [];
 		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
 			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
 			if (slot !== undefined) {
-				occurrences.push({ slot, precedingTokens: tokens });
+				occurrences.push({ slot, precedingTokens: immediateTokens.length });
 				return;
 			}
 			if (rule.type === STRING) {
-				if (!ctx.conditional) tokens += 1;
+				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
 				return;
 			}
 			const inner =
@@ -1816,7 +1836,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			for (const child of renderRuleWalker.childrenOf(rule)) walk(child, { conditional: inner });
 		};
 		walk(root, { conditional: false });
-		if (this._slots.length === 0) return tokens >= 2 ? [{ key: 'interior', precedingTokens: 1 }] : [];
+		const tokens = immediateTokens.length;
+		if (this._slots.length === 0) {
+			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
+		}
 		if (tokens === 0) {
 			const repeat = occurrences.find((occurrence) => isMultiple(occurrence.slot));
 			return repeat === undefined ? [] : [{ key: repeat.slot.name, precedingTokens: 0 }];
@@ -1825,7 +1848,12 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			.filter(
 				(occurrence, i) => occurrences.findIndex((other) => other.precedingTokens === occurrence.precedingTokens) === i
 			)
-			.filter((occurrence) => occurrence.precedingTokens > 0 && occurrence.precedingTokens < tokens)
+			.filter(
+				(occurrence) =>
+					occurrence.precedingTokens > 0 &&
+					occurrence.precedingTokens < tokens &&
+					!immediateTokens[occurrence.precedingTokens]
+			)
 			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
 	}
 

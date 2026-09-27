@@ -752,29 +752,6 @@ function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
 	return node instanceof AbstractAssembledCompound && node.lexedInterior;
 }
 
-function triviaInterior(rules: Readonly<Record<string, RenderRule>>, nodeMap: NodeMap): ReadonlySet<string> {
-	const referencers = new Map<string, Set<string>>();
-	for (const [kind, rule] of Object.entries(rules)) {
-		walker.fold(rule, undefined, (_, r) => {
-			const name = bag(r).name;
-			if (bag(r).type === SYMBOL && name !== undefined && name !== kind) {
-				referencers.set(name, (referencers.get(name) ?? new Set()).add(kind));
-			}
-			return undefined;
-		});
-	}
-	const interior = new Set(triviaKinds(nodeMap));
-	for (let grew = true; grew; ) {
-		grew = false;
-		for (const [kind, from] of referencers) {
-			if (interior.has(kind) || ![...from].every((referencer) => interior.has(referencer))) continue;
-			interior.add(kind);
-			grew = true;
-		}
-	}
-	return interior;
-}
-
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
 	const display = displayNameOf(kind, nodeMap);
@@ -812,7 +789,7 @@ export function seamRenderRules(
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: spacingArms, symbols } : { arms: whitespaceArmsOf(config.nodeMap), symbols: flankSyms };
 	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules };
-	const tokenInterior = triviaInterior(spaced.rules, config.nodeMap);
+	const tokenInterior = (kind: string): boolean => config.nodeMap.nodes.get(kind)?.triviaInterior === true;
 	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
@@ -827,8 +804,8 @@ export function seamRenderRules(
 			}
 			const kindConfig: RenderRulesConfig = { ...immediateConfig, choiceArmNodes: choiceArmNodesOf(rule) };
 			const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, kindConfig, resolver, seams);
-			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior.has(kind) ? rule : visit(walker.map(rule, visit));
-			const insideTrivia = tokenInterior.has(kind) && !triviaKinds(config.nodeMap).has(kind);
+			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior(kind) ? rule : visit(walker.map(rule, visit));
+			const insideTrivia = tokenInterior(kind) && !triviaKinds(config.nodeMap).has(kind);
 			out[kind] = ownsKindEdges(kind, config.nodeMap) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
 		}
 		return { rules: out };

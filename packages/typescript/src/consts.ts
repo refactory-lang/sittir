@@ -2722,11 +2722,7 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
 	object_pattern: ['properties'],
 	program: ['statements'],
 	statement_block: ['statements'],
-	string_double: ['elements'],
-	string_single: ['elements'],
 	switch_body: ['cases'],
-	template_literal_type: ['elements'],
-	template_string: ['elements'],
 	tuple_type: ['tuple_type_members']
 };
 

@@ -78843,7 +78843,6 @@ fn render_block_comment(node: &BlockCommentTransport, w: &mut dyn ::sittir_core:
     let content = View::new(&node.content, "{}");
     w.edge(::sittir_core::types::KindId(335), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("/*")?;
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "content", w)?;
     content.render(w)?;
     w.text("*/")?;
     w.edge(::sittir_core::types::KindId(335), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));

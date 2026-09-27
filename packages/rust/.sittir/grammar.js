@@ -136,16 +136,29 @@ function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
 }
+function realizesEmpty(rule, ctx) {
+  const settled = ctx.settled(rule);
+  if (settled !== void 0) return settled;
+  const children = ctx.children(rule);
+  return ctx.isChoice(rule) ? children.some((child) => realizesEmpty(child, ctx)) : children.every((child) => realizesEmpty(child, ctx));
+}
+var textEmptiness = {
+  settled(rule) {
+    const t = rule.type;
+    if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+    if (t === "STRING") return rule.value === "";
+    if (t === "PATTERN") return patternAcceptsEmpty(String(rule.value));
+    if (isChoiceType(t) || isSeqType(t) || isPrecWrapper(rule)) return void 0;
+    return false;
+  },
+  children(rule) {
+    if (isPrecWrapper(rule)) return [rule.content];
+    return rule.members ?? [];
+  },
+  isChoice: (rule) => isChoiceType(rule.type)
+};
 function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-  if (t === "STRING") return rule.value === "";
-  if (t === "PATTERN") return patternAcceptsEmpty(String(rule.value));
-  const members = rule.members ?? [];
-  if (isChoiceType(t)) return members.some(matchesEmpty);
-  if (isSeqType(t)) return members.every(matchesEmpty);
-  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
-  return false;
+  return realizesEmpty(rule, textEmptiness);
 }
 
 // packages/codegen/src/dsl/rule-walker.ts

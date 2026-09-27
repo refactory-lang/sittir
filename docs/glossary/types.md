@@ -1117,6 +1117,14 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
  *  either should use {@link isRepeatType}. */
 ```
 
+### `packages/codegen/src/types/runtime-shapes.ts::realizesEmpty`
+
+The one emptiness law over any rule shape: a rule its reader settles answers for itself; otherwise a choice can be empty when some child can, and anything else when every child can. Readers differ only in what they settle, since they ask about different emptiness: `matchesEmpty` asks about text (a non-empty string cannot be empty), `slotEmptiness` about slot values (every token can).
+
+### `packages/codegen/src/types/runtime-shapes.ts::EmptinessCtx`
+
+How `realizesEmpty` reads one rule shape: `settled` answers a rule outright or leaves it to its children (`undefined`), `children` lists what it composes and `isChoice` says whether one of them is enough.
+
 ### `packages/codegen/src/types/runtime-shapes.ts::matchesEmpty`
 
 ```text

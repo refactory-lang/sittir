@@ -1197,16 +1197,12 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (231, 1) => Some("properties"),
         (234, 1) => Some("elements"),
         (235, 1) => Some("elements"),
-        (266, 1) => Some("elements"),
         (271, 1) => Some("elements"),
         (275, 1) => Some("content"),
         (276, 1) => Some("formal_parameters_elements"),
         (310, 1) => Some("enum_body_elements"),
-        (335, 1) => Some("elements"),
         (366, 1) => Some("tuple_type_members"),
         (382, 0) => Some("content"),
-        (413, 1) => Some("elements"),
-        (414, 1) => Some("elements"),
         _ => None,
     }
 }

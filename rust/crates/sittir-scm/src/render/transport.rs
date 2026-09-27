@@ -8067,7 +8067,6 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
     let string_content = View::new(&node.string_content, "{}");
     w.edge(::sittir_core::types::KindId(34), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("\"")?;
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "string_content", w)?;
     string_content.render(w)?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(34), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -8077,7 +8076,6 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
 fn render_immediate_string(node: &ImmediateStringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let string_content = View::new(&node.string_content, "{}");
     w.text("\"")?;
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "string_content", w)?;
     string_content.render(w)?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(35), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -8096,7 +8094,6 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         head: None,
         tail: None,
     };
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "content", w)?;
     content.render(w)?;
     Ok(())
 }
@@ -8273,7 +8270,6 @@ fn render_named_node(node: &NamedNodeTransport, w: &mut dyn ::sittir_core::rende
     w.edge(::sittir_core::types::KindId(42), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_NAMED_NODE_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "name", w)?;
     name.render(w)?;
     named_node_arm.render(w)?;
     named_node_group.render(w)?;

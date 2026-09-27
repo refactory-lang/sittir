@@ -122,16 +122,29 @@ function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
 }
+function realizesEmpty(rule2, ctx) {
+  const settled = ctx.settled(rule2);
+  if (settled !== void 0) return settled;
+  const children = ctx.children(rule2);
+  return ctx.isChoice(rule2) ? children.some((child) => realizesEmpty(child, ctx)) : children.every((child) => realizesEmpty(child, ctx));
+}
+var textEmptiness = {
+  settled(rule2) {
+    const t = rule2.type;
+    if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+    if (t === "STRING") return rule2.value === "";
+    if (t === "PATTERN") return patternAcceptsEmpty(String(rule2.value));
+    if (isChoiceType(t) || isSeqType(t) || isPrecWrapper(rule2)) return void 0;
+    return false;
+  },
+  children(rule2) {
+    if (isPrecWrapper(rule2)) return [rule2.content];
+    return rule2.members ?? [];
+  },
+  isChoice: (rule2) => isChoiceType(rule2.type)
+};
 function matchesEmpty(rule2) {
-  const t = rule2.type;
-  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-  if (t === "STRING") return rule2.value === "";
-  if (t === "PATTERN") return patternAcceptsEmpty(String(rule2.value));
-  const members = rule2.members ?? [];
-  if (isChoiceType(t)) return members.some(matchesEmpty);
-  if (isSeqType(t)) return members.every(matchesEmpty);
-  if (isPrecWrapper(rule2)) return matchesEmpty(rule2.content);
-  return false;
+  return realizesEmpty(rule2, textEmptiness);
 }
 
 // packages/codegen/src/dsl/rule-metadata.ts

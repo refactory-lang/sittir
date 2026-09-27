@@ -1299,7 +1299,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (308, 1) => Some("statements"),
         (311, 1) => Some("elements"),
         (312, 1) => Some("patterns"),
-        (335, 1) => Some("content"),
         (370, 1) => Some("attributes"),
         (406, 1) => Some("token_patterns"),
         (407, 1) => Some("token_patterns"),

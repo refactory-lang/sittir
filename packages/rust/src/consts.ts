@@ -2650,7 +2650,6 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
 	arguments: ['arguments_elements'],
 	array_expression_list: ['attributes'],
 	block: ['statements'],
-	block_comment: ['content'],
 	closure_parameters: ['parameters'],
 	declaration_list: ['declarations'],
 	delim_token_tree_brace: ['delim_tokens'],

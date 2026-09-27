@@ -208,14 +208,37 @@ export function samplePattern(source: string): string | null {
 	}
 }
 
+export interface EmptinessCtx<R> {
+	settled(rule: R): boolean | undefined;
+	children(rule: R): readonly R[];
+	isChoice(rule: R): boolean;
+}
+
+export function realizesEmpty<R>(rule: R, ctx: EmptinessCtx<R>): boolean {
+	const settled = ctx.settled(rule);
+	if (settled !== undefined) return settled;
+	const children = ctx.children(rule);
+	return ctx.isChoice(rule)
+		? children.some((child) => realizesEmpty(child, ctx))
+		: children.every((child) => realizesEmpty(child, ctx));
+}
+
+const textEmptiness: EmptinessCtx<RuntimeRule> = {
+	settled(rule) {
+		const t = rule.type;
+		if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+		if (t === 'STRING') return (rule as { value?: unknown }).value === '';
+		if (t === 'PATTERN') return patternAcceptsEmpty(String((rule as { value?: unknown }).value));
+		if (isChoiceType(t) || isSeqType(t) || isPrecWrapper(rule as { type: string })) return undefined;
+		return false;
+	},
+	children(rule) {
+		if (isPrecWrapper(rule as { type: string })) return [(rule as { content?: RuntimeRule }).content!];
+		return (rule as { members?: readonly RuntimeRule[] }).members ?? [];
+	},
+	isChoice: (rule) => isChoiceType(rule.type)
+};
+
 export function matchesEmpty(rule: RuntimeRule): boolean {
-	const t = rule.type;
-	if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-	if (t === 'STRING') return (rule as { value?: unknown }).value === '';
-	if (t === 'PATTERN') return patternAcceptsEmpty(String((rule as { value?: unknown }).value));
-	const members = (rule as { members?: readonly RuntimeRule[] }).members ?? [];
-	if (isChoiceType(t)) return members.some(matchesEmpty);
-	if (isSeqType(t)) return members.every(matchesEmpty);
-	if (isPrecWrapper(rule as { type: string })) return matchesEmpty((rule as { content?: RuntimeRule }).content!);
-	return false;
+	return realizesEmpty(rule, textEmptiness);
 }

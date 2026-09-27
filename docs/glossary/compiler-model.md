@@ -4503,7 +4503,9 @@ build error naming the arms it admits.
 
 Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
 
-- A kind with any required slot has no gaps. A filled required slot gives every comment a named neighbour, so leading or trailing always holds it.
+- A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
+- A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
+- A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
 - When several slots share a span, only the first in render order keys it.
@@ -4549,6 +4551,14 @@ The one walk over a rule's edge. A sequence reads its outermost member on that e
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.leadingTerminals`
 
 How this kind's text can begin, read from its own rule by `ruleEdgeTerminals`. Symbols are left for the caller to resolve through the node map, as `lineTerminated` does for the end edge.
+
+### `packages/codegen/src/compiler/model/node-map.ts::slotEmptiness`
+
+The emptiness reader `innerGaps` passes to the shared law (`realizesEmpty`): whether a render rule can realise with no slot value. Optional, repeat and optional-element rules can; a slot occurrence cannot; a rule with no children (a token, a non-slot symbol) can. The root is a slot occurrence only when its slot is required, because a kind's sole slot also carries the root's id while the root is the whole body around it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotEmptinessCtx`
+
+The slots of the kind whose emptiness `slotEmptiness` reads, by source rule id.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::GapWalkCtx`
 
@@ -4633,16 +4643,20 @@ True for a slot value that is free text constrained by a pattern rather than a l
 True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
 ```
 
-### `packages/codegen/src/compiler/model/render-rules.ts::triviaInterior`
+### `packages/codegen/src/compiler/model/trivia.ts::stampTriviaInterior`
 
 The token-interior rule applied to trivia kinds. A trivia kind (`triviaKinds`)
 is lexically one unit: a comment body or a line continuation has no seam a
 space could go in without changing what it reads as (`/*!*/` spaced reads as a
 doc comment with a space of content; `\ ` before a newline is not a
 continuation). The token interior of a trivia kind covers the kinds reachable
-only through it, found as a fixpoint over the render rules' references (the
+only through it, found as a fixpoint over the grammar's normalized rules' references (the
 doc-comment variants and their markers). Those own no seams; the trivia kind's
-own edges stay, since it still sits among its neighbours.
+own edges stay, since it still sits among its neighbours. Stamped once at the end of assemble as `AssembledNodeBase.triviaInterior`; render-rules and `innerGaps` read the stamp.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.triviaInterior`
+
+Whether the kind is a trivia kind or reachable only through one (`stampTriviaInterior`): lexically one unit, with no interior seam and no inner gap.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateWhenPresent`
 

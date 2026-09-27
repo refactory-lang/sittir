@@ -50562,7 +50562,6 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         head: None,
         tail: None,
     };
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "content", w)?;
     content.render(w)?;
     Ok(())
 }
@@ -51003,7 +51002,6 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dy
         head: None,
         tail: None,
     };
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "content", w)?;
     content.render(w)?;
     Ok(())
 }

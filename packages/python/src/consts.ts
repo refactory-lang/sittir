@@ -1960,7 +1960,6 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
 	argument_list: ['arguments'],
 	case_list_pattern: ['list_pattern_case_patterns'],
 	case_tuple_pattern: ['list_pattern_case_patterns'],
-	comprehension_clauses: ['content'],
 	dict_pattern: ['dict_pattern_elements'],
 	dictionary: ['entries'],
 	list: ['collection_elements'],
@@ -1968,7 +1967,6 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
 	match_block_block: ['alternative'],
 	module: ['statements'],
 	parameters: ['elements'],
-	string_content: ['content'],
 	tuple: ['collection_elements'],
 	tuple_pattern: ['patterns']
 };
