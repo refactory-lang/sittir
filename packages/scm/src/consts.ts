@@ -12,7 +12,6 @@ const NODE_KINDS = [
 	'immediate_string',
 	'list',
 	'missing_node',
-	'named_node',
 	'named_node_expression_arm',
 	'negated_field',
 	'parameters',
@@ -118,16 +117,17 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	group_expression_arm: 47,
 	named_node_expression_arm: 48,
 	grouping_group: 49,
-	named_node_arm: 50,
-	named_node_group: 51,
-	named_node_group_children: 52,
-	named_node_group_anchored_last: 53,
-	program_repeat1: 54,
-	string_content_repeat1: 55,
-	parameters_repeat1: 56,
-	list_repeat1: 57,
-	grouping_repeat1: 58,
-	named_node_group_children_repeat1: 59
+	named_node_group: 50,
+	named_node_plain: 51,
+	named_node_supertyped: 52,
+	named_node_group_children: 53,
+	named_node_group_anchored_last: 54,
+	program_repeat1: 55,
+	string_content_repeat1: 56,
+	parameters_repeat1: 57,
+	list_repeat1: 58,
+	grouping_repeat1: 59,
+	named_node_group_children_repeat1: 60
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -180,16 +180,17 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[47]: 'group_expression_arm',
 	[48]: 'named_node_expression_arm',
 	[49]: 'grouping_group',
-	[50]: 'named_node_arm',
-	[51]: 'named_node_group',
-	[52]: 'named_node_group_children',
-	[53]: 'named_node_group_anchored_last',
-	[54]: 'program_repeat1',
-	[55]: 'string_content_repeat1',
-	[56]: 'parameters_repeat1',
-	[57]: 'list_repeat1',
-	[58]: 'grouping_repeat1',
-	[59]: 'named_node_group_children_repeat1'
+	[50]: 'named_node_group',
+	[51]: 'named_node_plain',
+	[52]: 'named_node_supertyped',
+	[53]: 'named_node_group_children',
+	[54]: 'named_node_group_anchored_last',
+	[55]: 'program_repeat1',
+	[56]: 'string_content_repeat1',
+	[57]: 'parameters_repeat1',
+	[58]: 'list_repeat1',
+	[59]: 'grouping_repeat1',
+	[60]: 'named_node_group_children_repeat1'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -247,33 +248,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym_named_node_expression_arm'
 	},
 	{ name: 'grouping_group', id: 49, enumName: 'GroupingGroup', cName: 'sym_grouping_group' },
-	{ name: 'named_node_arm', id: 50, enumName: 'NamedNodeArm', cName: 'sym_named_node_arm' },
-	{ name: 'named_node_group', id: 51, enumName: 'NamedNodeGroup', cName: 'sym_named_node_group' },
+	{ name: 'named_node_group', id: 50, enumName: 'NamedNodeGroup', cName: 'sym_named_node_group' },
+	{ name: 'named_node_plain', id: 51, enumName: 'NamedNodePlain', cName: 'sym_named_node_plain' },
+	{ name: 'named_node_supertyped', id: 52, enumName: 'NamedNodeSupertyped', cName: 'sym_named_node_supertyped' },
 	{
 		name: 'named_node_group_children',
-		id: 52,
+		id: 53,
 		enumName: 'NamedNodeGroupChildren',
 		cName: 'sym_named_node_group_children'
 	},
 	{
 		name: 'named_node_group_anchored_last',
-		id: 53,
+		id: 54,
 		enumName: 'NamedNodeGroupAnchoredLast',
 		cName: 'sym_named_node_group_anchored_last'
 	},
-	{ name: 'program_repeat1', id: 54, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
+	{ name: 'program_repeat1', id: 55, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
 	{
 		name: 'string_content_repeat1',
-		id: 55,
+		id: 56,
 		enumName: 'AuxStringContentRepeat1',
 		cName: 'aux_sym_string_content_repeat1'
 	},
-	{ name: 'parameters_repeat1', id: 56, enumName: 'AuxParametersRepeat1', cName: 'aux_sym_parameters_repeat1' },
-	{ name: 'list_repeat1', id: 57, enumName: 'AuxListRepeat1', cName: 'aux_sym_list_repeat1' },
-	{ name: 'grouping_repeat1', id: 58, enumName: 'AuxGroupingRepeat1', cName: 'aux_sym_grouping_repeat1' },
+	{ name: 'parameters_repeat1', id: 57, enumName: 'AuxParametersRepeat1', cName: 'aux_sym_parameters_repeat1' },
+	{ name: 'list_repeat1', id: 58, enumName: 'AuxListRepeat1', cName: 'aux_sym_list_repeat1' },
+	{ name: 'grouping_repeat1', id: 59, enumName: 'AuxGroupingRepeat1', cName: 'aux_sym_grouping_repeat1' },
 	{
 		name: 'named_node_group_children_repeat1',
-		id: 59,
+		id: 60,
 		enumName: 'AuxNamedNodeGroupChildrenRepeat1',
 		cName: 'aux_sym_named_node_group_children_repeat1'
 	}
@@ -289,7 +291,6 @@ export enum TSFieldId {
 	FieldName = 7,
 	FieldNamedNodeExpressions = 8,
 	FieldParameters = 9,
-	FieldQuantifier = 10,
 	FieldRight = 11,
 	FieldStringContent = 12,
 	FieldSupertype = 13,
@@ -306,7 +307,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	name: TSFieldId.FieldName,
 	named_node_expressions: TSFieldId.FieldNamedNodeExpressions,
 	parameters: TSFieldId.FieldParameters,
-	quantifier: TSFieldId.FieldQuantifier,
 	right: TSFieldId.FieldRight,
 	string_content: TSFieldId.FieldStringContent,
 	supertype: TSFieldId.FieldSupertype,
@@ -323,7 +323,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldName]: 'name',
 	[TSFieldId.FieldNamedNodeExpressions]: 'named_node_expressions',
 	[TSFieldId.FieldParameters]: 'parameters',
-	[TSFieldId.FieldQuantifier]: 'quantifier',
 	[TSFieldId.FieldRight]: 'right',
 	[TSFieldId.FieldStringContent]: 'string_content',
 	[TSFieldId.FieldSupertype]: 'supertype',
@@ -345,7 +344,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 		cName: 'field_named_node_expressions'
 	},
 	{ name: 'parameters', id: 9, enumName: 'FieldParameters', cName: 'field_parameters' },
-	{ name: 'quantifier', id: 10, enumName: 'FieldQuantifier', cName: 'field_quantifier' },
 	{ name: 'right', id: 11, enumName: 'FieldRight', cName: 'field_right' },
 	{ name: 'string_content', id: 12, enumName: 'FieldStringContent', cName: 'field_string_content' },
 	{ name: 'supertype', id: 13, enumName: 'FieldSupertype', cName: 'field_supertype' },

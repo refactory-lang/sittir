@@ -326,6 +326,8 @@ function readTerminalFromOther<T = _NodeData | number>(
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	definition: new Set([
 		'named_node',
+		'named_node_plain',
+		'named_node_supertyped',
 		'anonymous_node',
 		'missing_node',
 		'grouping',
@@ -336,6 +338,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_group_expression: new Set([
 		'definition',
 		'named_node',
+		'named_node_plain',
+		'named_node_supertyped',
 		'anonymous_node',
 		'missing_node',
 		'grouping',
@@ -347,6 +351,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_named_node_expression: new Set([
 		'definition',
 		'named_node',
+		'named_node_plain',
+		'named_node_supertyped',
 		'anonymous_node',
 		'missing_node',
 		'grouping',
@@ -357,6 +363,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'named_node_expression_arm'
 	]),
 	_node_identifier: new Set(['identifier']),
+	named_node: new Set(['named_node_plain', 'named_node_supertyped']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
 	_whitespace: new Set(['_tight', 'tight', '_space', 'space', '_newline', 'newline'])
 };
@@ -480,7 +487,9 @@ export function wrapDefinition(
 		'_grouping',
 		'_predicate',
 		'_list',
-		'_field_definition'
+		'_field_definition',
+		'_named_node_plain',
+		'_named_node_supertyped'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'named_node',
@@ -489,7 +498,9 @@ export function wrapDefinition(
 		'grouping',
 		'predicate',
 		'list',
-		'field_definition'
+		'field_definition',
+		'named_node_plain',
+		'named_node_supertyped'
 	]) as T.Definition | readonly T.Definition[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -500,7 +511,9 @@ export function wrapDefinition(
 			'grouping',
 			'predicate',
 			'list',
-			'field_definition'
+			'field_definition',
+			'named_node_plain',
+			'named_node_supertyped'
 		]);
 	if (
 		filtered === undefined &&
@@ -527,7 +540,8 @@ export function wrapGroupExpression(
 	const node = _keepModelledSlots(data, [
 		'_definition',
 		'_group_expression_arm',
-		'_named_node',
+		'_named_node_plain',
+		'_named_node_supertyped',
 		'_anonymous_node',
 		'_missing_node',
 		'_grouping',
@@ -538,7 +552,8 @@ export function wrapGroupExpression(
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'definition',
 		'group_expression_arm',
-		'named_node',
+		'named_node_plain',
+		'named_node_supertyped',
 		'anonymous_node',
 		'missing_node',
 		'grouping',
@@ -551,7 +566,8 @@ export function wrapGroupExpression(
 		_filterWrapChildrenByKind(node.$other, [
 			'definition',
 			'group_expression_arm',
-			'named_node',
+			'named_node_plain',
+			'named_node_supertyped',
 			'anonymous_node',
 			'missing_node',
 			'grouping',
@@ -585,7 +601,8 @@ export function wrapNamedNodeExpression(
 		'_definition',
 		'_negated_field',
 		'_named_node_expression_arm',
-		'_named_node',
+		'_named_node_plain',
+		'_named_node_supertyped',
 		'_anonymous_node',
 		'_missing_node',
 		'_grouping',
@@ -597,7 +614,8 @@ export function wrapNamedNodeExpression(
 		'definition',
 		'negated_field',
 		'named_node_expression_arm',
-		'named_node',
+		'named_node_plain',
+		'named_node_supertyped',
 		'anonymous_node',
 		'missing_node',
 		'grouping',
@@ -611,7 +629,8 @@ export function wrapNamedNodeExpression(
 			'definition',
 			'negated_field',
 			'named_node_expression_arm',
-			'named_node',
+			'named_node_plain',
+			'named_node_supertyped',
 			'anonymous_node',
 			'missing_node',
 			'grouping',
@@ -1057,80 +1076,32 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNamedNode(data: T.NamedNode, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_name', '_named_node_arm', '_named_node_group', '_quantifier', '_capture']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NamedNode as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNode as const,
-			_name: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'name',
-					span: (data as _NodeData).$span
-				}),
-				{ _: 7 }
-			),
-			_named_node_arm: normalizeSingularWrapSlot(data._named_node_arm, 'named_node_arm', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'named_node_arm',
-				span: (data as _NodeData).$span
-			}),
-			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'named_node_group',
-				span: (data as _NodeData).$span
-			}),
-			_quantifier: projectKindEnumStorage(
-				normalizeRepeatedWrapSlot(data._quantifier, false, 'quantifier', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'quantifier',
-					span: (data as _NodeData).$span
-				}),
-				{ '*': 2, '+': 3, '?': 4 }
-			),
-			_capture: normalizeRepeatedWrapSlot(data._capture, false, 'capture', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'capture',
-				span: (data as _NodeData).$span
-			}),
-
-			name() {
-				return drillIn<T.Identifier | TSKindId.Underscore | undefined>(this._name, tree);
-			},
-			namedNodeArm() {
-				return drillIn<T.NamedNodeArm | undefined>(this._named_node_arm, tree);
-			},
-			namedNodeGroup() {
-				return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
-			},
-			quantifiers() {
-				return this._quantifier;
-			},
-			captures() {
-				return drillInAll<T.Capture>(this._capture as readonly T.Capture[] | undefined, tree);
-			},
-			$with: {
-				name: (v: NonNullable<T.NamedNode['_name']>) => wrapNamedNode({ ...$edited(data), _name: v }, tree),
-				namedNodeArm: (v: NonNullable<T.NamedNode['_named_node_arm']>) =>
-					wrapNamedNode({ ...$edited(data), _named_node_arm: v }, tree),
-				namedNodeGroup: (v: NonNullable<T.NamedNode['_named_node_group']>) =>
-					wrapNamedNode({ ...$edited(data), _named_node_group: v }, tree),
-				quantifiers: (...v: NonNullable<T.NamedNode['_quantifier']>[number][]) =>
-					wrapNamedNode({ ...$edited(data), _quantifier: v }, tree),
-				captures: (...v: NonNullable<T.NamedNode['_capture']>[number][]) =>
-					wrapNamedNode({ ...$edited(data), _capture: v }, tree)
-			}
-		},
-		_treeEngine(tree)
+export function wrapNamedNode(
+	data: T.NamedNode & { readonly $other?: T.NamedNode | readonly T.NamedNode[] },
+	tree: TreeHandle
+) {
+	if (typeof data === 'number') return data;
+	const node = _keepModelledSlots(data, ['_named_node_plain', '_named_node_supertyped']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['named_node_plain', 'named_node_supertyped']) as
+		| T.NamedNode
+		| readonly T.NamedNode[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['named_node_plain', 'named_node_supertyped']);
+	if (
+		filtered === undefined &&
+		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
+	) {
+		return drillInSelf<T.NamedNode>(node as T.NamedNode, tree);
+	}
+	return drillIn<T.NamedNode>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _NodeData).$span
+		}),
+		tree
 	);
-	return _node;
 }
 
 export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle) {
@@ -1361,42 +1332,6 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNamedNodeArm(data: T.NamedNodeArm, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_supertype', '_name']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodeArm as const,
-			_supertype: normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'supertype',
-				span: (data as _NodeData).$span
-			}),
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
-
-			supertype() {
-				return drillIn<T.Identifier>(this._supertype, tree);
-			},
-			name() {
-				return drillIn<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
-			},
-			$with: {
-				supertype: (v: NonNullable<T.NamedNodeArm['_supertype']>) =>
-					wrapNamedNodeArm({ ...$edited(data), _supertype: v }, tree),
-				name: (v: NonNullable<T.NamedNodeArm['_name']>) => wrapNamedNodeArm({ ...$edited(data), _name: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapNamedNodeGroup(
 	data: T.NamedNodeGroup & { readonly $other?: T.NamedNodeGroup | readonly T.NamedNodeGroup[] },
 	tree: TreeHandle
@@ -1425,6 +1360,145 @@ export function wrapNamedNodeGroup(
 		}),
 		tree
 	);
+}
+
+export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_named_node_group', '_content']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.NamedNodePlain as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NamedNodePlain as const,
+			_name: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _NodeData).$span
+				}),
+				{ _: 7 }
+			),
+			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_group',
+				span: (data as _NodeData).$span
+			}),
+			_content: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(
+					data._content ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
+					false,
+					'content',
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '*': 2, '+': 3, '?': 4 },
+				undefined,
+				[31]
+			),
+
+			name() {
+				return drillIn<T.Identifier | TSKindId.Underscore>(this._name, tree);
+			},
+			namedNodeGroup() {
+				return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			},
+			contents() {
+				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+					tree
+				);
+			},
+			$with: {
+				name: (v: NonNullable<T.NamedNodePlain['_name']>) => wrapNamedNodePlain({ ...$edited(data), _name: v }, tree),
+				namedNodeGroup: (v: NonNullable<T.NamedNodePlain['_named_node_group']>) =>
+					wrapNamedNodePlain({ ...$edited(data), _named_node_group: v }, tree),
+				contents: (...v: NonNullable<T.NamedNodePlain['_content']>[number][]) =>
+					wrapNamedNodePlain({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_supertype', '_name', '_named_node_group', '_content']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.NamedNodeSupertyped as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NamedNodeSupertyped as const,
+			_supertype: normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'supertype',
+				span: (data as _NodeData).$span
+			}),
+			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _NodeData).$span
+			}),
+			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_group',
+				span: (data as _NodeData).$span
+			}),
+			_content: projectMixedEnumStorage(
+				normalizeRepeatedWrapSlot(
+					data._content ??
+						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+							TSKindId.Star,
+							TSKindId.Plus,
+							TSKindId.Qmark
+						]),
+					false,
+					'content',
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ '*': 2, '+': 3, '?': 4 },
+				undefined,
+				[31]
+			),
+
+			supertype() {
+				return drillIn<T.Identifier>(this._supertype, tree);
+			},
+			name() {
+				return drillIn<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
+			},
+			namedNodeGroup() {
+				return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			},
+			contents() {
+				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+					tree
+				);
+			},
+			$with: {
+				supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
+					wrapNamedNodeSupertyped({ ...$edited(data), _supertype: v }, tree),
+				name: (v: NonNullable<T.NamedNodeSupertyped['_name']>) =>
+					wrapNamedNodeSupertyped({ ...$edited(data), _name: v }, tree),
+				namedNodeGroup: (v: NonNullable<T.NamedNodeSupertyped['_named_node_group']>) =>
+					wrapNamedNodeSupertyped({ ...$edited(data), _named_node_group: v }, tree),
+				contents: (...v: NonNullable<T.NamedNodeSupertyped['_content']>[number][]) =>
+					wrapNamedNodeSupertyped({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
 }
 
 export function wrapNamedNodeGroupChildren(data: T.NamedNodeGroupChildren, tree: TreeHandle) {
@@ -1529,8 +1603,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.GroupExpressionArm]: (d, t) => wrapGroupExpressionArm(d as unknown as T.GroupExpressionArm, t),
 	[TSKindId.NamedNodeExpressionArm]: (d, t) => wrapNamedNodeExpressionArm(d as unknown as T.NamedNodeExpressionArm, t),
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),
-	[TSKindId.NamedNodeArm]: (d, t) => wrapNamedNodeArm(d as unknown as T.NamedNodeArm, t),
 	[TSKindId.NamedNodeGroup]: (d, t) => wrapNamedNodeGroup(d as unknown as T.NamedNodeGroup, t),
+	[TSKindId.NamedNodePlain]: (d, t) => wrapNamedNodePlain(d as unknown as T.NamedNodePlain, t),
+	[TSKindId.NamedNodeSupertyped]: (d, t) => wrapNamedNodeSupertyped(d as unknown as T.NamedNodeSupertyped, t),
 	[TSKindId.NamedNodeGroupChildren]: (d, t) => wrapNamedNodeGroupChildren(d as unknown as T.NamedNodeGroupChildren, t),
 	[TSKindId.NamedNodeGroupAnchoredLast]: (d, t) =>
 		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t),
@@ -1567,8 +1642,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.GroupExpressionArm]: ReturnType<typeof wrapGroupExpressionArm>;
 	[TSKindId.NamedNodeExpressionArm]: ReturnType<typeof wrapNamedNodeExpressionArm>;
 	[TSKindId.GroupingGroup]: ReturnType<typeof wrapGroupingGroup>;
-	[TSKindId.NamedNodeArm]: ReturnType<typeof wrapNamedNodeArm>;
 	[TSKindId.NamedNodeGroup]: ReturnType<typeof wrapNamedNodeGroup>;
+	[TSKindId.NamedNodePlain]: ReturnType<typeof wrapNamedNodePlain>;
+	[TSKindId.NamedNodeSupertyped]: ReturnType<typeof wrapNamedNodeSupertyped>;
 	[TSKindId.NamedNodeGroupChildren]: ReturnType<typeof wrapNamedNodeGroupChildren>;
 	[TSKindId.NamedNodeGroupAnchoredLast]: ReturnType<typeof wrapNamedNodeGroupAnchoredLast>;
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };

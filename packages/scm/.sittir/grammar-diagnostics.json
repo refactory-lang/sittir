@@ -77,46 +77,6 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "named_node",
-    "message": "[collect-slots] kind 'named_node': choice rule:named_node:root routes 1 unnamed-nonterminal arm(s) [named_node_arm] into one union slot alongside 2 label-routed arm(s) [field(name):identifier, field(name):underscore] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "name",
-        "name"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "named_node",
-    "message": "[collect-slots] kind 'named_node': choice rule:named_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-content-collision",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "named_node",
-    "message": "[derive-slots] kind 'named_node': union slot name(s) [content] already claimed by a sibling slot — union routing disabled for this rule (status-quo distribution). Free the name via field() naming in overrides (named slots bypass the claim).",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "unclassifiable-shape",
     "severity": "warning",
     "grammar": "scm",
@@ -127,6 +87,36 @@
       "bucket": "nested-seq",
       "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
       "ruleId": "rule:predicate:members.1"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "named_node_plain",
+    "message": "[collect-slots] kind 'named_node_plain': choice rule:named_node_plain:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "scm",
+    "ownerKind": "named_node_supertyped",
+    "message": "[collect-slots] kind 'named_node_supertyped': choice rule:named_node_supertyped:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
     }
   },
   {

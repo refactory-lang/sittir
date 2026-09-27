@@ -50,12 +50,12 @@ export const ir: {
 	readonly grouping: typeof F.grouping;
 	readonly missingNode: typeof F.missingNode;
 	readonly anonymousNode: typeof F.anonymousNode;
-	readonly namedNode: typeof F.namedNode;
 	readonly fieldDefinition: typeof F.fieldDefinition;
 	readonly negatedField: typeof F.negatedField;
 	readonly predicate: typeof F.predicate;
 	readonly groupExpressionArm: typeof F.groupExpressionArm;
 	readonly namedNodeExpressionArm: typeof F.namedNodeExpressionArm;
+	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
@@ -78,12 +78,12 @@ export const ir: {
 	grouping: F.grouping,
 	missingNode: F.missingNode,
 	anonymousNode: F.anonymousNode,
-	namedNode: F.namedNode,
 	fieldDefinition: F.fieldDefinition,
 	negatedField: F.negatedField,
 	predicate: F.predicate,
 	groupExpressionArm: F.groupExpressionArm,
 	namedNodeExpressionArm: F.namedNodeExpressionArm,
+	namedNode: F.namedNode,
 	namedNodeGroup: F.namedNodeGroup,
 
 	// Keyword factories

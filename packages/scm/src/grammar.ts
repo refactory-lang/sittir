@@ -15,6 +15,11 @@ export type ScmGrammar = {
 			{ type: 'predicate'; named: true }
 		];
 	};
+	readonly named_node: {
+		type: 'named_node';
+		named: true;
+		subtypes: [{ type: 'named_node_plain'; named: true }, { type: 'named_node_supertyped'; named: true }];
+	};
 	readonly named_node_group: {
 		type: 'named_node_group';
 		named: true;
@@ -113,39 +118,6 @@ export type ScmGrammar = {
 		};
 		children: { multiple: true; required: false; types: [{ type: 'capture'; named: true }] };
 	};
-	readonly named_node: {
-		type: 'named_node';
-		named: true;
-		fields: {
-			name: {
-				multiple: false;
-				required: false;
-				types: [{ type: '_'; named: false }, { type: 'identifier'; named: true }];
-			};
-			quantifier: { multiple: true; required: false; types: [{ type: 'quantifier'; named: true }] };
-		};
-		children: {
-			multiple: true;
-			required: false;
-			types: [
-				{ type: 'capture'; named: true },
-				{ type: 'named_node_arm'; named: true },
-				{ type: 'named_node_group'; named: true }
-			];
-		};
-	};
-	readonly named_node_arm: {
-		type: 'named_node_arm';
-		named: true;
-		fields: {
-			name: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'identifier'; named: true }, { type: 'immediate_string'; named: true }];
-			};
-			supertype: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-		};
-	};
 	readonly named_node_expression_arm: {
 		type: 'named_node_expression_arm';
 		named: true;
@@ -207,6 +179,41 @@ export type ScmGrammar = {
 					{ type: 'negated_field'; named: true }
 				];
 			};
+		};
+	};
+	readonly named_node_plain: {
+		type: 'named_node_plain';
+		named: true;
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: '_'; named: false }, { type: 'identifier'; named: true }];
+			};
+			quantifier: { multiple: true; required: false; types: [{ type: 'quantifier'; named: true }] };
+		};
+		children: {
+			multiple: true;
+			required: false;
+			types: [{ type: 'capture'; named: true }, { type: 'named_node_group'; named: true }];
+		};
+	};
+	readonly named_node_supertyped: {
+		type: 'named_node_supertyped';
+		named: true;
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'identifier'; named: true }, { type: 'immediate_string'; named: true }];
+			};
+			quantifier: { multiple: true; required: false; types: [{ type: 'quantifier'; named: true }] };
+			supertype: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+		};
+		children: {
+			multiple: true;
+			required: false;
+			types: [{ type: 'capture'; named: true }, { type: 'named_node_group'; named: true }];
 		};
 	};
 	readonly negated_field: {

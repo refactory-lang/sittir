@@ -8,6 +8,7 @@ import type {
 	NamespaceMap,
 	Definition,
 	GroupExpression,
+	NamedNode,
 	NamedNodeExpression,
 	NamedNodeGroup,
 	NodeIdentifier,
@@ -49,9 +50,6 @@ export interface IsGuards {
 	anonymousNode<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AnonymousNode };
-	namedNode<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNode };
 	fieldDefinition<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldDefinition };
@@ -72,6 +70,7 @@ export interface IsGuards {
 	groupExpression(v: { readonly $type: string | number } | number): v is GroupExpression;
 	namedNodeExpression(v: { readonly $type: string | number } | number): v is NamedNodeExpression;
 	nodeIdentifier(v: { readonly $type: string | number } | number): v is NodeIdentifier;
+	namedNode(v: { readonly $type: string | number } | number): v is NamedNode;
 	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
@@ -89,7 +88,6 @@ export interface AssertGuards {
 	grouping(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Grouping };
 	missingNode(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MissingNode };
 	anonymousNode(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AnonymousNode };
-	namedNode(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamedNode };
 	fieldDefinition(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FieldDefinition };
 	negatedField(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NegatedField };
 	predicate(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Predicate };
@@ -104,6 +102,7 @@ export interface AssertGuards {
 	groupExpression(v: { readonly $type: string | number } | number): asserts v is GroupExpression;
 	namedNodeExpression(v: { readonly $type: string | number } | number): asserts v is NamedNodeExpression;
 	nodeIdentifier(v: { readonly $type: string | number } | number): asserts v is NodeIdentifier;
+	namedNode(v: { readonly $type: string | number } | number): asserts v is NamedNode;
 	namedNodeGroup(v: { readonly $type: string | number } | number): asserts v is NamedNodeGroup;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
@@ -116,11 +115,12 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_definition_ids = new Set<number>([42, 41, 40, 39, 46, 38, 44]);
+const _supertype_definition_ids = new Set<number>([41, 40, 39, 46, 38, 44]);
 const _supertype_groupExpression_ids = new Set<number>([47]);
 const _supertype_namedNodeExpression_ids = new Set<number>([45, 48]);
 const _supertype_nodeIdentifier_ids = new Set<number>([5]);
-const _supertype_namedNodeGroup_ids = new Set<number>([52, 53]);
+const _supertype_namedNode_ids = new Set<number>([51, 52]);
+const _supertype_namedNodeGroup_ids = new Set<number>([53, 54]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26]);
 
 export const is = {
@@ -135,7 +135,6 @@ export const is = {
 	grouping: _g(TSKindId.Grouping),
 	missingNode: _g(TSKindId.MissingNode),
 	anonymousNode: _g(TSKindId.AnonymousNode),
-	namedNode: _g(TSKindId.NamedNode),
 	fieldDefinition: _g(TSKindId.FieldDefinition),
 	negatedField: _g(TSKindId.NegatedField),
 	predicate: _g(TSKindId.Predicate),
@@ -146,6 +145,7 @@ export const is = {
 	groupExpression: _sg(_supertype_groupExpression_ids),
 	namedNodeExpression: _sg(_supertype_namedNodeExpression_ids),
 	nodeIdentifier: _sg(_supertype_nodeIdentifier_ids),
+	namedNode: _sg(_supertype_namedNode_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
@@ -184,7 +184,6 @@ export const assert = {
 	grouping: _makeAssert('grouping', is.grouping as _AnyGuard),
 	missingNode: _makeAssert('missingNode', is.missingNode as _AnyGuard),
 	anonymousNode: _makeAssert('anonymousNode', is.anonymousNode as _AnyGuard),
-	namedNode: _makeAssert('namedNode', is.namedNode as _AnyGuard),
 	fieldDefinition: _makeAssert('fieldDefinition', is.fieldDefinition as _AnyGuard),
 	negatedField: _makeAssert('negatedField', is.negatedField as _AnyGuard),
 	predicate: _makeAssert('predicate', is.predicate as _AnyGuard),
@@ -195,6 +194,7 @@ export const assert = {
 	groupExpression: _makeAssert('groupExpression', is.groupExpression as _AnyGuard),
 	namedNodeExpression: _makeAssert('namedNodeExpression', is.namedNodeExpression as _AnyGuard),
 	nodeIdentifier: _makeAssert('nodeIdentifier', is.nodeIdentifier as _AnyGuard),
+	namedNode: _makeAssert('namedNode', is.namedNode as _AnyGuard),
 	namedNodeGroup: _makeAssert('namedNodeGroup', is.namedNodeGroup as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;

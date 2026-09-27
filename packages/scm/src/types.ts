@@ -87,16 +87,17 @@ export enum TSKindId {
 	GroupExpressionArm = 47,
 	NamedNodeExpressionArm = 48,
 	GroupingGroup = 49,
-	NamedNodeArm = 50,
-	NamedNodeGroup = 51,
-	NamedNodeGroupChildren = 52,
-	NamedNodeGroupAnchoredLast = 53,
-	ProgramRepeat1 = 54,
-	StringContentRepeat1 = 55,
-	ParametersRepeat1 = 56,
-	ListRepeat1 = 57,
-	GroupingRepeat1 = 58,
-	NamedNodeGroupChildrenRepeat1 = 59
+	NamedNodeGroup = 50,
+	NamedNodePlain = 51,
+	NamedNodeSupertyped = 52,
+	NamedNodeGroupChildren = 53,
+	NamedNodeGroupAnchoredLast = 54,
+	ProgramRepeat1 = 55,
+	StringContentRepeat1 = 56,
+	ParametersRepeat1 = 57,
+	ListRepeat1 = 58,
+	GroupingRepeat1 = 59,
+	NamedNodeGroupChildrenRepeat1 = 60
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -149,16 +150,17 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[47, 'group_expression_arm'],
 	[48, 'named_node_expression_arm'],
 	[49, 'grouping_group'],
-	[50, 'named_node_arm'],
-	[51, 'named_node_group'],
-	[52, 'named_node_group_children'],
-	[53, 'named_node_group_anchored_last'],
-	[54, 'program_repeat1'],
-	[55, 'string_content_repeat1'],
-	[56, 'parameters_repeat1'],
-	[57, 'list_repeat1'],
-	[58, 'grouping_repeat1'],
-	[59, 'named_node_group_children_repeat1']
+	[50, 'named_node_group'],
+	[51, 'named_node_plain'],
+	[52, 'named_node_supertyped'],
+	[53, 'named_node_group_children'],
+	[54, 'named_node_group_anchored_last'],
+	[55, 'program_repeat1'],
+	[56, 'string_content_repeat1'],
+	[57, 'parameters_repeat1'],
+	[58, 'list_repeat1'],
+	[59, 'grouping_repeat1'],
+	[60, 'named_node_group_children_repeat1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -212,16 +214,17 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[47, 'group_expression_arm'],
 	[48, 'named_node_expression_arm'],
 	[49, 'grouping_group'],
-	[50, 'named_node_arm'],
-	[51, 'named_node_group'],
-	[52, 'named_node_group_children'],
-	[53, 'named_node_group_anchored_last'],
-	[54, 'program_repeat1'],
-	[55, 'string_content_repeat1'],
-	[56, 'parameters_repeat1'],
-	[57, 'list_repeat1'],
-	[58, 'grouping_repeat1'],
-	[59, 'named_node_group_children_repeat1']
+	[50, 'named_node_group'],
+	[51, 'named_node_plain'],
+	[52, 'named_node_supertyped'],
+	[53, 'named_node_group_children'],
+	[54, 'named_node_group_anchored_last'],
+	[55, 'program_repeat1'],
+	[56, 'string_content_repeat1'],
+	[57, 'parameters_repeat1'],
+	[58, 'list_repeat1'],
+	[59, 'grouping_repeat1'],
+	[60, 'named_node_group_children_repeat1']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -327,10 +330,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NamedNodeExpressionArm;
 		case 'grouping_group':
 			return TSKindId.GroupingGroup;
-		case 'named_node_arm':
-			return TSKindId.NamedNodeArm;
 		case 'named_node_group':
 			return TSKindId.NamedNodeGroup;
+		case 'named_node_plain':
+			return TSKindId.NamedNodePlain;
+		case 'named_node_supertyped':
+			return TSKindId.NamedNodeSupertyped;
 		case 'named_node_group_children':
 			return TSKindId.NamedNodeGroupChildren;
 		case 'named_node_group_anchored_last':
@@ -420,6 +425,11 @@ export enum NamedNodeExpressionKind {
 
 export enum NodeIdentifierKind {
 	Identifier = 'identifier'
+}
+
+export enum NamedNodeKind {
+	NamedNodePlain = 'named_node_plain',
+	NamedNodeSupertyped = 'named_node_supertyped'
 }
 
 export enum NamedNodeGroupKind {
@@ -536,24 +546,6 @@ export interface AnonymousNode {
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 }
 
-export interface NamedNode {
-	readonly $type: TSKindId.NamedNode;
-	readonly _name?: Identifier | TSKindId.Underscore;
-	readonly _named_node_arm?: NamedNodeArm;
-	readonly _named_node_group?: NamedNodeGroup;
-	readonly _quantifier?: readonly number[];
-	readonly _capture?: readonly Capture[];
-	readonly __inputHints__?: {
-		readonly name?: KindEnum<'_', TSKindId.Underscore> | Identifier;
-		readonly quantifier?: readonly KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>[];
-	};
-	name(): Identifier | TSKindId.Underscore | undefined;
-	namedNodeArm(): NamedNodeArm | undefined;
-	namedNodeGroup(): NamedNodeGroup | undefined;
-	quantifiers(): readonly number[];
-	captures(): readonly Capture[];
-}
-
 export interface FieldDefinition {
 	readonly $type: TSKindId.FieldDefinition;
 	readonly _name: Identifier;
@@ -609,12 +601,33 @@ export interface GroupingGroup {
 	groupExpression(): Definition | GroupExpressionArm;
 }
 
-export interface NamedNodeArm {
-	readonly $type: TSKindId.NamedNodeArm;
+export interface NamedNodePlain {
+	readonly $type: TSKindId.NamedNodePlain;
+	readonly _name: Identifier | TSKindId.Underscore;
+	readonly _named_node_group?: NamedNodeGroup;
+	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	readonly __inputHints__?: {
+		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
+		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
+	};
+	name(): Identifier | TSKindId.Underscore;
+	namedNodeGroup(): NamedNodeGroup | undefined;
+	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+}
+
+export interface NamedNodeSupertyped {
+	readonly $type: TSKindId.NamedNodeSupertyped;
 	readonly _supertype: Identifier;
 	readonly _name: ImmediateIdentifier | ImmediateString;
+	readonly _named_node_group?: NamedNodeGroup;
+	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	readonly __inputHints__?: {
+		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
+	};
 	supertype(): Identifier;
 	name(): ImmediateIdentifier | ImmediateString;
+	namedNodeGroup(): NamedNodeGroup | undefined;
+	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 }
 
 export interface NamedNodeGroupChildren {
@@ -653,14 +666,14 @@ export interface ListTree extends TreeNode<'list'> {}
 export interface GroupingTree extends TreeNode<'grouping'> {}
 export interface MissingNodeTree extends TreeNode<'missing_node'> {}
 export interface AnonymousNodeTree extends TreeNode<'anonymous_node'> {}
-export interface NamedNodeTree extends TreeNode<'named_node'> {}
 export interface FieldDefinitionTree extends TreeNode<'field_definition'> {}
 export interface NegatedFieldTree extends TreeNode<'negated_field'> {}
 export interface PredicateTree extends TreeNode<'predicate'> {}
 export interface GroupExpressionArmTree extends TreeNode<'group_expression_arm'> {}
 export interface NamedNodeExpressionArmTree extends TreeNode<'named_node_expression_arm'> {}
 export interface GroupingGroupTree extends TreeNode<'grouping_group'> {}
-export interface NamedNodeArmTree extends TreeNode<'named_node_arm'> {}
+export interface NamedNodePlainTree extends TreeNode<'named_node_plain'> {}
+export interface NamedNodeSupertypedTree extends TreeNode<'named_node_supertyped'> {}
 export interface NamedNodeGroupChildrenTree extends TreeNode<'named_node_group_children'> {}
 export interface NamedNodeGroupAnchoredLastTree extends TreeNode<'named_node_group_anchored_last'> {}
 export interface QuantifierTree extends TreeNode<'quantifier'> {}
@@ -689,7 +702,6 @@ export interface UnderscoreTree extends AnyTreeNode {
 export type Definition = NamedNode | AnonymousNode | MissingNode | Grouping | Predicate | List | FieldDefinition;
 
 export type DefinitionTree =
-	| NamedNodeTree
 	| AnonymousNodeTree
 	| MissingNodeTree
 	| GroupingTree
@@ -708,6 +720,10 @@ export type NamedNodeExpressionTree = NegatedFieldTree | NamedNodeExpressionArmT
 export type NodeIdentifier = Identifier;
 
 export type NodeIdentifierTree = IdentifierTree;
+
+export type NamedNode = NamedNodePlain | NamedNodeSupertyped;
+
+export type NamedNodeTree = NamedNodePlainTree | NamedNodeSupertypedTree;
 
 export type NamedNodeGroup = NamedNodeGroupChildren | NamedNodeGroupAnchoredLast;
 
@@ -737,6 +753,11 @@ export namespace NodeIdentifier {
 	export type Tree = NodeIdentifierTree;
 }
 
+export namespace NamedNode {
+	export type Kind = 'named_node';
+	export type Tree = NamedNodeTree;
+}
+
 export namespace NamedNodeGroup {
 	export type Kind = 'named_node_group';
 	export type Tree = NamedNodeGroupTree;
@@ -762,14 +783,14 @@ export type ScmNode =
 	| Grouping
 	| MissingNode
 	| AnonymousNode
-	| NamedNode
 	| FieldDefinition
 	| NegatedField
 	| Predicate
 	| GroupExpressionArm
 	| NamedNodeExpressionArm
 	| GroupingGroup
-	| NamedNodeArm
+	| NamedNodePlain
+	| NamedNodeSupertyped
 	| NamedNodeGroupChildren
 	| NamedNodeGroupAnchoredLast;
 
@@ -783,14 +804,14 @@ export interface OptionsHintMap {
 	grouping: Grouping.Hints;
 	missingNode: MissingNode.Hints;
 	anonymousNode: AnonymousNode.Hints;
-	namedNode: NamedNode.Hints;
 	fieldDefinition: FieldDefinition.Hints;
 	negatedField: NegatedField.Hints;
 	predicate: Predicate.Hints;
 	groupExpressionArm: GroupExpressionArm.Hints;
 	namedNodeExpressionArm: NamedNodeExpressionArm.Hints;
 	groupingGroup: GroupingGroup.Hints;
-	namedNodeArm: NamedNodeArm.Hints;
+	namedNodePlain: NamedNodePlain.Hints;
+	namedNodeSupertyped: NamedNodeSupertyped.Hints;
 	namedNodeGroupChildren: NamedNodeGroupChildren.Hints;
 	namedNodeGroupAnchoredLast: NamedNodeGroupAnchoredLast.Hints;
 	quantifier: Quantifier.Hints;
@@ -806,7 +827,8 @@ export namespace Program {
 				readonly grouping?: { readonly after?: SpacingArm };
 				readonly list?: { readonly after?: SpacingArm };
 				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNode?: { readonly after?: SpacingArm };
+				readonly namedNodePlain?: { readonly after?: SpacingArm };
+				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
 				readonly predicate?: { readonly after?: SpacingArm };
 				readonly separator?: SpacingArm;
 			};
@@ -856,7 +878,8 @@ export namespace List {
 				readonly grouping?: { readonly after?: SpacingArm };
 				readonly list?: { readonly after?: SpacingArm };
 				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNode?: { readonly after?: SpacingArm };
+				readonly namedNodePlain?: { readonly after?: SpacingArm };
+				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
 				readonly predicate?: { readonly after?: SpacingArm };
 				readonly separator?: SpacingArm;
 			};
@@ -902,17 +925,6 @@ export namespace AnonymousNode {
 			readonly before?: SpacingArm;
 			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
 			readonly underscore?: { readonly after?: SpacingArm };
-		};
-	}
-}
-
-export namespace NamedNode {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -976,9 +988,28 @@ export namespace GroupingGroup {
 	}
 }
 
-export namespace NamedNodeArm {
+export namespace NamedNodePlain {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly underscore?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace NamedNodeSupertyped {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
 	}
 }
 
@@ -993,8 +1024,9 @@ export namespace NamedNodeGroupChildren {
 				readonly grouping?: { readonly after?: SpacingArm };
 				readonly list?: { readonly after?: SpacingArm };
 				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNode?: { readonly after?: SpacingArm };
 				readonly namedNodeExpressionArm?: { readonly after?: SpacingArm };
+				readonly namedNodePlain?: { readonly after?: SpacingArm };
+				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
 				readonly negatedField?: { readonly after?: SpacingArm };
 				readonly predicate?: { readonly after?: SpacingArm };
 				readonly separator?: SpacingArm;
@@ -1015,8 +1047,9 @@ export namespace NamedNodeGroupAnchoredLast {
 				readonly grouping?: { readonly after?: SpacingArm };
 				readonly list?: { readonly after?: SpacingArm };
 				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNode?: { readonly after?: SpacingArm };
 				readonly namedNodeExpressionArm?: { readonly after?: SpacingArm };
+				readonly namedNodePlain?: { readonly after?: SpacingArm };
+				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
 				readonly negatedField?: { readonly after?: SpacingArm };
 				readonly predicate?: { readonly after?: SpacingArm };
 				readonly separator?: SpacingArm;
@@ -1177,17 +1210,6 @@ export interface AnonymousNodeNs extends NodeNs<
 	never,
 	'anonymous_node'
 > {}
-export interface NamedNodeNs extends NodeNs<
-	NamedNode,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	NamedNode.Built,
-	NamedNode.BuildArgs,
-	NamedNode.LooseArgs,
-	never,
-	'named_node'
-> {}
 export interface FieldDefinitionNs extends NodeNs<
 	FieldDefinition,
 	LeafScalarMap,
@@ -1254,16 +1276,27 @@ export interface GroupingGroupNs extends NodeNs<
 	'group_expression',
 	'grouping_group'
 > {}
-export interface NamedNodeArmNs extends NodeNs<
-	NamedNodeArm,
+export interface NamedNodePlainNs extends NodeNs<
+	NamedNodePlain,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamedNodeArm.Built,
-	NamedNodeArm.BuildArgs,
-	NamedNodeArm.LooseArgs,
+	NamedNodePlain.Built,
+	NamedNodePlain.BuildArgs,
+	NamedNodePlain.LooseArgs,
 	never,
-	'named_node_arm'
+	'named_node_plain'
+> {}
+export interface NamedNodeSupertypedNs extends NodeNs<
+	NamedNodeSupertyped,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NamedNodeSupertyped.Built,
+	NamedNodeSupertyped.BuildArgs,
+	NamedNodeSupertyped.LooseArgs,
+	never,
+	'named_node_supertyped'
 > {}
 export interface NamedNodeGroupChildrenNs extends NodeNs<
 	NamedNodeGroupChildren,
@@ -1312,14 +1345,14 @@ export interface NamespaceMap {
 	[TSKindId.Grouping]: GroupingNs;
 	[TSKindId.MissingNode]: MissingNodeNs;
 	[TSKindId.AnonymousNode]: AnonymousNodeNs;
-	[TSKindId.NamedNode]: NamedNodeNs;
 	[TSKindId.FieldDefinition]: FieldDefinitionNs;
 	[TSKindId.NegatedField]: NegatedFieldNs;
 	[TSKindId.Predicate]: PredicateNs;
 	[TSKindId.GroupExpressionArm]: GroupExpressionArmNs;
 	[TSKindId.NamedNodeExpressionArm]: NamedNodeExpressionArmNs;
 	[TSKindId.GroupingGroup]: GroupingGroupNs;
-	[TSKindId.NamedNodeArm]: NamedNodeArmNs;
+	[TSKindId.NamedNodePlain]: NamedNodePlainNs;
+	[TSKindId.NamedNodeSupertyped]: NamedNodeSupertypedNs;
 	[TSKindId.NamedNodeGroupChildren]: NamedNodeGroupChildrenNs;
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLastNs;
 	[TSKindId.Tight]: TightNs;
@@ -1547,28 +1580,6 @@ export namespace AnonymousNode {
 	export type Tree = TreeFor<TSKindId.AnonymousNode>;
 	export type Kind = 'anonymous_node';
 }
-export namespace NamedNode {
-	export type Config = ConfigFor<TSKindId.NamedNode>;
-	export interface Built extends T.NamedNode, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value?: NonNullable<T.NamedNode.Config>['name']): T.NamedNode.Built;
-			namedNodeArm(value?: T.NamedNodeArm): T.NamedNode.Built;
-			namedNodeGroup(value?: T.NamedNodeGroup): T.NamedNode.Built;
-			quantifiers(value?: NonNullable<T.NamedNode.Config>['quantifier']): T.NamedNode.Built;
-			captures(...values: T.Capture[]): T.NamedNode.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.NamedNode>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NamedNode>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.NamedNode>>];
-	export type LooseArgs = [
-		config?: LooseConfigOf<T.NamedNode, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NamedNode
-	];
-	export type Tree = TreeFor<TSKindId.NamedNode>;
-	export type Kind = 'named_node';
-}
 export namespace FieldDefinition {
 	export type Config = ConfigFor<TSKindId.FieldDefinition>;
 	export interface Built extends T.FieldDefinition, NodeMethodsOf {
@@ -1685,24 +1696,48 @@ export namespace GroupingGroup {
 	export type Tree = TreeFor<TSKindId.GroupingGroup>;
 	export type Kind = 'grouping_group';
 }
-export namespace NamedNodeArm {
-	export type Config = ConfigFor<TSKindId.NamedNodeArm>;
-	export interface Built extends T.NamedNodeArm, NodeMethodsOf {
+export namespace NamedNodePlain {
+	export type Config = ConfigFor<TSKindId.NamedNodePlain>;
+	export interface Built extends T.NamedNodePlain, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			supertype(value: T.Identifier): T.NamedNodeArm.Built;
-			name(value: T.ImmediateIdentifier | T.ImmediateString): T.NamedNodeArm.Built;
+			name(value: NonNullable<T.NamedNodePlain.Config>['name']): T.NamedNodePlain.Built;
+			namedNodeGroup(value?: T.NamedNodeGroup): T.NamedNodePlain.Built;
+			contents(value?: NonNullable<T.NamedNodePlain.Config>['content']): T.NamedNodePlain.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NamedNodeArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodeArm>;
-	export type BuildArgs = [config: ConfigOf<T.NamedNodeArm>];
+	export type Loose = LooseFor<TSKindId.NamedNodePlain>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodePlain>;
+	export type BuildArgs = [config: ConfigOf<T.NamedNodePlain>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NamedNodeArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NamedNodeArm
+		config: LooseConfigOf<T.NamedNodePlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NamedNodePlain
 	];
-	export type Tree = TreeFor<TSKindId.NamedNodeArm>;
-	export type Kind = 'named_node_arm';
+	export type Tree = TreeFor<TSKindId.NamedNodePlain>;
+	export type Kind = 'named_node_plain';
+}
+export namespace NamedNodeSupertyped {
+	export type Config = ConfigFor<TSKindId.NamedNodeSupertyped>;
+	export interface Built extends T.NamedNodeSupertyped, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			supertype(value: T.Identifier): T.NamedNodeSupertyped.Built;
+			name(value: T.ImmediateIdentifier | T.ImmediateString): T.NamedNodeSupertyped.Built;
+			namedNodeGroup(value?: T.NamedNodeGroup): T.NamedNodeSupertyped.Built;
+			contents(value?: NonNullable<T.NamedNodeSupertyped.Config>['content']): T.NamedNodeSupertyped.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NamedNodeSupertyped>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodeSupertyped>;
+	export type BuildArgs = [config: ConfigOf<T.NamedNodeSupertyped>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.NamedNodeSupertyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.NamedNodeSupertyped
+	];
+	export type Tree = TreeFor<TSKindId.NamedNodeSupertyped>;
+	export type Kind = 'named_node_supertyped';
 }
 export namespace NamedNodeGroupChildren {
 	export type Config = ConfigFor<TSKindId.NamedNodeGroupChildren>;

@@ -99,7 +99,8 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(rust, '_let_chain')).toEqual([]);
 		const scm = await nodeMapOf('scm');
 		expect(innerGapsOf(scm, 'string')).toEqual([]);
-		expect(innerGapsOf(scm, 'named_node')).toEqual([]);
+		expect(innerGapsOf(scm, 'named_node_plain')).toEqual([]);
+		expect(innerGapsOf(scm, 'named_node_supertyped')).toEqual([]);
 		expect(innerGapsOf(scm, 'missing_node')).toEqual([{ key: 'name', precedingTokens: 2 }]);
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
 	});

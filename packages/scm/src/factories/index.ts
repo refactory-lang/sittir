@@ -16,15 +16,15 @@ export const list: Hoisted<typeof O.list> = hoist(O.list);
 export const grouping: Hoisted<typeof O.grouping> = hoist(O.grouping);
 export const missingNode: Hoisted<typeof O.missingNode> = hoist(O.missingNode);
 export const anonymousNode: Hoisted<typeof O.anonymousNode> = hoist(O.anonymousNode);
-export const namedNode: Hoisted<typeof O.namedNode> = hoist(O.namedNode);
 export const fieldDefinition: Hoisted<typeof O.fieldDefinition> = hoist(O.fieldDefinition);
 export const negatedField: Hoisted<typeof O.negatedField> = hoist(O.negatedField);
 export const predicate: Hoisted<typeof O.predicate> = hoist(O.predicate);
 export const groupExpressionArm: Hoisted<typeof O.groupExpressionArm> = hoist(O.groupExpressionArm);
 export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = hoist(O.namedNodeExpressionArm);
+export const namedNode: Hoisted<typeof O.namedNode> = hoistRoutes(O.namedNode);
+export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistRoutes(O.namedNodeGroup);
 export const definition: Hoisted<typeof O.definition> = hoistRoutes(O.definition);
 export const groupExpression: Hoisted<typeof O.groupExpression> = hoistRoutes(O.groupExpression);
 export const namedNodeExpression: Hoisted<typeof O.namedNodeExpression> = hoistRoutes(O.namedNodeExpression);
-export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistRoutes(O.namedNodeGroup);
 
 methodsEngine.trivia.comment = coerceToComment;

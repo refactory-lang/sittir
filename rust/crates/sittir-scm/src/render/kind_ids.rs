@@ -57,16 +57,17 @@ pub const PREDICATE: KindId = KindId(46);
 pub const GROUP_EXPRESSION_ARM: KindId = KindId(47);
 pub const NAMED_NODE_EXPRESSION_ARM: KindId = KindId(48);
 pub const GROUPING_GROUP: KindId = KindId(49);
-pub const NAMED_NODE_ARM: KindId = KindId(50);
-pub const NAMED_NODE_GROUP: KindId = KindId(51);
-pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(52);
-pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(53);
-pub const PROGRAM_REPEAT1: KindId = KindId(54);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(55);
-pub const PARAMETERS_REPEAT1: KindId = KindId(56);
-pub const LIST_REPEAT1: KindId = KindId(57);
-pub const GROUPING_REPEAT1: KindId = KindId(58);
-pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(59);
+pub const NAMED_NODE_GROUP: KindId = KindId(50);
+pub const NAMED_NODE_PLAIN: KindId = KindId(51);
+pub const NAMED_NODE_SUPERTYPED: KindId = KindId(52);
+pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(53);
+pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(54);
+pub const PROGRAM_REPEAT1: KindId = KindId(55);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(56);
+pub const PARAMETERS_REPEAT1: KindId = KindId(57);
+pub const LIST_REPEAT1: KindId = KindId(58);
+pub const GROUPING_REPEAT1: KindId = KindId(59);
+pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(60);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -121,16 +122,17 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         47 => "group_expression_arm", // "group_expression_arm"
         48 => "named_node_expression_arm", // "named_node_expression_arm"
         49 => "grouping_group", // "grouping_group"
-        50 => "named_node_arm", // "named_node_arm"
-        51 => "named_node_group", // "named_node_group"
-        52 => "named_node_group_children", // "named_node_group_children"
-        53 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
-        54 => "program_repeat1", // "program_repeat1"
-        55 => "string_content_repeat1", // "string_content_repeat1"
-        56 => "parameters_repeat1", // "parameters_repeat1"
-        57 => "list_repeat1", // "list_repeat1"
-        58 => "grouping_repeat1", // "grouping_repeat1"
-        59 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
+        50 => "named_node_group", // "named_node_group"
+        51 => "named_node_plain", // "named_node_plain"
+        52 => "named_node_supertyped", // "named_node_supertyped"
+        53 => "named_node_group_children", // "named_node_group_children"
+        54 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
+        55 => "program_repeat1", // "program_repeat1"
+        56 => "string_content_repeat1", // "string_content_repeat1"
+        57 => "parameters_repeat1", // "parameters_repeat1"
+        58 => "list_repeat1", // "list_repeat1"
+        59 => "grouping_repeat1", // "grouping_repeat1"
+        60 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
         _ => "<unknown>",
     }
 }
@@ -153,7 +155,7 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
 /// when it has no named child: an unnamed slot of the kind stores terminal
 /// kinds, and the wrap layer reclaims that slot's value from `$other`.
 pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 38 | 39 | 40 | 41 | 46)
+    matches!(kind.0, 38 | 39 | 40 | 41 | 46 | 51 | 52)
 }
 
 /// The model slot a child is stored under where its name differs from the
@@ -171,8 +173,6 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (40, Some("quantifier"), _) => Some("content"),
         (41, None, "capture") => Some("content"),
         (41, Some("quantifier"), _) => Some("content"),
-        (42, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (42, None, "named_node_group_children") => Some("named_node_group"),
         (46, None, "dot") => Some("content"),
         (46, None, "pound") => Some("content"),
         (49, None, "anonymous_node") => Some("group_expression"),
@@ -181,8 +181,17 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (49, None, "grouping") => Some("group_expression"),
         (49, None, "list") => Some("group_expression"),
         (49, None, "missing_node") => Some("group_expression"),
-        (49, None, "named_node") => Some("group_expression"),
+        (49, None, "named_node_plain") => Some("group_expression"),
+        (49, None, "named_node_supertyped") => Some("group_expression"),
         (49, None, "predicate") => Some("group_expression"),
+        (51, None, "capture") => Some("content"),
+        (51, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (51, None, "named_node_group_children") => Some("named_node_group"),
+        (51, Some("quantifier"), _) => Some("content"),
+        (52, None, "capture") => Some("content"),
+        (52, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (52, None, "named_node_group_children") => Some("named_node_group"),
+        (52, Some("quantifier"), _) => Some("content"),
         _ => None,
     }
 }
