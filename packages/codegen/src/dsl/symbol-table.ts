@@ -61,8 +61,7 @@ function walkGrammarNode(
 	const record = node as Record<string, unknown>;
 	if (record.type === 'ALIAS' && record.named === true && typeof record.value === 'string') {
 		const literals = aliasTargets.get(record.value) ?? new Set<string>();
-		const literal = aliasedLiteral(record.content);
-		if (literal !== undefined) literals.add(literal);
+		for (const literal of aliasedLiterals(record.content)) literals.add(literal);
 		aliasTargets.set(record.value, literals);
 	}
 	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') {
@@ -75,12 +74,15 @@ function walkGrammarNode(
 
 const LITERAL_WRAPPERS = new Set(['TOKEN', 'IMMEDIATE_TOKEN', 'PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
 
-function aliasedLiteral(content: unknown): string | undefined {
-	if (content === null || typeof content !== 'object') return undefined;
+function aliasedLiterals(content: unknown): readonly string[] {
+	if (content === null || typeof content !== 'object') return [];
 	const record = content as Record<string, unknown>;
-	if (record.type === 'STRING' && typeof record.value === 'string') return record.value;
-	if (typeof record.type === 'string' && LITERAL_WRAPPERS.has(record.type)) return aliasedLiteral(record.content);
-	return undefined;
+	if (record.type === 'STRING' && typeof record.value === 'string') return [record.value];
+	if ((record.type === 'CHOICE' || record.type === 'SEQ') && Array.isArray(record.members)) {
+		return record.members.flatMap(aliasedLiterals);
+	}
+	if (typeof record.type === 'string' && LITERAL_WRAPPERS.has(record.type)) return aliasedLiterals(record.content);
+	return [];
 }
 
 function resolveAliasedTokenLiterals(

@@ -6297,9 +6297,9 @@ same kinds, so the name and the fact cannot disagree.
 
 The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is itself one of `D`'s literals is that literal (the identifier-safe case, where tree-sitter's C name spells the literal); (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. No part of tree-sitter's C-name mangling is re-implemented: a non-identifier literal (`'\-'` → `anon_sym_BSLASH_DASH`) is recovered by elimination, never by decoding the mangled name.
 
-### `packages/codegen/src/dsl/symbol-table.ts::aliasedLiteral`
+### `packages/codegen/src/dsl/symbol-table.ts::aliasedLiterals`
 
-The literal a named alias wraps: its `STRING` content, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`), or `undefined` for any other content.
+The literals a named alias wraps. Tree-sitter applies an alias to every step of its content, so the walk collects each `STRING` under a `CHOICE` or `SEQ` member, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`); any other content contributes none.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::LITERAL_WRAPPERS`
 
