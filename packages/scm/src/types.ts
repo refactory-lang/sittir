@@ -18,7 +18,7 @@ import type {
 	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf } from './utils.js';
+import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { ScmGrammar };
 
@@ -1846,4 +1846,11 @@ export namespace ImmediateIdentifier {
 	export type LooseArgs = ImmediateIdentifierNs['LooseArgs'];
 	export type Tree = ImmediateIdentifierNs['Tree'];
 	export type Kind = '_immediate_identifier';
+}
+
+export interface EmptyProgram extends Program.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyMissingNode extends MissingNode.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

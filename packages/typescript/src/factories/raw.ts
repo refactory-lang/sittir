@@ -63,6 +63,8 @@ const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
 const _slotRe_buildNumberBigint_content =
 	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*)))$/u;
 
+export function buildProgram(): T.EmptyProgram;
+export function buildProgram(config?: Partial<T.Program.Config>): T.Program.Built;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = rejectBareText(config.hashBangLine, 'Program.hashBangLine', 'a built HashBangLine');
 	const _statements = rejectBareText(
@@ -137,6 +139,7 @@ export function buildNamespaceExport(value: T.Identifier | T.String): T.Namespac
 	);
 }
 
+export function buildExportClause(): T.EmptyExportClause;
 export function buildExportClause(value?: T.ExportSpecifiers): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -333,6 +336,7 @@ function _buildNamespaceImport(value: T.Identifier): T.NamespaceImport.Built {
 	);
 }
 
+export function buildNamedImports(): T.EmptyNamedImports;
 export function buildNamedImports(value?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -521,6 +525,8 @@ export function buildLexicalDeclaration(
 	);
 }
 
+export function buildStatementBlock(): T.EmptyStatementBlock;
+export function buildStatementBlock(config?: Partial<T.StatementBlock.Config>): T.StatementBlock.Built;
 export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {}): T.StatementBlock.Built {
 	const _statements = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.StatementBlock['_statements']>>(config.statements ?? [], []),
@@ -1200,6 +1206,8 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 	);
 }
 
+export function buildSwitchBody(): T.EmptySwitchBody;
+export function buildSwitchBody(...children: (T.SwitchCase | T.SwitchDefault)[]): T.SwitchBody.Built;
 export function buildSwitchBody(...children: (T.SwitchCase | T.SwitchDefault)[]): T.SwitchBody.Built {
 	const _cases = rejectBareText(children, 'SwitchBody.cases', 'a built SwitchCase / SwitchDefault');
 	return withMethods(
@@ -1364,6 +1372,40 @@ export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Bu
 	);
 }
 
+export function buildObject(): T.EmptyObject;
+export function buildObject(
+	...children: (
+		| (
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+		  )
+		| T.ShorthandPropertyIdentifier.Types
+	)[]
+): T.Object.Built;
 export function buildObject(
 	...children: (
 		| (
@@ -1456,6 +1498,40 @@ export function buildObject(
 	);
 }
 
+export function buildObjectPattern(): T.EmptyObjectPattern;
+export function buildObjectPattern(
+	...children: (
+		| (
+				| T.PairPattern
+				| T.RestPattern
+				| T.ObjectAssignmentPattern
+				| T.ShorthandPropertyIdentifierPattern
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+		  )
+		| T.ShorthandPropertyIdentifierPattern.Types
+	)[]
+): T.ObjectPattern.Built;
 export function buildObjectPattern(
 	...children: (
 		| (
@@ -1641,6 +1717,8 @@ export function buildObjectAssignmentPattern(
 	);
 }
 
+export function buildArray(): T.EmptyArray;
+export function buildArray(...children: (T.Expression | T.SpreadElement)[]): T.Array.Built;
 export function buildArray(...children: (T.Expression | T.SpreadElement)[]): T.Array.Built {
 	const _elements = rejectBareText(children, 'Array.elements', 'a built Expression / SpreadElement');
 	return withMethods(
@@ -1660,6 +1738,8 @@ export function buildArray(...children: (T.Expression | T.SpreadElement)[]): T.A
 	);
 }
 
+export function buildArrayPattern(): T.EmptyArrayPattern;
+export function buildArrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]): T.ArrayPattern.Built;
 export function buildArrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]): T.ArrayPattern.Built {
 	const _elements = rejectBareText(children, 'ArrayPattern.elements', 'a built Pattern / AssignmentPattern');
 	return withMethods(
@@ -2980,6 +3060,8 @@ export function buildUndefined(): TSKindId.Undefined {
 	return TSKindId.Undefined;
 }
 
+export function buildArguments(): T.EmptyArguments;
+export function buildArguments(...children: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
 export function buildArguments(...children: (T.Expression | T.SpreadElement)[]): T.Arguments.Built {
 	const _elements = rejectBareText(children, 'Arguments.elements', 'a built Expression / SpreadElement');
 	return withMethods(
@@ -3105,6 +3187,16 @@ export function buildDecoratorCallExpression(
 	);
 }
 
+export function buildClassBody(): T.EmptyClassBody;
+export function buildClassBody(
+	...children: (
+		| T.ClassBodyMethod
+		| T.ClassBodyMethodSig
+		| T.ClassStaticBlock
+		| T.ClassBodyMember
+		| TSKindId.EmptyMember
+	)[]
+): T.ClassBody.Built;
 export function buildClassBody(
 	...children: (
 		| T.ClassBodyMethod
@@ -3146,6 +3238,7 @@ export function buildClassBody(
 	);
 }
 
+export function buildFormalParameters(): T.EmptyFormalParameters;
 export function buildFormalParameters(value?: T.FormalParametersElements): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4638,6 +4731,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 	);
 }
 
+export function buildEnumBody(): T.EmptyEnumBody;
 export function buildEnumBody(value?: T.EnumBodyElements): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -6655,6 +6749,7 @@ export function buildArrayType(value: T.PrimaryType | T.TypeIdentifier.Types): T
 	);
 }
 
+export function buildTupleType(): T.EmptyTupleType;
 export function buildTupleType(value?: T.TupleTypeMembers): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },

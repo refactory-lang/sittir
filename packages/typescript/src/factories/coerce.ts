@@ -2449,6 +2449,8 @@ export function resolveProgram_statements(value: T.Program.LooseConfig['statemen
 	);
 }
 
+export function coerceToProgram(): T.EmptyProgram;
+export function coerceToProgram(input?: T.Program.Loose): ReturnType<typeof F.buildProgram>;
 export function coerceToProgram(input?: T.Program.Loose): ReturnType<typeof F.buildProgram> {
 	if (!_isLooseConfig<T.Program.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildProgram>;
@@ -2513,6 +2515,8 @@ export function resolveExportClause_exportSpecifiers(
 	return _resolveOneBranch<T.ExportSpecifiers>(value, 'export_specifiers', undefined, true);
 }
 
+export function coerceToExportClause(): T.EmptyExportClause;
+export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause>;
 export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ExportClause)
 		return input as unknown as ReturnType<typeof F.buildExportClause>;
@@ -2643,6 +2647,8 @@ export function resolveNamedImports_importSpecifiers(
 	return _resolveOneBranch<T.ImportSpecifiers>(value, 'import_specifiers', undefined, true);
 }
 
+export function coerceToNamedImports(): T.EmptyNamedImports;
+export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports>;
 export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.NamedImports)
 		return input as unknown as ReturnType<typeof F.buildNamedImports>;
@@ -2811,6 +2817,8 @@ export function resolveStatementBlock_automaticSemicolon(
 	return _resolveBooleanKeyword(value);
 }
 
+export function coerceToStatementBlock(): T.EmptyStatementBlock;
+export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock>;
 export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock> {
 	if (!_isLooseConfig<T.StatementBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildStatementBlock>;
@@ -3339,6 +3347,13 @@ export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): Retur
 	});
 }
 
+export function coerceToSwitchBody(): T.EmptySwitchBody;
+export function coerceToSwitchBody(
+	...input: readonly (
+		| T.SwitchBody.Loose
+		| LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildSwitchBody>;
 export function coerceToSwitchBody(
 	...input: readonly (
 		| T.SwitchBody.Loose
@@ -3491,6 +3506,43 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 	);
 }
 
+export function coerceToObject(): T.EmptyObject;
+export function coerceToObject(
+	...input: readonly (
+		| T.Object.Loose
+		| LooseValue<
+				| T.Pair
+				| T.SpreadElement
+				| T.MethodDefinition
+				| T.ShorthandPropertyIdentifier
+				| 'declare'
+				| 'namespace'
+				| 'type'
+				| 'public'
+				| 'private'
+				| 'protected'
+				| 'override'
+				| 'readonly'
+				| 'module'
+				| 'any'
+				| 'number'
+				| 'boolean'
+				| 'string'
+				| 'symbol'
+				| 'export'
+				| 'object'
+				| 'new'
+				| 'get'
+				| 'set'
+				| 'async'
+				| 'static'
+				| 'let',
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildObject>;
 export function coerceToObject(
 	...input: readonly (
 		| T.Object.Loose
@@ -3715,6 +3767,43 @@ export function coerceToObject(
 	);
 }
 
+export function coerceToObjectPattern(): T.EmptyObjectPattern;
+export function coerceToObjectPattern(
+	...input: readonly (
+		| T.ObjectPattern.Loose
+		| LooseValue<
+				| T.PairPattern
+				| T.RestPattern
+				| T.ObjectAssignmentPattern
+				| T.ShorthandPropertyIdentifierPattern
+				| 'declare'
+				| 'namespace'
+				| 'type'
+				| 'public'
+				| 'private'
+				| 'protected'
+				| 'override'
+				| 'readonly'
+				| 'module'
+				| 'any'
+				| 'number'
+				| 'boolean'
+				| 'string'
+				| 'symbol'
+				| 'export'
+				| 'object'
+				| 'new'
+				| 'get'
+				| 'set'
+				| 'async'
+				| 'static'
+				| 'let',
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildObjectPattern>;
 export function coerceToObjectPattern(
 	...input: readonly (
 		| T.ObjectPattern.Loose
@@ -4071,6 +4160,13 @@ export function coerceToObjectAssignmentPattern(
 	});
 }
 
+export function coerceToArray(): T.EmptyArray;
+export function coerceToArray(
+	...input: readonly (
+		| T.Array.Loose
+		| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildArray>;
 export function coerceToArray(
 	...input: readonly (
 		| T.Array.Loose
@@ -4103,6 +4199,13 @@ export function coerceToArray(
 	);
 }
 
+export function coerceToArrayPattern(): T.EmptyArrayPattern;
+export function coerceToArrayPattern(
+	...input: readonly (
+		| T.ArrayPattern.Loose
+		| LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildArrayPattern>;
 export function coerceToArrayPattern(
 	...input: readonly (
 		| T.ArrayPattern.Loose
@@ -5484,6 +5587,13 @@ export function coerceToUndefined(_input?: T.Undefined.Loose): ReturnType<typeof
 	return F.buildUndefined();
 }
 
+export function coerceToArguments(): T.EmptyArguments;
+export function coerceToArguments(
+	...input: readonly (
+		| T.Arguments.Loose
+		| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments(
 	...input: readonly (
 		| T.Arguments.Loose
@@ -5607,6 +5717,18 @@ export function coerceToDecoratorCallExpression(
 	});
 }
 
+export function coerceToClassBody(): T.EmptyClassBody;
+export function coerceToClassBody(
+	...input: readonly (
+		| T.ClassBody.Loose
+		| LooseValue<
+				T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';',
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildClassBody>;
 export function coerceToClassBody(
 	...input: readonly (
 		| T.ClassBody.Loose
@@ -5662,6 +5784,8 @@ export function resolveFormalParameters_formalParametersElements(
 	return _resolveOneBranch<T.FormalParametersElements>(value, 'formal_parameters_elements', undefined, true);
 }
 
+export function coerceToFormalParameters(): T.EmptyFormalParameters;
+export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters>;
 export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.FormalParameters)
 		return input as unknown as ReturnType<typeof F.buildFormalParameters>;
@@ -7455,6 +7579,8 @@ export function resolveEnumBody_enumBodyElements(
 	return _resolveOneBranch<T.EnumBodyElements>(value, 'enum_body_elements', undefined, true);
 }
 
+export function coerceToEnumBody(): T.EmptyEnumBody;
+export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody>;
 export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.EnumBody)
 		return input as unknown as ReturnType<typeof F.buildEnumBody>;
@@ -9323,6 +9449,8 @@ export function resolveTupleType_tupleTypeMembers(
 	return _resolveOneBranch<T.TupleTypeMembers>(value, 'tuple_type_members', undefined, true);
 }
 
+export function coerceToTupleType(): T.EmptyTupleType;
+export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TupleType)
 		return input as unknown as ReturnType<typeof F.buildTupleType>;

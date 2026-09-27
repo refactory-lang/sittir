@@ -26,6 +26,7 @@ import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
 import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
+	withEmptyOverload,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -411,15 +412,13 @@ function emitBranchFrom(
 		throw new Error(`from: '${node.kind}' has both a spelled delimiter and sibling leads; no typed form covers both`);
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
-	if (spelledType !== undefined) {
-		lines.push(
-			`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(input${opt}: I, options?: O): ${spelledType} {`
-		);
-	} else if (refusal !== undefined) {
-		lines.push(`export function ${fn}<const I extends ${inputType}>(input${opt}: I & ${refusal}${optionsParam}): ${returnType} {`);
-	} else {
-		lines.push(`export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`);
-	}
+	const signature =
+		spelledType !== undefined
+			? `export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(input${opt}: I, options?: O): ${spelledType} {`
+			: refusal !== undefined
+				? `export function ${fn}<const I extends ${inputType}>(input${opt}: I & ${refusal}${optionsParam}): ${returnType} {`
+				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
+	lines.push(...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';')));
 	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
 	const bareInterior = canDirectFactoryCall || slots.length === 0 ? undefined : bareInteriorText(node.kind, node);
 	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';
@@ -581,9 +580,11 @@ function emitRestParamFromResolver(
 	const returnType = factoryReturnTypeExpr(factory);
 	const inputType = listRestParamType(nonEmpty, `(${paramType})`, optionsType);
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
+	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
+	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
 	if (!hasNumericDiscriminant) {
 		return [
-			`export function ${fn}(...input: ${inputType}): ${returnType} {`,
+			...head,
 			...unwrap,
 			`  return ${buildCallExpr(freshVar, false)};`,
 			'}'
@@ -593,7 +594,7 @@ function emitRestParamFromResolver(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(...input: ${inputType}): ${returnType} {`,
+		...head,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,

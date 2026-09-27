@@ -1,6 +1,14 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { defaultTriviaForm, whitespaceTrivia, type TriviaForm, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
+import {
+	defaultTriviaForm,
+	emptyForms,
+	innerGapsKeyed,
+	whitespaceTrivia,
+	type EmptyForm,
+	type TriviaForm,
+	type WhitespaceTrivia
+} from '../compiler/model/trivia.ts';
 import { compareOrdinal } from './shared.ts';
 export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
@@ -26,8 +34,9 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push("import { KIND_NAMES } from './types.js';");
 	lines.push("import { INNER_GAPS } from './consts.js';");
+	if (emptyForms(config.nodeMap).size > 0) lines.push("import type * as T from './types.js';");
 	lines.push(
-		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText } from '@sittir/common/utils';"
+		"import { withMethods as withCommonMethods, isEmptyNode as _isEmptyNode, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText } from '@sittir/common/utils';"
 	);
 	lines.push("import type { WithMethodsEngine } from '@sittir/common/utils';");
 	lines.push('');
@@ -40,6 +49,8 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push(...emitMethodsEngine(form, whitespaceTrivia(config.nodeMap), config.triviaKinds ?? []));
 	lines.push('');
 	lines.push(...emitWithMethods(triviaTypeNames));
+	lines.push('');
+	lines.push(...emitEmptyGuards(emptyForms(config.nodeMap), config.nodeMap, triviaTypeNames));
 	lines.push('');
 	lines.push(...emitNodeGuards());
 	lines.push('');
@@ -157,6 +168,36 @@ function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 		'  return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;',
 		'}'
 	];
+}
+
+function emitEmptyGuards(
+	forms: ReadonlyMap<string, EmptyForm>,
+	nodeMap: NodeMap,
+	triviaTypeNames: readonly string[]
+): string[] {
+	if (forms.size === 0) return [];
+	const triviaEntry = buildTriviaEntryType(triviaTypeNames);
+	const triviaNode = buildTriviaNodeType(triviaTypeNames);
+	const keyed = innerGapsKeyed(nodeMap);
+	const lines = [
+		`export interface InnerTrivia<N${keyed ? ', Gap extends string' : ''}> {`,
+		`  inner(): readonly (${triviaNode})[];`,
+		`  inner(...items: ${triviaEntry}[]): N;`
+	];
+	if (keyed) {
+		lines.push(`  innerAt(gap: Gap): readonly (${triviaNode})[];`, `  innerAt(gap: Gap, ...items: ${triviaEntry}[]): N;`);
+	}
+	lines.push('}', '');
+	for (const [kind, form] of forms) {
+		lines.push(`export function isEmpty(node: T.${nodeMap.nodes.get(kind)!.typeName}): node is T.${form.typeName};`);
+	}
+	lines.push(
+		'export function isEmpty(node: AnyNodeData): boolean {',
+		'  const kind = methodsEngine.trivia.kindName(node.$type);',
+		'  return kind !== undefined && INNER_GAPS[kind] !== undefined && _isEmptyNode(node);',
+		'}'
+	);
+	return lines;
 }
 
 function emitIsNodeData(): string[] {

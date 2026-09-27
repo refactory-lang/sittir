@@ -345,6 +345,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "hoistRoutes": "function",
   "ir": "object",
   "is": "object",
+  "isEmpty": "function",
   "isNode": "function",
   "isNodeData": "function",
   "isNodeOfKind": "function",

@@ -68,6 +68,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
+import { emptyForms } from '../compiler/model/trivia.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -1162,4 +1163,16 @@ export function expandAndDedupeContentTypes(
 	};
 	for (const t of contentTypes) visit(t);
 	return expanded;
+}
+
+export function withEmptyOverload(
+	nodeMap: NodeMap,
+	kind: string,
+	head: string,
+	lines: readonly string[],
+	general?: string
+): string[] {
+	const empty = emptyForms(nodeMap).get(kind);
+	if (empty === undefined) return [...lines];
+	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
 }

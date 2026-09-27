@@ -2033,6 +2033,13 @@ const _K46: readonly string[] = ['pair', 'dictionary_splat'];
 const _K47: readonly string[] = ['for_in_clause', 'if_clause'];
 const _K48: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
 
+export function coerceToModule(): T.EmptyModule;
+export function coerceToModule(
+	...input: readonly (
+		| T.Module.Loose
+		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildModule>;
 export function coerceToModule(
 	...input: readonly (
 		| T.Module.Loose
@@ -2943,6 +2950,8 @@ export function resolveParameters_elements(value: T.Parameters.LooseConfig['elem
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
+export function coerceToParameters(): T.EmptyParameters;
+export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Parameters)
 		return input as unknown as ReturnType<typeof F.buildParameters>;
@@ -3230,6 +3239,8 @@ export function resolveArgumentList_arguments(
 	return _resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true);
 }
 
+export function coerceToArgumentList(): T.EmptyArgumentList;
+export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList>;
 export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ArgumentList)
 		return input as unknown as ReturnType<typeof F.buildArgumentList>;
@@ -3661,6 +3672,8 @@ export function resolveDictPattern_dictPatternElements(
 	return _resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true);
 }
 
+export function coerceToDictPattern(): T.EmptyDictPattern;
+export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern>;
 export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.DictPattern)
 		return input as unknown as ReturnType<typeof F.buildDictPattern>;
@@ -3942,6 +3955,8 @@ export function resolveTuplePattern_patterns(
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
+export function coerceToTuplePattern(): T.EmptyTuplePattern;
+export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TuplePattern)
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
@@ -3959,6 +3974,8 @@ export function resolveListPattern_patterns(value: T.ListPattern.LooseConfig['pa
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
+export function coerceToListPattern(): T.EmptyListPattern;
+export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern>;
 export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ListPattern)
 		return input as unknown as ReturnType<typeof F.buildListPattern>;
@@ -4833,6 +4850,8 @@ export function resolveList_collectionElements(
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
 }
 
+export function coerceToList(): T.EmptyList;
+export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList>;
 export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.List)
 		return input as unknown as ReturnType<typeof F.buildList>;
@@ -4877,6 +4896,8 @@ export function resolveTuple_collectionElements(
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
 }
 
+export function coerceToTuple(): T.EmptyTuple;
+export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple>;
 export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Tuple)
 		return input as unknown as ReturnType<typeof F.buildTuple>;
@@ -4896,6 +4917,8 @@ export function resolveDictionary_entries(value: T.Dictionary.LooseConfig['entri
 	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
 }
 
+export function coerceToDictionary(): T.EmptyDictionary;
+export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary>;
 export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Dictionary)
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
@@ -6109,6 +6132,8 @@ export function resolveCaseTuplePattern_listPatternCasePatterns(
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
+export function coerceToCaseTuplePattern(): T.EmptyCaseTuplePattern;
+export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern>;
 export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.CaseTuplePattern)
 		return input as unknown as ReturnType<typeof F.buildCaseTuplePattern>;
@@ -6130,6 +6155,8 @@ export function resolveCaseListPattern_listPatternCasePatterns(
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
+export function coerceToCaseListPattern(): T.EmptyCaseListPattern;
+export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern>;
 export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.CaseListPattern)
 		return input as unknown as ReturnType<typeof F.buildCaseListPattern>;
@@ -7057,6 +7084,13 @@ export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnT
 	);
 }
 
+export function coerceToMatchBlockBlock(): T.EmptyMatchBlockBlock;
+export function coerceToMatchBlockBlock(
+	...input: readonly (
+		| T.MatchBlockBlock.Loose
+		| LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildMatchBlockBlock>;
 export function coerceToMatchBlockBlock(
 	...input: readonly (
 		| T.MatchBlockBlock.Loose

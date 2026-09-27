@@ -216,6 +216,19 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Built {
 	);
 }
 
+export function buildCharacterClass(): T.EmptyCharacterClass;
+export function buildCharacterClass(
+	...children: (
+		| T.ClassCharacter
+		| TSKindId.BslashDash
+		| T.CharacterClassEscape
+		| T.ControlEscape
+		| T.ControlLetterEscape
+		| T.IdentityEscape
+		| T.PosixCharacterClass
+		| T.ClassRange
+	)[]
+): T.CharacterClass.Built;
 export function buildCharacterClass(
 	...children: (
 		| T.ClassCharacter

@@ -23,6 +23,8 @@ const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*)
 const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
+export function buildProgram(): T.EmptyProgram;
+export function buildProgram(...children: T.Definition[]): T.Program.Built;
 export function buildProgram(...children: T.Definition[]): T.Program.Built {
 	const _definitions = rejectBareText(children, 'Program.definitions', 'a built Definition');
 	return withMethods(
@@ -333,6 +335,8 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Built {
 	);
 }
 
+export function buildMissingNode(): T.EmptyMissingNode;
+export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Built;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Built {
 	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
 	const _content = rejectBareText(

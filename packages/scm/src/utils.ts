@@ -17,8 +17,10 @@ import type { Comment, Newline, Space, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
+import type * as T from './types.js';
 import {
 	withMethods as withCommonMethods,
+	isEmptyNode as _isEmptyNode,
 	isNodeData as _isNodeData,
 	isTreeNode as _isTreeNode,
 	hasKind,
@@ -92,6 +94,18 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 	// Grammar-local facade: T extends object to accept wrap.ts union-spread literals.
 	// Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.
 	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
+}
+
+export interface InnerTrivia<N> {
+	inner(): readonly (Comment | Newline | Space)[];
+	inner(...items: (Comment | Newline | Space | string)[]): N;
+}
+
+export function isEmpty(node: T.Program): node is T.EmptyProgram;
+export function isEmpty(node: T.MissingNode): node is T.EmptyMissingNode;
+export function isEmpty(node: AnyNodeData): boolean {
+	const kind = methodsEngine.trivia.kindName(node.$type);
+	return kind !== undefined && INNER_GAPS[kind] !== undefined && _isEmptyNode(node);
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(

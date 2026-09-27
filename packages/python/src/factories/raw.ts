@@ -98,6 +98,8 @@ const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
 const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 
+export function buildModule(): T.EmptyModule;
+export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built;
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
 	const _statements = rejectBareText(children, 'Module.statements', 'a built SimpleStatements / CompoundStatement');
 	return withMethods(
@@ -1068,6 +1070,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	);
 }
 
+export function buildParameters(): T.EmptyParameters;
 export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -1405,6 +1408,7 @@ export function buildParenthesizedListSplat(
 	);
 }
 
+export function buildArgumentList(): T.EmptyArgumentList;
 export function buildArgumentList(value?: T.ArgumentListElements): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -1759,6 +1763,7 @@ export function buildUnionPattern(
 	);
 }
 
+export function buildDictPattern(): T.EmptyDictPattern;
 export function buildDictPattern(value?: T.DictPatternElements): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -2069,6 +2074,7 @@ function _buildPatterns(
 	);
 }
 
+export function buildTuplePattern(): T.EmptyTuplePattern;
 export function buildTuplePattern(value?: T.Patterns): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -2109,6 +2115,7 @@ function _buildTuplePattern(value?: T.Patterns): T.TuplePattern.Built {
 	);
 }
 
+export function buildListPattern(): T.EmptyListPattern;
 export function buildListPattern(value?: T.Patterns): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -3106,6 +3113,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 	);
 }
 
+export function buildList(): T.EmptyList;
 export function buildList(value?: T.CollectionElements): ReturnType<typeof _buildList>;
 export function buildList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -3190,6 +3198,7 @@ function _buildSet(value: T.CollectionElements): T.Set.Built {
 	);
 }
 
+export function buildTuple(): T.EmptyTuple;
 export function buildTuple(value?: T.CollectionElements): ReturnType<typeof _buildTuple>;
 export function buildTuple(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -3232,6 +3241,7 @@ function _buildTuple(value?: T.CollectionElements): T.Tuple.Built {
 	);
 }
 
+export function buildDictionary(): T.EmptyDictionary;
 export function buildDictionary(value?: T.DictionaryElements): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4534,6 +4544,7 @@ export function buildExceptClauseExceptionAs(
 	);
 }
 
+export function buildCaseTuplePattern(): T.EmptyCaseTuplePattern;
 export function buildCaseTuplePattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4582,6 +4593,7 @@ function _buildCaseTuplePattern(value?: T.ListPatternCasePatterns): T.CaseTupleP
 	);
 }
 
+export function buildCaseListPattern(): T.EmptyCaseListPattern;
 export function buildCaseListPattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -5588,6 +5600,8 @@ function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.
 	);
 }
 
+export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
+export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built;
 export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built {
 	const _alternative = rejectBareText(children, 'MatchBlockBlock.alternative', 'a built CaseClause');
 	return withMethods(

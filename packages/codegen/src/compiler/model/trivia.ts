@@ -196,3 +196,31 @@ export function stampTriviaInterior(nodeMap: NodeMap): void {
 		if (node !== undefined) node.triviaInterior = true;
 	}
 }
+
+export interface EmptyForm {
+	readonly typeName: string;
+	readonly gaps: readonly string[];
+}
+
+const emptyFormsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, EmptyForm>>();
+
+export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
+	const cached = emptyFormsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const typeNames = new Set([...nodeMap.nodes.values()].map((node) => node.typeName));
+	const forms = new Map<string, EmptyForm>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined) continue;
+		const gaps = node.innerGaps.map((gap) => gap.key);
+		if (gaps.length === 0) continue;
+		const typeName = `Empty${node.typeName}`;
+		if (typeNames.has(typeName)) throw new Error(`trivia: '${kind}' would name its empty form ${typeName}, which a kind already names`);
+		forms.set(kind, { typeName, gaps });
+	}
+	emptyFormsByNodeMap.set(nodeMap, forms);
+	return forms;
+}
+
+export function innerGapsKeyed(nodeMap: NodeMap): boolean {
+	return [...emptyForms(nodeMap).values()].some((form) => form.gaps.length > 1);
+}

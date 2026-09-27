@@ -18,7 +18,7 @@ import type {
 	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf } from './utils.js';
+import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { RegexGrammar };
 
@@ -2720,4 +2720,8 @@ export namespace DecimalDigits {
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
 	export type Tree = DecimalDigitsNs['Tree'];
 	export type Kind = 'decimal_digits';
+}
+
+export interface EmptyCharacterClass extends CharacterClass.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

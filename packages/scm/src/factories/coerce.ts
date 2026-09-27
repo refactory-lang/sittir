@@ -499,6 +499,10 @@ const _K7: readonly string[] = [
 const _K8: readonly string[] = ['_immediate_identifier'];
 const _K9: readonly string[] = ['immediate_string'];
 
+export function coerceToProgram(): T.EmptyProgram;
+export function coerceToProgram(
+	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+): ReturnType<typeof F.buildProgram>;
 export function coerceToProgram(
 	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildProgram> {
@@ -767,6 +771,8 @@ export function resolveMissingNode_contents(value: T.MissingNode.LooseConfig['co
 	);
 }
 
+export function coerceToMissingNode(): T.EmptyMissingNode;
+export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typeof F.buildMissingNode>;
 export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typeof F.buildMissingNode> {
 	if (!_isLooseConfig<T.MissingNode.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildMissingNode>;

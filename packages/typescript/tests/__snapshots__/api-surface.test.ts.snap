@@ -332,6 +332,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "importIdentifier": "object",
   "ir": "object",
   "is": "object",
+  "isEmpty": "function",
   "isNode": "function",
   "isNodeData": "function",
   "isNodeOfKind": "function",

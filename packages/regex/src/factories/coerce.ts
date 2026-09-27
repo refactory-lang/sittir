@@ -785,6 +785,25 @@ export function coerceToPatternCharacter(input: T.PatternCharacter.Loose): Retur
 	return F.buildPatternCharacter(input as Parameters<typeof F.buildPatternCharacter>[0]);
 }
 
+export function coerceToCharacterClass(): T.EmptyCharacterClass;
+export function coerceToCharacterClass(
+	...input: readonly (
+		| T.CharacterClass.Loose
+		| LooseValue<
+				| T.ClassCharacter
+				| '\\-'
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.PosixCharacterClass
+				| T.ClassRange,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildCharacterClass>;
 export function coerceToCharacterClass(
 	...input: readonly (
 		| T.CharacterClass.Loose

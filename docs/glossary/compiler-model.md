@@ -4622,6 +4622,18 @@ The non-default arms of a polymorph, each with its leading regex (the `leadSourc
 
 The alternatives a kind's text can begin with (`LeadAlternative`): each literal, each pattern, and each symbol resolved through the node map. A kind that can begin empty throws, since any text could read as it, and so does one the node map cannot read.
 
+### `packages/codegen/src/compiler/model/trivia.ts::emptyForms`
+
+The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and at least one inner gap. Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::innerGapsKeyed`
+
+True when some kind's empty form has more than one inner gap, so a gap has to be named when writing to it. Only then does `InnerTrivia` take a `Gap` parameter and an `innerAt(gap, ...)` method. With one gap per kind, `inner(...)` already says where the entries go.
+
+### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
+
+One kind's empty form: the emitted type name (`Empty<TypeName>`) and the keys of its inner gaps, in render order. When some kind has more than one gap (`innerGapsKeyed`), those keys are the `Gap` union of its `InnerTrivia`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 
 ```text

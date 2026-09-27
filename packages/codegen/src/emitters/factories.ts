@@ -74,6 +74,7 @@ import {
 	enumMemberDiscriminant,
 	expandAndDedupeContentTypes,
 	registeredSlots,
+	withEmptyOverload,
 	pruneUnusedImports
 } from './shared.ts';
 import {
@@ -1259,12 +1260,12 @@ function emitFieldCarryingFactory(
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
 		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
 		const overloadParams = [surface.params, ...targetOverloads].map(declarationParams);
-		const wrapper: string[] = [
+		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...[...overloadParams.filter((params) => params === ''), ...overloadParams.filter((params) => params !== '')].map(
 				(params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`
 			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
-		];
+		]);
 		if (registered.length > 0) {
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
@@ -1306,8 +1307,11 @@ function emitFieldCarryingFactory(
 			);
 		}
 		lines.unshift(...wrapper);
+		return renameUnusedConfigParam(lines);
 	}
-	return renameUnusedConfigParam(lines);
+	return renameUnusedConfigParam(
+		withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, lines, `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`)
+	);
 }
 
 export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {

@@ -21,7 +21,7 @@ import type {
 	OmitEach
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf } from './utils.js';
+import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { TypescriptGrammar };
 
@@ -23644,4 +23644,47 @@ export namespace ErrorRecovery {
 	export type LooseArgs = ErrorRecoveryNs['LooseArgs'];
 	export type Tree = ErrorRecoveryNs['Tree'];
 	export type Kind = '__error_recovery';
+}
+
+export interface EmptyProgram extends Program.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyExportClause extends ExportClause.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyNamedImports extends NamedImports.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyStatementBlock extends StatementBlock.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptySwitchBody extends SwitchBody.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyObject extends Object.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyObjectPattern extends ObjectPattern.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyArray extends Array.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyArrayPattern extends ArrayPattern.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyArguments extends Arguments.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyClassBody extends ClassBody.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyFormalParameters extends FormalParameters.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyEnumBody extends EnumBody.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTupleType extends TupleType.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

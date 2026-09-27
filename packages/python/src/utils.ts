@@ -27,8 +27,10 @@ import type {
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
+import type * as T from './types.js';
 import {
 	withMethods as withCommonMethods,
+	isEmptyNode as _isEmptyNode,
 	isNodeData as _isNodeData,
 	isTreeNode as _isTreeNode,
 	hasKind,
@@ -189,6 +191,49 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 	// Grammar-local facade: T extends object to accept wrap.ts union-spread literals.
 	// Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.
 	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
+}
+
+export interface InnerTrivia<N> {
+	inner(): readonly (
+		| Blankline
+		| Comment
+		| DoubleBlankline
+		| LineContinuation
+		| LineContinuationNewline
+		| LineContinuationNul
+		| Newline
+		| Space
+	)[];
+	inner(
+		...items: (
+			| Blankline
+			| Comment
+			| DoubleBlankline
+			| LineContinuation
+			| LineContinuationNewline
+			| LineContinuationNul
+			| Newline
+			| Space
+			| string
+		)[]
+	): N;
+}
+
+export function isEmpty(node: T.Module): node is T.EmptyModule;
+export function isEmpty(node: T.Parameters): node is T.EmptyParameters;
+export function isEmpty(node: T.ArgumentList): node is T.EmptyArgumentList;
+export function isEmpty(node: T.DictPattern): node is T.EmptyDictPattern;
+export function isEmpty(node: T.TuplePattern): node is T.EmptyTuplePattern;
+export function isEmpty(node: T.ListPattern): node is T.EmptyListPattern;
+export function isEmpty(node: T.List): node is T.EmptyList;
+export function isEmpty(node: T.Tuple): node is T.EmptyTuple;
+export function isEmpty(node: T.Dictionary): node is T.EmptyDictionary;
+export function isEmpty(node: T.CaseTuplePattern): node is T.EmptyCaseTuplePattern;
+export function isEmpty(node: T.CaseListPattern): node is T.EmptyCaseListPattern;
+export function isEmpty(node: T.MatchBlockBlock): node is T.EmptyMatchBlockBlock;
+export function isEmpty(node: AnyNodeData): boolean {
+	const kind = methodsEngine.trivia.kindName(node.$type);
+	return kind !== undefined && INNER_GAPS[kind] !== undefined && _isEmptyNode(node);
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(

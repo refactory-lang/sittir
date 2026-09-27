@@ -815,6 +815,8 @@ parameterless form declared last would make the wrapper's parameter type
 `[]` for every consumer that reads it (python `buildSuiteEmpty` in the
 coerce layer).
 
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` (`withEmptyOverload`). On a forwarding factory it goes on the exported wrapper, ahead of the forwarded overloads, and never on the private `_build…`.
+
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
 ```text
@@ -1525,6 +1527,8 @@ A delimiter that is a spelling choice goes through `spelledForm` instead, and th
 
 The coercer's signature carries the same facts as types. With a spelled delimiter it is generic over the input and options (`<const I, const O>`) and returns `spelledReturnType`, so `integer.hex('0XFF').prefix()` is `'0X'`. With sibling leads its input is `I & SiblingLeadRefusal<…>` (`siblingLeadRefusalType`), so `blockComment('/*! x */')` fails to compile, naming `ir.blockCommentDocInner`. A plain `string` input keeps today's types and is checked at runtime. Delimiters with no slot and no siblings leave the signature as it was.
 
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
+
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
 An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
@@ -1652,6 +1656,8 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 #### options-first list coercer
 
 A separated list types its rest parameter with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
+
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
@@ -10013,6 +10019,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // generated interface name can ever contain `$`.
 ```
 
+After the namespaces, one `Empty<TypeName>` interface per empty form. It extends the kind's `Built`, and its `$trivia` adds `InnerTrivia<this>`, keyed by the form's gap keys only under `innerGapsKeyed`. It uses `this` because the base declares `TriviaSetterOf<this>`.
+
 ### `packages/codegen/src/emitters/types.ts::NodeCategories`
 
 ```text
@@ -11163,6 +11171,10 @@ Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render
 // The predicate intersects with AnyNodeData for the same reason as
 // `isNodeData`'s kinded overload: a keyword kind's `Node` is its id.
 ```
+
+### `packages/codegen/src/emitters/client-utils.ts::emitEmptyGuards`
+
+The grammar's `InnerTrivia<N>` interface and its `isEmpty` guard; nothing when no kind has an empty form. `inner()` reads a node's inner entries and `inner(...items)` rebuilds the node with them, typed by the same trivia unions as `TriviaSetterOf`. When some kind has more than one gap (`innerGapsKeyed`), the interface also takes a `Gap` parameter and gets `innerAt(gap, ...)`. `isEmpty` has one overload per empty form, narrowing that kind to `Empty<TypeName>`. At runtime a node is empty when its kind has inner gaps (`INNER_GAPS`) and it holds no children (`isEmptyNode`).
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -15161,6 +15173,10 @@ factory's trailing parameter comes from. `OptionsArg<typeof parent>` cannot
 serve: a raw factory with a bare-text overload lists that overload last, and
 `ArgsOf` reads the last overload, which has no options parameter.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedParent`
+
+The strict and coerce entry points of a parent whose arms are seated into it: the parent's builder composed with each seat, typed to accept the parent's own input or a seated child's. When the parent has an empty form, each entry point is emitted as an overloaded function through `withEmptyOverload`, so `ir.<kind>()` keeps its `Empty<TypeName>` type through the overlay. Otherwise it stays a typed `const`. Called with no argument, the composed builder calls the parent with none, so the runtime realizes the same empty node.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::nestingArmOf`
 
 Where a nested arm sits: under the direct arm reaching the same child, at
@@ -15444,6 +15460,8 @@ through it (post-order).
 ride in the erased-helper block for the flatten methods.
 
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
+
+It imports the grammar types as `T` when any emitted block names `T.`.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16323,6 +16341,10 @@ disagree on what counts as an options object.
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
 The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call.
+
+### `packages/codegen/src/emitters/shared.ts::withEmptyOverload`
+
+Puts the zero-argument overload `head(): T.Empty<TypeName>` in front of a function's lines when the kind has an empty form, and leaves the lines unchanged otherwise. `general` is the declaration of the implementation's own signature. Pass it when the lines hold only the implementation, because once one overload exists the implementation signature is no longer callable. Omit it when the lines already begin with overload declarations. Factories, coercers and seated polymorph parents all get the empty overload here. It comes first because `ReturnType<typeof f>` reads the last overload, so the general signature has to stay last.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorOf`
 

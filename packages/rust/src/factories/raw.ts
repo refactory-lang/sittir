@@ -55,6 +55,8 @@ const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4})
 const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
 const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 
+export function buildSourceFile(): T.EmptySourceFile;
+export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Built;
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Built {
 	const _shebang = rejectBareText(config.shebang, 'SourceFile.shebang', 'a built Shebang');
 	const _statements = rejectBareText(
@@ -821,6 +823,8 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 	);
 }
 
+export function buildDeclarationList(): T.EmptyDeclarationList;
+export function buildDeclarationList(...children: T.DeclarationStatement[]): T.DeclarationList.Built;
 export function buildDeclarationList(...children: T.DeclarationStatement[]): T.DeclarationList.Built {
 	const _declarations = rejectBareText(children, 'DeclarationList.declarations', 'a built DeclarationStatement');
 	return withMethods(
@@ -933,6 +937,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 	);
 }
 
+export function buildEnumVariantList(): T.EmptyEnumVariantList;
 export function buildEnumVariantList(value?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -1028,6 +1033,7 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bu
 	);
 }
 
+export function buildFieldDeclarationList(): T.EmptyFieldDeclarationList;
 export function buildFieldDeclarationList(
 	value?: T.FieldDeclarationListElements
 ): ReturnType<typeof _buildFieldDeclarationList>;
@@ -1124,6 +1130,7 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 	);
 }
 
+export function buildOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
 export function buildOrderedFieldDeclarationList(
 	value?: T.OrderedFieldDeclarationListElements
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
@@ -2228,6 +2235,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 	);
 }
 
+export function buildUseList(): T.EmptyUseList;
 export function buildUseList(value?: T.UseClauses): ReturnType<typeof _buildUseList>;
 export function buildUseList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -2478,6 +2486,7 @@ function _buildUseWildcard(value?: T.UseWildcardGroup): T.UseWildcard.Built {
 	);
 }
 
+export function buildParameters(): T.EmptyParameters;
 export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -3116,6 +3125,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bu
 	);
 }
 
+export function buildUseBounds(): T.EmptyUseBounds;
 export function buildUseBounds(value?: T.UseBoundsElements): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4113,6 +4123,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 	);
 }
 
+export function buildArguments(): T.EmptyArguments;
 export function buildArguments(value?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
 export function buildArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4256,6 +4267,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 	);
 }
 
+export function buildFieldInitializerList(): T.EmptyFieldInitializerList;
 export function buildFieldInitializerList(
 	value?: T.FieldInitializerListElements
 ): ReturnType<typeof _buildFieldInitializerList>;
@@ -4557,6 +4569,8 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 	);
 }
 
+export function buildMatchBlock(): T.EmptyMatchBlock;
+export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built;
 export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
 	const _match_block_arms = rejectBareText(value, 'MatchBlock.matchBlockArms', 'a built MatchBlockArms');
 	return withMethods(
@@ -4796,6 +4810,8 @@ function _buildConstBlock(value: T.Block): T.ConstBlock.Built {
 	);
 }
 
+export function buildClosureParameters(): T.EmptyClosureParameters;
+export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[]): T.ClosureParameters.Built;
 export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[]): T.ClosureParameters.Built {
 	const _parameters = rejectBareText(children, 'ClosureParameters.parameters', 'a built Pattern / Parameter');
 	return withMethods(
@@ -5141,6 +5157,8 @@ function _buildTryBlock(value: T.Block): T.TryBlock.Built {
 	);
 }
 
+export function buildBlock(): T.EmptyBlock;
+export function buildBlock(config?: Partial<T.Block.Config>): T.Block.Built;
 export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built {
 	const _label = rejectBareText(config.label, 'Block.label', 'a built Label');
 	const _statements = rejectBareText(
@@ -5205,6 +5223,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 	);
 }
 
+export function buildTuplePattern(): T.EmptyTuplePattern;
 export function buildTuplePattern(value?: T.TuplePatternElements): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -5249,6 +5268,7 @@ function _buildTuplePattern(value?: T.TuplePatternElements): T.TuplePattern.Buil
 	);
 }
 
+export function buildSlicePattern(): T.EmptySlicePattern;
 export function buildSlicePattern(value?: T.Patterns): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -7446,6 +7466,8 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 	);
 }
 
+export function buildArrayExpressionList(): T.EmptyArrayExpressionList;
+export function buildArrayExpressionList(config?: Partial<T.ArrayExpressionList.Config>): T.ArrayExpressionList.Built;
 export function buildArrayExpressionList(
 	config: Partial<T.ArrayExpressionList.Config> = {}
 ): T.ArrayExpressionList.Built {
@@ -8844,6 +8866,16 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 	);
 }
 
+export function buildTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
+export function buildTokenTreePatternParen(
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T.NonSpecialToken
+	)[]
+): T.TokenTreePatternParen.Built;
 export function buildTokenTreePatternParen(
 	...children: (
 		| T.TokenTreePattern
@@ -8885,6 +8917,16 @@ export function buildTokenTreePatternParen(
 	);
 }
 
+export function buildTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
+export function buildTokenTreePatternBracket(
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T.NonSpecialToken
+	)[]
+): T.TokenTreePatternBracket.Built;
 export function buildTokenTreePatternBracket(
 	...children: (
 		| T.TokenTreePattern
@@ -8926,6 +8968,16 @@ export function buildTokenTreePatternBracket(
 	);
 }
 
+export function buildTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
+export function buildTokenTreePatternBrace(
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T.NonSpecialToken
+	)[]
+): T.TokenTreePatternBrace.Built;
 export function buildTokenTreePatternBrace(
 	...children: (
 		| T.TokenTreePattern
@@ -8967,6 +9019,10 @@ export function buildTokenTreePatternBrace(
 	);
 }
 
+export function buildTokenTreeParen(): T.EmptyTokenTreeParen;
+export function buildTokenTreeParen(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
+): T.TokenTreeParen.Built;
 export function buildTokenTreeParen(
 	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeParen.Built {
@@ -8995,6 +9051,10 @@ export function buildTokenTreeParen(
 	);
 }
 
+export function buildTokenTreeBracket(): T.EmptyTokenTreeBracket;
+export function buildTokenTreeBracket(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
+): T.TokenTreeBracket.Built;
 export function buildTokenTreeBracket(
 	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeBracket.Built {
@@ -9023,6 +9083,10 @@ export function buildTokenTreeBracket(
 	);
 }
 
+export function buildTokenTreeBrace(): T.EmptyTokenTreeBrace;
+export function buildTokenTreeBrace(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
+): T.TokenTreeBrace.Built;
 export function buildTokenTreeBrace(
 	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeBrace.Built {
@@ -9051,6 +9115,10 @@ export function buildTokenTreeBrace(
 	);
 }
 
+export function buildDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
+export function buildDelimTokenTreeParen(
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+): T.DelimTokenTreeParen.Built;
 export function buildDelimTokenTreeParen(
 	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeParen.Built {
@@ -9079,6 +9147,10 @@ export function buildDelimTokenTreeParen(
 	);
 }
 
+export function buildDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
+export function buildDelimTokenTreeBracket(
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+): T.DelimTokenTreeBracket.Built;
 export function buildDelimTokenTreeBracket(
 	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBracket.Built {
@@ -9107,6 +9179,10 @@ export function buildDelimTokenTreeBracket(
 	);
 }
 
+export function buildDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
+export function buildDelimTokenTreeBrace(
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+): T.DelimTokenTreeBrace.Built;
 export function buildDelimTokenTreeBrace(
 	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBrace.Built {

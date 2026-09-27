@@ -95,6 +95,7 @@ import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
+import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -356,6 +357,18 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
+	const keyed = innerGapsKeyed(nodeMap);
+	for (const [kind, empty] of emptyForms(nodeMap)) {
+		const node = nodeMap.nodes.get(kind)!;
+		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
+		lines.push(
+			`export interface ${empty.typeName} extends ${node.typeName}.Built {`,
+			`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
+			'}'
+		);
+	}
+	lines.push('');
+
 	if (referencedBitflagConsts.size > 0) {
 		const sortedNames = [...referencedBitflagConsts].sort();
 		const importLine = `import { ${sortedNames.join(', ')} } from './consts.js';`;
@@ -366,8 +379,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
-	if (/\bNodeMethodsOf\b/.test(body)) {
-		lines.splice(sittirImportIndex + 1, 0, `import type { NodeMethodsOf } from './utils.js';`);
+	const utilsTypes = ['NodeMethodsOf', 'TriviaSetterOf', 'InnerTrivia'].filter((name) => new RegExp(`\\b${name}\\b`).test(body));
+	if (utilsTypes.length > 0) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { ${utilsTypes.join(', ')} } from './utils.js';`);
 	}
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
