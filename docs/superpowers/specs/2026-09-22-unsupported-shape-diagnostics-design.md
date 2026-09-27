@@ -3,7 +3,9 @@
 **Status:** approved design, 2026-09-22; amended 2026-09-26 (render bodies stay
 on `renderAs:`, all five grammars, measured ceilings, upstream taken from the
 base `wire()` receives); amended again 2026-09-26 (diagnostics are checks
-over the evaluated rule tree and gate link, §4).
+over the evaluated rule tree and gate link, §4); implemented 2026-09-27:
+ceilings typescript 6 / rust 13 / python 14 / scm 1 / regex 1, floors recorded
+in each grammar's `expectDiagnostics`.
 
 **Goal:** the compiler refuses every grammar shape it does not model, at the
 site, naming the shape and the patch form that resolves it; and every
@@ -325,8 +327,8 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
   `expectDiagnostics` lists their current instances per grammar; the
   structural-recursion fallback in `collect-slots` runs only for
   floor-listed instances, and an unlisted instance blocks.
-- Ratchet: hand-written rule counts at or below 12/14/15/1/1; the check runs
-  with the phantom-kind ratchet.
+- Ratchet: hand-written rule counts at or below 6/13/14/1/1 (typescript,
+  rust, python, scm, regex); the check runs with the phantom-kind ratchet.
 - No diagnostic reads link, normalize or assemble output. A grammar with an
   unfloored blocking record stops before link; a unit fixture proves it.
 - Every stage, including typescript's raw stage, produces records; no stage
