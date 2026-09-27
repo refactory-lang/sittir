@@ -523,8 +523,9 @@ the declaration or deletion that resolves it:
   external, as the evaluated externals list spells it.
 - `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
   rule.
-- `rule-cause-mismatch`: a `reauthored` entry on a name upstream does not
-  declare, or one whose upstream provocations all belong to other causes.
+- `rule-cause-mismatch`: a `reauthored` entry whose cause is not a cause, on a
+  name upstream does not declare, or whose upstream provocations all belong to
+  other causes.
 - `rule-reauthored-without-cause`: a `reauthored` entry no `PROVOKING_CODES`
   code provokes. The one floorable code; the floor applies at the gate.
 
@@ -535,7 +536,7 @@ declares, else nothing.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
 
-The `reauthored` judgement: the name must be an upstream rule, some
+The `reauthored` judgement: the declared cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
 `PROVOKING_CODES` code must fire on it upstream, and one of those codes must
 belong to the declared cause.
 

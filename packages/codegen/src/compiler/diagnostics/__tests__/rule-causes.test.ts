@@ -64,6 +64,17 @@ describe('diagnoseRuleCauses', () => {
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:a']);
 	});
 
+	it('a reauthored declaration with a cause that is not one is rule-cause-mismatch naming the valid causes', () => {
+		for (const diagnostics of [[fired('unclassifiable-shape', 'a')], []]) {
+			const ds = diagnose({
+				ruleCauses: { a: { kind: 'reauthored', cause: 'bogus' } as never },
+				enriched: enriched({ ruleNames: new Set(['a']), diagnostics })
+			});
+			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:a']);
+			expect(ds[0]!.message).toMatch(/'alias-shape', 'ambiguity'/);
+		}
+	});
+
 	it('a reauthored declaration on a name upstream does not declare is rule-cause-mismatch', () => {
 		const ds = diagnose({
 			ruleCauses: { brand_new: { kind: 'reauthored', cause: 'ambiguity' } },

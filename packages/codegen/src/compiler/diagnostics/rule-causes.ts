@@ -64,6 +64,17 @@ function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis
 
 function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
 	const { grammar, enriched } = input;
+	if (!Object.hasOwn(PROVOKING_CODES, cause)) {
+		return blocking(
+			grammar,
+			'rule-cause-mismatch',
+			name,
+			`rules: '${name}' is declared reauthored('${cause}'), which is not a cause. Declare one of: ${Object.keys(PROVOKING_CODES)
+				.map((known) => `'${known}'`)
+				.join(', ')}`,
+			{ cause }
+		);
+	}
 	if (!enriched.ruleNames.has(name)) {
 		return blocking(
 			grammar,
