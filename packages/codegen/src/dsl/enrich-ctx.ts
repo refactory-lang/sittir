@@ -1,4 +1,5 @@
 import type { Rule } from '../types/rule.ts';
+import type { RuntimeRule } from '../types/runtime-shapes.ts';
 import { isParserHiddenName, ruleListParts, type RuleListEntry, type SymbolSource } from './rule-patterns.ts';
 import { predictedSymbolSourceOf } from './symbol-table.ts';
 
@@ -10,6 +11,7 @@ export interface EnrichCtxInit {
 	readonly extras: readonly RuleListEntry[];
 	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
+	readonly authoredGroupBodies: readonly RuntimeRule[];
 }
 
 export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<string, Rule>>): SymbolSource {
@@ -51,6 +53,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly extras: readonly RuleListEntry[];
 	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
+	readonly authoredGroupBodies: readonly RuntimeRule[];
 	readonly sourceSymbols: SymbolSource;
 	readonly kwRules: Record<string, Rule>;
 	readonly clauseGroupRules: Record<string, Rule>;
@@ -68,6 +71,7 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.extras = fields.extras;
 		this.word = fields.word;
 		this.wordMatcher = fields.wordMatcher;
+		this.authoredGroupBodies = fields.authoredGroupBodies;
 		this.sourceSymbols = fields.sourceSymbols;
 		this.kwRules = fields.kwRules;
 		this.clauseGroupRules = fields.clauseGroupRules;

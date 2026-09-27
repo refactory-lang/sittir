@@ -744,14 +744,14 @@ function ruleListParts(rules) {
   }
   return parts;
 }
-function symbolFactsOf(grammar2) {
+function symbolFactsOf(grammar) {
   return {
-    rules: grammar2.rules,
-    externals: new Set(ruleListParts(grammar2.externals).names),
-    inline: new Set(grammar2.inline),
-    supertypes: new Set(grammar2.supertypes),
-    extras: new Set(ruleListParts(grammar2.extras).names),
-    visibleExternals: new Set(Object.keys(grammar2.visibleExternals ?? {}))
+    rules: grammar.rules,
+    externals: new Set(ruleListParts(grammar.externals).names),
+    inline: new Set(grammar.inline),
+    supertypes: new Set(grammar.supertypes),
+    extras: new Set(ruleListParts(grammar.extras).names),
+    visibleExternals: new Set(Object.keys(grammar.visibleExternals ?? {}))
   };
 }
 var selfReferenceWalker = new RuleWalker({});
@@ -1189,9 +1189,9 @@ function renameRule(value, renames) {
     if (name !== record.name) changes.name = name;
   }
   if (Object.keys(changes).length === 0) return value;
-  const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value));
-  for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
-  return copy;
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
+  return Object.create(Object.getPrototypeOf(value), descriptors);
 }
 function renameNameList(value, renames) {
   if (renames.size === 0) return value;
@@ -1305,9 +1305,9 @@ function resolveAliasedTokenLiterals(names, aliasTargets) {
   }
   return resolved;
 }
-function resolveSymbolTextFacts(names, grammar2) {
+function resolveSymbolTextFacts(names, grammar) {
   const result = /* @__PURE__ */ new Map();
-  const aliasedLiterals2 = resolveAliasedTokenLiterals(names, grammar2.aliasTargets);
+  const aliasedLiterals2 = resolveAliasedTokenLiterals(names, grammar.aliasTargets);
   for (const [cName, displayName] of names) {
     if (cName.startsWith("anon_sym_")) {
       const aliasedLiteralText = aliasedLiterals2.get(cName);
@@ -1320,9 +1320,9 @@ function resolveSymbolTextFacts(names, grammar2) {
     }
     if (cName.startsWith("sym_")) {
       const ruleName = cName.slice("sym_".length);
-      const literalValue = grammar2.literalRules.get(ruleName);
+      const literalValue = grammar.literalRules.get(ruleName);
       if (literalValue === void 0) continue;
-      const isNamedAliasTarget = grammar2.aliasTargets.has(displayName);
+      const isNamedAliasTarget = grammar.aliasTargets.has(displayName);
       if (isNamedAliasTarget) continue;
       result.set(cName, { literalText: literalValue, literalRule: true });
     }
@@ -1429,10 +1429,10 @@ function isFixedTextRule(rule2) {
   return current?.type === "STRING";
 }
 function collectLexicalRanks(grammarJson) {
-  const grammar2 = grammarJson;
-  const rules = grammar2?.rules ?? {};
+  const grammar = grammarJson;
+  const rules = grammar?.rules ?? {};
   const ruleNames = Object.keys(rules);
-  const externals = (grammar2?.externals ?? []).flatMap(
+  const externals = (grammar?.externals ?? []).flatMap(
     (external) => typeof external.name === "string" ? [external.name] : []
   );
   const mintSources = /* @__PURE__ */ new Map();
@@ -1479,8 +1479,8 @@ function collectLexicalRanks(grammarJson) {
   const ordered = [...keys].sort(([a, ka], [b, kb]) => compareLexicalKeys(ka, kb) || (a < b ? -1 : a > b ? 1 : 0));
   return new Map(ordered.map(([name], rank) => [name, rank]));
 }
-function stampVisibleExternals(tables, grammar2) {
-  const declared = Object.keys(grammar2.visibleExternals ?? {});
+function stampVisibleExternals(tables, grammar) {
+  const declared = Object.keys(grammar.visibleExternals ?? {});
   if (tables?.kindIds === void 0 || declared.length === 0) return tables;
   const stamped = new Map(toEntries(tables.kindIds));
   for (const name of declared) {
@@ -1842,17 +1842,17 @@ function referencedNames(rule2, into) {
   if ("members" in rule2) for (const member of rule2.members) referencedNames(member, into);
   if ("content" in rule2) referencedNames(rule2.content, into);
 }
-function liveRuleNames(grammar2) {
+function liveRuleNames(grammar) {
   const live = /* @__PURE__ */ new Set();
   const pending = [
-    ...Object.keys(grammar2.rules).slice(0, 1),
-    ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)
+    ...Object.keys(grammar.rules).slice(0, 1),
+    ...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)
   ];
   while (pending.length > 0) {
     const name = pending.pop();
-    if (live.has(name) || !(name in grammar2.rules)) continue;
+    if (live.has(name) || !(name in grammar.rules)) continue;
     live.add(name);
-    referencedNames(grammar2.rules[name], pending);
+    referencedNames(grammar.rules[name], pending);
   }
   return live;
 }
@@ -1934,31 +1934,31 @@ function clearDefaultAliases(productions, defaults) {
     for (const step of cleared) delete step.alias;
   }
 }
-function predictSymbolTable(grammar2) {
-  const live = liveRuleNames(grammar2);
-  const supertypes = new Set(grammar2.supertypes);
+function predictSymbolTable(grammar) {
+  const live = liveRuleNames(grammar);
+  const supertypes = new Set(grammar.supertypes);
   const undefinedNames = /* @__PURE__ */ new Set();
   const resolve = (name) => {
     if (live.has(name)) return `nt:${name}`;
-    const index = grammar2.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
+    const index = grammar.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
     if (index >= 0) return `ext:${index}`;
     undefinedNames.add(name);
     return `undef:${name}`;
   };
-  let variables = Object.keys(grammar2.rules).filter((name) => live.has(name)).map((name) => ({
+  let variables = Object.keys(grammar.rules).filter((name) => live.has(name)).map((name) => ({
     name,
     kind: supertypes.has(name) || name.startsWith("_") ? "hidden" : "named",
-    rule: internRule(grammar2.rules[name], resolve)
+    rule: internRule(grammar.rules[name], resolve)
   }));
-  const externals = grammar2.externals.map(
+  const externals = grammar.externals.map(
     (entry, index) => entry.type === SYMBOL ? {
       name: entry.name,
       kind: entry.name.startsWith("_") ? "hidden" : "named",
-      rule: { type: "SYM", key: entry.name in grammar2.rules ? `nt:${entry.name}` : `ext:${index}` }
+      rule: { type: "SYM", key: entry.name in grammar.rules ? `nt:${entry.name}` : `ext:${index}` }
     } : { name: entry.value, kind: "anonymous", rule: { type: entry.type, value: entry.value } }
   );
   const tokens = new TokenExtractor();
-  const wordFirst = [...variables].sort((a, b) => Number(b.name === grammar2.word) - Number(a.name === grammar2.word));
+  const wordFirst = [...variables].sort((a, b) => Number(b.name === grammar.word) - Number(a.name === grammar.word));
   for (const variable of wordFirst) variable.rule = tokens.extractFrom(variable.name, variable.rule);
   for (const external of externals) external.rule = tokens.extractFrom(external.name, external.rule);
   const replaced = /* @__PURE__ */ new Map();
@@ -1974,7 +1974,7 @@ function predictSymbolTable(grammar2) {
   });
   const replace = (key) => replaced.get(key) ?? key;
   for (const variable of [...variables, ...externals]) variable.rule = mapSymbolKeys(variable.rule, replace);
-  const extraKeys = grammar2.extras.flatMap((entry) => {
+  const extraKeys = grammar.extras.flatMap((entry) => {
     if (entry.type === SYMBOL) return [replace(resolve(entry.name))];
     const lexical = internRule(entry, resolve);
     const index = tokens.lexical.findIndex((token) => sameShape(token.rule, lexical));
@@ -1989,7 +1989,7 @@ function predictSymbolTable(grammar2) {
   const syntax = expandRepeats(variables);
   const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
   const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, productionsOf(variable.rule)]));
-  const inline = new Set(grammar2.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
+  const inline = new Set(grammar.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
   const reachable = /* @__PURE__ */ new Set();
   const queue = [`nt:${variables[0].name}`, ...extraKeys];
   while (queue.length > 0) {
@@ -2080,10 +2080,10 @@ function predictSymbolTable(grammar2) {
     undefinedNames: [...undefinedNames]
   };
 }
-function predictKindCatalog(grammar2) {
-  const table = predictSymbolTable(grammar2);
-  const kindIds = kindTableOfSymbolTable(table, grammar2);
-  const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: "predicted" }, grammar2)).map(
+function predictKindCatalog(grammar) {
+  const table = predictSymbolTable(grammar);
+  const kindIds = kindTableOfSymbolTable(table, grammar);
+  const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: "predicted" }, grammar)).map(
     ({ lexicalRank: _lexicalRank, ...entry }) => entry
   );
   return { entries, undefinedNames: table.undefinedNames };
@@ -2114,8 +2114,8 @@ function renameAwareSymbolSource(facts) {
     isVisibleExternal: (name) => catalog.isVisibleExternal(asked(name))
   };
 }
-function predictedSymbolSourceOf(grammar2) {
-  return renameAwareSymbolSource({ ...symbolFactsOf(grammar2), kindEntries: predictKindCatalog(grammar2).entries });
+function predictedSymbolSourceOf(grammar) {
+  return renameAwareSymbolSource({ ...symbolFactsOf(grammar), kindEntries: predictKindCatalog(grammar).entries });
 }
 
 // packages/codegen/src/dsl/enrich-ctx.ts
@@ -2141,6 +2141,7 @@ var EnrichCtx = class _EnrichCtx {
   extras;
   word;
   wordMatcher;
+  authoredGroupBodies;
   sourceSymbols;
   kwRules;
   clauseGroupRules;
@@ -2157,6 +2158,7 @@ var EnrichCtx = class _EnrichCtx {
     this.extras = fields.extras;
     this.word = fields.word;
     this.wordMatcher = fields.wordMatcher;
+    this.authoredGroupBodies = fields.authoredGroupBodies;
     this.sourceSymbols = fields.sourceSymbols;
     this.kwRules = fields.kwRules;
     this.clauseGroupRules = fields.clauseGroupRules;
@@ -2376,9 +2378,9 @@ var fuseHeadRepeatListsWalker = new RuleWalker();
 // packages/codegen/src/dsl/shared.ts
 function baseRulesOf(base2) {
   if (!base2 || typeof base2 !== "object") return void 0;
-  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
-  if (!grammar2 || typeof grammar2 !== "object") return void 0;
-  return grammar2.rules;
+  const grammar = "grammar" in base2 ? base2.grammar : base2;
+  if (!grammar || typeof grammar !== "object") return void 0;
+  return grammar.rules;
 }
 
 // packages/codegen/src/dsl/transform/token-forms.ts
@@ -2621,14 +2623,14 @@ function isAutomaticVariants(value) {
   const record = value;
   return record?.keys instanceof Set && record.supertypeOwners instanceof Set;
 }
-function getEnrichAutomaticVariants(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object" || !(ENRICH_AUTOMATIC_VARIANTS_KEY in grammar2)) return void 0;
-  const value = grammar2[ENRICH_AUTOMATIC_VARIANTS_KEY];
+function getEnrichAutomaticVariants(grammar) {
+  if (!grammar || typeof grammar !== "object" || !(ENRICH_AUTOMATIC_VARIANTS_KEY in grammar)) return void 0;
+  const value = grammar[ENRICH_AUTOMATIC_VARIANTS_KEY];
   if (!isAutomaticVariants(value)) throw new Error("enrich: the automatic-variant sidecar is malformed; expected { keys: Set, supertypeOwners: Set }");
   return value;
 }
-function seedAutomaticVariants(grammar2) {
-  const enriched = getEnrichAutomaticVariants(grammar2);
+function seedAutomaticVariants(grammar) {
+  const enriched = getEnrichAutomaticVariants(grammar);
   return enriched === void 0 ? { keys: /* @__PURE__ */ new Set(), supertypeOwners: /* @__PURE__ */ new Set() } : { keys: new Set(enriched.keys), supertypeOwners: enriched.supertypeOwners };
 }
 function withoutAutomaticVariants(rule2, automatic) {
@@ -2687,7 +2689,7 @@ function relabelledArm(site, original, automatic) {
 function withContent(node, content) {
   return { ...node, content };
 }
-function enrich(baseInput) {
+function enrich(baseInput, authored = {}) {
   const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -2706,7 +2708,8 @@ function enrich(baseInput) {
     inline: inlineNames,
     extras: extractGrammarRuleList(base2, hasWrapper, "extras"),
     word: extractWordName(grammarMeta?.word),
-    wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
+    wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
+    authoredGroupBodies: authored.groupBodies ?? []
   });
   const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
   const enrichedRules = {};
@@ -2811,23 +2814,23 @@ function enrich(baseInput) {
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
-function getEnrichClauseGroups(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_CLAUSE_GROUPS_KEY];
+function getEnrichClauseGroups(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar[ENRICH_CLAUSE_GROUPS_KEY];
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
 var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
-function getEnrichClauseGroupOwners(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+function getEnrichClauseGroupOwners(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Map();
+  const owners = grammar[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
   if (owners instanceof Map) return owners;
   return /* @__PURE__ */ new Map();
 }
 var ENRICH_VISIBLE_GROUP_SOURCES_KEY = "__enrichedVisibleGroupSources__";
-function getEnrichVisibleGroupSources(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
+function getEnrichVisibleGroupSources(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
@@ -4249,6 +4252,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
     );
   }
   const registeredBody = ambientPrec ? withContent(ambientPrec, content) : content;
+  if (coveredByAuthoredGroup(registeredBody, ctx)) return null;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
@@ -4365,7 +4369,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
     if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
-    if (isSupertypeLike(body)) return null;
+    if (isSupertypeLike(body) || coveredByAuthoredGroup(body, ctx)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
@@ -4384,6 +4388,9 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
+}
+function coveredByAuthoredGroup(body, ctx) {
+  return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body), pattern));
 }
 function makeGroupLiftSymbol(_referenceRule, name) {
   const symbol = nativeRuleFn("symbol", "sym");
@@ -4778,7 +4785,6 @@ function wire(config, base2) {
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
-    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map(),
     baseRuleBodies: baseRuleBodiesOf(baseArg),
     liftBodies: /* @__PURE__ */ new Map()
   };
@@ -4794,7 +4800,7 @@ function wire(config, base2) {
     }
   }
   for (const liftName of enrichLiftNames(base2)) {
-    if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+    if (liftName in outRules || !(liftName in context.baseRuleBodies)) continue;
     outRules[liftName] = passthroughBaseRuleFn;
   }
   wrapAllRuleFns(outRules, context);
@@ -4805,12 +4811,10 @@ function wire(config, base2) {
       context.syntheticInline.add(name);
     }
     for (const name of getEnrichVisibleGroupSources(base2)) {
-      if (context.adoptedGroups.has(name)) continue;
       context.inlineRemovals.add(name);
     }
     const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
-      if (context.adoptedGroups.has(syntheticName)) continue;
       if (context.authoredRuleNames.has(ownerKind)) {
         context.orphanedSyntheticGroups.add(syntheticName);
       }
@@ -4870,8 +4874,8 @@ function renamingReserved(reserved, context) {
   );
 }
 function baseDeclares(base2, key) {
-  const grammar2 = base2?.grammar ?? base2;
-  return grammar2?.[key] !== void 0;
+  const grammar = base2?.grammar ?? base2;
+  return grammar?.[key] !== void 0;
 }
 function renamingCallback(user, rename, context) {
   return function renamed($, previous) {
@@ -5213,20 +5217,8 @@ function declaredPatterns(groups, injects) {
     return { section, key, value, body };
   });
 }
-function adoptMintedGroups(baseArg, base2, groups) {
-  const adopted = /* @__PURE__ */ new Map();
-  const authored = declaredPatterns(groups, void 0);
-  if (authored.length === 0) return adopted;
-  const baseRules = baseRulesOf(baseArg) ?? {};
-  for (const minted of getEnrichVisibleGroupSources(base2)) {
-    const body = baseRules[minted];
-    if (body === void 0) continue;
-    const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body), pattern.body));
-    if (owner === void 0) continue;
-    adopted.set(minted, owner.key);
-    delete baseRules[minted];
-  }
-  return adopted;
+function authoredGroupBodies(groups) {
+  return declaredPatterns(groups, void 0).map((pattern) => pattern.body);
 }
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
@@ -5253,7 +5245,7 @@ function replaceInBodyRt(rule2, candidates, automatic) {
   if (!rule2 || typeof rule2 !== "object") return rule2;
   const r = rule2;
   for (const c of candidates) {
-    if (rulesEqual(rule2, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
+    if (rulesEqual(rule2, c.body)) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule2, automatic());
     }
@@ -5373,8 +5365,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
   for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
     const hiddenName = declaredGroupMintName(key);
     const hidden = hiddenName === key;
-    const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
-    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
     const registered = wrapOneRuleFn(hiddenName, value, context);
     rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }
@@ -6570,38 +6561,38 @@ function extractNonEmpty(rule2) {
   return null;
 }
 
+// packages/codegen/src/dsl/sittir-grammar.ts
+function sittirGrammar(base2, config) {
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups) });
+  const grammar = globalThis.grammar;
+  return grammar(enriched, wire(config, enriched));
+}
+
 // packages/regex/grammar.sittir.ts
-var enrichedBase = enrich(import_grammar.default);
-var grammar_sittir_default = grammar(
-  enrichedBase,
-  wire(
-    {
-      name: "regex",
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline],
-      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
-      visibleExternals: (_$) => ({
-        _tight: string(""),
-        _space: string(" "),
-        _newline: string("\n")
-      }),
-      patches: {
-        class_range: { 0: field("start"), 2: field("end") },
-        term: { "0/1": field("quantifier") },
-        inline_flags_group: [
-          {
-            "1/0": field("enabled"),
-            "1/1/0": field("enabled"),
-            "1/1/2": field("disabled"),
-            "1/2/1": field("disabled")
-          },
-          { "1/0": variant("enable"), "1/1": variant("toggle"), "1/2": variant("disable") }
-        ]
+var grammar_sittir_default = sittirGrammar(import_grammar.default, {
+  name: "regex",
+  externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline],
+  supertypes: ($, previous) => [...previous ?? [], $._whitespace],
+  visibleExternals: (_$) => ({
+    _tight: string(""),
+    _space: string(" "),
+    _newline: string("\n")
+  }),
+  patches: {
+    class_range: { 0: field("start"), 2: field("end") },
+    term: { "0/1": field("quantifier") },
+    inline_flags_group: [
+      {
+        "1/0": field("enabled"),
+        "1/1/0": field("enabled"),
+        "1/1/2": field("disabled"),
+        "1/2/1": field("disabled")
       },
-      rules: {
-        _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
-      }
-    },
-    enrichedBase
-  )
-);
+      { "1/0": variant("enable"), "1/1": variant("toggle"), "1/2": variant("disable") }
+    ]
+  },
+  rules: {
+    _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
+  }
+});
 if (module.exports && module.exports.default) module.exports = module.exports.default;

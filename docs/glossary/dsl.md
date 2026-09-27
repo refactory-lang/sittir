@@ -4359,6 +4359,45 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
 Works on a copy of its input's rules: the input grammar is never written,
 so the upstream module stays as published for every later evaluation.
 
+The optional second argument carries the authored config enrich must see
+(`EnrichAuthoredConfig`). With it, a visible group whose whole body an
+authored `groups:` pattern covers is not minted: the body stays where it is,
+and wire's pattern replacement names it under the authored key. The enriched
+grammar is then already self-consistent, with no minted rule for a later
+stage to take back.
+
+### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
+
+The part of a grammar's authored config enrich reads: `groupBodies`, the
+evaluated `groups:` body patterns (`authoredGroupBodies`).
+
+### `packages/codegen/src/dsl/enrich.ts::coveredByAuthoredGroup`
+
+Whether an authored group pattern covers a would-be visible group's whole
+body, compared with `rulesEqual` after `unwrapPrec`, since enrich registers
+the ambient prec on the lifted body. Read by `visibleGroupSynthName` (every
+synthesized group, list and arm) and by the promote-existing-hidden-rule branch
+of `mintStructuredChoiceArm`; either declines on a match. A pattern covering
+only part of the body declines nothing, and the pattern is replaced inside the
+minted group.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
+
+The one composition of a sittir grammar: `enrich(base, { groupBodies })`
+with the config's authored group patterns, then `wire(config, enriched)`,
+then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
+sittir's `grammarFn` under evaluate) over the enriched base and wired options.
+Every `grammar.sittir.ts` and the bootstrap template call it as
+`export default sittirGrammar(base, { … })`.
+
+`B` infers from the upstream `base`, and the config is contextually typed as
+`WireConfig<EnrichedGrammar<B>>`, so rule callbacks get the grammar-shaped
+`$` and `previous` exactly as a direct `wire({…}, enrich(base))` call did; in
+`vocabulary()` and `reauthored()` callbacks `$` is grammar-shaped too, where
+the separate-binding form left it unshaped. `P` and `O` infer from the
+`patches` and `options` blocks and are forwarded to `wire` explicitly, so
+`PatchesCheck` and `OptionsCheck` judge the grammar's written keys.
+
 #### body
 
 ```text
@@ -5895,7 +5934,7 @@ Appends rule names to the grammar's `supertypes`, whether it is an array of name
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 
-Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies.
+Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
 
@@ -5991,7 +6030,7 @@ The content under a chain of named aliases.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 

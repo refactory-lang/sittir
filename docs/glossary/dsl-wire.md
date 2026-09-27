@@ -928,8 +928,8 @@ The rules of a `wire()` base, wrapped or bare; an empty record without one.
 ### `packages/codegen/src/dsl/wire/wire.ts::enrichLiftNames`
 
 Every rule enrich lifted out of a parent body: its clause groups and its
-visible-group sources. `wire()` gives each one still in the base, and not
-adopted by a declared group, a `passthroughBaseRuleFn`, inserted after the
+visible-group sources. `wire()` gives each one still in the base a
+`passthroughBaseRuleFn`, inserted after the
 authored and patched-parent rule fns. Both tree-sitter's `grammar()` and
 sittir's `grammarFn` run rule fns in key insertion order, so a lift's fn
 runs after every fn whose patch can descend into it and returns the patched
@@ -1530,7 +1530,7 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
  *
  * @param config - Options to pass to `grammar()` plus the optional
  *   `patches` declaration.
- * @param base - Optional enriched-base grammar object. When supplied AND
+ * @param base - The enriched-base grammar object. When
  *   `config.groups` declares body-pattern entries (function values), wire
  *   walks every base rule and injects a pattern-replacing override for it.
  *   This is necessary because tree-sitter only invokes override rule fns
@@ -1551,10 +1551,7 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 // `B` infers from `base` (the enriched-base grammar), so the config
 // literal is contextually typed — and IntelliSense'd — against the
 // precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
-// No explicit `WireConfig` annotation is needed at the call site. When
-// `base` is omitted, `B` defaults to `any` (the loose form, identical to
-// the prior `C extends WireConfig<any>` behavior — there is nothing to
-// infer grammar precision from).
+// No explicit `WireConfig` annotation is needed at the call site.
 ```
 
 The `patches` and `options` blocks are inferred on their own (`P`, `O`) so
@@ -1564,8 +1561,16 @@ whole literal, because a type parameter that the contextual type of a
 context-sensitive callback mentions gets fixed before the callbacks are typed
 — inferring the whole config would fix it to its default and check nothing.
 Neither block holds a function, so neither is fixed early. An explicit type
-argument disables inference for the parameters after it; the grammars pass
-`enrich(base)` and let every parameter infer.
+argument disables inference for the parameters after it. The base is
+required: without it the base-dependent passes (base-rule passthroughs, enrich
+lift registration, body-pattern replacement over base rules) would silently not
+run. Grammars do not call `wire` directly; `sittirGrammar` composes it with
+`enrich` and `grammar()`, and forwards its own `P` and `O` explicitly so the
+checks judge the grammar's written keys.
+
+Wire writes nothing into the base it is given: every rule it adds or changes
+goes into its own options, and the enriched base stays exactly as enrich
+built it, the same object the upstream diagnostic stage reads.
 
 
 #### body
@@ -1750,33 +1755,13 @@ argument disables inference for the parameters after it; the grammars pass
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::adoptMintedGroups`
+### `packages/codegen/src/dsl/wire/wire.ts::authoredGroupBodies`
 
-An authored `groups:` pattern takes over an enrich-minted visible group whose
-whole body it matches, the same way enrich's automatic facts give way to an
-authored declaration elsewhere (automatic arm labels vs `variant()`). The
-minted groups come only from enrich's own record
-(`getEnrichVisibleGroupSources`), never a name pattern. The minted body is
-compared with `unwrapPrec` applied, since enrich re-registers the ambient prec
-on it, using `rulesEqual`, the predicate the replacement itself uses. An
-adopted group is deleted from the enriched base's rule map, which wire runs
-before `grammar()` copies it in both pipelines. Its references are rewritten to
-the authored alias by `replaceInBodyRt` through the candidate's `adopts` set.
-Adopted names are skipped when wire registers enrich's visible groups for
-inline removal and conflicts. A partial match adopts nothing: the pattern is
-replaced inside the minted group as usual.
-
-This is a bridge until enrich sees the authored config directly (a combined
-`sittirGrammar(base, cfg)` entry point); enrich then declines the mint instead
-of wire undoing it.
-
-The delete is the one remaining write into a grammar wire did not create. The
-enriched base is shared with the upstream diagnostic stage, so a grammar that
-adopts a minted group (python: `comparison_operator_group`, `_not_in`,
-`_is_not`) has an enriched stage that already lacks those rules; its
-enriched-stage diagnostics are provisional. For the same reason the
-upstream-immutability test freezes only the raw upstream base, not the
-enriched base at `wire()` entry.
+The evaluated bodies of a config's `groups:` body-pattern entries, through
+`declaredPatterns`. `sittirGrammar` hands them to `enrich` so enrich declines
+any visible group whose whole body an authored pattern covers; wire then
+replaces the pattern where it stands in the enriched rule, and never has a
+minted group to take over.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
 
@@ -1789,17 +1774,7 @@ Evaluates the body-pattern entries of `groups:` and `injects:` once, with the
 validation both consumers share: a `groups:` key must be visible, the body fn
 must return a rule, and the body must be a complex structural pattern
 (`isComplexBodyRt`). Used by `applyWirePatternReplacement` and
-`adoptMintedGroups`.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.adoptedGroups`
-
-Minted visible-group name → the authored `groups:` key that adopted it
-(`adoptMintedGroups`). Empty without an enriched base.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate.adopts`
-
-Minted group names this authored candidate adopted. `replaceInBodyRt` treats a
-reference to one of them as a match of the candidate's body.
+`authoredGroupBodies`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
 

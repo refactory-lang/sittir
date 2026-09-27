@@ -1,9 +1,9 @@
 {
   "grammar": "regex",
-  "source_hash": "abc370414501d0cde76c303e9067edd540c97654ddb0ecbb27c67c77642c7a8b",
+  "source_hash": "b7e13d627bbd8904357a8a5bbefbcca4cfd49ee988b0096c32d6ddd2472c631d",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "1f9f485c7a38a5161c246aec4ca1f2eb4e68ca17900a4cd1acca0e0b59ad53ad",
-    "packages/regex/.sittir/grammar.js": "52d682651df8f9ec474b7d8eaa6891ce136fd0695fb50db9d15215160ece03f1",
+    "packages/regex/.sittir/grammar.js": "0f7d0d0dd4b6ee54cf6b79b2287ff903673dcf7e3320faa66717687b5f909949",
     "packages/regex/.sittir/package.json": "803cef73973099f3584ef39a78d7e7b7fbdaf77fb5e4feb3d9f4c66e5430021e",
     "packages/regex/.sittir/parser.wasm": "6d17c4da1193bd9cb2825529ea0108e5ae71779dc5c1c504c857491970a1f953",
     "packages/regex/.sittir/render-bodies.json": "6344a37307ed20b9148396108c050d3e996c20bbe505bb60c42796f273d9fd56",

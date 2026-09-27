@@ -12,14 +12,14 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `enrichedBase` (`packages/python/grammar.sittir.ts:14`)
+### `sittirGrammar(base, …)` (`packages/python/grammar.sittir.ts:27`)
 
-`enrich(base)` is bound once and the SAME enriched grammar is handed to both
-`grammar()` and `wire()` (matching rust and typescript). `wire`'s
-base-dependent passes — auto-group synthesis, body-pattern groups, and the
-enrich-hoisted-clause inline registration — must see the post-enrich shape;
-enriching twice, or wiring against the raw base, desynchronises them from the
-grammar tree-sitter actually compiles.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `externals` (`packages/python/grammar.sittir.ts:20`)
 

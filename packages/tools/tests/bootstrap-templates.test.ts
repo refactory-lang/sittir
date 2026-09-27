@@ -21,16 +21,21 @@ describe('bootstrap templates reproduce an existing grammar package', () => {
 	}
 });
 
-const ENRICHED_COMPOSITION =
-	/const enrichedBase = enrich\(base\);[\s\S]*export default grammar\(\s*enrichedBase,\s*wire\([\s\S]*,\s*enrichedBase\s*\)\s*\);\s*$/;
+const COMPOSITION = /\bsittirGrammar\b[^}]*\} from '\.\.\/codegen\/src\/dsl\/(index|dsl-authoring)\.ts';[\s\S]*export default sittirGrammar\(base, \{[\s\S]*\}\);\s*$/;
+const SEPARATE_STEPS = /\b(enrich|wire)\(/;
 
-describe('grammar composition passes the enriched base to wire', () => {
+function expectComposition(source: string): void {
+	expect(source).toMatch(COMPOSITION);
+	expect(source).not.toMatch(SEPARATE_STEPS);
+}
+
+describe('grammar composition goes through sittirGrammar, which enriches and wires the base itself', () => {
 	it('the bootstrap template', () => {
-		expect(python.find((f) => f.path === 'grammar.sittir.ts')!.contents).toMatch(ENRICHED_COMPOSITION);
+		expectComposition(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
 	});
 	for (const grammar of allGrammars()) {
 		it(grammar, () => {
-			expect(readFileSync(join(grammarPackageDir(grammar), 'grammar.sittir.ts'), 'utf8')).toMatch(ENRICHED_COMPOSITION);
+			expectComposition(readFileSync(join(grammarPackageDir(grammar), 'grammar.sittir.ts'), 'utf8'));
 		});
 	}
 });

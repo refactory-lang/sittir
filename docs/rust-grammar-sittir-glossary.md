@@ -20,14 +20,12 @@ Tree-sitter's ambient DSL (`Rule` / `RuleOrLiteral` / `GrammarSchema` /
 `tsconfig.overrides.json`'s `types`, NOT via a `/// <reference>` directive —
 a reference directive fails with TS2688 under this `rootDir`.
 
-`prec` / `token` / `grammar` are deliberately NOT ambient here. They are
-imported from `dsl-authoring.ts`, which shadows tree-sitter's ambient versions
-through ordinary lexical scoping with sittir's own `AuthoringRule`-typed /
-`GrammarResult`-typed re-exports of the SAME runtime-injected functions.
-`dsl-authoring.ts` explains why: `const`-declared ambient globals don't merge
-as overloads across files the way `declare function` does, and tree-sitter's
-`grammar()` expects a flat `GrammarSchema` base rather than `enrich()`'s
-`{ grammar: { … } }` shape.
+`prec` / `token` are deliberately NOT ambient here. They are imported from
+`dsl-authoring.ts`, which shadows tree-sitter's ambient versions through
+ordinary lexical scoping with sittir's own `AuthoringRule`-typed re-exports of
+the SAME runtime-injected functions: `const`-declared ambient globals don't
+merge as overloads across files the way `declare function` does. `grammar()`
+is not called here at all; `sittirGrammar` calls it.
 
 ### `_whitespace` (`packages/rust/grammar.sittir.ts:450`)
 
@@ -45,45 +43,30 @@ is a runtime global injected by tree-sitter's `grammar()`, used solely inside
 the `renderAs` callback. Everything else is either ambient (see the module
 preamble entry above) or imported, so this is the only stub the file needs.
 
-### `enrichedBase` (`packages/rust/grammar.sittir.ts:28`)
+### `sittirGrammar(base, …)` (`packages/rust/grammar.sittir.ts:30`)
 
-Two reasons this is a named binding declared before the wire payload rather
-than an inline `enrich(base)` argument.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
-Type inference: the inline `wire({…}, enrichedBase)` call infers `wire`'s `B`
-type-param from `enrichedBase` (typed `EnrichedGrammar<RustGrammarShape>`), and
-that inference contextually types the config literal against
-`WireConfig<EnrichedGrammar<RustGrammarShape>>` — every rule/transform/groups/
-conflicts callback's `$` is a typed `ShapedSymbols`, and each
-`previous`/`original` is the precise per-rule post-enrich shape, with no
-explicit `WireConfig` annotation anywhere. Hoisting the payload into a separate
-`const config = {…}` would lose all of that: its callback params would infer as
-implicit `any`, because the literal has no contextual type at its declaration
-site.
+Type inference: `B` infers from `base` (typed by `./base.ts`), and the config
+literal is contextually typed against `WireConfig<EnrichedGrammar<B>>`, so
+every rule, transform, groups and conflicts callback's `$` is a typed
+`ShapedSymbols` and each `previous`/`original` is the precise per-rule
+post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
+`reauthored()` callbacks get the same shaped `$`. The payload stays inline:
+hoisting it into a separate `const config = {…}` would leave its callback
+params implicitly `any`, since the literal has no contextual type at its
+declaration site.
 
-Behaviour: `wire` needs the enriched base so body-pattern groups (the
-function-valued entries in `groups:`) can walk base rules and inject
-pattern-replacing passthroughs. Without the base arg, unoverridden base rules
-bypass pattern replacement and tree-sitter never emits the `alias()`-wrapped
-visible kinds.
-
-### `wire(…, enrichedBase)` (`packages/rust/grammar.sittir.ts:20`)
-
-No type argument: `B` infers from the `enrichedBase` value and the `patches`
-and `options` blocks infer on their own, which is what lets `wire()` judge
-every written path key against the rule shapes (`PatchesCheck`) and every
-option address and binding for syntax and resolution (`OptionsCheck`). An
-explicit type argument would disable inference for the parameters after it
-and check nothing. The earlier explicit `wire<EnrichedGrammar<RustGrammarShape>>`
-form guarded a TS2589 that came from enumerating path keys inside
-`PatchesConfig`; keys are now judged per written key instead, so the mapped
-type stays shallow and the generic call is safe.
-
-`grammar` here is `dsl-authoring.ts`'s own typed re-export of the
-runtime-injected `grammarFn` — its real two-arg contract is
-`(base: GrammarResult, options: WiredOpts)`, not tree-sitter's ambient
-`GrammarSchema`-based overloads — so `enrichedBase`'s `{ grammar: { … } }`
-shape needs no suppression at this call site.
+No type argument: `patches` and `options` infer on their own, which is what
+lets every written path key be judged against the rule shapes (`PatchesCheck`)
+and every option address and binding for syntax and resolution
+(`OptionsCheck`). An explicit type argument would disable inference for the
+parameters after it and check nothing.
 
 ### `conflicts` (`packages/rust/grammar.sittir.ts:35`)
 

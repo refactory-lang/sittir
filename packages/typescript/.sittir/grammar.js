@@ -747,14 +747,14 @@ function ruleListParts(rules) {
   }
   return parts;
 }
-function symbolFactsOf(grammar2) {
+function symbolFactsOf(grammar) {
   return {
-    rules: grammar2.rules,
-    externals: new Set(ruleListParts(grammar2.externals).names),
-    inline: new Set(grammar2.inline),
-    supertypes: new Set(grammar2.supertypes),
-    extras: new Set(ruleListParts(grammar2.extras).names),
-    visibleExternals: new Set(Object.keys(grammar2.visibleExternals ?? {}))
+    rules: grammar.rules,
+    externals: new Set(ruleListParts(grammar.externals).names),
+    inline: new Set(grammar.inline),
+    supertypes: new Set(grammar.supertypes),
+    extras: new Set(ruleListParts(grammar.extras).names),
+    visibleExternals: new Set(Object.keys(grammar.visibleExternals ?? {}))
   };
 }
 var selfReferenceWalker = new RuleWalker({});
@@ -1210,9 +1210,9 @@ function renameRule(value, renames) {
     if (name !== record.name) changes.name = name;
   }
   if (Object.keys(changes).length === 0) return value;
-  const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value));
-  for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
-  return copy;
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
+  return Object.create(Object.getPrototypeOf(value), descriptors);
 }
 function renameNameList(value, renames) {
   if (renames.size === 0) return value;
@@ -1326,9 +1326,9 @@ function resolveAliasedTokenLiterals(names, aliasTargets) {
   }
   return resolved;
 }
-function resolveSymbolTextFacts(names, grammar2) {
+function resolveSymbolTextFacts(names, grammar) {
   const result = /* @__PURE__ */ new Map();
-  const aliasedLiterals2 = resolveAliasedTokenLiterals(names, grammar2.aliasTargets);
+  const aliasedLiterals2 = resolveAliasedTokenLiterals(names, grammar.aliasTargets);
   for (const [cName, displayName] of names) {
     if (cName.startsWith("anon_sym_")) {
       const aliasedLiteralText = aliasedLiterals2.get(cName);
@@ -1341,9 +1341,9 @@ function resolveSymbolTextFacts(names, grammar2) {
     }
     if (cName.startsWith("sym_")) {
       const ruleName = cName.slice("sym_".length);
-      const literalValue = grammar2.literalRules.get(ruleName);
+      const literalValue = grammar.literalRules.get(ruleName);
       if (literalValue === void 0) continue;
-      const isNamedAliasTarget = grammar2.aliasTargets.has(displayName);
+      const isNamedAliasTarget = grammar.aliasTargets.has(displayName);
       if (isNamedAliasTarget) continue;
       result.set(cName, { literalText: literalValue, literalRule: true });
     }
@@ -1450,10 +1450,10 @@ function isFixedTextRule(rule2) {
   return current?.type === "STRING";
 }
 function collectLexicalRanks(grammarJson) {
-  const grammar2 = grammarJson;
-  const rules = grammar2?.rules ?? {};
+  const grammar = grammarJson;
+  const rules = grammar?.rules ?? {};
   const ruleNames = Object.keys(rules);
-  const externals = (grammar2?.externals ?? []).flatMap(
+  const externals = (grammar?.externals ?? []).flatMap(
     (external) => typeof external.name === "string" ? [external.name] : []
   );
   const mintSources = /* @__PURE__ */ new Map();
@@ -1500,8 +1500,8 @@ function collectLexicalRanks(grammarJson) {
   const ordered = [...keys].sort(([a, ka], [b, kb]) => compareLexicalKeys(ka, kb) || (a < b ? -1 : a > b ? 1 : 0));
   return new Map(ordered.map(([name], rank) => [name, rank]));
 }
-function stampVisibleExternals(tables, grammar2) {
-  const declared = Object.keys(grammar2.visibleExternals ?? {});
+function stampVisibleExternals(tables, grammar) {
+  const declared = Object.keys(grammar.visibleExternals ?? {});
   if (tables?.kindIds === void 0 || declared.length === 0) return tables;
   const stamped = new Map(toEntries(tables.kindIds));
   for (const name of declared) {
@@ -1863,17 +1863,17 @@ function referencedNames(rule2, into) {
   if ("members" in rule2) for (const member of rule2.members) referencedNames(member, into);
   if ("content" in rule2) referencedNames(rule2.content, into);
 }
-function liveRuleNames(grammar2) {
+function liveRuleNames(grammar) {
   const live = /* @__PURE__ */ new Set();
   const pending = [
-    ...Object.keys(grammar2.rules).slice(0, 1),
-    ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)
+    ...Object.keys(grammar.rules).slice(0, 1),
+    ...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)
   ];
   while (pending.length > 0) {
     const name = pending.pop();
-    if (live.has(name) || !(name in grammar2.rules)) continue;
+    if (live.has(name) || !(name in grammar.rules)) continue;
     live.add(name);
-    referencedNames(grammar2.rules[name], pending);
+    referencedNames(grammar.rules[name], pending);
   }
   return live;
 }
@@ -1955,31 +1955,31 @@ function clearDefaultAliases(productions, defaults) {
     for (const step of cleared) delete step.alias;
   }
 }
-function predictSymbolTable(grammar2) {
-  const live = liveRuleNames(grammar2);
-  const supertypes = new Set(grammar2.supertypes);
+function predictSymbolTable(grammar) {
+  const live = liveRuleNames(grammar);
+  const supertypes = new Set(grammar.supertypes);
   const undefinedNames = /* @__PURE__ */ new Set();
   const resolve = (name) => {
     if (live.has(name)) return `nt:${name}`;
-    const index = grammar2.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
+    const index = grammar.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
     if (index >= 0) return `ext:${index}`;
     undefinedNames.add(name);
     return `undef:${name}`;
   };
-  let variables = Object.keys(grammar2.rules).filter((name) => live.has(name)).map((name) => ({
+  let variables = Object.keys(grammar.rules).filter((name) => live.has(name)).map((name) => ({
     name,
     kind: supertypes.has(name) || name.startsWith("_") ? "hidden" : "named",
-    rule: internRule(grammar2.rules[name], resolve)
+    rule: internRule(grammar.rules[name], resolve)
   }));
-  const externals = grammar2.externals.map(
+  const externals = grammar.externals.map(
     (entry, index) => entry.type === SYMBOL ? {
       name: entry.name,
       kind: entry.name.startsWith("_") ? "hidden" : "named",
-      rule: { type: "SYM", key: entry.name in grammar2.rules ? `nt:${entry.name}` : `ext:${index}` }
+      rule: { type: "SYM", key: entry.name in grammar.rules ? `nt:${entry.name}` : `ext:${index}` }
     } : { name: entry.value, kind: "anonymous", rule: { type: entry.type, value: entry.value } }
   );
   const tokens = new TokenExtractor();
-  const wordFirst = [...variables].sort((a, b) => Number(b.name === grammar2.word) - Number(a.name === grammar2.word));
+  const wordFirst = [...variables].sort((a, b) => Number(b.name === grammar.word) - Number(a.name === grammar.word));
   for (const variable of wordFirst) variable.rule = tokens.extractFrom(variable.name, variable.rule);
   for (const external of externals) external.rule = tokens.extractFrom(external.name, external.rule);
   const replaced = /* @__PURE__ */ new Map();
@@ -1995,7 +1995,7 @@ function predictSymbolTable(grammar2) {
   });
   const replace = (key) => replaced.get(key) ?? key;
   for (const variable of [...variables, ...externals]) variable.rule = mapSymbolKeys(variable.rule, replace);
-  const extraKeys = grammar2.extras.flatMap((entry) => {
+  const extraKeys = grammar.extras.flatMap((entry) => {
     if (entry.type === SYMBOL) return [replace(resolve(entry.name))];
     const lexical = internRule(entry, resolve);
     const index = tokens.lexical.findIndex((token2) => sameShape(token2.rule, lexical));
@@ -2010,7 +2010,7 @@ function predictSymbolTable(grammar2) {
   const syntax = expandRepeats(variables);
   const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
   const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, productionsOf(variable.rule)]));
-  const inline = new Set(grammar2.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
+  const inline = new Set(grammar.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
   const reachable = /* @__PURE__ */ new Set();
   const queue = [`nt:${variables[0].name}`, ...extraKeys];
   while (queue.length > 0) {
@@ -2101,10 +2101,10 @@ function predictSymbolTable(grammar2) {
     undefinedNames: [...undefinedNames]
   };
 }
-function predictKindCatalog(grammar2) {
-  const table = predictSymbolTable(grammar2);
-  const kindIds = kindTableOfSymbolTable(table, grammar2);
-  const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: "predicted" }, grammar2)).map(
+function predictKindCatalog(grammar) {
+  const table = predictSymbolTable(grammar);
+  const kindIds = kindTableOfSymbolTable(table, grammar);
+  const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: "predicted" }, grammar)).map(
     ({ lexicalRank: _lexicalRank, ...entry }) => entry
   );
   return { entries, undefinedNames: table.undefinedNames };
@@ -2135,8 +2135,8 @@ function renameAwareSymbolSource(facts) {
     isVisibleExternal: (name) => catalog.isVisibleExternal(asked(name))
   };
 }
-function predictedSymbolSourceOf(grammar2) {
-  return renameAwareSymbolSource({ ...symbolFactsOf(grammar2), kindEntries: predictKindCatalog(grammar2).entries });
+function predictedSymbolSourceOf(grammar) {
+  return renameAwareSymbolSource({ ...symbolFactsOf(grammar), kindEntries: predictKindCatalog(grammar).entries });
 }
 
 // packages/codegen/src/dsl/enrich-ctx.ts
@@ -2162,6 +2162,7 @@ var EnrichCtx = class _EnrichCtx {
   extras;
   word;
   wordMatcher;
+  authoredGroupBodies;
   sourceSymbols;
   kwRules;
   clauseGroupRules;
@@ -2178,6 +2179,7 @@ var EnrichCtx = class _EnrichCtx {
     this.extras = fields.extras;
     this.word = fields.word;
     this.wordMatcher = fields.wordMatcher;
+    this.authoredGroupBodies = fields.authoredGroupBodies;
     this.sourceSymbols = fields.sourceSymbols;
     this.kwRules = fields.kwRules;
     this.clauseGroupRules = fields.clauseGroupRules;
@@ -2397,9 +2399,9 @@ var fuseHeadRepeatListsWalker = new RuleWalker();
 // packages/codegen/src/dsl/shared.ts
 function baseRulesOf(base2) {
   if (!base2 || typeof base2 !== "object") return void 0;
-  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
-  if (!grammar2 || typeof grammar2 !== "object") return void 0;
-  return grammar2.rules;
+  const grammar = "grammar" in base2 ? base2.grammar : base2;
+  if (!grammar || typeof grammar !== "object") return void 0;
+  return grammar.rules;
 }
 
 // packages/codegen/src/dsl/transform/token-forms.ts
@@ -2642,14 +2644,14 @@ function isAutomaticVariants(value) {
   const record = value;
   return record?.keys instanceof Set && record.supertypeOwners instanceof Set;
 }
-function getEnrichAutomaticVariants(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object" || !(ENRICH_AUTOMATIC_VARIANTS_KEY in grammar2)) return void 0;
-  const value = grammar2[ENRICH_AUTOMATIC_VARIANTS_KEY];
+function getEnrichAutomaticVariants(grammar) {
+  if (!grammar || typeof grammar !== "object" || !(ENRICH_AUTOMATIC_VARIANTS_KEY in grammar)) return void 0;
+  const value = grammar[ENRICH_AUTOMATIC_VARIANTS_KEY];
   if (!isAutomaticVariants(value)) throw new Error("enrich: the automatic-variant sidecar is malformed; expected { keys: Set, supertypeOwners: Set }");
   return value;
 }
-function seedAutomaticVariants(grammar2) {
-  const enriched = getEnrichAutomaticVariants(grammar2);
+function seedAutomaticVariants(grammar) {
+  const enriched = getEnrichAutomaticVariants(grammar);
   return enriched === void 0 ? { keys: /* @__PURE__ */ new Set(), supertypeOwners: /* @__PURE__ */ new Set() } : { keys: new Set(enriched.keys), supertypeOwners: enriched.supertypeOwners };
 }
 function withoutAutomaticVariants(rule2, automatic) {
@@ -2708,7 +2710,7 @@ function relabelledArm(site, original, automatic) {
 function withContent(node, content) {
   return { ...node, content };
 }
-function enrich(baseInput) {
+function enrich(baseInput, authored = {}) {
   const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -2727,7 +2729,8 @@ function enrich(baseInput) {
     inline: inlineNames,
     extras: extractGrammarRuleList(base2, hasWrapper, "extras"),
     word: extractWordName(grammarMeta?.word),
-    wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
+    wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
+    authoredGroupBodies: authored.groupBodies ?? []
   });
   const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
   const enrichedRules = {};
@@ -2832,23 +2835,23 @@ function enrich(baseInput) {
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
-function getEnrichClauseGroups(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_CLAUSE_GROUPS_KEY];
+function getEnrichClauseGroups(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar[ENRICH_CLAUSE_GROUPS_KEY];
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
 var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
-function getEnrichClauseGroupOwners(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+function getEnrichClauseGroupOwners(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Map();
+  const owners = grammar[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
   if (owners instanceof Map) return owners;
   return /* @__PURE__ */ new Map();
 }
 var ENRICH_VISIBLE_GROUP_SOURCES_KEY = "__enrichedVisibleGroupSources__";
-function getEnrichVisibleGroupSources(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
+function getEnrichVisibleGroupSources(grammar) {
+  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
@@ -4270,6 +4273,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
     );
   }
   const registeredBody = ambientPrec ? withContent(ambientPrec, content) : content;
+  if (coveredByAuthoredGroup(registeredBody, ctx)) return null;
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
@@ -4386,7 +4390,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
     if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
-    if (isSupertypeLike(body)) return null;
+    if (isSupertypeLike(body) || coveredByAuthoredGroup(body, ctx)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
@@ -4405,6 +4409,9 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
+}
+function coveredByAuthoredGroup(body, ctx) {
+  return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body), pattern));
 }
 function makeGroupLiftSymbol(_referenceRule, name) {
   const symbol = nativeRuleFn("symbol", "sym");
@@ -4807,7 +4814,6 @@ function wire(config, base2) {
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
-    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map(),
     baseRuleBodies: baseRuleBodiesOf(baseArg),
     liftBodies: /* @__PURE__ */ new Map()
   };
@@ -4823,7 +4829,7 @@ function wire(config, base2) {
     }
   }
   for (const liftName of enrichLiftNames(base2)) {
-    if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+    if (liftName in outRules || !(liftName in context.baseRuleBodies)) continue;
     outRules[liftName] = passthroughBaseRuleFn;
   }
   wrapAllRuleFns(outRules, context);
@@ -4834,12 +4840,10 @@ function wire(config, base2) {
       context.syntheticInline.add(name);
     }
     for (const name of getEnrichVisibleGroupSources(base2)) {
-      if (context.adoptedGroups.has(name)) continue;
       context.inlineRemovals.add(name);
     }
     const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
-      if (context.adoptedGroups.has(syntheticName)) continue;
       if (context.authoredRuleNames.has(ownerKind)) {
         context.orphanedSyntheticGroups.add(syntheticName);
       }
@@ -4899,8 +4903,8 @@ function renamingReserved(reserved, context) {
   );
 }
 function baseDeclares(base2, key) {
-  const grammar2 = base2?.grammar ?? base2;
-  return grammar2?.[key] !== void 0;
+  const grammar = base2?.grammar ?? base2;
+  return grammar?.[key] !== void 0;
 }
 function renamingCallback(user, rename, context) {
   return function renamed($, previous) {
@@ -5242,20 +5246,8 @@ function declaredPatterns(groups, injects) {
     return { section, key, value, body };
   });
 }
-function adoptMintedGroups(baseArg, base2, groups) {
-  const adopted = /* @__PURE__ */ new Map();
-  const authored = declaredPatterns(groups, void 0);
-  if (authored.length === 0) return adopted;
-  const baseRules = baseRulesOf(baseArg) ?? {};
-  for (const minted of getEnrichVisibleGroupSources(base2)) {
-    const body = baseRules[minted];
-    if (body === void 0) continue;
-    const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body), pattern.body));
-    if (owner === void 0) continue;
-    adopted.set(minted, owner.key);
-    delete baseRules[minted];
-  }
-  return adopted;
+function authoredGroupBodies(groups) {
+  return declaredPatterns(groups, void 0).map((pattern) => pattern.body);
 }
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
@@ -5282,7 +5274,7 @@ function replaceInBodyRt(rule2, candidates, automatic) {
   if (!rule2 || typeof rule2 !== "object") return rule2;
   const r = rule2;
   for (const c of candidates) {
-    if (rulesEqual(rule2, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
+    if (rulesEqual(rule2, c.body)) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule2, automatic());
     }
@@ -5402,8 +5394,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
   for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
     const hiddenName = declaredGroupMintName(key);
     const hidden = hiddenName === key;
-    const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
-    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
     const registered = wrapOneRuleFn(hiddenName, value, context);
     rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }
@@ -6621,744 +6612,744 @@ function refine(original, forms) {
   return original;
 }
 
+// packages/codegen/src/dsl/sittir-grammar.ts
+function sittirGrammar(base2, config) {
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups) });
+  const grammar = globalThis.grammar;
+  return grammar(enriched, wire(config, enriched));
+}
+
 // packages/typescript/grammar.sittir.ts
-var enrichedBase = enrich(import_grammar.default);
-var grammar_sittir_default = grammar(
-  enrichedBase,
-  wire(
-    {
-      name: "typescript",
-      conflicts: ($, previous) => [
-        ...previous ?? [],
-        [$.sequence_expression, $.parenthesized_expression_typed],
-        [$.sequence_expression, $.parenthesized_expression_arm],
-        [$.primary_expression, $.arrow_function],
-        [$.readonly_type, $._kw_readonly_marker],
-        [$.abstract_method_signature, $._kw_abstract_marker],
-        [$.index_signature, $._kw_readonly_marker],
-        // The fielded `readonly` in index_signature's modifier group makes
-        // `'class' '{' 'readonly' • '['` ambiguous with the sibling
-        // class-member rules that also start with a readonly modifier.
-        [$.method_definition, $.method_signature, $.index_signature, $.public_field_definition],
-        [$.primary_expression, $._kw_async_marker],
-        [$.primary_expression, $._property_name, $._kw_async_marker],
-        [$.primary_expression, $._kw_static_marker],
-        [$.primary_expression, $._kw_readonly_marker],
-        [$.primary_expression, $._kw_abstract_marker],
-        [$.primary_expression, $._kw_const_marker],
-        [$.primary_expression, $._kw_using_marker],
-        [$.primary_expression, $._property_name],
-        [$.labeled_statement, $._property_name],
-        [$.object, $.object_pattern],
-        [$.primary_expression, $.method_definition],
-        [$.primary_expression, $.arrow_function, $._property_name],
-        [$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
-        [$.assignment_expression, $.pattern],
-        [$.primary_expression, $.pattern],
-        [$.primary_expression, $._parameter_name],
-        [$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
-        [$.array, $.array_pattern],
-        [$.primary_type, $.type_parameter],
-        [$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
-        [$.primary_expression, $.rest_pattern],
-        [$._for_header, $.primary_expression],
-        [$.class],
-        [$.class_static_block, $._property_name],
-        [$.primary_expression, $.literal_type],
-        [$.pattern, $.primary_type],
-        [$.primary_expression, $.primary_type],
-        [$.primary_expression, $.nested_identifier, $.nested_type_identifier],
-        [$.primary_expression, $.generic_type],
-        [$._parameter_name, $.primary_type],
-        [$.primary_expression, $.predefined_type],
-        [$._call_signature, $.function_type],
-        [$.optional_tuple_parameter, $.primary_type],
-        [$.call_expression, $.binary_expression, $.instantiation_expression],
-        [$.object_assignment_pattern, $.assignment_expression],
-        [$.array, $.computed_property_name],
-        [$.variable_declarator, $._for_header],
-        [$.object, $.object_pattern, $._property_name],
-        [$.object_pattern, $.object_type],
-        [$.object, $.object_type],
-        [$.primary_expression, $.pattern, $.primary_type],
-        [$.primary_expression, $._parameter_name, $.primary_type],
-        [$.array, $.array_pattern, $.tuple_type],
-        [$.array_pattern, $.tuple_type],
-        [$.array, $.tuple_type],
-        [$._call_signature, $.constructor_type],
-        [$.template_string, $.template_literal_type],
-        [$.object, $.object_pattern, $.object_type],
-        [$.primary_expression, $.rest_pattern, $.primary_type],
-        [$.primary_expression, $.rest_pattern, $.literal_type],
-        [$.primary_expression, $.rest_pattern, $.predefined_type],
-        [$.nested_identifier, $.nested_type_identifier],
-        [$._initializer, $.binary_expression],
-        [$.primary_expression, $.export_statement_namespace_export],
-        [$.binary_expression, $.unary_expression, $.instantiation_expression, $.call_expression_call],
-        [$.await_expression, $.binary_expression, $.instantiation_expression, $.call_expression_call],
-        [$.binary_expression, $.update_expression, $.instantiation_expression, $.call_expression_call],
-        [$.binary_expression, $.instantiation_expression, $.call_expression_call],
-        [$._type_query_call_expression_in_type_annotation, $.call_expression_call],
-        [$._type_query_call_expression, $.call_expression_call],
-        [$.primary_expression, $.export_statement_default],
-        [$.string],
-        [$.await_expression, $.update_expression_postfix],
-        [$.await_expression, $.update_expression_arm1],
-        [$.arrow_function, $.update_expression_arm1],
-        [$.await_expression, $.call_expression_call],
-        [$.instantiation_expression, $.call_expression_call],
-        [$.await_expression, $.binary_expression_arm],
-        [$.as_expression, $.binary_expression_arm],
-        [$.call_expression_call, $.binary_expression_arm],
-        // binary_expression_arm (the `in`-operator arm, freshly extracted —
-        // same PREC-descent mechanism as call_expression's arms above) mirrors
-        // binary_expression's own conflict set: every continuation that used to
-        // share LR state with the whole (unsplit) binary_expression choice needs
-        // the same explicit GLR declaration now that this one arm has its own
-        // symbol boundary.
-        [$.call_expression, $.binary_expression_arm, $.unary_expression, $.instantiation_expression],
-        [$.call_expression, $.await_expression, $.binary_expression_arm, $.instantiation_expression],
-        [$.call_expression, $.binary_expression_arm, $.update_expression, $.instantiation_expression],
-        [$.call_expression, $.binary_expression_arm, $.instantiation_expression],
-        [$._initializer, $.binary_expression_arm],
-        [$.binary_expression_arm, $.unary_expression, $.instantiation_expression, $.call_expression_call],
-        [$.await_expression, $.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
-        [$.binary_expression_arm, $.update_expression, $.instantiation_expression, $.call_expression_call],
-        [$.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
-        [$.subscript_expression, $.binary_expression_arm],
-        [$.member_expression, $.binary_expression_arm],
-        [$.member_expression, $.subscript_expression, $.binary_expression_arm],
-        [$.binary_expression, $.instantiation_expression, $.call_expression_call, $.binary_expression_arm],
-        [$.non_null_expression, $.binary_expression_arm],
-        [$.satisfies_expression, $.binary_expression_arm],
-        [$.binary_expression_arm, $.update_expression_postfix],
-        [$.binary_expression_arm, $.update_expression_prefix],
-        [$.binary_expression_arm, $.update_expression_arm1],
-        [$.ternary_expression, $.binary_expression_arm],
-        [$.arrow_function, $.call_expression_call],
-        [$.arrow_function, $.binary_expression_arm],
-        [$.expression, $.call_expression_template_call],
-        [$.variable_declarator_arm1, $.for_header_arm2],
-        [$.primary_expression, $.for_header_arm2],
-        [$.variable_declarator_arm1, $.for_header_let_const_kind],
-        [$.class_body_arm1, $.class_body_arm2],
-        [$.import, $.meta_property_arm2],
-        [$.primary_expression, $.meta_property_arm1],
-        [$._lhs_expression, $.export_statement_equals_export],
-        [$.object_assignment_pattern, $._lhs_expression],
-        [$.object_assignment_pattern, $._lhs_expression, $.export_statement_equals_export],
-        [$.primary_expression, $._lhs_expression],
-        [$._lhs_expression, $.primary_type],
-        [$._lhs_expression, $.literal_type],
-        [$._lhs_expression, $.readonly_type],
-        [$._lhs_expression, $.predefined_type],
-        [$.function_type, $._call_signature],
-        [$.primary_expression, $._lhs_expression, $.primary_type],
-        [$.primary_expression, $._lhs_expression, $.literal_type],
-        [$.primary_expression, $._lhs_expression, $.predefined_type],
-        [$.constructor_type, $._call_signature],
-        [$._lhs_expression],
-        [$.await_expression, $.update_expression_prefix],
-        [$.arrow_function, $.update_expression_postfix],
-        [$.arrow_function, $.update_expression_prefix],
-        [$.primary_expression, $.export_statement_default_from],
-        [$.primary_expression, $.export_statement_default_declaration],
-        [$.primary_expression, $._parameter_name, $.readonly_type],
-        [$.class_body_method],
-        [$.class_body_method_sig, $.class_body_member],
-        [$.public_field_definition],
-        [$.method_definition, $.public_field_definition],
-        [$.method_definition, $.method_signature, $.public_field_definition],
-        [$.abstract_method_signature, $.public_field_definition],
-        [$.primary_expression, $.for_header_lhs],
-        [$.primary_expression, $.for_header_var_kind],
-        [$.primary_expression, $.for_header_let_const_kind],
-        [$.variable_declarator, $.for_header_var_kind],
-        [$.variable_declarator, $.for_header_let_const_kind]
-      ],
-      groups: {
-        jsx_opening_element_content: ($) => seq(
-          choice(field("name", choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),
-          repeat(field("attribute", $._jsx_attribute))
-        )
-      },
-      options: {
-        body: { before: preference("indent"), after: preference("dedent") },
-        case_body: { start: preference("indent"), end: preference("dedent") },
-        gap: { separator: preference("newline") },
-        number_hex: { "prefix:": preference("0x") },
-        number_octal: { "prefix:": preference("0o") },
-        number_binary: { "prefix:": preference("0b") },
-        number_float_point: { "marker:": preference("e") },
-        number_float_leading_point: { "marker:": preference("e") },
-        number_float_scientific: { "marker:": preference("e") },
-        statements: { terminator: preference(";") },
-        quotes: { style: preference("double") },
-        enum_body_elements: {
-          'content:/separator/","/after': preference("newline"),
-          "content:/delimiter": preference("Delimiter.Trailing")
-        },
-        program: { "statements:/separator": preference("tight"), "statements:/(_)/after": preference("blankline") },
-        _: {
-          "decorator:/separator": preference("tight"),
-          "decorator:/(_)/after": preference("newline"),
-          "decorator:/end": preference("newline"),
-          '"("/before': preference("tight"),
-          '"("/after': preference("tight"),
-          '")"/before': preference("tight"),
-          '"["/before': preference("tight"),
-          '"["/after': preference("tight"),
-          '"]"/before': preference("tight"),
-          '"{"/after': preference("tight"),
-          '"}"/before': preference("tight"),
-          '"${"/after': preference("tight"),
-          '"<"/before': preference("tight"),
-          '"<"/after': preference("tight"),
-          '">"/before': preference("tight"),
-          '"."/before': preference("tight"),
-          '"."/after': preference("tight"),
-          '","/before': preference("tight"),
-          '";"/before': preference("tight"),
-          '"++"/before': preference("tight"),
-          '"++"/after': preference("tight"),
-          '"--"/before': preference("tight"),
-          '"--"/after': preference("tight"),
-          '"?."/before': preference("tight"),
-          '"?."/after': preference("tight"),
-          '"..."/after': preference("tight"),
-          '":"/before': preference("tight"),
-          '":"/after': preference("space"),
-          '"="/before': preference("space"),
-          '"="/after': preference("space"),
-          '"=>"/before': preference("space"),
-          '"=>"/after': preference("space"),
-          '"|"/before': preference("space"),
-          '"|"/after': preference("space"),
-          '"&"/before': preference("space"),
-          '"&"/after': preference("space"),
-          "operator:/before": preference("space"),
-          "operator:/after": preference("space"),
-          '_/separator/","/before': preference("tight")
-        },
-        // A space after the substitution's `}` changes the template text. The edge
-        // sits in every string-interior context, so no neighbour immediacy reaches it.
-        template_substitution: { after: preference("tight") },
-        template_type: { after: preference("tight") },
-        literal_type_negative_number: { "operator:/after": preference("tight") },
-        unary_expression: { "operator:/after": preference("tight") },
-        update_expression_postfix: { "operator:/before": preference("tight") },
-        update_expression_prefix: { "operator:/after": preference("tight") },
-        object_type_content: {
-          "members:/separator/before": preference("tight"),
-          "members:/separator/after": preference("newline"),
-          "members:/separator/kind": preference("semi"),
-          "members:/delimiter": preference("Delimiter.Trailing")
-        },
-        statement_block: { before: preference("space") },
-        class_body: { before: preference("space") },
-        switch_body: { before: preference("space") },
-        named_imports: {
-          before: preference("space"),
-          after: preference("space"),
-          '"{"/after': preference("space"),
-          '"}"/before': preference("space")
-        },
-        export_clause: {
-          before: preference("space"),
-          after: preference("space"),
-          '"{"/after': preference("space"),
-          '"}"/before': preference("space")
-        },
-        object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
-        object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
-        ternary_expression: { '":"/before': preference("space") },
-        for_statement: { '"("/before': preference("space"), '";"/after': preference("space") },
-        lexical_declaration: { after: preference("space") },
-        variable_declaration: { after: preference("space") },
-        required_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
-        optional_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
-        _bindings: {
-          "_/terminator:": "statements/terminator",
-          "_/automatic_semicolon:": "statements/terminator",
-          "string/variant": "quotes/style",
-          'class_body/"{"/after': "body/before",
-          'class_body/"}"/before': "body/after",
-          'statement_block/"{"/after': "body/before",
-          'statement_block/"}"/before': "body/after",
-          'switch_body/"{"/after': "body/before",
-          'switch_body/"}"/before': "body/after",
-          'enum_body/"{"/after': "body/before",
-          'enum_body/"}"/before': "body/after",
-          "object_type/opening:/after": "body/before",
-          "object_type/closing:/before": "body/after",
-          "switch_case/body:/start": "case_body/start",
-          "switch_case/body:/end": "case_body/end",
-          "switch_default/body:/start": "case_body/start",
-          "switch_default/body:/end": "case_body/end",
-          "class_body/content:/separator": "gap/separator",
-          "statement_block/statements:/separator": "gap/separator",
-          "switch_body/cases:/separator": "gap/separator",
-          "switch_case/body:/separator": "gap/separator",
-          "switch_default/body:/separator": "gap/separator"
-        }
-      },
-      patches: {
-        decorator: { 1: field("expression") },
-        decorator_parenthesized_expression: { 1: field("expression") },
-        asserts: { 1: field("value") },
-        type_query: { 1: field("expression") },
-        comment: {
-          "1/0/1": regex(/([^*]|\*+[^*\/])*\**/),
-          "1/0/2": { type: "STRING", value: "*/" },
-          0: variant("line"),
-          1: variant("block")
-        },
-        literal_type: { 0: variant("negative_number") },
-        number: {
-          "1/0/0": field("integer"),
-          "1/0/2": field("fraction"),
-          "1/0/3/0/0": field("marker"),
-          "1/0/3/0/1/0": field("sign"),
-          "1/0/3/0/1/1": field("exponent"),
-          "2/0/1": field("fraction"),
-          "2/0/2/0/0": field("marker"),
-          "2/0/2/0/1/0": field("sign"),
-          "2/0/2/0/1/1": field("exponent"),
-          "3/0/0": field("integer"),
-          "3/0/1/0": field("marker"),
-          "3/0/1/1/0": field("sign"),
-          "3/0/1/1/1": field("exponent"),
-          0: variant("hex"),
-          1: variant("float_point"),
-          2: variant("float_leading_point"),
-          3: variant("float_scientific"),
-          4: variant("decimal", { default: true }),
-          5: variant("binary"),
-          6: variant("octal"),
-          7: variant("bigint")
-        },
-        hash_bang_line: { ".": regex(/#!(?<content>.*)/) },
-        binary_expression: {
-          24: variant("in")
-        },
-        arguments: {
-          1: field("elements")
-        },
-        array: {
-          1: field("elements")
-        },
-        array_pattern: {
-          1: field("elements")
-        },
-        object: {
-          1: field("properties")
-        },
-        object_pattern: {
-          1: field("properties")
-        },
-        switch_body: {
-          1: field("cases")
-        },
-        object_type: {},
-        enum_body: {},
-        jsx_expression: {
-          1: field("expression")
-        },
-        // Patch sets apply in order. The second fields the member repeat
-        // AFTER the arm-level paths of the first resolve against the
-        // un-fielded shape: with the stray `';'` arm minted as its own kind
-        // `empty_member`, every element — members and stray semicolons
-        // alike — keys into one ordered `_content` array. The third's
-        // variant paths then traverse the `content` field the second added.
-        class_body: [
-          {
-            "1/0/4": alias("empty_member"),
-            "1/0/0/2": field("terminator"),
-            "1/0/1/1": field("terminator"),
-            "1/0/3/0": field("member"),
-            "1/0/3/1": field("terminator")
-          },
-          { 1: field("content") },
-          {
-            "1/content:/0/0": variant("method"),
-            "1/content:/0/1": variant("method_sig"),
-            "1/content:/0/3": variant("member")
-          }
-        ],
-        abstract_method_signature: {
-          "3/0": field("accessor_kind"),
-          "5/0": field("optional_marker")
-        },
-        ambient_declaration: {
-          "1/0": variant("declaration"),
-          "1/1": variant("global"),
-          "1/2": variant("module")
-        },
-        jsx_namespace_name: { 0: field("namespace"), 2: field("name") },
-        as_expression: {
-          2: field("type_annotation")
-        },
-        class_declaration: {
-          "4/0": field("heritage"),
-          6: field("automatic_semicolon")
-        },
-        import_alias: {
-          1: field("name"),
-          3: field("value"),
-          4: field("terminator")
-        },
-        import_attribute: {
-          0: field("attribute_kind")
-        },
-        index_signature: [
-          {
-            // Presence carrier for the bare `readonly` modifier: the
-            // enclosing optional group's only other slot (`sign`) is
-            // itself optional, so without this field a sign-less
-            // `readonly [k: string]: T` has nothing recording the
-            // group's occurrence and render drops the keyword.
-            "0/0/1": field("readonly_marker")
-          },
-          { "2/0": variant("colon"), "2/1": variant("mapped_type_clause") }
-        ],
-        import_statement: [
-          { "2/0": variant("clause_from") },
-          {
-            1: field("import_clause"),
-            2: field("from_clause"),
-            4: field("terminator")
-          }
-        ],
-        infer_type: {
-          // No field on position 2 (the optional `extends` clause group):
-          // an outer field on an inlined hidden group makes tree-sitter tag
-          // every spliced child with the OUTER name, while the slot model
-          // names the slot from the inner field — the wire and the model
-          // then disagree and the clause never renders. The enrich-supplied
-          // inner field('type') is the single naming source.
-          1: field("name")
-        },
-        intersection_type: {
-          0: field("left"),
-          2: field("right")
-        },
-        lexical_declaration: {
-          1: field("declarators"),
-          2: field("terminator")
-        },
-        lookup_type: {
-          0: field("type"),
-          2: field("index_type")
-        },
-        member_expression: {
-          1: field("separator")
-        },
-        method_definition: {
-          1: field("static_marker"),
-          "3/0": field("readonly_marker"),
-          "4/0": field("async_marker"),
-          "5/0": field("accessor_kind"),
-          "7/0": field("optional_marker")
-        },
-        method_signature: {
-          1: field("static_marker"),
-          "5/0": field("accessor_kind"),
-          "7/0": field("optional_marker")
-        },
-        program: {
-          0: field("hash_bang_line"),
-          1: field("statements")
-        },
-        property_signature: {
-          1: field("static_marker"),
-          "5/0": field("optional_marker")
-        },
-        satisfies_expression: {
-          2: field("type_annotation")
-        },
-        statement_block: {
-          1: field("statements"),
-          3: field("automatic_semicolon")
-        },
-        union_type: {
-          0: field("left"),
-          2: field("right")
-        },
-        variable_declaration: {
-          1: field("declarators"),
-          2: field("terminator")
-        },
-        yield_expression: {
-          1: field("expression")
-        },
-        expression_statement: {
-          0: field("expression"),
-          1: field("terminator")
-        },
-        type_alias_declaration: {
-          5: field("terminator")
-        },
-        // `_expressions` is one expression or a sequence_expression; the
-        // slot holds one value, so it is named for that, not for the
-        // hidden rule's plural.
-        return_statement: {
-          1: field("expression"),
-          2: field("terminator")
-        },
-        throw_statement: {
-          1: field("expression"),
-          2: field("terminator")
-        },
-        function_expression: {
-          "0/0": field("async_marker")
-        },
-        function_declaration: {
-          "0/0": field("async_marker")
-        },
-        generator_function: {
-          "0/0": field("async_marker")
-        },
-        generator_function_declaration: {
-          "0/0": field("async_marker")
-        },
-        break_statement: {
-          2: field("terminator")
-        },
-        continue_statement: {
-          2: field("terminator")
-        },
-        debugger_statement: {
-          1: field("terminator")
-        },
-        do_statement: {
-          4: field("terminator")
-        },
-        constructor_type: {
-          "0/0": field("abstract_marker")
-        },
-        enum_declaration: {
-          "0/0": field("const_marker")
-        },
-        function_signature: {
-          4: field("terminator")
-        },
-        assignment_expression: {
-          "0/0": field("using_marker")
-        },
-        export_specifier: {
-          "0/0": field("export_kind")
-        },
-        import_specifier: [{ "0/0": field("import_kind") }, { "1/0": variant("name"), "1/1": variant("as") }],
-        public_field_definition: {
-          // Both spellings of the accessibility position (declare-first
-          // and access-first modifier orders) carry ONE shared field so
-          // the exclusive occurrences merge into a single slot, same as
-          // the enrich-promoted `*_marker` fields merge across the
-          // permutation arms.
-          "1/0/0/1/0": field("accessibility_modifier"),
-          "1/0/1/0": field("accessibility_modifier"),
-          "4/0": field("optionality_marker")
-        },
-        parenthesized_expression: {
-          "1/0": variant("typed"),
-          "1/1": variant("sequence")
-        },
-        // export_statement: variant() adoption on all four branches.
-        // Path 0 is the JS-inherited `previous` (export default,
-        // export function, export from, …); paths 1/2/3 are
-        // `export type`, `export =`, `export as namespace`. Without
-        // labeling path 0, its base-JS branches render without the
-        // `export` prefix (parent template is just `$$$CHILDREN`,
-        // which filters to named children) — the wrapper becomes
-        // invisible at render time.
-        //
-        // `export_statement_default`'s body is a top-level choice of
-        // TWO structurally distinct shapes:
-        //   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
-        //   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
-        // Splitting it further (e.g. `0/0` / `0/1` for these sub-arms)
-        // just moves the non-canonical flag one level deeper — each
-        // split arm STILL has inner choice-with-fields shapes
-        // (specifiers, from-clause forms, default value). Adoption on
-        // kinds synthesized by a parent polymorph adoption isn't
-        // supported end-to-end, so deferred for future work. The
-        // walker handles the shape via its per-branch + downgrade
-        // logic correctly; the audit flag surfaces real adoption
-        // opportunity but not a blocking bug.
-        export_statement: {
-          0: variant("default"),
-          1: variant("type_export"),
-          2: variant("equals_export"),
-          3: variant("namespace_export")
-        },
-        call_expression: {
-          0: variant("call"),
-          1: variant("template_call"),
-          2: variant("member")
-        },
-        string: [
-          { "0/2": token.immediate('"'), "1/2": token.immediate("'") },
-          { 0: variant("double"), 1: variant("single") }
-        ],
-        template_string: { 2: token.immediate("`") },
-        template_literal_type: { 2: token.immediate("`") },
-        template_type: { 0: token.immediate("${"), 1: field("type") },
-        template_substitution: { 0: token.immediate("${"), 1: field("expression") },
-        update_expression: {
-          0: variant("postfix"),
-          1: variant("prefix")
-        },
-        arrow_function: { "1/0": variant("parameter") },
-        class_heritage: { "0": variant("extends_clause"), "1": variant("implements_clause") },
-        extends_clause: { "1/0": alias("extends_clause_single"), "1/1/0/1": alias("extends_clause_single") },
-        import_clause: {
-          "0": variant("namespace_import"),
-          "1": variant("named_imports"),
-          "2": variant("default_import")
-        },
-        export_statement_default: {
-          0: variant("from"),
-          "0/1/0": variant("star_from"),
-          "0/1/1": variant("ns_from"),
-          "0/1/2": variant("clause_from"),
-          1: variant("declaration"),
-          "1/2/1": variant("default_kw"),
-          "1/2/1/1/1": variant("value")
-        },
-        variable_declarator: { 0: variant("plain"), 1: variant("definite") },
-        meta_property: { 0: variant("new_target"), 1: variant("import_meta") },
-        namespace_import: { 2: field("name") },
-        else_clause: { 1: field("body") },
-        jsx_element: { 1: field("children") },
-        class: { "4/0": field("heritage") },
-        abstract_class_declaration: { "5/0": field("heritage") },
-        import_require_clause: { 0: field("name") },
-        index_type_query: { 1: field("type") },
-        flow_maybe_type: { 1: field("type") },
-        array_type: { 0: field("type") },
-        export_statement_namespace_export: { 3: field("name"), 4: field("terminator") },
-        export_statement_type_export: { 4: field("terminator") },
-        export_statement_equals_export: { 3: field("terminator") },
-        _for_header: {
-          "1/0": variant("lhs"),
-          "1/1": variant("var_kind"),
-          "1/2": variant("let_const_kind")
-        }
-      },
-      externals: ($, previous) => [
-        ...previous ?? [],
-        $._tight,
-        $._space,
-        $._newline,
-        $._blankline,
-        $._indent,
-        $._dedent
-      ],
-      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
-      extras: ($, previous) => [...previous ?? []],
-      visibleExternals: (_$) => ({
-        _automatic_semicolon: string("\n"),
-        _function_signature_automatic_semicolon: string("\n"),
-        _tight: string(""),
-        _space: string(" "),
-        _newline: string("\n"),
-        _blankline: string("\n\n"),
-        _indent: indent(),
-        _dedent: dedent()
-      }),
-      expectTestFailures: {
-        debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
-        import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
-        object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
-        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
-      },
-      expectDiagnostics: {
-        "unclassifiable-shape": ["binary_expression", "public_field_definition"],
-        "union-slot-mixed-row": ["binary_expression"],
-        "rule-reauthored-without-cause": ["object_type"]
-      },
-      rules: {
-        _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
-        // `template_substitution` sits only in string-interior contexts
-        // (template_string / template_literal_type elements), where any
-        // preceding characters are absorbed into a fragment token — no
-        // whitespace can ever precede its `${`, but upstream writes a
-        // plain string. Declaring `token.immediate` matters for
-        // RENDERING: `$` is word-class in typescript, so without the
-        // declared fact the seam check injects a hazard space after a
-        // word-ending fragment or escape (`mid\n ${`), which reparses
-        // as a spurious one-space string_fragment. The stamp makes the
-        // kind left-immediate (its leftmost terminal), so structural
-        // references render seam-free. Parser-neutral by the absorption
-        // argument above.
-        // The signature arm of an arrow function is upstream's hidden
-        // `_call_signature`, whose fields inline into the parent. Upstream
-        // typescript already declares that body as the visible kind
-        // `call_signature`, so the arm references that kind directly:
-        // storage and parse are one symbol, the arm seats through the
-        // existing factory, and no per-parent form kind is minted for a
-        // body that has a name of its own. Positions are unchanged, so the
-        // `parameter` polymorph path above stays valid.
-        arrow_function: reauthored("alias-shape", ($, original) => ({
-          ...original,
-          members: original.members.map(
-            (m, i) => i === 1 ? {
-              ...m,
-              members: m.members.map((arm2, j) => j === 1 ? $.call_signature : arm2)
-            } : m
-          )
-        })),
-        ambient_declaration_global: vocabulary(($) => seq("global", field("body", $.statement_block))),
-        ambient_declaration_module: vocabulary(
-          ($) => prec.right(
-            seq(
-              "module",
-              ".",
-              field("name", alias($.identifier, $.property_identifier)),
-              ":",
-              field("type", $.type),
-              optional(field("terminator", $._semicolon))
-            )
-          )
-        ),
-        object_type: reauthored(
-          "ambiguity",
-          ($) => refine(
-            seq(
-              field("opening", choice("{", "{|")),
-              field("members", optional($.object_type_content)),
-              field("closing", choice("}", "|}"))
-            ),
-            {
-              curly: { "opening:": "{", "closing:": "}" },
-              flow: { "opening:": "{|", "closing:": "|}" }
-            }
-          )
-        ),
-        object_type_content: vocabulary(($) => {
-          const SEP = () => choice(",", ";");
-          const member = choice(
-            $.export_statement,
-            $.property_signature,
-            $.call_signature,
-            $.construct_signature,
-            $.index_signature,
-            $.method_signature
-          );
-          return seq(
-            optional(SEP()),
-            seq(field("members", member), repeat(seq(SEP(), field("members", member)))),
-            optional(SEP())
-          );
-        })
-      },
-      renderAs: (_$) => ({
-        html_comment: /<!--[\s\S]*?-->/,
-        jsx_text: /[^{}<>]+/,
-        _template_chars: token.immediate(/[^`\\$]+/)
-      })
+var grammar_sittir_default = sittirGrammar(import_grammar.default, {
+  name: "typescript",
+  conflicts: ($, previous) => [
+    ...previous ?? [],
+    [$.sequence_expression, $.parenthesized_expression_typed],
+    [$.sequence_expression, $.parenthesized_expression_arm],
+    [$.primary_expression, $.arrow_function],
+    [$.readonly_type, $._kw_readonly_marker],
+    [$.abstract_method_signature, $._kw_abstract_marker],
+    [$.index_signature, $._kw_readonly_marker],
+    // The fielded `readonly` in index_signature's modifier group makes
+    // `'class' '{' 'readonly' • '['` ambiguous with the sibling
+    // class-member rules that also start with a readonly modifier.
+    [$.method_definition, $.method_signature, $.index_signature, $.public_field_definition],
+    [$.primary_expression, $._kw_async_marker],
+    [$.primary_expression, $._property_name, $._kw_async_marker],
+    [$.primary_expression, $._kw_static_marker],
+    [$.primary_expression, $._kw_readonly_marker],
+    [$.primary_expression, $._kw_abstract_marker],
+    [$.primary_expression, $._kw_const_marker],
+    [$.primary_expression, $._kw_using_marker],
+    [$.primary_expression, $._property_name],
+    [$.labeled_statement, $._property_name],
+    [$.object, $.object_pattern],
+    [$.primary_expression, $.method_definition],
+    [$.primary_expression, $.arrow_function, $._property_name],
+    [$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
+    [$.assignment_expression, $.pattern],
+    [$.primary_expression, $.pattern],
+    [$.primary_expression, $._parameter_name],
+    [$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
+    [$.array, $.array_pattern],
+    [$.primary_type, $.type_parameter],
+    [$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
+    [$.primary_expression, $.rest_pattern],
+    [$._for_header, $.primary_expression],
+    [$.class],
+    [$.class_static_block, $._property_name],
+    [$.primary_expression, $.literal_type],
+    [$.pattern, $.primary_type],
+    [$.primary_expression, $.primary_type],
+    [$.primary_expression, $.nested_identifier, $.nested_type_identifier],
+    [$.primary_expression, $.generic_type],
+    [$._parameter_name, $.primary_type],
+    [$.primary_expression, $.predefined_type],
+    [$._call_signature, $.function_type],
+    [$.optional_tuple_parameter, $.primary_type],
+    [$.call_expression, $.binary_expression, $.instantiation_expression],
+    [$.object_assignment_pattern, $.assignment_expression],
+    [$.array, $.computed_property_name],
+    [$.variable_declarator, $._for_header],
+    [$.object, $.object_pattern, $._property_name],
+    [$.object_pattern, $.object_type],
+    [$.object, $.object_type],
+    [$.primary_expression, $.pattern, $.primary_type],
+    [$.primary_expression, $._parameter_name, $.primary_type],
+    [$.array, $.array_pattern, $.tuple_type],
+    [$.array_pattern, $.tuple_type],
+    [$.array, $.tuple_type],
+    [$._call_signature, $.constructor_type],
+    [$.template_string, $.template_literal_type],
+    [$.object, $.object_pattern, $.object_type],
+    [$.primary_expression, $.rest_pattern, $.primary_type],
+    [$.primary_expression, $.rest_pattern, $.literal_type],
+    [$.primary_expression, $.rest_pattern, $.predefined_type],
+    [$.nested_identifier, $.nested_type_identifier],
+    [$._initializer, $.binary_expression],
+    [$.primary_expression, $.export_statement_namespace_export],
+    [$.binary_expression, $.unary_expression, $.instantiation_expression, $.call_expression_call],
+    [$.await_expression, $.binary_expression, $.instantiation_expression, $.call_expression_call],
+    [$.binary_expression, $.update_expression, $.instantiation_expression, $.call_expression_call],
+    [$.binary_expression, $.instantiation_expression, $.call_expression_call],
+    [$._type_query_call_expression_in_type_annotation, $.call_expression_call],
+    [$._type_query_call_expression, $.call_expression_call],
+    [$.primary_expression, $.export_statement_default],
+    [$.string],
+    [$.await_expression, $.update_expression_postfix],
+    [$.await_expression, $.update_expression_arm1],
+    [$.arrow_function, $.update_expression_arm1],
+    [$.await_expression, $.call_expression_call],
+    [$.instantiation_expression, $.call_expression_call],
+    [$.await_expression, $.binary_expression_arm],
+    [$.as_expression, $.binary_expression_arm],
+    [$.call_expression_call, $.binary_expression_arm],
+    // binary_expression_arm (the `in`-operator arm, freshly extracted —
+    // same PREC-descent mechanism as call_expression's arms above) mirrors
+    // binary_expression's own conflict set: every continuation that used to
+    // share LR state with the whole (unsplit) binary_expression choice needs
+    // the same explicit GLR declaration now that this one arm has its own
+    // symbol boundary.
+    [$.call_expression, $.binary_expression_arm, $.unary_expression, $.instantiation_expression],
+    [$.call_expression, $.await_expression, $.binary_expression_arm, $.instantiation_expression],
+    [$.call_expression, $.binary_expression_arm, $.update_expression, $.instantiation_expression],
+    [$.call_expression, $.binary_expression_arm, $.instantiation_expression],
+    [$._initializer, $.binary_expression_arm],
+    [$.binary_expression_arm, $.unary_expression, $.instantiation_expression, $.call_expression_call],
+    [$.await_expression, $.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
+    [$.binary_expression_arm, $.update_expression, $.instantiation_expression, $.call_expression_call],
+    [$.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
+    [$.subscript_expression, $.binary_expression_arm],
+    [$.member_expression, $.binary_expression_arm],
+    [$.member_expression, $.subscript_expression, $.binary_expression_arm],
+    [$.binary_expression, $.instantiation_expression, $.call_expression_call, $.binary_expression_arm],
+    [$.non_null_expression, $.binary_expression_arm],
+    [$.satisfies_expression, $.binary_expression_arm],
+    [$.binary_expression_arm, $.update_expression_postfix],
+    [$.binary_expression_arm, $.update_expression_prefix],
+    [$.binary_expression_arm, $.update_expression_arm1],
+    [$.ternary_expression, $.binary_expression_arm],
+    [$.arrow_function, $.call_expression_call],
+    [$.arrow_function, $.binary_expression_arm],
+    [$.expression, $.call_expression_template_call],
+    [$.variable_declarator_arm1, $.for_header_arm2],
+    [$.primary_expression, $.for_header_arm2],
+    [$.variable_declarator_arm1, $.for_header_let_const_kind],
+    [$.class_body_arm1, $.class_body_arm2],
+    [$.import, $.meta_property_arm2],
+    [$.primary_expression, $.meta_property_arm1],
+    [$._lhs_expression, $.export_statement_equals_export],
+    [$.object_assignment_pattern, $._lhs_expression],
+    [$.object_assignment_pattern, $._lhs_expression, $.export_statement_equals_export],
+    [$.primary_expression, $._lhs_expression],
+    [$._lhs_expression, $.primary_type],
+    [$._lhs_expression, $.literal_type],
+    [$._lhs_expression, $.readonly_type],
+    [$._lhs_expression, $.predefined_type],
+    [$.function_type, $._call_signature],
+    [$.primary_expression, $._lhs_expression, $.primary_type],
+    [$.primary_expression, $._lhs_expression, $.literal_type],
+    [$.primary_expression, $._lhs_expression, $.predefined_type],
+    [$.constructor_type, $._call_signature],
+    [$._lhs_expression],
+    [$.await_expression, $.update_expression_prefix],
+    [$.arrow_function, $.update_expression_postfix],
+    [$.arrow_function, $.update_expression_prefix],
+    [$.primary_expression, $.export_statement_default_from],
+    [$.primary_expression, $.export_statement_default_declaration],
+    [$.primary_expression, $._parameter_name, $.readonly_type],
+    [$.class_body_method],
+    [$.class_body_method_sig, $.class_body_member],
+    [$.public_field_definition],
+    [$.method_definition, $.public_field_definition],
+    [$.method_definition, $.method_signature, $.public_field_definition],
+    [$.abstract_method_signature, $.public_field_definition],
+    [$.primary_expression, $.for_header_lhs],
+    [$.primary_expression, $.for_header_var_kind],
+    [$.primary_expression, $.for_header_let_const_kind],
+    [$.variable_declarator, $.for_header_var_kind],
+    [$.variable_declarator, $.for_header_let_const_kind]
+  ],
+  groups: {
+    jsx_opening_element_content: ($) => seq(
+      choice(field("name", choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),
+      repeat(field("attribute", $._jsx_attribute))
+    )
+  },
+  options: {
+    body: { before: preference("indent"), after: preference("dedent") },
+    case_body: { start: preference("indent"), end: preference("dedent") },
+    gap: { separator: preference("newline") },
+    number_hex: { "prefix:": preference("0x") },
+    number_octal: { "prefix:": preference("0o") },
+    number_binary: { "prefix:": preference("0b") },
+    number_float_point: { "marker:": preference("e") },
+    number_float_leading_point: { "marker:": preference("e") },
+    number_float_scientific: { "marker:": preference("e") },
+    statements: { terminator: preference(";") },
+    quotes: { style: preference("double") },
+    enum_body_elements: {
+      'content:/separator/","/after': preference("newline"),
+      "content:/delimiter": preference("Delimiter.Trailing")
     },
-    enrichedBase
-  )
-);
+    program: { "statements:/separator": preference("tight"), "statements:/(_)/after": preference("blankline") },
+    _: {
+      "decorator:/separator": preference("tight"),
+      "decorator:/(_)/after": preference("newline"),
+      "decorator:/end": preference("newline"),
+      '"("/before': preference("tight"),
+      '"("/after': preference("tight"),
+      '")"/before': preference("tight"),
+      '"["/before': preference("tight"),
+      '"["/after': preference("tight"),
+      '"]"/before': preference("tight"),
+      '"{"/after': preference("tight"),
+      '"}"/before': preference("tight"),
+      '"${"/after': preference("tight"),
+      '"<"/before': preference("tight"),
+      '"<"/after': preference("tight"),
+      '">"/before': preference("tight"),
+      '"."/before': preference("tight"),
+      '"."/after': preference("tight"),
+      '","/before': preference("tight"),
+      '";"/before': preference("tight"),
+      '"++"/before': preference("tight"),
+      '"++"/after': preference("tight"),
+      '"--"/before': preference("tight"),
+      '"--"/after': preference("tight"),
+      '"?."/before': preference("tight"),
+      '"?."/after': preference("tight"),
+      '"..."/after': preference("tight"),
+      '":"/before': preference("tight"),
+      '":"/after': preference("space"),
+      '"="/before': preference("space"),
+      '"="/after': preference("space"),
+      '"=>"/before': preference("space"),
+      '"=>"/after': preference("space"),
+      '"|"/before': preference("space"),
+      '"|"/after': preference("space"),
+      '"&"/before': preference("space"),
+      '"&"/after': preference("space"),
+      "operator:/before": preference("space"),
+      "operator:/after": preference("space"),
+      '_/separator/","/before': preference("tight")
+    },
+    // A space after the substitution's `}` changes the template text. The edge
+    // sits in every string-interior context, so no neighbour immediacy reaches it.
+    template_substitution: { after: preference("tight") },
+    template_type: { after: preference("tight") },
+    literal_type_negative_number: { "operator:/after": preference("tight") },
+    unary_expression: { "operator:/after": preference("tight") },
+    update_expression_postfix: { "operator:/before": preference("tight") },
+    update_expression_prefix: { "operator:/after": preference("tight") },
+    object_type_content: {
+      "members:/separator/before": preference("tight"),
+      "members:/separator/after": preference("newline"),
+      "members:/separator/kind": preference("semi"),
+      "members:/delimiter": preference("Delimiter.Trailing")
+    },
+    statement_block: { before: preference("space") },
+    class_body: { before: preference("space") },
+    switch_body: { before: preference("space") },
+    named_imports: {
+      before: preference("space"),
+      after: preference("space"),
+      '"{"/after': preference("space"),
+      '"}"/before': preference("space")
+    },
+    export_clause: {
+      before: preference("space"),
+      after: preference("space"),
+      '"{"/after': preference("space"),
+      '"}"/before': preference("space")
+    },
+    object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
+    object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
+    ternary_expression: { '":"/before': preference("space") },
+    for_statement: { '"("/before': preference("space"), '";"/after': preference("space") },
+    lexical_declaration: { after: preference("space") },
+    variable_declaration: { after: preference("space") },
+    required_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
+    optional_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
+    _bindings: {
+      "_/terminator:": "statements/terminator",
+      "_/automatic_semicolon:": "statements/terminator",
+      "string/variant": "quotes/style",
+      'class_body/"{"/after': "body/before",
+      'class_body/"}"/before': "body/after",
+      'statement_block/"{"/after': "body/before",
+      'statement_block/"}"/before': "body/after",
+      'switch_body/"{"/after': "body/before",
+      'switch_body/"}"/before': "body/after",
+      'enum_body/"{"/after': "body/before",
+      'enum_body/"}"/before': "body/after",
+      "object_type/opening:/after": "body/before",
+      "object_type/closing:/before": "body/after",
+      "switch_case/body:/start": "case_body/start",
+      "switch_case/body:/end": "case_body/end",
+      "switch_default/body:/start": "case_body/start",
+      "switch_default/body:/end": "case_body/end",
+      "class_body/content:/separator": "gap/separator",
+      "statement_block/statements:/separator": "gap/separator",
+      "switch_body/cases:/separator": "gap/separator",
+      "switch_case/body:/separator": "gap/separator",
+      "switch_default/body:/separator": "gap/separator"
+    }
+  },
+  patches: {
+    decorator: { 1: field("expression") },
+    decorator_parenthesized_expression: { 1: field("expression") },
+    asserts: { 1: field("value") },
+    type_query: { 1: field("expression") },
+    comment: {
+      "1/0/1": regex(/([^*]|\*+[^*\/])*\**/),
+      "1/0/2": { type: "STRING", value: "*/" },
+      0: variant("line"),
+      1: variant("block")
+    },
+    literal_type: { 0: variant("negative_number") },
+    number: {
+      "1/0/0": field("integer"),
+      "1/0/2": field("fraction"),
+      "1/0/3/0/0": field("marker"),
+      "1/0/3/0/1/0": field("sign"),
+      "1/0/3/0/1/1": field("exponent"),
+      "2/0/1": field("fraction"),
+      "2/0/2/0/0": field("marker"),
+      "2/0/2/0/1/0": field("sign"),
+      "2/0/2/0/1/1": field("exponent"),
+      "3/0/0": field("integer"),
+      "3/0/1/0": field("marker"),
+      "3/0/1/1/0": field("sign"),
+      "3/0/1/1/1": field("exponent"),
+      0: variant("hex"),
+      1: variant("float_point"),
+      2: variant("float_leading_point"),
+      3: variant("float_scientific"),
+      4: variant("decimal", { default: true }),
+      5: variant("binary"),
+      6: variant("octal"),
+      7: variant("bigint")
+    },
+    hash_bang_line: { ".": regex(/#!(?<content>.*)/) },
+    binary_expression: {
+      24: variant("in")
+    },
+    arguments: {
+      1: field("elements")
+    },
+    array: {
+      1: field("elements")
+    },
+    array_pattern: {
+      1: field("elements")
+    },
+    object: {
+      1: field("properties")
+    },
+    object_pattern: {
+      1: field("properties")
+    },
+    switch_body: {
+      1: field("cases")
+    },
+    object_type: {},
+    enum_body: {},
+    jsx_expression: {
+      1: field("expression")
+    },
+    // Patch sets apply in order. The second fields the member repeat
+    // AFTER the arm-level paths of the first resolve against the
+    // un-fielded shape: with the stray `';'` arm minted as its own kind
+    // `empty_member`, every element — members and stray semicolons
+    // alike — keys into one ordered `_content` array. The third's
+    // variant paths then traverse the `content` field the second added.
+    class_body: [
+      {
+        "1/0/4": alias("empty_member"),
+        "1/0/0/2": field("terminator"),
+        "1/0/1/1": field("terminator"),
+        "1/0/3/0": field("member"),
+        "1/0/3/1": field("terminator")
+      },
+      { 1: field("content") },
+      {
+        "1/content:/0/0": variant("method"),
+        "1/content:/0/1": variant("method_sig"),
+        "1/content:/0/3": variant("member")
+      }
+    ],
+    abstract_method_signature: {
+      "3/0": field("accessor_kind"),
+      "5/0": field("optional_marker")
+    },
+    ambient_declaration: {
+      "1/0": variant("declaration"),
+      "1/1": variant("global"),
+      "1/2": variant("module")
+    },
+    jsx_namespace_name: { 0: field("namespace"), 2: field("name") },
+    as_expression: {
+      2: field("type_annotation")
+    },
+    class_declaration: {
+      "4/0": field("heritage"),
+      6: field("automatic_semicolon")
+    },
+    import_alias: {
+      1: field("name"),
+      3: field("value"),
+      4: field("terminator")
+    },
+    import_attribute: {
+      0: field("attribute_kind")
+    },
+    index_signature: [
+      {
+        // Presence carrier for the bare `readonly` modifier: the
+        // enclosing optional group's only other slot (`sign`) is
+        // itself optional, so without this field a sign-less
+        // `readonly [k: string]: T` has nothing recording the
+        // group's occurrence and render drops the keyword.
+        "0/0/1": field("readonly_marker")
+      },
+      { "2/0": variant("colon"), "2/1": variant("mapped_type_clause") }
+    ],
+    import_statement: [
+      { "2/0": variant("clause_from") },
+      {
+        1: field("import_clause"),
+        2: field("from_clause"),
+        4: field("terminator")
+      }
+    ],
+    infer_type: {
+      // No field on position 2 (the optional `extends` clause group):
+      // an outer field on an inlined hidden group makes tree-sitter tag
+      // every spliced child with the OUTER name, while the slot model
+      // names the slot from the inner field — the wire and the model
+      // then disagree and the clause never renders. The enrich-supplied
+      // inner field('type') is the single naming source.
+      1: field("name")
+    },
+    intersection_type: {
+      0: field("left"),
+      2: field("right")
+    },
+    lexical_declaration: {
+      1: field("declarators"),
+      2: field("terminator")
+    },
+    lookup_type: {
+      0: field("type"),
+      2: field("index_type")
+    },
+    member_expression: {
+      1: field("separator")
+    },
+    method_definition: {
+      1: field("static_marker"),
+      "3/0": field("readonly_marker"),
+      "4/0": field("async_marker"),
+      "5/0": field("accessor_kind"),
+      "7/0": field("optional_marker")
+    },
+    method_signature: {
+      1: field("static_marker"),
+      "5/0": field("accessor_kind"),
+      "7/0": field("optional_marker")
+    },
+    program: {
+      0: field("hash_bang_line"),
+      1: field("statements")
+    },
+    property_signature: {
+      1: field("static_marker"),
+      "5/0": field("optional_marker")
+    },
+    satisfies_expression: {
+      2: field("type_annotation")
+    },
+    statement_block: {
+      1: field("statements"),
+      3: field("automatic_semicolon")
+    },
+    union_type: {
+      0: field("left"),
+      2: field("right")
+    },
+    variable_declaration: {
+      1: field("declarators"),
+      2: field("terminator")
+    },
+    yield_expression: {
+      1: field("expression")
+    },
+    expression_statement: {
+      0: field("expression"),
+      1: field("terminator")
+    },
+    type_alias_declaration: {
+      5: field("terminator")
+    },
+    // `_expressions` is one expression or a sequence_expression; the
+    // slot holds one value, so it is named for that, not for the
+    // hidden rule's plural.
+    return_statement: {
+      1: field("expression"),
+      2: field("terminator")
+    },
+    throw_statement: {
+      1: field("expression"),
+      2: field("terminator")
+    },
+    function_expression: {
+      "0/0": field("async_marker")
+    },
+    function_declaration: {
+      "0/0": field("async_marker")
+    },
+    generator_function: {
+      "0/0": field("async_marker")
+    },
+    generator_function_declaration: {
+      "0/0": field("async_marker")
+    },
+    break_statement: {
+      2: field("terminator")
+    },
+    continue_statement: {
+      2: field("terminator")
+    },
+    debugger_statement: {
+      1: field("terminator")
+    },
+    do_statement: {
+      4: field("terminator")
+    },
+    constructor_type: {
+      "0/0": field("abstract_marker")
+    },
+    enum_declaration: {
+      "0/0": field("const_marker")
+    },
+    function_signature: {
+      4: field("terminator")
+    },
+    assignment_expression: {
+      "0/0": field("using_marker")
+    },
+    export_specifier: {
+      "0/0": field("export_kind")
+    },
+    import_specifier: [{ "0/0": field("import_kind") }, { "1/0": variant("name"), "1/1": variant("as") }],
+    public_field_definition: {
+      // Both spellings of the accessibility position (declare-first
+      // and access-first modifier orders) carry ONE shared field so
+      // the exclusive occurrences merge into a single slot, same as
+      // the enrich-promoted `*_marker` fields merge across the
+      // permutation arms.
+      "1/0/0/1/0": field("accessibility_modifier"),
+      "1/0/1/0": field("accessibility_modifier"),
+      "4/0": field("optionality_marker")
+    },
+    parenthesized_expression: {
+      "1/0": variant("typed"),
+      "1/1": variant("sequence")
+    },
+    // export_statement: variant() adoption on all four branches.
+    // Path 0 is the JS-inherited `previous` (export default,
+    // export function, export from, …); paths 1/2/3 are
+    // `export type`, `export =`, `export as namespace`. Without
+    // labeling path 0, its base-JS branches render without the
+    // `export` prefix (parent template is just `$$$CHILDREN`,
+    // which filters to named children) — the wrapper becomes
+    // invisible at render time.
+    //
+    // `export_statement_default`'s body is a top-level choice of
+    // TWO structurally distinct shapes:
+    //   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
+    //   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
+    // Splitting it further (e.g. `0/0` / `0/1` for these sub-arms)
+    // just moves the non-canonical flag one level deeper — each
+    // split arm STILL has inner choice-with-fields shapes
+    // (specifiers, from-clause forms, default value). Adoption on
+    // kinds synthesized by a parent polymorph adoption isn't
+    // supported end-to-end, so deferred for future work. The
+    // walker handles the shape via its per-branch + downgrade
+    // logic correctly; the audit flag surfaces real adoption
+    // opportunity but not a blocking bug.
+    export_statement: {
+      0: variant("default"),
+      1: variant("type_export"),
+      2: variant("equals_export"),
+      3: variant("namespace_export")
+    },
+    call_expression: {
+      0: variant("call"),
+      1: variant("template_call"),
+      2: variant("member")
+    },
+    string: [
+      { "0/2": token.immediate('"'), "1/2": token.immediate("'") },
+      { 0: variant("double"), 1: variant("single") }
+    ],
+    template_string: { 2: token.immediate("`") },
+    template_literal_type: { 2: token.immediate("`") },
+    template_type: { 0: token.immediate("${"), 1: field("type") },
+    template_substitution: { 0: token.immediate("${"), 1: field("expression") },
+    update_expression: {
+      0: variant("postfix"),
+      1: variant("prefix")
+    },
+    arrow_function: { "1/0": variant("parameter") },
+    class_heritage: { "0": variant("extends_clause"), "1": variant("implements_clause") },
+    extends_clause: { "1/0": alias("extends_clause_single"), "1/1/0/1": alias("extends_clause_single") },
+    import_clause: {
+      "0": variant("namespace_import"),
+      "1": variant("named_imports"),
+      "2": variant("default_import")
+    },
+    export_statement_default: {
+      0: variant("from"),
+      "0/1/0": variant("star_from"),
+      "0/1/1": variant("ns_from"),
+      "0/1/2": variant("clause_from"),
+      1: variant("declaration"),
+      "1/2/1": variant("default_kw"),
+      "1/2/1/1/1": variant("value")
+    },
+    variable_declarator: { 0: variant("plain"), 1: variant("definite") },
+    meta_property: { 0: variant("new_target"), 1: variant("import_meta") },
+    namespace_import: { 2: field("name") },
+    else_clause: { 1: field("body") },
+    jsx_element: { 1: field("children") },
+    class: { "4/0": field("heritage") },
+    abstract_class_declaration: { "5/0": field("heritage") },
+    import_require_clause: { 0: field("name") },
+    index_type_query: { 1: field("type") },
+    flow_maybe_type: { 1: field("type") },
+    array_type: { 0: field("type") },
+    export_statement_namespace_export: { 3: field("name"), 4: field("terminator") },
+    export_statement_type_export: { 4: field("terminator") },
+    export_statement_equals_export: { 3: field("terminator") },
+    _for_header: {
+      "1/0": variant("lhs"),
+      "1/1": variant("var_kind"),
+      "1/2": variant("let_const_kind")
+    }
+  },
+  externals: ($, previous) => [
+    ...previous ?? [],
+    $._tight,
+    $._space,
+    $._newline,
+    $._blankline,
+    $._indent,
+    $._dedent
+  ],
+  supertypes: ($, previous) => [...previous ?? [], $._whitespace],
+  extras: ($, previous) => [...previous ?? []],
+  visibleExternals: (_$) => ({
+    _automatic_semicolon: string("\n"),
+    _function_signature_automatic_semicolon: string("\n"),
+    _tight: string(""),
+    _space: string(" "),
+    _newline: string("\n"),
+    _blankline: string("\n\n"),
+    _indent: indent(),
+    _dedent: dedent()
+  }),
+  expectTestFailures: {
+    debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
+    import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
+    object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
+    string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
+  },
+  expectDiagnostics: {
+    "unclassifiable-shape": ["binary_expression", "public_field_definition"],
+    "union-slot-mixed-row": ["binary_expression"],
+    "rule-reauthored-without-cause": ["object_type"]
+  },
+  rules: {
+    _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
+    // `template_substitution` sits only in string-interior contexts
+    // (template_string / template_literal_type elements), where any
+    // preceding characters are absorbed into a fragment token — no
+    // whitespace can ever precede its `${`, but upstream writes a
+    // plain string. Declaring `token.immediate` matters for
+    // RENDERING: `$` is word-class in typescript, so without the
+    // declared fact the seam check injects a hazard space after a
+    // word-ending fragment or escape (`mid\n ${`), which reparses
+    // as a spurious one-space string_fragment. The stamp makes the
+    // kind left-immediate (its leftmost terminal), so structural
+    // references render seam-free. Parser-neutral by the absorption
+    // argument above.
+    // The signature arm of an arrow function is upstream's hidden
+    // `_call_signature`, whose fields inline into the parent. Upstream
+    // typescript already declares that body as the visible kind
+    // `call_signature`, so the arm references that kind directly:
+    // storage and parse are one symbol, the arm seats through the
+    // existing factory, and no per-parent form kind is minted for a
+    // body that has a name of its own. Positions are unchanged, so the
+    // `parameter` polymorph path above stays valid.
+    arrow_function: reauthored("alias-shape", ($, original) => ({
+      ...original,
+      members: original.members.map(
+        (m, i) => i === 1 ? {
+          ...m,
+          members: m.members.map((arm2, j) => j === 1 ? $.call_signature : arm2)
+        } : m
+      )
+    })),
+    ambient_declaration_global: vocabulary(($) => seq("global", field("body", $.statement_block))),
+    ambient_declaration_module: vocabulary(
+      ($) => prec.right(
+        seq(
+          "module",
+          ".",
+          field("name", alias($.identifier, $.property_identifier)),
+          ":",
+          field("type", $.type),
+          optional(field("terminator", $._semicolon))
+        )
+      )
+    ),
+    object_type: reauthored(
+      "ambiguity",
+      ($) => refine(
+        seq(
+          field("opening", choice("{", "{|")),
+          field("members", optional($.object_type_content)),
+          field("closing", choice("}", "|}"))
+        ),
+        {
+          curly: { "opening:": "{", "closing:": "}" },
+          flow: { "opening:": "{|", "closing:": "|}" }
+        }
+      )
+    ),
+    object_type_content: vocabulary(($) => {
+      const SEP = () => choice(",", ";");
+      const member = choice(
+        $.export_statement,
+        $.property_signature,
+        $.call_signature,
+        $.construct_signature,
+        $.index_signature,
+        $.method_signature
+      );
+      return seq(
+        optional(SEP()),
+        seq(field("members", member), repeat(seq(SEP(), field("members", member)))),
+        optional(SEP())
+      );
+    })
+  },
+  renderAs: (_$) => ({
+    html_comment: /<!--[\s\S]*?-->/,
+    jsx_text: /[^{}<>]+/,
+    _template_chars: token.immediate(/[^`\\$]+/)
+  })
+});
 if (module.exports && module.exports.default) module.exports = module.exports.default;

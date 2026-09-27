@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { enrich } from '../enrich.ts';
+import { enrich, getEnrichVisibleGroupSources, type EnrichAuthoredConfig } from '../enrich.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
 
@@ -26,8 +26,8 @@ function mkGrammar(rules: Record<string, unknown>, externals: readonly string[] 
 	return { grammar: { name: 'test', rules, externals: externals.map((name) => ({ type: 'SYMBOL', name })) } };
 }
 
-function runEnrich(input: ReturnType<typeof mkGrammar>) {
-	return enrich(input as unknown as Parameters<typeof enrich>[0]) as unknown as {
+function runEnrich(input: ReturnType<typeof mkGrammar>, authored?: EnrichAuthoredConfig) {
+	return enrich(input as unknown as Parameters<typeof enrich>[0], authored) as unknown as {
 		grammar: { name: string; rules: Record<string, unknown> };
 	};
 }
@@ -650,5 +650,26 @@ describe('enrich clause-hoist pass — repeat over a multi-slot seq', () => {
 	it('leaves a single-slot element in place', () => {
 		const rules = runEnrich(mkGrammar({ list: repeatOf(str('('), sym('item'), str(')')) })).grammar.rules;
 		expect((rules.list as { content: { type: string } }).content.type).toBe('SEQ');
+	});
+	it('declines the lift when an authored groups: pattern covers the whole element', () => {
+		const atom = { type: 'FIELD', name: 'atom', content: sym('atom') };
+		const pair = { type: 'SEQ', members: [atom, quantifier] };
+		const enriched = runEnrich(mkGrammar({ term: repeatOf(atom, quantifier) }), { groupBodies: [pair] });
+		expect((enriched.grammar.rules.term as { content: unknown }).content).toEqual(pair);
+		expect(enriched.grammar.rules).not.toHaveProperty('term_group');
+		expect(getEnrichVisibleGroupSources(enriched).has('term_group')).toBe(false);
+	});
+
+	it('declines through the ambient prec enrich registers on the lifted body', () => {
+		const atom = { type: 'FIELD', name: 'atom', content: sym('atom') };
+		const pair = { type: 'SEQ', members: [atom, quantifier] };
+		const term = { type: 'PREC_LEFT', value: 1, content: repeatOf(atom, quantifier) };
+		const rules = runEnrich(mkGrammar({ term }), { groupBodies: [pair] }).grammar.rules;
+		expect(rules).not.toHaveProperty('term_group');
+	});
+
+	it('still lifts when an authored pattern covers only part of the element', () => {
+		const rules = runEnrich(mkGrammar({ term: repeatOf(sym('atom'), quantifier) }), { groupBodies: [quantifier] }).grammar.rules;
+		expect((rules.term as { content: unknown }).content).toMatchObject({ type: 'SYMBOL', name: 'term_group' });
 	});
 });

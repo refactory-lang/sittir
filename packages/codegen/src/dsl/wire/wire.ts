@@ -24,7 +24,7 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
-import { rulesEqual, unwrapPrec } from '../rule-patterns.ts';
+import { rulesEqual } from '../rule-patterns.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -81,7 +81,6 @@ export interface WireContext {
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
-	readonly adoptedGroups: ReadonlyMap<string, string>;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 }
@@ -221,7 +220,6 @@ export function withWireContext<T>(
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: new Map(),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
 		liftBodies: new Map()
 	};
@@ -372,7 +370,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
 	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
-	base?: B
+	base: B
 ): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
@@ -402,7 +400,6 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base, cfg.groups) : new Map(),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
 		liftBodies: new Map()
 	};
@@ -420,7 +417,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		}
 	}
 	for (const liftName of enrichLiftNames(base)) {
-		if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+		if (liftName in outRules || !(liftName in context.baseRuleBodies)) continue;
 		outRules[liftName] = passthroughBaseRuleFn;
 	}
 	wrapAllRuleFns(outRules, context);
@@ -432,12 +429,10 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 			context.syntheticInline.add(name);
 		}
 		for (const name of getEnrichVisibleGroupSources(base)) {
-			if (context.adoptedGroups.has(name)) continue;
 			context.inlineRemovals.add(name);
 		}
 		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
-			if (context.adoptedGroups.has(syntheticName)) continue;
 			if (context.authoredRuleNames.has(ownerKind)) {
 				context.orphanedSyntheticGroups.add(syntheticName);
 			}
@@ -920,7 +915,6 @@ interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
 	readonly aliasAs?: string;
-	readonly adopts?: ReadonlySet<string>;
 }
 
 interface DeclaredPattern {
@@ -965,20 +959,8 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 	});
 }
 
-function adoptMintedGroups(baseArg: BaseArg, base: unknown, groups: GroupsConfig | undefined): Map<string, string> {
-	const adopted = new Map<string, string>();
-	const authored = declaredPatterns(groups, undefined);
-	if (authored.length === 0) return adopted;
-	const baseRules = baseRulesOf<unknown>(baseArg) ?? {};
-	for (const minted of getEnrichVisibleGroupSources(base)) {
-		const body = baseRules[minted];
-		if (body === undefined) continue;
-		const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern.body as RuntimeRule));
-		if (owner === undefined) continue;
-		adopted.set(minted, owner.key);
-		delete baseRules[minted];
-	}
-	return adopted;
+export function authoredGroupBodies(groups: GroupsConfig | undefined): RuntimeRule[] {
+	return declaredPatterns(groups, undefined).map((pattern) => pattern.body);
 }
 
 export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
@@ -1008,10 +990,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
-		if (
-			rulesEqual(rule as RuntimeRule, c.body as RuntimeRule) ||
-			(r.type === 'SYMBOL' && c.adopts?.has((r as { name?: string }).name ?? '') === true)
-		) {
+		if (rulesEqual(rule as RuntimeRule, c.body as RuntimeRule)) {
 			const site =
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
@@ -1173,8 +1152,7 @@ export function applyWirePatternReplacement(
 	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
-		const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
-		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
+		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
 		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}

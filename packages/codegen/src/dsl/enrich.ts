@@ -52,7 +52,9 @@ import {
 	withOptionalContent,
 	ruleListEntryOf,
 	ruleListParts,
-	type RuleListEntry
+	type RuleListEntry,
+	rulesEqual,
+	unwrapPrec
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -76,7 +78,11 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 		}
 	: B;
 
-export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
+export interface EnrichAuthoredConfig {
+	readonly groupBodies?: readonly RuntimeRule[];
+}
+
+export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
 	if (!base || typeof base !== 'object') {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
@@ -97,7 +103,8 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		inline: inlineNames,
 		extras: extractGrammarRuleList(base, hasWrapper, 'extras'),
 		word: extractWordName(grammarMeta?.word),
-		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
+		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
+		authoredGroupBodies: authored.groupBodies ?? []
 	});
 	const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
 	const enrichedRules: Record<string, Rule> = {};
@@ -1866,6 +1873,7 @@ function visibleGroupSynthName(
 		);
 	}
 	const registeredBody = ambientPrec ? withContent(ambientPrec, content) : content;
+	if (coveredByAuthoredGroup(registeredBody, ctx)) return null;
 	const key = ruleKey(registeredBody as RuntimeRule);
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
@@ -2000,7 +2008,7 @@ function mintStructuredChoiceArm(
 		if (Object.hasOwn(clauseGroupRules, name)) return null;
 		const body = rulesBag[name];
 		if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
-		if (isSupertypeLike(body)) return null;
+		if (isSupertypeLike(body) || coveredByAuthoredGroup(body, ctx)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, 'arm');
 		if (!promoted) return null;
 		rulesBag[name] = withHoistedAnnotation(body);
@@ -2021,6 +2029,10 @@ function mintStructuredChoiceArm(
 	}
 
 	return null;
+}
+
+function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {
+	return ctx.authoredGroupBodies.some((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern));
 }
 
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {

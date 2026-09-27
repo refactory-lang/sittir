@@ -10,6 +10,7 @@ import { assertCompilation } from '../compile.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
+import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 // evaluate() reads a module from disk, so an inline grammar has to become a
 // real file. The chain below mirrors generate()'s own phase order, including
@@ -54,7 +55,7 @@ const nestableGrammar = (factoryInline: string): string =>
 describe('factoryInline', () => {
 	it('threads the wire config section onto the wired opts', () => {
 		const factoryInline = ($: Record<string, unknown>): unknown[] => [$.in_path];
-		const wired = wire({ name: 'fi', rules: { root: () => 'x' }, factoryInline });
+		const wired = wire({ name: 'fi', rules: { root: () => 'x' }, factoryInline }, emptyBase);
 		expect(wired.factoryInline).toBe(factoryInline);
 	});
 

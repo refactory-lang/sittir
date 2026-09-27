@@ -20,14 +20,14 @@ wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
 
-### `enrichedBase` (`packages/typescript/grammar.sittir.ts:19`)
+### `sittirGrammar(base, …)` (`packages/typescript/grammar.sittir.ts:25`)
 
-`enrich(base)` is bound once and the SAME enriched grammar is handed to both
-`grammar()` and `wire()` (matching rust). `wire` needs the enriched base so its
-base-dependent passes — auto-group synthesis, body-pattern groups, and the
-enrich-hoisted-clause inline registration — operate on the post-enrich shape.
-Without the second argument those passes silently no-op, leaving
-enrich-hoisted clause groups un-inlined and producing LR conflicts.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `conflicts` (`packages/typescript/grammar.sittir.ts:25`)
 
