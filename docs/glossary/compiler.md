@@ -9767,6 +9767,8 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 // `assertCompilation`. All three grammars carry zero.
 ```
 
+A target the sink already records as a dangling reference — the evaluate-phase record for a name the grammar never defined — is skipped, so hydrate does not record the same fact again.
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 
 #### body
@@ -10258,7 +10260,7 @@ A hidden rule the parser always shows under one tree name (`ts_symbol_names` giv
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 
-It is `collapseRenames` (which rules the catalog renames) then `renameRules` (the rewrite), and, when the catalog has rows, `assertParserPrediction` over the two, so both callers check the prediction against the renames they apply.
+It is `collapseRenames` (which rules the catalog renames) then `renameRules` (the rewrite). When the catalog has rows and evaluate predicted a catalog, it first asserts the prediction against the catalog (`dsl/symbol-table.ts::assertPredictedKindEntries`); the renames, like every other catalog read, then agree by construction.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenames`
 
@@ -10267,10 +10269,6 @@ The renames the parser catalog records: each rule or external whose catalog row 
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
 Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged.
-
-### `packages/codegen/src/compiler/link.ts::assertParserPrediction`
-
-Runs `dsl/rule-patterns.ts::assertPredictionAgrees` for `collapseRenamedRules`. The renames are compared on the evaluated grammar: `predictedRenames` from the evaluated rules against the catalog's `collapseRenames`. The inline facts are compared on the renamed grammar, the one `stampParserVisibility` stamps: a renamed name no longer occurs there, so the catalog is never asked about a name link would not ask it about. It runs only when the catalog has rows; before the first generate there is nothing to agree with.
 
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 
@@ -10286,5 +10284,12 @@ envelopes the same way element and value derivation does.
 
 ### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
 
-The predicted `SymbolSource` (`dsl/rule-patterns.ts::predictedSymbolSource`) over the evaluated grammar's rules, externals and inline names, built on first use and shared by the phase. It is the prediction even when a catalog exists, because link must recognize the separators enrich recognized. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
+The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
+### `packages/codegen/src/compiler/evaluate.ts::predictKinds`
+
+The kind catalog predicted from the faithful evaluated grammar: `predictSymbolTable` over its rules without the evaluate-synthesized ones, turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are. The rows omit `lexicalRank`, which the prediction does not derive faithfully. A grammar the prediction cannot build a table for — one tree-sitter rejects — yields the failure instead of rows, so evaluate never throws on it. `evaluate` stamps the result as `predictedKinds`.
+
+### `packages/codegen/src/compiler/link.ts::reportUnpredictedKinds`
+
+Records a failed catalog prediction in link's sink, once per grammar: each undefined name as `dangling-internal-ref`, any other cause as `unpredictable-symbol-table`. Both fail; neither is a grammar diagnostic, so no `expectDiagnostics` entry can excuse one.

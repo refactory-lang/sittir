@@ -208,6 +208,7 @@ gate, per code and per owner, and only shrink.
 | slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
 | literal sets | `single-literal-choice` (new) | a choice whose literal arms reduce to one value, which assemble today rejects by throwing (typescript `meta_property` upstream) |
 | inline list | `inline-array-visible-name` | the `inline:` list and predicted visibility |
+| symbol table | `dangling-internal-ref` (a reference that names no rule and no external), `unpredictable-symbol-table` (new) | the catalog prediction (§4.3); tree-sitter rejects either grammar, so neither is expectable |
 
 Detection moves to the rule checks, and classification stays in one place:
 the member-shape classifier and the storage-name derivation are single
@@ -223,16 +224,21 @@ one predicate: the splice view calls it with the predicted source, and link
 (stamping parser visibility, then normalize's splicing) calls it with the
 catalog source. `SymbolSource` answers every fact the predicate reads:
 hiddenness (including an aliased hidden rule), supertype, terminality,
-visible external and inlining. The predicted source reads them from the
-rules, externals, `inline:` and `supertypes:`, never from parser.c.
+visible external and inlining. The predicted source is the catalog source
+over a predicted kind catalog: evaluate ports tree-sitter's symbol-table
+construction over the evaluated rules, externals, extras, `inline:`,
+`supertypes:` and `word`, and turns the predicted table into rows with the
+same derivation that turns parser.c's table into rows. It never reads
+parser.c.
 
 Renames that link applies from the parser's tables (a hidden rule that the
-parser always presents under an alias name) are predicted from the rules'
-alias sites the same way. Link asserts that the catalog agrees with the
-prediction on every fact the predicate reads and on the renames. A
-disagreement is a predictor bug, fixed in the predictor; it is never absorbed
-by moving a floor. With that assertion in place, the view and the normalized
-tree agree.
+parser always presents under an alias name) come from the same rows. Link
+asserts that the predicted catalog agrees with the parser's on every field
+the pipeline reads, row by row; every other fact, renames included, then
+agrees by construction. A disagreement is a predictor bug, fixed in the
+predictor; it is never absorbed by moving a floor. A grammar the prediction
+cannot build a table for is one tree-sitter rejects: it is recorded (§4.2),
+not thrown.
 
 ### 4.4 What is not a grammar diagnostic
 

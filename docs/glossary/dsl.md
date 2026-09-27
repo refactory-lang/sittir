@@ -6502,3 +6502,115 @@ The grammar's `dsl/rule-patterns.ts::SymbolFacts` plus the catalog rows (empty b
 ### `packages/codegen/src/dsl/symbol-table.ts::catalogSymbolSource`
 
 Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal. It is hidden when its own row is hidden and not an alias row (`parserHiddenOf`), a supertype when the row or the declared `supertypes:` say so (`parserSupertypeOf`), and a visible external when its row carries `visibleExternal`. Link stamps inlining through this source and asserts the prediction agrees with it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::PredictedGrammar`
+
+What `predictSymbolTable` reads from an evaluated grammar: its rules in declaration order (the first is the start rule), its `extras` and `externals` rule lists, and its `supertypes`, `inline` and `word` names. The caller passes the faithful rules — before canonicalization peels wrappers the parser's symbol table depends on — without the evaluate-synthesized ones, which tree-sitter never sees.
+
+### `packages/codegen/src/dsl/symbol-table.ts::AliasFact`
+
+An alias as tree-sitter compares aliases: its name and whether it is named.
+
+### `packages/codegen/src/dsl/symbol-table.ts::MetaParams`
+
+The metadata tree-sitter keeps on a wrapped rule: token-ness, immediacy, the alias, the field name and the precedences. Nested wrappers merge into one set unless the inner one is a token, which keeps its own.
+
+### `packages/codegen/src/dsl/symbol-table.ts::InternedRule`
+
+A rule after tree-sitter's interning: `OPTIONAL` and `REPEAT` are rewritten into `CHOICE`/`REPEAT` over `BLANK`, an empty `SEQ` or `CHOICE` is `BLANK`, wrappers collapse into one `META`, and a reference is a `SYM` key — `nt:<rule>`, `t:<lexical index>` or `ext:<external index>`.
+
+### `packages/codegen/src/dsl/symbol-table.ts::VariableKind`
+
+A symbol's kind in tree-sitter's variable tables: `named`, `hidden` (underscore-led or a supertype), `anonymous` (a literal text) or `auxiliary` (a symbol tree-sitter mints: a `_tokenN` or a `_repeatN`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::Variable`
+
+One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place.
+
+### `packages/codegen/src/dsl/symbol-table.ts::ProductionStep`
+
+One step of a flattened production: the symbol key and, when one applies, the alias over it. Clearing a default alias deletes the step's alias.
+
+### `packages/codegen/src/dsl/symbol-table.ts::BLANK_RULE`
+
+The interned empty rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::sameShape`
+
+Structural equality of two interned values, the equality tree-sitter uses to dedupe lexical rules, productions and aliases.
+
+### `packages/codegen/src/dsl/symbol-table.ts::withMeta`
+
+Adds metadata to an interned rule: merged into an existing non-token `META`, otherwise a new `META` around it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::internRule`
+
+Interns one evaluated rule the way tree-sitter's grammar preparation does, resolving each reference to its symbol key. A sittir-only rule type (`SUPERTYPE`, `INDENT`, `DEDENT`, `NEWLINE`) has no parser symbol and throws.
+
+### `packages/codegen/src/dsl/symbol-table.ts::TokenExtractor`
+
+Tree-sitter's token extraction: each `STRING`, `PATTERN` or token-wrapped rule becomes a lexical variable, deduped by shape. A string names its variable by its text (`anonymous`); anything else is `<owner>_tokenN` (`auxiliary`), counted per owning variable. A token wrapper with more metadata than token-ness extracts whole. `usage` counts the references to each lexical variable.
+
+### `packages/codegen/src/dsl/symbol-table.ts::mapSymbolKeys`
+
+Rewrites every `SYM` key in an interned rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::productionsOf`
+
+Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', and the innermost alias applies to every step under it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
+
+The words tree-sitter spells punctuation with in a C symbol name.
+
+### `packages/codegen/src/dsl/symbol-table.ts::C_CONTROL_CHARACTER_NAMES`
+
+The words tree-sitter spells control characters (below U+0020) with in a C symbol name.
+
+### `packages/codegen/src/dsl/symbol-table.ts::sanitizeCIdentifier`
+
+Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit.
+
+### `packages/codegen/src/dsl/symbol-table.ts::referencedNames`
+
+Every name a rule references through a `SYMBOL`.
+
+### `packages/codegen/src/dsl/symbol-table.ts::liveRuleNames`
+
+The rules reachable from the start rule and from the extras' SYMBOL entries — the rules tree-sitter keeps. The rest never become symbols.
+
+### `packages/codegen/src/dsl/symbol-table.ts::expandRepeats`
+
+Tree-sitter's repeat expansion: each `REPEAT` becomes an auxiliary `<owner>_repeatN` variable (`choice(seq(self, self), inner)`), deduped across the grammar by its inner rule. A hidden variable whose whole rule is a `REPEAT` becomes that auxiliary itself.
+
+### `packages/codegen/src/dsl/symbol-table.ts::defaultAliasesOf`
+
+Each symbol's default alias: over the productions of reachable variables, skipping steps whose symbol is inlined, a symbol that every use aliases takes its most frequent alias (the first on a tie); one unaliased use clears it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::clearDefaultAliases`
+
+Removes a default alias from each step that carries it, unless another production of the same variable has a different alias at that position.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictSymbolTable`
+
+Predicts the parser's symbol table from the evaluated grammar by porting tree-sitter's preparation: live rules (`liveRuleNames`), interning, token extraction (the `word` rule first), single-use whole-rule token replacement, externals (a literal external is an anonymous token), extras, repeat expansion, flattening, reachability from the start rule and the extras (every external is reachable), default aliases and their clearing. Symbols are ordered terminals, externals, then non-inlined nonterminals, then the aliases no symbol displays as, sorted by name and namedness; ids follow that order from 1 and C names come from `sanitizeCIdentifier` with numeric suffixes on collision. Each symbol's name is its display name — its default alias when it has one — and its visible, named, supertype and aliased-non-terminal flags follow tree-sitter's metadata. A reference that names no rule and no external is what tree-sitter rejects the grammar for; every such name is collected and thrown as one `UndefinedSymbolsError`. `kindTableOfSymbolTable` turns the table into rows exactly as it turns parser.c's.
+
+### `packages/codegen/src/dsl/symbol-table.ts::UndefinedSymbolsError`
+
+The names a grammar references that are neither rules nor externals — tree-sitter rejects such a grammar, so no symbol table exists to predict.
+
+### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
+
+What evaluate stamps as `RawGrammar.predictedKinds`: the predicted kind catalog's rows, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedEntriesOf`
+
+The predicted rows, or none when the prediction failed.
+
+### `packages/codegen/src/dsl/symbol-table.ts::PREDICTED_KIND_FIELDS`
+
+The catalog-row fields the pipeline reads, and so the fields the predicted catalog must match: everything but the ids and `lexicalRank`.
+
+### `packages/codegen/src/dsl/symbol-table.ts::assertPredictedKindEntries`
+
+Compares the predicted kind catalog with the parser's row by row on `PREDICTED_KIND_FIELDS`, plus each side's kind set, and throws listing every disagreement. Ids are not compared: nothing reads a predicted id.

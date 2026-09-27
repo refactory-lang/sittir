@@ -29,6 +29,14 @@ import type {
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, RuleProvenance, UpstreamEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
+import {
+	collectGeneratedKindEntries,
+	kindTableOfSymbolTable,
+	predictSymbolTable,
+	stampVisibleExternals,
+	UndefinedSymbolsError,
+	type PredictedKinds
+} from '../dsl/symbol-table.ts';
 import { isComplexBody, optionalContentOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
@@ -925,7 +933,24 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 let evaluateMutex: Promise<void> = Promise.resolve();
 
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	return canonicalGrammar(await evaluateDsl(entryPath));
+	const evaluated = await evaluateDsl(entryPath);
+	return { ...canonicalGrammar(evaluated), predictedKinds: predictKinds(evaluated) };
+}
+
+function predictKinds(evaluated: EvaluatedGrammar): PredictedKinds {
+	const rules = Object.fromEntries(
+		Object.entries(evaluated.rules).filter(([name]) => evaluated.provenanceByKind.get(name) !== 'evaluate-synthesized')
+	);
+	try {
+		const kindIds = kindTableOfSymbolTable(predictSymbolTable({ ...evaluated, rules }), { rules });
+		const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, evaluated));
+		return { entries: entries.map(({ lexicalRank: _lexicalRank, ...entry }) => entry) };
+	} catch (error) {
+		return {
+			failure: error instanceof Error ? error.message : String(error),
+			undefinedNames: error instanceof UndefinedSymbolsError ? error.names : []
+		};
+	}
 }
 
 export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {

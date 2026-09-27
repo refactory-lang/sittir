@@ -1,4 +1,31 @@
-import { isParserHiddenName, terminalContentOf, type SymbolFacts, type SymbolSource } from './rule-patterns.ts';
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	IMMEDIATE_TOKEN,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN
+} from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
+import {
+	isParserHiddenName,
+	ruleListParts,
+	terminalContentOf,
+	type RuleListEntry,
+	type SymbolFacts,
+	type SymbolSource
+} from './rule-patterns.ts';
 import type { KindParserMetadata } from '../compiler/types.ts';
 
 export interface ParserSymbolTable {
@@ -623,4 +650,615 @@ export function catalogSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
 		isSupertype: (name) => parserSupertypeOf(entryOf(name), name, facts.supertypes),
 		isVisibleExternal: (name) => entryOf(name)?.visibleExternal === true
 	};
+}
+
+export interface PredictedGrammar {
+	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly extras: readonly RuleListEntry[];
+	readonly externals: readonly RuleListEntry[];
+	readonly supertypes: readonly string[];
+	readonly inline: readonly string[];
+	readonly word: string | null;
+}
+
+interface AliasFact {
+	readonly value: string;
+	readonly named: boolean;
+}
+
+interface MetaParams {
+	token?: true;
+	immediate?: true;
+	alias?: AliasFact;
+	field?: string;
+	prec?: Record<string, number | string>;
+}
+
+type InternedRule =
+	| { readonly type: 'BLANK' }
+	| { readonly type: 'STRING'; readonly value: string }
+	| { readonly type: 'PATTERN'; readonly value: string }
+	| { readonly type: 'SYM'; readonly key: string }
+	| { readonly type: 'SEQ' | 'CHOICE'; readonly members: readonly InternedRule[] }
+	| { readonly type: 'REPEAT'; readonly content: InternedRule }
+	| { readonly type: 'META'; readonly params: MetaParams; readonly rule: InternedRule };
+
+type VariableKind = 'named' | 'hidden' | 'anonymous' | 'auxiliary';
+
+interface Variable {
+	name: string;
+	kind: VariableKind;
+	rule: InternedRule;
+}
+
+interface ProductionStep {
+	readonly key: string;
+	alias?: AliasFact;
+}
+
+const BLANK_RULE: InternedRule = { type: 'BLANK' };
+
+function sameShape(a: unknown, b: unknown): boolean {
+	return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function withMeta(content: InternedRule, set: (params: MetaParams) => void): InternedRule {
+	if (content.type === 'META' && content.params.token !== true) {
+		const params = { ...content.params };
+		set(params);
+		return { type: 'META', params, rule: content.rule };
+	}
+	const params: MetaParams = {};
+	set(params);
+	return { type: 'META', params, rule: content };
+}
+
+function internRule(rule: Rule<'evaluate'>, resolve: (name: string) => string): InternedRule {
+	switch (rule.type) {
+		case OPTIONAL:
+			return { type: 'CHOICE', members: [internRule(rule.content, resolve), BLANK_RULE] };
+		case STRING:
+			return { type: 'STRING', value: rule.value };
+		case PATTERN:
+			return { type: 'PATTERN', value: rule.value };
+		case SYMBOL:
+			return { type: 'SYM', key: resolve(rule.name) };
+		case SEQ:
+		case CHOICE:
+			return rule.members.length === 0
+				? BLANK_RULE
+				: { type: rule.type, members: rule.members.map((member) => internRule(member, resolve)) };
+		case REPEAT:
+			return { type: 'CHOICE', members: [{ type: 'REPEAT', content: internRule(rule.content, resolve) }, BLANK_RULE] };
+		case REPEAT1:
+			return { type: 'REPEAT', content: internRule(rule.content, resolve) };
+		case TOKEN:
+			return withMeta(internRule(rule.content, resolve), (params) => {
+				params.token = true;
+				if (rule.immediate === true) params.immediate = true;
+			});
+		case IMMEDIATE_TOKEN:
+			return withMeta(internRule(rule.content, resolve), (params) => {
+				params.token = true;
+				params.immediate = true;
+			});
+		case ALIAS:
+			return withMeta(internRule(rule.content, resolve), (params) => {
+				params.alias = { value: rule.value, named: rule.named };
+			});
+		case FIELD:
+			return withMeta(internRule(rule.content, resolve), (params) => {
+				params.field = rule.name;
+			});
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+			return withMeta(internRule(rule.content, resolve), (params) => {
+				params.prec = { ...params.prec, [rule.type]: rule.value };
+			});
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			throw new Error(`symbol-table: a ${rule.type} rule has no parser symbol to predict`);
+		default:
+			return assertNever(rule);
+	}
+}
+
+class TokenExtractor {
+	readonly lexical: Variable[] = [];
+	readonly usage: number[] = [];
+	#owner = '';
+	#count = 0;
+
+	extractFrom(owner: string, rule: InternedRule): InternedRule {
+		this.#owner = owner;
+		this.#count = 0;
+		return this.#extractIn(rule);
+	}
+
+	#extractIn(rule: InternedRule): InternedRule {
+		switch (rule.type) {
+			case 'STRING':
+				return this.#extract(rule, rule.value);
+			case 'PATTERN':
+				return this.#extract(rule, undefined);
+			case 'META': {
+				if (rule.params.token !== true) return { type: 'META', params: rule.params, rule: this.#extractIn(rule.rule) };
+				const { token: _token, ...params } = rule.params;
+				const text = rule.rule.type === 'STRING' ? rule.rule.value : undefined;
+				return this.#extract(Object.keys(params).length === 0 ? rule.rule : rule, text);
+			}
+			case 'REPEAT':
+				return { type: 'REPEAT', content: this.#extractIn(rule.content) };
+			case 'SEQ':
+			case 'CHOICE':
+				return { type: rule.type, members: rule.members.map((member) => this.#extractIn(member)) };
+			default:
+				return rule;
+		}
+	}
+
+	#extract(rule: InternedRule, text: string | undefined): InternedRule {
+		const existing = this.lexical.findIndex((variable) => sameShape(variable.rule, rule));
+		if (existing >= 0) {
+			this.usage[existing]!++;
+			return { type: 'SYM', key: `t:${existing}` };
+		}
+		this.lexical.push(
+			text === undefined
+				? { name: `${this.#owner}_token${++this.#count}`, kind: 'auxiliary', rule }
+				: { name: text, kind: 'anonymous', rule }
+		);
+		this.usage.push(1);
+		return { type: 'SYM', key: `t:${this.lexical.length - 1}` };
+	}
+}
+
+function mapSymbolKeys(rule: InternedRule, map: (key: string) => string): InternedRule {
+	switch (rule.type) {
+		case 'SYM':
+			return { type: 'SYM', key: map(rule.key) };
+		case 'META':
+			return { ...rule, rule: mapSymbolKeys(rule.rule, map) };
+		case 'REPEAT':
+			return { ...rule, content: mapSymbolKeys(rule.content, map) };
+		case 'SEQ':
+		case 'CHOICE':
+			return { ...rule, members: rule.members.map((member) => mapSymbolKeys(member, map)) };
+		default:
+			return rule;
+	}
+}
+
+function productionsOf(rule: InternedRule, alias?: AliasFact): ProductionStep[][] {
+	switch (rule.type) {
+		case 'BLANK':
+			return [[]];
+		case 'SYM':
+			return [[alias === undefined ? { key: rule.key } : { key: rule.key, alias }]];
+		case 'META':
+			return productionsOf(rule.rule, rule.params.alias ?? alias);
+		case 'CHOICE': {
+			const productions: ProductionStep[][] = [];
+			for (const member of rule.members) {
+				for (const production of productionsOf(member, alias)) {
+					if (!productions.some((known) => sameShape(known, production))) productions.push(production);
+				}
+			}
+			return productions;
+		}
+		case 'SEQ': {
+			let productions: ProductionStep[][] = [[]];
+			for (const member of rule.members) {
+				const tails = productionsOf(member, alias);
+				productions = productions.flatMap((head) => tails.map((tail) => [...head, ...tail]));
+			}
+			return productions;
+		}
+		default:
+			throw new Error(`symbol-table: a ${rule.type} survived token extraction`);
+	}
+}
+
+const C_SYMBOL_CHARACTER_NAMES: Readonly<Record<string, string>> = {
+	'~': 'TILDE',
+	'`': 'BQUOTE',
+	'!': 'BANG',
+	'@': 'AT',
+	'#': 'POUND',
+	$: 'DOLLAR',
+	'%': 'PERCENT',
+	'^': 'CARET',
+	'&': 'AMP',
+	'*': 'STAR',
+	'(': 'LPAREN',
+	')': 'RPAREN',
+	'-': 'DASH',
+	'+': 'PLUS',
+	'=': 'EQ',
+	'{': 'LBRACE',
+	'}': 'RBRACE',
+	'[': 'LBRACK',
+	']': 'RBRACK',
+	'\\': 'BSLASH',
+	'|': 'PIPE',
+	':': 'COLON',
+	';': 'SEMI',
+	'"': 'DQUOTE',
+	"'": 'SQUOTE',
+	'<': 'LT',
+	'>': 'GT',
+	',': 'COMMA',
+	'.': 'DOT',
+	'?': 'QMARK',
+	'/': 'SLASH',
+	'\n': 'LF',
+	'\r': 'CR',
+	'\t': 'TAB',
+	'\0': 'NULL'
+};
+
+const C_CONTROL_CHARACTER_NAMES = [
+	'NULL', 'SOH', 'STX', 'ETX', 'EOT', 'ENQ', 'ACK', 'BEL', 'BS', 'TAB', 'LF', 'VTAB', 'FF', 'CR', 'SO', 'SI',
+	'DLE', 'DC1', 'DC2', 'DC3', 'DC4', 'NAK', 'SYN', 'ETB', 'CAN', 'EM', 'SUB', 'ESC', 'FS', 'GS', 'RS', 'US'
+] as const;
+
+function sanitizeCIdentifier(name: string): string {
+	let identifier = '';
+	for (const character of name) {
+		if (/[A-Za-z0-9_]/.test(character)) {
+			identifier += character;
+			continue;
+		}
+		const codePoint = character.codePointAt(0)!;
+		const replacement =
+			character === ' ' && name.length === 1
+				? 'SPACE'
+				: (C_SYMBOL_CHARACTER_NAMES[character] ?? C_CONTROL_CHARACTER_NAMES[codePoint]);
+		if (replacement !== undefined) {
+			if (identifier.length > 0 && !identifier.endsWith('_')) identifier += '_';
+			identifier += replacement;
+			continue;
+		}
+		for (let unit = 0; unit < character.length; unit++) {
+			identifier += `u${character.charCodeAt(unit).toString(16).padStart(4, '0')}`;
+		}
+	}
+	return identifier;
+}
+
+function referencedNames(rule: Rule<'evaluate'>, into: string[]): void {
+	if (rule.type === SYMBOL) into.push(rule.name);
+	if ('members' in rule) for (const member of rule.members) referencedNames(member, into);
+	if ('content' in rule) referencedNames(rule.content, into);
+}
+
+function liveRuleNames(grammar: PredictedGrammar): ReadonlySet<string> {
+	const live = new Set<string>();
+	const pending = [
+		...Object.keys(grammar.rules).slice(0, 1),
+		...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)
+	];
+	while (pending.length > 0) {
+		const name = pending.pop()!;
+		if (live.has(name) || !(name in grammar.rules)) continue;
+		live.add(name);
+		referencedNames(grammar.rules[name]!, pending);
+	}
+	return live;
+}
+
+function expandRepeats(variables: Variable[]): Variable[] {
+	const auxiliaries: Variable[] = [];
+	const expansions = new Map<string, string>();
+	for (const variable of variables) {
+		let count = 0;
+		const repeatOf = (key: string, inner: InternedRule): InternedRule => ({
+			type: 'CHOICE',
+			members: [{ type: 'SEQ', members: [{ type: 'SYM', key }, { type: 'SYM', key }] }, inner]
+		});
+		const expand = (rule: InternedRule): InternedRule => {
+			switch (rule.type) {
+				case 'REPEAT': {
+					const inner = expand(rule.content);
+					const known = expansions.get(JSON.stringify(inner));
+					if (known !== undefined) return { type: 'SYM', key: known };
+					const name = `${variable.name}_repeat${++count}`;
+					const key = `nt:${name}`;
+					expansions.set(JSON.stringify(inner), key);
+					auxiliaries.push({ name, kind: 'auxiliary', rule: repeatOf(key, inner) });
+					return { type: 'SYM', key };
+				}
+				case 'META':
+					return { ...rule, rule: expand(rule.rule) };
+				case 'SEQ':
+				case 'CHOICE':
+					return { ...rule, members: rule.members.map(expand) };
+				default:
+					return rule;
+			}
+		};
+		if (variable.kind === 'hidden' && variable.rule.type === 'REPEAT') {
+			variable.rule = repeatOf(`nt:${variable.name}`, expand(variable.rule.content));
+			variable.kind = 'auxiliary';
+		} else variable.rule = expand(variable.rule);
+	}
+	return [...variables, ...auxiliaries];
+}
+
+function defaultAliasesOf(
+	productions: ReadonlyMap<string, ProductionStep[][]>,
+	reachable: ReadonlySet<string>,
+	inline: ReadonlySet<string>
+): ReadonlyMap<string, AliasFact> {
+	const uses = new Map<string, { unaliased: boolean; readonly counts: [AliasFact, number][] }>();
+	for (const [owner, ownerProductions] of productions) {
+		if (!reachable.has(owner)) continue;
+		for (const step of ownerProductions.flat()) {
+			if (inline.has(step.key)) continue;
+			const use = uses.get(step.key) ?? { unaliased: false, counts: [] };
+			uses.set(step.key, use);
+			if (step.alias === undefined) {
+				use.unaliased = true;
+				continue;
+			}
+			const counted = use.counts.find(([alias]) => sameShape(alias, step.alias));
+			if (counted !== undefined) counted[1]++;
+			else use.counts.push([step.alias, 1]);
+		}
+	}
+	const defaults = new Map<string, AliasFact>();
+	for (const [key, use] of uses) {
+		if (use.unaliased || use.counts.length === 0) continue;
+		let best = use.counts[0]!;
+		for (const counted of use.counts) if (counted[1] > best[1]) best = counted;
+		defaults.set(key, best[0]);
+	}
+	return defaults;
+}
+
+function clearDefaultAliases(
+	productions: ReadonlyMap<string, ProductionStep[][]>,
+	defaults: ReadonlyMap<string, AliasFact>
+): void {
+	for (const ownerProductions of productions.values()) {
+		const cleared: ProductionStep[] = [];
+		ownerProductions.forEach((production, index) =>
+			production.forEach((step, position) => {
+				if (step.alias === undefined || !sameShape(step.alias, defaults.get(step.key))) return;
+				const conflicts = ownerProductions.some(
+					(other, otherIndex) =>
+						otherIndex !== index &&
+						other.length > position &&
+						other[position]!.alias !== undefined &&
+						!sameShape(other[position]!.alias, step.alias)
+				);
+				if (!conflicts) cleared.push(step);
+			})
+		);
+		for (const step of cleared) delete step.alias;
+	}
+}
+
+export class UndefinedSymbolsError extends Error {
+	constructor(readonly names: readonly string[]) {
+		super(`symbol-table: ${names.map((name) => `'${name}'`).join(', ')} name no rule and no external`);
+	}
+}
+
+export function predictSymbolTable(grammar: PredictedGrammar): ParserSymbolTable {
+	const live = liveRuleNames(grammar);
+	const supertypes = new Set(grammar.supertypes);
+	const undefinedNames = new Set<string>();
+	const resolve = (name: string): string => {
+		if (live.has(name)) return `nt:${name}`;
+		const index = grammar.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
+		if (index < 0) undefinedNames.add(name);
+		return `ext:${index}`;
+	};
+	let variables: Variable[] = Object.keys(grammar.rules)
+		.filter((name) => live.has(name))
+		.map((name) => ({
+			name,
+			kind: supertypes.has(name) || name.startsWith('_') ? 'hidden' : 'named',
+			rule: internRule(grammar.rules[name]!, resolve)
+		}));
+	const externals: Variable[] = grammar.externals.map((entry, index) =>
+		entry.type === SYMBOL
+			? {
+					name: entry.name,
+					kind: entry.name.startsWith('_') ? 'hidden' : 'named',
+					rule: { type: 'SYM', key: entry.name in grammar.rules ? `nt:${entry.name}` : `ext:${index}` }
+				}
+			: { name: entry.value, kind: 'anonymous', rule: { type: entry.type, value: entry.value } }
+	);
+
+	const tokens = new TokenExtractor();
+	const wordFirst = [...variables].sort((a, b) => Number(b.name === grammar.word) - Number(a.name === grammar.word));
+	for (const variable of wordFirst) variable.rule = tokens.extractFrom(variable.name, variable.rule);
+	for (const external of externals) external.rule = tokens.extractFrom(external.name, external.rule);
+	const replaced = new Map<string, string>();
+	variables = variables.filter((variable, index) => {
+		if (index === 0 || variable.rule.type !== 'SYM' || !variable.rule.key.startsWith('t:')) return true;
+		const tokenIndex = Number(variable.rule.key.slice(2));
+		const token = tokens.lexical[tokenIndex]!;
+		if (tokens.usage[tokenIndex] !== 1 || (token.kind !== 'auxiliary' && variable.kind === 'hidden')) return true;
+		token.kind = variable.kind;
+		token.name = variable.name;
+		replaced.set(`nt:${variable.name}`, variable.rule.key);
+		return false;
+	});
+	const replace = (key: string): string => replaced.get(key) ?? key;
+	for (const variable of [...variables, ...externals]) variable.rule = mapSymbolKeys(variable.rule, replace);
+
+	const extraKeys = grammar.extras.flatMap((entry) => {
+		if (entry.type === SYMBOL) return [replace(resolve(entry.name))];
+		const lexical = internRule(entry, resolve);
+		const index = tokens.lexical.findIndex((token) => sameShape(token.rule, lexical));
+		return index < 0 ? [] : [`t:${index}`];
+	});
+	if (undefinedNames.size > 0) throw new UndefinedSymbolsError([...undefinedNames]);
+	const externalKey = (index: number): string => {
+		const rule = externals[index]!.rule;
+		return rule.type === 'SYM' && rule.key.startsWith('t:') ? rule.key : `ext:${index}`;
+	};
+	const canonical = (key: string): string => (key.startsWith('ext:') ? externalKey(Number(key.slice(4))) : key);
+	for (const variable of variables) variable.rule = mapSymbolKeys(variable.rule, canonical);
+
+	const syntax = expandRepeats(variables);
+	const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
+	const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, productionsOf(variable.rule)]));
+	const inline = new Set(grammar.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
+	const reachable = new Set<string>();
+	const queue = [`nt:${variables[0]!.name}`, ...extraKeys];
+	while (queue.length > 0) {
+		const key = queue.shift()!;
+		if (reachable.has(key)) continue;
+		reachable.add(key);
+		for (const step of (productions.get(key) ?? []).flat()) queue.push(step.key);
+	}
+	externals.forEach((_, index) => reachable.add(externalKey(index)));
+
+	const defaults = defaultAliasesOf(productions, reachable, inline);
+	clearDefaultAliases(productions, defaults);
+	const variableOf = (key: string): Variable =>
+		key.startsWith('nt:')
+			? byKey.get(key)!
+			: key.startsWith('t:')
+				? tokens.lexical[Number(key.slice(2))]!
+				: externals[Number(key.slice(4))]!;
+	const displayOf = (key: string): { readonly name: string; readonly named: boolean; readonly visible: boolean } => {
+		const alias = defaults.get(key);
+		if (alias !== undefined) return { name: alias.value, named: alias.named, visible: true };
+		const { name, kind } = variableOf(key);
+		return { name, named: kind === 'named' || kind === 'hidden', visible: kind === 'named' || kind === 'anonymous' };
+	};
+
+	const order = [
+		...tokens.lexical.map((_, index) => `t:${index}`).filter((key) => reachable.has(key)),
+		...externals.map((_, index) => externalKey(index)).filter((key) => key.startsWith('ext:') && reachable.has(key)),
+		...syntax.map((variable) => `nt:${variable.name}`).filter((key) => reachable.has(key) && !inline.has(key))
+	];
+	const tokenCount = 1 + order.filter((key) => !key.startsWith('nt:')).length;
+	const usedCNames = new Set<string>();
+	const uniqueCName = (base: string): string => {
+		let cName = base;
+		for (let suffix = 2; usedCNames.has(cName); suffix++) cName = `${base}${suffix}`;
+		usedCNames.add(cName);
+		return cName;
+	};
+	const cNameOf = new Map(
+		order.map((key) => {
+			const { name, kind } = variableOf(key);
+			const prefix = kind === 'anonymous' ? 'anon_sym_' : kind === 'auxiliary' ? 'aux_sym_' : 'sym_';
+			return [key, uniqueCName(prefix + sanitizeCIdentifier(name))];
+		})
+	);
+
+	const aliasedNonTerminals = new Set<string>();
+	const aliasSymbols: AliasFact[] = [];
+	for (const [owner, ownerProductions] of productions) {
+		if (!reachable.has(owner)) continue;
+		for (const step of ownerProductions.flat()) {
+			if (step.alias === undefined) continue;
+			if (step.key.startsWith('nt:') && !sameShape(step.alias, defaults.get(step.key))) aliasedNonTerminals.add(step.key);
+			const alias = step.alias;
+			const named = order.some((key) => {
+				const display = displayOf(key);
+				return display.name === alias.value && display.named === alias.named;
+			});
+			if (!named && !aliasSymbols.some((known) => sameShape(known, alias))) aliasSymbols.push(alias);
+		}
+	}
+
+	const symbols = new Map<string, CEnumEntry>();
+	const names = new Map<string, string>();
+	const visible = new Map<string, boolean>();
+	const namedFlags = new Map<string, boolean>();
+	const supertypeCNames = new Set<string>();
+	const aliasedNonTerminalCNames = new Set<string>();
+	for (const key of order) {
+		const cName = cNameOf.get(key)!;
+		const display = displayOf(key);
+		symbols.set(cName, { cName, id: symbols.size + 1 });
+		names.set(cName, display.name);
+		visible.set(cName, display.visible);
+		namedFlags.set(cName, display.named);
+		if (key.startsWith('nt:') && supertypes.has(variableOf(key).name)) supertypeCNames.add(cName);
+		if (aliasedNonTerminals.has(key)) aliasedNonTerminalCNames.add(cName);
+	}
+	aliasSymbols.sort((a, b) => (a.value < b.value ? -1 : a.value > b.value ? 1 : Number(a.named) - Number(b.named)));
+	for (const alias of aliasSymbols) {
+		const cName = uniqueCName(`alias_sym_${sanitizeCIdentifier(alias.value)}`);
+		symbols.set(cName, { cName, id: symbols.size + 1 });
+		names.set(cName, alias.value);
+		visible.set(cName, true);
+		namedFlags.set(cName, alias.named);
+	}
+	return {
+		symbols,
+		names,
+		facts: {
+			aliasedNonTerminals: aliasedNonTerminalCNames,
+			visible,
+			named: namedFlags,
+			supertypes: supertypeCNames,
+			tokenCount
+		}
+	};
+}
+
+export type PredictedKinds =
+	| { readonly entries: readonly GeneratedKindEntry[] }
+	| { readonly failure: string; readonly undefinedNames: readonly string[] };
+
+export function predictedEntriesOf(kinds: PredictedKinds | undefined): readonly GeneratedKindEntry[] {
+	return kinds !== undefined && 'entries' in kinds ? kinds.entries : [];
+}
+
+const PREDICTED_KIND_FIELDS = [
+	'symbolName',
+	'literalText',
+	'anon',
+	'literalRule',
+	'alias',
+	'hidden',
+	'keyword',
+	'aliasedNonTerminal',
+	'supertype',
+	'terminal',
+	'visibleExternal',
+	'parseName'
+] as const satisfies readonly (keyof GeneratedKindEntry)[];
+
+export function assertPredictedKindEntries(
+	predicted: readonly GeneratedKindEntry[],
+	catalog: readonly GeneratedKindEntry[]
+): void {
+	const predictedByKind = new Map(predicted.map((entry) => [entry.kind, entry]));
+	const catalogKinds = new Set(catalog.map((entry) => entry.kind));
+	const disagreements: string[] = [];
+	for (const entry of catalog) {
+		const row = predictedByKind.get(entry.kind);
+		if (row === undefined) {
+			disagreements.push(`${entry.kind}: in the catalog, not predicted`);
+			continue;
+		}
+		for (const field of PREDICTED_KIND_FIELDS) {
+			if (row[field] !== entry[field]) {
+				disagreements.push(
+					`${entry.kind}.${field}: predicted ${JSON.stringify(row[field])}, catalog ${JSON.stringify(entry[field])}`
+				);
+			}
+		}
+	}
+	for (const entry of predicted) {
+		if (!catalogKinds.has(entry.kind)) disagreements.push(`${entry.kind}: predicted, not in the catalog`);
+	}
+	if (disagreements.length > 0) {
+		throw new Error(`symbol-table: the predicted kind catalog disagrees with the parser's:\n  ${disagreements.join('\n  ')}`);
+	}
 }

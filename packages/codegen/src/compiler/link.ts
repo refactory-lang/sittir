@@ -81,17 +81,14 @@ import {
 	isNamedArmChoice,
 	rulesEqual,
 	separatorOf,
-	predictedSymbolSource,
 	inlinesAtReference,
-	predictedRenames,
-	assertPredictionAgrees,
 	symbolFactsOf,
 	type InlineAtReferenceCtx,
 	type SymbolSource,
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { catalogSymbolSource } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogSymbolSource, predictedEntriesOf } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -142,7 +139,10 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	#sourceSymbols?: SymbolSource;
 
 	get sourceSymbols(): SymbolSource {
-		this.#sourceSymbols ??= predictedSymbolSource(symbolFactsOf(this.grammar));
+		this.#sourceSymbols ??= catalogSymbolSource({
+			...symbolFactsOf(this.grammar),
+			kindEntries: predictedEntriesOf(this.grammar.predictedKinds)
+		});
 		return this.#sourceSymbols;
 	}
 }
@@ -181,6 +181,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		hiddenNamedArmChoices,
 		kindEntries
 	});
+	reportUnpredictedKinds(linkCtx);
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		rules[name] = resolveRule(rule as Rule<'link'>, linkCtx, name);
@@ -748,29 +749,37 @@ function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<stri
 	return renames;
 }
 
-function assertParserPrediction(
-	evaluated: RawGrammar,
-	collapsed: RawGrammar,
-	renames: ReadonlyMap<string, string>,
-	ctx: KindCatalogCtx
-): void {
-	const evaluatedFacts = symbolFactsOf(evaluated);
-	const collapsedFacts = symbolFactsOf(collapsed);
-	assertPredictionAgrees({
-		predicted: predictedSymbolSource(collapsedFacts),
-		catalog: catalogSymbolSource({ ...collapsedFacts, kindEntries: ctx.kindEntries }),
-		inlineNames: collapsedFacts.inline,
-		renames: {
-			predicted: predictedRenames(evaluated.rules, evaluatedFacts.extras, predictedSymbolSource(evaluatedFacts)),
-			catalog: renames
-		}
-	});
+function reportUnpredictedKinds(ctx: LinkCtx): void {
+	const { grammar: raw, diagnostics } = ctx;
+	const kinds = raw.predictedKinds;
+	if (kinds === undefined || 'entries' in kinds) return;
+	if (kinds.undefinedNames.length === 0) {
+		diagnostics.fail({
+			code: 'unpredictable-symbol-table',
+			scope: 'compiler',
+			phase: 'evaluate',
+			message: `the parser's symbol table cannot be predicted from the grammar: ${kinds.failure}`,
+			details: { grammar: raw.name, message: kinds.failure }
+		});
+		return;
+	}
+	for (const targetName of kinds.undefinedNames) {
+		diagnostics.fail({
+			code: 'dangling-internal-ref',
+			scope: 'compiler',
+			phase: 'evaluate',
+			message: `the grammar references '${targetName}', which names no rule and no external`,
+			details: { grammar: raw.name, targetName }
+		});
+	}
 }
 
 export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const renames = collapseRenames(raw, ctx);
 	const collapsed = renameRules(raw, renames);
-	if (ctx.kindEntries.length > 0) assertParserPrediction(raw, collapsed, renames, ctx);
+	if (ctx.kindEntries.length > 0 && raw.predictedKinds !== undefined && 'entries' in raw.predictedKinds) {
+		assertPredictedKindEntries(raw.predictedKinds.entries, ctx.kindEntries);
+	}
 	return collapsed;
 }
 

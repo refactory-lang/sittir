@@ -1,5 +1,6 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
+import type { PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -123,6 +124,7 @@ export interface RawGrammar {
 	readonly patchSites?: readonly PatchSite[];
 	readonly upstream?: UpstreamEvaluation;
 	readonly orphanedSyntheticGroups?: readonly string[];
+	readonly predictedKinds?: PredictedKinds;
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];

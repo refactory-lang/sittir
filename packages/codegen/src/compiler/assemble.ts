@@ -683,6 +683,9 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		}
 		if (externals.has(targetName)) continue;
 		if (inline.has(targetName)) continue;
+		if (diagnostics?.all().some((d) => d.code === 'dangling-internal-ref' && d.details?.targetName === targetName)) {
+			continue;
+		}
 		diagnostics?.fail({
 			code: 'dangling-internal-ref',
 			message:

@@ -171,6 +171,9 @@ describe('post-evaluate invariant', () => {
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
 				'orphanedSyntheticGroups',
+				// The kind catalog predicted from the evaluated grammar (or why it could
+				// not be) — link asserts it against the parser's catalog and reads it.
+				'predictedKinds',
 				// groups: body-pattern entries referenced nowhere after pattern
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
