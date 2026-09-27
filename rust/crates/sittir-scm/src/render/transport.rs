@@ -8028,6 +8028,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         head: None,
         tail: None,
     };
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "definitions", w)?;
     definitions.render(w)?;
     Ok(())
 }

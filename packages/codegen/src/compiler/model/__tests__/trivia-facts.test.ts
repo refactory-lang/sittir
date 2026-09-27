@@ -94,12 +94,19 @@ describe('trivia model facts', () => {
 	});
 
 	it('gives no inner gap where tree-sitter cannot lex an extra, or where the node cannot be empty', async () => {
-		expect(innerGapsOf(await nodeMapOf('rust'), 'block_comment')).toEqual([]);
+		const rust = await nodeMapOf('rust');
+		expect(innerGapsOf(rust, 'block_comment')).toEqual([]);
+		expect(innerGapsOf(rust, '_let_chain')).toEqual([]);
 		const scm = await nodeMapOf('scm');
 		expect(innerGapsOf(scm, 'string')).toEqual([]);
 		expect(innerGapsOf(scm, 'named_node')).toEqual([]);
 		expect(innerGapsOf(scm, 'missing_node')).toEqual([{ key: 'name', precedingTokens: 2 }]);
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
+	});
+
+	it('gives a tokenless kind a gap only when it is the grammar root, keying its repeat slot', async () => {
+		expect(innerGapsOf(await nodeMapOf('typescript'), 'enum_body_elements')).toEqual([]);
+		expect(innerGapsOf(await nodeMapOf('scm'), 'program')).toEqual([{ key: 'definitions', precedingTokens: 0 }]);
 	});
 
 	it("takes the loose trivia form from ir.comment's default arm: its kind, literal delimiters, coercer and sibling leads", async () => {

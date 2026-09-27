@@ -124,6 +124,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly root: string | undefined;
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -144,6 +145,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries ?? [];
+		this.root = rootRuleName(init.grammar.rules);
 	}
 
 	get rules(): Record<string, Rule<'evaluate'>> {
@@ -276,7 +278,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		stampCtx
 	);
 	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
-	const rootName = rootRuleName(raw.rules);
+	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
@@ -299,6 +301,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	return {
 		name: raw.name,
+		root: linkCtx.root,
 		rules,
 		supertypes,
 		factoryInline,
@@ -950,7 +953,7 @@ function pruneInlinedAliasBodies(rules: Record<string, Rule<'link'>>, ctx: Stamp
 }
 
 function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
-	const rootName = rootRuleName(rules);
+	const rootName = ctx.root;
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
 	for (const keep of [...ctx.grammar.externals, ...ruleListParts(ctx.grammar.extras).names, ...ctx.supertypes]) {

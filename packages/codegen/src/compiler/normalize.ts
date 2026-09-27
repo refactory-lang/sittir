@@ -247,6 +247,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
+		root: linked.root,
 		rules: normalizedRules,
 		supertypes: linked.supertypes,
 		word: linked.word,
@@ -308,6 +309,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 
 	return {
 		name: linked.name,
+		root: linked.root,
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,

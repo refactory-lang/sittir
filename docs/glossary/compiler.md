@@ -10780,3 +10780,11 @@ Rule types that wrap a literal without changing the token it lexes.
 
 The predicted `SymbolSource` (`dsl/rule-patterns.ts::predictedSymbolSource`) over the evaluated grammar's rules, externals and inline names, built on first use and shared by the phase. It is the prediction even when a catalog exists, because link must recognize the separators enrich recognized. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
+
+### `packages/codegen/src/compiler/assemble.ts::stampGrammarRoot`
+
+Stamps `grammarRoot` on the node of the root rule link recorded (`NodeMap.root`).
+
+### `packages/codegen/src/compiler/link.ts::LinkCtx.root`
+
+The grammar's root rule (`rootRuleName`, the first rule), read once when the link context is built. Link prunes and reports reachability from it and records it on the linked grammar, from where normalize and assemble carry it to `NodeMap.root`; no later phase re-derives it.

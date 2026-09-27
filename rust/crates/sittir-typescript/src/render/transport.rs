@@ -100182,7 +100182,6 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, w: &mut dyn ::sit
         tail: Some(options::SITE_ENUM_BODY_ELEMENTS_CONTENT_END),
     };
     w.edge(::sittir_core::types::KindId(382), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "content", w)?;
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(382), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())

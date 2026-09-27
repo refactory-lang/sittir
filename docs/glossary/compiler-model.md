@@ -4509,7 +4509,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
 - When several slots share a span, only the first in render order keys it.
-- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception, and only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
+- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
 
 Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `()` no longer records its token split, so an inner comment there is a read diagnostic and a count in the trivia validation row.
@@ -4653,6 +4653,10 @@ continuation). The token interior of a trivia kind covers the kinds reachable
 only through it, found as a fixpoint over the grammar's normalized rules' references (the
 doc-comment variants and their markers). Those own no seams; the trivia kind's
 own edges stay, since it still sits among its neighbours. Stamped once at the end of assemble as `AssembledNodeBase.triviaInterior`; render-rules and `innerGaps` read the stamp.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.grammarRoot`
+
+Whether the kind is the grammar's root rule, stamped once in assemble (`stampGrammarRoot`) from the root link records. Only the root holds extras outside its own tokens.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.triviaInterior`
 

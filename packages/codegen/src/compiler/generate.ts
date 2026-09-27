@@ -18,7 +18,6 @@ import { loadGrammarJsonInlineList, assertGrammarJsonInlineIntegrity } from './i
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -103,7 +102,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
 		}
 
-		const rootKind = rootRuleName(normalized.rules)!;
+		const rootKind = normalized.root!;
 		const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
 		const triviaKindNames = [...triviaKinds(nodeMap)];
 

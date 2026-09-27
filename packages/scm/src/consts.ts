@@ -362,7 +362,8 @@ export const TOKEN_INTERIORS = {
 
 /** The gaps an empty node of each kind holds inner trivia in, in render order. */
 export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
-	missing_node: ['name']
+	missing_node: ['name'],
+	program: ['definitions']
 };
 
 /** Valid values for `predicate_type` nodes. */

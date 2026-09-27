@@ -75,7 +75,6 @@ import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
@@ -312,6 +311,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	const assembled: AssembledNodeMap = {
 		name: normalized.name,
+		root: normalized.root,
 		nodes,
 		nodeByRuleId,
 		nodeByKindId,
@@ -333,6 +333,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	};
 	computeFieldStorageInfo(assembled);
 	stampTriviaInterior(assembled);
+	stampGrammarRoot(assembled);
 	return assembled;
 }
 
@@ -390,7 +391,7 @@ function stampFactoryInline(
 		}
 	}
 
-	const rootKind = rootRuleName(ctx.grammar.rules);
+	const rootKind = ctx.grammar.root;
 	for (const kind of declared) {
 		const node = nodes.get(kind);
 		if (!node) {
@@ -1106,4 +1107,9 @@ export { nameNode } from './model/node-map.ts';
 
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
+}
+
+function stampGrammarRoot(nodeMap: AssembledNodeMap): void {
+	const root = nodeMap.root === undefined ? undefined : nodeMap.nodes.get(nodeMap.root);
+	if (root !== undefined) root.grammarRoot = true;
 }

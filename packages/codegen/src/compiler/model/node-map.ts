@@ -1153,6 +1153,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	triviaInterior: boolean = false;
 
+	grammarRoot: boolean = false;
+
 	get annotations(): RuleAnnotations | undefined {
 		return this.rule.annotations;
 	}
@@ -1841,8 +1843,12 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
 		}
 		if (tokens === 0) {
-			const repeat = occurrences.find((occurrence) => isMultiple(occurrence.slot));
-			return repeat === undefined ? [] : [{ key: repeat.slot.name, precedingTokens: 0 }];
+			if (!this.grammarRoot) return [];
+			const rootSlot = root.id === undefined ? undefined : slotById.get(root.id);
+			const repeat =
+				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
+				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
+			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0 }];
 		}
 		return occurrences
 			.filter(

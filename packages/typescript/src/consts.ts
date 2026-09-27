@@ -2714,7 +2714,6 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
 	array_pattern: ['elements'],
 	class_body: ['content'],
 	enum_body: ['enum_body_elements'],
-	enum_body_elements: ['content'],
 	export_clause: ['export_specifiers'],
 	formal_parameters: ['formal_parameters_elements'],
 	named_imports: ['import_specifiers'],
