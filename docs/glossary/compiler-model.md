@@ -4596,13 +4596,13 @@ A non-default arm of the default comment kind: `lead`, the start-anchored regex 
 
 ### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
 
-The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are the literal STRING runs at the two ends of that kind's render SEQ. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm whose render rule is not a SEQ throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
+The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are that kind's `fullForm` delimiters. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm with no full form, or with a spelled delimiter, throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
 
-When the default comment kind is a polymorph, every other arm is a sibling (`siblingArms`). A loose interior that starts the way a sibling can is refused, because its rendered text would read back as that sibling, or at best be ambiguous with it. The check needs no lexer precedence: whether a sibling could start there is enough. Rust `line_comment` refuses `/…` (doc_outer), `!…` (doc_inner) and `//…` (extra_slashes); python `comment` and typescript `comment_line` have no siblings.
+When the default comment kind is a polymorph, every other arm is a sibling (`siblingLeads`). A loose interior that starts the way a sibling can is refused, because its rendered text would read back as that sibling, or at best be ambiguous with it. The check needs no lexer precedence: whether a sibling could start there is enough. Rust `line_comment` refuses `/…` (doc_outer), `!…` (doc_inner) and `//…` (extra_slashes); python `comment` and typescript `comment_line` have no siblings.
 
-### `packages/codegen/src/compiler/model/trivia.ts::siblingArms`
+### `packages/codegen/src/compiler/model/trivia.ts::siblingLeads`
 
-The non-default arms of a polymorph default comment kind, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder. An arm with no `ir` key throws.
+The non-default arms of a polymorph, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder; none for a kind that is not a polymorph. A full-form coercer refuses an interior that starts the way one of them can. An arm with no `ir` key throws.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::leadSources`
 
@@ -4797,3 +4797,77 @@ The one derivation of a text leaf's whole-text guard: the kind's `textPattern` w
 ```
 
 An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
+
+### `packages/codegen/src/compiler/model/node-map.ts::seamNeedsSpace`
+
+```text
+/**
+ * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
+ * exactly where word-class text meets word-class text. The one seam
+ * decision shared by every static bake — fixed×fixed (classes of the
+ * concrete chars) and tag boundaries (classes derived per kind) — so a
+ * baked outcome can never disagree with the runtime writer's.
+ * Punctuation merge-hazard pairs are decided from concrete characters
+ * (`isLiteralMergePair`), never from classes, and are layered on by the
+ * caller where characters are known.
+ */
+```
+
+The template emitter's static seams and the full-form stamp (`stampFullForms`) both apply it, so whether a delimiter is separated from its content is the render's own law.
+
+### `packages/codegen/src/compiler/model/node-map.ts::wordCharPredicate`
+
+The grammar's word-class test for one character: the ASCII table (`wordCharAsciiTable`) over the word matcher, with a Unicode letter-or-number fallback above ASCII, and `\w` when the grammar has no word matcher. The template emitter's `isWordChar` and the full-form stamp's edge context are both this predicate.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FullForm`
+
+The literal delimiters a kind's text carries around its one text content: `open` and `close`, each a `FullFormAffix`. A builder that takes the content also takes the whole text (`fullForm`).
+
+### `packages/codegen/src/compiler/model/node-map.ts::FullFormAffix`
+
+One side of a full form: the `texts` it may be spelled with (one for a fixed delimiter, several for a spelling choice), and the `slot` (a field name) that records which was typed, when there is a choice.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.fullForm`
+
+The kind's full form, stamped by `stampFullForms`; undefined when the kind's text is not literal delimiters around one text content.
+
+### `packages/codegen/src/compiler/model/full-form.ts::stampFullForms`
+
+Stamps `fullForm` on every compound whose render SEQ is literal runs around exactly one text content. Text content is a pattern, a pattern leaf, or a choice of the polymorph's own arms that are each a pattern or a kind with a full form (rust `line_comment`, `block_comment`). A kind whose delimiter can be separated from its content by a word seam (`isSeparated`) has none: `global x` or `* as x` hold a space, so they are source text, not the spelling of one token, and those kinds take only their content. Kinds around node content (`parenthesized_expression`) or a fragment list (every `string`) have no full form, and neither does one whose delimiter is an optional flag (rust `char_literal`'s `b`).
+
+### `packages/codegen/src/compiler/model/full-form.ts::affixOf`
+
+A render member as a literal delimiter: a STRING, a reference to a fixed-text leaf (its text; rust `outer_line_doc_comment_marker` is `/`), or a field over a choice of strings (a spelling slot, its alternatives). A member with a multiplicity is an optional slot, never a delimiter.
+
+### `packages/codegen/src/compiler/model/full-form.ts::contentEdges`
+
+The edge classes the content starts and ends with: a pattern's leading and trailing classes, a leaf kind's (`edgeClassesOfKind`), or the classes the polymorph's arms agree on.
+
+### `packages/codegen/src/compiler/model/full-form.ts::affixEdge`
+
+The edge class a delimiter meets its content with: the class of the last character of the open side, or the first of the close side, uniform across spelling alternatives; none when that side is empty.
+
+### `packages/codegen/src/compiler/model/full-form.ts::isSeparated`
+
+Whether the render can put a word seam between a delimiter and the content (`maySpace`). A token interior (`lexedInterior`) never has one, so number and escape prefixes stay glued.
+
+### `packages/codegen/src/compiler/model/full-form.ts::maySpace`
+
+`seamNeedsSpace` over every concrete class an edge can take: a `varies` edge is word or not-word, so a delimiter ending in a word character before a content that can start with one is separated (typescript `* as` before an identifier).
+
+### `packages/codegen/src/compiler/model/full-form.ts::joinRun`
+
+One side's literal members as one affix: empty when there are none, the member itself when there is one, and the concatenation of fixed texts otherwise. A spelling slot beside other literals has no single text to record, so that run has no full form.
+
+### `packages/codegen/src/compiler/model/full-form.ts::isTextContent`
+
+Whether the one non-literal member between the runs is text: an inline pattern, a reference to a pattern leaf, or a choice of the polymorph's own arms, each of which is text (`FullForms.isText`).
+
+### `packages/codegen/src/compiler/model/full-form.ts::fullFormOf`
+
+One compound's full form: find the literal runs at each end, require exactly one member between them that is text content and no word-shaped literal, and join each run.
+
+### `packages/codegen/src/compiler/model/full-form.ts::FullForms`
+
+The memo `stampFullForms` walks with: each compound's full form computed once, so a polymorph can ask whether its arms have one in any order. A kind is marked undefined while it is being computed, so a cycle reads as no full form. It carries the edge context (`edges`) the separation check reads.
+

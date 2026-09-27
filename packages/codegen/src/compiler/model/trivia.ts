@@ -1,6 +1,14 @@
 import type { NodeMap } from '../types.ts';
-import type { RenderRule } from '../../types/rule.ts';
-import { AbstractAssembledCompound, AssembledPolymorph, AssembledPunctuation, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledPolymorph,
+	type AssembledNode,
+	type FullFormAffix,
+	AssembledPunctuation,
+	AssembledSupertype,
+	isNodeRef,
+	storageKindOfRef
+} from './node-map.ts';
 import { anchoredLeafRegex, leadingRegex } from './leaf-pattern.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
@@ -27,37 +35,39 @@ export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
 	const comment = [...nodeMap.nodes.values()].find((node) => node.irKey === COMMENT_IR_KEY);
 	if (comment === undefined) return undefined;
 	const defaultRef =
-		comment instanceof AssembledSupertype ? comment.subtypes.filter(isNodeRef).find((ref) => ref.default === true) : undefined;
+		comment instanceof AssembledSupertype
+			? comment.subtypes.filter(isNodeRef).find((ref) => ref.default === true)
+			: undefined;
 	const arm = defaultRef === undefined ? comment : nodeMap.nodes.get(storageKindOfRef(defaultRef.node));
-	if (!(arm instanceof AbstractAssembledCompound) || arm.renderRule.type !== 'SEQ') {
-		throw new Error(`trivia: ir.${COMMENT_IR_KEY} has no default arm whose rule is a sequence to take delimiters from`);
+	if (!(arm instanceof AbstractAssembledCompound) || arm.fullForm === undefined) {
+		throw new Error(`trivia: ir.${COMMENT_IR_KEY} has no default arm with a full form to take delimiters from`);
 	}
-	const members = arm.renderRule.members;
-	const literalRun = (from: readonly RenderRule[]): string[] => {
-		const run: string[] = [];
-		for (const member of from) {
-			if (member.type !== 'STRING') break;
-			run.push(member.value);
-		}
-		return run;
+	const fullForm = arm.fullForm;
+	const fixedText = (affix: FullFormAffix): string => {
+		const [text] = affix.texts;
+		if (text === undefined || affix.texts.length !== 1)
+			throw new Error(`trivia: the default comment kind '${arm.kind}' has a spelled delimiter`);
+		return text;
 	};
-	if (arm.fromFunctionName === undefined) throw new Error(`trivia: the default comment kind '${arm.kind}' has no coercer`);
+	if (arm.fromFunctionName === undefined)
+		throw new Error(`trivia: the default comment kind '${arm.kind}' has no coercer`);
 	return {
 		kind: arm.kind,
-		open: literalRun(members).join(''),
-		close: literalRun([...members].reverse()).reverse().join(''),
+		open: fixedText(fullForm.open),
+		close: fixedText(fullForm.close),
 		coercer: arm.fromFunctionName,
-		siblings: arm instanceof AssembledPolymorph ? siblingArms(nodeMap, arm) : []
+		siblings: siblingLeads(nodeMap, arm)
 	};
 }
 
-function siblingArms(nodeMap: NodeMap, polymorph: AssembledPolymorph): TriviaSibling[] {
-	return polymorph.arms.flatMap((ref) => {
+export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibling[] {
+	if (!(node instanceof AssembledPolymorph)) return [];
+	return node.arms.flatMap((ref) => {
 		if (ref.type !== SYMBOL || ref.annotations?.default === true) return [];
-		const node = nodeMap.nodes.get(ref.name);
-		if (node?.irKey === undefined) throw new Error(`trivia: '${polymorph.kind}' arm '${ref.name}' has no builder`);
+		const arm = nodeMap.nodes.get(ref.name);
+		if (arm?.irKey === undefined) throw new Error(`trivia: '${node.kind}' arm '${ref.name}' has no builder`);
 		const leads = leadSources(nodeMap, ref.name, new Set());
-		return [{ lead: leadingRegex(ref.name, leads.join('|')), builder: `ir.${node.irKey}` }];
+		return [{ lead: leadingRegex(ref.name, leads.join('|')), builder: `ir.${arm.irKey}` }];
 	});
 }
 

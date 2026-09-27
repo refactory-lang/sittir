@@ -46,7 +46,7 @@ import {
 	valueParseKindsOf,
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
-import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../compiler/generated-metadata.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
@@ -1080,11 +1080,6 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 		return 'skip-leaf-model-type';
 	}
 	return 'emit';
-}
-
-export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
-	const isWord = wordCharClass(wordMatcher);
-	return Array.from({ length: 128 }, (_, i) => isWord(String.fromCharCode(i)));
 }
 
 export function literalMergePairs(

@@ -46,6 +46,7 @@ import {
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { anchoredLeafRegex } from './leaf-pattern.ts';
+import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
@@ -1665,10 +1666,21 @@ export interface InnerGap {
 	readonly precedingTokens: number;
 }
 
+export interface FullFormAffix {
+	readonly texts: readonly string[];
+	readonly slot?: string;
+}
+
+export interface FullForm {
+	readonly open: FullFormAffix;
+	readonly close: FullFormAffix;
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
+	fullForm?: FullForm;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
 
@@ -2371,19 +2383,28 @@ export interface KindEdgeClasses {
 	readonly ends: SeamEdgeClass;
 }
 
+export function seamNeedsSpace(seam: { readonly left: SeamEdgeClass; readonly right: SeamEdgeClass }): boolean {
+	return seam.left === 'word' && seam.right === 'word';
+}
+
+export function wordCharPredicate(wordMatcher: RegExp | undefined): (c: string) => boolean {
+	const table = wordCharAsciiTable(wordMatcher ?? /\w/);
+	return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
+}
+
 export interface EdgeClassCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly isWordChar: (c: string) => boolean;
 }
 
-const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
+export const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
 	if (classes.length === 0) return 'varies';
 	const first = classes[0]!;
 	return classes.every((c) => c === first) ? first : 'varies';
 };
 
-const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
+export const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
 	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
 
 const REGEX_CONTROL_ESCAPES: Record<string, string> = {

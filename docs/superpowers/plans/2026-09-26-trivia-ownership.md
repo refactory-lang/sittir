@@ -481,6 +481,27 @@ it('classifies loose strings against comment kinds and rejects others', () => {
   `markUserFacing` and the edge classes read the grammar ones.
 - Pulled forward from Task 7: the whitespace transport variants and render.
 
+### Full-form acceptance (follows 5w)
+
+**As landed:**
+- Every builder whose kind is literal delimiters around one text content
+  takes either the content or the whole text, and tries the whole text
+  first. The delimiters are stamped once on the kind (`fullForm`), and
+  `defaultTriviaForm` reads the same stamp.
+- Text content is a pattern, a pattern leaf, or a polymorph's text arms
+  (rust `line_comment`, `block_comment`). A polymorph refuses an interior
+  that starts the way another arm can, naming that arm's builder.
+- A spelling-choice delimiter records the alternative that was typed as
+  its option (`integer.hex('0XFF')` → `0X`), and an explicit option wins.
+- A delimiter the render can separate from its content by a word seam
+  has no full form (the model's `seamNeedsSpace`, shared with the template
+  emitter; token interiors are glued): python `global`/`nonlocal`,
+  typescript `* as`. A delimiter must be a required member.
+- Follow-ups: optional-flag delimiters (rust `charLiteral("b'a'")` is
+  refused; `charLiteral('a')` builds `'a'`); regex
+  `posixCharacterClass('alpha')` renders `[: alpha :]`; typescript
+  `number.bigint('1')` renders `1 n`.
+
 ### Task 6: Types: `Empty<Kind>`, `isEmpty`, factory return types
 
 **Files:**

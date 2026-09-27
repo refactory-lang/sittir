@@ -26,6 +26,7 @@ import type {
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
+import { stampFullForms } from './model/full-form.ts';
 import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
@@ -265,6 +266,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, assembleDiagnostics);
 	stampWhitespaceBuilders(nodes);
+	stampFullForms(nodes, wordMatcherRegex);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));

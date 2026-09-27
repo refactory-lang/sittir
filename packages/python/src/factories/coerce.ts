@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior } from '@sittir/common';
+import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -6349,15 +6349,20 @@ export function coerceToIntegerHex(
 ): ReturnType<typeof F.buildIntegerHex> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
 		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerHex(
 		_requireField(
 			'integer_hex',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -6371,15 +6376,20 @@ export function coerceToIntegerOctal(
 ): ReturnType<typeof F.buildIntegerOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
 		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerOctal(
 		_requireField(
 			'integer_octal',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -6395,15 +6405,20 @@ export function coerceToIntegerBinary(
 ): ReturnType<typeof F.buildIntegerBinary> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
 		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerBinary(
 		_requireField(
 			'integer_binary',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -6555,7 +6570,11 @@ export function coerceToEscapeSequenceUnicodeFixed(
 			'escape_sequence_unicode_fixed',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6579,7 +6598,11 @@ export function coerceToEscapeSequenceUnicodeWide(
 			'escape_sequence_unicode_wide',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6603,7 +6626,11 @@ export function coerceToEscapeSequenceHex(
 			'escape_sequence_hex',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6623,7 +6650,11 @@ export function coerceToEscapeSequenceOctal(
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.EscapeSequenceOctal)
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: typeof input === 'string'
+				? spelledInterior(input, '\\', '')
+				: input;
 	return F.buildEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
@@ -6649,7 +6680,11 @@ export function coerceToEscapeSequenceLineBreak(
 			'escape_sequence_line_break',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6673,7 +6708,11 @@ export function coerceToEscapeSequenceSimple(
 			'escape_sequence_simple',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6697,7 +6736,11 @@ export function coerceToEscapeSequenceNamed(
 			'escape_sequence_named',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)

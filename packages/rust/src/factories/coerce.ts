@@ -5122,7 +5122,11 @@ export function coerceToLifetime(input: T.Lifetime.Loose): ReturnType<typeof F.b
 			'lifetime',
 			'name',
 			_resolveOneLeaf<T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, "'", '')
+						: input,
 				'identifier'
 			)
 		)
@@ -6936,7 +6940,11 @@ export function coerceToLabel(input: T.Label.Loose): ReturnType<typeof F.buildLa
 			'label',
 			'name',
 			_resolveOneLeaf<T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, "'", '')
+						: input,
 				'identifier'
 			)
 		)
@@ -7535,7 +7543,14 @@ export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<t
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(
 		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+				? input.content
+				: typeof input === 'string'
+					? refuseSiblingLead(spelledInterior(input, '/*', '*/'), [
+							[/^(?:\*)/u, 'ir.blockCommentDocOuter'],
+							[/^(?:!)/u, 'ir.blockCommentDocInner']
+						])
+					: input,
 			_K60,
 			_K61,
 			'_block_comment_content'
@@ -7560,7 +7575,11 @@ export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.bui
 			'shebang',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '#!', '\n')
+						: input,
 				_K2,
 				_K2
 			)
@@ -7592,7 +7611,11 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 			'metavariable',
 			'name',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, '$', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9146,7 +9169,11 @@ export function coerceToEscapeSequenceSimple(
 			'escape_sequence_simple',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9170,7 +9197,11 @@ export function coerceToEscapeSequenceUnicodeFixed(
 			'escape_sequence_unicode_fixed',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9194,7 +9225,11 @@ export function coerceToEscapeSequenceUnicodeBraced(
 			'escape_sequence_unicode_braced',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9218,7 +9253,11 @@ export function coerceToEscapeSequenceHex(
 			'escape_sequence_hex',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -10493,7 +10532,11 @@ export function coerceToLineCommentDocOuter(
 			'line_comment_doc_outer',
 			'doc',
 			_resolveOneLeaf<T.DocComment>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+					? input.doc
+					: typeof input === 'string'
+						? spelledInterior(input, '/', '')
+						: input,
 				'doc_comment'
 			)
 		)
@@ -10516,7 +10559,11 @@ export function coerceToLineCommentDocInner(
 			'line_comment_doc_inner',
 			'doc',
 			_resolveOneLeaf<T.DocComment>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+					? input.doc
+					: typeof input === 'string'
+						? spelledInterior(input, '!', '')
+						: input,
 				'doc_comment'
 			)
 		)
@@ -10543,7 +10590,11 @@ export function coerceToBlockCommentDocOuter(
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocOuter>;
 	return F.buildBlockCommentDocOuter(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+				? input.doc
+				: typeof input === 'string'
+					? spelledInterior(input, '*', '')
+					: input,
 			'_block_comment_content'
 		)
 	);
@@ -10562,7 +10613,11 @@ export function coerceToBlockCommentDocInner(
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocInner>;
 	return F.buildBlockCommentDocInner(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+				? input.doc
+				: typeof input === 'string'
+					? spelledInterior(input, '!', '')
+					: input,
 			'_block_comment_content'
 		)
 	);

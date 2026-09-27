@@ -1,6 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
+import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -54,7 +55,6 @@ import {
 	isSlotBearingCompound,
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
-	wordCharAsciiTable,
 	literalMergePairs,
 	fieldTypeComponents,
 	slotSeparatorTexts,

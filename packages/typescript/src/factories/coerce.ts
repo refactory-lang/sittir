@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior } from '@sittir/common';
+import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -2470,7 +2470,11 @@ export function coerceToHashBangLine(input: T.HashBangLine.Loose): ReturnType<ty
 			'hash_bang_line',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '#!', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -5308,7 +5312,11 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 			'escape_sequence',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -5440,7 +5448,11 @@ export function coerceToPrivatePropertyIdentifier(
 			'private_property_identifier',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '#', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -10337,7 +10349,11 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 			'comment_block',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '/*', '*/')
+						: input,
 				_K2,
 				_K2
 			)
@@ -10389,11 +10405,16 @@ export function coerceToNumberHex(
 ): ReturnType<typeof F.buildNumberHex> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberHex)
 		return input as unknown as ReturnType<typeof F.buildNumberHex>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildNumberHex(
 		_requireField('number_hex', 'content', typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -10553,15 +10574,20 @@ export function coerceToNumberBinary(
 ): ReturnType<typeof F.buildNumberBinary> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBinary)
 		return input as unknown as ReturnType<typeof F.buildNumberBinary>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildNumberBinary(
 		_requireField(
 			'number_binary',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -10575,15 +10601,20 @@ export function coerceToNumberOctal(
 ): ReturnType<typeof F.buildNumberOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberOctal)
 		return input as unknown as ReturnType<typeof F.buildNumberOctal>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildNumberOctal(
 		_requireField(
 			'number_octal',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		),
-		options
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	);
 }
 
@@ -10595,7 +10626,11 @@ export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<ty
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBigint)
 		return input as unknown as ReturnType<typeof F.buildNumberBigint>;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: typeof input === 'string'
+				? spelledInterior(input, '', 'n')
+				: input;
 	return F.buildNumberBigint(
 		_requireField(
 			'number_bigint',

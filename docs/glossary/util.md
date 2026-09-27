@@ -71,6 +71,25 @@ emitted ASCII table (`wordCharAsciiTable`) and the fixed-literal join
 (`collectFixedLiteral`) both read it; nothing else decides word-ness. Without a
 matcher the class is `\w+`.
 
+### `packages/codegen/src/util/word-matcher.ts::wordCharAsciiTable`
+
+```text
+/**
+ * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
+ * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
+ * already carried on LinkedGrammar — no new configuration").
+ *
+ * Per-char classification uses the PAIR test rather than a single-char
+ * match: a char is word-class iff it would EXTEND a word match ('a'+c
+ * matches longer than 'a') or START one that the next word char joins
+ * (c+'a' matches longer than c). This is grammar-faithful where a naive
+ * single-char test fails — digits are word-INTERIOR for identifier-shaped
+ * word patterns without being valid word STARTS.
+ */
+```
+
+Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex probe of its own, so the table and the fixed-literal join can never disagree about a character.
+
 ### `packages/codegen/src/util/word-matcher.ts::ruleToRegexSource`
 
 ```text

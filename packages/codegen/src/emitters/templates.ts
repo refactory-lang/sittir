@@ -1,6 +1,6 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -26,7 +26,8 @@ import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../ty
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
+import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
+import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
 	flanksOf,
@@ -147,10 +148,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
-			isWordChar: (() => {
-				const table = wordCharAsciiTable(this.#wordMatcher);
-				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
-			})(),
+			isWordChar: wordCharPredicate(this.#wordMatcher),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
 					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(
@@ -244,10 +242,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		}
 		this.#bodies.set(node.kind, body);
 	}
-}
-
-export function seamNeedsSpace(left: SeamEdgeClass, right: SeamEdgeClass): boolean {
-	return left === 'word' && right === 'word';
 }
 
 function renderRuleEdge(
@@ -365,7 +359,7 @@ function classifySeqBoundary(
 		const leftE = partEdge(leftRule, 'ends', l);
 		const rightE = partEdge(rightRule, 'starts', r);
 		if (leftE === 'varies' || rightE === 'varies') return RUNTIME_VARYING;
-		if (seamNeedsSpace(leftE, rightE)) return STATIC_SPACED;
+		if (seamNeedsSpace({ left: leftE, right: rightE })) return STATIC_SPACED;
 		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) return RUNTIME_VARYING;
 		return STATIC_GLUED;
 	}

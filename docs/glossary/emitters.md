@@ -1519,11 +1519,17 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 
 #### loose trivia
 
-The coercer of `ir.comment`'s default arm (`defaultTriviaForm`) passes a bare string through `spelledInterior`: text spelled with the arm's literal delimiters sheds them, and any other text is the interior as it stands, checked by the content leaf's guard. `'// TODO'` and `' TODO'` both build rust `// TODO`. When the arm has siblings, `refuseSiblingLead` then refuses an interior that starts the way one of them can, naming that sibling's builder (`spelledInteriorExpr`).
+The coercer of every kind with a full form (`fullForm`), `ir.comment`'s default arm among them, passes a bare string through `spelledInterior`: text spelled with the kind's literal delimiters sheds them, and any other text is the content as it stands, checked by the content's leaf guard. The full form is tried first, so `'// TODO'` and `' TODO'` both build rust `// TODO`, and python `comment('# x')` is `# x`, never `## x`. When the kind is a polymorph, `refuseSiblingLead` then refuses an interior that starts the way another arm can, naming that arm's builder (`refuseSiblingLeadExpr`).
 
-### `packages/codegen/src/emitters/from.ts::spelledInteriorExpr`
+A delimiter that is a spelling choice goes through `spelledForm` instead, and the alternative typed becomes that slot's option: python `integer.hex('0XFF')` renders `0XFF`, `integer.hex('FF')` the default `0xFF`, and an explicit option wins over the typed text (`spelledOptionKeys`).
 
-The loose-string expression of the default trivia form's coercer: `spelledInterior(input, open, close)`, wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder when the form has siblings.
+### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
+
+An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
+
+### `packages/codegen/src/emitters/from.ts::spelledOptionKeys`
+
+The option key of each full-form side that is a spelling choice, found through the slot the affix names. A spelling slot that is not a registered option throws: the typed alternative has no option to go to.
 
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
@@ -5603,25 +5609,6 @@ forms, python's `_except_clause_list` and `_match_block_block`). The seat the
 overlay derives from that shape is the kind's own builder passed through
 the parent's.
 
-### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
-
-```text
-/**
- * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
- * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
- * already carried on LinkedGrammar — no new configuration").
- *
- * Per-char classification uses the PAIR test rather than a single-char
- * match: a char is word-class iff it would EXTEND a word match ('a'+c
- * matches longer than 'a') or START one that the next word char joins
- * (c+'a' matches longer than c). This is grammar-faithful where a naive
- * single-char test fails — digits are word-INTERIOR for identifier-shaped
- * word patterns without being valid word STARTS.
- */
-```
-
-Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex probe of its own, so the table and the fixed-literal join can never disagree about a character.
-
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
 A stable SHA-256 hex digest over a set of named files, sorted by name with
@@ -8420,12 +8407,7 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 
 ### `packages/codegen/src/emitters/templates.ts::isWordChar`
 
-```text
-/** Grammar-faithful word-class test for a single char (ASCII table from
-	 *  wordCharAsciiTable + Unicode-alphanumeric fallback). Used for
-	 *  compile-time STATIC-STATIC seam spaces; dynamic seams belong to the
-	 *  runtime SpacingWriter with the same class. */
-```
+The grammar's word-class test for a single char (`wordCharPredicate`), used for compile-time static seam spaces; dynamic seams belong to the runtime SpacingWriter with the same class.
 
 ### `packages/codegen/src/emitters/templates.ts::rules`
 
@@ -10369,21 +10351,6 @@ to `gateOptionalSlotSeams`.
 // Slot-preservation gate (PR2 Task 3.B4): assert every declared slot
 // appears at least once in the emitted body. Replaces the deleted
 // byte-equivalence diff gate. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
-```
-
-### `packages/codegen/src/emitters/templates.ts::seamNeedsSpace`
-
-```text
-/**
- * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
- * exactly where word-class text meets word-class text. The one seam
- * decision shared by every static bake — fixed×fixed (classes of the
- * concrete chars) and tag boundaries (classes derived per kind) — so a
- * baked outcome can never disagree with the runtime writer's.
- * Punctuation merge-hazard pairs are decided from concrete characters
- * (`isLiteralMergePair`), never from classes, and are layered on by the
- * caller where characters are known.
- */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::renderRuleEdge`

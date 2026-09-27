@@ -533,7 +533,11 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 			'escape_sequence',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -565,7 +569,11 @@ export function coerceToCapture(input: T.Capture.Loose): ReturnType<typeof F.bui
 			'capture',
 			'name',
 			_resolveOneLeaf<T.ImmediateIdentifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, '@', '')
+						: input,
 				'_immediate_identifier'
 			)
 		)
@@ -875,7 +883,9 @@ export function coerceToNegatedField(input: T.NegatedField.Loose): ReturnType<ty
 			_resolveOneLeaf<T.Identifier>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'identifier' in input
 					? input.identifier
-					: input,
+					: typeof input === 'string'
+						? spelledInterior(input, '!', '')
+						: input,
 				'identifier'
 			)
 		)
