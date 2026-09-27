@@ -121,6 +121,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 const _supertype_classAtom_ids = new Set<number>([20, 72, 75, 41, 42, 58, 60]);
 const _supertype_inlineFlagsGroup_ids = new Set<number>([81, 82, 83]);
 const _supertype_characterEscape_ids = new Set<number>([75, 41, 42]);
+const _supertype_whitespace_ids = new Set<number>([47, 48, 49]);
 
 export const is = {
 	pattern: _g(TSKindId.Pattern),
@@ -144,7 +145,7 @@ export const is = {
 	classAtom: _sg(_supertype_classAtom_ids),
 	inlineFlagsGroup: _sg(_supertype_inlineFlagsGroup_ids),
 	characterEscape: _sg(_supertype_characterEscape_ids),
-	whitespace: _sg(new Set<number>())
+	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.

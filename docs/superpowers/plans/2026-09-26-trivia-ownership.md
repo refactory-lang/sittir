@@ -450,6 +450,37 @@ it('classifies loose strings against comment kinds and rejects others', () => {
 - [ ] **Step 4: Run the tests.** Expected: PASS.
 - [ ] **Step 5: Regen, gate and commit.**
 
+### Task 5w: Whitespace trivia entries
+
+**As landed:**
+- A whitespace entry is the kind id of a `_whitespace` member. Every member
+  gets its parameterless builder under `ir.whitespace` (rust/ts: tight,
+  space, newline, blankline, indent, dedent; python: tight, space, newline,
+  blankline, double_blankline). Python's `newline` is the scanner's
+  statement terminator (id 113): one kind, one builder, the same value in a
+  slot and in trivia.
+- Which members a trivia position accepts is derived, not listed: a member
+  is an extra when its literal text is one or more of the grammar's lexical
+  extras (`whitespaceTriviaKinds`, one clause in `triviaKinds`). That gives
+  space/newline/blankline (and python's double_blankline). tight, indent
+  and dedent are refused for that one reason: "<kind> is not an extra".
+- Lexical extras are stamped at evaluate as `extraPatterns` (patterns, and
+  literal-string extras escaped), apart from `extras` (symbol names only).
+- Loose whitespace text resolves to the kind whose literal it is exactly
+  (`'\n\n'` → blankline), or is refused. It never falls back to a comment.
+- Render: a whitespace entry replaces the spacing of the gap it sits in
+  (`SEAM_TRIVIA`, above declared strength; `TriviaSeam` on the trivia
+  transport). After an open line comment it still keeps the line break, and
+  an empty block holding one keeps it (`{\n\n}`).
+- The factory emitters' hidden-keyword skip reads `isHiddenPresenceMarker`;
+  the skipped `_kw_*` sets are unchanged.
+- A builder never flips `hidden`: `hidden` is stored from the grammar, and
+  builder presence is `factoryName`. The leaf predicates are split to match.
+  Emitter sites read the builder ones (`isBuilderTextLeaf`,
+  `isBuilderlessPunctuationLeaf`, `isWordOrBuilderTextLeaf`), and `consts`,
+  `markUserFacing` and the edge classes read the grammar ones.
+- Pulled forward from Task 7: the whitespace transport variants and render.
+
 ### Task 6: Types: `Empty<Kind>`, `isEmpty`, factory return types
 
 **Files:**
@@ -503,6 +534,11 @@ const s: readonly import('../src/index.js').Statement[] = parsed.statements();
   commit message.
 
 ### Task 7: Transport and render: line-terminated breaks, leading joins, inner layout
+
+**Landed early (Task 5w):** the whitespace variants of `TriviaTransport` and
+a whitespace entry replacing the gap's spacing. Still open here: an own-line
+trailing comment renders a blank line after it (`a;\n    // c\n\n    b;`),
+on the comment-only path.
 
 Re-based on Task 3, which landed the core `trivia::TransportTrivia<T>` (with
 `inner`, `same_line`, `tokens_between` per entry), same-line trailing seating in

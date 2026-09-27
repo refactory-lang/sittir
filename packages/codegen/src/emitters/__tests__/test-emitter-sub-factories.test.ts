@@ -27,6 +27,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
+		extraPatterns: [],
 		externals: [],
 		supertypes: [],
 		factoryInline: [],

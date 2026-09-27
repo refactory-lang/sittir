@@ -51,6 +51,8 @@ mod trivia_macro_tests {
     /// test, not any grammar's comment template.
     struct MockTrivia(String);
 
+    impl crate::trivia::TriviaSeam for MockTrivia {}
+
     impl Render for MockTrivia {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
             w.text(&self.0)

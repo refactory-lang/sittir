@@ -27,6 +27,24 @@ impl<T: Render> Render for TriviaEntry<T> {
     }
 }
 
+/// A trivia value that is whitespace answers its text: it is merged into the
+/// gap it sits in (`RenderSink::trivia_seam`), replacing that gap's default,
+/// instead of being written as a line of its own.
+pub trait TriviaSeam {
+    fn seam_text(&self) -> Option<&str> {
+        None
+    }
+}
+
+impl<T: TriviaSeam> TriviaEntry<T> {
+    fn seam_text(&self) -> Option<&str> {
+        match &self.value {
+            SlotValue::Transport(value) => value.seam_text(),
+            SlotValue::Coord(_) => None,
+        }
+    }
+}
+
 /// The trivia one transport owns. Mirrors `NodeTrivia` in `@sittir/types`.
 #[derive(Debug, Clone)]
 pub struct TransportTrivia<T> {
@@ -49,14 +67,34 @@ impl<T> Default for TransportTrivia<T> {
 /// comment swallows whatever follows it on its line. An entry whose own text
 /// already ends the line (a grammar may include the terminator in the
 /// comment's span) needs no extra break.
-fn render_lines<T: Render>(entries: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
+fn render_lines<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
+    let mut line_open = false;
     for entry in entries {
-        entry.render(w)?;
-        if !w.ends_line() {
+        if let Some(text) = entry.seam_text() {
+            w.trivia_seam(breaking(text, std::mem::replace(&mut line_open, false)));
+            continue;
+        }
+        if std::mem::replace(&mut line_open, false) {
             w.text("\n")?;
         }
+        entry.render(w)?;
+        line_open = !w.ends_line();
+    }
+    if line_open {
+        w.text("\n")?;
     }
     Ok(())
+}
+
+/// A whitespace entry's text, kept to at least a line break when it follows
+/// an entry that left its line open: a line comment swallows whatever
+/// follows it on its line.
+fn breaking(text: &str, line_open: bool) -> &str {
+    if line_open && !text.contains('\n') {
+        "\n"
+    } else {
+        text
+    }
 }
 
 /// Hold a run of same-line trailing entries in the sink.
@@ -69,7 +107,7 @@ fn defer_run<T: Render>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> Rende
     })
 }
 
-impl<T: Render> TransportTrivia<T> {
+impl<T: Render + TriviaSeam> TransportTrivia<T> {
     /// Leading entries, before the owner renders.
     pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
         render_lines(self.leading.as_deref().unwrap_or(&[]), w)
@@ -101,11 +139,21 @@ impl<T: Render> TransportTrivia<T> {
         }
         if !own_line.is_empty() {
             w.seat_trailing()?;
+            let mut line_open = false;
+            let mut gap_set = false;
             for entry in own_line {
-                w.text("\n")?;
+                if let Some(text) = entry.seam_text() {
+                    w.trivia_seam(breaking(text, std::mem::replace(&mut line_open, false)));
+                    gap_set = true;
+                    continue;
+                }
+                if !std::mem::replace(&mut gap_set, false) {
+                    w.text("\n")?;
+                }
                 entry.render(w)?;
+                line_open = !w.ends_line();
             }
-            if !w.ends_line() {
+            if line_open {
                 w.text("\n")?;
             }
         }
@@ -123,7 +171,7 @@ impl<T: Render> TransportTrivia<T> {
 }
 
 /// The inner entries at gap `key` of a transport's trivia, if it has any.
-pub fn render_inner<T: Render>(
+pub fn render_inner<T: Render + TriviaSeam>(
     trivia: &Option<TransportTrivia<T>>,
     key: &str,
     w: &mut dyn RenderSink,

@@ -121,6 +121,7 @@ const _supertype_groupExpression_ids = new Set<number>([47]);
 const _supertype_namedNodeExpression_ids = new Set<number>([45, 48]);
 const _supertype_nodeIdentifier_ids = new Set<number>([5]);
 const _supertype_namedNodeGroup_ids = new Set<number>([52, 53]);
+const _supertype_whitespace_ids = new Set<number>([24, 25, 26]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -146,7 +147,7 @@ export const is = {
 	namedNodeExpression: _sg(_supertype_namedNodeExpression_ids),
 	nodeIdentifier: _sg(_supertype_nodeIdentifier_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
-	whitespace: _sg(new Set<number>())
+	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.

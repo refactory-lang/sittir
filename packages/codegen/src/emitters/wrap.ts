@@ -1,6 +1,6 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledAlias, isVisibleTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -1425,7 +1425,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					entry !== undefined && entry.kind === kind,
 					`ReturnType<typeof wrap${node.typeName}>`
 				);
-			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isVisibleTextLeaf(node)) {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isBuilderTextLeaf(node)) {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries) {
 					const entry = findKindEntry(this.#kindEntries, kind);

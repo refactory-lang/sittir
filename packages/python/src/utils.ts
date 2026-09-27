@@ -13,7 +13,17 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, LineContinuation, LineContinuationNewline, LineContinuationNul, NamespaceMap } from './types.js';
+import type {
+	Blankline,
+	Comment,
+	DoubleBlankline,
+	LineContinuation,
+	LineContinuationNewline,
+	LineContinuationNul,
+	Newline,
+	Space,
+	NamespaceMap
+} from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -56,8 +66,21 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['comment', 'line_continuation', 'line_continuation_newline', 'line_continuation_nul']),
+		kinds: new Set<string>([
+			'_blankline',
+			'_double_blankline',
+			'_newline',
+			'_space',
+			'comment',
+			'line_continuation',
+			'line_continuation_newline',
+			'line_continuation_nul'
+		]),
 		innerGaps: INNER_GAPS,
+		whitespace: {
+			run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
+			kindIdByText: { ' ': 121, '\n': 113, '\n\n': 122, '\n\n\n': 123 }
+		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -70,17 +93,89 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)
+			| (
+					| Blankline
+					| Comment
+					| DoubleBlankline
+					| LineContinuation
+					| LineContinuationNewline
+					| LineContinuationNul
+					| Newline
+					| Space
+					| string
+			  )
 			| {
-					leading?: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[];
-					trailing?: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[];
+					leading?: (
+						| Blankline
+						| Comment
+						| DoubleBlankline
+						| LineContinuation
+						| LineContinuationNewline
+						| LineContinuationNul
+						| Newline
+						| Space
+						| string
+					)[];
+					trailing?: (
+						| Blankline
+						| Comment
+						| DoubleBlankline
+						| LineContinuation
+						| LineContinuationNewline
+						| LineContinuationNul
+						| Newline
+						| Space
+						| string
+					)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul)[];
-	leading(...items: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[]): Self;
-	trailing(): readonly (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul)[];
-	trailing(...items: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[]): Self;
+	leading(): readonly (
+		| Blankline
+		| Comment
+		| DoubleBlankline
+		| LineContinuation
+		| LineContinuationNewline
+		| LineContinuationNul
+		| Newline
+		| Space
+	)[];
+	leading(
+		...items: (
+			| Blankline
+			| Comment
+			| DoubleBlankline
+			| LineContinuation
+			| LineContinuationNewline
+			| LineContinuationNul
+			| Newline
+			| Space
+			| string
+		)[]
+	): Self;
+	trailing(): readonly (
+		| Blankline
+		| Comment
+		| DoubleBlankline
+		| LineContinuation
+		| LineContinuationNewline
+		| LineContinuationNul
+		| Newline
+		| Space
+	)[];
+	trailing(
+		...items: (
+			| Blankline
+			| Comment
+			| DoubleBlankline
+			| LineContinuation
+			| LineContinuationNewline
+			| LineContinuationNul
+			| Newline
+			| Space
+			| string
+		)[]
+	): Self;
 }
 
 export interface NodeMethodsOf {

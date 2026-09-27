@@ -113,6 +113,12 @@ pub trait RenderSink {
     fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>);
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
+    /// A whitespace trivia entry: its text replaces whatever seam the gap it
+    /// sits in would otherwise get. A sink that knows no strengths writes it
+    /// as a token seam.
+    fn trivia_seam(&mut self, text: &str) {
+        self.token_seam(text);
+    }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds. The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.

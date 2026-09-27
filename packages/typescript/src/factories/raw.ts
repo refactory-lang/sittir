@@ -9645,6 +9645,30 @@ export function buildFunctionSignatureAutomaticSemicolon(): TSKindId.FunctionSig
 	return TSKindId.FunctionSignatureAutomaticSemicolon;
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildIndent(): TSKindId.Indent {
+	return TSKindId.Indent;
+}
+
+export function buildDedent(): TSKindId.Dedent {
+	return TSKindId.Dedent;
+}
+
 export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
 	if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
 	return withMethods(
@@ -10458,6 +10482,12 @@ export type FluentKindMap = {
 	_template_chars: T.TemplateChars;
 	_automatic_semicolon: T.AutomaticSemicolon;
 	_function_signature_automatic_semicolon: T.FunctionSignatureAutomaticSemicolon;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	_ternary_qmark: T.TernaryQmark;
 	__error_recovery: T.ErrorRecovery;
 	statement_identifier: T.StatementIdentifier.Built;
@@ -10705,6 +10735,12 @@ export const _factoryMap = {
 	_template_chars: buildTemplateChars,
 	_automatic_semicolon: buildAutomaticSemicolon,
 	_function_signature_automatic_semicolon: buildFunctionSignatureAutomaticSemicolon,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	_ternary_qmark: buildTernaryQmark,
 	__error_recovery: buildErrorRecovery,
 	statement_identifier: buildStatementIdentifier,

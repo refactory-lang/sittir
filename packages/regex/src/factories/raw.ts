@@ -1077,6 +1077,18 @@ export function buildInlineFlagsGroupDisable(
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
 export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(value, [['?', TSKindId.Qmark] as const]);
 	return withMethods(
@@ -1165,6 +1177,9 @@ export type FluentKindMap = {
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Built;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Built;
 	inline_flags_group_disable: T.InlineFlagsGroupDisable.Built;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
 	lazy: T.Lazy.Built;
 	unicode_property_name: T.UnicodePropertyName.Built;
 };
@@ -1215,6 +1230,9 @@ export const _factoryMap = {
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,
 	inline_flags_group_disable: buildInlineFlagsGroupDisable,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline,
 	lazy: buildLazy,
 	unicode_property_name: buildUnicodePropertyName
 } as const;

@@ -363,6 +363,10 @@ reach.
  *  actually-emitted aliases drift. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::classifyFactoryEmission`
+
+Whether a kind gets a top-level factory, and the skip reason when it does not. A presence marker (`isHiddenPresenceMarker`) is skipped as a hidden keyword literal; `buildFactoryMapEntries` skips the same kinds, and both read that one model predicate.
+
 ### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
@@ -4145,6 +4149,8 @@ that arrives as bare text (a detached fixture's comment, or text a user
 attached). Typed variants are needed because a factory-constructed comment
 carries the same wrapped wire shape as any other node and renders through
 its own template.
+
+`TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own.
 
 `TransportTrivia` is an alias for `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
 The carrier's shape (leading, trailing and inner entries, each with its
@@ -11149,8 +11155,9 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 
 Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia`:
 - `kindName`, from `KIND_NAMES`;
-- `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node entry of any other kind;
+- `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
+- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
 - `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
 
 `trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
@@ -12603,10 +12610,13 @@ A supertype group whose name is also a kind's flat key (typescript's
 `identifier` supertype over `identifier | undefined`) is emitted as that
 kind's callable with the group members attached — `attachProps(F.buildIdentifier,
 { … })` typed `typeof F.buildIdentifier & { … }` — so `ir.identifier('x')` and
-`ir.identifier.identifier('x')` both work. Before, the flat entry simply
-yielded to the group and the kind became uncallable from `ir`. `attachProps`
+`ir.identifier.identifier('x')` both work. `attachProps`
 mutating the factory export is the same pattern the coercing bundles use
 for `.strict`.
+
+A group lists a surface-hidden member only when it is a punctuation leaf
+with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its
+members; any other surface-hidden member stays out of the group.
 
 The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
 

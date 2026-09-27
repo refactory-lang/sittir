@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { NamespaceMap } from './types.js';
+import type { Newline, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -56,8 +56,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>([]),
-		innerGaps: INNER_GAPS
+		kinds: new Set<string>(['_newline']),
+		innerGaps: INNER_GAPS,
+		whitespace: { run: /^(?:(?:(?:\r?\n))+)$/u, kindIdByText: { '\n': 49 } }
 	}
 } satisfies WithMethodsEngine;
 
@@ -67,13 +68,11 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(
-		...args: ((AnyNodeData | string) | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
-	): Self;
-	leading(): readonly AnyNodeData[];
-	leading(...items: (AnyNodeData | string)[]): Self;
-	trailing(): readonly AnyNodeData[];
-	trailing(...items: (AnyNodeData | string)[]): Self;
+	(...args: ((Newline | string) | { leading?: (Newline | string)[]; trailing?: (Newline | string)[] })[]): Self;
+	leading(): readonly Newline[];
+	leading(...items: (Newline | string)[]): Self;
+	trailing(): readonly Newline[];
+	trailing(...items: (Newline | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

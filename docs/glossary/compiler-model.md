@@ -608,12 +608,13 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::hidden`
 
-```text
-/** A node is hidden when it has no factory (supertype, group, token). */
-```
-
-This is factory absence, not parser visibility: whether the kind is hidden on
-the generated surface is `surfaceHidden`.
+Whether the kind is not a named node, as the grammar says at construction: a
+literal that is not `named`, a supertype, a synthetic keyword. It is stored,
+so stamping a builder later (`stampWhitespaceBuilders`) never flips it, and
+the facts derived from it (node-model `hidden`, the `consts` keyword and
+operator tables, the `$named` stamp) stay the grammar's. Whether the kind has
+a builder is `factoryName !== undefined`; whether it is hidden on the
+generated surface is `surfaceHidden`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::surfaceHidden`
 
@@ -2484,11 +2485,27 @@ a pass rebuilds.
  *  `isFixedTextLeaf`. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isVisibleTextLeaf`
+### `packages/codegen/src/compiler/model/node-map.ts::isBuilderTextLeaf`
 
-A fixed-text leaf that is not hidden: a visible kind that owns a factory and
-a type. Visibility is the leaf's `hidden` attribute, never its class; the
-class answers only whether the text is word-shaped.
+A fixed-text leaf that has a builder (`factoryName` set): a visible kind, or
+a `_whitespace` member, which is hidden but gets a builder. The class answers
+only whether the text is word-shaped. Emitters that produce a leaf's builder,
+coercer, type, `ir` member, wrap entry or keyword test ask this, never
+`hidden`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isBuilderlessPunctuationLeaf`
+
+A non-word fixed-text leaf with no builder: an anonymous or `_`-prefixed
+delimiter. Emitters that skip factories and types for delimiters ask this, so
+neither a visible non-word literal nor a `_whitespace` member is skipped with
+them.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isWordOrBuilderTextLeaf`
+
+A fixed-text leaf that gets a text factory shape or a keyword type row: a
+word-shaped keyword of either visibility, or a non-word token with a builder.
+It is the complement of `isBuilderlessPunctuationLeaf` within the fixed-text
+leaves. `classifyFactoryShape` and the type tables (`types`) ask it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isVisiblePunctuationLeaf`
 
@@ -2497,24 +2514,24 @@ whole body is punctuation, such as typescript `optional_chain` (`?.`) or
 rust `unit_expression`. A grammar-wide `_` literal row addresses punctuation
 faces, and a keyword resolves its face through the word default instead, so
 the rule that seats a token seam for a node arm of a choice asks this class
-and not `isVisibleTextLeaf`.
+and not `isBuilderTextLeaf`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
 
-A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
-Emitters that skip factories and types for delimiters ask this, so a visible
-non-word literal is not skipped with them.
+A non-word fixed-text leaf the grammar hides: `hidden`, not builder presence.
+The `consts` operator table and `markUserFacing` ask it, so a `_whitespace`
+member with a builder is still an operator, not a keyword.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isWordOrVisibleTextLeaf`
 
-A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
-keyword of either visibility, or a visible non-word token. It is the
-complement of `isHiddenPunctuationLeaf` within the fixed-text leaves.
+A word-shaped keyword of either visibility, or a non-word token the grammar
+shows: the complement of `isHiddenPunctuationLeaf` within the fixed-text
+leaves. The `consts` keyword table and the edge classes and edge char sets of
+a kind ask it; they read the grammar, so a builder never changes them.
 
-Only the sites that must see hidden keywords use it: the kind-id and type
-tables (`consts`, `types`), `classifyFactoryShape`, and the edge classes and
-edge char sets of a kind. Every other emitter site asks `isVisibleTextLeaf`;
-tightening any of the four regenerates all three grammars differently.
+### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPresenceMarker`
+
+A surface-hidden keyword: the `_kw_*` presence markers, whose builders exist but are stored as a flag on their parent, so no top-level factory is emitted for them.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
@@ -4296,6 +4313,10 @@ member symbol: the members of its `_whitespace` supertype
 codegen lists whitespace kinds by name, so every spacing site, `options.ts`
 union, whitespace text and choice member symbol is read from here.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::declaresWhitespace`
+
+Whether the grammar has a `_whitespace` supertype. Every real grammar does; a unit-test grammar may not, and the model passes that read the vocabulary during assembly skip it there.
+
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
 
 The arms of `whitespaceSymbolsOf`, in declaration order.
@@ -4539,7 +4560,23 @@ A sequence's terminals on one edge, given its members ordered from that edge inw
 
 ### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
 
-The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
+
+A text made of one or more of the grammar's lexical extras: `^(?:p1|p2|…)+$` over `extraPatterns`, compiled as a leaf guard is. Undefined for a grammar with no lexical extra.
+
+### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
+
+The `_whitespace` members that are extras: those whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras. Rust and typescript get `space`, `newline` and `blankline`, and python adds `double_blankline`. `tight` is excluded because an empty text is no run, and the depth marks because their text is not whitespace. The builders of the rest still exist; a trivia position refuses them.
+
+### `packages/codegen/src/compiler/model/trivia.ts::WhitespaceTrivia`
+
+The runtime's reading of loose whitespace text: `run`, the lexical-extras regex, and `kindIdByText`, each whitespace trivia kind's literal to its kind id.
+
+### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTrivia`
+
+`WhitespaceTrivia` for a grammar, undefined when it has no lexical extra. Text the run accepts names the kind whose literal it is exactly; there is no nearest match.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineTerminated`
 

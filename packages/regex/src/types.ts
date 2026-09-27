@@ -36,6 +36,8 @@ export type LeafStringMap = {
 	[TSKindId.EndAssertion]: '$';
 	[TSKindId.BoundaryAssertion]: '\\b';
 	[TSKindId.NonBoundaryAssertion]: '\\B';
+	[TSKindId.Space]: ' ';
+	[TSKindId.Newline]: '\n';
 };
 
 export enum TSKindId {
@@ -952,6 +954,9 @@ export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
 export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>;
 export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
+export type Tight = TSKindId.Tight;
+export type Space = TSKindId.Space;
+export type Newline = TSKindId.Newline;
 
 // Tree types
 export interface PatternTree extends TreeNode<'pattern'> {}
@@ -1011,6 +1016,15 @@ export interface ControlEscapeTree extends TreeNode<'control_escape'> {}
 export interface ControlLetterEscapeTree extends TreeNode<'control_letter_escape'> {}
 export interface GroupNameTree extends TreeNode<'group_name'> {}
 export interface DecimalDigitsTree extends TreeNode<'decimal_digits'> {}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
 
 // Supertype unions
 export type ClassAtom =
@@ -1045,6 +1059,8 @@ export type CharacterEscapeTree = ControlEscapeTree | ControlLetterEscapeTree | 
 
 export type Whitespace = Tight | Space | Newline;
 
+export type WhitespaceTree = TightTree | SpaceTree | NewlineTree;
+
 export namespace ClassAtom {
 	export type Kind = '_class_atom';
 	export type Tree = ClassAtomTree;
@@ -1062,21 +1078,10 @@ export namespace CharacterEscape {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Tree = WhitespaceTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Tight = TSKindId.Tight;
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export type Space = TSKindId.Space;
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export type Newline = TSKindId.Newline;
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
 export type BslashDash = TSKindId.BslashDash;
 export interface BslashDashTree extends AnyTreeNode {
 	readonly type: 'bslash_dash';
@@ -1728,6 +1733,9 @@ export interface NonBoundaryAssertionNs extends KeywordNs<
 	NonBoundaryAssertionTree,
 	'non_boundary_assertion'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
@@ -1831,6 +1839,9 @@ export interface NamespaceMap {
 	[TSKindId.EndAssertion]: EndAssertionNs;
 	[TSKindId.BoundaryAssertion]: BoundaryAssertionNs;
 	[TSKindId.NonBoundaryAssertion]: NonBoundaryAssertionNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.PatternCharacter]: PatternCharacterNs;
 	[TSKindId.PosixClassName]: PosixClassNameNs;
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
@@ -2469,6 +2480,36 @@ export namespace NonBoundaryAssertion {
 	export type LooseArgs = NonBoundaryAssertionNs['LooseArgs'];
 	export type Tree = NonBoundaryAssertionNs['Tree'];
 	export type Kind = 'non_boundary_assertion';
+}
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Space {
+	export type Config = SpaceNs['Config'];
+	export type Built = SpaceNs['Built'];
+	export type Loose = SpaceNs['Loose'];
+	export type LooseConfig = SpaceNs['LooseConfig'];
+	export type BuildArgs = SpaceNs['BuildArgs'];
+	export type LooseArgs = SpaceNs['LooseArgs'];
+	export type Tree = SpaceNs['Tree'];
+	export type Kind = '_space';
+}
+export namespace Newline {
+	export type Config = NewlineNs['Config'];
+	export type Built = NewlineNs['Built'];
+	export type Loose = NewlineNs['Loose'];
+	export type LooseConfig = NewlineNs['LooseConfig'];
+	export type BuildArgs = NewlineNs['BuildArgs'];
+	export type LooseArgs = NewlineNs['LooseArgs'];
+	export type Tree = NewlineNs['Tree'];
+	export type Kind = '_newline';
 }
 export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];

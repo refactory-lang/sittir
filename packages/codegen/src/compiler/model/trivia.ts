@@ -1,7 +1,8 @@
 import type { NodeMap } from '../types.ts';
 import type { RenderRule } from '../../types/rule.ts';
-import { AbstractAssembledCompound, AssembledPolymorph, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
-import { leadingRegex } from './leaf-pattern.ts';
+import { AbstractAssembledCompound, AssembledPolymorph, AssembledPunctuation, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
+import { anchoredLeafRegex, leadingRegex } from './leaf-pattern.ts';
+import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
@@ -77,7 +78,7 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = triviaKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;
 	const kinds = extrasClosure(
-		[...(nodeMap.extras ?? [])].filter((kind) => nodeMap.nodes.has(kind)),
+		[...(nodeMap.extras ?? []), ...whitespaceTriviaKinds(nodeMap)],
 		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AssembledSupertype ? [kind] : [])),
 		(kind) => {
 			const node = nodeMap.nodes.get(kind);
@@ -88,6 +89,40 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	);
 	triviaKindsByNodeMap.set(nodeMap, kinds);
 	return kinds;
+}
+
+export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {
+	const patterns = nodeMap.extraPatterns ?? [];
+	if (patterns.length === 0) return undefined;
+	return anchoredLeafRegex('extras', `(?:${patterns.map((pattern) => `(?:${pattern})`).join('|')})+`);
+}
+
+export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
+	const extrasRun = lexicalExtrasRun(nodeMap);
+	if (extrasRun === undefined || !declaresWhitespace(nodeMap)) return [];
+	return [...whitespaceSymbolsOf(nodeMap).values()].filter((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		return node instanceof AssembledPunctuation && extrasRun.test(node.text);
+	});
+}
+
+export interface WhitespaceTrivia {
+	readonly run: RegExp;
+	readonly kindIdByText: ReadonlyMap<string, number>;
+}
+
+export function whitespaceTrivia(nodeMap: NodeMap): WhitespaceTrivia | undefined {
+	const run = lexicalExtrasRun(nodeMap);
+	if (run === undefined) return undefined;
+	const kindIdByText = new Map<string, number>();
+	for (const kind of whitespaceTriviaKinds(nodeMap)) {
+		const node = nodeMap.nodes.get(kind);
+		if (!(node instanceof AssembledPunctuation) || node.kindId === undefined) {
+			throw new Error(`trivia: whitespace kind '${kind}' has no literal and kind id`);
+		}
+		kindIdByText.set(node.text, node.kindId);
+	}
+	return { run, kindIdByText };
 }
 
 export function lineTerminated(nodeMap: NodeMap, kind: string): boolean | undefined {

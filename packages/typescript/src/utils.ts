@@ -13,7 +13,16 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, CommentBlock, CommentLine, HtmlComment, NamespaceMap } from './types.js';
+import type {
+	Blankline,
+	Comment,
+	CommentBlock,
+	CommentLine,
+	HtmlComment,
+	Newline,
+	Space,
+	NamespaceMap
+} from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -56,8 +65,20 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['comment', 'comment_block', 'comment_line', 'html_comment']),
+		kinds: new Set<string>([
+			'_blankline',
+			'_newline',
+			'_space',
+			'comment',
+			'comment_block',
+			'comment_line',
+			'html_comment'
+		]),
 		innerGaps: INNER_GAPS,
+		whitespace: {
+			run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
+			kindIdByText: { ' ': 178, '\n': 179, '\n\n': 180 }
+		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -70,17 +91,21 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Comment | CommentBlock | CommentLine | HtmlComment | string)
+			| (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)
 			| {
-					leading?: (Comment | CommentBlock | CommentLine | HtmlComment | string)[];
-					trailing?: (Comment | CommentBlock | CommentLine | HtmlComment | string)[];
+					leading?: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[];
+					trailing?: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Comment | CommentBlock | CommentLine | HtmlComment)[];
-	leading(...items: (Comment | CommentBlock | CommentLine | HtmlComment | string)[]): Self;
-	trailing(): readonly (Comment | CommentBlock | CommentLine | HtmlComment)[];
-	trailing(...items: (Comment | CommentBlock | CommentLine | HtmlComment | string)[]): Self;
+	leading(): readonly (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space)[];
+	leading(
+		...items: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[]
+	): Self;
+	trailing(): readonly (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space)[];
+	trailing(
+		...items: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[]
+	): Self;
 }
 
 export interface NodeMethodsOf {

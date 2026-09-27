@@ -1097,6 +1097,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
+	readonly hidden: boolean;
 	irKey?: string;
 	abstract readonly modelType: ModelType;
 
@@ -1170,15 +1171,13 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.wordMatcher = opts?.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
-		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
+		this.hidden = opts?.hidden === true;
+		this.factoryName = this.hidden ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
-	get hidden(): boolean {
-		return this.factoryName === undefined;
-	}
 
 	get surfaceHidden(): boolean {
 		return surfaceHiddenOf(this.kindEntry, this.kind);
@@ -1615,8 +1614,16 @@ export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword |
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
-export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return isFixedTextLeaf(node) && !node.hidden;
+export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return isFixedTextLeaf(node) && node.factoryName !== undefined;
+}
+
+export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.factoryName === undefined;
+}
+
+export function isWordOrBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return node instanceof AssembledKeyword || isBuilderTextLeaf(node);
 }
 
 export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
@@ -1628,7 +1635,11 @@ export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledP
 }
 
 export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
+	return node instanceof AssembledKeyword || (isFixedTextLeaf(node) && !node.hidden);
+}
+
+export function isHiddenPresenceMarker(node: AssembledNode): node is AssembledKeyword {
+	return node instanceof AssembledKeyword && node.surfaceHidden;
 }
 
 export interface CompoundOpts {

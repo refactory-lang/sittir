@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lineTerminated, triviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import type { NodeMap } from '../../types.ts';
 
 async function nodeMapOf(grammar: string): Promise<NodeMap> {
@@ -16,19 +16,57 @@ function innerGapsOf(nodeMap: NodeMap, kind: string): unknown {
 
 describe('trivia model facts', () => {
 	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
-		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual(['block_comment', 'comment', 'line_comment']);
+		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual([
+			'_blankline',
+			'_newline',
+			'_space',
+			'block_comment',
+			'comment',
+			'line_comment'
+		]);
 		expect([...triviaKinds(await nodeMapOf('python'))].sort()).toEqual([
+			'_blankline',
+			'_double_blankline',
+			'_newline',
+			'_space',
 			'comment',
 			'line_continuation',
 			'line_continuation_newline',
 			'line_continuation_nul'
 		]);
 		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual([
+			'_blankline',
+			'_newline',
+			'_space',
 			'comment',
 			'comment_block',
 			'comment_line',
 			'html_comment'
 		]);
+	});
+
+	it('keeps symbol extras and lexical extras apart', async () => {
+		const rust = await nodeMapOf('rust');
+		expect([...(rust.extras ?? [])]).toEqual(['line_comment', 'block_comment']);
+		expect(rust.extraPatterns).toEqual(['\\s']);
+	});
+
+	it('makes a whitespace kind trivia exactly when its literal is one or more lexical extras', async () => {
+		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_newline', '_space']);
+		expect(whitespaceTriviaKinds(await nodeMapOf('python')).sort()).toEqual([
+			'_blankline',
+			'_double_blankline',
+			'_newline',
+			'_space'
+		]);
+		const typescript = await nodeMapOf('typescript');
+		expect(whitespaceTriviaKinds(typescript)).not.toContain('_tight');
+		expect(whitespaceTriviaKinds(typescript)).not.toContain('_indent');
+		expect(Object.fromEntries(whitespaceTrivia(typescript)?.kindIdByText ?? [])).toEqual({
+			' ': typescript.nodes.get('_space')?.kindId,
+			'\n': typescript.nodes.get('_newline')?.kindId,
+			'\n\n': typescript.nodes.get('_blankline')?.kindId
+		});
 	});
 
 	it('marks a token line-terminated only when every arm ends in an open pattern that cannot cross a line', async () => {

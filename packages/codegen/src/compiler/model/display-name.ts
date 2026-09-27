@@ -35,7 +35,7 @@ export function displayOfParserName(name: string): string {
 }
 
 
-export function displayNameOf(kind: string, nodeMap: NodeMap): string {
+export function displayNameOf(kind: string, nodeMap: Pick<NodeMap, 'nodes'>): string {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) throw new Error(`display name: '${kind}' is not a kind of this grammar`);
 	return node.display.name;

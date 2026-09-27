@@ -14768,6 +14768,12 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		...d,
 		$type: TSKindId.FunctionSignatureAutomaticSemicolon as const
 	}),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
+	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
 	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
 	[TSKindId.StatementIdentifier]: (d, t) =>
@@ -15097,6 +15103,12 @@ interface _WrapReturnByKindId {
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: _NodeData & {
 		readonly $type: TSKindId.FunctionSignatureAutomaticSemicolon;
 	};
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
+	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
+	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
+	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
+	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
 	[TSKindId.TernaryQmark]: _NodeData & { readonly $type: TSKindId.TernaryQmark };
 	[TSKindId.ErrorRecovery]: _NodeData & { readonly $type: TSKindId.ErrorRecovery };
 	[TSKindId.StatementIdentifier]: ReturnType<typeof wrapStatementIdentifier>;

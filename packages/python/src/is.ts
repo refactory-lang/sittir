@@ -668,7 +668,7 @@ const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
 const _supertype_float_ids = new Set<number>([94, 95, 96]);
 const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
-const _supertype_whitespace_ids = new Set<number>([113]);
+const _supertype_whitespace_ids = new Set<number>([120, 121, 113, 122, 123]);
 
 export const is = {
 	module: _g(TSKindId.Module),

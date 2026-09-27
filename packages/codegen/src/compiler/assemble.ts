@@ -25,7 +25,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
-import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
+import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
 import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
@@ -264,6 +264,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 
 	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, assembleDiagnostics);
+	stampWhitespaceBuilders(nodes);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -278,7 +279,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 	const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 	for (const rule of Object.values(normalized.normalizedRules)) {
-		if (rule.type !== SUPERTYPE || !rule.variantArms || rule.name === WHITESPACE_SUPERTYPE) continue;
+		if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
 		for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 	}
 	const userFacingCtx: _UserFacingCtx = {
@@ -322,6 +323,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		reserved: normalized.reserved,
 		externals: normalized.externals ? new Set(normalized.externals) : undefined,
 		extras: normalized.extras ? new Set(normalized.extras) : undefined,
+		extraPatterns: normalized.extraPatterns,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		deriveShapeDiagnostics: assembleDiagnostics.deriveShapeDiagnostics.all,
@@ -718,6 +720,15 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 		return;
 	}
 	node.userFacing = ctx.aliasSourceKinds.has(kind) || ctx.variantChildKinds.has(kind);
+}
+
+function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
+	if (!declaresWhitespace({ nodes })) return;
+	for (const kind of whitespaceSymbolsOf({ nodes }).values()) {
+		const node = nodes.get(kind);
+		if (!(node instanceof AssembledPunctuation)) throw new Error(`assemble: whitespace arm '${kind}' is not a literal kind`);
+		node.factoryName ??= nameNode(node.kind).factoryName;
+	}
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>, ctx: AssembleCtx): void {

@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { BlockComment, Comment, LineComment, NamespaceMap } from './types.js';
+import type { Blankline, BlockComment, Comment, LineComment, Newline, Space, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -56,8 +56,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['block_comment', 'comment', 'line_comment']),
+		kinds: new Set<string>(['_blankline', '_newline', '_space', 'block_comment', 'comment', 'line_comment']),
 		innerGaps: INNER_GAPS,
+		whitespace: { run: /^(?:(?:(?:\s))+)$/u, kindIdByText: { ' ': 166, '\n': 167, '\n\n': 168 } },
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -70,17 +71,17 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (BlockComment | Comment | LineComment | string)
+			| (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)
 			| {
-					leading?: (BlockComment | Comment | LineComment | string)[];
-					trailing?: (BlockComment | Comment | LineComment | string)[];
+					leading?: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[];
+					trailing?: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (BlockComment | Comment | LineComment)[];
-	leading(...items: (BlockComment | Comment | LineComment | string)[]): Self;
-	trailing(): readonly (BlockComment | Comment | LineComment)[];
-	trailing(...items: (BlockComment | Comment | LineComment | string)[]): Self;
+	leading(): readonly (Blankline | BlockComment | Comment | LineComment | Newline | Space)[];
+	leading(...items: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[]): Self;
+	trailing(): readonly (Blankline | BlockComment | Comment | LineComment | Newline | Space)[];
+	trailing(...items: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

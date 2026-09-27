@@ -34,7 +34,10 @@ export const _fromMap = {
 	grouping_group: coerceToGroupingGroup,
 	named_node_arm: coerceToNamedNodeArm,
 	named_node_group_children: coerceToNamedNodeGroupChildren,
-	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast
+	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_newline: coerceToNewline
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -48,7 +51,10 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
 	identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildIdentifier },
 	_immediate_identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildImmediateIdentifier },
-	comment: { factory: (content: string) => _resolveByKind('comment', content) }
+	comment: { factory: (content: string) => _resolveByKind('comment', content) },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['escape_sequence', 'comment']);
 
@@ -63,7 +69,7 @@ function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
 	return entry.factory(v);
 }
 
-const _TEXT_KINDS_BY_RANK: readonly string[] = ['identifier', '_immediate_identifier'];
+const _TEXT_KINDS_BY_RANK: readonly string[] = ['_tight', '_space', '_newline', 'identifier', '_immediate_identifier'];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {};
 
@@ -1064,4 +1070,16 @@ export function coerceToNamedNodeGroupAnchoredLast(
 		namedNodeExpressions: resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(input.namedNodeExpressions),
 		last: _requireField('named_node_group_anchored_last', 'last', resolveNamedNodeGroupAnchoredLast_last(input.last))
 	});
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
+	return F.buildNewline();
 }

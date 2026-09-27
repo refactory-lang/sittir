@@ -21,6 +21,16 @@ export const nodeIdentifier: {
 	identifier: F.buildIdentifier
 };
 
+export const whitespace: {
+	readonly tight: typeof F.buildTight;
+	readonly space: typeof F.buildSpace;
+	readonly newline: typeof F.buildNewline;
+} = {
+	tight: F.buildTight,
+	space: F.buildSpace,
+	newline: F.buildNewline
+};
+
 export const definition: typeof F.definition = F.definition;
 
 export const groupExpression: typeof F.groupExpression = F.groupExpression;
@@ -50,6 +60,7 @@ export const ir: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly nodeIdentifier: typeof nodeIdentifier;
+	readonly whitespace: typeof whitespace;
 	readonly definition: typeof definition;
 	readonly groupExpression: typeof groupExpression;
 	readonly namedNodeExpression: typeof namedNodeExpression;
@@ -83,6 +94,7 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	nodeIdentifier,
+	whitespace,
 	definition,
 	groupExpression,
 	namedNodeExpression

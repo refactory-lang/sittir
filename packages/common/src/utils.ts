@@ -36,6 +36,7 @@ export interface TriviaFacts {
 	kindName(type: AnyNodeData['$type']): string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
+	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	comment?: ((text: string) => AnyNodeData) | undefined;
 }
 
@@ -136,21 +137,28 @@ function triviaSetterOf<Self extends AnyNodeData>(node: Self, facts: TriviaFacts
 	) as TriviaSetterRuntime<Self>;
 }
 
-/** One trivia item as its entry: a node as it is, a string through the grammar's `ir.comment`. */
+/** One trivia item as its entry: a trivia node or whitespace kind id as it is, a string by `textEntryOf`. */
 function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
-	if (typeof item !== 'string') {
-		if (isNodeData(item)) {
-			const kind = facts.kindName(item.$type);
-			if (kind === undefined || !facts.kinds.has(kind)) {
-				throw new Error(`trivia: ${kind ?? String(item.$type)} is not a trivia kind; an entry is one of ${[...facts.kinds].join(', ')}`);
-			}
-			return item;
-		}
-		throw new Error(`trivia: an entry is a node or a comment's text, not ${JSON.stringify(item)}`);
+	if (typeof item === 'string') return textEntryOf(item, facts);
+	if (typeof item !== 'number' && !isNodeData(item)) {
+		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
-	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(item)} is text, and this grammar has no ir.comment`);
-	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(item)} is text, and ir.comment is bound when the factories load; import the factories`);
-	return facts.comment(item);
+	const type = typeof item === 'number' ? item : item.$type;
+	const kind = facts.kindName(type);
+	if (kind === undefined || !facts.kinds.has(kind)) throw new Error(`trivia: ${kind ?? String(type)} is not an extra`);
+	return item;
+}
+
+/** Loose text: whitespace text names the whitespace kind spelled exactly so; any other text is a comment's. */
+function textEntryOf(text: string, facts: TriviaFacts): TriviaEntry {
+	if (facts.whitespace?.run.test(text) === true) {
+		const kindId = facts.whitespace.kindIdByText[text];
+		if (kindId === undefined) throw new Error(`trivia: no whitespace kind is spelled ${JSON.stringify(text)}`);
+		return kindId;
+	}
+	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(text)} is text, and this grammar has no ir.comment`);
+	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(text)} is text, and ir.comment is bound when the factories load; import the factories`);
+	return facts.comment(text);
 }
 
 /**

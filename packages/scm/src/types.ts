@@ -10,6 +10,7 @@ import type {
 	LooseValue,
 	NodeKind,
 	NodeNs,
+	KeywordNs,
 	LeafNs,
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
@@ -30,6 +31,8 @@ export type LeafScalarMap = {};
 export type LeafStringMap = {
 	[TSKindId.Quantifier]: '*' | '+' | '?';
 	[TSKindId.PredicateType]: '?' | '!';
+	[TSKindId.Space]: ' ';
+	[TSKindId.Newline]: '\n';
 	[TSKindId.MissingKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
 };
@@ -633,6 +636,9 @@ export type Quantifier = TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>;
 export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
+export type Tight = TSKindId.Tight;
+export type Space = TSKindId.Space;
+export type Newline = TSKindId.Newline;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
@@ -663,6 +669,15 @@ export interface ImmediateIdentifierTree extends AnyTreeNode {
 	readonly type: '_immediate_identifier';
 }
 export interface PredicateTypeTree extends TreeNode<'predicate_type'> {}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
 export interface MissingKeywordTree extends AnyTreeNode {
 	readonly type: 'missing_keyword';
 }
@@ -700,6 +715,8 @@ export type NamedNodeGroupTree = NamedNodeGroupChildrenTree | NamedNodeGroupAnch
 
 export type Whitespace = Tight | Space | Newline;
 
+export type WhitespaceTree = TightTree | SpaceTree | NewlineTree;
+
 export namespace Definition {
 	export type Kind = 'definition';
 	export type Tree = DefinitionTree;
@@ -727,21 +744,10 @@ export namespace NamedNodeGroup {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Tree = WhitespaceTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Tight = TSKindId.Tight;
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export type Space = TSKindId.Space;
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export type Newline = TSKindId.Newline;
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
 
 export type ScmNode =
 	| Program
@@ -1281,6 +1287,9 @@ export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 	never,
 	'named_node_group_anchored_last'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
 export interface ImmediateIdentifierNs extends LeafNs<
 	ImmediateIdentifier,
@@ -1313,6 +1322,9 @@ export interface NamespaceMap {
 	[TSKindId.NamedNodeArm]: NamedNodeArmNs;
 	[TSKindId.NamedNodeGroupChildren]: NamedNodeGroupChildrenNs;
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLastNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
 }
@@ -1739,6 +1751,36 @@ export namespace NamedNodeGroupAnchoredLast {
 	];
 	export type Tree = TreeFor<TSKindId.NamedNodeGroupAnchoredLast>;
 	export type Kind = 'named_node_group_anchored_last';
+}
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Space {
+	export type Config = SpaceNs['Config'];
+	export type Built = SpaceNs['Built'];
+	export type Loose = SpaceNs['Loose'];
+	export type LooseConfig = SpaceNs['LooseConfig'];
+	export type BuildArgs = SpaceNs['BuildArgs'];
+	export type LooseArgs = SpaceNs['LooseArgs'];
+	export type Tree = SpaceNs['Tree'];
+	export type Kind = '_space';
+}
+export namespace Newline {
+	export type Config = NewlineNs['Config'];
+	export type Built = NewlineNs['Built'];
+	export type Loose = NewlineNs['Loose'];
+	export type LooseConfig = NewlineNs['LooseConfig'];
+	export type BuildArgs = NewlineNs['BuildArgs'];
+	export type LooseArgs = NewlineNs['LooseArgs'];
+	export type Tree = NewlineNs['Tree'];
+	export type Kind = '_newline';
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];

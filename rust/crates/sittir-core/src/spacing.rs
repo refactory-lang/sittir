@@ -122,13 +122,15 @@ pub const DEFAULT_INDENT: &str = "    ";
 pub type SeamRank = usize;
 
 /// How firmly a mark holds its gap against the mark meeting it there. A
-/// declared arm (a grammar row, or a value set on the node) beats one the
+/// whitespace trivia entry beats everything: it replaces the gap's default.
+/// A declared arm (a grammar row, or a value set on the node) beats one the
 /// kind edge took from its edge token's face (cascade), which beats the bare
 /// fallback; rank decides only between marks of one strength. Depth marks
 /// stay above the whole scale.
 pub const SEAM_FALLBACK: u8 = 0;
 pub const SEAM_CASCADE: u8 = 1;
 pub const SEAM_DECLARED: u8 = 2;
+pub const SEAM_TRIVIA: u8 = 3;
 
 pub fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
@@ -496,6 +498,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_is_token = true;
     }
 
+    fn trivia_seam(&mut self, text: &str) {
+        self.merge_seam_with(text, SEAM_TRIVIA);
+        self.seam_is_token = true;
+    }
+
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
         self.sources.and_then(|sources| sources.kind_of(coord))
     }
@@ -520,9 +527,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn dedent(&mut self, seam: &str) {
         self.depth = self.depth.saturating_sub(1);
-        if std::mem::replace(&mut self.indent_armed, false) {
+        let holds_trivia = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA;
+        if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.seam = None;
             self.seam_text.clear();
+            self.seam_is_token = false;
             return;
         }
         if !seam.is_empty() {
@@ -741,6 +750,30 @@ mod sink_tests {
                 w.text("b").unwrap();
             }),
             "a\nb"
+        );
+    }
+
+    #[test]
+    fn a_trivia_seam_replaces_the_gap_default_whatever_its_width() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam("\n");
+                w.trivia_seam(" ");
+                w.seam("\n");
+                w.text("b").unwrap();
+            }),
+            "a b"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.trivia_seam("\n\n");
+                w.dedent("\n");
+                w.text("}").unwrap();
+            }),
+            "{\n\n}"
         );
     }
 

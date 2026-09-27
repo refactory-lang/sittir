@@ -248,6 +248,12 @@ export const _fromMap = {
 	_template_chars: coerceToTemplateChars,
 	_automatic_semicolon: coerceToAutomaticSemicolon,
 	_function_signature_automatic_semicolon: coerceToFunctionSignatureAutomaticSemicolon,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	statement_identifier: coerceToStatementIdentifier,
 	shorthand_property_identifier: coerceToShorthandPropertyIdentifier,
 	shorthand_property_identifier_pattern: coerceToShorthandPropertyIdentifierPattern,
@@ -353,6 +359,12 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		values: ['\n'],
 		factory: () => F.buildFunctionSignatureAutomaticSemicolon()
 	},
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
 	statement_identifier: {
 		pattern:
 			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
@@ -405,6 +417,12 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'html_comment',
 	'jsx_text',
 	'_function_signature_automatic_semicolon',
+	'_tight',
+	'_space',
+	'_newline',
+	'_blankline',
+	'_indent',
+	'_dedent',
 	'regex_pattern',
 	'unescaped_double_string_fragment',
 	'unescaped_single_string_fragment',
@@ -11980,6 +11998,30 @@ export function coerceToFunctionSignatureAutomaticSemicolon(
 	_input?: T.FunctionSignatureAutomaticSemicolon.Loose
 ): ReturnType<typeof F.buildFunctionSignatureAutomaticSemicolon> {
 	return F.buildFunctionSignatureAutomaticSemicolon();
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
+	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
+	return F.buildIndent();
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
+	return F.buildDedent();
 }
 
 export function resolveStatementIdentifier_content(

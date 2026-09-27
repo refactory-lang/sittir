@@ -304,6 +304,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		externalRoles,
 		externals: raw.externals,
 		extras: raw.extras,
+		extraPatterns: raw.extraPatterns,
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,

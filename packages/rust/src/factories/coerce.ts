@@ -260,6 +260,12 @@ export const _fromMap = {
 	raw_string_literal_end: coerceToRawStringLiteralEnd,
 	doc_comment: coerceToDocComment,
 	_block_comment_content: coerceToBlockCommentContent,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	type_identifier: coerceToTypeIdentifier,
 	field_identifier: coerceToFieldIdentifier,
 	shorthand_field_identifier: coerceToShorthandFieldIdentifier
@@ -344,6 +350,12 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
 	doc_comment: { pattern: /^(?:(?:.*\n?))$/u, factory: F.buildDocComment },
 	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
 	type_identifier: {
 		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
@@ -389,6 +401,12 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'inner_doc_comment_marker',
 	'_block_comment_content',
 	'doc_comment',
+	'_tight',
+	'_space',
+	'_newline',
+	'_blankline',
+	'_indent',
+	'_dedent',
 	'inner_line_doc_comment_marker',
 	'outer_line_doc_comment_marker',
 	'line_comment_regular',
@@ -11773,6 +11791,30 @@ export function coerceToBlockCommentContent(
 ): ReturnType<typeof F.buildBlockCommentContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
+	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
+	return F.buildIndent();
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
+	return F.buildDedent();
 }
 
 export function resolveTypeIdentifier_content(

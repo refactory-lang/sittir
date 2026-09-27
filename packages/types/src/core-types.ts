@@ -14,10 +14,13 @@
  * Leading trivia renders before the node's own text, trailing trivia after
  * it, and inner trivia inside an empty node, at the gap it is keyed by. An
  * entry is the NodeData of one of the grammar's trivia kinds (e.g. a
- * `line_comment`), rendered through its own kind; a loose string given to
- * `$trivia` is built into one through the grammar's `ir.comment`.
+ * `line_comment`), rendered through its own kind, or the kind id of a
+ * whitespace kind the grammar's extras match (e.g. `blankline`), which
+ * replaces the spacing of the gap it sits in. A loose string given to
+ * `$trivia` is the whitespace kind spelled exactly so, or else is built into
+ * a comment through the grammar's `ir.comment`.
  */
-export type TriviaEntry = AnyNodeData;
+export type TriviaEntry = AnyNodeData | number;
 
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];

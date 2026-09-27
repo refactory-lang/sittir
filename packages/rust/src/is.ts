@@ -843,6 +843,7 @@ const _supertype_comment_ids = new Set<number>([332, 335]);
 const _supertype_path_ids = new Set<number>([
 	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 258, 52, 33, 53
 ]);
+const _supertype_whitespace_ids = new Set<number>([165, 166, 167, 168, 169, 170]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -1025,7 +1026,7 @@ export const is = {
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	comment: _sg(_supertype_comment_ids),
 	path: _sg(_supertype_path_ids),
-	whitespace: _sg(new Set<number>())
+	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.

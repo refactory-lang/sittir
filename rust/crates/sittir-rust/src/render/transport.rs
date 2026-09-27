@@ -2751,6 +2751,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 pub enum TriviaTransport {
     LineComment(LineCommentTransport),
     BlockComment(BlockCommentTransport),
+    Space(SpaceTransport),
+    Newline(NewlineTransport),
+    Blankline(BlanklineTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -2759,6 +2762,9 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
         match self {
             TriviaTransport::LineComment(t) => t.prepare(ctx),
             TriviaTransport::BlockComment(t) => t.prepare(ctx),
+            TriviaTransport::Space(t) => t.prepare(ctx),
+            TriviaTransport::Newline(t) => t.prepare(ctx),
+            TriviaTransport::Blankline(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -2769,7 +2775,21 @@ impl ::sittir_core::render::Render for TriviaTransport {
         match self {
             TriviaTransport::LineComment(t) => t.render(w),
             TriviaTransport::BlockComment(t) => t.render(w),
+            TriviaTransport::Space(t) => t.render(w),
+            TriviaTransport::Newline(t) => t.render(w),
+            TriviaTransport::Blankline(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
+        }
+    }
+}
+
+impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
+    fn seam_text(&self) -> Option<&str> {
+        match self {
+            TriviaTransport::Space(t) => Some(&t.text),
+            TriviaTransport::Newline(t) => Some(&t.text),
+            TriviaTransport::Blankline(t) => Some(&t.text),
+            _ => None,
         }
     }
 }
@@ -2785,6 +2805,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 match u16::from_napi_value(env, napi_val)? {
                     332 => Ok(Self::LineComment(LineCommentTransport::from_napi_value(env, napi_val)?)),
                     335 => Ok(Self::BlockComment(BlockCommentTransport::from_napi_value(env, napi_val)?)),
+                    166 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    167 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    168 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -2798,6 +2821,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 match kind_id {
                     332 => Ok(Self::LineComment(LineCommentTransport::from_napi_value(env, napi_val)?)),
                     335 => Ok(Self::BlockComment(BlockCommentTransport::from_napi_value(env, napi_val)?)),
+                    166 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    167 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    168 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),

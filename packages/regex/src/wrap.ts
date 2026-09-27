@@ -1561,6 +1561,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
 	[TSKindId.Lazy]: (d, t) => wrapLazy(_aliasEnvelope(d, t) as unknown as T.Lazy, t),
 	[TSKindId.UnicodePropertyName]: (d, t) =>
 		wrapUnicodePropertyName(_aliasEnvelope(d, t) as unknown as T.UnicodePropertyName, t)
@@ -1645,6 +1648,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.InlineFlagsGroupEnable]: ReturnType<typeof wrapInlineFlagsGroupEnable>;
 	[TSKindId.InlineFlagsGroupToggle]: ReturnType<typeof wrapInlineFlagsGroupToggle>;
 	[TSKindId.InlineFlagsGroupDisable]: ReturnType<typeof wrapInlineFlagsGroupDisable>;
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
+	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
 	[TSKindId.Lazy]: ReturnType<typeof wrapLazy>;
 	[TSKindId.UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
 }

@@ -901,6 +901,7 @@ const _supertype_primaryType_ids = new Set<number>([
 	353, 354, 306, 338, 356, 365, 366, 352, 345, 346, 119, 351, 349, 347, 337, 335, 369, 368
 ]);
 const _supertype_indexSignature_ids = new Set<number>([403, 404]);
+const _supertype_whitespace_ids = new Set<number>([177, 178, 179, 180, 181, 182]);
 const _supertype_exportStatementDefault_ids = new Set<number>([420, 421]);
 
 export const is = {
@@ -1092,7 +1093,7 @@ export const is = {
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids),
 	indexSignature: _sg(_supertype_indexSignature_ids),
-	whitespace: _sg(new Set<number>()),
+	whitespace: _sg(_supertype_whitespace_ids),
 	exportStatementDefault: _sg(_supertype_exportStatementDefault_ids)
 } as unknown as IsGuards;
 

@@ -14,6 +14,7 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
+import { escapeRegexLiteral } from '../util/word-matcher.ts';
 import type {
 	AliasRule,
 	ChoiceRule,
@@ -285,6 +286,7 @@ interface GrammarOptions {
 
 interface MetadataSinks {
 	extras: string[];
+	extraPatterns: string[];
 	externals: string[];
 	supertypes: string[];
 	factoryInline: string[];
@@ -329,6 +331,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const provenanceByKind = new Map<string, RuleProvenance>();
 
 	const extras: string[] = [];
+	const extraPatterns: string[] = [];
 	const externals: string[] = [];
 	const supertypes: string[] = [];
 	const factoryInline: string[] = [];
@@ -340,6 +343,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const sinks: MetadataSinks = {
 		extras,
+		extraPatterns,
 		externals,
 		supertypes,
 		factoryInline,
@@ -392,6 +396,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		name: opts.name,
 		rules: identified.rules,
 		extras,
+		extraPatterns,
 		externals,
 		supertypes,
 		factoryInline,
@@ -868,6 +873,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 	const { sinks, setWord } = ctx;
 	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ?? ctx.baseGrammar) as {
 		extras?: string[];
+		extraPatterns?: string[];
 		externals?: string[];
 		supertypes?: string[];
 		factoryInline?: string[];
@@ -880,6 +886,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 	if (inherited) {
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
 		if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras);
+		if (!opts.extras && Array.isArray(inherited.extraPatterns)) sinks.extraPatterns.push(...inherited.extraPatterns);
 		if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes);
 		if (!opts.factoryInline && Array.isArray(inherited.factoryInline)) {
 			sinks.factoryInline.push(...inherited.factoryInline);
@@ -890,6 +897,14 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		if (!opts.word && inherited.word) setWord(inherited.word);
 		if (!opts.reserved && inherited.reserved) Object.assign(sinks.reserved, inherited.reserved);
 	}
+}
+
+function appendExtra(rule: Rule<'evaluate'>, ctx: EvaluateCtx): void {
+	const { sinks } = ctx;
+	if (rule.type === SYMBOL) appendDedup(sinks.extras, rule.name);
+	else if (rule.type === PATTERN) appendDedup(sinks.extraPatterns, rule.value);
+	else if (rule.type === STRING) appendDedup(sinks.extraPatterns, escapeRegexLiteral(rule.value));
+	else throw new Error(`evaluate: an extra is a symbol, a pattern or a string, not ${rule.type}`);
 }
 
 function appendDedup(sink: string[], value: string): void {
@@ -916,6 +931,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	const { refs, sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
 		extras?: string[];
+		extraPatterns?: string[];
 		externals?: string[];
 		supertypes?: string[];
 		factoryInline?: string[];
@@ -927,19 +943,12 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	} | null;
 	if (opts.extras) {
 		const $ = createProxy('_extras_', refs);
-		const baseExtras = baseGrammar?.extras ?? [];
+		const baseExtras = [
+			...baseNameSymbols(baseGrammar?.extras),
+			...(baseGrammar?.extraPatterns ?? []).map((value) => ({ type: PATTERN, value }))
+		];
 		const result = opts.extras.call($, $, baseExtras);
-		if (Array.isArray(result)) {
-			for (const e of result) {
-				if (typeof e === 'string') {
-					appendDedup(sinks.extras, e);
-					continue;
-				}
-				const n = coerceToRule(e);
-				if (n.type === SYMBOL) appendDedup(sinks.extras, n.name);
-				else if (n.type === PATTERN) appendDedup(sinks.extras, n.value);
-			}
-		}
+		if (Array.isArray(result)) for (const e of result) appendExtra(coerceToRule(e), ctx);
 	}
 
 	if (opts.externals) {

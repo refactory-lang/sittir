@@ -5872,6 +5872,22 @@ export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
 
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
 export function buildIndent(text: string): T.Indent.Built {
 	if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
 	return withMethods(
@@ -6148,6 +6164,10 @@ export type FluentKindMap = {
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
 	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
+	_tight: T.Tight;
+	_space: T.Space;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	names: T.Names.Built;
@@ -6338,6 +6358,10 @@ export const _factoryMap = {
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
 	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
+	_tight: buildTight,
+	_space: buildSpace,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	names: buildNames,

@@ -96,6 +96,11 @@ export type LeafStringMap = {
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
 	[TSKindId.AutomaticSemicolon]: '\n';
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n';
+	[TSKindId.Space]: ' ';
+	[TSKindId.Newline]: '\n';
+	[TSKindId.Blankline]: '\n\n';
+	[TSKindId.Indent]: '﷐\n';
+	[TSKindId.Dedent]: '﷑\n';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.TypeofKeyword]: 'typeof';
@@ -9844,6 +9849,12 @@ export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
 export type AutomaticSemicolon = TSKindId.AutomaticSemicolon;
 export type FunctionSignatureAutomaticSemicolon = TSKindId.FunctionSignatureAutomaticSemicolon;
+export type Tight = TSKindId.Tight;
+export type Space = TSKindId.Space;
+export type Newline = TSKindId.Newline;
+export type Blankline = TSKindId.Blankline;
+export type Indent = TSKindId.Indent;
+export type Dedent = TSKindId.Dedent;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type TypeKeyword = TSKindId.TypeKeyword;
@@ -10197,6 +10208,24 @@ export interface AutomaticSemicolonTree extends AnyTreeNode {
 }
 export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode {
 	readonly type: '_function_signature_automatic_semicolon';
+}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
 }
 export interface TernaryQmarkTree extends AnyTreeNode {
 	readonly type: '_ternary_qmark';
@@ -10849,6 +10878,8 @@ export type IndexSignatureTree = IndexSignatureColonTree | IndexSignatureMappedT
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
+export type WhitespaceTree = TightTree | SpaceTree | NewlineTree | BlanklineTree | IndentTree | DedentTree;
+
 export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
 
 export type ExportStatementDefaultTree = ExportStatementDefaultFromTree | ExportStatementDefaultDeclarationTree;
@@ -10995,6 +11026,7 @@ export namespace IndexSignature {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Tree = WhitespaceTree;
 }
 
 export namespace ExportStatementDefault {
@@ -11003,30 +11035,6 @@ export namespace ExportStatementDefault {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Tight = TSKindId.Tight;
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export type Space = TSKindId.Space;
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export type Newline = TSKindId.Newline;
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export type Blankline = TSKindId.Blankline;
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export type Indent = TSKindId.Indent;
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export type Dedent = TSKindId.Dedent;
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
-}
 
 export type TypescriptNode =
 	| Program
@@ -16579,6 +16587,12 @@ export interface FunctionSignatureAutomaticSemicolonNs extends KeywordNs<
 	FunctionSignatureAutomaticSemicolonTree,
 	'_function_signature_automatic_semicolon'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', IndentTree, '_indent'> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', DedentTree, '_dedent'> {}
 export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TypeKeywordTree, 'type_keyword'> {}
 export interface DeclareKeywordNs extends KeywordNs<
 	TSKindId.DeclareKeyword,
@@ -16978,6 +16992,12 @@ export interface NamespaceMap {
 	[TSKindId.MetaPropertyImportMeta]: MetaPropertyImportMetaNs;
 	[TSKindId.AutomaticSemicolon]: AutomaticSemicolonNs;
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: FunctionSignatureAutomaticSemicolonNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Newline]: NewlineNs;
+	[TSKindId.Blankline]: BlanklineNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.TypeKeyword]: TypeKeywordNs;
 	[TSKindId.DeclareKeyword]: DeclareKeywordNs;
 	[TSKindId.NamespaceKeyword]: NamespaceKeywordNs;
@@ -23179,6 +23199,66 @@ export namespace FunctionSignatureAutomaticSemicolon {
 	export type LooseArgs = FunctionSignatureAutomaticSemicolonNs['LooseArgs'];
 	export type Tree = FunctionSignatureAutomaticSemicolonNs['Tree'];
 	export type Kind = '_function_signature_automatic_semicolon';
+}
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Space {
+	export type Config = SpaceNs['Config'];
+	export type Built = SpaceNs['Built'];
+	export type Loose = SpaceNs['Loose'];
+	export type LooseConfig = SpaceNs['LooseConfig'];
+	export type BuildArgs = SpaceNs['BuildArgs'];
+	export type LooseArgs = SpaceNs['LooseArgs'];
+	export type Tree = SpaceNs['Tree'];
+	export type Kind = '_space';
+}
+export namespace Newline {
+	export type Config = NewlineNs['Config'];
+	export type Built = NewlineNs['Built'];
+	export type Loose = NewlineNs['Loose'];
+	export type LooseConfig = NewlineNs['LooseConfig'];
+	export type BuildArgs = NewlineNs['BuildArgs'];
+	export type LooseArgs = NewlineNs['LooseArgs'];
+	export type Tree = NewlineNs['Tree'];
+	export type Kind = '_newline';
+}
+export namespace Blankline {
+	export type Config = BlanklineNs['Config'];
+	export type Built = BlanklineNs['Built'];
+	export type Loose = BlanklineNs['Loose'];
+	export type LooseConfig = BlanklineNs['LooseConfig'];
+	export type BuildArgs = BlanklineNs['BuildArgs'];
+	export type LooseArgs = BlanklineNs['LooseArgs'];
+	export type Tree = BlanklineNs['Tree'];
+	export type Kind = '_blankline';
+}
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Built = IndentNs['Built'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Tree = IndentNs['Tree'];
+	export type Kind = '_indent';
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Built = DedentNs['Built'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Tree = DedentNs['Tree'];
+	export type Kind = '_dedent';
 }
 export namespace TypeKeyword {
 	export type Config = TypeKeywordNs['Config'];

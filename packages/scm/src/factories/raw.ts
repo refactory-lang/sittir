@@ -734,6 +734,18 @@ export function buildNamedNodeGroupAnchoredLast(
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
 export type FluentKindMap = {
 	program: T.Program.Built;
 	escape_sequence: T.EscapeSequence.Built;
@@ -759,6 +771,9 @@ export type FluentKindMap = {
 	named_node_arm: T.NamedNodeArm.Built;
 	named_node_group_children: T.NamedNodeGroupChildren.Built;
 	named_node_group_anchored_last: T.NamedNodeGroupAnchoredLast.Built;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
 };
 
 export const _factoryMap = {
@@ -785,6 +800,9 @@ export const _factoryMap = {
 	grouping_group: buildGroupingGroup,
 	named_node_arm: buildNamedNodeArm,
 	named_node_group_children: buildNamedNodeGroupChildren,
-	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast
+	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline
 } as const;
 export type _FactoryMap = typeof _factoryMap;

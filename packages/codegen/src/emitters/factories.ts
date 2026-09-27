@@ -1,7 +1,7 @@
 import { findOwnKindEntry, reservedWordset } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker } from '../compiler/model/node-map.ts';
 import {
 	interiorEnumArms,
 	interiorOf,
@@ -56,7 +56,6 @@ import {
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
-	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
@@ -284,7 +283,7 @@ function buildFactoryMapEntries(
 		const isHiddenGroup = node.surfaceHidden && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
+		if (isHiddenPresenceMarker(node)) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
@@ -347,7 +346,7 @@ export namespace factory {
 			}
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) {
+				if (isBuilderTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -1114,7 +1113,7 @@ export function constructorSurface(
 		}
 		case 'keyword':
 		case 'punctuation':
-			if (!isVisibleTextLeaf(target)) return undefined;
+			if (!isBuilderTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: leafTextParams(target), args: 'text' };
@@ -1886,7 +1885,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) this.emitLeaf(node);
+				if (isBuilderTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

@@ -10144,6 +10144,30 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bu
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildIndent(): TSKindId.Indent {
+	return TSKindId.Indent;
+}
+
+export function buildDedent(): TSKindId.Dedent {
+	return TSKindId.Dedent;
+}
+
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	return withMethods(
@@ -10469,6 +10493,12 @@ export type FluentKindMap = {
 	raw_string_literal_end: T.RawStringLiteralEnd;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Built;
 	field_identifier: T.FieldIdentifier.Built;
@@ -10724,6 +10754,12 @@ export const _factoryMap = {
 	raw_string_literal_end: buildRawStringLiteralEnd,
 	doc_comment: buildDocComment,
 	_block_comment_content: buildBlockCommentContent,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,

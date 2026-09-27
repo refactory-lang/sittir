@@ -240,6 +240,22 @@ export const primaryType: {
 	union: F.unionType
 };
 
+export const whitespace: {
+	readonly tight: typeof F.buildTight;
+	readonly space: typeof F.buildSpace;
+	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly indent: typeof F.buildIndent;
+	readonly dedent: typeof F.buildDedent;
+} = {
+	tight: F.buildTight,
+	space: F.buildSpace,
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	indent: F.buildIndent,
+	dedent: F.buildDedent
+};
+
 export const declaration: typeof F.declaration = F.declaration;
 
 export const formalParameter: typeof F.formalParameter = F.formalParameter;
@@ -467,6 +483,7 @@ export const ir: {
 	readonly type: typeof type;
 	readonly tupleTypeMember: typeof tupleTypeMember;
 	readonly primaryType: typeof primaryType;
+	readonly whitespace: typeof whitespace;
 	readonly declaration: typeof declaration;
 	readonly formalParameter: typeof formalParameter;
 	readonly destructuringPattern: typeof destructuringPattern;
@@ -694,6 +711,7 @@ export const ir: {
 	type,
 	tupleTypeMember,
 	primaryType,
+	whitespace,
 	declaration,
 	formalParameter,
 	destructuringPattern,

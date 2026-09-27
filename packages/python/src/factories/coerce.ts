@@ -194,6 +194,10 @@ export const _fromMap = {
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
 	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
 	format_expression: coerceToFormatExpression
@@ -286,7 +290,11 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_fragment: { pattern: /^(?:(?:[^"'\\{}\n]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:["']+))$/u, factory: F.buildStringEnd },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() }
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'comment',
@@ -316,6 +324,10 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'string_fragment',
 	'escape_interpolation',
 	'string_end',
+	'_tight',
+	'_space',
+	'_blankline',
+	'_double_blankline',
 	'wildcard_import',
 	'ellipsis',
 	'not_escape_sequence',
@@ -7175,6 +7187,22 @@ export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F
 
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
 	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
+	return F.buildDoubleBlankline();
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
 }
 
 export function resolveNames_content(value: T.Names.LooseConfig['content']): T.Names['_content'] {

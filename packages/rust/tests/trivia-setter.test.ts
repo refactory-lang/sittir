@@ -13,7 +13,7 @@ const innerOf = <N extends { $trivia: object }>(node: N): InnerSetter<N> => node
 describe('$trivia getters, inner and refusals', () => {
 	it('reads back what each position was set to, [] where nothing was', () => {
 		const a = ir.identifier('a').$trivia.leading(ir.comment(' lead')).$trivia.trailing(ir.comment(' tail'));
-		expect(a.$trivia.leading().map((entry) => entry.$type)).toEqual([TSKindId.LineComment]);
+		expect(a.$trivia.leading().map((entry) => (typeof entry === 'number' ? entry : entry.$type))).toEqual([TSKindId.LineComment]);
 		expect(a.$trivia.trailing()).toHaveLength(1);
 		expect(ir.identifier('b').$trivia.leading()).toEqual([]);
 	});
@@ -55,13 +55,14 @@ describe('loose trivia strings build ir.comment', () => {
 	it('takes the full spelling or the interior alike', () => {
 		const spelled = ir.identifier('a').$trivia.leading('// hi');
 		const interior = ir.identifier('a').$trivia.leading(' hi');
-		expect(spelled.$trivia.leading()[0]!.$type).toBe(TSKindId.LineComment);
+		expect(spelled.$trivia.leading()).toMatchObject([{ $type: TSKindId.LineComment }]);
 		expect(JSON.stringify(spelled.$trivia.leading())).toBe(JSON.stringify(interior.$trivia.leading()));
 		expect(spelled.$render()).toBe('// hi\na');
 	});
 
-	it('refuses a string the default arm cannot hold', () => {
-		expect(() => ir.identifier('a').$trivia.leading('\n\n')).toThrow();
+	it('refuses whitespace text no whitespace kind spells exactly', () => {
+		expect(() => ir.identifier('a').$trivia.leading('\n \n')).toThrow(/no whitespace kind is spelled/);
+		expect(() => ir.identifier('a').$trivia.leading('\n\n\n')).toThrow(/no whitespace kind is spelled/);
 	});
 
 	it('builds a line comment from its full spelling, not a doubled marker', () => {
@@ -81,7 +82,39 @@ describe('loose trivia strings build ir.comment', () => {
 	});
 
 	it('refuses a node entry whose kind is not trivia', () => {
-		expect(() => ir.identifier('a').$trivia.leading(ir.identifier('b') as never)).toThrow(/identifier is not a trivia kind/);
+		expect(() => ir.identifier('a').$trivia.leading(ir.identifier('b') as never)).toThrow(/identifier is not an extra/);
 		expect(ir.identifier('a').$trivia.leading(ir.blockComment(' b ')).$render()).toBe('/* b */\na');
+	});
+
+	it('takes an eligible whitespace kind, built or spelled exactly, as its kind id', () => {
+		const built = ir.identifier('a').$trivia.leading(ir.whitespace.blankline());
+		const spelled = ir.identifier('a').$trivia.leading('\n\n');
+		expect(built.$trivia.leading()).toEqual([TSKindId.Blankline]);
+		expect(spelled.$trivia.leading()).toEqual([TSKindId.Blankline]);
+	});
+
+	it('refuses whitespace kinds the extras do not match, for the one reason that they are not extras', () => {
+		const a = (): ReturnType<typeof ir.identifier> => ir.identifier('a');
+		// @ts-expect-error tight is not an extra, so it is no trivia entry
+		expect(() => a().$trivia.leading(ir.whitespace.tight())).toThrow(/_tight is not an extra/);
+		// @ts-expect-error indent is not an extra, so it is no trivia entry
+		expect(() => a().$trivia.leading(ir.whitespace.indent())).toThrow(/_indent is not an extra/);
+		// @ts-expect-error dedent is not an extra, so it is no trivia entry
+		expect(() => a().$trivia.leading(ir.whitespace.dedent())).toThrow(/_dedent is not an extra/);
+	});
+
+	it('renders a whitespace entry in place of the spacing of the gap it sits in', () => {
+		const stmt = (name: string): ReturnType<typeof ir.expressionStatement> =>
+			ir.expressionStatement(ir.identifier(name));
+		expect(ir.block({ statements: [stmt('a'), stmt('b')] }).$render()).toBe('{\n    a;\n    b;\n}');
+		const spaced = ir.block({ statements: [stmt('a'), stmt('b').$trivia.leading(ir.whitespace.blankline())] });
+		expect(spaced.$render()).toBe('{\n    a;\n\n    b;\n}');
+		const joined = ir.block({ statements: [stmt('a'), stmt('b').$trivia.leading(ir.whitespace.space())] });
+		expect(joined.$render()).toBe('{\n    a; b;\n}');
+		const afterComment = ir.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', ir.whitespace.blankline())] });
+		expect(afterComment.$render()).toBe('{\n    a;\n    // c\n\n    b;\n}');
+		const keepsBreak = ir.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', ir.whitespace.space())] });
+		expect(keepsBreak.$render()).toBe('{\n    a;\n    // c\n    b;\n}');
+		expect(innerOf(ir.block()).inner(ir.whitespace.blankline()).$render()).toBe('{\n\n}');
 	});
 });

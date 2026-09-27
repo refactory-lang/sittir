@@ -1533,7 +1533,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NamedNodeGroup]: (d, t) => wrapNamedNodeGroup(d as unknown as T.NamedNodeGroup, t),
 	[TSKindId.NamedNodeGroupChildren]: (d, t) => wrapNamedNodeGroupChildren(d as unknown as T.NamedNodeGroupChildren, t),
 	[TSKindId.NamedNodeGroupAnchoredLast]: (d, t) =>
-		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t)
+		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const })
 };
 
 interface _WrapReturnByKindId {
@@ -1568,6 +1571,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.NamedNodeGroup]: ReturnType<typeof wrapNamedNodeGroup>;
 	[TSKindId.NamedNodeGroupChildren]: ReturnType<typeof wrapNamedNodeGroupChildren>;
 	[TSKindId.NamedNodeGroupAnchoredLast]: ReturnType<typeof wrapNamedNodeGroupAnchoredLast>;
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
+	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

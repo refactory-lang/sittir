@@ -1,7 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
-import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -113,7 +113,7 @@ import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import type { GrammarName } from '../grammars.ts';
-import { triviaKinds } from '../compiler/model/trivia.ts';
+import { triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -1499,8 +1499,8 @@ function emitAliasUnwrapRecurseArm(
 
 function aliasLeafTrialOrder(node: AssembledNode): number {
 	if (node instanceof AssembledEnum) return 0;
-	if (isVisibleTextLeaf(node)) return 1;
-	if (isHiddenPunctuationLeaf(node)) return 2;
+	if (isBuilderTextLeaf(node)) return 1;
+	if (isBuilderlessPunctuationLeaf(node)) return 2;
 	if (node instanceof AssembledPattern) return 3;
 	return -1;
 }
@@ -2589,6 +2589,20 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		lines.push(`            TriviaTransport::${variant}(t) => t.render(w),`);
 	}
 	lines.push('            TriviaTransport::Verbatim(t) => t.render(w),');
+	lines.push('        }');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
+	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
+	lines.push('    fn seam_text(&self) -> Option<&str> {');
+	lines.push('        match self {');
+	for (const node of extrasNodes) {
+		if (!whitespaceKinds.has(node.kind)) continue;
+		lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(t) => Some(&t.text),`);
+	}
+	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
 	lines.push('}');

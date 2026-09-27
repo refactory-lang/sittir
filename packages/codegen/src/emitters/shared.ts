@@ -3,9 +3,10 @@ import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledAlias,
-	isWordOrVisibleTextLeaf,
-	isVisibleTextLeaf,
-	isHiddenPunctuationLeaf
+	isWordOrBuilderTextLeaf,
+	isBuilderTextLeaf,
+	isBuilderlessPunctuationLeaf,
+	isHiddenPresenceMarker
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
@@ -59,7 +60,7 @@ export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompoun
 export function isTextLeaf(
 	node: AssembledNode
 ): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
-	return isVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
+	return isBuilderTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
@@ -853,8 +854,8 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node)) return 'text';
-	if (isHiddenPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
+	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
@@ -990,7 +991,7 @@ export function classifyFactoryEmission(
 	context: FactoryDispatchContext
 ): FactoryEmission {
 	if (!node.userFacing && !isHiddenStructuralFactoryKind(kind, node)) return 'skip-non-surface-kind';
-	if (resolveHiddenKeywordLiteral(kind, context.nodeMap) !== undefined) return 'skip-hidden-keyword-literal';
+	if (isHiddenPresenceMarker(node)) return 'skip-hidden-keyword-literal';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
 	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
@@ -1003,7 +1004,7 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	if (isHiddenPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
+	if (isBuilderlessPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
 	return true;
 }
 

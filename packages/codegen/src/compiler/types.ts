@@ -102,6 +102,7 @@ export interface RawGrammar {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
 	readonly extras: string[];
+	readonly extraPatterns: string[];
 	readonly externals: string[];
 	readonly supertypes: string[];
 	readonly factoryInline: string[];
@@ -186,6 +187,7 @@ export interface LinkedGrammar {
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
+	readonly extraPatterns?: readonly string[];
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
@@ -219,6 +221,7 @@ export interface NormalizedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
+	readonly extraPatterns?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -248,6 +251,7 @@ export interface SimplifiedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
+	readonly extraPatterns?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
@@ -286,6 +290,7 @@ export interface NodeMap {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
+	readonly extraPatterns?: readonly string[];
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 }

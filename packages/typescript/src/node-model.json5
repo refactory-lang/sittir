@@ -4267,21 +4267,25 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
+      "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
-      "text": "﷑\n"
+      "text": "﷑\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_destructuring_pattern",
@@ -4372,11 +4376,13 @@
       "kind": "_indent",
       "modelType": "punctuation",
       "typeName": "Indent",
+      "factoryName": "indent",
       "irKey": "indent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
-      "text": "﷐\n"
+      "text": "﷐\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_kind",
@@ -4792,11 +4798,13 @@
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
+      "factoryName": "newline",
       "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_operator",
@@ -4830,11 +4838,13 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_template_chars",
@@ -4859,11 +4869,13 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_tuple_type_member",

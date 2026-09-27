@@ -20,7 +20,7 @@ describe('extension-point dedupe (Phase 6)', () => {
 	it('collapses duplicate extras entries to a single occurrence', async () => {
 		const raw = await evaluate(fixture('extension-dedup-grammar.js'));
 		// Source listed /\s/ twice. The pattern's source string is `\\s`.
-		const whitespaceCount = raw.extras.filter((e) => e === '\\s').length;
+		const whitespaceCount = raw.extraPatterns.filter((e) => e === '\\s').length;
 		expect(whitespaceCount).toBe(1);
 	});
 });

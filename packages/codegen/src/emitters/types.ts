@@ -1,7 +1,7 @@
 import { findOwnKindEntry, modelKindOfEntry } from '../compiler/generated-metadata.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -443,7 +443,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) {
+				if (isWordOrBuilderTextLeaf(node)) {
 					leafKinds.push(kind);
 					keywordKinds.set(kind, node.text);
 				}
@@ -707,7 +707,7 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName, token: isHiddenPunctuationLeaf(n) };
+			return { sub, typeName: n.typeName, token: isBuilderlessPunctuationLeaf(n) };
 		});
 		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
@@ -741,12 +741,12 @@ function collectAndEmitTokenTypeAliases(
 	const referencedTokenTypeNames = new Set<string>();
 	for (const t of referenced) {
 		const ref = nodeMap.nodes.get(t);
-		if (ref !== undefined && isHiddenPunctuationLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
+		if (ref !== undefined && isBuilderlessPunctuationLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
 	}
 
 	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!isHiddenPunctuationLeaf(node)) continue;
+		if (!isBuilderlessPunctuationLeaf(node)) continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;

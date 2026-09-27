@@ -2843,6 +2843,10 @@ runs once the metadata callbacks have been evaluated.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::appendExtra`
+
+One entry of an `extras` callback's result, recorded by what it is: a symbol's name in `extras`, a pattern's source in `extraPatterns`, and a literal string escaped into `extraPatterns` too, so the lexical extras are one list of regex sources. Any other rule is refused, since tree-sitter's extras are only these.
+
 ### `packages/codegen/src/compiler/evaluate.ts::appendDedup`
 
 ```text
@@ -2862,6 +2866,8 @@ runs once the metadata callbacks have been evaluated.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
+
+An `extras` callback receives the base grammar's extras as rules, its names as symbols and its patterns as `PATTERN` rules, and each entry of its result goes through `appendExtra`. Symbol extras and lexical extras stay two lists from here on (`extras`, `extraPatterns`).
 
 Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
 
@@ -9842,6 +9848,10 @@ same kinds, so the name and the fact cannot disagree.
 
 The grammar's `reserved` field as tree-sitter has it: each wordset name mapped to its members as rules, in declaration order. `evaluate` records it verbatim (a member written as a string is a STRING rule), and it equals `.sittir/src/grammar.json`'s `reserved`, which is `{}` for a grammar that declares none. It is carried unchanged through link, normalize and simplify to the node map.
 
+### `packages/codegen/src/compiler/types.ts::RawGrammar.extraPatterns`
+
+The grammar's lexical extras as regex sources: its pattern extras, and any literal-string extra escaped. `extras` holds only symbol names. The two are threaded side by side to the node map, where `triviaKinds` reads the patterns.
+
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
 
 ```text
@@ -10212,6 +10222,10 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 // data, reported to the sink as `dangling-internal-ref` and refused by
 // `assertCompilation`. All three grammars carry zero.
 ```
+
+### `packages/codegen/src/compiler/assemble.ts::stampWhitespaceBuilders`
+
+Gives every member of the grammar's `_whitespace` supertype (`whitespaceSymbolsOf`) its builder name, so each is built by `ir.whitespace.<member>()` and returns its kind id. The members are hidden literal kinds, which would otherwise have no builder. A grammar that declares no `_whitespace` (`declaresWhitespace`) has none to stamp. Which of them a trivia position accepts is a separate fact (`whitespaceTriviaKinds`).
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 

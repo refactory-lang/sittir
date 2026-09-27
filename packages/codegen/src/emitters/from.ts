@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -219,7 +219,7 @@ export namespace from {
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
 			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node) !== undefined);
-		} else if (isVisibleTextLeaf(node)) {
+		} else if (isBuilderTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
 		if (result) output.push(result);
@@ -795,9 +795,9 @@ function classifyKindsForResolver(
 			branchKinds.push(t);
 			continue;
 		}
-		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isVisibleTextLeaf(n)) {
+		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isBuilderTextLeaf(n)) {
 			leafKinds.push(t);
-		} else if (isHiddenPunctuationLeaf(n)) {
+		} else if (isBuilderlessPunctuationLeaf(n)) {
 			tokenKinds.push(t);
 		} else {
 			branchKinds.push(t);
@@ -1025,7 +1025,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 	for (const [kind, node] of nodeMap.nodes) {
 		if (classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (isVisibleTextLeaf(node)) {
+		if (isBuilderTextLeaf(node)) {
 			textChecks.push({ kind, values: [node.text] });
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
@@ -1170,7 +1170,7 @@ export function bareAcceptClosure(
 
 function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
 	if (!node.rawFactoryName) return false;
-	return node instanceof AssembledEnum || isVisibleTextLeaf(node) || node instanceof AssembledPattern;
+	return node instanceof AssembledEnum || isBuilderTextLeaf(node) || node instanceof AssembledPattern;
 }
 
 function emitBareRoutingTables(
@@ -1828,7 +1828,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 			this.emitBranch(node);
 			return;
 		}
-		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isVisibleTextLeaf(node)) {
+		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isBuilderTextLeaf(node)) {
 			this.emitLeaf(node);
 		}
 	}

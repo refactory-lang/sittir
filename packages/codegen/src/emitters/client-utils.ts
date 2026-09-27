@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { defaultTriviaForm, type TriviaForm } from '../compiler/model/trivia.ts';
+import { defaultTriviaForm, whitespaceTrivia, type TriviaForm, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal } from './shared.ts';
 export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
@@ -37,7 +37,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 	lines.push(...emitIsTreeNode());
 	lines.push('');
-	lines.push(...emitMethodsEngine(form, config.triviaKinds ?? []));
+	lines.push(...emitMethodsEngine(form, whitespaceTrivia(config.nodeMap), config.triviaKinds ?? []));
 	lines.push('');
 	lines.push(...emitWithMethods(triviaTypeNames));
 	lines.push('');
@@ -96,16 +96,28 @@ function emitAttachProps(): string[] {
 	];
 }
 
-function emitMethodsEngine(form: TriviaForm | undefined, triviaKinds: readonly string[]): string[] {
+function emitMethodsEngine(
+	form: TriviaForm | undefined,
+	whitespace: WhitespaceTrivia | undefined,
+	triviaKinds: readonly string[]
+): string[] {
+	const facts = [
+		"    kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type)",
+		`    kinds: new Set<string>(${JSON.stringify([...triviaKinds].sort(compareOrdinal))})`,
+		'    innerGaps: INNER_GAPS',
+		...(whitespace === undefined
+			? []
+			: [
+					`    whitespace: { run: /${whitespace.run.source}/${whitespace.run.flags}, kindIdByText: ${JSON.stringify(Object.fromEntries(whitespace.kindIdByText))} }`
+				]),
+		...(form === undefined ? [] : ['    comment: undefined as ((text: string) => AnyNodeData) | undefined'])
+	];
 	return [
 		'export const methodsEngine = {',
 		'  render(node: AnyNodeData) { return render(node); },',
 		'  toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) { return toEdit(node, startOrRange, endPos); },',
 		'  trivia: {',
-		"    kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),",
-		`    kinds: new Set<string>(${JSON.stringify([...triviaKinds].sort(compareOrdinal))}),`,
-		`    innerGaps: INNER_GAPS${form === undefined ? '' : ','}`,
-		...(form === undefined ? [] : ['    comment: undefined as ((text: string) => AnyNodeData) | undefined']),
+		facts.join(',\n'),
 		'  }',
 		'} satisfies WithMethodsEngine;'
 	];

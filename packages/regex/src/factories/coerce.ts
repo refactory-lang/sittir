@@ -55,6 +55,9 @@ export const _fromMap = {
 	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
 	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
 	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_newline: coerceToNewline,
 	lazy: coerceToLazy,
 	unicode_property_name: coerceToUnicodePropertyName
 } as const;
@@ -90,6 +93,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
 	group_name: { pattern: /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u, factory: F.buildGroupName },
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
 	unicode_property_name: {
 		pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u,
 		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodePropertyValue(text) as never)
@@ -109,6 +115,9 @@ function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
 }
 
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
+	'_tight',
+	'_space',
+	'_newline',
 	'any_character',
 	'start_assertion',
 	'end_assertion',
@@ -1441,6 +1450,18 @@ export function coerceToInlineFlagsGroupDisable(
 		),
 		pattern: resolveInlineFlagsGroupDisable_pattern(input.pattern)
 	});
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
+	return F.buildNewline();
 }
 
 export function resolveLazy_content(value: T.Lazy.LooseConfig['content']): T.Lazy['_content'] {

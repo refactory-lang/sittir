@@ -1,6 +1,6 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -1426,7 +1426,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) te.emitLeaf(node);
+				if (isBuilderTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':
 			case 'envelope':

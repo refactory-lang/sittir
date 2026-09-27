@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, NamespaceMap } from './types.js';
+import type { Comment, Newline, Space, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -56,8 +56,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['comment']),
+		kinds: new Set<string>(['_newline', '_space', 'comment']),
 		innerGaps: INNER_GAPS,
+		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\n': 26 } },
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -68,11 +69,16 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(...args: ((Comment | string) | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): Self;
-	leading(): readonly Comment[];
-	leading(...items: (Comment | string)[]): Self;
-	trailing(): readonly Comment[];
-	trailing(...items: (Comment | string)[]): Self;
+	(
+		...args: (
+			| (Comment | Newline | Space | string)
+			| { leading?: (Comment | Newline | Space | string)[]; trailing?: (Comment | Newline | Space | string)[] }
+		)[]
+	): Self;
+	leading(): readonly (Comment | Newline | Space)[];
+	leading(...items: (Comment | Newline | Space | string)[]): Self;
+	trailing(): readonly (Comment | Newline | Space)[];
+	trailing(...items: (Comment | Newline | Space | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
