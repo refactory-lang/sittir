@@ -287,8 +287,10 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
 
 - The key is `(code, ruleId, slotName?)`. Diagnostics are owner-level, and
   rule ids below the root are not stable across stages (enrich's field wraps
-  and hoists change paths), so the key uses the owner's root id. All stages
-  use evaluate-time kind names, so no rename canonicalization is needed.
+  and hoists change paths), so the key uses the owner's root id. Owner
+  identity is that root id, stable across renames: a rule id points back to
+  the source rule, so a kind the catalog renames to its parser name keeps the
+  id it was minted with, and no rename canonicalization is needed.
 - `ruleProvenance` is where the owner kind comes from: `upstream` if the raw
   stage declares it, `enrich` if enrich mints it, otherwise `wire`. The first
   stage a key appears in is not stored; it is read from the stage records.

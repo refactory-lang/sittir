@@ -43,6 +43,7 @@ export interface RuleCatalogBuildResult {
 export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 	readonly roots?: readonly string[];
+	readonly sourceKindOf?: ReadonlyMap<string, string>;
 }
 
 export function buildRuleCatalog(
@@ -66,6 +67,7 @@ export function buildRuleCatalog(
 		const result = identifyRule({
 			rule,
 			ownerKind,
+			sourceKind: ctx.sourceKindOf?.get(ownerKind) ?? ownerKind,
 			parentId: undefined,
 			path: [],
 			provenance,
@@ -126,6 +128,7 @@ export function collectReferences(rules: Readonly<Record<string, Rule<'evaluate'
 interface IdentifyParams {
 	readonly rule: Rule<'evaluate'>;
 	readonly ownerKind: string;
+	readonly sourceKind: string;
 	readonly parentId: RuleId | undefined;
 	readonly path: readonly RulePathSegment[];
 	readonly provenance: RuleProvenance;
@@ -135,7 +138,7 @@ interface IdentifyParams {
 }
 
 function identifyRule(params: IdentifyParams): BuildResult {
-	const id = createRuleId(params.ownerKind, { path: params.path });
+	const id = createRuleId(params.sourceKind, { path: params.path });
 	const children = identifyChildren({ ...params, selfId: id });
 	const childIds = children.map((child) => child.id);
 	const rule = withIdentifiedChildren({ rule: params.rule, id, children });
@@ -162,6 +165,7 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		identifyRule({
 			rule: childArgs.rule,
 			ownerKind: params.ownerKind,
+			sourceKind: params.sourceKind,
 			parentId: selfId,
 			path: [...params.path, childArgs.segment],
 			provenance: params.provenance,
@@ -281,9 +285,15 @@ function classifyIntrinsic(
 	return classifyByType(rule.type, anyChildNonterminal);
 }
 
+const RULE_ID_SCHEME = 'rule:';
+
 export function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
-	if (ctx.path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
-	return `rule:${encodeURIComponent(ownerKind)}:${ctx.path.map(formatPathSegment).join('/')}`;
+	const owner = `${RULE_ID_SCHEME}${encodeURIComponent(ownerKind)}:`;
+	return ctx.path.length === 0 ? `${owner}root` : `${owner}${ctx.path.map(formatPathSegment).join('/')}`;
+}
+
+export function ruleIdPath(id: RuleId): string {
+	return id.slice(id.indexOf(':', RULE_ID_SCHEME.length) + 1);
 }
 
 function formatPathSegment(segment: RulePathSegment): string {

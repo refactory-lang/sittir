@@ -1845,7 +1845,8 @@ rebuild goes through here.
 
 ```text
 /** Re-key a spliced body's rule ids under the host reference's id. Ids are
- *  minted once, per owner kind, by the rule catalog (`rule:<owner>:<path>`);
+ *  minted once, per source kind, by the rule catalog; `ruleIdPath` reads
+ *  their path back;
  *  when link or normalize splices a body into another rule, the descendants
  *  would otherwise keep the source owner's ids, and every host that inlines
  *  the same body would register the same id in `slotByRuleId` — last writer

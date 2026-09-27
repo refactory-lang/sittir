@@ -808,7 +808,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		if (provenance !== undefined) provenanceByKind.set(rename(kind), provenance);
 	}
 	const supertypes = raw.supertypes.map(rename);
-	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes });
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes, sourceKindOf: targets });
 	const renameEntry = (entry: RuleListEntry): RuleListEntry =>
 		entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry;
 	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });

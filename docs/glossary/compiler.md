@@ -5856,6 +5856,19 @@ Ctx for `collectReferences`: the rule catalog whose roots give `fromRuleId`.
  *  no visible rule reaches it — `_whitespace` has no reference anywhere. */
 ```
 
+`sourceKindOf` maps a renamed kind to the source rule it came from. The catalog mints that kind's ids under
+the source name, so a rule id stays a back-pointer to its source rule across renames: `match_block`, collapsed
+from `_match_block`, keeps `rule:_match_block:root`. Ids are the owner identity diagnostic records key on.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::createRuleId`
+
+Writes a rule id, `rule:<source kind>:<path>`, with the source kind URI-encoded so it holds no `:`. It and
+`ruleIdPath` are the only code that knows the format.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::ruleIdPath`
+
+The path part of a rule id (`root`, or `content/members.2`), the inverse of `createRuleId`.
+
 ### `packages/codegen/src/compiler/generate.ts::engine`
 
 ```text
@@ -10141,7 +10154,7 @@ The renames the parser catalog records for the grammar's rules and externals (`d
 
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
-Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged.
+Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`).
 
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 
