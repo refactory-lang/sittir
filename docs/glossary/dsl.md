@@ -6096,3 +6096,211 @@ The grammar-level inputs of an `enrich()` call: the base rules, the supertype, e
 
 The `SymbolFacts` of an `enrich()` call over a given rule set: the ctx's names, with no declared visible externals, since those are declared by wire, which runs after enrich. Both of enrich's predicted sources (`sourceSymbols` over the base rules, `enrichedSymbols` over the enriched ones) are built from it.
 
+### `packages/codegen/src/dsl/symbol-table.ts::ParserSymbolTable`
+
+A parser's symbol table as the kind catalog needs it: each symbol's C name with its id, in id order (`symbols`); the name `ts_symbol_names` gives each (`names`); and the per-symbol facts — visible, named, supertype, aliased non-terminal, and the token count (`facts`). The parser.c reader fills one from the generated C source; the catalog predictor fills one from the grammar.
+
+### `packages/codegen/src/dsl/symbol-table.ts::kindTableOfSymbolTable`
+
+The one derivation of the kind catalog's rows from a symbol table and its grammar.json: literal texts (`resolveSymbolTextFacts`), runtime kind names (`deriveSymbolRuntimeName`), lexical ranks (`collectLexicalRanks`), joined per symbol by `joinIdNames`. Both sources of a table go through it, so a predicted row and a real row can differ only where the tables do.
+
+### `packages/codegen/src/dsl/symbol-table.ts::literalRuleValue`
+
+```text
+/**
+ * The literal text a grammar-JSON rule node stands for, when the node is
+ * itself a bare `STRING` or an unnamed `ALIAS` wrapping one — the two rule
+ * shapes tree-sitter treats as a literal for aliasing purposes. Returns
+ * `undefined` for every other rule shape.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::walkGrammarNode`
+
+```text
+/**
+ * One pass over the grammar-JSON rule tree, collecting every `STRING`
+ * value, every named-ALIAS target name, and every unnamed-ALIAS-of-a-SYMBOL
+ * pair (the literal-rule chain `findEntryForLiteralText` falls back to).
+ * Recurses into arrays and every object value uniformly, since a rule tree
+ * has no fixed shape by node type.
+ */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::ParserSymbolFacts`
+
+The per-symbol facts read from `parser.c` beside the name tables: the symbols in `ts_non_terminal_alias_map`, each symbol's `.visible` and `.named` flags, the symbols flagged `.supertype` (`collectSymbolFlags`), and `TOKEN_COUNT` (`collectTokenCount`), below which every symbol id is a terminal.
+
+### `packages/codegen/src/dsl/symbol-table.ts::collectLexicalRanks`
+
+The lexical precedence of every rule, external and alias display in the compiled `grammar.json`, as a dense rank (0 first). The loose surface builds a bare string as the first admitted text kind in this order, so the order has to follow the facts tree-sitter's lexer uses when two tokens could match the same text. Each name gets a key, compared element by element:
+
+1. externals before rules — the external scanner runs before the internal lexer;
+2. higher lexical precedence first — a `PREC` directly inside `TOKEN`/`IMMEDIATE_TOKEN` (`tokenLexicalPrec`);
+3. fixed text before a pattern (`isFixedTextRule`) — tree-sitter prefers a string match over a regex match of the same length;
+4. position — the index in `externals` or `rules`.
+
+A sittir mint (a `SYMBOL` stamped `metadata.symbolSource: 'group-lift'`) takes its source rule's position followed by its arm order within that rule, so it ranks where its text was declared. A named `ALIAS` display that is not itself a rule takes its storage symbol's key, since the lexer matches the storage token. Ties at the key are broken by name so the order is deterministic.
+
+### `packages/codegen/src/dsl/symbol-table.ts::GrammarJsonRule`
+
+The slice of a `grammar.json` rule node `collectLexicalRanks` reads: type, name, value, `named`, content, members and the `symbolSource` stamp.
+
+### `packages/codegen/src/dsl/symbol-table.ts::LexicalKey`
+
+A lexical sort key: a sequence of numbers compared element by element (`compareLexicalKeys`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::grammarNameOfSymbol`
+
+The grammar name of a parser symbol's C name: `sym_`, `anon_sym_`, `aux_sym_` or `alias_sym_` stripped. It is the key `collectLexicalRanks` rows are looked up by.
+
+### `packages/codegen/src/dsl/symbol-table.ts::compareLexicalKeys`
+
+Element-by-element comparison of two `LexicalKey`s; a key that is a prefix of the other sorts first.
+
+### `packages/codegen/src/dsl/symbol-table.ts::tokenLexicalPrec`
+
+The lexical precedence of a rule: the value of a `PREC` placed directly inside `TOKEN` or `IMMEDIATE_TOKEN`, else 0. A `PREC` outside the token is a parse precedence and does not order the lexer.
+
+### `packages/codegen/src/dsl/symbol-table.ts::isFixedTextRule`
+
+Whether a rule, under its `TOKEN`/`IMMEDIATE_TOKEN`/`PREC` wrappers, is a single `STRING`.
+
+### `packages/codegen/src/dsl/symbol-table.ts::joinIdNames`
+
+#### body
+
+```text
+/* The join key is the **prefix-stripped C symbol name**:
+	   `sym__array_expression_list` becomes `_array_expression_list`, distinct
+	   from the visible `sym_array_expression_list` (would-be
+	   `array_expression_list`). The lookup table `ts_symbol_names[]` is
+	   intentionally lossy — it canonicalizes display labels and collapses
+	   `sym__as_pattern` and `sym_as_pattern` to the same `"as_pattern"` string —
+	   so it can NOT be used as the identity key. The symbol name survives as a
+	   diagnostic label on the catalog row. */
+```
+
+#### body
+
+```text
+/* `_newline`'s `sym__newline` (kept as `existing`, id 101,
+			   `ts_symbol_names` label `"_newline"`) and `alias_sym_newline` (this
+			   `entry`, id 294, label `"newline"`) both join to key `_newline` —
+			   same underlying rule, but the alias occurrence is the ONLY thing
+			   that ever displays under the visible name `"newline"` (no plain
+			   `sym_newline` exists in this grammar).
+
+			   A node parsed at THIS alias's grammar position always carries the
+			   alias's OWN numeric id at runtime (294), never the hidden rule's id
+			   (101) — aliasing creates a genuinely distinct parser symbol, not
+			   just a cosmetic rename. So when an alias introduces a display name
+			   not already covered by `existing`, the alias's id — not the hidden
+			   rule's — is what `$type` dispatch must key on for that name.
+			   (Cascade: prefer a real `sym_<name>` under that exact visible name
+			   if one exists elsewhere in the catalog — `shouldReplaceSymbol`
+			   already handles that case before we ever get here — falling back
+			   to the alias's id only when nothing else claims the name. An
+			   anonymous and a named entry reaching the same key here, after
+			   keyword-suffixing has already run, is a genuine naming collision:
+			   `joinIdNames` throws rather than inventing a second name for it.) */
+```
+
+#### body
+
+```text
+/* `id` stays the STORAGE kind id (101, the rule's own truth —
+				   `_newline` as a rule, regardless of how/whether it's ever
+				   aliased). `parseId` is the separate PARSE/dispatch id: what a
+				   node actually carries at runtime when produced through THIS
+				   alias (294) — the id every render-dispatch match arm must key
+				   on, since that's what tree-sitter really emits. */
+```
+
+#### parseName
+
+The fold records the alias's display name as `parseName` beside `parseId` and leaves the row's parser metadata (its own `symbolName`) untouched, so a consumer names the storage id by the row's own symbol and the parse id by `parseName`.
+
+#### lexicalRank
+
+Each row's parser metadata carries the symbol's `lexicalRank` from `collectLexicalRanks`, looked up by the symbol's grammar name (`grammarNameOfSymbol`); `createParserMetadata` stamps it and a symbol with no rule, external or alias display gets none.
+
+### `packages/codegen/src/dsl/symbol-table.ts::collectGrammarFacts`
+
+Ground truth for a symbol's literal text and alias status, read once from the compiled grammar.json rather than re-derived per symbol: `aliasTargets` maps every named `ALIAS` target to the set of literals aliased to it (a `STRING` content, seen through `token`/`prec` wrappers — see `aliasedLiteral`; a symbol-content alias contributes the name with no literal), and `literalRules` records the named rules that are themselves nothing but a literal — a bare STRING body or an unnamed ALIAS body, keyed by rule name. Whether a given rule IS the alias source is decided later, at the symbol, by comparing the parser's own display name against the rule name derived from the C symbol (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree.
+
+### `packages/codegen/src/dsl/symbol-table.ts::resolveSymbolTextFacts`
+
+Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed into `createParserMetadata`. `symbolName` (the parser's own display name) is never touched here — it comes straight from `ts_symbol_names[]`. This resolves the separate fact `literalText`: for an aliased `anon_sym_*`, the literal `resolveAliasedTokenLiterals` pairs it with; for any other `anon_sym_*`, the display name itself. For `sym_*`, present only when the rule is a bare-literal rule (`literalRules`) AND the parser's display name for that symbol equals the rule name parsed from `cName` — a mismatch means tree-sitter compiled this rule's hidden body into the same symbol id as a differently-named alias elsewhere (python's `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol), and the alias's own display name must survive untouched.
+
+### `packages/codegen/src/dsl/symbol-table.ts::deriveSymbolRuntimeName`
+
+Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
+arrive in parser.c with all-caps tail names. Lowercase them so the catalog
+`key` is consistently snake-case across all kinds (aligns with
+`call_expression`, `_array_expression_list`, etc.) and the downstream
+PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
+Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase` regex
+inserts `_` before every letter, and the emitted Rust constant becomes
+`L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is preserved in
+`parser.cSymbol`; the parser's display name is preserved in
+`parser.symbolName`, and the token's own verbatim text — which for an
+aliased anonymous token differs from `symbolName` — is `parser.literalText`.
+
+#### body — keyword tokens
+
+A keyword is not detected by a regex or a word-shape test on the runtime
+name; parser.c already names it that way. An anonymous symbol's own C name
+is `anon_sym_` followed by its literal text verbatim exactly when
+tree-sitter minted that symbol from an identifier-shaped keyword — `class`,
+`expr_2021` — since a symbolic token instead goes through per-character
+name substitution (`anon_sym_COMMA` for `,`, `anon_sym_macro_rules_BANG` for
+`macro_rules!`), which never reproduces the literal text after the
+`anon_sym_` prefix. That exact match (`cName === 'anon_sym_' + literalText`)
+is the one predicate: every keyword token gets the `_keyword` suffix,
+collision with a same-named kind or not — `fn_keyword`, `class_keyword`,
+`u8_keyword`, `tt_keyword`. `_` is punctuation, not a keyword, even though
+its C name matches the exact-text predicate: text made of nothing but
+underscores derives `underscore` (`underscore2` for `__`, one more
+underscore character per further doubling, mirroring tree-sitter's own `LT2`
+convention for a doubled symbolic character) rather than `__keyword` —
+underscore is the one identifier-class character tree-sitter never escapes
+to a symbolic name, so this is the symbolic name it omitted, sitting beside
+`comma`/`lparen`. A symbolic token keeps its plain derived name (`comma`,
+`macro_rules_bang`). This is the ONE derivation of a keyword's runtime name:
+the `TSKindId` member, the kind string, factories, and the nested option key
+`nestedKey` derives all follow from it. If a suffixed name still collides
+with an existing key, `joinIdNames` throws naming both symbols — there is no
+second, id-suffixed fallback.
+
+### `packages/codegen/src/dsl/symbol-table.ts::keywordTextOf`
+
+The keyword predicate described under `deriveSymbolRuntimeName`, in one
+place: the literal text of an anonymous symbol whose C name is `anon_sym_`
+followed by that text verbatim and which is not made only of underscores,
+else `undefined`. `deriveSymbolRuntimeName` suffixes `_keyword` exactly when
+it returns text, and `createParserMetadata` stamps `keyword: true` on the
+same kinds, so the name and the fact cannot disagree.
+
+#### body
+
+```text
+/* `alias_sym_<target>` is the parser symbol for an aliased kind. The
+	   codegen rule that produces it is the hidden source (leading
+	   underscore) — e.g. tree-sitter-rust aliases `_field_identifier` →
+	   `field_identifier`, which appears in parser.c as
+	   `alias_sym_field_identifier`. Map back to the hidden source name so
+	   the join hits the codegen-side rule key. */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::resolveAliasedTokenLiterals`
+
+The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is itself one of `D`'s literals is that literal (the identifier-safe case, where tree-sitter's C name spells the literal); (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. No part of tree-sitter's C-name mangling is re-implemented: a non-identifier literal (`'\-'` → `anon_sym_BSLASH_DASH`) is recovered by elimination, never by decoding the mangled name.
+
+### `packages/codegen/src/dsl/symbol-table.ts::aliasedLiteral`
+
+The literal a named alias wraps: its `STRING` content, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`), or `undefined` for any other content.
+
+### `packages/codegen/src/dsl/symbol-table.ts::LITERAL_WRAPPERS`
+
+Rule types that wrap a literal without changing the token it lexes.
