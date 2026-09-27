@@ -120,22 +120,10 @@
     "code": "rule-reauthored-without-cause",
     "severity": "warning",
     "ownerKind": "string_content",
-    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": true,
     "details": {
-      "cause": "lexical-interior"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "format_specifier",
-    "message": "rules: 'format_specifier' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "lexical-interior"
+      "cause": "alias-shape"
     }
   },
   {

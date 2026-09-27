@@ -333,6 +333,7 @@ export default grammar(
 				string: {
 					1: field('content')
 				},
+				format_specifier: [{ '1/0/0': token.immediate(prec(1, /[^{}\n]+/)) }, { '1/0': field('elements') }],
 
 				try_statement: {
 					3: field('except_clauses')
@@ -376,7 +377,6 @@ export default grammar(
 				],
 				'rule-reauthored-without-cause': [
 					'_simple_pattern',
-					'format_specifier',
 					'primary_expression',
 					'print_statement',
 					'string_content'
@@ -398,7 +398,7 @@ export default grammar(
 				_except_clause_exception_as_optional1: vocabulary(($) => seq('as', field('alias', $.expression))),
 
 				// See docs/python-grammar-sittir-glossary.md::string_content
-				string_content: reauthored('lexical-interior', ($) =>
+				string_content: reauthored('alias-shape', ($) =>
 					prec.right(
 						repeat1(
 							choice(
@@ -412,18 +412,6 @@ export default grammar(
 				),
 
 				// See docs/python-grammar-sittir-glossary.md::format_specifier
-				format_specifier: reauthored('lexical-interior', ($) =>
-					seq(
-						':',
-						repeat(
-							field(
-								'elements',
-								choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression))
-							)
-						)
-					)
-				),
-
 				// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
 				case_tuple_pattern: vocabulary(($) => seq('(', optional($.list_pattern_case_patterns), ')')),
 				case_list_pattern: vocabulary(($) => seq('[', optional($.list_pattern_case_patterns), ']')),

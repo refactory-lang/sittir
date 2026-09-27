@@ -530,6 +530,15 @@ they need no entry in `transforms`.
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
+### `format_specifier` (`packages/python/grammar.sittir.ts`, `patches`)
+
+`format_specifier: [{ '1/0/0': token.immediate(prec(1, /[^{}\n]+/)) }, { '1/0': field('elements') }]`.
+The base rule is `seq(':', repeat(choice(token(prec(1, /[^{}\n]+/)), alias(interpolation, format_expression))))`.
+The first set makes the text arm immediate, so the render glues it to the `:`
+and to neighbouring interpolations. The second fields the repeated choice as
+`elements`; it comes second so the first set's path still reaches the text arm
+beneath it.
+
 ### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
@@ -710,10 +719,11 @@ shrinks.
 
 - `primary_expression` (declared `'ambiguity'`, unverified: no detector): without it `from` and
   read-render-parse each lose a case. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `string_content` (declared `'lexical-interior'`, unverified: no detector): without it read-render-parse,
-  factory-render-parse and ir-render-parse all regress. missing detector: 'lexical-interior' ← token-interior opacity.
-- `format_specifier` (declared `'lexical-interior'`, unverified: no detector): without it the `elements` field
-  becomes `contents` and the text token loses its immediacy. missing detector: 'lexical-interior' ← token-interior opacity.
+- `string_content` (declared `'alias-shape'`, unverified: no detector): upstream's arms `_string_content` and
+  `_not_escape_sequence` are hidden, so the repeated `elements` slot never sees a node and the reader throws;
+  the rule aliases them to the visible `string_fragment` / `not_escape_sequence`. Without it read-render-parse,
+  factory-render-parse and ir-render-parse all regress. missing detector: 'alias-shape' ← a repeated slot whose
+  every arm is a hidden terminal.
 - `_simple_pattern` (declared `'alias-shape'`, unverified: no detector): without it `from` loses a case.
   missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
 - `patch-without-cause` on `list_comprehension`, `dictionary_comprehension`,

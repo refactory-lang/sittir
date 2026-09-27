@@ -204,54 +204,6 @@
     "grammar": "typescript",
     "code": "rule-reauthored-without-cause",
     "severity": "warning",
-    "ownerKind": "template_string",
-    "message": "rules: 'template_string' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "lexical-interior"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "template_literal_type",
-    "message": "rules: 'template_literal_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "lexical-interior"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "template_type",
-    "message": "rules: 'template_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "lexical-interior"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
-    "ownerKind": "template_substitution",
-    "message": "rules: 'template_substitution' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'lexical-interior'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": true,
-    "details": {
-      "cause": "lexical-interior"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "rule-reauthored-without-cause",
-    "severity": "warning",
     "ownerKind": "object_type",
     "message": "rules: 'object_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": true,

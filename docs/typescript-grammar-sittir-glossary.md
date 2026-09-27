@@ -888,39 +888,32 @@ overriding the canonical rule too.
 				// base grammar's conflict resolution carries through.
 ```
 
-### `string` (`packages/typescript/grammar.sittir.ts:1052`)
+### `string` (`packages/typescript/grammar.sittir.ts`, `patches`)
 
-```text
-				// string: variant() adoption on the quote-style choice. Base
-				// grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
-				// walker's primary-branch-wins would always pick the first
-				// (double-quoted) branch as the template, so `'x'` source
-				// round-trips as `"x"` — AST mismatch. Splitting into variant
-				// children (`string_double` / `string_single`) gives each its
-				// own template that preserves the quote style.
-				//
-				// Restored 2026-07-20 (was removed in c5f7f88ff, 2026-05-12,
-				// in favor of a `rules:` rewrite using `refine()` to
-				// correlate an uncorrelated flat seq — see that rule's
-				// former doc comment for the intent). refine() is
-				// authoring-only metadata (packages/codegen/src/dsl/primitives/refine.ts)
-				// and never constrains the actual generated parser: the
-				// rewritten grammar left `unescaped_double_string_fragment`
-				// and `unescaped_single_string_fragment` lexically reachable
-				// in the SAME parser state regardless of which quote char
-				// opened the string, so tree-sitter's longest-match lexer
-				// could pick the wrong fragment token and consume past the
-				// intended closing quote — every plain string literal
-				// produced ERROR (rust/crates/sittir-parity-tests/tests/native_parser.rs's
-				// `typescript_lexical_declaration_reads_override_named_fields`,
-				// confirmed via `tree-sitter parse` on the compiled parser
-				// directly, no read/transport layer involved). This variant
-				// split leaves the base grammar's already-correlated
-				// `choice(seq('"',…,'"'), seq("'",…,"'"))` untouched — the
-				// quote literal and its matching fragment token are baked
-				// into the same seq branch, so there's no cross-branch
-				// lexical ambiguity for tree-sitter to resolve at runtime.
-```
+`string: [{ '0/2': token.immediate('"'), '1/2': token.immediate("'") }, { 0: variant('double'), 1: variant('single') }]`.
+The base rule is `choice(seq('"', …, '"'), seq("'", …, "'"))`. The first set
+makes each closing quote immediate, so the render glues it to the last fragment
+(without it `"baz"` renders `" baz "`); the fragments already absorb every
+character the closing token could follow, so the parse table is unchanged. The
+second set splits the arms into `string_double` / `string_single`, giving each
+quote style its own template; it comes second so the paths in the first set
+still address the unsplit arms. Keeping the quote literal and its fragment
+token inside one arm leaves no cross-arm lexical ambiguity.
+
+### Template delimiters (`packages/typescript/grammar.sittir.ts`, `patches`)
+
+`template_string: { 2: token.immediate('`') }`,
+`template_literal_type: { 2: token.immediate('`') }`,
+`template_type: { 0: token.immediate('${'), 1: field('type') }`,
+`template_substitution: { 0: token.immediate('${'), 1: field('expression') }`.
+The closing backtick is immediate for the same reason as `string`'s closing
+quote. The opening `${` is immediate so the render never spaces it from a
+preceding fragment: `$` is word-class, so without the stamp the seam before
+the substitution is a runtime-varying option site, and in `template_literal_type`
+the seam after the opening backtick becomes a spaced-by-default `bquote_after`
+option. `field('type')` names `template_type`'s `choice(primary_type,
+infer_type)`; fielding it keeps enrich from splitting the kind into variants.
+`field('expression')` names the substitution's `_expressions`.
 
 ### `update_expression` (`packages/typescript/grammar.sittir.ts:1086`)
 
@@ -1006,12 +999,6 @@ only shrinks, and an entry leaves when its detector lands.
 
 - `object_type` (declared `'ambiguity'`, unverified: no detector): without it, generate blocks on
   `storagename-collision` / `content-collision` on `object_type`. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `template_literal_type`, `template_substitution`, `template_type`
-  (declared `'lexical-interior'`, unverified: no detector): without them read-render-parse loses an AST match.
-  missing detector: 'lexical-interior' ← token-interior opacity.
-- `template_string` (declared `'lexical-interior'`, unverified: no detector): without it the closing backtick
-  loses its immediacy, which changes the parser and renumbers token kinds.
-  missing detector: 'lexical-interior' ← token-interior opacity.
 
 Shape floors (the compiler has no model for these shapes yet; each blocks
 without its entry):

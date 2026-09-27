@@ -22,12 +22,6 @@ import {
 	vocabulary
 } from '../codegen/src/dsl/index.ts';
 
-function immediateClosingDelimiter(original: unknown) {
-	const seqMembers = (original as { members: unknown[] }).members;
-	const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
-	return { ...(original as object), members: [...seqMembers.slice(0, -1), token.immediate(last.value!)] };
-}
-
 const enrichedBase = enrich(base);
 
 export default grammar(
@@ -659,7 +653,14 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: { 0: variant('double'), 1: variant('single') },
+				string: [
+					{ '0/2': token.immediate('"'), '1/2': token.immediate("'") },
+					{ 0: variant('double'), 1: variant('single') }
+				],
+				template_string: { 2: token.immediate('`') },
+				template_literal_type: { 2: token.immediate('`') },
+				template_type: { 0: token.immediate('${'), 1: field('type') },
+				template_substitution: { 0: token.immediate('${'), 1: field('expression') },
 
 				update_expression: {
 					0: variant('postfix'),
@@ -741,35 +742,11 @@ export default grammar(
 			expectDiagnostics: {
 				'unclassifiable-shape': ['binary_expression', 'public_field_definition'],
 				'union-slot-mixed-row': ['binary_expression'],
-				'rule-reauthored-without-cause': [
-					'object_type',
-					'template_literal_type',
-					'template_string',
-					'template_substitution',
-					'template_type'
-				]
+				'rule-reauthored-without-cause': ['object_type']
 			},
 			rules: {
 				_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
 
-				string: reauthored('lexical-interior', ($, original) => ({
-					...original,
-					members: original.members.map((arm) => {
-						const seqMembers = (arm as { members: unknown[] }).members;
-						const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
-						if (last.type !== 'STRING') return arm;
-						return {
-							...(arm as object),
-							members: [...seqMembers.slice(0, -1), token.immediate(last.value!)]
-						};
-					})
-				})),
-
-				template_string: reauthored('lexical-interior', ($, original) => immediateClosingDelimiter(original)),
-				template_literal_type: reauthored('lexical-interior', ($, original) => immediateClosingDelimiter(original)),
-				template_type: reauthored('lexical-interior', ($) =>
-					seq(token.immediate('${'), field('type', choice($.primary_type, $.infer_type)), '}')
-				),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -782,10 +759,6 @@ export default grammar(
 				// kind left-immediate (its leftmost terminal), so structural
 				// references render seam-free. Parser-neutral by the absorption
 				// argument above.
-				template_substitution: reauthored('lexical-interior', ($) =>
-					seq(token.immediate('${'), field('expression', $._expressions), '}')
-				),
-
 				// The signature arm of an arrow function is upstream's hidden
 				// `_call_signature`, whose fields inline into the parent. Upstream
 				// typescript already declares that body as the visible kind
