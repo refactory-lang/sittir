@@ -1,7 +1,11 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, grammarPackageDir } from '@sittir/codegen/grammars';
+import { allGrammars, grammarPackageDir, grammarRequire } from '@sittir/codegen/grammars';
+import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
+import { diagnoseEvaluationStage } from '../../codegen/src/compiler/stage.ts';
+import { diagnoseRuleCauses } from '../../codegen/src/compiler/diagnostics/rule-causes.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
 
 const python = grammarPackageFiles({
@@ -38,4 +42,29 @@ describe('grammar composition goes through sittirGrammar, which enriches and wir
 			expectComposition(readFileSync(join(grammarPackageDir(grammar), 'grammar.sittir.ts'), 'utf8'));
 		});
 	}
+});
+
+describe('a bootstrapped grammar declares every hand-written rule', () => {
+	it('the template grammar passes the rule-cause judgement', async () => {
+		const template = grammarPackageFiles({
+			name: 'regex',
+			Name: 'Regex',
+			upstreamDependency: 'tree-sitter-regex',
+			upstreamRange: '^0.25.0'
+		}).find((f) => f.path === 'grammar.sittir.ts')!.contents;
+		const source = template
+			.replace("'tree-sitter-regex/grammar.js'", JSON.stringify(grammarRequire('regex').resolve('tree-sitter-regex/grammar.js')))
+			.replace("'../codegen/src/dsl/index.ts'", JSON.stringify(resolve(__dirname, '../../codegen/src/dsl/index.ts')));
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-bootstrap-template-'));
+		const entry = join(dir, 'grammar.sittir.ts');
+		writeFileSync(entry, source, 'utf8');
+		try {
+			const raw = await evaluate(entry);
+			expect(raw.stages).toBeDefined();
+			const enriched = diagnoseEvaluationStage(raw.stages!.enriched);
+			expect(diagnoseRuleCauses({ grammar: 'regex', raw, enriched })).toEqual([]);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 60_000);
 });

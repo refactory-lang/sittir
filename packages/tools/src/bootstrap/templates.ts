@@ -88,7 +88,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 			path: 'grammar.sittir.ts',
 			contents: `// @ts-nocheck — grammar.js is untyped
 import base from '${v.upstreamDependency}/grammar.js';
-import { sittirGrammar } from '../codegen/src/dsl/index.ts';
+import { sittirGrammar, vocabulary } from '../codegen/src/dsl/index.ts';
 
 export default sittirGrammar(base, {
 	name: '${v.name}',
@@ -100,7 +100,7 @@ export default sittirGrammar(base, {
 		_newline: string('\\n')
 	}),
 	rules: {
-		_whitespace: ($) => choice($._tight, $._space, $._newline)
+		_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
 	}
 });
 `
