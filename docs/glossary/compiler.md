@@ -5665,6 +5665,8 @@ parts with the space its parser needs.
  */
 ```
 
+The rebuilt choice has no rule id: ids are source back-pointers, and the choice stands for one position across every arm, which is no single source position. Each varying member keeps its own id, and those resolve to the slot.
+
 ### `packages/codegen/src/compiler/flatten.ts::permutationKey`
 
 ```text
