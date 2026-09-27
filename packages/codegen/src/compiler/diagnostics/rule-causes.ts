@@ -1,7 +1,7 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { RuleCause } from '../../dsl/primitives/rule-cause.ts';
 import type { RawGrammar } from '../types.ts';
-import type { UpstreamCompilation } from '../upstream.ts';
+import type { StageDiagnosis } from '../stage.ts';
 
 export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	'alias-shape': [
@@ -20,11 +20,11 @@ const ANY_PROVOKING: ReadonlySet<string> = new Set(Object.values(PROVOKING_CODES
 export interface RuleCausesInput {
 	readonly grammar: string;
 	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs'>;
-	readonly upstream: UpstreamCompilation;
+	readonly enriched: StageDiagnosis;
 }
 
 export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] {
-	const { grammar, raw, upstream } = input;
+	const { grammar, raw, enriched } = input;
 	const out: GrammarDiagnostic[] = (raw.undeclaredRules ?? []).map((name) =>
 		blocking(
 			grammar,
@@ -34,7 +34,7 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 		)
 	);
 	for (const name of Object.keys(raw.renderAs ?? {})) {
-		if (upstream.externalNames.has(name)) continue;
+		if (enriched.externalNames.has(name)) continue;
 		out.push(
 			blocking(
 				grammar,
@@ -46,14 +46,14 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 	}
 	for (const [name, declaration] of Object.entries(raw.ruleCauses ?? {})) {
 		const diagnostic =
-			declaration.kind === 'vocabulary' ? judgeVocabulary(grammar, name, upstream) : judgeReauthored(input, name, declaration.cause);
+			declaration.kind === 'vocabulary' ? judgeVocabulary(grammar, name, enriched) : judgeReauthored(input, name, declaration.cause);
 		if (diagnostic !== undefined) out.push(diagnostic);
 	}
 	return out;
 }
 
-function judgeVocabulary(grammar: string, name: string, upstream: UpstreamCompilation): GrammarDiagnostic | undefined {
-	if (!upstream.ruleNames.has(name)) return undefined;
+function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis): GrammarDiagnostic | undefined {
+	if (!enriched.ruleNames.has(name)) return undefined;
 	return blocking(
 		grammar,
 		'vocabulary-replaces-upstream',
@@ -63,8 +63,8 @@ function judgeVocabulary(grammar: string, name: string, upstream: UpstreamCompil
 }
 
 function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
-	const { grammar, upstream } = input;
-	if (!upstream.ruleNames.has(name)) {
+	const { grammar, enriched } = input;
+	if (!enriched.ruleNames.has(name)) {
 		return blocking(
 			grammar,
 			'rule-cause-mismatch',
@@ -73,13 +73,13 @@ function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause)
 			{ cause }
 		);
 	}
-	const provoking = [...new Set(upstream.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))].sort();
+	const provoking = [...new Set(enriched.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))].sort();
 	if (provoking.length === 0) {
 		return blocking(
 			grammar,
 			'rule-reauthored-without-cause',
 			name,
-			`rules: '${name}' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause '${cause}'). Delete the entry so the upstream rule compiles as is`,
+			`rules: '${name}' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause '${cause}'). Delete the entry so the upstream rule compiles as is`,
 			{ cause }
 		);
 	}
@@ -88,7 +88,7 @@ function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause)
 		grammar,
 		'rule-cause-mismatch',
 		name,
-		`rules: '${name}' is declared reauthored('${cause}') but the upstream shape is provoked by [${provoking.join(', ')}], none of which belongs to that cause. Declare the cause those codes belong to`,
+		`rules: '${name}' is declared reauthored('${cause}') but the enriched shape is provoked by [${provoking.join(', ')}], none of which belongs to that cause. Declare the cause those codes belong to`,
 		{ cause, provoking }
 	);
 }

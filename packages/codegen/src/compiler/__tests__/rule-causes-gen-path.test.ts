@@ -3,7 +3,7 @@ import { compileGrammar } from '../compile.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { blockedRecords } from '../diagnostics/grammar-diagnostics.ts';
 
-const RULE_CAUSE_CODES = /^(rule-|render-only|vocabulary-|upstream-)/;
+const RULE_CAUSE_CODES = /^(rule-|render-only|vocabulary-)/;
 
 describe('rule-cause diagnostics on the gen path (with generated id tables)', () => {
 	for (const grammar of ['python', 'rust']) {

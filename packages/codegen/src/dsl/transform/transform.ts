@@ -27,7 +27,8 @@ import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
 import {
-	wireRegisterSymbolRename,
+	wireRenameLift,
+	wireWithPatchSites,
 	wireHasAuthoredRule,
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
@@ -113,9 +114,12 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 }
 
 function recordPatchSites(patches: PatchSet): void {
+	for (const site of patchSitesOf(Object.entries(patches))) wireRecordPatchSite(site);
+}
+
+function patchSitesOf(entries: ReadonlyArray<readonly [string, PatchValue]>): PatchSite[] {
 	const ownerKind = wireGetCurrentRuleKind();
-	if (ownerKind === null) return;
-	for (const [path, value] of Object.entries(patches)) wireRecordPatchSite({ ownerKind, path, ...patchFormOf(value) });
+	return ownerKind === null ? [] : entries.map(([path, value]) => ({ ownerKind, path, ...patchFormOf(value) }));
 }
 
 function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
@@ -140,9 +144,11 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
-		const segments = parsePath(String(key));
-		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
-		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, String(key), precStack));
+		const segments = parsePath(key);
+		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
+		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+			applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+		);
 		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
 	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
@@ -202,7 +208,7 @@ function applyVariantPatches(
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
 ): RuntimeRule {
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
-	const hoisted = tryHoistSiblingVariants(rule, ordered);
+	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
 	if (hoisted === null) {
 		const absent = ordered.find(([, v]) => v.absent === true);
 		if (absent !== undefined) {
@@ -216,7 +222,9 @@ function applyVariantPatches(
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
 		try {
-			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack));
+			result = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+				applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+			);
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
 			throw error;
@@ -431,7 +439,7 @@ function buildHoistedVariants(
 		const altMember = choiceMembers[resolvedAlt]!;
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
-		if (lift !== null) wireRegisterSymbolRename(lift.liftName, name);
+		if (lift !== null) wireRenameLift(lift.liftName, name);
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
@@ -503,7 +511,7 @@ function renameEnrichLift(
 	nodeName: string
 ): RuntimeRule {
 	if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
-	wireRegisterSymbolRename(lift.liftName, ruleName);
+	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;
 	if ((member as { type?: string }).type !== 'ALIAS') return ruleRef(ruleName, nodeName);
 	return {
@@ -597,7 +605,7 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
-		members[index] = resolvePatch(patch, members[index]!, key);
+		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolvePatch(patch, members[index]!, key));
 	}
 	return reconstructContainer(original, members);
 }

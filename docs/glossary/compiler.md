@@ -1683,9 +1683,11 @@ vocabularies stay separate: a grammar diagnostic blocks through `canProceed: fal
 
 Evaluates the grammar and gates it twice through `assertGatePasses`, each call with the floors its records are
 named against. Before link it checks the evaluate-time records (`evaluateRecords`, and when the grammar departs
-from upstream, `diagnoseRuleCauses` and `diagnosePatchSites` over the upstream stage), with the evaluated
-grammar's `expectDiagnostics`. A grammar tree-sitter rejects therefore never reaches link. After assemble it
-checks the front half's records with the collapsed grammar's `expectDiagnostics`. `allowDiagnostics` is the
+from its base, `diagnoseRuleCauses` over the enriched stage), with the evaluated grammar's `expectDiagnostics`. A
+grammar tree-sitter rejects therefore never reaches link. After assemble it folds the stages into
+`diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so it cannot
+run before link), and checks those and the front half's records with the collapsed grammar's
+`expectDiagnostics`. `allowDiagnostics` is the
 caller's override at both. Hydrate then runs with `droppedKinds` as the names whose absence is already reported.
 
 ### `packages/codegen/src/compiler/compile.ts::assertCompilation`
@@ -2199,38 +2201,47 @@ each is omitted when empty, and both when the grammar was not wired.
 ### `packages/codegen/src/compiler/evaluate.ts::drainPatchSitesMetadata`
 
 Copies `WireContext.patchSites` onto `RawGrammar.patchSites`, sorted by
-owner, path and form; omitted when there are none.
+owner, path and form, each with the lifts it claimed (`WireContext.liftClaims`) as `lifts`; omitted when there
+are none.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
 
 Every `patches:` entry the grammar applied, by owner kind, path and
 placeholder form. Read by the patch-site labelling and the override census.
 
-### `packages/codegen/src/compiler/evaluate.ts::departsFromUpstream`
+### `packages/codegen/src/compiler/evaluate.ts::departsFromBase`
 
-Whether a wired grammar departs from its base: it declares at least one
-`rules:` entry or `patches:` entry. Only such a grammar has hand-authored
-departures to judge, so only it pays for an upstream evaluation.
+Whether a wired grammar departs from its base: it extends a base and declares at least one
+`rules:` entry or `patches:` entry. A grammar with no base has nothing to depart from. Only such a grammar has hand-authored
+departures to judge, so only it pays for the stage evaluations.
 
-### `packages/codegen/src/compiler/evaluate.ts::evaluateUpstream`
+### `packages/codegen/src/compiler/evaluate.ts::evaluateStages`
 
-Evaluates the enriched base `grammar()` received (`sittirGrammar`'s `enrich` output, the same object `wire()`
-read) a second time with no wire config, inside the same DSL-globals scope, so the upstream is never located by
-package path. It also records every rule name the upstream declares: the base's rules plus the enrich overrides
-merged into the upstream options. The evaluated rules alone are not that list, because the rule catalog omits
-hidden rules it finds unreachable (typescript's `_reserved_identifier`). A throw fails the evaluation: an upstream
-grammar tree-sitter accepts always evaluates, and one it rejects is reported by its prediction records.
+The two stages a departing grammar is judged against: `raw`, the upstream base before enrich
+(`WireContext.source`), and `enriched`, the enriched base `grammar()` received (the object `wire()` read). Both
+are evaluated with no wire config, inside the same DSL-globals scope, so the upstream is never located by package
+path.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.upstream`
+### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
 
-The base evaluated with no wire config (`{ raw, ruleNames }`) or the reason that
-evaluation failed (`{ failure }`); absent when the grammar does not depart
-from its base (`departsFromUpstream`).
+Evaluates one base a second time with no wire config, and records every rule name it declares: the base's rules
+plus any enrich overrides merged into the stage options. The evaluated rules alone are not that list, because the
+rule catalog omits hidden rules it finds unreachable (typescript's `_reserved_identifier`). A throw fails the
+evaluation: a base tree-sitter accepts always evaluates, and one it rejects is reported by its prediction records.
 
-### `packages/codegen/src/compiler/types.ts::UpstreamEvaluation`
+### `packages/codegen/src/compiler/types.ts::RawGrammar.stages`
 
-`{ raw, ruleNames }`: the outcome of `evaluateUpstream`. The `raw` grammar is an `EvaluatedGrammar` until the
-compile boundary canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
+The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when the grammar does
+not depart from its base (`departsFromBase`).
+
+### `packages/codegen/src/compiler/types.ts::EvaluationStages`
+
+`{ raw, enriched }`, each a `StageEvaluation`: the outcome of `evaluateStages`.
+
+### `packages/codegen/src/compiler/types.ts::StageEvaluation`
+
+`{ grammar, ruleNames }`: one evaluated stage. The grammar is an `EvaluatedGrammar` until the compile boundary
+canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
@@ -2241,24 +2252,33 @@ catalog and `protectedRuleNames` for the orphan pass — and nothing reads it as
 compiler input except `canonicalGrammar`. It is also what an extending grammar
 receives as its base.
 
-### `packages/codegen/src/compiler/upstream.ts::compileUpstream`
+### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStage`
 
-Diagnoses the evaluated upstream stage (`diagnoseStage`) and returns its declared rule names (post-enrich, so
-enrich mints count as upstream), its externals and its records. The stage runs the id-free front half over the
-predicted catalog: no generate, no parser tables, no generate output. A throw in link, normalize or assemble is a
-compiler invariant and propagates.
+Diagnoses one evaluated stage (`diagnoseStage`) and returns its declared rule names (for the enriched stage these
+include enrich's mints), its externals, its records and its rule catalog. The stage runs the id-free front half
+over the predicted catalog: no generate, no parser tables, no generate output. A throw in link, normalize or
+assemble is a compiler invariant and propagates.
 
-### `packages/codegen/src/compiler/upstream.ts::UpstreamCompilation`
+### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStages`
 
-The upstream stage's rule names, external names and grammar diagnostics.
+`diagnoseEvaluationStage` of both stages.
 
-### `packages/codegen/src/compiler/compile.ts::Compilation.upstream`
+### `packages/codegen/src/compiler/stage.ts::StageDiagnosis`
 
-`compileUpstream` of `RawGrammar.upstream`, run inline in `compileGrammar`
-whenever the grammar evaluated one. `compileGrammar` judges the grammar's
-hand-written rules against it (`diagnoseRuleCauses`) and appends those
-diagnostics to `grammarDiagnostics`, where `assertCompilation` blocks on
-them like any other.
+One stage's rule names, external names, grammar diagnostics and rule catalog; the catalog is absent when the
+stage's kind prediction failed and the front half never ran.
+
+### `packages/codegen/src/compiler/compile.ts::Compilation.stages`
+
+`diagnoseEvaluationStages` of `RawGrammar.stages`, run inline in `compileGrammar` whenever the grammar evaluated
+them. `compileGrammar` judges the grammar's hand-written rules against the enriched stage (`diagnoseRuleCauses`)
+and folds both stages into `diagnosticRecords`. A stage's records are `stages.raw.diagnostics` and
+`stages.enriched.diagnostics`; the final stage's are in `grammarDiagnostics`.
+
+### `packages/codegen/src/compiler/compile.ts::Compilation.diagnosticRecords`
+
+`deriveDiagnosticRecords` over the stages and the compiled grammar; empty when the grammar evaluated no stages.
+The override census and the patch-site labels read it.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 
@@ -5862,12 +5882,16 @@ from `_match_block`, keeps `rule:_match_block:root`. Ids are the owner identity 
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::createRuleId`
 
-Writes a rule id, `rule:<source kind>:<path>`, with the source kind URI-encoded so it holds no `:`. It and
-`ruleIdPath` are the only code that knows the format.
+Writes a rule id, `rule:<source kind>:<path>`, with the source kind URI-encoded so it holds no `:`. It,
+`ruleIdPath` and `ruleIdOwner` are the only code that knows the format.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::ruleIdPath`
 
 The path part of a rule id (`root`, or `content/members.2`), the inverse of `createRuleId`.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::ruleIdOwner`
+
+The source kind a rule id was minted under, decoded; the other inverse of `createRuleId`.
 
 ### `packages/codegen/src/compiler/generate.ts::engine`
 
@@ -10179,6 +10203,6 @@ The kind catalog predicted from the faithful evaluated grammar, before canonical
 ### `packages/codegen/src/compiler/link.ts::assertPredictedKinds`
 
 Link runs only on a grammar whose catalog prediction built: a failed prediction is recorded before link
-(`grammar-diagnostics.ts::predictionRecords`) and gated, or, for the upstream stage, stops at its records
+(`grammar-diagnostics.ts::predictionRecords`) and gated, or, for an evaluation stage, stops at its records
 (`diagnoseStage`). Reaching link with a failed prediction throws.
 

@@ -40,7 +40,8 @@ const MODULES = {
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
-	upstream: '../../codegen/src/compiler/upstream.ts',
+	stage: '../../codegen/src/compiler/stage.ts',
+	ruleCatalog: '../../codegen/src/compiler/rule-catalog.ts',
 	compile: '../../codegen/src/compiler/compile.ts',
 	patchSites: '../../codegen/src/compiler/diagnostics/patch-sites.ts',
 	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
@@ -73,7 +74,8 @@ export interface CodegenSurface {
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
-	upstream: typeof import('../../codegen/src/compiler/upstream.ts');
+	stage: typeof import('../../codegen/src/compiler/stage.ts');
+	ruleCatalog: typeof import('../../codegen/src/compiler/rule-catalog.ts');
 	compile: typeof import('../../codegen/src/compiler/compile.ts');
 	patchSites: typeof import('../../codegen/src/compiler/diagnostics/patch-sites.ts');
 	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');

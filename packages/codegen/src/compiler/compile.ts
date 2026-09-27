@@ -8,9 +8,10 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import { stampVisibleExternals, type GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
+import { diagnoseEvaluationStages, type StageDiagnoses } from './stage.ts';
 import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
+import { deriveDiagnosticRecords, type DiagnosticRecord } from './diagnostics/diagnostic-records.ts';
 
 export interface Compilation {
 	readonly grammar: string;
@@ -22,7 +23,8 @@ export interface Compilation {
 	readonly diagnostics: DiagnosticSink;
 	readonly slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	readonly grammarDiagnostics: readonly GrammarDiagnostic[];
-	readonly upstream?: UpstreamCompilation;
+	readonly stages?: StageDiagnoses;
+	readonly diagnosticRecords: readonly DiagnosticRecord[];
 }
 
 export interface CompileGrammarConfig {
@@ -40,15 +42,11 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const evaluated = await evaluate(entryPath);
 	const generatedIdTables = stampVisibleExternals(cfg.generatedIdTables, evaluated);
 
-	const upstream = evaluated.upstream === undefined ? undefined : compileUpstream(evaluated.upstream);
+	const stages = evaluated.stages === undefined ? undefined : diagnoseEvaluationStages(evaluated.stages);
+	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
-		...evaluateRecords(evaluated),
-		...(upstream === undefined
-			? []
-			: [
-					...diagnoseRuleCauses({ grammar: cfg.grammar, raw: evaluated, upstream }),
-					...diagnosePatchSites({ grammar: cfg.grammar, sites: labelPatchSites(evaluated.patchSites ?? [], upstream) })
-				])
+		...evaluatedRecords,
+		...(stages === undefined ? [] : diagnoseRuleCauses({ grammar: cfg.grammar, raw: evaluated, enriched: stages.enriched }))
 	];
 	assertGatePasses(evaluateDiagnostics, evaluated.expectDiagnostics, cfg.allowDiagnostics);
 
@@ -58,7 +56,20 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 			include: cfg.include,
 			generatedIdTables
 		});
-	const grammarDiagnostics = [...evaluateDiagnostics, ...diagnostics];
+	const diagnosticRecords =
+		stages === undefined
+			? []
+			: deriveDiagnosticRecords({
+					stages,
+					final: { diagnostics: [...evaluatedRecords, ...diagnostics], ruleCatalog: raw.ruleCatalog },
+					authoredRules: [...Object.keys(evaluated.ruleCauses ?? {}), ...(evaluated.undeclaredRules ?? [])],
+					patchSites: evaluated.patchSites ?? []
+				});
+	const patchSiteDiagnostics =
+		stages === undefined
+			? []
+			: diagnosePatchSites({ grammar: cfg.grammar, sites: labelPatchSites(evaluated.patchSites ?? [], diagnosticRecords) });
+	const grammarDiagnostics = [...evaluateDiagnostics, ...patchSiteDiagnostics, ...diagnostics];
 	assertGatePasses(grammarDiagnostics, raw.expectDiagnostics, cfg.allowDiagnostics);
 
 	hydrateSlotRefs(nodeMap, {
@@ -77,7 +88,8 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		diagnostics: compilerDiagnostics,
 		slotGroupingDiagnostics,
 		grammarDiagnostics,
-		upstream
+		stages,
+		diagnosticRecords
 	};
 }
 

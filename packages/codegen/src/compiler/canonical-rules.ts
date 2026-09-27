@@ -5,7 +5,7 @@ import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
-import type { EvaluatedGrammar, RawGrammar, UpstreamEvaluation } from './types.ts';
+import type { EvaluatedGrammar, EvaluationStages, RawGrammar, StageEvaluation } from './types.ts';
 import { predictedKindsOf, type PredictedKinds } from '../dsl/symbol-table.ts';
 
 type EvalRule = Rule<'evaluate'>;
@@ -106,13 +106,17 @@ function canonicalRuleBodies(bodies: Readonly<Record<string, EvalRule>>): Record
 	return Object.fromEntries(Object.entries(bodies).map(([name, body]) => [name, canonicalRuleTree(body)]));
 }
 
-function canonicalUpstream(upstream: UpstreamEvaluation<EvaluatedGrammar> | undefined): UpstreamEvaluation | undefined {
-	if (upstream === undefined) return upstream;
-	return { ...upstream, raw: canonicalGrammar(upstream.raw) };
+function canonicalStage(stage: StageEvaluation<EvaluatedGrammar>): StageEvaluation {
+	return { ...stage, grammar: canonicalGrammar(stage.grammar) };
+}
+
+function canonicalStages(stages: EvaluationStages<EvaluatedGrammar> | undefined): EvaluationStages | undefined {
+	if (stages === undefined) return stages;
+	return { raw: canonicalStage(stages.raw), enriched: canonicalStage(stages.enriched) };
 }
 
 export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
-	const { provenanceByKind, protectedRuleNames, upstream, renderAs, visibleExternals, ...rest } = evaluated;
+	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const { rules, inline, conflicts } =
 		protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(protectedRuleNames));
@@ -126,7 +130,7 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),
 		renderAs: renderAs && canonicalRuleBodies(renderAs),
 		visibleExternals: visibleExternals && canonicalRuleBodies(visibleExternals),
-		upstream: canonicalUpstream(upstream),
+		stages: canonicalStages(stages),
 		predictedKinds: predictKinds(evaluated)
 	};
 }

@@ -32,7 +32,8 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 			nodeMap,
 			diagnostics,
 			slotGroupingDiagnostics: [],
-			grammarDiagnostics: []
+			grammarDiagnostics: [],
+			diagnosticRecords: []
 		});
 		return nodeMap;
 	} finally {

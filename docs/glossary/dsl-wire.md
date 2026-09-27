@@ -894,7 +894,13 @@ Partitions the config's `rules:` functions into `ruleCauses` and
 One `patches:` entry: the owner kind it patches, its path key, and the form
 of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
 `default`, `group`, `flatten`, `regex`, `preference`, or `literal` for a raw
-rule value), with the placeholder's name where it has one.
+rule value), with the placeholder's name where it has one. `lifts` names the enrich lifts the entry rewrote or
+renamed while it applied (`WireContext.liftClaims`), so the diagnostic records credit it with the records those
+lifts own.
+
+### `packages/codegen/src/dsl/wire/wire.ts::patchSiteKey`
+
+A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` and `WireContext.liftClaims`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
 
@@ -919,7 +925,38 @@ A lift's current body: the overlay's patched body, else the base body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireSetLiftBody`
 
-Records a patched lift body in the active wire context's overlay.
+Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
+applying (`recordLiftClaim`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRenameLift`
+
+Renames an enrich lift to a patch-chosen name (`wireRegisterSymbolRename`) and credits the lift to the patch
+sites applying. With `wireSetLiftBody` it is the only writer of a lift, so every lift a patch touches is recorded
+as evidence where the patch touches it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithPatchSites`
+
+Runs a patch application with the given sites as the active ones (`WireContext.activePatchSites`) and restores
+the prior set after, so a nested `transform()` credits its own sites. Outside a wire context it only runs the
+function.
+
+### `packages/codegen/src/dsl/wire/wire.ts::recordLiftClaim`
+
+Adds a lift to the claims of every active patch site; a no-op outside a wire context or while no patch applies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftClaims`
+
+The lifts each patch site rewrote or renamed, by `patchSiteKey`. `drainPatchSitesMetadata` copies them onto
+`PatchSite.lifts`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.activePatchSites`
+
+The keys of the patch sites whose application is running, set by `wireWithPatchSites`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.source`
+
+The upstream base before enrich: `wire()`'s third argument, which defaults to the base it was given, since a
+grammar wired without `sittirGrammar` ran no enrich. Evaluate reads it as the raw stage.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::baseRuleBodiesOf`
 

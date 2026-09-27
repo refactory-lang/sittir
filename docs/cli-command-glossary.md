@@ -383,7 +383,7 @@ Run pre-codegen grammar diagnostics
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--upstream` — diagnose the grammar's base evaluated with no wire config
+- `--stage <stage>` — diagnose an evaluated stage: raw (the upstream base) or enriched (the base after enrich), both with no wire config — choices: `raw` | `enriched`
 
 **Example**
 
@@ -460,7 +460,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
 
 ### `tool override-census`
 
-List hand-written rules and patch sites, labelled against the upstream compile
+List hand-written rules and patch sites, with the diagnostic records they resolve across the raw, enriched and final stages
 
 **Options**
 

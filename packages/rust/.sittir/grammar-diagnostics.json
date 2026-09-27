@@ -15,7 +15,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "tuple_type",
-    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -27,7 +27,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "tuple_expression",
-    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -39,7 +39,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "_non_special_token",
-    "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -51,7 +51,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "_primitive_type",
-    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "ambiguity"
@@ -63,7 +63,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "reference_expression",
-    "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "ambiguity"
@@ -75,7 +75,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "impl_item",
-    "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "ambiguity"

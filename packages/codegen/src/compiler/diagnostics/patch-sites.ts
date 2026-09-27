@@ -1,6 +1,6 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { PatchForm, PatchSite } from '../../dsl/wire/wire.ts';
-import type { UpstreamCompilation } from '../upstream.ts';
+import type { DiagnosticRecord } from './diagnostic-records.ts';
 
 export type PatchSiteLabel = 'authoring' | 'resolving';
 
@@ -11,16 +11,18 @@ export interface LabelledPatchSite extends PatchSite {
 
 const RESOLVING_ONLY: ReadonlySet<PatchForm> = new Set(['rule']);
 
-export function labelPatchSites(sites: readonly PatchSite[], upstream: UpstreamCompilation): LabelledPatchSite[] {
-	const blockingByOwner = new Map<string, Set<string>>();
-	for (const d of upstream.diagnostics) {
-		if (d.canProceed !== false || d.ownerKind === undefined) continue;
-		blockingByOwner.set(d.ownerKind, (blockingByOwner.get(d.ownerKind) ?? new Set()).add(d.code));
-	}
+export function labelPatchSites(sites: readonly PatchSite[], records: readonly DiagnosticRecord[]): LabelledPatchSite[] {
+	const patchClaims = records.flatMap(({ code, resolvedBy }) =>
+		resolvedBy?.stage === 'wire' ? resolvedBy.by.flatMap((by) => ('patch' in by ? [{ code, patch: by.patch }] : [])) : []
+	);
 	return sites.map((site) => {
-		const claims = [...(blockingByOwner.get(site.ownerKind) ?? [])].sort();
+		const claims = [...new Set(patchClaims.filter(({ patch }) => sameSite(patch, site)).map(({ code }) => code))].sort();
 		return { ...site, label: claims.length > 0 ? 'resolving' : 'authoring', claims };
 	});
+}
+
+function sameSite(a: Pick<PatchSite, 'ownerKind' | 'path' | 'form'>, b: PatchSite): boolean {
+	return a.ownerKind === b.ownerKind && a.path === b.path && a.form === b.form;
 }
 
 export function diagnosePatchSites(input: {
@@ -35,7 +37,7 @@ export function diagnosePatchSites(input: {
 			code: 'patch-without-cause',
 			severity: 'error' as const,
 			ownerKind: site.ownerKind,
-			message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: no diagnostic blocks the upstream shape of '${site.ownerKind}'. Delete the patch so the upstream shape stands`,
+			message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands`,
 			canProceed: false,
 			details: { path: site.path, form: site.form, name: site.name }
 		}));

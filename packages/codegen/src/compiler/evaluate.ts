@@ -27,7 +27,7 @@ import type {
 	TokenRule
 } from '../types/rule.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, RuleProvenance, UpstreamEvaluation } from './types.ts';
+import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, RuleProvenance, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
@@ -263,7 +263,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const optionsBlock = drainOptionsMetadata(opts);
 	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
 	const patchSites = drainPatchSitesMetadata(opts);
-	const upstream = departsFromUpstream(opts) ? evaluateUpstream(optionsOrBase, ctx) : undefined;
+	const stages = departsFromBase(ctx) ? evaluateStages(optionsOrBase, ctx) : undefined;
 
 	const grammarResult = {
 		name: opts.name,
@@ -289,7 +289,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		ruleCauses,
 		undeclaredRules,
 		patchSites,
-		upstream,
+		stages,
 		orphanedSyntheticGroups,
 		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
@@ -343,24 +343,34 @@ function drainRuleCausesMetadata(opts: GrammarOptions): Pick<RawGrammar, 'ruleCa
 }
 
 function drainPatchSitesMetadata(opts: GrammarOptions): readonly PatchSite[] | undefined {
-	const sites = [...(getWireContext(opts)?.patchSites.values() ?? [])];
-	if (sites.length === 0) return undefined;
-	const key = (s: PatchSite) => `${s.ownerKind}|${s.path}|${s.form}`;
-	return sites.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
+	const wireCtx = getWireContext(opts);
+	if (!wireCtx || wireCtx.patchSites.size === 0) return undefined;
+	const sites = [...wireCtx.patchSites].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+	return sites.map(([key, site]) => {
+		const lifts = wireCtx.liftClaims.get(key);
+		return lifts === undefined ? site : { ...site, lifts: [...lifts].sort() };
+	});
 }
 
-function departsFromUpstream(opts: GrammarOptions): boolean {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx) return false;
-	const patches = (opts as { patches?: Record<string, unknown> }).patches;
+function departsFromBase(ctx: EvaluateCtx): boolean {
+	const wireCtx = getWireContext(ctx.opts);
+	if (!ctx.isExtension || !wireCtx) return false;
+	const patches = (ctx.opts as { patches?: Record<string, unknown> }).patches;
 	return wireCtx.authoredRuleNames.size > 0 || Object.keys(patches ?? {}).length > 0;
 }
 
-function evaluateUpstream(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): UpstreamEvaluation<EvaluatedGrammar> {
-	const upstreamOpts: GrammarOptions = { name: ctx.opts.name, rules: {} };
-	const raw = grammarFn(base, upstreamOpts).grammar as EvaluatedGrammar;
-	const ruleNames = [...new Set([...Object.keys(ctx.baseRules), ...Object.keys(upstreamOpts.rules)])].sort();
-	return { raw, ruleNames };
+function evaluateStages(enriched: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
+	const wireCtx = getWireContext(ctx.opts);
+	if (!wireCtx) throw new Error(`evaluateStages('${ctx.opts.name}'): the grammar departs from its base but carries no wire context`);
+	return { raw: evaluateStage(wireCtx.source as { grammar: any }, ctx), enriched: evaluateStage(enriched, ctx) };
+}
+
+function evaluateStage(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
+	const stageOpts: GrammarOptions = { name: ctx.opts.name, rules: {} };
+	const grammar = grammarFn(base, stageOpts).grammar as EvaluatedGrammar;
+	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
+	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
+	return { grammar, ruleNames };
 }
 
 function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {

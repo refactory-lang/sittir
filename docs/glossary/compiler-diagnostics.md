@@ -446,8 +446,8 @@ The records answerable from the evaluated grammar alone, before link: the predic
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
 
 Every grammar diagnostic of one evaluated stage, ungated: `evaluateRecords`, then the front half's records when
-the prediction built. The upstream stage (`upstream.ts::compileUpstream`) and the `grammar-diagnostics` tool use
-it.
+the prediction built, with the collapsed grammar's rule catalog so a record's owner resolves to its root rule id.
+The evaluation stages (`stage.ts::diagnoseEvaluationStage`) and the `grammar-diagnostics` tool use it.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::withoutOrphanedGroups`
 
@@ -491,30 +491,30 @@ console during regen and the persisted grammar-diagnostics.json.
 Which upstream diagnostic codes justify each `reauthored` cause. A code
 counts on the rule it names (`ownerKind`), whether or not it blocks yet, so the
 judgement does not depend on which shape codes have been flipped to blocking.
-The table lists only codes the upstream compiles are observed to report:
+The table lists only codes the enriched stages are observed to report:
 `'alias-shape'` has the
 alias codes and the four collect-slots shape codes; `'ambiguity'` has none,
 because no detector for an upstream generate conflict exists yet. A rule whose
 cause has no detector lands on its grammar's
 `rule-reauthored-without-cause` floor, named per rule, and leaves it when the
 detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
-upstream has no generated parser, so it fires on every anonymous literal.
+enriched stage has no generated parser, so it fires on every anonymous literal.
 `content-collision` and `storagename-collision` are absent too: a `field()`
 patch resolves them, so they are patch-site provocations, not rule causes.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
 
-Judges a grammar's hand-authored departures against its upstream stage's records. They are evaluate-time
+Judges a grammar's hand-authored departures against its enriched stage's records. They are evaluate-time
 records, so the gate checks them before link.
 Both sides are compared by authored names: `compileGrammar` passes the
 evaluated grammar, not the one `collectGrammarDiagnosticsForGrammar` returns,
 because with generated id tables that one has hidden rules and `renderAs:`
-keys collapsed to their display names, while the upstream compile (no id
+keys collapsed to their display names, while the enriched stage (no id
 tables) never collapses. Every code it emits blocks, and every message names
 the declaration or deletion that resolves it:
 
 - `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
-  upstream.
+  enriched stage.
 - `render-only-not-external`: a `renderAs:` key that is not an upstream
   external, as the evaluated externals list spells it.
 - `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
@@ -537,20 +537,57 @@ belong to the declared cause.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
 
-Labels each patch site against the upstream compile. A site is `resolving`
-when some diagnostic blocks the upstream shape of its owner kind, and it
-claims every such code; otherwise it is `authoring` and claims nothing. The
-labelling is owner-level, because upstream diagnostics name an owner, not a
-path: an authoring `field()` on a flagged owner also reads as resolving, so
-the labels may over-report resolving sites but never under-report them. Only
-`diagnosePatchSites` acts on the labels, and it judges `rule()` sites alone,
-where the coarseness cannot matter. `content-collision` and
-`storagename-collision` count here: a `field()` patch resolves them.
+Labels each patch site from the diagnostic records. A site is `resolving` when wire resolves some record the
+enriched stage raised and credits the site with it (`DiagnosticRecord.resolvedBy`); it claims those records'
+codes. Otherwise it is `authoring` and claims nothing. The credit is path-blind: a site is credited with every
+record owned by its owner kind or by an enrich lift it rewrote or renamed, so an authoring `field()` on an owner
+wire otherwise repairs also reads as resolving. Only `diagnosePatchSites` acts on the labels, and it judges
+`rule()` sites alone. Records of every code count, blocking or not: `content-collision` and
+`storagename-collision` among them, since a `field()` patch resolves them.
+
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::diagnosePatchSites`
 
 `patch-without-cause` for every `rule()` site labelled authoring: a
-`rule(name, body)` placeholder can only be justified by a shape the upstream
-compile blocks on, so one on an unflagged owner resolves nothing. It blocks;
+`rule(name, body)` placeholder can only be justified by an enriched-stage record wire resolves, so one
+credited with none resolves nothing. It blocks;
 a floor for it applies at the gate. Authoring
 forms (`field`, `variant`, `alias` used to name) are never judged.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::sameSite`
+
+Whether a credited patch names the site: same owner kind, path and form.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::DiagnosticRecord`
+
+One record per key `(code, owner root rule id, slot name)`, folded over the raw, enriched and final stages.
+`ownerKind` is the owner's name in the latest stage that raises the key, since a catalog rename changes the name
+but not the root id. `ruleProvenance` says where the owner kind comes from: `upstream` when the raw stage
+declares it, `enrich` when only the enriched stage does, `wire` otherwise. `resolved` means the final stage no
+longer raises the key. `resolvedBy.stage` is `enrich` when the enriched stage already dropped it, with an empty
+`by` because nothing names the enrich pass; it is `wire` when the enriched stage still raised it, and `by` then
+lists the `rules:` entries and patch sites credited with it.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::deriveDiagnosticRecords`
+
+Folds the stage diagnoses and the final stage's records into `DiagnosticRecord`s, one per key, in first-seen
+order (raw, then enriched, then final). The final stage is `evaluateRecords` plus the front half's records of
+the compiled grammar, the same composition `diagnoseStage` makes; the rule-cause and patch-site records are
+about the departure itself and stay out.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::keyedDiagnostics`
+
+One stage's records by key; a record with no owner has no key and stays out.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::ownerRootId`
+
+A record's owner as a root rule id: the owner of its stamped `ruleId` when it has one, else its owner kind
+looked up in the stage's catalog, else the id `createRuleId` mints for that name. The last case is a record
+raised before link, whose owner kind is still its source name, so it is the id link would mint.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::claimantsOf`
+
+What wire resolved a key with: the `rules:` entry named like the owner, and every patch site on the owner or
+whose `PatchSite.lifts` holds it. The lift writers record that evidence; nothing here matches names across
+kinds.
+

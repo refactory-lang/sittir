@@ -14,6 +14,7 @@ function makeCompilation(overrides: Partial<Compilation> = {}): Compilation {
 		diagnostics: new DiagnosticSink(),
 		slotGroupingDiagnostics: [],
 		grammarDiagnostics: [],
+		diagnosticRecords: [],
 		...overrides
 	};
 }

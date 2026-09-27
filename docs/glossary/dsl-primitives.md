@@ -241,7 +241,7 @@ Whether a patch value is a `rule()` placeholder.
 rule of the same name, and why: `'alias-shape'` (an alias or
 hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
 precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
-diagnostics judge the declaration against the upstream compile.
+diagnostics judge the declaration against the enriched stage.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
 

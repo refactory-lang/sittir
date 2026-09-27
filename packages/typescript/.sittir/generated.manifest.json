@@ -1,9 +1,9 @@
 {
   "grammar": "typescript",
-  "source_hash": "29fee213512a900765710a3e670f17343bd204e64c3c69bebb69fa6ef447146e",
+  "source_hash": "e0cff014284b143906e7cb181e618ae7e8d11972511027638991a476b66e0d43",
   "files": {
-    "packages/typescript/.sittir/grammar-diagnostics.json": "557732edef4b1baa858f57959dfc914381b08b128db1f03ce98e6453dcb499f0",
-    "packages/typescript/.sittir/grammar.js": "59f168461ad3f1576d23864e9303bb1edd8c7081ef933b961843322e7926d918",
+    "packages/typescript/.sittir/grammar-diagnostics.json": "0f7d8c11a04065fd10039ce0b011ff0ac5c4fb44f02b992af25605480d8a0831",
+    "packages/typescript/.sittir/grammar.js": "aa0a42a240804098c9ae797949a014882be7393a0be47b6ba14f575b51cfead4",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "7e58aeaae9ca12bbce7e0cc90670f27637ada64d752e3fa6b3b5b71ee116c93d",
     "packages/typescript/.sittir/render-bodies.json": "379bf9e522001cbba015f562b9c8d0c9b17391651e955e0a4ca76b9c461ba65e",

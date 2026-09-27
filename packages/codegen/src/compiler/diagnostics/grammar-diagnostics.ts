@@ -9,7 +9,7 @@ import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisi
 import type { AssembleWarning, NamingEvent } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, RuleCatalog } from '../types.ts';
 import { kindCatalogOf, predictedEntriesOf, renameAwareSymbolSource, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
@@ -306,10 +306,11 @@ export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	]);
 }
 
-export function diagnoseStage(raw: RawGrammar): GrammarDiagnostic[] {
+export function diagnoseStage(raw: RawGrammar): { diagnostics: GrammarDiagnostic[]; ruleCatalog?: RuleCatalog } {
 	const records = evaluateRecords(raw);
-	if (predictionFailed(raw)) return records;
-	return [...records, ...collectGrammarDiagnosticsForGrammar({ rawGrammar: raw }).diagnostics];
+	if (predictionFailed(raw)) return { diagnostics: records };
+	const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+	return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
 }
 
 function withoutOrphanedGroups(raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>, records: GrammarDiagnostic[]): GrammarDiagnostic[] {

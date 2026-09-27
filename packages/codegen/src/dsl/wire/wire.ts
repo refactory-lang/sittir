@@ -54,6 +54,7 @@ export interface PatchSite {
 	readonly path: string;
 	readonly form: PatchForm;
 	readonly name?: string;
+	readonly lifts?: readonly string[];
 }
 
 export interface WireContext {
@@ -83,6 +84,9 @@ export interface WireContext {
 	readonly automaticVariants: AutomaticVariants;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
 	readonly liftBodies: Map<string, RuntimeRule>;
+	readonly liftClaims: Map<string, Set<string>>;
+	activePatchSites: readonly string[];
+	readonly source: unknown;
 }
 
 export interface RefineForm {
@@ -150,6 +154,11 @@ export function wireRegisterSymbolRename(oldName: string, newName: string): bool
 	return true;
 }
 
+export function wireRenameLift(liftName: string, newName: string): void {
+	recordLiftClaim(liftName);
+	wireRegisterSymbolRename(liftName, newName);
+}
+
 export function wireHasAuthoredRule(name: string): boolean {
 	return currentContext?.authoredRuleNames.has(name) ?? false;
 }
@@ -160,8 +169,32 @@ export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): bool
 	return true;
 }
 
+export function patchSiteKey(site: PatchSite): string {
+	return `${site.ownerKind}|${site.path}|${site.form}`;
+}
+
 export function wireRecordPatchSite(site: PatchSite): void {
-	currentContext?.patchSites.set(`${site.ownerKind}|${site.path}|${site.form}`, site);
+	currentContext?.patchSites.set(patchSiteKey(site), site);
+}
+
+export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T): T {
+	const context = currentContext;
+	if (!context) return fn();
+	const prior = context.activePatchSites;
+	context.activePatchSites = sites.map(patchSiteKey);
+	try {
+		return fn();
+	} finally {
+		context.activePatchSites = prior;
+	}
+}
+
+function recordLiftClaim(liftName: string): void {
+	if (!currentContext) return;
+	for (const key of currentContext.activePatchSites) {
+		const claims = currentContext.liftClaims.get(key) ?? new Set<string>();
+		currentContext.liftClaims.set(key, claims.add(liftName));
+	}
 }
 
 export function wireGetCurrentRuleKind(): string | null {
@@ -186,6 +219,7 @@ export function wireGetLiftBody(name: string): RuntimeRule | undefined {
 }
 
 export function wireSetLiftBody(name: string, body: RuntimeRule): void {
+	recordLiftClaim(name);
 	currentContext?.liftBodies.set(name, body);
 }
 
@@ -221,7 +255,10 @@ export function withWireContext<T>(
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
-		liftBodies: new Map()
+		liftBodies: new Map(),
+		liftClaims: new Map(),
+		activePatchSites: [],
+		source: base
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -370,7 +407,8 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
 	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
-	base: B
+	base: B,
+	source: unknown = base
 ): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
@@ -401,7 +439,10 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
-		liftBodies: new Map()
+		liftBodies: new Map(),
+		liftClaims: new Map(),
+		activePatchSites: [],
+		source
 	};
 
 	const patches = cfg.patches ?? {};

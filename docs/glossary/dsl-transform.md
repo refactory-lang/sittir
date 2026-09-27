@@ -556,6 +556,12 @@ calls.
  */
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
+
+Applies a path-keyed patch set: every non-variant entry at its path, each as its own active patch site
+(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then clears sibling
+defaults an `arm.default` entry displaced.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
 Apply a patch set's `variant()` entries: try the whole-arm hoist
@@ -564,7 +570,8 @@ arm, then register the parent for flattening when it ended as a pure choice of
 its own variants. An absent variant only exists in the hoisted form, so when
 the set declares one (`variant(name, { absent: true })`) and the hoist does
 not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
-prints why the hoist bailed.
+prints why the hoist bailed. The hoist runs with every variant entry as the active patch sites, since it
+applies them together; each remaining entry runs as its own site.
 
 #### body
 
@@ -1462,6 +1469,12 @@ Records each entry of a patch set as a `PatchSite` under the current rule
 kind before the set is applied. `transform()` is where every entry passes,
 including sibling `variant()` entries that hoist whole-arm without reaching
 `resolvePatch` and wildcard paths that reach it once per matching member.
+
+### `packages/codegen/src/dsl/transform/transform.ts::patchSitesOf`
+
+The `PatchSite` of each patch entry under the current rule kind; none outside a rule callback. Both the
+recording (`recordPatchSites`) and the application scopes (`wireWithPatchSites`) build sites here, so a lift
+claim lands on the same key the site was recorded under.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::patchFormOf`
 

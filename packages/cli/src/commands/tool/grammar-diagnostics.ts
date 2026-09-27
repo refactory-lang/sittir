@@ -1,3 +1,4 @@
+import { Option } from 'commander';
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 
@@ -6,12 +7,17 @@ export const grammarDiagnostics: CommandModule = {
 	describe: 'Run pre-codegen grammar diagnostics',
 	register: (program) => {
 		withGrammar(defineCommand(program, grammarDiagnostics))
-			.option('--upstream', "diagnose the grammar's base evaluated with no wire config")
-			.action(async (opts: { grammar?: string; upstream?: boolean }) => {
+			.addOption(
+				new Option('--stage <stage>', 'diagnose an evaluated stage: raw (the upstream base) or enriched (the base after enrich), both with no wire config').choices([
+					'raw',
+					'enriched'
+				])
+			)
+			.action(async (opts: { grammar?: string; stage?: 'raw' | 'enriched' }) => {
 				const { grammarDiagnostics: runGrammarDiagnostics } = await import('@sittir/tools');
 				const code = await runGrammarDiagnostics({
 					grammar: opts.grammar ?? 'rust',
-					...(opts.upstream === true ? { upstream: true } : {})
+					...(opts.stage === undefined ? {} : { stage: opts.stage })
 				});
 				if (code !== 0) process.exitCode = code;
 			});

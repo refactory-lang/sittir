@@ -165,8 +165,9 @@ describe('post-evaluate invariant', () => {
 				// Every patches: entry by owner, path and placeholder form — read by the
 				// patch-site labelling and the override census.
 				'patchSites',
-				// The base evaluated with no wire config — read by the upstream compile.
-				'upstream',
+				// The base evaluated with no wire config, before and after enrich — read
+				// by the stage diagnoses and the diagnostic records.
+				'stages',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.

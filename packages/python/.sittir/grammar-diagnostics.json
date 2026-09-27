@@ -5,7 +5,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "primary_expression",
-    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "ambiguity"
@@ -17,7 +17,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "string_content",
-    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -29,7 +29,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "print_statement",
-    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -41,7 +41,7 @@
     "code": "rule-reauthored-without-cause",
     "severity": "error",
     "ownerKind": "_simple_pattern",
-    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the upstream shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
     "details": {
       "cause": "alias-shape"
@@ -53,7 +53,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "dictionary_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'dictionary_comprehension'. Delete the patch so the upstream shape stands",
+    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -67,7 +67,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "generator_expression",
-    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'generator_expression'. Delete the patch so the upstream shape stands",
+    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -81,7 +81,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "list_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'list_comprehension'. Delete the patch so the upstream shape stands",
+    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -95,7 +95,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "set_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: no diagnostic blocks the upstream shape of 'set_comprehension'. Delete the patch so the upstream shape stands",
+    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",

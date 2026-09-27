@@ -3,7 +3,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const overrideCensus: CommandModule = {
 	name: 'override-census',
-	describe: 'List hand-written rules and patch sites, labelled against the upstream compile',
+	describe: 'List hand-written rules and patch sites, with the diagnostic records they resolve across the raw, enriched and final stages',
 	register: (program) => {
 		withGrammar(defineCommand(program, overrideCensus))
 			.option('--json', 'Print the census as JSON')

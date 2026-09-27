@@ -4761,11 +4761,36 @@ function wireRegisterSymbolRename(oldName, newName) {
   currentContext.symbolRenames.set(oldName, newName);
   return true;
 }
+function wireRenameLift(liftName, newName) {
+  recordLiftClaim(liftName);
+  wireRegisterSymbolRename(liftName, newName);
+}
 function wireHasAuthoredRule(name) {
   return currentContext?.authoredRuleNames.has(name) ?? false;
 }
+function patchSiteKey(site) {
+  return `${site.ownerKind}|${site.path}|${site.form}`;
+}
 function wireRecordPatchSite(site) {
-  currentContext?.patchSites.set(`${site.ownerKind}|${site.path}|${site.form}`, site);
+  currentContext?.patchSites.set(patchSiteKey(site), site);
+}
+function wireWithPatchSites(sites, fn) {
+  const context = currentContext;
+  if (!context) return fn();
+  const prior = context.activePatchSites;
+  context.activePatchSites = sites.map(patchSiteKey);
+  try {
+    return fn();
+  } finally {
+    context.activePatchSites = prior;
+  }
+}
+function recordLiftClaim(liftName) {
+  if (!currentContext) return;
+  for (const key of currentContext.activePatchSites) {
+    const claims = currentContext.liftClaims.get(key) ?? /* @__PURE__ */ new Set();
+    currentContext.liftClaims.set(key, claims.add(liftName));
+  }
 }
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
@@ -4784,12 +4809,13 @@ function wireGetLiftBody(name) {
   return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
 }
 function wireSetLiftBody(name, body) {
+  recordLiftClaim(name);
   currentContext?.liftBodies.set(name, body);
 }
 function baseRuleBodiesOf(base2) {
   return baseRulesOf(base2) ?? {};
 }
-function wire(config, base2) {
+function wire(config, base2, source = base2) {
   const cfg = config;
   const baseArg = base2;
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
@@ -4819,7 +4845,10 @@ function wire(config, base2) {
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
     baseRuleBodies: baseRuleBodiesOf(baseArg),
-    liftBodies: /* @__PURE__ */ new Map()
+    liftBodies: /* @__PURE__ */ new Map(),
+    liftClaims: /* @__PURE__ */ new Map(),
+    activePatchSites: [],
+    source
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -5912,9 +5941,11 @@ function transform(original, ...patchSets) {
   return rule2;
 }
 function recordPatchSites(patches) {
+  for (const site of patchSitesOf(Object.entries(patches))) wireRecordPatchSite(site);
+}
+function patchSitesOf(entries) {
   const ownerKind = wireGetCurrentRuleKind();
-  if (ownerKind === null) return;
-  for (const [path, value] of Object.entries(patches)) wireRecordPatchSite({ ownerKind, path, ...patchFormOf(value) });
+  return ownerKind === null ? [] : entries.map(([path, value]) => ({ ownerKind, path, ...patchFormOf(value) }));
 }
 function patchFormOf(value) {
   if (isRulePlaceholder(value)) return { form: "rule", name: value.name };
@@ -5936,9 +5967,12 @@ function applyPathPatches(original, patches) {
   const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
   let rule2 = original;
   for (const [key, value] of otherEntries) {
-    const segments = parsePath(String(key));
-    if (isArmDefault(value)) assertChoiceArmPath(rule2, String(key), segments);
-    rule2 = applyPath(rule2, segments, (member, precStack) => resolvePatch(value, member, String(key), precStack));
+    const segments = parsePath(key);
+    if (isArmDefault(value)) assertChoiceArmPath(rule2, key, segments);
+    rule2 = wireWithPatchSites(
+      patchSitesOf([[key, value]]),
+      () => applyPath(rule2, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+    );
     if (isArmDefault(value)) rule2 = clearSiblingDefaults(rule2, segments);
   }
   if (variantEntries.length > 0) rule2 = applyVariantPatches(rule2, variantEntries);
@@ -5987,7 +6021,7 @@ function partitionPatchesByVariant(patches) {
 }
 function applyVariantPatches(rule2, variantEntries) {
   const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
-  const hoisted = tryHoistSiblingVariants(rule2, ordered);
+  const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule2, ordered));
   if (hoisted === null) {
     const absent = ordered.find(([, v]) => v.absent === true);
     if (absent !== void 0) {
@@ -6001,7 +6035,10 @@ function applyVariantPatches(rule2, variantEntries) {
     if (hoisted?.consumed.has(key)) continue;
     const segments = parsePath(key);
     try {
-      result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack));
+      result = wireWithPatchSites(
+        patchSitesOf([[key, value]]),
+        () => applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+      );
     } catch (error) {
       if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
       throw error;
@@ -6163,7 +6200,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const altMember = choiceMembers[resolvedAlt];
     const name = polymorphVisibleName(parentKind, variantMintName(p.v));
     const lift = enrichLiftArmOf(altMember);
-    if (lift !== null) wireRegisterSymbolRename(lift.liftName, name);
+    if (lift !== null) wireRenameLift(lift.liftName, name);
     if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
       throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
     }
@@ -6223,7 +6260,7 @@ function enrichLiftArmOf(member) {
 }
 function renameEnrichLift(member, lift, ruleName, nodeName) {
   if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
-  wireRegisterSymbolRename(lift.liftName, ruleName);
+  wireRenameLift(lift.liftName, ruleName);
   if (ruleName === nodeName) return { ...lift.symbol, name: nodeName };
   if (member.type !== "ALIAS") return ruleRef(ruleName, nodeName);
   return {
@@ -6300,7 +6337,7 @@ function applyFlatPatchesToSeq(original, patches) {
         `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
       );
     }
-    members[index] = resolvePatch(patch, members[index], key);
+    members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolvePatch(patch, members[index], key));
   }
   return reconstructContainer(original, members);
 }
@@ -6618,7 +6655,7 @@ function role(symbol, roleName) {
 function sittirGrammar(base2, config) {
   const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups) });
   const grammar = globalThis.grammar;
-  return grammar(enriched, wire(config, enriched));
+  return grammar(enriched, wire(config, enriched, base2));
 }
 
 // packages/python/grammar.sittir.ts

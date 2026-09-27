@@ -4385,7 +4385,8 @@ minted group.
 ### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
 
 The one composition of a sittir grammar: `enrich(base, { groupBodies })`
-with the config's authored group patterns, then `wire(config, enriched)`,
+with the config's authored group patterns, then `wire(config, enriched, base)`, which keeps the pre-enrich
+base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options.
 Every `grammar.sittir.ts` and the bootstrap template call it as

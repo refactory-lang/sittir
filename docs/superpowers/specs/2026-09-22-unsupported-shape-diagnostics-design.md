@@ -304,6 +304,11 @@ type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string;
 - Patch-site labels (`authoring` / `resolving`) derive from the records: a
   site is resolving iff it claims a key present in the enriched stage and
   resolved by wire.
+- The compilation exposes the records as `diagnosticRecords`. Each stage's
+  diagnostics are read where they live: `stages.raw.diagnostics` and
+  `stages.enriched.diagnostics` for the evaluated stages, and
+  `grammarDiagnostics` for the final stage. No second copy of any stage is
+  stored.
 
 ## 6. Acceptance
 

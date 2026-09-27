@@ -296,6 +296,10 @@ export function ruleIdPath(id: RuleId): string {
 	return id.slice(id.indexOf(':', RULE_ID_SCHEME.length) + 1);
 }
 
+export function ruleIdOwner(id: RuleId): string {
+	return decodeURIComponent(id.slice(RULE_ID_SCHEME.length, id.indexOf(':', RULE_ID_SCHEME.length)));
+}
+
 function formatPathSegment(segment: RulePathSegment): string {
 	switch (segment.edge) {
 		case 'content':

@@ -14,5 +14,5 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 ): GrammarResult {
 	const enriched = enrich(base, { groupBodies: authoredGroupBodies(config.groups) });
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
-	return grammar(enriched, wire<EnrichedGrammar<B>, P, O>(config, enriched));
+	return grammar(enriched, wire<EnrichedGrammar<B>, P, O>(config, enriched, base));
 }

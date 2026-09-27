@@ -122,7 +122,7 @@ export interface RawGrammar {
 	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
 	readonly undeclaredRules?: readonly string[];
 	readonly patchSites?: readonly PatchSite[];
-	readonly upstream?: UpstreamEvaluation;
+	readonly stages?: EvaluationStages;
 	readonly orphanedSyntheticGroups?: readonly string[];
 	readonly predictedKinds?: PredictedKinds;
 	readonly automaticVariants?: AutomaticVariants;
@@ -131,15 +131,20 @@ export interface RawGrammar {
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
 
-export interface UpstreamEvaluation<G = RawGrammar> {
-	readonly raw: G;
+export interface StageEvaluation<G = RawGrammar> {
+	readonly grammar: G;
 	readonly ruleNames: readonly string[];
 }
 
-export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'upstream'> {
+export interface EvaluationStages<G = RawGrammar> {
+	readonly raw: StageEvaluation<G>;
+	readonly enriched: StageEvaluation<G>;
+}
+
+export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages'> {
 	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
 	readonly protectedRuleNames?: readonly string[];
-	readonly upstream?: UpstreamEvaluation<EvaluatedGrammar>;
+	readonly stages?: EvaluationStages<EvaluatedGrammar>;
 }
 
 export interface DesugarDivergenceEvent {
