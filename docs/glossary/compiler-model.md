@@ -4507,19 +4507,35 @@ One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
 
-The rule walk behind `lineEnds`. A pattern is probed with the leaf guards' own anchored regex (`anchoredLeafRegex`): it is `open` when it accepts the probe line and rejects two probe lines joined by a line break.
+`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is probed with the leaf guards' own anchored regex (`anchoredLeafRegex`). It is `open` when it accepts the probe line and rejects two probe lines joined by a line break.
+
+### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
+
+What a rule can begin or end with: a `literal`, a `pattern`, another kind (`symbol`), or nothing (`empty`, which an empty literal also reads as).
+
+### `packages/codegen/src/compiler/model/node-map.ts::EdgeCtx`
+
+Which end of a rule `ruleEdgeTerminals` reads: `start` or `end`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEndCtx`
 
-The kind whose rule `ruleLineEnds` walks, which names its patterns in the anchored-regex error.
+The kind whose rule `ruleLineEnds` classifies, which names its patterns in the anchored-regex error.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeTerminals`
+
+The one walk over a rule's edge. A sequence reads its outermost member on that edge, falling inward through members that can be empty; a choice reads each of its arms; an optional or repeated rule adds `empty`. `lineEnds` classifies the `end` terminals and `leadingTerminals` returns the `start` ones, so both edges share one reading of the rule.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.leadingTerminals`
+
+How this kind's text can begin, read from its own rule by `ruleEdgeTerminals`. Symbols are left for the caller to resolve through the node map, as `lineTerminated` does for the end edge.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::GapWalkCtx`
 
 Whether the `innerGaps` walk is under an optional, repeat or choice member, where tokens are conditional.
 
-### `packages/codegen/src/compiler/model/node-map.ts::seqLineEnds`
+### `packages/codegen/src/compiler/model/node-map.ts::seqEdgeTerminals`
 
-A sequence's ends: its last member's, plus the ends of the members before it when the last can be empty.
+A sequence's terminals on one edge, given its members ordered from that edge inward: the first member's, plus the next member's when the first can be empty.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
 
@@ -4535,11 +4551,25 @@ The `ir` key a loose trivia string is built through: every grammar's `comment`.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::TriviaForm`
 
-The kind a loose trivia string builds, and the literal delimiters its full spelling carries (`open`, `close`; empty when the arm has none on that side).
+The kind a loose trivia string builds, the literal delimiters its full spelling carries (`open`, `close`; empty when the arm has none on that side), the coercer that builds it (the kind's `fromFunctionName`, which `ir.comment`'s coerce flavor also calls), and the sibling arms whose start a loose interior must not have.
+
+### `packages/codegen/src/compiler/model/trivia.ts::TriviaSibling`
+
+A non-default arm of the default comment kind: `lead`, the start-anchored regex of how its text can begin, and `builder`, the `ir` key that builds it (named in the refusal).
 
 ### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
 
 The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are the literal STRING runs at the two ends of that kind's render SEQ. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm whose render rule is not a SEQ throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
+
+When the default comment kind is a polymorph, every other arm is a sibling (`siblingArms`). A loose interior that starts the way a sibling can is refused, because its rendered text would read back as that sibling, or at best be ambiguous with it. The check needs no lexer precedence: whether a sibling could start there is enough. Rust `line_comment` refuses `/…` (doc_outer), `!…` (doc_inner) and `//…` (extra_slashes); python `comment` and typescript `comment_line` have no siblings.
+
+### `packages/codegen/src/compiler/model/trivia.ts::siblingArms`
+
+The non-default arms of a polymorph default comment kind, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder. An arm with no `ir` key throws.
+
+### `packages/codegen/src/compiler/model/trivia.ts::leadSources`
+
+The regex sources a kind's text can begin with: each literal escaped, each pattern grouped, and each symbol resolved through the node map. A kind that can begin empty throws, since any text could read as it, and so does one the node map cannot read.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 
@@ -4652,6 +4682,14 @@ Whether a kind is hidden on the surface, read from its node in the map (`surface
 ### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegex`
 
 The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::leadingRegex`
+
+A pattern compiled to match at the start of a text only (`^(?:<pattern>)`), with the same escape stripping, flags and error as `anchoredLeafRegex` (`compiledLeafRegex` serves both).
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::compiledLeafRegex`
+
+The shared compile behind `anchoredLeafRegex` and `leadingRegex`: strips useless escapes, anchors the whole text or its start, and stops codegen with the kind and pattern when neither flag compiles it.
 
 ### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegexLiteral`
 

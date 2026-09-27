@@ -53,37 +53,51 @@ const LINE_PROBE = 'a b\t*/ -->#;';
 
 export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
 
+export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
+
+interface EdgeCtx {
+	readonly edge: 'start' | 'end';
+}
+
 interface LineEndCtx {
 	readonly kind: string;
 }
 
-function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
+function ruleEdgeTerminals(rule: AnyRule, ctx: EdgeCtx): EdgeTerminal[] {
 	switch (rule.type) {
 		case STRING:
-			return [rule.value === '' ? 'empty' : 'closed'];
-		case PATTERN: {
-			const anchored = anchoredLeafRegex(ctx.kind, rule.value);
-			return [
-				anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed'
-			];
-		}
+			return [rule.value === '' ? 'empty' : { literal: rule.value }];
+		case PATTERN:
+			return [{ pattern: rule.value }];
 		case SYMBOL:
 			return [{ symbol: rule.name }];
 		default:
 			break;
 	}
 	const children = anyRuleWalker.childrenOf(rule);
-	const ends = rule.type === SEQ ? seqLineEnds(children, ctx) : children.flatMap((child) => ruleLineEnds(child, ctx));
+	const terminals =
+		rule.type === SEQ
+			? seqEdgeTerminals(ctx.edge === 'end' ? [...children].reverse() : children, ctx)
+			: children.flatMap((child) => ruleEdgeTerminals(child, ctx));
 	const optional = 'multiplicity' in rule && (rule.multiplicity === 'optional' || rule.multiplicity === 'array');
-	return optional || children.length === 0 ? [...ends, 'empty'] : ends;
+	return optional || children.length === 0 ? [...terminals, 'empty'] : terminals;
 }
 
-function seqLineEnds(members: readonly AnyRule[], ctx: LineEndCtx): LineEnd[] {
-	const last = members.at(-1);
-	if (last === undefined) return ['empty'];
-	const ends = ruleLineEnds(last, ctx);
-	if (!ends.includes('empty')) return ends;
-	return [...ends.filter((end) => end !== 'empty'), ...seqLineEnds(members.slice(0, -1), ctx)];
+function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTerminal[] {
+	const outer = fromEdge[0];
+	if (outer === undefined) return ['empty'];
+	const terminals = ruleEdgeTerminals(outer, ctx);
+	if (!terminals.includes('empty')) return terminals;
+	return [...terminals.filter((terminal) => terminal !== 'empty'), ...seqEdgeTerminals(fromEdge.slice(1), ctx)];
+}
+
+function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
+	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
+		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
+		if ('literal' in terminal) return 'closed';
+		const anchored = anchoredLeafRegex(ctx.kind, terminal.pattern);
+		return anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed';
+	});
 }
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
@@ -1092,6 +1106,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	get lineEnds(): readonly LineEnd[] {
 		return ruleLineEnds(this.rule, { kind: this.kind });
+	}
+
+	get leadingTerminals(): readonly EdgeTerminal[] {
+		return ruleEdgeTerminals(this.rule, { edge: 'start' });
 	}
 
 	get parameterless(): boolean {

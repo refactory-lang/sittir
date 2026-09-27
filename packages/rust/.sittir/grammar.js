@@ -120,8 +120,8 @@ var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
-function compileAnchoredPattern(source) {
-  const anchored = `^(?:${source})$`;
+function compileAnchoredPattern(source, anchor = "whole") {
+  const anchored = anchor === "whole" ? `^(?:${source})$` : `^(?:${source})`;
   try {
     return { regex: new RegExp(anchored, "u") };
   } catch {

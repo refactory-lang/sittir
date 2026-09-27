@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior } from '@sittir/common';
+import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -7477,7 +7477,11 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '//', '')
+						? refuseSiblingLead(spelledInterior(input, '//', ''), [
+								[/^(?:(?:\/\/))/u, 'ir.lineCommentExtraSlashes'],
+								[/^(?:\/)/u, 'ir.lineCommentDocOuter'],
+								[/^(?:!)/u, 'ir.lineCommentDocInner']
+							])
 						: input,
 				_K58,
 				_K59,

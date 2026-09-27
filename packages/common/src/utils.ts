@@ -34,8 +34,9 @@ export interface TriviaSetterRuntime<Self> {
  */
 export interface TriviaFacts {
 	kindName(type: AnyNodeData['$type']): string | undefined;
+	readonly kinds: ReadonlySet<string>;
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
-	comment?(text: string): AnyNodeData;
+	comment?: ((text: string) => AnyNodeData) | undefined;
 }
 
 export interface WithMethodsEngine {
@@ -138,10 +139,17 @@ function triviaSetterOf<Self extends AnyNodeData>(node: Self, facts: TriviaFacts
 /** One trivia item as its entry: a node as it is, a string through the grammar's `ir.comment`. */
 function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
 	if (typeof item !== 'string') {
-		if (isNodeData(item)) return item;
+		if (isNodeData(item)) {
+			const kind = facts.kindName(item.$type);
+			if (kind === undefined || !facts.kinds.has(kind)) {
+				throw new Error(`trivia: ${kind ?? String(item.$type)} is not a trivia kind; an entry is one of ${[...facts.kinds].join(', ')}`);
+			}
+			return item;
+		}
 		throw new Error(`trivia: an entry is a node or a comment's text, not ${JSON.stringify(item)}`);
 	}
-	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(item)} is text, and this grammar has no ir.comment`);
+	if (!('comment' in facts)) throw new Error(`trivia: ${JSON.stringify(item)} is text, and this grammar has no ir.comment`);
+	if (facts.comment === undefined) throw new Error(`trivia: ${JSON.stringify(item)} is text, and ir.comment is bound when the factories load; import the factories`);
 	return facts.comment(item);
 }
 

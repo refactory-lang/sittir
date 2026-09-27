@@ -352,7 +352,6 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "numberText": "function",
   "path": "object",
   "pattern": "object",
-  "provideCommentBuilder": "function",
   "readTreeNode": "function",
   "rejectBareText": "function",
   "rejectKeywordText": "function",

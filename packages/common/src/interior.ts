@@ -51,3 +51,12 @@ export function spelledInterior(text: string, open: string, close: string): stri
 	const spelled = text.length >= open.length + close.length && text.startsWith(open) && text.endsWith(close);
 	return spelled ? text.slice(open.length, text.length - close.length) : text;
 }
+
+export function refuseSiblingLead(interior: string, siblings: readonly (readonly [lead: RegExp, builder: string])[]): string {
+	for (const [lead, builder] of siblings) {
+		if (lead.test(interior)) {
+			throw new Error(`${JSON.stringify(interior)} starts the way ${builder} does, so it would not read back as this arm; build it with ${builder}`);
+		}
+	}
+	return interior;
+}

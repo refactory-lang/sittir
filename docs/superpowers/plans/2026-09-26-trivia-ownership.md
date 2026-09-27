@@ -333,11 +333,16 @@ it('wraps trivia entries like slot children', () => {
 
 **As landed:**
 - Grammar facts reach the runtime as `methodsEngine.trivia`, typed as
-  `TriviaFacts`: `kindName`, `innerGaps` (the emitted `INNER_GAPS`, from the
-  node map's `innerGaps` rows) and `comment(text)`. The comment builder is
-  registered by `provideCommentBuilder(comment)` at the end of
-  `factories/index.ts`, because a direct import from `utils.ts` would be a
-  cycle.
+  `TriviaFacts`: `kindName`, `kinds` (the trivia kind names; any other node
+  entry is refused), `innerGaps` (the emitted `INNER_GAPS`, from the node
+  map's `innerGaps` rows) and `comment`. `comment` is the default arm's
+  coercer (what `ir.comment.coerce` calls), bound once by
+  `factories/index.ts` when it loads. Any import of a factory module from
+  `utils.ts` is a static cycle, which lint forbids.
+- A loose interior that starts the way a sibling arm of the default comment
+  kind can is refused, and the error names that sibling's builder. The leads
+  are stamped at codegen from the arms' rules (`leadingTerminals`, which
+  shares the edge walk with `lineEnds`). Rust refuses `/…`, `!…` and `//…`.
 - A loose string means `ir.comment`'s default arm (`defaultTriviaForm`: rust
   `line_comment`, python `comment`, typescript `comment_line`). The arm's
   coercer strips the full spelling through `spelledInterior`; any other text

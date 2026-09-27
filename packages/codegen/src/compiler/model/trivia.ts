@@ -1,15 +1,25 @@
 import type { NodeMap } from '../types.ts';
 import type { RenderRule } from '../../types/rule.ts';
-import { AbstractAssembledCompound, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
+import { AbstractAssembledCompound, AssembledPolymorph, AssembledSupertype, isNodeRef, storageKindOfRef } from './node-map.ts';
+import { leadingRegex } from './leaf-pattern.ts';
+import { escapeRegexLiteral } from '../../util/word-matcher.ts';
+import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
 
 const triviaKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
 export const COMMENT_IR_KEY = 'comment';
 
+export interface TriviaSibling {
+	readonly lead: RegExp;
+	readonly builder: string;
+}
+
 export interface TriviaForm {
 	readonly kind: string;
 	readonly open: string;
 	readonly close: string;
+	readonly coercer: string;
+	readonly siblings: readonly TriviaSibling[];
 }
 
 export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
@@ -30,11 +40,35 @@ export function defaultTriviaForm(nodeMap: NodeMap): TriviaForm | undefined {
 		}
 		return run;
 	};
+	if (arm.fromFunctionName === undefined) throw new Error(`trivia: the default comment kind '${arm.kind}' has no coercer`);
 	return {
 		kind: arm.kind,
 		open: literalRun(members).join(''),
-		close: literalRun([...members].reverse()).reverse().join('')
+		close: literalRun([...members].reverse()).reverse().join(''),
+		coercer: arm.fromFunctionName,
+		siblings: arm instanceof AssembledPolymorph ? siblingArms(nodeMap, arm) : []
 	};
+}
+
+function siblingArms(nodeMap: NodeMap, polymorph: AssembledPolymorph): TriviaSibling[] {
+	return polymorph.arms.flatMap((ref) => {
+		if (ref.type !== SYMBOL || ref.annotations?.default === true) return [];
+		const node = nodeMap.nodes.get(ref.name);
+		if (node?.irKey === undefined) throw new Error(`trivia: '${polymorph.kind}' arm '${ref.name}' has no builder`);
+		const leads = leadSources(nodeMap, ref.name, new Set());
+		return [{ lead: leadingRegex(ref.name, leads.join('|')), builder: `ir.${node.irKey}` }];
+	});
+}
+
+function leadSources(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): string[] {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || seen.has(kind)) throw new Error(`trivia: cannot read how '${kind}' starts`);
+	const within = new Set([...seen, kind]);
+	return node.leadingTerminals.flatMap((terminal) => {
+		if (terminal === 'empty') throw new Error(`trivia: '${kind}' can start empty, so any text could read as it`);
+		if ('symbol' in terminal) return leadSources(nodeMap, terminal.symbol, within);
+		return ['literal' in terminal ? escapeRegexLiteral(terminal.literal) : `(?:${terminal.pattern})`];
+	});
 }
 
 const lineTerminatedByNodeMap = new WeakMap<NodeMap, Map<string, boolean | undefined>>();

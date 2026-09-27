@@ -69,4 +69,19 @@ describe('loose trivia strings build ir.comment', () => {
 		expect(ir.comment('// TODO').$render()).toBe('// TODO');
 		expect(ir.comment(' TODO').$render()).toBe('// TODO');
 	});
+
+	it('refuses loose text a sibling arm would read back as, naming that arm', () => {
+		const a = (): ReturnType<typeof ir.identifier> => ir.identifier('a');
+		expect(() => a().$trivia.leading('/ doc')).toThrow(/ir\.lineCommentDocOuter/);
+		expect(() => a().$trivia.leading('/// doc')).toThrow(/ir\.lineCommentDocOuter/);
+		expect(() => a().$trivia.leading('//! doc')).toThrow(/ir\.lineCommentDocInner/);
+		expect(() => a().$trivia.leading('//// x')).toThrow(/ir\.lineCommentExtraSlashes/);
+		expect(() => ir.lineComment('/ doc')).toThrow(/ir\.lineCommentDocOuter/);
+		expect(a().$trivia.leading('//x').$render()).toBe('//x\na');
+	});
+
+	it('refuses a node entry whose kind is not trivia', () => {
+		expect(() => ir.identifier('a').$trivia.leading(ir.identifier('b') as never)).toThrow(/identifier is not a trivia kind/);
+		expect(ir.identifier('a').$trivia.leading(ir.blockComment(' b ')).$render()).toBe('/* b */\na');
+	});
 });

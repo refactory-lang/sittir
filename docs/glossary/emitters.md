@@ -1515,7 +1515,11 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 
 #### loose trivia
 
-The coercer of `ir.comment`'s default arm (`defaultTriviaForm`) passes a bare string through `spelledInterior`: text spelled with the arm's literal delimiters sheds them, and any other text is the interior as it stands, checked by the content leaf's guard. `'// TODO'` and `' TODO'` both build rust `// TODO`.
+The coercer of `ir.comment`'s default arm (`defaultTriviaForm`) passes a bare string through `spelledInterior`: text spelled with the arm's literal delimiters sheds them, and any other text is the interior as it stands, checked by the content leaf's guard. `'// TODO'` and `' TODO'` both build rust `// TODO`. When the arm has siblings, `refuseSiblingLead` then refuses an interior that starts the way one of them can, naming that sibling's builder (`spelledInteriorExpr`).
+
+### `packages/codegen/src/emitters/from.ts::spelledInteriorExpr`
+
+The loose-string expression of the default trivia form's coercer: `spelledInterior(input, open, close)`, wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder when the form has siblings.
 
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
@@ -11143,7 +11147,13 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
 
-Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia` — `kindName` (from `KIND_NAMES`), `innerGaps` (`INNER_GAPS`), and `comment(text)`, which builds a loose trivia string through the builder `provideCommentBuilder` registered, and throws if the factories were never imported. A grammar with no default trivia form (`defaultTriviaForm`) emits no `comment`, and a loose trivia string there is refused.
+Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia`:
+- `kindName`, from `KIND_NAMES`;
+- `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node entry of any other kind;
+- `innerGaps` (`INNER_GAPS`);
+- `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
+
+`trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
 
@@ -14699,7 +14709,7 @@ Emits `factories/index.ts`, the dynamic final chain step: re-exports the top ove
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
 
-A grammar with a default trivia form ends the module with `provideCommentBuilder(comment)`, handing the hoisted `ir.comment` to `methodsEngine.trivia.comment`. The engine lives in `utils.ts`, which the factories import, so the builder is registered from this side instead of imported there.
+A grammar with a default trivia form ends the module by binding `methodsEngine.trivia.comment` to the form's coercer (`TriviaForm.coercer`), the function `ir.comment`'s coerce flavor calls. That field is the only channel, written once, at load. Until then a loose trivia string is refused with a request to import the factories.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 

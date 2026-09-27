@@ -22,7 +22,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
-import { defaultTriviaForm } from '../compiler/model/trivia.ts';
+import { defaultTriviaForm, type TriviaForm } from '../compiler/model/trivia.ts';
 import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
@@ -280,6 +280,13 @@ function emitBranchNodeDataPassthrough(
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
+function spelledInteriorExpr(form: TriviaForm): string {
+	const interior = `spelledInterior(input, ${JSON.stringify(form.open)}, ${JSON.stringify(form.close)})`;
+	if (form.siblings.length === 0) return interior;
+	const siblings = form.siblings.map((sibling) => `[/${sibling.lead.source}/${sibling.lead.flags}, ${JSON.stringify(sibling.builder)}]`);
+	return `refuseSiblingLead(${interior}, [${siblings.join(', ')}])`;
+}
+
 function emitBranchFrom(
 	node: FormChildForFrom,
 	nodeMap: NodeMap,
@@ -396,7 +403,7 @@ function emitBranchFrom(
 		if (canDirectFactoryCall) {
 			const triviaForm = defaultTriviaForm(nodeMap);
 			const spelled = triviaForm?.kind === node.kind ? triviaForm : undefined;
-			const bare = spelled === undefined ? 'input' : `(typeof input === 'string' ? spelledInterior(input, ${JSON.stringify(spelled.open)}, ${JSON.stringify(spelled.close)}) : input)`;
+			const bare = spelled === undefined ? 'input' : `(typeof input === 'string' ? ${spelledInteriorExpr(spelled)} : input)`;
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
 			const numeric = numericSlotShape(soleField) !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
@@ -1844,11 +1851,13 @@ export class FromEmitter implements CodegenEmitter<string> {
 				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
 				const usesNumberText = /\bnumberText\(/.test(body);
 				const usesSpelled = /\bspelledInterior\(/.test(body);
+				const usesSiblingLead = /\brefuseSiblingLead\(/.test(body);
 				if (usesInterior || usesNumberText || usesSpelled) {
 					const common = [
 						...(usesInterior ? ['lexedConfig'] : []),
 						...(usesNumberText ? ['numberText'] : []),
-						...(usesSpelled ? ['spelledInterior'] : [])
+						...(usesSpelled ? ['spelledInterior'] : []),
+						...(usesSiblingLead ? ['refuseSiblingLead'] : [])
 					];
 					return [
 						l,

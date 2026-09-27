@@ -47,14 +47,6 @@ export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
 	return _isTreeNode(v);
 }
 
-let _commentBuilder: ((text: string) => AnyNodeData) | undefined;
-
-/** The factories index hands `ir.comment` over here once it is defined: utils sits below the
- *  factories, which import it, so it cannot import them. */
-export function provideCommentBuilder(build: (text: string) => AnyNodeData): void {
-	_commentBuilder = build;
-}
-
 export const methodsEngine = {
 	render(node: AnyNodeData) {
 		return render(node);
@@ -64,11 +56,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
+		kinds: new Set<string>(['comment', 'line_continuation', 'line_continuation_newline', 'line_continuation_nul']),
 		innerGaps: INNER_GAPS,
-		comment(text: string): AnyNodeData {
-			if (_commentBuilder === undefined) throw new Error('trivia: ir.comment is not loaded; import the factories');
-			return _commentBuilder(text);
-		}
+		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
 

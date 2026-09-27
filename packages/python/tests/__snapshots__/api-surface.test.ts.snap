@@ -264,7 +264,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "parameter": "object",
   "pattern": "object",
   "primaryExpression": "object",
-  "provideCommentBuilder": "function",
   "readTreeNode": "function",
   "rejectBareText": "function",
   "rejectKeywordText": "function",

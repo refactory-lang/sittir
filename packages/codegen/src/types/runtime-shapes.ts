@@ -91,8 +91,8 @@ export const isEmptyBody = (rule: unknown): boolean => {
 
 export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
 
-export function compileAnchoredPattern(source: string): CompiledPattern {
-	const anchored = `^(?:${source})$`;
+export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start' = 'whole'): CompiledPattern {
+	const anchored = anchor === 'whole' ? `^(?:${source})$` : `^(?:${source})`;
 	try {
 		return { regex: new RegExp(anchored, 'u') };
 	} catch {

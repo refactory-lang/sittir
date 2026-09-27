@@ -56,6 +56,7 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
+		kinds: new Set<string>([]),
 		innerGaps: INNER_GAPS
 	}
 } satisfies WithMethodsEngine;

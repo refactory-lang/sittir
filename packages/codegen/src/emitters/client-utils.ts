@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { defaultTriviaForm, type TriviaForm } from '../compiler/model/trivia.ts';
+import { compareOrdinal } from './shared.ts';
 export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
@@ -36,7 +37,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 	lines.push(...emitIsTreeNode());
 	lines.push('');
-	lines.push(...emitMethodsEngine(form));
+	lines.push(...emitMethodsEngine(form, config.triviaKinds ?? []));
 	lines.push('');
 	lines.push(...emitWithMethods(triviaTypeNames));
 	lines.push('');
@@ -95,38 +96,16 @@ function emitAttachProps(): string[] {
 	];
 }
 
-function emitMethodsEngine(form: TriviaForm | undefined): string[] {
-	const slot =
-		form === undefined
-			? []
-			: [
-					'let _commentBuilder: ((text: string) => AnyNodeData) | undefined;',
-					'',
-					'/** The factories index hands `ir.comment` over here once it is defined: utils sits below the',
-					' *  factories, which import it, so it cannot import them. */',
-					'export function provideCommentBuilder(build: (text: string) => AnyNodeData): void {',
-					'  _commentBuilder = build;',
-					'}',
-					''
-				];
-	const comment =
-		form === undefined
-			? []
-			: [
-					'    comment(text: string): AnyNodeData {',
-					"      if (_commentBuilder === undefined) throw new Error('trivia: ir.comment is not loaded; import the factories');",
-					'      return _commentBuilder(text);',
-					'    }'
-				];
+function emitMethodsEngine(form: TriviaForm | undefined, triviaKinds: readonly string[]): string[] {
 	return [
-		...slot,
 		'export const methodsEngine = {',
 		'  render(node: AnyNodeData) { return render(node); },',
 		'  toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) { return toEdit(node, startOrRange, endPos); },',
 		'  trivia: {',
 		"    kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),",
+		`    kinds: new Set<string>(${JSON.stringify([...triviaKinds].sort(compareOrdinal))}),`,
 		`    innerGaps: INNER_GAPS${form === undefined ? '' : ','}`,
-		...comment,
+		...(form === undefined ? [] : ['    comment: undefined as ((text: string) => AnyNodeData) | undefined']),
 		'  }',
 		'} satisfies WithMethodsEngine;'
 	];

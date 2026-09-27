@@ -68,11 +68,19 @@ export function stripUselessEscapes(pattern: string): string {
 
 export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
 	if (!textPattern) return undefined;
-	const compiled = compileAnchoredPattern(stripUselessEscapes(textPattern));
+	return compiledLeafRegex(kind, textPattern, 'whole');
+}
+
+export function leadingRegex(kind: string, textPattern: string): RegExp {
+	return compiledLeafRegex(kind, textPattern, 'start');
+}
+
+function compiledLeafRegex(kind: string, textPattern: string, anchor: 'whole' | 'start'): RegExp {
+	const compiled = compileAnchoredPattern(stripUselessEscapes(textPattern), anchor);
 	if ('error' in compiled) {
 		throw new Error(
 			`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
-				`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(`^(?:${stripUselessEscapes(textPattern)})$`)}. ` +
+				`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(anchor === 'whole' ? `^(?:${stripUselessEscapes(textPattern)})$` : `^(?:${stripUselessEscapes(textPattern)})`)}. ` +
 				`Cause: ${compiled.error.message}. ` +
 				`Either fix the grammar or add the kind to an emitter exception list.`
 		);

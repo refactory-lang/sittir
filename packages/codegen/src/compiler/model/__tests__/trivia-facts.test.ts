@@ -53,9 +53,32 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
 	});
 
-	it("takes the loose trivia form from ir.comment's default arm: its kind and literal delimiters", async () => {
-		expect(defaultTriviaForm(await nodeMapOf('rust'))).toEqual({ kind: 'line_comment', open: '//', close: '' });
-		expect(defaultTriviaForm(await nodeMapOf('python'))).toEqual({ kind: 'comment', open: '#', close: '' });
-		expect(defaultTriviaForm(await nodeMapOf('typescript'))).toEqual({ kind: 'comment_line', open: '//', close: '' });
+	it("takes the loose trivia form from ir.comment's default arm: its kind, literal delimiters, coercer and sibling leads", async () => {
+		const rust = defaultTriviaForm(await nodeMapOf('rust'));
+		expect({ ...rust, siblings: rust?.siblings.map((sibling) => [String(sibling.lead), sibling.builder]) }).toEqual({
+			kind: 'line_comment',
+			open: '//',
+			close: '',
+			coercer: 'coerceToLineComment',
+			siblings: [
+				['/^(?:(?:\\/\\/))/u', 'ir.lineCommentExtraSlashes'],
+				['/^(?:\\/)/u', 'ir.lineCommentDocOuter'],
+				['/^(?:!)/u', 'ir.lineCommentDocInner']
+			]
+		});
+		expect(defaultTriviaForm(await nodeMapOf('python'))).toEqual({ kind: 'comment', open: '#', close: '', coercer: 'coerceToComment', siblings: [] });
+		expect(defaultTriviaForm(await nodeMapOf('typescript'))).toEqual({
+			kind: 'comment_line',
+			open: '//',
+			close: '',
+			coercer: 'coerceToCommentLine',
+			siblings: []
+		});
+	});
+
+	it('reads how a kind starts through the same edge walk as how it ends', async () => {
+		const rust = await nodeMapOf('rust');
+		expect(rust.nodes.get('line_comment_doc_inner')?.leadingTerminals).toEqual([{ literal: '!' }]);
+		expect(rust.nodes.get('line_comment_extra_slashes')?.leadingTerminals).toEqual([{ pattern: '\\/\\/' }]);
 	});
 });

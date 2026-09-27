@@ -1642,7 +1642,7 @@ Any consumer downstream of the template emitter (e.g. the render-module emitter'
 
 ### `packages/codegen/src/types/runtime-shapes.ts::compileAnchoredPattern`
 
-The one place a grammar pattern becomes a JavaScript regex: anchored, tried with the `u` flag and then without, returning the regex or the compile error for the caller to report. The leaf guards (`anchoredLeafRegex`) and the emptiness check share it.
+The one place a grammar pattern becomes a JavaScript regex: anchored to the whole text, or to its start when `anchor` is `start`, tried with the `u` flag and then without, returning the regex or the compile error for the caller to report. The leaf guards (`anchoredLeafRegex`) and the emptiness check share it.
 
 ### `packages/codegen/src/types/runtime-shapes.ts::patternAcceptsEmpty`
 
