@@ -257,6 +257,8 @@ export default grammar(
 
 				literal_type_negative_number: { 'operator:/after': preference('tight') },
 				unary_expression: { 'operator:/after': preference('tight') },
+				update_expression_postfix: { 'operator:/before': preference('tight') },
+				update_expression_prefix: { 'operator:/after': preference('tight') },
 
 				object_type_content: {
 					'members:/separator/before': preference('tight'),

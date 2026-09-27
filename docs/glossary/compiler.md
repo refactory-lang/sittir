@@ -1717,12 +1717,9 @@ by a plain `generate()` call alike.
 
 ```text
 /**
- * Sequence combinator — matches all members in order.
- *
- * @remarks
- * A single-member seq collapses to its sole member: the extra layer has
- * the same parse semantics but confuses walkers that count seq members
- * for positional hints.
+ * Sequence combinator — matches all members in order. Builds tree-sitter's
+ * SEQ as is: a single member stays wrapped (the compile boundary flattens
+ * it, `canonicalRuleTree`).
  *
  * @remarks
  * The separated-list LIFT — commaSep1 (`seq(x, repeat(seq(sep, x)))`) →
@@ -1741,72 +1738,29 @@ by a plain `generate()` call alike.
 
 ### `packages/codegen/src/compiler/evaluate.ts::choice`
 
-```text
-/**
- * Choice combinator — evaluate's own sugar over
- * `structuralBuilder.choice` (dsl/builders.ts, which owns the
- * all-same-name-FIELD collapse):
- *
- * @remarks
- * A single-member choice collapses to its member — the wrapper has no
- * parse semantics.
- *
- * @remarks
- * `choice(x, blank())` is lowered to `optional(x)`. Tree-sitter encodes
- * blank() as either an empty seq (historical) or an empty choice; both
- * shapes mark "this branch matches nothing", so the outer choice is
- * "x or nothing" = `optional(x)`. Collapsing at DSL time means walkers
- * only ever see the optional shape.
- *
- * @remarks
- * An all-string choice is compacted to an `EnumRule<'evaluate'>` for fast downstream
- * handling.
- */
-```
-
-#### body
-
-```text
-// Recurse through optional() so `optional(optional(x))` keeps
-// collapsing per rule #5.
-```
-
-#### body
-
-```text
-// Detect all-string choice → EnumRule<'evaluate'>
-```
+Coerces its members and builds tree-sitter's CHOICE as is — a single member
+stays wrapped and same-name FIELD members are not factored (both happen at
+the compile boundary, `canonicalRuleTree`). The one rewrite is
+`choice(x, blank())`, which builds `optional(x)`: the same language, and the
+representation pair `optionalContentOf` and `rulesEqual` read as one shape.
 
 ### `packages/codegen/src/compiler/evaluate.ts::optional`
 
-```text
-/**
- * Optional combinator — coerces `content`, then delegates the one-level
- * shape recognitions (`optional(optional(x))`, `optional(repeat(x))`,
- * `optional(repeat1(x))`) to `structuralBuilder.optional`
- * (dsl/builders.ts) — see that entry for the collapse rationale.
- */
-```
+Coerces `content` and delegates to `structuralBuilder.optional`, which wraps
+it as given; `optional(optional(x))`, `optional(repeat(x))` and
+`optional(repeat1(x))` collapse at the compile boundary (`canonicalRuleTree`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::repeat`
 
-```text
-/**
- * Zero-or-more repetition combinator — coerces `content`, then delegates the one-level shape
- * recognitions to `structuralBuilder.repeat` (dsl/builders.ts) — see that
- * entry for the collapse rationale.
- */
-```
+Coerces `content` and delegates to `structuralBuilder.repeat`, which wraps it
+as given; nested repeat/optional wrappers collapse at the compile boundary
+(`canonicalRuleTree`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::repeat1`
 
-```text
-/**
- * One-or-more repetition combinator — coerces `content`, then delegates the one-level shape
- * recognition to `structuralBuilder.repeat1` (dsl/builders.ts) — see that
- * entry for the collapse rationale.
- */
-```
+Coerces `content` and delegates to `structuralBuilder.repeat1`, which wraps it
+as given; `repeat1(repeat1(x))` collapses at the compile boundary
+(`canonicalRuleTree`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::field`
 
@@ -1822,10 +1776,6 @@ by a plain `generate()` call alike.
  * When `content` is omitted, a placeholder FieldRule<'evaluate'> is returned with
  * `_needsContent: true`, which `resolvePatch` swaps out with the
  * original member when applying transform() patches.
- * @remarks
- * The `optional(repeat(...))`/`optional(repeat1(...))` collapse inside the
- * field's content is `structuralBuilder.field`'s own one-level shape
- * recognition (dsl/builders.ts) — see that entry for the rationale.
  * @remarks
  * Propagates the field name to every nested symbol ref. Stops at inner
  * field/alias boundaries — those own their own field name. Does not
@@ -2301,7 +2251,18 @@ from its base (`departsFromUpstream`).
 
 ### `packages/codegen/src/compiler/types.ts::UpstreamEvaluation`
 
-`{ raw, ruleNames }` or `{ failure }`: the outcome of `evaluateUpstream`.
+`{ raw, ruleNames }` or `{ failure }`: the outcome of `evaluateUpstream`. The
+`raw` grammar is an `EvaluatedGrammar` until the compile boundary
+canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
+
+### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
+
+A grammar as sittir's `grammar()` returns it: rules exactly as the DSL built
+them, without a rule catalog or reference list. It carries what the compile
+boundary needs to finish the grammar — `provenanceByKind` for the rule
+catalog and `protectedRuleNames` for the orphan pass — and nothing reads it as
+compiler input except `canonicalGrammar`. It is also what an extending grammar
+receives as its base.
 
 ### `packages/codegen/src/compiler/upstream.ts::compileUpstream`
 
@@ -2365,11 +2326,10 @@ The grammar's `rules:` entries with a bare body, sorted.
 #### body
 
 ```text
-// Drained bodies enter AFTER the rules-map normalizeImmediateTokens
-// pass, and the returned record is also re-applied at link — fold
-// `token.immediate(...)` wrappers here so no destination ever sees a
-// raw IMMEDIATE_TOKEN tag (an immediate-declared external's renderAs
-// body is the sanctioned way to declare its immediacy).
+// An immediate-declared external's renderAs body is the sanctioned way
+// to declare its immediacy; the compile boundary canonicalizes the
+// returned record like every rule body, so no destination sees a raw
+// IMMEDIATE_TOKEN tag.
 ```
 
 #### body
@@ -2412,11 +2372,10 @@ The grammar's `rules:` entries with a bare body, sorted.
 #### body
 
 ```text
-// Drained bodies enter AFTER the rules-map normalizeImmediateTokens
-// pass, and the returned record is also re-applied at link — fold
-// `token.immediate(...)` wrappers here so no destination ever sees a
-// raw IMMEDIATE_TOKEN tag (an immediate-declared external's renderAs
-// body is the sanctioned way to declare its immediacy).
+// An immediate-declared external's renderAs body is the sanctioned way
+// to declare its immediacy; the compile boundary canonicalizes the
+// returned record like every rule body, so no destination sees a raw
+// IMMEDIATE_TOKEN tag.
 ```
 
 #### body
@@ -2465,7 +2424,8 @@ The grammar's `rules:` entries with a bare body, sorted.
 ```text
 /**
  * Run the grammar's DSL a second time, sittir-side, and return the
- * `RawGrammar`. The bundled grammar is written against tree-sitter's global
+ * `RawGrammar`: `evaluateDsl`'s grammar, canonicalized at the compile
+ * boundary (`canonicalGrammar`). The bundled grammar is written against tree-sitter's global
  * DSL, so for the duration of one call the DSL functions are installed on
  * `globalThis` and restored in `finally`. Calls are serialized behind a
  * module-level promise chain (`evaluateMutex`): the body awaits the module
@@ -2525,36 +2485,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 // body fn failed to evaluate in sittir context — skip; wire path handles it
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::prunePlaceholderOrphans`
-
-Remove the rules wire pre-registered for a placeholder that never deposited,
-and any other rule nothing reaches (`collectOrphanedRules`). Wire has to
-register every name a placeholder might mint before tree-sitter walks the
-rule map, so an unfired `field('x')`, `alias()` or `variant()` — including an
-absent-case `bare` whose hoist did not fire — leaves an empty rule behind.
-Deposit-backed names and declared supertypes are roots besides visible rules
-with a body (`_whitespace` is referenced by nothing but `supertypes:`), so this
-runs once the metadata callbacks have been evaluated.
-
-#### body
-
-```text
-// Twin of `transpile/prune-grammar-json.ts` over the SAME shared
-// reachability traversal — rules nothing reaches must vanish from the
-// sittir-evaluated map exactly as they vanish from grammar.json, or the
-// model carries kinds the parser never emits (the phantom-kind class).
-// inline/conflict bookkeeping deliberately does not root (an orphaned mint
-// would keep itself alive through its own entries).
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::isBlankRule`
-
-```text
-/**
- * True when `rule` is the empty-choice sentinel returned by `blank()`.
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::applyPatternReplacement`
 
 ```text
@@ -2580,7 +2510,7 @@ runs once the metadata callbacks have been evaluated.
  *
  * @remarks
  * This runs after `injectSyntheticRules` so the full merged rule set is
- * available, and before `prunePlaceholderOrphans` so that any pattern-rule
+ * available, and before the compile boundary prunes orphans so that any pattern-rule
  * body that would have been pruned is instead preserved because it has real
  * content.
  */
@@ -2888,6 +2818,14 @@ which one fails; this is the only place `globalThis` is touched.
  * bag we mutate inside this scope.
  */
 ```
+
+### `packages/codegen/src/compiler/evaluate.ts::evaluateDsl`
+
+Runs the grammar's DSL sittir-side and returns the `EvaluatedGrammar`: every
+rule exactly as the DSL built it, the shape tree-sitter builds from the same
+source (`dsl-shape-fidelity.test.ts` holds each grammar to its shipped
+`grammar.json` under `rulesEqual`). `evaluate` is this plus the compile
+boundary; a caller that wants the DSL's own shape calls it directly.
 
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
@@ -4051,15 +3989,6 @@ declared-supertype override:
 /**
  * Validate all groups config at config-load time. Throws on E1-E5,
  * warns on E6. See spec §"Error handling" for the full taxonomy.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::isBlankRule`
-
-```text
-/**
- * `blank()` produces `{ type: 'CHOICE', members: [] }` (see evaluate.ts).
- * Same shape detection used by choice()'s optional-collapse pass.
  */
 ```
 
@@ -8084,6 +8013,82 @@ carried through a side channel.
 	 *  abstract rather than one generic implementation. */
 ```
 
+### `packages/codegen/src/compiler/canonical-rules.ts::module`
+
+The compile boundary: the one place a grammar's rules move from the shape its
+DSL built — tree-sitter's shape, which enrich and wire read under both
+runtimes — to the canonical shape link and every later phase read. The
+canonicalization functions here run only at this boundary, never at
+construction, so nothing that runs inside `grammar()` can see a collapsed
+shape the parser's copy of the grammar does not have.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::WRAPPER_FACT_KEYS`
+
+The rule properties that carry facts rather than structure — `annotations` and
+`metadata`. They are the only properties of a peeled wrapper that survive,
+moved onto what the wrapper held.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::peelWrapper`
+
+Removes one wrapper — a precedence wrapper, or a collapsing optional, repeat,
+single-member sequence or choice — and returns what it held (its `content`, or
+its only member) with the wrapper's `annotations` and `metadata` unioned into
+its own. The union is key-by-key: a fact present on both sides must be equal
+(compared structurally), and a conflicting value throws, naming the key, the
+wrapper type and both values — neither side silently wins. A wrapper with no
+facts returns its content unchanged (same object). Enrich and wire stamp facts
+on the outermost node of a rule body, which is often a wrapper the boundary
+removes; peeling through this is what keeps those facts.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalRuleTree`
+
+Canonicalizes one rule body, bottom-up:
+
+- every precedence wrapper is peeled — tree-sitter resolves precedence from
+  its own evaluation, and link onward has no use for it;
+- a single-member `SEQ` or `CHOICE` becomes its member;
+- `optional(optional(x))` and `optional(repeat(x))` become the inner rule,
+  `optional(repeat1(x))` becomes `repeat(x)` keeping the separator shape
+  (parse-identical: an absent optional and an empty repeat both surface as
+  no children);
+- `repeat(repeat(x))` without a separator becomes the inner repeat,
+  `repeat(optional(x))` becomes `repeat(x)`, and `repeat1(repeat1(x))`
+  without a separator becomes the inner `repeat1`; `repeat1(repeat(x))` is
+  left alone, since it accepts zero `x` and `repeat1(x)` does not;
+- a `CHOICE` of two or more FIELDs sharing one name becomes that FIELD over a
+  CHOICE of their contents (`fieldSource: 'grammar'`), unless any arm's content
+  is an ALIAS — link routes an alias target only when the alias sits in a
+  plain choice;
+- `IMMEDIATE_TOKEN(x)` becomes `TOKEN(x)` with `immediate: true`, and a TOKEN
+  with no flag gets `immediate: false`.
+
+Every rewrite that removes a wrapper goes through `peelWrapper`, so no
+annotation or metadata is lost; the immediate-token rewrite keeps the node's
+own facts.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalGrammar`
+
+Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads:
+canonicalizes every rule body, the `renderAs` and `visibleExternals` records,
+and the evaluated upstream; removes orphaned rules; then builds the rule
+catalog and the reference list over the canonical rules.
+
+The orphan pass removes the rules wire pre-registered for a placeholder that
+never deposited, and any other rule nothing reaches (`collectOrphanedRules`).
+Wire has to register every name a placeholder might mint before tree-sitter
+walks the rule map, so an unfired `field('x')`, `alias()` or `variant()` —
+including an absent-case `bare` whose hoist did not fire — leaves an empty
+rule behind. The roots besides visible rules with a body are the grammar's
+`protectedRuleNames`: wire's deposit names, the declared supertypes
+(`_whitespace` is referenced by nothing but `supertypes:`) and the
+`renderAs` / `visibleExternals` names. It is the twin of
+`transpile/prune-grammar-json.ts` over the same reachability traversal: rules
+nothing reaches must vanish from the sittir-evaluated map exactly as they
+vanish from grammar.json, or the model carries kinds the parser never emits.
+Inline and conflict bookkeeping deliberately does not root (an orphaned mint
+would keep itself alive through its own entries). A grammar evaluated without
+wire has no protected names and prunes nothing.
+
 ### `packages/codegen/src/compiler/evaluate.ts::module`
 
 ```text
@@ -8158,65 +8163,11 @@ carried through a side channel.
 
 ### `packages/codegen/src/compiler/evaluate.ts::PrecFn`
 
-```text
-// ---------------------------------------------------------------------------
-// Precedence — wrapped as a transient Prec*Rule (PREC/PREC_LEFT/PREC_RIGHT/
-// PREC_DYNAMIC, matching tree-sitter's own dsl.js prec shape and the
-// grammar-shapes/grammar-json.ts family already modeled for it) so enrich's
-// minting decisions see the same arm shape under both runtimes. `grammarFn`
-// strips every Prec*Rule back to its content once enrich's minting pass
-// completes — see the doc comment on these types in types/rule.ts.
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::stripPrecedenceWrappers`
-
-```text
-// Sittir-runtime-exclusive cleanup: by the time `grammarFn` calls this (right
-// after `evaluateRulesAndInjectSynthetics`, i.e. after enrich's minting
-// decisions over the Prec*Rule-shaped tree are locked in — see
-// `mintStructuredChoiceArm`'s PREC-descent branch in dsl/enrich.ts), every
-// Prec*Rule node has served its only purpose (letting enrich see the same arm
-// shape tree-sitter's CLI runtime sees). Tree-sitter's own compiler resolves
-// precedence directly from its OWN parallel evaluation of the same DSL
-// source, so sittir's IR has no further use for the wrapper — link/normalize/
-// simplify never need to see it. Strips every occurrence, not just the root:
-// a hidden group's registered body can itself be Prec*Rule-wrapped (see
-// `visibleGroupSynthName`'s `ambientPrec` re-wrap).
-```
-
-Peeling a wrapper never drops a fact: each peeled wrapper's `annotations` and
-`metadata` move onto its content through `peelPrecWrapper`. Enrich and wire
-stamp facts on the outermost node of a rule body, which is the PREC wrapper
-whenever the body carries precedence — the same place tree-sitter's run of
-the bundled grammar puts them in `.sittir/src/grammar.json`.
-
-### `packages/codegen/src/compiler/evaluate.ts::WRAPPER_FACT_KEYS`
-
-The rule properties that carry facts rather than structure — `annotations` and
-`metadata`. They are the only properties of a precedence wrapper that survive
-`stripPrecedenceWrappers`.
-
-### `packages/codegen/src/compiler/evaluate.ts::peelPrecWrapper`
-
-Removes one precedence wrapper: returns the wrapper's content with the
-wrapper's `annotations` and `metadata` unioned into its own. The union is key-by-key: a fact present on both sides must be equal
-(compared structurally), and a conflicting value throws, naming the key, the
-wrapper type and both values — neither side silently wins. A wrapper with no
-facts returns its content unchanged (same object).
-
-### `packages/codegen/src/compiler/evaluate.ts::foldImmediateTokenRule`
-
-```text
-// Sittir-runtime-exclusive normalization: folds every real IMMEDIATE_TOKEN
-// node (see ImmediateTokenRule's doc comment in types/rule.ts) into
-// TOKEN+`immediate: true` once enrich's dedup/equality decisions —
-// dsl/rule-patterns.ts's `rulesEqual` dispatches purely on `type`, so it needs
-// the distinct IMMEDIATE_TOKEN tag to tell `token.immediate(x)` apart from
-// `token(x)` — are locked in. Downstream phases (Link onward) already expect
-// immediate-ness as TokenRule's boolean field, never a separate type tag —
-// see docs/glossary/compiler-model.md's `NodeRef.immediate`.
-```
+The precedence family, built as tree-sitter's DSL builds it: `prec(n, x)`,
+`prec.dynamic(n, x)`, and `prec.left` / `prec.right` with an optional
+precedence that defaults to 0 when only the rule is given. Enrich and wire see
+the wrappers exactly as tree-sitter does; the compile boundary peels every one
+(`canonicalRuleTree`), so link onward never sees precedence.
 
 ### `packages/codegen/src/compiler/evaluate.ts::alias`
 
@@ -8246,7 +8197,8 @@ facts returns its content unchanged (same object).
 #### body
 
 ```text
-// BLANK is represented as choice() with no members — absorbed by choice()
+// A choice with no members; `isBlank` reads it and tree-sitter's BLANK as
+// the same rule.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
@@ -8283,8 +8235,8 @@ facts returns its content unchanged (same object).
 #### body
 
 ```text
-// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
-// rule bodies appear in the catalog. It also strips any base-grammar
+// renderAs is drained into the rules map so the synthesized rule
+// bodies reach the compile boundary's rule catalog. It also strips any base-grammar
 // body for the same key (keeping the sittir-side def authoritative).
 // The DSL globals (string, etc.) are still injected at this point —
 // evaluate()'s try block is still active.
@@ -8394,16 +8346,16 @@ facts returns its content unchanged (same object).
 #### body
 
 ```text
-/* PREC family: stripped by stripPrecedenceWrappers before
-		   buildRuleCatalog runs — unreachable at runtime, transparent
+/* PREC family: stripped at the compile boundary
+		   (`canonicalRuleTree`) before buildRuleCatalog runs — unreachable at runtime, transparent
 		   single-child wrapper for exhaustiveness. */
 ```
 
 #### body
 
 ```text
-/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by
-		   normalizeImmediateTokens before buildRuleCatalog runs —
+/* IMMEDIATE_TOKEN is folded into TOKEN+immediate at the compile
+		   boundary (`canonicalRuleTree`) before buildRuleCatalog runs —
 		   unreachable at runtime, transparent single-child wrapper. */
 ```
 

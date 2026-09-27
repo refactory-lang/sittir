@@ -72,7 +72,6 @@ export type LeafStringMap = {
 	[TSKindId.KwConstMarker]: 'const';
 	[TSKindId.Kind]: 'let' | 'const';
 	[TSKindId.ForHeaderOperator]: 'in' | 'of';
-	['_operator']: '++' | '--';
 	[TSKindId.EmptyMember]: ';';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
@@ -9791,7 +9790,6 @@ export type KwAccessorMarker = TSKindId.KwAccessorMarker;
 export type KwConstMarker = TSKindId.KwConstMarker;
 export type Kind = TSKindId.LetKeyword | TSKindId.ConstKeyword;
 export type ForHeaderOperator = TSKindId.InKeyword | TSKindId.OfKeyword;
-export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type EmptyMember = TSKindId.EmptyMember;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
@@ -10119,9 +10117,6 @@ export interface KindTree extends AnyTreeNode {
 }
 export interface ForHeaderOperatorTree extends AnyTreeNode {
 	readonly type: '__for_header_operator';
-}
-export interface OperatorTree extends AnyTreeNode {
-	readonly type: '_operator';
 }
 export interface NumberDecimalTree extends TreeNode<'number_decimal'> {}
 export interface EmptyMemberTree extends AnyTreeNode {
@@ -11392,7 +11387,6 @@ export interface OptionsHintMap {
 	forHeaderLetConstKind: ForHeaderLetConstKind.Hints;
 	regexPattern: RegexPattern.Hints;
 	predefinedType: PredefinedType.Hints;
-	operator: Operator.Hints;
 	metaPropertyNewTarget: MetaPropertyNewTarget.Hints;
 	metaPropertyImportMeta: MetaPropertyImportMeta.Hints;
 	string: String.Hints;
@@ -13786,13 +13780,21 @@ export namespace StringSingle {
 
 export namespace UpdateExpressionPostfix {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly before?: WhitespaceArm };
+		};
 	}
 }
 
 export namespace UpdateExpressionPrefix {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm };
+		};
 	}
 }
 
@@ -13969,15 +13971,6 @@ export namespace PredefinedType {
 			readonly unique?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly unknownKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly voidKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace Operator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly dashDash?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly plusPlus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }

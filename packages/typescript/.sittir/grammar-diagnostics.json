@@ -162,19 +162,6 @@
     }
   },
   {
-    "code": "kindid-unstamped-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_operator"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
     "code": "kindid-unstamped-literals",
     "message": "7 literal(s) resolved no parser kindId",
     "canProceed": true,
@@ -207,19 +194,6 @@
         "#!",
         "﷐\n",
         "﷑\n"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_operator"
       ]
     },
     "scope": "grammar",

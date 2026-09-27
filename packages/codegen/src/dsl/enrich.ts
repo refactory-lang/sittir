@@ -19,8 +19,7 @@ import {
 	isChoiceType,
 	isRepeatType,
 	isPrecWrapper,
-	typeEq,
-	matchesEmpty
+	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
 
@@ -29,7 +28,7 @@ function withContent(node: object, content: Rule): Rule {
 }
 import {
 	separatorOf,
-	ruleMatchesEmpty,
+	matchesEmpty,
 	isInlineSafe,
 	isMultiSlotRepeatElement,
 	isSupertypeLike,
@@ -37,8 +36,7 @@ import {
 	isEnumChoiceRule,
 	exclusiveFieldChoiceBranches,
 	normalizeMember,
-	peelOptional,
-	peelOptionalSeq,
+	optionalSeqBodyOf,
 	listSeparatorOfOptionalSeq,
 	optionalStringLiteral,
 	separatedListBodyInfo,
@@ -49,9 +47,12 @@ import {
 	type SeparatedListBodyInfo,
 	throughPrec,
 	predictedSymbolSource,
-	type SymbolSource
+	type SymbolSource,
+	ruleKey,
+	optionalContentOf,
+	withOptionalContent
 } from './rule-patterns.ts';
-import { baseRulesOf, ruleKey } from './shared.ts';
+import { baseRulesOf } from './shared.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
@@ -978,9 +979,9 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 			names.add(m.name);
 			continue;
 		}
-		const peeled = peelOptional(m as unknown as Rule);
-		if (peeled.isOptional) {
-			const innerN = normalizeMember(peeled.inner);
+		const inner = optionalContentOf(m as unknown as Rule);
+		if (inner !== undefined) {
+			const innerN = normalizeMember(inner);
 			if (isFieldType(innerN.type) && typeof innerN.name === 'string') {
 				names.add(innerN.name);
 			}
@@ -1013,18 +1014,18 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 			wrap: (fieldNode) => fieldNode
 		};
 	}
-	const peeled = peelOptional(member);
-	if (!peeled.isOptional) return null;
-	const innerN = normalizeMember(peeled.inner);
+	const inner = optionalContentOf(member);
+	if (inner === undefined) return null;
+	const innerN = normalizeMember(inner);
 	if (isSymbolType(innerN.type) && typeof innerN.name === 'string') {
 		return {
 			name: innerN.name,
-			symbolRule: peeled.inner,
-			wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+			symbolRule: inner,
+			wrap: (fieldNode) => withOptionalContent(member, fieldNode)
 		};
 	}
 	if (!isSeqType(innerN.type)) return null;
-	const seqMembers = (peeled.inner as unknown as { members: Rule[] }).members;
+	const seqMembers = (inner as unknown as { members: Rule[] }).members;
 	let symIdx = -1;
 	for (let i = 0; i < seqMembers.length; i++) {
 		const sn = normalizeMember(seqMembers[i]!);
@@ -1039,14 +1040,14 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	const symMember = seqMembers[symIdx]!;
 	const sn = normalizeMember(symMember);
 	if (!isSymbolType(sn.type) || typeof sn.name !== 'string') return null;
-	const seqRule = peeled.inner;
+	const seqRule = inner;
 	return {
 		name: sn.name,
 		symbolRule: symMember,
 		wrap: (fieldNode) => {
 			const newSeqMembers = seqMembers.map((mm, i) => (i === symIdx ? fieldNode : mm));
 			const newSeq = { ...seqRule, members: newSeqMembers } as Rule;
-			return rebuildOptional(member, newSeq);
+			return withOptionalContent(member, newSeq);
 		}
 	};
 }
@@ -1349,13 +1350,13 @@ function tryPromoteOptionalNode(
 	claimedAtSeqLevel: Set<string>,
 	ctx: EnrichCtx
 ): { matched: boolean; result: Rule | null } {
-	const peeled = peelOptional(rule);
-	if (!peeled.isOptional) return { matched: false, result: null };
-	const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, ctx);
+	const inner = optionalContentOf(rule);
+	if (inner === undefined) return { matched: false, result: null };
+	const replacement = tryPromoteInnerKeyword(ruleName, rule, inner, claimedAtSeqLevel, ctx);
 	if (replacement !== null) return { matched: true, result: replacement };
-	const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, ctx);
+	const innerRewritten = walkOptionalKeyword(ruleName, inner, claimedAtSeqLevel, ctx);
 	if (innerRewritten !== null) {
-		return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+		return { matched: true, result: withOptionalContent(rule, innerRewritten) };
 	}
 	return { matched: true, result: null };
 }
@@ -1434,19 +1435,7 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	const fieldNode = makeField(fieldName, symbolRef);
-	return rebuildOptional(optionalRule, fieldNode);
-}
-
-function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
-	if (isOptionalType(optionalRule.type)) {
-		return withContent(optionalRule, newInner);
-	}
-	const members = (optionalRule as unknown as { members: Rule[] }).members;
-	const newMembers = members.map((m) => {
-		const t = (m as { type?: string }).type;
-		return t === 'BLANK' ? m : newInner;
-	});
-	return { ...optionalRule, members: newMembers } as Rule;
+	return withOptionalContent(optionalRule, fieldNode);
 }
 
 interface ClauseHoistCounter {
@@ -1457,11 +1446,10 @@ interface ClauseHoistCounter {
 }
 
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
-	const peeled = peelOptionalSeq(optSeqRule)!;
-	const seqBody = peeled.seqBody;
+	const seqBody = optionalSeqBodyOf(optSeqRule)!;
 	const seqMembers = (seqBody as unknown as { members: Rule[] }).members;
 	const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] } as Rule;
-	return rebuildOptional(optSeqRule, newSeqBody);
+	return withOptionalContent(optSeqRule, newSeqBody);
 }
 
 interface InlineSeparatedListRun {
@@ -1601,34 +1589,20 @@ function applyClauseHoist(
 	enclosingFieldName?: string
 ): Rule {
 	const { rulesBag, visibleGroupSources, clauseGroupOwners } = ctx;
-	const peeled = peelOptionalSeq(rule);
-	if (peeled !== null) {
-		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, ctx, counter, ambientPrec, enclosingFieldName);
+	const seqBody = optionalSeqBodyOf(rule);
+	if (seqBody !== undefined) {
+		const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
 
-		if (ruleMatchesEmpty(recursedSeqBody)) {
+		if (matchesEmpty(recursedSeqBody)) {
 			counter.opt += 1;
-			if (recursedSeqBody === peeled.seqBody) return rule;
-			if (peeled.form === 'optional') {
-				return rebuildOptional(rule, recursedSeqBody);
-			} else {
-				const members = (rule as unknown as { members: Rule[] }).members;
-				const newMembers = members.slice() as Rule[];
-				newMembers[peeled.seqIdx] = recursedSeqBody;
-				return { ...rule, members: newMembers } as Rule;
-			}
+			if (recursedSeqBody === seqBody) return rule;
+			return withOptionalContent(rule, recursedSeqBody);
 		} else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
 			const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
 			if (name !== null) {
 				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 				const symbolRef = makeGroupLiftSymbol(rule, name);
-				if (peeled.form === 'optional') {
-					return rebuildOptional(rule, symbolRef);
-				} else {
-					const members = (rule as unknown as { members: Rule[] }).members;
-					const newMembers = members.slice() as Rule[];
-					newMembers[peeled.seqIdx] = symbolRef;
-					return { ...rule, members: newMembers } as Rule;
-				}
+				return withOptionalContent(rule, symbolRef);
 			}
 			return rule;
 		} else {
@@ -1638,31 +1612,17 @@ function applyClauseHoist(
 				visibleGroupSources.add(name);
 				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 				const groupRef = makeGroupLiftSymbol(rule, name);
-				if (peeled.form === 'optional') {
-					return rebuildOptional(rule, groupRef);
-				} else {
-					const members = (rule as unknown as { members: Rule[] }).members;
-					const newMembers = members.slice() as Rule[];
-					newMembers[peeled.seqIdx] = groupRef;
-					return { ...rule, members: newMembers } as Rule;
-				}
+				return withOptionalContent(rule, groupRef);
 			}
-			if (recursedSeqBody === peeled.seqBody) return rule;
-			if (peeled.form === 'optional') {
-				return rebuildOptional(rule, recursedSeqBody);
-			} else {
-				const members = (rule as unknown as { members: Rule[] }).members;
-				const newMembers = members.slice() as Rule[];
-				newMembers[peeled.seqIdx] = recursedSeqBody;
-				return { ...rule, members: newMembers } as Rule;
-			}
+			if (recursedSeqBody === seqBody) return rule;
+			return withOptionalContent(rule, recursedSeqBody);
 		}
 	}
 
 	{
-		const opt = peelOptional(rule);
-		if (opt.isOptional) {
-			const recursed = applyClauseHoist(parentKind, opt.inner, ctx, counter, ambientPrec, enclosingFieldName);
+		const inner = optionalContentOf(rule);
+		if (inner !== undefined) {
+			const recursed = applyClauseHoist(parentKind, inner, ctx, counter, ambientPrec, enclosingFieldName);
 			const promoted = mintStructuredChoiceArm(
 				recursed,
 				parentKind,
@@ -1673,15 +1633,8 @@ function applyClauseHoist(
 				enclosingFieldName
 			);
 			const final = promoted ?? recursed;
-			if (final === opt.inner) return rule;
-			if (isOptionalType(rule.type)) {
-				return withContent(rule, final);
-			}
-			const members = (rule as unknown as { members: Rule[] }).members;
-			const idx = members.findIndex((m) => (m as { type: string }).type !== 'BLANK');
-			const newMembers = members.slice();
-			newMembers[idx] = final;
-			return { ...rule, members: newMembers } as Rule;
+			if (final === inner) return rule;
+			return withOptionalContent(rule, final);
 		}
 	}
 
@@ -2029,7 +1982,7 @@ function mintStructuredChoiceArm(
 		if (counter.supertypeNames?.has(name)) return null;
 		if (Object.hasOwn(clauseGroupRules, name)) return null;
 		const body = rulesBag[name];
-		if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
+		if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
 		if (isSupertypeLike(body)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, 'arm');
 		if (!promoted) return null;
@@ -2040,7 +1993,7 @@ function mintStructuredChoiceArm(
 	}
 
 	if (isSeqType(t) || isChoiceType(t)) {
-		if (ruleMatchesEmpty(arm) || isInlineSafe(arm, ctx.sourceSymbols)) return null;
+		if (matchesEmpty(arm) || isInlineSafe(arm, ctx.sourceSymbols)) return null;
 		if (isSupertypeLike(arm)) return null;
 		if (isPermutationChoice(arm, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
 		const minted = visibleGroupSynthName(arm, parentKind, ctx, counter, ambientPrec, enclosingFieldName, 'arm');

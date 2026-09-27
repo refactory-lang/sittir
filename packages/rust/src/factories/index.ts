@@ -160,14 +160,6 @@ export const structPatternElements: Hoisted<typeof O.structPatternElements> = ho
 export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoist(O.useWildcardGroup);
 export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);
-export const escapeSequenceSimple: Hoisted<typeof O.escapeSequenceSimple> = hoist(O.escapeSequenceSimple);
-export const escapeSequenceUnicodeFixed: Hoisted<typeof O.escapeSequenceUnicodeFixed> = hoist(
-	O.escapeSequenceUnicodeFixed
-);
-export const escapeSequenceUnicodeBraced: Hoisted<typeof O.escapeSequenceUnicodeBraced> = hoist(
-	O.escapeSequenceUnicodeBraced
-);
-export const escapeSequenceHex: Hoisted<typeof O.escapeSequenceHex> = hoist(O.escapeSequenceHex);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistRoutes(O.macroDefinition);
 export const tokenTreePattern: Hoisted<typeof O.tokenTreePattern> = hoistRoutes(O.tokenTreePattern);
 export const tokenTree: Hoisted<typeof O.tokenTree> = hoistRoutes(O.tokenTree);

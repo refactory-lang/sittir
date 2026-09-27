@@ -956,6 +956,14 @@ only: a keyword operator keeps its word seam (`typeof x`, `typeof (x)`,
 `++` can begin what directly follows a unary `-` or `+`, and a tight site
 still takes that lexical space.
 
+### `options` — `update_expression_postfix` / `update_expression_prefix`
+
+The update operator binds tight to its operand: `operator:/before` on the
+postfix variant (`x++`), `operator:/after` on the prefix variant (`--x`).
+Upstream spells both operators as an inline `choice('++', '--')` in each
+arm, so the operator is a slot of the variant itself and takes the
+grammar-wide `operator:` spacing unless its variant says otherwise.
+
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 
 ```text

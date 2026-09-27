@@ -308,8 +308,7 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 	? RuleBase<Phase> & {
 			readonly type: typeof TOKEN;
 			readonly content: Rule<Phase>;
-			readonly immediate: boolean;
-		}
+		} & (Phase extends 'evaluate' ? { readonly immediate?: boolean } : { readonly immediate: boolean })
 	: never;
 
 export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ruleMatchesEmpty, isInlineSafe, predictedSymbolSource } from '../rule-patterns.ts';
+import { matchesEmpty, isInlineSafe, predictedSymbolSource } from '../rule-patterns.ts';
 
 const str = (v: string) => ({ type: 'STRING', value: v });
 const sym = (n: string) => ({ type: 'SYMBOL', name: n });
@@ -15,10 +15,10 @@ const symbols = predictedSymbolSource(
 );
 const inlineSafe = (rule: unknown) => isInlineSafe(rule, symbols);
 
-describe('ruleMatchesEmpty', () => {
-	it('non-empty string seq is not empty', () => expect(ruleMatchesEmpty(seq(str('as'), sym('x')))).toBe(false));
-	it('all-optional seq matches empty', () => expect(ruleMatchesEmpty(seq(opt(sym('a')), opt(sym('b'))))).toBe(true));
-	it('symbol is conservatively non-empty', () => expect(ruleMatchesEmpty(sym('x'))).toBe(false));
+describe('matchesEmpty', () => {
+	it('non-empty string seq is not empty', () => expect(matchesEmpty(seq(str('as'), sym('x')))).toBe(false));
+	it('all-optional seq matches empty', () => expect(matchesEmpty(seq(opt(sym('a')), opt(sym('b'))))).toBe(true));
+	it('symbol is conservatively non-empty', () => expect(matchesEmpty(sym('x'))).toBe(false));
 });
 
 describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping literals', () => {

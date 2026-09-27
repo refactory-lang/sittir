@@ -191,7 +191,6 @@ const LEAF_KINDS = [
 	'_kw_declare_marker',
 	'_kw_static_marker',
 	'_kw_using_marker',
-	'_operator',
 	'_template_chars',
 	'_ternary_qmark',
 	'abstract_keyword',
@@ -2711,10 +2710,6 @@ export type ForHeaderOperatorValue = (typeof __FOR_HEADER_OPERATORS)[number];
 /** Valid values for `_kind` nodes. */
 export const _KINDS = ['let', 'const'] as const;
 export type KindValue = (typeof _KINDS)[number];
-
-/** Valid values for `_operator` nodes. */
-export const _OPERATORS = ['++', '--'] as const;
-export type OperatorValue = (typeof _OPERATORS)[number];
 
 /** Valid values for `accessibility_modifier` nodes. */
 export const ACCESSIBILITY_MODIFIERS = ['public', 'private', 'protected'] as const;

@@ -1,9 +1,8 @@
 import {
-	isBlankType,
 	isChoiceType,
 	isFieldType,
-	isOptionalType,
 	isPrecWrapper,
+	patternAcceptsEmpty,
 	isRepeatType,
 	isSeqType,
 	isStringType,
@@ -122,7 +121,6 @@ export function isSpliceableBareSeq(rule: Rule<'normalize'>): rule is SeqRule<'n
 	);
 }
 import type { DelimiterMode } from '../types/rule.ts';
-import { ruleKey } from './shared.ts';
 
 interface SeparatorFact {
 	readonly value: RuntimeRule;
@@ -133,6 +131,67 @@ interface SeparatorFact {
 export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFact | undefined): boolean {
 	if (a === undefined || b === undefined) return a === b;
 	return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
+}
+
+type RuleLike = { readonly type: string };
+
+export function isBlank(rule: unknown): boolean {
+	if (!rule || typeof rule !== 'object') return false;
+	const r = rule as { type?: unknown; members?: unknown };
+	if (r.type === 'BLANK') return true;
+	return (r.type === CHOICE || r.type === SEQ) && Array.isArray(r.members) && r.members.length === 0;
+}
+
+export function optionalContentOf<R extends RuleLike>(rule: R): R | undefined {
+	if (rule.type === OPTIONAL) return (rule as unknown as { content: R }).content;
+	if (rule.type !== CHOICE) return undefined;
+	const members = (rule as unknown as { members?: readonly R[] }).members;
+	if (!Array.isArray(members) || members.length !== 2) return undefined;
+	const [first, second] = members as [R, R];
+	if (isBlank(first) === isBlank(second)) return undefined;
+	return isBlank(second) ? first : second;
+}
+
+export function isImmediateToken(rule: RuleLike): boolean {
+	return rule.type === IMMEDIATE_TOKEN || (rule.type === TOKEN && (rule as { immediate?: unknown }).immediate === true);
+}
+
+type CanonicalForm = string | number | boolean | null | readonly CanonicalForm[];
+
+export function ruleKey(rule: RuntimeRule): string {
+	return JSON.stringify(canonicalRuleForm(rule));
+}
+
+function canonicalRuleForm(rule: unknown): CanonicalForm {
+	if (typeof rule !== 'object' || rule === null) return rule as CanonicalForm;
+	const r = rule as Record<string, unknown> & RuleLike;
+	const separator = 'separator' in r ? canonicalSeparatorForm(r.separator) : null;
+	if (isBlank(r)) return ['BLANK', null, null, null, separator, null];
+	const optional = optionalContentOf(r);
+	if (optional !== undefined) return [OPTIONAL, null, null, null, separator, [canonicalRuleForm(optional)]];
+	const type = isImmediateToken(r) ? IMMEDIATE_TOKEN : ((r.type as string | undefined) ?? null);
+	const name = typeof r.name === 'string' ? r.name : null;
+	const value = typeof r.value === 'string' || typeof r.value === 'number' ? r.value : null;
+	const named = typeof r.named === 'boolean' ? r.named : null;
+
+	const members = r.members as readonly unknown[] | undefined;
+	if (members !== undefined) return [type, name, value, named, separator, members.map(canonicalRuleForm)];
+
+	const content = r.content;
+	if (content !== undefined) return [type, name, value, named, separator, [canonicalRuleForm(content)]];
+
+	return [type, name, value, named, separator, null];
+}
+
+function canonicalSeparatorForm(separator: unknown): CanonicalForm {
+	if (typeof separator !== 'object' || separator === null) return separator as CanonicalForm;
+	const sep = separator as { readonly value?: unknown; readonly trailing?: unknown; readonly leading?: unknown };
+	return [
+		'fact',
+		typeof sep.trailing === 'string' ? sep.trailing : null,
+		typeof sep.leading === 'string' ? sep.leading : null,
+		canonicalRuleForm(sep.value)
+	];
 }
 
 export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
@@ -168,40 +227,18 @@ export function separatorOf<R extends RuntimeRule>(
 	return null;
 }
 
-export function ruleMatchesEmpty(rule: unknown): boolean {
+export function matchesEmpty(rule: unknown): boolean {
 	if (!rule || typeof rule !== 'object') return false;
 	const r = rule as Record<string, unknown>;
-	const t = typeof r.type === 'string' ? r.type : '';
-
-	if (isOptionalType(t) || isPlainRepeatType(t) || isBlankType(t)) return true;
-
-	if (typeEq(t, 'REPEAT1')) {
-		return ruleMatchesEmpty(r.content);
-	}
-
-	if (isSeqType(t)) {
-		const members = r.members;
-		if (!Array.isArray(members) || members.length === 0) return true;
-		return members.every((m) => ruleMatchesEmpty(m));
-	}
-
-	if (typeEq(t, 'CHOICE')) {
-		const members = r.members;
-		if (!Array.isArray(members)) return false;
-		return members.some((m) => ruleMatchesEmpty(m));
-	}
-
-	if (isFieldType(t) || isPrecWrapper(r as { type: string })) {
-		return ruleMatchesEmpty(r.content);
-	}
-
-	if (isStringType(t) || isSymbolType(t) || typeEq(t, 'TOKEN') || typeEq(t, 'PATTERN')) return false;
-
+	const t = r.type;
+	if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+	if (t === STRING) return r.value === '';
+	if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+	const members = Array.isArray(r.members) ? (r.members as readonly unknown[]) : [];
+	if (t === SEQ) return members.every(matchesEmpty);
+	if (t === CHOICE) return members.some(matchesEmpty);
+	if (t === REPEAT1 || t === FIELD || isPrecWrapper(r as RuleLike)) return matchesEmpty(r.content);
 	return false;
-}
-
-function isPlainRepeatType(t: string): boolean {
-	return t === 'REPEAT';
 }
 
 function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
@@ -211,7 +248,7 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 		const r = m as Record<string, unknown>;
 		const t = typeof r.type === 'string' ? r.type : '';
 
-		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlankType(t)) continue;
+		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlank(r)) continue;
 
 		if (rulesBag && isSymbolType(t)) {
 			const name = typeof r.name === 'string' ? r.name : undefined;
@@ -288,35 +325,8 @@ function repeatHasNonterminalSeparator(repeatRule: RuntimeRule, symbols: SymbolS
 
 function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
 	if (!member || typeof member !== 'object') return false;
-	const r = member as Record<string, unknown>;
-	const t = typeof r.type === 'string' ? r.type : '';
-
-	if (isOptionalType(t)) {
-		const content = r.content;
-		if (!content || typeof content !== 'object') return false;
-		const cr = content as Record<string, unknown>;
-		return isStringType(typeof cr.type === 'string' ? cr.type : '') && cr.value === sepValue;
-	}
-
-	if (isChoiceType(t)) {
-		const members = r.members;
-		if (!Array.isArray(members) || members.length !== 2) return false;
-		const hasBlank = members.some(
-			(m) => m && typeof m === 'object' && isBlankType((m as Record<string, unknown>).type as string)
-		);
-		const hasMatchingLiteral = members.some(
-			(m) =>
-				m &&
-				typeof m === 'object' &&
-				isStringType(
-					typeof (m as Record<string, unknown>).type === 'string' ? ((m as Record<string, unknown>).type as string) : ''
-				) &&
-				(m as Record<string, unknown>).value === sepValue
-		);
-		return hasBlank && hasMatchingLiteral;
-	}
-
-	return false;
+	const content = optionalContentOf(member as RuleLike) as Record<string, unknown> | undefined;
+	return content !== undefined && isStringType(content.type) && content.value === sepValue;
 }
 
 function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, siblings: unknown[], symbols: SymbolSource): boolean {
@@ -490,7 +500,7 @@ export function isPermutationChoice(
 	const members = (b as Record<string, unknown>).members;
 	if (!Array.isArray(members)) return false;
 	const arms = members.filter(
-		(m) => m && typeof m === 'object' && !isBlankType(((m as { type?: string }).type ?? '') as string)
+		(m) => m && typeof m === 'object' && !isBlank(m)
 	);
 	if (arms.length < 2) return false;
 	const keySets: Set<string>[] = [];
@@ -542,23 +552,12 @@ function permutationAtomKey(
 			core = unwrapPrec(r.content);
 			continue;
 		}
-		if (isOptionalType(t)) {
-			core = unwrapPrec(r.content);
+		const optional = optionalContentOf(r as RuleLike);
+		if (optional !== undefined) {
+			core = unwrapPrec(optional);
 			continue;
 		}
-		if (isChoiceType(t)) {
-			const ms = r.members;
-			if (Array.isArray(ms) && ms.length === 2) {
-				const blankIdx = ms.findIndex(
-					(m) => m && typeof m === 'object' && isBlankType(((m as { type?: string }).type ?? '') as string)
-				);
-				if (blankIdx !== -1) {
-					core = unwrapPrec(ms[1 - blankIdx]);
-					continue;
-				}
-			}
-			return null;
-		}
+		if (isChoiceType(t)) return null;
 		break;
 	}
 	const r = core as Record<string, unknown>;
@@ -626,7 +625,7 @@ function extractedToken(rule: TokenShape): ExtractedToken | undefined {
 	for (;;) {
 		if (isTokenWrapperType(current.type)) {
 			tokenized = true;
-			if (current.type === IMMEDIATE_TOKEN) params.push('immediate');
+			if (isImmediateToken(current)) params.push('immediate');
 		} else if (isPrecWrapper(current)) {
 			params.push(`${current.type}:${String(current.value)}`);
 		} else break;
@@ -779,55 +778,21 @@ export function normalizeMember(m: unknown): {
 	return (m as { type: string }) ?? { type: 'UNKNOWN' };
 }
 
-export function peelOptional<P extends PhaseName>(rule: Rule<P>): { inner: Rule<P>; isOptional: boolean } {
-	if (isOptionalType(rule.type)) {
-		return {
-			inner: (rule as unknown as { content: Rule<P> }).content,
-			isOptional: true
-		};
-	}
-	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members: Array<{ type: string }> }).members;
-		if (members.length === 2) {
-			const blankIdx = members.findIndex((m) => m.type === 'BLANK');
-			if (blankIdx !== -1) {
-				const inner = members[1 - blankIdx] as unknown as Rule<P>;
-				return { inner, isOptional: true };
-			}
-		}
-	}
-	return { inner: rule, isOptional: false };
+export function withOptionalContent<R extends RuleLike>(rule: R, content: R): R {
+	if (rule.type === OPTIONAL) return { ...rule, content };
+	const members = (rule as unknown as { members: readonly R[] }).members;
+	return { ...rule, members: members.map((m) => (isBlank(m) ? m : content)) };
 }
 
-export function peelOptionalSeq<P extends PhaseName>(
-	rule: Rule<P>
-): {
-	seqBody: Rule<P>;
-	form: 'optional' | 'choice';
-	seqIdx: number;
-} | null {
-	if (isOptionalType(rule.type)) {
-		const content = (rule as unknown as { content?: Rule<P> }).content;
-		if (content && isSeqType((content as { type?: string }).type)) {
-			return { seqBody: content, form: 'optional', seqIdx: -1 };
-		}
-		return null;
-	}
-	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members?: Rule<P>[] }).members;
-		if (!Array.isArray(members) || members.length !== 2) return null;
-		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
-		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
-		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
-		return { seqBody: members[seqIdx]!, form: 'choice', seqIdx };
-	}
-	return null;
+export function optionalSeqBodyOf<R extends RuleLike>(rule: R): R | undefined {
+	const content = optionalContentOf(rule);
+	return content !== undefined && content.type === SEQ ? content : undefined;
 }
 
 export function listSeparatorOfOptionalSeq<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource): string | null {
-	const peeled = peelOptionalSeq(rule);
-	if (peeled === null) return null;
-	const seqMembers = (peeled.seqBody as unknown as { members?: Rule<P>[] }).members;
+	const seqBody = optionalSeqBodyOf(rule);
+	if (seqBody === undefined) return null;
+	const seqMembers = (seqBody as unknown as { members?: Rule<P>[] }).members;
 	if (!Array.isArray(seqMembers)) return null;
 	for (const m of seqMembers) {
 		if (!isRepeatType((m as { type?: string }).type)) continue;
@@ -850,9 +815,9 @@ export function listSeparatorOfOptionalSeq<P extends PhaseName>(rule: Rule<P>, s
 }
 
 export function optionalStringLiteral<P extends PhaseName>(rule: Rule<P>): string | null {
-	const peeled = peelOptional(rule);
-	if (!peeled.isOptional) return null;
-	const innerN = normalizeMember(peeled.inner);
+	const inner = optionalContentOf(rule);
+	if (inner === undefined) return null;
+	const innerN = normalizeMember(inner);
 	if (isStringType(innerN.type) && typeof innerN.value === 'string') return innerN.value;
 	return null;
 }
@@ -878,11 +843,6 @@ export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): st
 		return content ? separatedListElementName(content) : null;
 	}
 	return null;
-}
-
-export function peelOptionalEitherSpelling<P extends PhaseName>(rule: Rule<P>): Rule<P> | null {
-	const peeled = peelOptional(rule);
-	return peeled.isOptional ? peeled.inner : null;
 }
 
 export interface SeparatedListBodyInfo<P extends PhaseName = 'normalize'> {
@@ -933,7 +893,7 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 		if (repeatIdx === 0) {
 			if (!typeEq((members[0] as { type?: string }).type, 'REPEAT1')) return null;
 			if (members.length !== 2) return null;
-			const flank = peelOptionalEitherSpelling(members[1]!);
+			const flank = optionalContentOf(members[1]!);
 			const flankLit =
 				flank && isStringType((flank as { type?: string }).type) ? (flank as { value?: unknown }).value : null;
 			if (flankLit === null || (separatorLiteral !== null && flankLit !== separatorLiteral)) return null;
@@ -956,11 +916,11 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 			if (isStringType((m as { type?: string }).type) && (m as { value?: unknown }).value === separatorLiteral) {
 				continue;
 			}
-			const inner = peelOptionalEitherSpelling(m);
+			const inner = optionalContentOf(m);
 			const innerLit =
 				inner && isStringType((inner as { type?: string }).type) ? (inner as { value?: unknown }).value : null;
 			const innerMatchesChoiceSep =
-				inner !== null && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
+				inner !== undefined && separatorIsChoice && isChoiceType((inner as { type?: string }).type ?? '');
 			if (
 				(innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral)) ||
 				innerMatchesChoiceSep
@@ -981,8 +941,8 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	}
 
 	if (repeatIdx !== 0 || members.length !== 2) return null;
-	const tail = peelOptionalEitherSpelling(members[1]!);
-	if (tail === null) return null;
+	const tail = optionalContentOf(members[1]!);
+	if (tail === undefined) return null;
 	if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
 	if (elementName === null && ruleKey(tail as RuntimeRule) !== ruleKey(detected.content as RuntimeRule)) return null;
 	return {
@@ -1157,8 +1117,7 @@ export function collectFixedLiteral(
 			if (rule.members.length === 0) return undefined;
 			let found: string | undefined;
 			for (const m of rule.members) {
-				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
-				if (isBlank) {
+				if (isBlank(m)) {
 					if (ctx.deterministic) return undefined;
 					continue;
 				}
@@ -1171,9 +1130,7 @@ export function collectFixedLiteral(
 		}
 		case SEQ: {
 			if (rule.members.length === 0) return undefined;
-			const nonBlanks = rule.members.filter(
-				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
-			);
+			const nonBlanks = rule.members.filter((m) => !isBlank(m));
 			const [only] = nonBlanks;
 			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
 			const parts: string[] = [];
@@ -1227,10 +1184,6 @@ function escapeControlChar(char: string, next: string | undefined): string {
 
 const REGEX_SYNTAX_CHARS = /[.*+?^${}()|[\]\\]/g;
 
-function isBlankLinkRule(rule: Rule<'link'>): boolean {
-	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
-}
-
 export function composeTokenText(
 	rule: Rule<'link'>,
 	lookup?: (name: string) => Rule<'link'> | undefined,
@@ -1255,7 +1208,7 @@ export function composeTokenText(
 			const arms: string[] = [];
 			let blank = false;
 			for (const member of rule.members) {
-				if (isBlankLinkRule(member)) {
+				if (isBlank(member)) {
 					blank = true;
 					continue;
 				}

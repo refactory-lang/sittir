@@ -55,12 +55,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   may not. */
 ```
 
-#### body
-
-```text
-/* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
-	   `optional(STRING)`. */
-```
+An optional in either representation is read through `optionalContentOf`; the
+rewritten content is rebuilt in the representation it had
+(`withOptionalContent`).
 
 ### `packages/codegen/src/dsl/primitives/field.ts::synthesizeKwSymbol`
 
@@ -68,25 +65,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
  * `inline:`, and return a SYMBOL reference to it.
- */
-```
-
-### `packages/codegen/src/dsl/primitives/field.ts::descendOptional`
-
-```text
-/**
- * Recurse into an optional-shaped wrapper's content. If the inner is a
- * bare STRING that `maybeKeywordSymbol` would symbolize, rebuild the
- * wrapper around the new SYMBOL ref so the original optional semantics
- * are preserved while the inner STRING is routed through a hidden rule.
- *
- * `wrapperKind`:
- *   - `'optional'` — `{ type: 'OPTIONAL', content }` (both runtimes
- *     agree on this shape).
- *   - `'choice-blank'` — tree-sitter's `CHOICE` of `[content, BLANK]`
- *     normalized form of `optional(content)`.
- *
- * Returns the content unchanged if the inner isn't a symbolizable STRING.
  */
 ```
 

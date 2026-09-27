@@ -135,15 +135,5 @@ export const printStatementChevron = bundle(F.buildPrintStatementChevron, C.coer
 export const printStatementPlain = bundle(F.buildPrintStatementPlain, C.coerceToPrintStatementPlain);
 export const parenthesizedImportList = bundle(F.buildParenthesizedImportList, C.coerceToParenthesizedImportList);
 export const comprehensionClauses = bundle(F.buildComprehensionClauses, C.coerceToComprehensionClauses);
-export const escapeSequenceUnicodeFixed = bundle(
-	F.buildEscapeSequenceUnicodeFixed,
-	C.coerceToEscapeSequenceUnicodeFixed
-);
-export const escapeSequenceUnicodeWide = bundle(F.buildEscapeSequenceUnicodeWide, C.coerceToEscapeSequenceUnicodeWide);
-export const escapeSequenceHex = bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex);
-export const escapeSequenceOctal = bundle(F.buildEscapeSequenceOctal, C.coerceToEscapeSequenceOctal);
-export const escapeSequenceLineBreak = bundle(F.buildEscapeSequenceLineBreak, C.coerceToEscapeSequenceLineBreak);
-export const escapeSequenceSimple = bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple);
-export const escapeSequenceNamed = bundle(F.buildEscapeSequenceNamed, C.coerceToEscapeSequenceNamed);
 export const expressionStatementTuple = bundle(F.buildExpressionStatementTuple, C.coerceToExpressionStatementTuple);
 export const withClauseBare = bundle(F.buildWithClauseBare, C.coerceToWithClauseBare);

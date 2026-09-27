@@ -212,7 +212,6 @@ pub enum AnyTransport {
     CatchClauseGroup(CatchClauseGroupTransport),
     Kind(KindEnum),
     ForHeaderOperator(ForHeaderOperatorEnum),
-    Operator(OperatorEnum),
     AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
     AmbientDeclarationModule(AmbientDeclarationModuleTransport),
     ObjectTypeContent(ObjectTypeContentTransport),
@@ -418,12 +417,12 @@ pub enum AnyTransport {
     AccessorKeyword(AccessorKeywordTransport),
     Comma(CommaTransport),
     OfKeyword(OfKeywordTransport),
-    PlusPlus(PlusPlusTransport),
-    DashDash(DashDashTransport),
     GlobalKeyword(GlobalKeywordTransport),
     FromKeyword(FromKeywordTransport),
     Dquote(DquoteTransport),
     Squote(SquoteTransport),
+    PlusPlus(PlusPlusTransport),
+    DashDash(DashDashTransport),
     TargetKeyword(TargetKeywordTransport),
     MetaKeyword(MetaKeywordTransport),
     Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
@@ -737,7 +736,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::CatchClauseGroup(t) => t.prepare(ctx),
             AnyTransport::Kind(t) => t.prepare(ctx),
             AnyTransport::ForHeaderOperator(t) => t.prepare(ctx),
-            AnyTransport::Operator(t) => t.prepare(ctx),
             AnyTransport::AmbientDeclarationGlobal(t) => t.prepare(ctx),
             AnyTransport::AmbientDeclarationModule(t) => t.prepare(ctx),
             AnyTransport::ObjectTypeContent(t) => t.prepare(ctx),
@@ -943,12 +941,12 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AccessorKeyword(t) => t.prepare(ctx),
             AnyTransport::Comma(t) => t.prepare(ctx),
             AnyTransport::OfKeyword(t) => t.prepare(ctx),
-            AnyTransport::PlusPlus(t) => t.prepare(ctx),
-            AnyTransport::DashDash(t) => t.prepare(ctx),
             AnyTransport::GlobalKeyword(t) => t.prepare(ctx),
             AnyTransport::FromKeyword(t) => t.prepare(ctx),
             AnyTransport::Dquote(t) => t.prepare(ctx),
             AnyTransport::Squote(t) => t.prepare(ctx),
+            AnyTransport::PlusPlus(t) => t.prepare(ctx),
+            AnyTransport::DashDash(t) => t.prepare(ctx),
             AnyTransport::TargetKeyword(t) => t.prepare(ctx),
             AnyTransport::MetaKeyword(t) => t.prepare(ctx),
             AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
@@ -2666,14 +2664,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 150 => Ok(AnyTransport::OfKeyword(
                     OfKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: plus_plus (PLUS_PLUS)
-                166 => Ok(AnyTransport::PlusPlus(
-                    PlusPlusTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: dash_dash (DASH_DASH)
-                167 => Ok(AnyTransport::DashDash(
-                    DashDashTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: global_keyword (GLOBAL_KEYWORD)
                 151 => Ok(AnyTransport::GlobalKeyword(
                     GlobalKeywordTransport::from_napi_value(env, napi_val)?
@@ -2689,6 +2679,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: squote (SQUOTE)
                 164 => Ok(AnyTransport::Squote(
                     SquoteTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: plus_plus (PLUS_PLUS)
+                166 => Ok(AnyTransport::PlusPlus(
+                    PlusPlusTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: dash_dash (DASH_DASH)
+                167 => Ok(AnyTransport::DashDash(
+                    DashDashTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: target_keyword (TARGET_KEYWORD)
                 168 => Ok(AnyTransport::TargetKeyword(
@@ -53965,20 +53963,8 @@ fn update_expression_postfix_operator_transport_slot_to_any(t: UpdateExpressionP
 impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPostfixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => {
-                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_BEFORE);
-                let written = w.text("++");
-                written?;
-                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_AFTER);
-                Ok(())
-            }
-            UpdateExpressionPostfixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => {
-                w.site_at(options::SITE_OPERATOR_DASH_DASH_BEFORE);
-                let written = w.text("--");
-                written?;
-                w.site_at(options::SITE_OPERATOR_DASH_DASH_AFTER);
-                Ok(())
-            }
+            UpdateExpressionPostfixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => w.text("++"),
+            UpdateExpressionPostfixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => w.text("--"),
         }
     }
 }
@@ -54081,20 +54067,8 @@ fn update_expression_prefix_operator_transport_slot_to_any(t: UpdateExpressionPr
 impl ::sittir_core::render::Render for UpdateExpressionPrefixOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPrefixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => {
-                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_BEFORE);
-                let written = w.text("++");
-                written?;
-                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_AFTER);
-                Ok(())
-            }
-            UpdateExpressionPrefixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => {
-                w.site_at(options::SITE_OPERATOR_DASH_DASH_BEFORE);
-                let written = w.text("--");
-                written?;
-                w.site_at(options::SITE_OPERATOR_DASH_DASH_AFTER);
-                Ok(())
-            }
+            UpdateExpressionPrefixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => w.text("++"),
+            UpdateExpressionPrefixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => w.text("--"),
         }
     }
 }
@@ -74087,94 +74061,6 @@ impl ::sittir_core::render::Render for ForHeaderOperatorEnum {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OperatorEnum {
-    V2b_2b,
-    V2d_2d,
-}
-
-impl ::sittir_core::prepare::Prepare for OperatorEnum {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        166 => return Ok(Self::V2b_2b), // "++"
-                        167 => return Ok(Self::V2d_2d), // "--"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "++" => return Ok(Self::V2b_2b),
-                    "--" => return Ok(Self::V2d_2d),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        166 => return Ok(Self::V2b_2b), // "++"
-                        167 => return Ok(Self::V2d_2d), // "--"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "++" => return Ok(Self::V2b_2b),
-                        "--" => return Ok(Self::V2d_2d),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_++")?.is_some() { return Ok(Self::V2b_2b); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_--")?.is_some() { return Ok(Self::V2d_2d); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for OperatorEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("OperatorEnum is receive-only"))
-    }
-}
-
-impl ::sittir_core::view::KindOf for OperatorEnum {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::V2b_2b => [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k)),
-            Self::V2d_2d => [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for OperatorEnum {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            Self::V2b_2b => { w.site_at(options::SITE_OPERATOR_PLUS_PLUS_BEFORE); w.text("++")?; w.site_at(options::SITE_OPERATOR_PLUS_PLUS_AFTER); Ok(()) }
-            Self::V2d_2d => { w.site_at(options::SITE_OPERATOR_DASH_DASH_BEFORE); w.text("--")?; w.site_at(options::SITE_OPERATOR_DASH_DASH_AFTER); Ok(()) }
-        }
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AmbientDeclarationGlobalTransport {
@@ -76359,7 +76245,7 @@ pub struct UpdateExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<OperatorEnum>,
+    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for UpdateExpressionPostfixTransport {
@@ -76417,7 +76303,7 @@ pub struct UpdateExpressionPrefixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<OperatorEnum>,
+    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
@@ -93124,214 +93010,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OfKeywordTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct PlusPlusTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for PlusPlusTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for PlusPlusTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(166) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for PlusPlusTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PlusPlusTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "++".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "++".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "++".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PlusPlusTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusPlusTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PlusPlusTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusPlusTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PlusPlusTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct DashDashTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for DashDashTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for DashDashTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(167) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for DashDashTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for DashDashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "--".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "--".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "--".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DashDashTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DashDashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DashDashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DashDashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DashDashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct GlobalKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -93744,6 +93422,214 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SquoteTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SquoteTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PlusPlusTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PlusPlusTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for PlusPlusTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(166) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for PlusPlusTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PlusPlusTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "++".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "++".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "++".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PlusPlusTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PlusPlusTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PlusPlusTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusPlusTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PlusPlusTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DashDashTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DashDashTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for DashDashTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(167) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for DashDashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DashDashTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "--".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "--".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "--".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DashDashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DashDashTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DashDashTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DashDashTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DashDashTransport::to_napi_value(env, *val)
     }
 }
 
@@ -99754,10 +99640,6 @@ fn render_for_header_operator(t: &ForHeaderOperatorEnum, w: &mut dyn ::sittir_co
     t.render(w)
 }
 
-fn render_operator(t: &OperatorEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    t.render(w)
-}
-
 fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     w.edge(::sittir_core::types::KindId(390), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -100268,6 +100150,7 @@ fn render_update_expression_postfix(node: &UpdateExpressionPostfixTransport, w: 
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(415), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     argument.render(w)?;
+    w.site_at(options::SITE_UPDATE_EXPRESSION_POSTFIX_OPERATOR_BEFORE);
     operator.render(w)?;
     w.edge(::sittir_core::types::KindId(415), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -100278,6 +100161,7 @@ fn render_update_expression_prefix(node: &UpdateExpressionPrefixTransport, w: &m
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(416), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
+    w.site_at(options::SITE_UPDATE_EXPRESSION_PREFIX_OPERATOR_AFTER);
     argument.render(w)?;
     w.edge(::sittir_core::types::KindId(416), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -101134,14 +101018,6 @@ fn render_of_keyword(t: &OfKeywordTransport, w: &mut dyn ::sittir_core::render::
     w.text(&t.text)
 }
 
-fn render_plus_plus(t: &PlusPlusTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_dash_dash(t: &DashDashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
 fn render_global_keyword(t: &GlobalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -101155,6 +101031,14 @@ fn render_dquote(t: &DquoteTransport, w: &mut dyn ::sittir_core::render::RenderS
 }
 
 fn render_squote(t: &SquoteTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_plus_plus(t: &PlusPlusTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_dash_dash(t: &DashDashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -101625,7 +101509,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::CatchClauseGroup(inner) => inner.kind_in(kinds),
             Self::Kind(inner) => inner.kind_in(kinds),
             Self::ForHeaderOperator(inner) => inner.kind_in(kinds),
-            Self::Operator(inner) => inner.kind_in(kinds),
             Self::AmbientDeclarationGlobal(inner) => inner.kind_in(kinds),
             Self::AmbientDeclarationModule(inner) => inner.kind_in(kinds),
             Self::ObjectTypeContent(inner) => inner.kind_in(kinds),
@@ -101831,12 +101714,12 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AccessorKeyword(inner) => inner.kind_in(kinds),
             Self::Comma(inner) => inner.kind_in(kinds),
             Self::OfKeyword(inner) => inner.kind_in(kinds),
-            Self::PlusPlus(inner) => inner.kind_in(kinds),
-            Self::DashDash(inner) => inner.kind_in(kinds),
             Self::GlobalKeyword(inner) => inner.kind_in(kinds),
             Self::FromKeyword(inner) => inner.kind_in(kinds),
             Self::Dquote(inner) => inner.kind_in(kinds),
             Self::Squote(inner) => inner.kind_in(kinds),
+            Self::PlusPlus(inner) => inner.kind_in(kinds),
+            Self::DashDash(inner) => inner.kind_in(kinds),
             Self::TargetKeyword(inner) => inner.kind_in(kinds),
             Self::MetaKeyword(inner) => inner.kind_in(kinds),
             _ => false,
@@ -102037,7 +101920,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::CatchClauseGroup(t) => t.render(w),
             AnyTransport::Kind(t) => t.render(w),
             AnyTransport::ForHeaderOperator(t) => t.render(w),
-            AnyTransport::Operator(t) => t.render(w),
             AnyTransport::AmbientDeclarationGlobal(t) => t.render(w),
             AnyTransport::AmbientDeclarationModule(t) => t.render(w),
             AnyTransport::ObjectTypeContent(t) => t.render(w),
@@ -102243,12 +102125,12 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AccessorKeyword(t) => t.render(w),
             AnyTransport::Comma(t) => t.render(w),
             AnyTransport::OfKeyword(t) => t.render(w),
-            AnyTransport::PlusPlus(t) => t.render(w),
-            AnyTransport::DashDash(t) => t.render(w),
             AnyTransport::GlobalKeyword(t) => t.render(w),
             AnyTransport::FromKeyword(t) => t.render(w),
             AnyTransport::Dquote(t) => t.render(w),
             AnyTransport::Squote(t) => t.render(w),
+            AnyTransport::PlusPlus(t) => t.render(w),
+            AnyTransport::DashDash(t) => t.render(w),
             AnyTransport::TargetKeyword(t) => t.render(w),
             AnyTransport::MetaKeyword(t) => t.render(w),
             AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),

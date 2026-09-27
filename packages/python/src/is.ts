@@ -392,27 +392,6 @@ export interface IsGuards {
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
-	escapeSequenceUnicodeFixed<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
-	escapeSequenceUnicodeWide<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
-	escapeSequenceHex<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
-	escapeSequenceOctal<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceOctal };
-	escapeSequenceLineBreak<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceLineBreak };
-	escapeSequenceSimple<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceSimple };
-	escapeSequenceNamed<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
 	expressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -628,27 +607,6 @@ export interface AssertGuards {
 	comprehensionClauses(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
-	escapeSequenceUnicodeFixed(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
-	escapeSequenceUnicodeWide(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceUnicodeWide };
-	escapeSequenceHex(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceHex };
-	escapeSequenceOctal(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceOctal };
-	escapeSequenceLineBreak(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceLineBreak };
-	escapeSequenceSimple(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceSimple };
-	escapeSequenceNamed(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.EscapeSequenceNamed };
 	expressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -837,13 +795,6 @@ export const is = {
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
-	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
-	escapeSequenceUnicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
-	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
-	escapeSequenceOctal: _g(TSKindId.EscapeSequenceOctal),
-	escapeSequenceLineBreak: _g(TSKindId.EscapeSequenceLineBreak),
-	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
-	escapeSequenceNamed: _g(TSKindId.EscapeSequenceNamed),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
@@ -1014,13 +965,6 @@ export const assert = {
 	printStatementChevron: _makeAssert('printStatementChevron', is.printStatementChevron as _AnyGuard),
 	printStatementPlain: _makeAssert('printStatementPlain', is.printStatementPlain as _AnyGuard),
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
-	escapeSequenceUnicodeFixed: _makeAssert('escapeSequenceUnicodeFixed', is.escapeSequenceUnicodeFixed as _AnyGuard),
-	escapeSequenceUnicodeWide: _makeAssert('escapeSequenceUnicodeWide', is.escapeSequenceUnicodeWide as _AnyGuard),
-	escapeSequenceHex: _makeAssert('escapeSequenceHex', is.escapeSequenceHex as _AnyGuard),
-	escapeSequenceOctal: _makeAssert('escapeSequenceOctal', is.escapeSequenceOctal as _AnyGuard),
-	escapeSequenceLineBreak: _makeAssert('escapeSequenceLineBreak', is.escapeSequenceLineBreak as _AnyGuard),
-	escapeSequenceSimple: _makeAssert('escapeSequenceSimple', is.escapeSequenceSimple as _AnyGuard),
-	escapeSequenceNamed: _makeAssert('escapeSequenceNamed', is.escapeSequenceNamed as _AnyGuard),
 	expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
 	withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),

@@ -91,6 +91,7 @@ import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
+	isBlank,
 	isEnumChoiceRule,
 	hiddenChoiceClass,
 	isKindChoice,
@@ -2314,7 +2315,7 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 		case REPEAT1:
 			return namedAliasFaceOf(target.content);
 		case CHOICE: {
-			const arms = target.members.filter((m) => !isBlankRule(m));
+			const arms = target.members.filter((m) => !isBlank(m));
 			return arms.length === 1 ? namedAliasFaceOf(arms[0]!) : undefined;
 		}
 		case ALIAS:
@@ -2380,7 +2381,7 @@ export function stampStaticRenderAs(
 		if (body.type === STRING) renderStamps[sym] = { value: body.value, immediate: false };
 		else if (body.type === TOKEN && body.content.type === STRING) {
 			renderStamps[sym] = { value: body.content.value, immediate: body.immediate };
-		} else if (isBlankRule(body)) blankStamps.add(sym);
+		} else if (isBlank(body)) blankStamps.add(sym);
 	}
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
@@ -2403,9 +2404,6 @@ export function stampStaticRenderAs(
 		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
 	}
 	return out;
-}
-function isBlankRule(rule: Rule<'link'>): boolean {
-	return (rule.type === CHOICE && rule.members.length === 0) || (rule.type === SEQ && rule.members.length === 0);
 }
 function literalRuleForStamp(stamp: RenderAsLiteralStamp, id: RuleId | undefined): Rule<'link'> {
 	return stamp.immediate
@@ -2449,7 +2447,7 @@ function rewriteRuleForStamp(
 
 		case CHOICE: {
 			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
-			const nonBlank = members.filter((m) => !isBlankRule(m));
+			const nonBlank = members.filter((m) => !isBlank(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
 			if (nonBlank.length === 0) return withId({ type: CHOICE, members: [] }, rule.id);

@@ -105,7 +105,6 @@ var isSymbolType = (t) => typeEq(t, "SYMBOL");
 var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
-var isBlankType = (t) => typeEq(t, "BLANK");
 function compileAnchoredPattern(source) {
   const anchored = `^(?:${source})$`;
   try {
@@ -121,17 +120,6 @@ function compileAnchoredPattern(source) {
 function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
-}
-function matchesEmpty(rule2) {
-  const t = rule2.type;
-  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-  if (t === "STRING") return rule2.value === "";
-  if (t === "PATTERN") return patternAcceptsEmpty(String(rule2.value));
-  const members = rule2.members ?? [];
-  if (isChoiceType(t)) return members.some(matchesEmpty);
-  if (isSeqType(t)) return members.every(matchesEmpty);
-  if (isPrecWrapper(rule2)) return matchesEmpty(rule2.content);
-  return false;
 }
 
 // packages/codegen/src/dsl/rule-metadata.ts
@@ -293,181 +281,6 @@ function parseFlankAddress(key) {
   return m ? { kind: m[1], side: m[2] } : void 0;
 }
 
-// packages/codegen/src/dsl/primitives/field.ts
-function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  if (!c || typeof c.type !== "string") return content;
-  if (isStringType(c.type)) {
-    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
-  }
-  if (isOptionalType(c.type)) {
-    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
-  }
-  if (isChoiceType(c.type)) {
-    const members = content.members;
-    if (Array.isArray(members) && members.length === 2) {
-      const blankIdx = members.findIndex((m) => m?.type === "BLANK");
-      if (blankIdx !== -1) {
-        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
-      }
-    }
-    return content;
-  }
-  return content;
-}
-function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
-  const hiddenName = `_kw_${fieldName}`;
-  let body = content;
-  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
-  if (!wireRegisterSyntheticRule(hiddenName, body)) {
-    throw new Error(
-      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
-    );
-  }
-  wireRegisterSyntheticInline(hiddenName);
-  return {
-    type: "SYMBOL",
-    name: hiddenName
-  };
-}
-function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
-  let inner;
-  if (wrapperKind === "optional") {
-    inner = content.content;
-  } else {
-    const members = content.members;
-    const nonBlank = members.find((m) => m.type !== "BLANK");
-    inner = nonBlank;
-  }
-  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
-  if (rewritten === inner) return content;
-  if (wrapperKind === "optional") {
-    const nativeOptional = globalThis.optional;
-    if (typeof nativeOptional !== "function") return content;
-    return nativeOptional(rewritten);
-  }
-  const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" ? m : rewritten);
-  return { ...c, members: newMembers };
-}
-function isFieldPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
-}
-function field(name, content) {
-  if (content === void 0) {
-    return {
-      __sittirPlaceholder: "field",
-      name
-    };
-  }
-  const native = globalThis.field;
-  if (typeof native !== "function") {
-    throw new Error(
-      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
-    );
-  }
-  return buildTwoArgFieldResult(native, name, content);
-}
-function buildTwoArgFieldResult(native, name, content) {
-  const initial = native(name, content);
-  const inner = initial.content;
-  const symbolized = maybeKeywordSymbol(name, inner);
-  const metadata = makeRuleMetadata({ fieldSource: "override" });
-  if (symbolized !== inner) {
-    const reconstructed = native(name, symbolized);
-    return {
-      ...reconstructed,
-      metadata
-    };
-  }
-  return { ...initial, metadata };
-}
-
-// packages/codegen/src/dsl/primitives/alias.ts
-function isAliasPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
-}
-function alias(rule2, value) {
-  if (typeof rule2 === "string" && value === void 0) {
-    return {
-      __sittirPlaceholder: "alias",
-      name: rule2
-    };
-  }
-  const native = globalThis.alias;
-  if (typeof native !== "function") {
-    throw new Error(
-      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
-    );
-  }
-  if (value !== void 0) {
-    return native(rule2, value);
-  }
-  return native(rule2, rule2);
-}
-
-// packages/codegen/src/dsl/primitives/rule.ts
-function isRulePlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "rule";
-}
-function rule(name, body) {
-  return { __sittirPlaceholder: "rule", name, body };
-}
-
-// packages/codegen/src/dsl/primitives/variant.ts
-var ABSENT_VARIANT_NAME = "bare";
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name, options) {
-  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {}, ...options?.default === true ? { default: true } : {} };
-}
-function variantMintName(v) {
-  return [...v.nestedUnder ?? [], v.name].join("_");
-}
-function nestVariant(v, nestedUnder) {
-  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
-}
-
-// packages/codegen/src/dsl/wire/symbol-renames.ts
-function resolveName(name, renames) {
-  let current = name;
-  for (let hops = 0; hops < renames.size; hops++) {
-    const next = renames.get(current);
-    if (next === void 0 || next === current) return current;
-    current = next;
-  }
-  return current;
-}
-function renameRule(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) {
-    const mapped = value.map((entry) => renameRule(entry, renames));
-    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
-  }
-  if (value === null || typeof value !== "object") return value;
-  const record = value;
-  const changes = {};
-  for (const [key, entry] of Object.entries(record)) {
-    const next = renameRule(entry, renames);
-    if (next !== entry) changes[key] = next;
-  }
-  if (record.type === "SYMBOL" && typeof record.name === "string") {
-    const name = resolveName(record.name, renames);
-    if (name !== record.name) changes.name = name;
-  }
-  if (Object.keys(changes).length === 0) return value;
-  const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value));
-  for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
-  return copy;
-}
-function renameNameList(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
-  if (typeof value === "string") return resolveName(value, renames);
-  return renameRule(value, renames);
-}
-
 // packages/codegen/src/util/word-matcher.ts
 function compileWordMatcher(word, rules) {
   if (!word) return void 0;
@@ -539,46 +352,60 @@ function escapeRegexLiteral(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// packages/codegen/src/dsl/shared.ts
-function ruleKey(rule2) {
-  return JSON.stringify(canonicalize(rule2));
+// packages/codegen/src/dsl/rule-patterns.ts
+function isEnumChoiceRule(rule2) {
+  return rule2.type === CHOICE && rule2.members.length >= 2 && rule2.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
 }
-function canonicalize(rule2) {
+function isBlank(rule2) {
+  if (!rule2 || typeof rule2 !== "object") return false;
+  const r = rule2;
+  if (r.type === "BLANK") return true;
+  return (r.type === CHOICE || r.type === SEQ) && Array.isArray(r.members) && r.members.length === 0;
+}
+function optionalContentOf(rule2) {
+  if (rule2.type === OPTIONAL) return rule2.content;
+  if (rule2.type !== CHOICE) return void 0;
+  const members = rule2.members;
+  if (!Array.isArray(members) || members.length !== 2) return void 0;
+  const [first, second] = members;
+  if (isBlank(first) === isBlank(second)) return void 0;
+  return isBlank(second) ? first : second;
+}
+function isImmediateToken(rule2) {
+  return rule2.type === IMMEDIATE_TOKEN || rule2.type === TOKEN && rule2.immediate === true;
+}
+function ruleKey(rule2) {
+  return JSON.stringify(canonicalRuleForm(rule2));
+}
+function canonicalRuleForm(rule2) {
   if (typeof rule2 !== "object" || rule2 === null) return rule2;
   const r = rule2;
-  const type = r.type ?? null;
+  const separator = "separator" in r ? canonicalSeparatorForm(r.separator) : null;
+  if (isBlank(r)) return ["BLANK", null, null, null, separator, null];
+  const optional2 = optionalContentOf(r);
+  if (optional2 !== void 0) return [OPTIONAL, null, null, null, separator, [canonicalRuleForm(optional2)]];
+  const type = isImmediateToken(r) ? IMMEDIATE_TOKEN : r.type ?? null;
   const name = typeof r.name === "string" ? r.name : null;
   const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
   const named = typeof r.named === "boolean" ? r.named : null;
-  const separator = "separator" in r ? canonicalizeSeparator(r.separator) : null;
   const members = r.members;
-  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalize)];
+  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalRuleForm)];
   const content = r.content;
-  if (content !== void 0) return [type, name, value, named, separator, [canonicalize(content)]];
+  if (content !== void 0) return [type, name, value, named, separator, [canonicalRuleForm(content)]];
   return [type, name, value, named, separator, null];
 }
-function canonicalizeSeparator(separator) {
+function canonicalSeparatorForm(separator) {
   if (typeof separator !== "object" || separator === null) return separator;
   const sep = separator;
   return [
     "fact",
     typeof sep.trailing === "string" ? sep.trailing : null,
     typeof sep.leading === "string" ? sep.leading : null,
-    canonicalize(sep.value)
+    canonicalRuleForm(sep.value)
   ];
 }
-var DSL_RULES_KEY = /* @__PURE__ */ Symbol.for("sittir.dslRules");
-function baseRulesOf(base2) {
-  if (!base2 || typeof base2 !== "object") return void 0;
-  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
-  if (!grammar2 || typeof grammar2 !== "object") return void 0;
-  const dslRules = grammar2[DSL_RULES_KEY];
-  return dslRules ?? grammar2.rules;
-}
-
-// packages/codegen/src/dsl/rule-patterns.ts
-function isEnumChoiceRule(rule2) {
-  return rule2.type === CHOICE && rule2.members.length >= 2 && rule2.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
+function rulesEqual(a, b) {
+  return ruleKey(a) === ruleKey(b);
 }
 function leadingLiteralOf(r) {
   if (!typeEq(r.type, "CHOICE")) return null;
@@ -600,32 +427,18 @@ function separatorOf(resolved, symbols) {
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
-function ruleMatchesEmpty(rule2) {
+function matchesEmpty(rule2) {
   if (!rule2 || typeof rule2 !== "object") return false;
   const r = rule2;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (isOptionalType(t) || isPlainRepeatType2(t) || isBlankType(t)) return true;
-  if (typeEq(t, "REPEAT1")) {
-    return ruleMatchesEmpty(r.content);
-  }
-  if (isSeqType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length === 0) return true;
-    return members.every((m) => ruleMatchesEmpty(m));
-  }
-  if (typeEq(t, "CHOICE")) {
-    const members = r.members;
-    if (!Array.isArray(members)) return false;
-    return members.some((m) => ruleMatchesEmpty(m));
-  }
-  if (isFieldType(t) || isPrecWrapper(r)) {
-    return ruleMatchesEmpty(r.content);
-  }
-  if (isStringType(t) || isSymbolType(t) || typeEq(t, "TOKEN") || typeEq(t, "PATTERN")) return false;
+  const t = r.type;
+  if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+  if (t === STRING) return r.value === "";
+  if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+  const members = Array.isArray(r.members) ? r.members : [];
+  if (t === SEQ) return members.every(matchesEmpty);
+  if (t === CHOICE) return members.some(matchesEmpty);
+  if (t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return matchesEmpty(r.content);
   return false;
-}
-function isPlainRepeatType2(t) {
-  return t === "REPEAT";
 }
 function collectSlots(members, rulesBag) {
   const slots = [];
@@ -633,7 +446,7 @@ function collectSlots(members, rulesBag) {
     if (!m || typeof m !== "object") continue;
     const r = m;
     const t = typeof r.type === "string" ? r.type : "";
-    if (isStringType(t) || typeEq(t, "TOKEN") || isBlankType(t)) continue;
+    if (isStringType(t) || typeEq(t, "TOKEN") || isBlank(r)) continue;
     if (rulesBag && isSymbolType(t)) {
       const name = typeof r.name === "string" ? r.name : void 0;
       if (name !== void 0 && !(name in rulesBag)) continue;
@@ -700,28 +513,8 @@ function repeatHasNonterminalSeparator(repeatRule, symbols) {
 }
 function isOptionalSeparatorFlank(member, sepValue) {
   if (!member || typeof member !== "object") return false;
-  const r = member;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (isOptionalType(t)) {
-    const content = r.content;
-    if (!content || typeof content !== "object") return false;
-    const cr = content;
-    return isStringType(typeof cr.type === "string" ? cr.type : "") && cr.value === sepValue;
-  }
-  if (isChoiceType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length !== 2) return false;
-    const hasBlank = members.some(
-      (m) => m && typeof m === "object" && isBlankType(m.type)
-    );
-    const hasMatchingLiteral = members.some(
-      (m) => m && typeof m === "object" && isStringType(
-        typeof m.type === "string" ? m.type : ""
-      ) && m.value === sepValue
-    );
-    return hasBlank && hasMatchingLiteral;
-  }
-  return false;
+  const content = optionalContentOf(member);
+  return content !== void 0 && isStringType(content.type) && content.value === sepValue;
 }
 function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings, symbols) {
   if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
@@ -842,7 +635,7 @@ function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
   const members = b.members;
   if (!Array.isArray(members)) return false;
   const arms = members.filter(
-    (m) => m && typeof m === "object" && !isBlankType(m.type ?? "")
+    (m) => m && typeof m === "object" && !isBlank(m)
   );
   if (arms.length < 2) return false;
   const keySets = [];
@@ -882,23 +675,12 @@ function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
       core = unwrapPrec(r2.content);
       continue;
     }
-    if (isOptionalType(t2)) {
-      core = unwrapPrec(r2.content);
+    const optional2 = optionalContentOf(r2);
+    if (optional2 !== void 0) {
+      core = unwrapPrec(optional2);
       continue;
     }
-    if (isChoiceType(t2)) {
-      const ms = r2.members;
-      if (Array.isArray(ms) && ms.length === 2) {
-        const blankIdx = ms.findIndex(
-          (m) => m && typeof m === "object" && isBlankType(m.type ?? "")
-        );
-        if (blankIdx !== -1) {
-          core = unwrapPrec(ms[1 - blankIdx]);
-          continue;
-        }
-      }
-      return null;
-    }
+    if (isChoiceType(t2)) return null;
     break;
   }
   const r = core;
@@ -940,7 +722,7 @@ function extractedToken(rule2) {
   for (; ; ) {
     if (isTokenWrapperType(current.type)) {
       tokenized = true;
-      if (current.type === IMMEDIATE_TOKEN) params.push("immediate");
+      if (isImmediateToken(current)) params.push("immediate");
     } else if (isPrecWrapper(current)) {
       params.push(`${current.type}:${String(current.value)}`);
     } else break;
@@ -1063,47 +845,19 @@ function normalizeMember(m) {
   if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
   return m ?? { type: "UNKNOWN" };
 }
-function peelOptional(rule2) {
-  if (isOptionalType(rule2.type)) {
-    return {
-      inner: rule2.content,
-      isOptional: true
-    };
-  }
-  if (isChoiceType(rule2.type)) {
-    const members = rule2.members;
-    if (members.length === 2) {
-      const blankIdx = members.findIndex((m) => m.type === "BLANK");
-      if (blankIdx !== -1) {
-        const inner = members[1 - blankIdx];
-        return { inner, isOptional: true };
-      }
-    }
-  }
-  return { inner: rule2, isOptional: false };
+function withOptionalContent(rule2, content) {
+  if (rule2.type === OPTIONAL) return { ...rule2, content };
+  const members = rule2.members;
+  return { ...rule2, members: members.map((m) => isBlank(m) ? m : content) };
 }
-function peelOptionalSeq(rule2) {
-  if (isOptionalType(rule2.type)) {
-    const content = rule2.content;
-    if (content && isSeqType(content.type)) {
-      return { seqBody: content, form: "optional", seqIdx: -1 };
-    }
-    return null;
-  }
-  if (isChoiceType(rule2.type)) {
-    const members = rule2.members;
-    if (!Array.isArray(members) || members.length !== 2) return null;
-    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
-    const seqIdx = members.findIndex((m) => isSeqType(m.type));
-    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
-    return { seqBody: members[seqIdx], form: "choice", seqIdx };
-  }
-  return null;
+function optionalSeqBodyOf(rule2) {
+  const content = optionalContentOf(rule2);
+  return content !== void 0 && content.type === SEQ ? content : void 0;
 }
 function listSeparatorOfOptionalSeq(rule2, symbols) {
-  const peeled = peelOptionalSeq(rule2);
-  if (peeled === null) return null;
-  const seqMembers = peeled.seqBody.members;
+  const seqBody = optionalSeqBodyOf(rule2);
+  if (seqBody === void 0) return null;
+  const seqMembers = seqBody.members;
   if (!Array.isArray(seqMembers)) return null;
   for (const m of seqMembers) {
     if (!isRepeatType(m.type)) continue;
@@ -1125,9 +879,9 @@ function listSeparatorOfOptionalSeq(rule2, symbols) {
   return null;
 }
 function optionalStringLiteral(rule2) {
-  const peeled = peelOptional(rule2);
-  if (!peeled.isOptional) return null;
-  const innerN = normalizeMember(peeled.inner);
+  const inner = optionalContentOf(rule2);
+  if (inner === void 0) return null;
+  const innerN = normalizeMember(inner);
   if (isStringType(innerN.type) && typeof innerN.value === "string") return innerN.value;
   return null;
 }
@@ -1152,10 +906,6 @@ function separatedListElementName(rule2) {
     return content ? separatedListElementName(content) : null;
   }
   return null;
-}
-function peelOptionalEitherSpelling(rule2) {
-  const peeled = peelOptional(rule2);
-  return peeled.isOptional ? peeled.inner : null;
 }
 function separatedListBodyInfo(body, symbols) {
   if (!isSeqType(body.type)) return null;
@@ -1190,7 +940,7 @@ function separatedListBodyInfo(body, symbols) {
     if (repeatIdx === 0) {
       if (!typeEq(members[0].type, "REPEAT1")) return null;
       if (members.length !== 2) return null;
-      const flank = peelOptionalEitherSpelling(members[1]);
+      const flank = optionalContentOf(members[1]);
       const flankLit = flank && isStringType(flank.type) ? flank.value : null;
       if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
       return {
@@ -1212,9 +962,9 @@ function separatedListBodyInfo(body, symbols) {
       if (isStringType(m.type) && m.value === separatorLiteral) {
         continue;
       }
-      const inner = peelOptionalEitherSpelling(m);
+      const inner = optionalContentOf(m);
       const innerLit = inner && isStringType(inner.type) ? inner.value : null;
-      const innerMatchesChoiceSep = inner !== null && separatorIsChoice && isChoiceType(inner.type ?? "");
+      const innerMatchesChoiceSep = inner !== void 0 && separatorIsChoice && isChoiceType(inner.type ?? "");
       if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral) || innerMatchesChoiceSep) {
         flankCarrying = true;
         continue;
@@ -1231,8 +981,8 @@ function separatedListBodyInfo(body, symbols) {
     };
   }
   if (repeatIdx !== 0 || members.length !== 2) return null;
-  const tail = peelOptionalEitherSpelling(members[1]);
-  if (tail === null) return null;
+  const tail = optionalContentOf(members[1]);
+  if (tail === void 0) return null;
   if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
   if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
   return {
@@ -1321,6 +1071,153 @@ function armsDifferOnlyByLiteralChoice(a, b) {
     return JSON.stringify(x) === JSON.stringify(y);
   };
   return same(a, b) && literalDeltas === 1;
+}
+
+// packages/codegen/src/dsl/primitives/field.ts
+function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  if (!c || typeof c.type !== "string") return content;
+  if (isStringType(c.type)) {
+    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
+  }
+  const optional2 = optionalContentOf(c);
+  if (optional2 !== void 0) {
+    const rewritten = maybeKeywordSymbol(fieldName, optional2, wrapSyntheticBody);
+    return rewritten === optional2 ? content : withOptionalContent(c, rewritten);
+  }
+  return content;
+}
+function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
+  const hiddenName = `_kw_${fieldName}`;
+  let body = content;
+  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+  if (!wireRegisterSyntheticRule(hiddenName, body)) {
+    throw new Error(
+      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+    );
+  }
+  wireRegisterSyntheticInline(hiddenName);
+  return {
+    type: "SYMBOL",
+    name: hiddenName
+  };
+}
+function isFieldPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
+}
+function field(name, content) {
+  if (content === void 0) {
+    return {
+      __sittirPlaceholder: "field",
+      name
+    };
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error(
+      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  return buildTwoArgFieldResult(native, name, content);
+}
+function buildTwoArgFieldResult(native, name, content) {
+  const initial = native(name, content);
+  const inner = initial.content;
+  const symbolized = maybeKeywordSymbol(name, inner);
+  const metadata = makeRuleMetadata({ fieldSource: "override" });
+  if (symbolized !== inner) {
+    const reconstructed = native(name, symbolized);
+    return {
+      ...reconstructed,
+      metadata
+    };
+  }
+  return { ...initial, metadata };
+}
+
+// packages/codegen/src/dsl/primitives/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+function alias(rule2, value) {
+  if (typeof rule2 === "string" && value === void 0) {
+    return {
+      __sittirPlaceholder: "alias",
+      name: rule2
+    };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  if (value !== void 0) {
+    return native(rule2, value);
+  }
+  return native(rule2, rule2);
+}
+
+// packages/codegen/src/dsl/primitives/rule.ts
+function isRulePlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "rule";
+}
+function rule(name, body) {
+  return { __sittirPlaceholder: "rule", name, body };
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+var ABSENT_VARIANT_NAME = "bare";
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name, options) {
+  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {}, ...options?.default === true ? { default: true } : {} };
+}
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
+}
+
+// packages/codegen/src/dsl/wire/symbol-renames.ts
+function resolveName(name, renames) {
+  let current = name;
+  for (let hops = 0; hops < renames.size; hops++) {
+    const next = renames.get(current);
+    if (next === void 0 || next === current) return current;
+    current = next;
+  }
+  return current;
+}
+function renameRule(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) {
+    const mapped = value.map((entry) => renameRule(entry, renames));
+    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
+  }
+  if (value === null || typeof value !== "object") return value;
+  const record = value;
+  const changes = {};
+  for (const [key, entry] of Object.entries(record)) {
+    const next = renameRule(entry, renames);
+    if (next !== entry) changes[key] = next;
+  }
+  if (record.type === "SYMBOL" && typeof record.name === "string") {
+    const name = resolveName(record.name, renames);
+    if (name !== record.name) changes.name = name;
+  }
+  if (Object.keys(changes).length === 0) return value;
+  const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value));
+  for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
+  return copy;
+}
+function renameNameList(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
+  if (typeof value === "string") return resolveName(value, renames);
+  return renameRule(value, renames);
 }
 
 // packages/codegen/src/dsl/enrich-ctx.ts
@@ -1560,12 +1457,19 @@ function unaliasOverloadedDisplays(rules, ctx) {
 var flagWalker = new RuleWalker();
 var fuseHeadRepeatListsWalker = new RuleWalker();
 
+// packages/codegen/src/dsl/shared.ts
+function baseRulesOf(base2) {
+  if (!base2 || typeof base2 !== "object") return void 0;
+  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
+  if (!grammar2 || typeof grammar2 !== "object") return void 0;
+  return grammar2.rules;
+}
+
 // packages/codegen/src/dsl/transform/token-forms.ts
 var typeOf2 = (rule2) => rule2.type ?? "";
 var membersOf = (rule2) => rule2.members ?? [];
 var contentOf = (rule2) => rule2.content;
 var rebuilt = (rule2, patch) => ({ ...rule2, ...patch });
-var isBlank = (rule2) => typeOf2(rule2) === "BLANK";
 var isString = (rule2) => typeOf2(rule2) === "STRING";
 function isTokenWrapper(rule2) {
   return isTokenWrapperType(typeOf2(rule2));
@@ -1583,23 +1487,13 @@ function flattenFormArms(arms) {
 }
 function findOutermostForms(rule2, path) {
   const t = typeOf2(rule2);
-  if (isChoiceType(t)) {
-    const cls = classifyTokenChoice(rule2);
-    if (cls === "forms") return { path, arms: flattenFormArms(membersOf(rule2)) };
-    if (cls === "spelling") return void 0;
-    const live = membersOf(rule2).filter((m) => !isBlank(m));
-    const only = live.length === 1 ? live[0] : void 0;
-    if (only !== void 0 && isChoiceType(typeOf2(only)) && classifyTokenChoice(only) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf(only)), membersOf(rule2).find(isBlank)] };
-    }
-    return void 0;
+  const optional2 = optionalContentOf(rule2);
+  if (optional2 !== void 0) {
+    const forms = isChoiceType(typeOf2(optional2)) && classifyTokenChoice(optional2) === "forms";
+    return forms ? { path, arms: [...flattenFormArms(membersOf(optional2)), BLANK] } : void 0;
   }
-  if (t === "OPTIONAL") {
-    const inner = contentOf(rule2);
-    if (isChoiceType(typeOf2(inner)) && classifyTokenChoice(inner) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf(inner)), BLANK] };
-    }
-    return void 0;
+  if (isChoiceType(t)) {
+    return classifyTokenChoice(rule2) === "forms" ? { path, arms: flattenFormArms(membersOf(rule2)) } : void 0;
   }
   if (isSeqType(t)) {
     const members = membersOf(rule2);
@@ -1717,7 +1611,7 @@ function armNameOf(owner, display, ownerIsSupertype) {
 
 // packages/codegen/src/dsl/automatic-variants.ts
 var ENRICH_AUTOMATIC_VARIANTS_KEY = "__enrichedAutomaticVariants__";
-var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL", "BLANK"]);
+var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL"]);
 function coreOf(arm2) {
   return unwrapPrec(arm2);
 }
@@ -1754,7 +1648,7 @@ function withAutomaticLabel(core, label, automatic) {
 }
 function holdsChoice(node) {
   if (node === void 0) return false;
-  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => m.type !== "BLANK").length >= 2 || (node.members ?? []).some(holdsChoice);
+  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => !isBlank(m)).length >= 2 || (node.members ?? []).some(holdsChoice);
   if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return false;
   return (node.members ?? []).some(holdsChoice) || node.content !== void 0 && holdsChoice(node.content);
 }
@@ -1777,8 +1671,8 @@ function stampRuleVariants(owner, rule2, ruleOf, automatic) {
   };
   const visit = (node) => {
     if (node.type === "CHOICE" && node.members !== void 0) {
-      const choosable = node.members.filter((m) => m.type !== "BLANK").length >= 2;
-      const members = node.members.map((member) => choosable && member.type !== "BLANK" ? stamp(member) : visit(member));
+      const choosable = node.members.filter((m) => !isBlank(m)).length >= 2;
+      const members = node.members.map((member) => choosable && !isBlank(member) ? stamp(member) : visit(member));
       return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
     }
     if (node.type === "SYMBOL" && typeof node.name === "string" && annotationsOf(node)?.variantOf === void 0) {
@@ -2684,9 +2578,9 @@ function collectFieldNamesRuntime(rule2) {
       names.add(m.name);
       continue;
     }
-    const peeled = peelOptional(m);
-    if (peeled.isOptional) {
-      const innerN = normalizeMember(peeled.inner);
+    const inner = optionalContentOf(m);
+    if (inner !== void 0) {
+      const innerN = normalizeMember(inner);
       if (isFieldType(innerN.type) && typeof innerN.name === "string") {
         names.add(innerN.name);
       }
@@ -2711,18 +2605,18 @@ function detectSymbolTarget(member) {
       wrap: (fieldNode) => fieldNode
     };
   }
-  const peeled = peelOptional(member);
-  if (!peeled.isOptional) return null;
-  const innerN = normalizeMember(peeled.inner);
+  const inner = optionalContentOf(member);
+  if (inner === void 0) return null;
+  const innerN = normalizeMember(inner);
   if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
     return {
       name: innerN.name,
-      symbolRule: peeled.inner,
-      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+      symbolRule: inner,
+      wrap: (fieldNode) => withOptionalContent(member, fieldNode)
     };
   }
   if (!isSeqType(innerN.type)) return null;
-  const seqMembers = peeled.inner.members;
+  const seqMembers = inner.members;
   let symIdx = -1;
   for (let i = 0; i < seqMembers.length; i++) {
     const sn2 = normalizeMember(seqMembers[i]);
@@ -2737,14 +2631,14 @@ function detectSymbolTarget(member) {
   const symMember = seqMembers[symIdx];
   const sn = normalizeMember(symMember);
   if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
-  const seqRule = peeled.inner;
+  const seqRule = inner;
   return {
     name: sn.name,
     symbolRule: symMember,
     wrap: (fieldNode) => {
       const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
       const newSeq = { ...seqRule, members: newSeqMembers };
-      return rebuildOptional(member, newSeq);
+      return withOptionalContent(member, newSeq);
     }
   };
 }
@@ -3005,13 +2899,13 @@ function peelPrec(rule2) {
   return cursor;
 }
 function tryPromoteOptionalNode(ruleName, rule2, claimedAtSeqLevel, ctx) {
-  const peeled = peelOptional(rule2);
-  if (!peeled.isOptional) return { matched: false, result: null };
-  const replacement = tryPromoteInnerKeyword(ruleName, rule2, peeled.inner, claimedAtSeqLevel, ctx);
+  const inner = optionalContentOf(rule2);
+  if (inner === void 0) return { matched: false, result: null };
+  const replacement = tryPromoteInnerKeyword(ruleName, rule2, inner, claimedAtSeqLevel, ctx);
   if (replacement !== null) return { matched: true, result: replacement };
-  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, ctx);
+  const innerRewritten = walkOptionalKeyword(ruleName, inner, claimedAtSeqLevel, ctx);
   if (innerRewritten !== null) {
-    return { matched: true, result: rebuildOptional(rule2, innerRewritten) };
+    return { matched: true, result: withOptionalContent(rule2, innerRewritten) };
   }
   return { matched: true, result: null };
 }
@@ -3077,25 +2971,13 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, ctx) {
     return null;
   }
   const fieldNode = makeField(fieldName, symbolRef2);
-  return rebuildOptional(optionalRule, fieldNode);
-}
-function rebuildOptional(optionalRule, newInner) {
-  if (isOptionalType(optionalRule.type)) {
-    return withContent(optionalRule, newInner);
-  }
-  const members = optionalRule.members;
-  const newMembers = members.map((m) => {
-    const t = m.type;
-    return t === "BLANK" ? m : newInner;
-  });
-  return { ...optionalRule, members: newMembers };
+  return withOptionalContent(optionalRule, fieldNode);
 }
 function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
-  const peeled = peelOptionalSeq(optSeqRule);
-  const seqBody = peeled.seqBody;
+  const seqBody = optionalSeqBodyOf(optSeqRule);
   const seqMembers = seqBody.members;
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
-  return rebuildOptional(optSeqRule, newSeqBody);
+  return withOptionalContent(optSeqRule, newSeqBody);
 }
 function detectInlineSeparatedListRuns(members, symbols) {
   const carriesRepeat = (m) => {
@@ -3210,33 +3092,19 @@ function absorbTrailingListSeparators(members, symbols) {
 }
 function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosingFieldName) {
   const { rulesBag, visibleGroupSources, clauseGroupOwners } = ctx;
-  const peeled = peelOptionalSeq(rule2);
-  if (peeled !== null) {
-    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, ctx, counter, ambientPrec, enclosingFieldName);
-    if (ruleMatchesEmpty(recursedSeqBody)) {
+  const seqBody = optionalSeqBodyOf(rule2);
+  if (seqBody !== void 0) {
+    const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
+    if (matchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
-      if (recursedSeqBody === peeled.seqBody) return rule2;
-      if (peeled.form === "optional") {
-        return rebuildOptional(rule2, recursedSeqBody);
-      } else {
-        const members = rule2.members;
-        const newMembers = members.slice();
-        newMembers[peeled.seqIdx] = recursedSeqBody;
-        return { ...rule2, members: newMembers };
-      }
+      if (recursedSeqBody === seqBody) return rule2;
+      return withOptionalContent(rule2, recursedSeqBody);
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule2, name);
-        if (peeled.form === "optional") {
-          return rebuildOptional(rule2, symbolRef2);
-        } else {
-          const members = rule2.members;
-          const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = symbolRef2;
-          return { ...rule2, members: newMembers };
-        }
+        return withOptionalContent(rule2, symbolRef2);
       }
       return rule2;
     } else {
@@ -3246,30 +3114,16 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
         visibleGroupSources.add(name);
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule2, name);
-        if (peeled.form === "optional") {
-          return rebuildOptional(rule2, groupRef);
-        } else {
-          const members = rule2.members;
-          const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = groupRef;
-          return { ...rule2, members: newMembers };
-        }
+        return withOptionalContent(rule2, groupRef);
       }
-      if (recursedSeqBody === peeled.seqBody) return rule2;
-      if (peeled.form === "optional") {
-        return rebuildOptional(rule2, recursedSeqBody);
-      } else {
-        const members = rule2.members;
-        const newMembers = members.slice();
-        newMembers[peeled.seqIdx] = recursedSeqBody;
-        return { ...rule2, members: newMembers };
-      }
+      if (recursedSeqBody === seqBody) return rule2;
+      return withOptionalContent(rule2, recursedSeqBody);
     }
   }
   {
-    const opt = peelOptional(rule2);
-    if (opt.isOptional) {
-      const recursed = applyClauseHoist(parentKind, opt.inner, ctx, counter, ambientPrec, enclosingFieldName);
+    const inner = optionalContentOf(rule2);
+    if (inner !== void 0) {
+      const recursed = applyClauseHoist(parentKind, inner, ctx, counter, ambientPrec, enclosingFieldName);
       const promoted = mintStructuredChoiceArm(
         recursed,
         parentKind,
@@ -3280,15 +3134,8 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
         enclosingFieldName
       );
       const final = promoted ?? recursed;
-      if (final === opt.inner) return rule2;
-      if (isOptionalType(rule2.type)) {
-        return withContent(rule2, final);
-      }
-      const members = rule2.members;
-      const idx = members.findIndex((m) => m.type !== "BLANK");
-      const newMembers = members.slice();
-      newMembers[idx] = final;
-      return { ...rule2, members: newMembers };
+      if (final === inner) return rule2;
+      return withOptionalContent(rule2, final);
     }
   }
   if (isSeqType(rule2.type)) {
@@ -3588,7 +3435,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
-    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
+    if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
@@ -3598,7 +3445,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
+    if (matchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(arm2)) return null;
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
@@ -4448,7 +4295,7 @@ function adoptMintedGroups(baseArg, base2, groups) {
   for (const minted of getEnrichVisibleGroupSources(base2)) {
     const body = baseRules[minted];
     if (body === void 0) continue;
-    const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+    const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body), pattern.body));
     if (owner === void 0) continue;
     adopted.set(minted, owner.key);
     delete baseRules[minted];
@@ -4476,52 +4323,11 @@ function isComplexBodyRt(rule2) {
   }
   return false;
 }
-function unwrapOptionalChoiceRt(node) {
-  if (!node || typeof node !== "object") return node;
-  const r = node;
-  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
-    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
-    if (blankIdx !== -1) return { type: "OPTIONAL", content: r.members[1 - blankIdx] };
-  }
-  return node;
-}
-function patternBodyEqual(aIn, bIn) {
-  const a = unwrapOptionalChoiceRt(aIn);
-  const b = unwrapOptionalChoiceRt(bIn);
-  if (!a || typeof a !== "object") return a === b;
-  if (!b || typeof b !== "object") return false;
-  const ra = a;
-  const rb = b;
-  if (ra.type !== rb.type) return false;
-  const t = ra.type;
-  if (t === "STRING" || t === "PATTERN") return ra.value === rb.value;
-  if (t === "SYMBOL") return ra.name === rb.name;
-  if (t === "BLANK") return true;
-  if (t === "SEQ" || t === "CHOICE") {
-    const ma = ra.members;
-    const mb = rb.members;
-    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
-    if (ma.length !== mb.length) return false;
-    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
-  }
-  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1") {
-    return patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "FIELD") {
-    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "ALIAS") {
-    const raa = ra;
-    const rba = rb;
-    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
-  }
-  return false;
-}
 function replaceInBodyRt(rule2, candidates, automatic) {
   if (!rule2 || typeof rule2 !== "object") return rule2;
   const r = rule2;
   for (const c of candidates) {
-    if (patternBodyEqual(rule2, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
+    if (rulesEqual(rule2, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule2, automatic());
     }
@@ -5329,17 +5135,14 @@ function planSiblingVariantHoist(rule2, variantEntries, onBail = () => {
   }
   const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
   const emptyArm = choiceMembers.findIndex(
-    (arm2) => (isBlank2(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
+    (arm2) => matchesEmpty(arm2) && scaffolding.every((m) => matchesEmpty(m))
   );
   if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
   const bareArm = choiceMembers.findIndex(
-    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank2(arm2) ? [] : [arm2]] })
+    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
   );
   if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
   return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted };
-}
-function isBlank2(rule2) {
-  return rule2.type === "BLANK";
 }
 function hoistChoiceOf(rule2, throughOptional) {
   if (!rule2) return null;
@@ -5352,12 +5155,6 @@ function hoistChoiceOf(rule2, throughOptional) {
   }
   if (throughOptional || !isChoiceType(rule2.type)) return null;
   return { choice: rule2, choiceMembers: [...membersOf3(rule2)], absentIdx: void 0 };
-}
-function optionalContentOf(rule2) {
-  if (rule2.type === "OPTIONAL") return contentOf3(rule2);
-  if (!isChoiceType(rule2.type)) return void 0;
-  const members = membersOf3(rule2);
-  return members.length === 2 && isBlank2(members[1]) && !isBlank2(members[0]) ? members[0] : void 0;
 }
 function tryHoistSiblingVariants(rule2, variantEntries) {
   const { bail } = peelPrecWrappersFromRule(rule2);
@@ -5407,7 +5204,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
 }
 function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack) {
   const hoist = (altContent) => {
-    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank2(altContent) ? [] : [altContent]);
+    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
     return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
   };
   const refs = [];
@@ -5450,7 +5247,7 @@ function countBodyAnchors(rule2) {
   const t = rule2.type;
   if (t === "STRING" || t === "PATTERN" || t === "TOKEN") return { tokens: 1, named: 0 };
   if (t === "SYMBOL") return { tokens: 0, named: 1 };
-  if (t === "BLANK") return { tokens: 0, named: 0 };
+  if (isBlank(rule2)) return { tokens: 0, named: 0 };
   if (isSeqType(rule2.type) || isChoiceType(rule2.type)) {
     return membersOf3(rule2).reduce(
       (acc, m) => {
@@ -5629,81 +5426,14 @@ function resolvePatch(patch, originalMember, key, precStack) {
 }
 function findEnrichShapedFieldThroughTransparentWrappers(node) {
   const r = node;
-  if (!r || typeof r !== "object") return null;
-  const t = r.type;
-  if (!t) return null;
-  const isSittirOptional = t === "OPTIONAL";
-  if (isSittirOptional) {
-    const inner = r.content;
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => ({ ...r, content: newInner })
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
-      };
-    }
-    return null;
-  }
-  if (isChoiceType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length !== 2) return null;
-    const blankIdx = members.findIndex((m) => {
-      const mt = m.type;
-      return mt === "BLANK";
-    });
-    if (blankIdx === -1) return null;
-    const contentIdx = 1 - blankIdx;
-    const inner = members[contentIdx];
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => {
-          const newMembers = [...members];
-          newMembers[contentIdx] = newInner;
-          return { ...r, members: newMembers };
-        }
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => {
-          const newMembers = [...members];
-          newMembers[contentIdx] = deeper.reconstruct(newInner);
-          return { ...r, members: newMembers };
-        }
-      };
-    }
-    return null;
-  }
-  if (isPrecWrapper(r)) {
-    const inner = r.content;
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => ({ ...r, content: newInner })
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
-      };
-    }
-    return null;
-  }
-  return null;
+  if (!r || typeof r !== "object" || typeof r.type !== "string") return null;
+  const optional2 = optionalContentOf(r);
+  const inner = optional2 ?? (isPrecWrapper(r) ? r.content : void 0);
+  if (!inner || typeof inner !== "object") return null;
+  const rebuild = (newInner) => optional2 !== void 0 ? withOptionalContent(r, newInner) : { ...r, content: newInner };
+  if (isEnrichShapedFieldWrapper(inner)) return { found: inner, reconstruct: rebuild };
+  const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
+  return deeper ? { found: deeper.found, reconstruct: (newInner) => rebuild(deeper.reconstruct(newInner)) } : null;
 }
 function unifyChoiceArmFieldNames(content, unifiedName) {
   const r = content;
@@ -5891,10 +5621,8 @@ function extractNonEmpty(rule2) {
     };
     return { nonEmpty };
   }
-  if (isOptionalType(t)) {
-    const inner = contentOf3(rule2);
-    return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
-  }
+  const optional2 = optionalContentOf(rule2);
+  if (optional2 !== void 0) return matchesEmpty(optional2) ? extractNonEmpty(optional2) : { nonEmpty: optional2 };
   if (isChoiceType(t)) {
     const members = membersOf3(rule2);
     const nonEmpty = members.filter((m) => !matchesEmpty(m));

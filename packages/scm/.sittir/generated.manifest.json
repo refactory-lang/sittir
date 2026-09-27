@@ -1,9 +1,9 @@
 {
   "grammar": "scm",
-  "source_hash": "bdbbd9aa1c00de46cbcc13e3210d0d48c617c14005e985f7ca4e0e55cf7e7f17",
+  "source_hash": "9f3e6c05ad42810199d7915d2a08f16405afdcc5a11936fc5b21b4153dc09a40",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "97899c271971cf7937b395142d6260b87287d963d03cbb5304cf32f3e138df29",
-    "packages/scm/.sittir/grammar.js": "9f82350e4cb121f50b54cfd99bbcb921823b6915a2828224ef9279254895f923",
+    "packages/scm/.sittir/grammar.js": "9996d921c751d0f47ef45f2f5b876e033d75ea3647060f1782411d79e69efb8d",
     "packages/scm/.sittir/package.json": "3fc0d76ae4579344e2d04102d6746c98dabe8a6b248ea8278612613adc61bd11",
     "packages/scm/.sittir/parser.wasm": "53df94cbe0b3c77126de5cf1c2455c3d77042fcc4842b72d3d106ab37f931ef7",
     "packages/scm/.sittir/render-bodies.json": "711db6af0a2bc737c759fbfe747c494a2a366fee3ee2df8e285fff81f59314a8",

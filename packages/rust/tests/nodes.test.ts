@@ -3755,58 +3755,6 @@ describe('range_expression_bare', () => {
 	});
 });
 
-describe('escape_sequence_simple', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequenceSimple('a');
-		expect(node.$type).toBe(TSKindId.EscapeSequenceSimple);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.escapeSequenceSimple('a');
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('escape_sequence_unicode_fixed', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequenceUnicodeFixed('u0000');
-		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeFixed);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.escapeSequenceUnicodeFixed('u0000');
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('escape_sequence_unicode_braced', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequenceUnicodeBraced('u{0}');
-		expect(node.$type).toBe(TSKindId.EscapeSequenceUnicodeBraced);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.escapeSequenceUnicodeBraced('u{0}');
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('escape_sequence_hex', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequenceHex('x00');
-		expect(node.$type).toBe(TSKindId.EscapeSequenceHex);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.escapeSequenceHex('x00');
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
 describe('impl_item_body sub-factories', () => {
 	it('positiveClause builds the parent', () => {
 		const node = ir.implItem.body.positiveClause.coerce({

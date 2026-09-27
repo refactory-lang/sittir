@@ -240,11 +240,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** True if `t` equals `upper` (both runtimes now agree on the discriminant case). */
 ```
 
-### `packages/codegen/src/types/runtime-shapes.ts::isEmptyBody`
-
-Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
-`BLANK`, or sittir evaluate's `blank()`, a choice with no members.
-
 ### `packages/codegen/src/types/diagnostics.ts::GrammarDiagnostic`
 
 ```text
@@ -948,7 +943,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  * `metadata.source` bag, and `types/` cannot import the dsl-owned
  * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
  * module for the implementation; re-exported here is NOT done deliberately —
- * callers (compiler/link.ts, compiler/evaluate.ts) already import from
+ * callers (compiler/link.ts, dsl/enrich.ts) already import from
  * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
  */
 ```
@@ -1115,19 +1110,6 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 ```text
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
-```
-
-### `packages/codegen/src/types/runtime-shapes.ts::matchesEmpty`
-
-```text
-/**
- * Whether a rule can produce a zero-length match: blank, optional and a
- * plain repeat do; a choice does when any arm does; a seq does when every
- * member does; a prec wrapper does when its content does — prec is
- * transparent to emptiness; a symbol, string, pattern, field or token does
- * not. Shared by the transform's empty-arm factoring and enrich's element
- * mint, which declines to field an element that may be absent.
- */
 ```
 
 ### `packages/codegen/src/types/runtime-shapes.ts::isRepeatType`
@@ -1532,10 +1514,9 @@ narrowing guard.
 // enrich (e.g. dsl/rule-patterns.ts's `rulesEqual`, which dispatches purely on
 // `type`) sees the SAME distinct tag under both runtimes, matching tree-sitter's
 // CLI-runtime `token.immediate()` which was never foldable to sittir's shape in
-// the first place. `grammarFn`'s `normalizeImmediateTokens` folds every
-// remaining IMMEDIATE_TOKEN into `TokenRule` + `immediate: true` once enrich's
-// decisions are locked in, matching what the compiler pipeline (Link onward)
-// already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
+// the first place. The compile boundary (`canonicalRuleTree`) folds every
+// IMMEDIATE_TOKEN into `TokenRule` + `immediate: true`, matching what the
+// compiler pipeline (Link onward) already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
 ```
 
 ### `packages/codegen/src/types/rule.ts::PrecRule`

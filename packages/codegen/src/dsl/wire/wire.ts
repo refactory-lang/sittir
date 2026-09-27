@@ -1,7 +1,7 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
+import { typeEq } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference } from '../primitives/preference.ts';
@@ -24,7 +24,7 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
-import { unwrapPrec } from '../rule-patterns.ts';
+import { rulesEqual, unwrapPrec } from '../rule-patterns.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -973,7 +973,7 @@ function adoptMintedGroups(baseArg: BaseArg, base: unknown, groups: GroupsConfig
 	for (const minted of getEnrichVisibleGroupSources(base)) {
 		const body = baseRules[minted];
 		if (body === undefined) continue;
-		const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+		const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body) as RuntimeRule, pattern.body as RuntimeRule));
 		if (owner === undefined) continue;
 		adopted.set(minted, owner.key);
 		delete baseRules[minted];
@@ -1004,55 +1004,12 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 	return false;
 }
 
-function unwrapOptionalChoiceRt(node: unknown): unknown {
-	if (!node || typeof node !== 'object') return node;
-	const r = node as { type?: string; members?: unknown[] };
-	if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
-		const blankIdx = r.members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
-		if (blankIdx !== -1) return { type: 'OPTIONAL', content: r.members[1 - blankIdx] };
-	}
-	return node;
-}
-
-function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
-	const a = unwrapOptionalChoiceRt(aIn);
-	const b = unwrapOptionalChoiceRt(bIn);
-	if (!a || typeof a !== 'object') return a === b;
-	if (!b || typeof b !== 'object') return false;
-	const ra = a as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
-	const rb = b as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
-	if (ra.type !== rb.type) return false;
-	const t = ra.type;
-	if (t === 'STRING' || t === 'PATTERN') return ra.value === rb.value;
-	if (t === 'SYMBOL') return ra.name === rb.name;
-	if (t === 'BLANK') return true;
-	if (t === 'SEQ' || t === 'CHOICE') {
-		const ma = ra.members;
-		const mb = rb.members;
-		if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
-		if (ma.length !== mb.length) return false;
-		return ma.every((m, i) => patternBodyEqual(m, mb[i]));
-	}
-	if (t === 'OPTIONAL' || t === 'REPEAT' || t === 'REPEAT1') {
-		return patternBodyEqual(ra.content, rb.content);
-	}
-	if (t === 'FIELD') {
-		return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
-	}
-	if (t === 'ALIAS') {
-		const raa = ra as { type: string; content?: unknown; named?: boolean; value?: string };
-		const rba = rb as { type: string; content?: unknown; named?: boolean; value?: string };
-		return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
-	}
-	return false;
-}
-
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
 		if (
-			patternBodyEqual(rule, c.body) ||
+			rulesEqual(rule as RuntimeRule, c.body as RuntimeRule) ||
 			(r.type === 'SYMBOL' && c.adopts?.has((r as { name?: string }).name ?? '') === true)
 		) {
 			const site =

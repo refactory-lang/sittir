@@ -52,14 +52,12 @@ import {
 	isWrapperType,
 	isSeqType,
 	isChoiceType,
-	isOptionalType,
 	isPlainRepeatType,
-	isSymbolType,
-	matchesEmpty
+	isSymbolType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { isHiddenKind, lexesAsOneToken } from '../rule-patterns.ts';
+import { isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -319,7 +317,7 @@ function planSiblingVariantHoist(
 	}
 	const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
 	const emptyArm = choiceMembers.findIndex(
-		(arm) => (isBlank(arm) || matchesEmpty(arm)) && scaffolding.every((m) => matchesEmpty(m))
+		(arm) => matchesEmpty(arm) && scaffolding.every((m) => matchesEmpty(m))
 	);
 	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
 	const bareArm = choiceMembers.findIndex((arm) =>
@@ -327,10 +325,6 @@ function planSiblingVariantHoist(
 	);
 	if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
 	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted };
-}
-
-function isBlank(rule: RuntimeRule): boolean {
-	return (rule.type as string) === 'BLANK';
 }
 
 function hoistChoiceOf(
@@ -347,13 +341,6 @@ function hoistChoiceOf(
 	}
 	if (throughOptional || !isChoiceType(rule.type)) return null;
 	return { choice: rule, choiceMembers: [...membersOf(rule)], absentIdx: undefined };
-}
-
-function optionalContentOf(rule: RuntimeRule): RuntimeRule | undefined {
-	if ((rule.type as string) === 'OPTIONAL') return contentOf(rule);
-	if (!isChoiceType(rule.type)) return undefined;
-	const members = membersOf(rule);
-	return members.length === 2 && isBlank(members[1]!) && !isBlank(members[0]!) ? members[0] : undefined;
 }
 
 function tryHoistSiblingVariants(
@@ -481,7 +468,7 @@ function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } 
 	const t = rule.type;
 	if (t === 'STRING' || t === 'PATTERN' || t === 'TOKEN') return { tokens: 1, named: 0 };
 	if (t === 'SYMBOL') return { tokens: 0, named: 1 };
-	if (t === 'BLANK') return { tokens: 0, named: 0 };
+	if (isBlank(rule)) return { tokens: 0, named: 0 };
 	if (isSeqType(rule.type) || isChoiceType(rule.type)) {
 		return membersOf(rule).reduce(
 			(acc, m) => {
@@ -694,85 +681,15 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
 	const r = node as Record<string, unknown>;
-	if (!r || typeof r !== 'object') return null;
-	const t = r.type as string | undefined;
-	if (!t) return null;
-
-	const isSittirOptional = t === 'OPTIONAL';
-	if (isSittirOptional) {
-		const inner = r.content as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
-			};
-		}
-		return null;
-	}
-
-	if (isChoiceType(t)) {
-		const members = r.members as unknown[] | undefined;
-		if (!Array.isArray(members) || members.length !== 2) return null;
-		const blankIdx = members.findIndex((m) => {
-			const mt = (m as Record<string, unknown>).type;
-			return mt === 'BLANK';
-		});
-		if (blankIdx === -1) return null;
-		const contentIdx = 1 - blankIdx;
-		const inner = members[contentIdx] as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => {
-					const newMembers = [...members];
-					newMembers[contentIdx] = newInner;
-					return { ...r, members: newMembers };
-				}
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => {
-					const newMembers = [...members];
-					newMembers[contentIdx] = deeper.reconstruct(newInner);
-					return { ...r, members: newMembers };
-				}
-			};
-		}
-		return null;
-	}
-
-	if (isPrecWrapper(r as { type: string })) {
-		const inner = r.content as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
-			};
-		}
-		return null;
-	}
-
-	return null;
+	if (!r || typeof r !== 'object' || typeof r.type !== 'string') return null;
+	const optional = optionalContentOf(r as { type: string });
+	const inner = optional ?? (isPrecWrapper(r as { type: string }) ? r.content : undefined);
+	if (!inner || typeof inner !== 'object') return null;
+	const rebuild = (newInner: unknown): unknown =>
+		optional !== undefined ? withOptionalContent(r as { type: string }, newInner as { type: string }) : { ...r, content: newInner };
+	if (isEnrichShapedFieldWrapper(inner)) return { found: inner, reconstruct: rebuild };
+	const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
+	return deeper ? { found: deeper.found, reconstruct: (newInner: unknown) => rebuild(deeper.reconstruct(newInner)) } : null;
 }
 
 function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
@@ -982,10 +899,8 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		};
 		return { nonEmpty };
 	}
-	if (isOptionalType(t)) {
-		const inner = contentOf(rule);
-		return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
-	}
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) return matchesEmpty(optional) ? extractNonEmpty(optional) : { nonEmpty: optional };
 	if (isChoiceType(t)) {
 		const members = membersOf(rule);
 		const nonEmpty = members.filter((m) => !matchesEmpty(m));

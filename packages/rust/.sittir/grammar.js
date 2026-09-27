@@ -119,7 +119,6 @@ var isSymbolType = (t) => typeEq(t, "SYMBOL");
 var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
-var isBlankType = (t) => typeEq(t, "BLANK");
 function compileAnchoredPattern(source) {
   const anchored = `^(?:${source})$`;
   try {
@@ -135,17 +134,6 @@ function compileAnchoredPattern(source) {
 function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
-}
-function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-  if (t === "STRING") return rule.value === "";
-  if (t === "PATTERN") return patternAcceptsEmpty(String(rule.value));
-  const members = rule.members ?? [];
-  if (isChoiceType(t)) return members.some(matchesEmpty);
-  if (isSeqType(t)) return members.every(matchesEmpty);
-  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
-  return false;
 }
 
 // packages/codegen/src/dsl/rule-walker.ts
@@ -736,15 +724,806 @@ function isRulePlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "rule";
 }
 
+// packages/codegen/src/util/word-matcher.ts
+function compileWordMatcher(word, rules) {
+  if (!word) return void 0;
+  const wordRule = rules[word];
+  if (!wordRule) return void 0;
+  const src = ruleToRegexSource(wordRule);
+  if (src === null) return void 0;
+  const full = `^(?:${src})$`;
+  try {
+    return new RegExp(full, "u");
+  } catch {
+    try {
+      return new RegExp(full);
+    } catch {
+      return void 0;
+    }
+  }
+}
+function matchesWordShape(value, wordMatcher) {
+  return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
+}
+function ruleToRegexSource(rule) {
+  const shaped = rule;
+  switch (rule.type) {
+    case PATTERN:
+      return shaped.value ?? null;
+    case STRING:
+      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
+    case TOKEN:
+      return shaped.content ? ruleToRegexSource(shaped.content) : null;
+    case SEQ: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(`(?:${p})`);
+      }
+      return parts.join("");
+    }
+    case CHOICE: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(p);
+      }
+      return `(?:${parts.join("|")})`;
+    }
+    case OPTIONAL: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})?`;
+    }
+    case REPEAT: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})*`;
+    }
+    case REPEAT1: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})+`;
+    }
+    default:
+      return null;
+  }
+}
+function escapeRegexLiteral(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// packages/codegen/src/dsl/rule-patterns.ts
+function isEnumChoiceRule(rule) {
+  return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
+}
+function isBlank(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  if (r.type === "BLANK") return true;
+  return (r.type === CHOICE || r.type === SEQ) && Array.isArray(r.members) && r.members.length === 0;
+}
+function optionalContentOf(rule) {
+  if (rule.type === OPTIONAL) return rule.content;
+  if (rule.type !== CHOICE) return void 0;
+  const members = rule.members;
+  if (!Array.isArray(members) || members.length !== 2) return void 0;
+  const [first, second] = members;
+  if (isBlank(first) === isBlank(second)) return void 0;
+  return isBlank(second) ? first : second;
+}
+function isImmediateToken(rule) {
+  return rule.type === IMMEDIATE_TOKEN || rule.type === TOKEN && rule.immediate === true;
+}
+function ruleKey(rule) {
+  return JSON.stringify(canonicalRuleForm(rule));
+}
+function canonicalRuleForm(rule) {
+  if (typeof rule !== "object" || rule === null) return rule;
+  const r = rule;
+  const separator = "separator" in r ? canonicalSeparatorForm(r.separator) : null;
+  if (isBlank(r)) return ["BLANK", null, null, null, separator, null];
+  const optional2 = optionalContentOf(r);
+  if (optional2 !== void 0) return [OPTIONAL, null, null, null, separator, [canonicalRuleForm(optional2)]];
+  const type = isImmediateToken(r) ? IMMEDIATE_TOKEN : r.type ?? null;
+  const name = typeof r.name === "string" ? r.name : null;
+  const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
+  const named = typeof r.named === "boolean" ? r.named : null;
+  const members = r.members;
+  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalRuleForm)];
+  const content = r.content;
+  if (content !== void 0) return [type, name, value, named, separator, [canonicalRuleForm(content)]];
+  return [type, name, value, named, separator, null];
+}
+function canonicalSeparatorForm(separator) {
+  if (typeof separator !== "object" || separator === null) return separator;
+  const sep = separator;
+  return [
+    "fact",
+    typeof sep.trailing === "string" ? sep.trailing : null,
+    typeof sep.leading === "string" ? sep.leading : null,
+    canonicalRuleForm(sep.value)
+  ];
+}
+function rulesEqual(a, b) {
+  return ruleKey(a) === ruleKey(b);
+}
+function leadingLiteralOf(r) {
+  if (!typeEq(r.type, "CHOICE")) return null;
+  const members = r.members ?? [];
+  const lit = members.find((m) => typeEq(m.type, "STRING"));
+  return lit ? lit.value : null;
+}
+function separatorOf(resolved, symbols) {
+  if (!typeEq(resolved.type, "SEQ")) return null;
+  const members = resolved.members;
+  if (!members || members.length !== 2) return null;
+  const [first, second] = members;
+  const firstIsStr = typeEq(first.type, "STRING");
+  const secondIsStr = typeEq(second.type, "STRING");
+  if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+  if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
+  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.isTerminal);
+  if (isToken(first) && !secondIsStr) return { content: second, separator: first };
+  if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
+  return null;
+}
+function matchesEmpty(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  const t = r.type;
+  if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+  if (t === STRING) return r.value === "";
+  if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+  const members = Array.isArray(r.members) ? r.members : [];
+  if (t === SEQ) return members.every(matchesEmpty);
+  if (t === CHOICE) return members.some(matchesEmpty);
+  if (t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return matchesEmpty(r.content);
+  return false;
+}
+function collectSlots(members, rulesBag) {
+  const slots = [];
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const r = m;
+    const t = typeof r.type === "string" ? r.type : "";
+    if (isStringType(t) || typeEq(t, "TOKEN") || isBlank(r)) continue;
+    if (rulesBag && isSymbolType(t)) {
+      const name = typeof r.name === "string" ? r.name : void 0;
+      if (name !== void 0 && !(name in rulesBag)) continue;
+    }
+    slots.push(m);
+  }
+  return slots;
+}
+function isMultiSlotRepeatElement(content, symbols) {
+  const core = unwrapPrec(content);
+  if (!core || typeof core !== "object" || !isSeqType(core.type)) return false;
+  if (separatorOf(core, symbols) !== null || !("members" in core) || !Array.isArray(core.members)) return false;
+  return collectSlots(core.members, symbols.rules).length >= 2;
+}
+function unwrapPrec(rule) {
+  let cur = rule;
+  while (cur && typeof cur === "object") {
+    const r = cur;
+    if (isPrecWrapper(r)) {
+      cur = r.content;
+    } else {
+      break;
+    }
+  }
+  return cur;
+}
+function isRepeatLike(t) {
+  return isRepeatType(t) || typeEq(t, "REPEAT1");
+}
+function flattenSeqMembers(members) {
+  const out = [];
+  for (const m of members) {
+    const core = unwrapPrec(m);
+    if (core && typeof core === "object") {
+      const ct = core.type;
+      const inner = core.members;
+      if (typeof ct === "string" && isSeqType(ct) && Array.isArray(inner)) {
+        out.push(...flattenSeqMembers(inner));
+        continue;
+      }
+    }
+    out.push(m);
+  }
+  return out;
+}
+function seqHasTopLevelRepeat(members) {
+  for (const m of flattenSeqMembers(members)) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct === "string" && isRepeatLike(ct)) return true;
+  }
+  return false;
+}
+function isNonterminalSeparatorType(t) {
+  return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
+}
+function repeatHasNonterminalSeparator(repeatRule, symbols) {
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = separatorOf(content, symbols);
+  if (!detected) return false;
+  return isNonterminalSeparatorType(detected.separator.type);
+}
+function isOptionalSeparatorFlank(member, sepValue) {
+  if (!member || typeof member !== "object") return false;
+  const content = optionalContentOf(member);
+  return content !== void 0 && isStringType(content.type) && content.value === sepValue;
+}
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings, symbols) {
+  if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = separatorOf(content, symbols);
+  if (!detected || !isStringType(detected.separator.type)) return false;
+  const sepValue = detected.separator.value;
+  if (typeof sepValue !== "string") return false;
+  return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
+}
+function repeatHasGenuineSeparatorVariability(repeatRule, symbols) {
+  return repeatHasNonterminalSeparator(repeatRule, symbols);
+}
+function seqHasGenuineSeparatorVariability(members, symbols) {
+  const flat = flattenSeqMembers(members);
+  const repeatMembers = [];
+  for (const m of flat) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
+    const content = core.content;
+    if (content && typeof content === "object" && separatorOf(content, symbols) !== null) {
+      repeatMembers.push(core);
+    }
+  }
+  if (repeatMembers.length !== 1) return false;
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat, symbols);
+}
+function isInlineSafe(seqBody, symbols) {
+  if (!seqBody || typeof seqBody !== "object") return false;
+  const r = seqBody;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody, symbols);
+  if (typeEq(t, "ALIAS")) return true;
+  if (!isSeqType(t)) return false;
+  const members = r.members;
+  if (!Array.isArray(members)) return false;
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members, symbols);
+  const slots = collectSlots(members, symbols.rules);
+  if (slots.length !== 1) return false;
+  const core = unwrapPrec(slots[0]);
+  if (!core || typeof core !== "object") return false;
+  const coreType = core.type;
+  if (typeof coreType !== "string") return false;
+  return isFieldType(coreType) || isSymbolType(coreType);
+}
+function typeOf(rule) {
+  return typeof rule?.type === "string" ? rule.type : void 0;
+}
+function isNamedAlias(rule) {
+  return typeEq(typeOf(rule) ?? "", "ALIAS") && rule.named === true;
+}
+function isNamedArmChoice(body) {
+  const b = body;
+  if (!isChoiceType(typeOf(b) ?? "") || !Array.isArray(b.members) || b.members.length === 0) return false;
+  return b.members.every((m) => isNamedAlias(m) && isSymbolType(typeOf(m.content) ?? ""));
+}
+function isEnumMember(member, storageBodyOf) {
+  const t = typeOf(member) ?? "";
+  if (isStringType(t)) return true;
+  if (isSymbolType(t)) return member.literal !== void 0;
+  if (!isNamedAlias(member)) return false;
+  const content = member.content;
+  if (isStringType(typeOf(content) ?? "")) return true;
+  return isSymbolType(typeOf(content) ?? "") && typeof content.name === "string" && isStringType(typeOf(storageBodyOf(content.name)) ?? "");
+}
+function aliasesSymbol(content) {
+  const t = typeOf(content) ?? "";
+  if (isSymbolType(t)) return true;
+  return typeEq(t, "TOKEN") && aliasesSymbol(content.content);
+}
+function isSupertypeMember(member) {
+  const t = typeOf(member) ?? "";
+  if (isSymbolType(t) || isStringType(t)) return true;
+  return isNamedAlias(member) && (isStringType(typeOf(member.content) ?? "") || aliasesSymbol(member.content));
+}
+function flattenChoiceMembers(members) {
+  return members.flatMap((m) => isChoiceType(typeOf(m) ?? "") ? flattenChoiceMembers(m.members ?? []) : [m]);
+}
+function hiddenChoiceClass(body, storageBodyOf, namedArms) {
+  const b = body;
+  if (b?.annotations?.hoisted === true || !isChoiceType(typeOf(b) ?? "") || !Array.isArray(b.members)) return void 0;
+  if (b.members.every((m) => isEnumMember(m, storageBodyOf))) return "enum";
+  if (namedArms) return "named-arms";
+  return flattenChoiceMembers(b.members).every(isSupertypeMember) ? "supertype" : void 0;
+}
+function throughPrec(rule, fn) {
+  const r = rule;
+  if (typeof r?.type !== "string" || !isPrecWrapper(r) || r.content === void 0) return fn(rule);
+  const content = throughPrec(r.content, fn);
+  return content === r.content ? rule : { ...rule, content };
+}
+function isSupertypeLike(body) {
+  const b = unwrapPrec(body);
+  if (!b || typeof b !== "object") return false;
+  const t = b.type;
+  if (typeof t !== "string" || !isChoiceType(t)) return false;
+  const members = b.members;
+  if (!Array.isArray(members) || members.length === 0) return false;
+  return members.every((m) => {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") return false;
+    const c = core;
+    const coreType = c.type;
+    if (typeof coreType !== "string") return false;
+    if (isSymbolType(coreType) || isStringType(coreType)) return true;
+    if (typeEq(coreType, "ALIAS")) return c.named === true;
+    return false;
+  });
+}
+function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
+  const b = unwrapPrec(body);
+  if (!b || typeof b !== "object") return false;
+  const t = b.type;
+  if (typeof t !== "string" || !isChoiceType(t)) return false;
+  const members = b.members;
+  if (!Array.isArray(members)) return false;
+  const arms = members.filter(
+    (m) => m && typeof m === "object" && !isBlank(m)
+  );
+  if (arms.length < 2) return false;
+  const keySets = [];
+  for (const arm2 of arms) {
+    const keys = permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher);
+    if (keys === null) return false;
+    keySets.push(keys);
+  }
+  const first = keySets[0];
+  if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
+  return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
+}
+function permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher) {
+  const core = unwrapPrec(arm2);
+  if (!core || typeof core !== "object") return null;
+  const t = core.type;
+  if (typeof t !== "string" || !isSeqType(t)) return null;
+  const members = core.members;
+  if (!Array.isArray(members) || members.length < 2) return null;
+  const keys = /* @__PURE__ */ new Set();
+  for (const member of members) {
+    const key = permutationAtomKey(member, rulesBag, kwRules, wordMatcher);
+    if (key === null || keys.has(key)) return null;
+    keys.add(key);
+  }
+  return keys;
+}
+function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
+  let core = unwrapPrec(member);
+  let fieldName;
+  for (; ; ) {
+    if (!core || typeof core !== "object") return null;
+    const r2 = core;
+    const t2 = typeof r2.type === "string" ? r2.type : "";
+    if (isFieldType(t2)) {
+      if (fieldName === void 0 && typeof r2.name === "string") fieldName = r2.name;
+      core = unwrapPrec(r2.content);
+      continue;
+    }
+    const optional2 = optionalContentOf(r2);
+    if (optional2 !== void 0) {
+      core = unwrapPrec(optional2);
+      continue;
+    }
+    if (isChoiceType(t2)) return null;
+    break;
+  }
+  const r = core;
+  const t = typeof r.type === "string" ? r.type : "";
+  const keyed = (lit, fallback) => {
+    if (lit !== null && (fieldName === void 0 || fieldName === `${lit}_marker`)) return `lit:${lit}`;
+    const bare = lit !== null ? `lit:${lit}` : fallback;
+    return fieldName === void 0 ? bare : `field:${fieldName}=${bare}`;
+  };
+  if (isStringType(t)) {
+    const v = r.value;
+    if (typeof v !== "string" || !matchesWordShape(v, wordMatcher)) return null;
+    return keyed(v, "");
+  }
+  if (isSymbolType(t)) {
+    const name = typeof r.name === "string" ? r.name : void 0;
+    if (name === void 0) return null;
+    const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
+    return keyed(resolved, `sym:${name}`);
+  }
+  return null;
+}
+function resolveRuleLiteral(body) {
+  const core = unwrapPrec(body);
+  if (!core || typeof core !== "object") return null;
+  const r = core;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (typeEq(t, "TOKEN")) return resolveRuleLiteral(r.content);
+  if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
+  return null;
+}
+function isParserHiddenName(name) {
+  return name.startsWith("_");
+}
+function extractedToken(rule) {
+  const params = [];
+  let tokenized = false;
+  let current = rule;
+  for (; ; ) {
+    if (isTokenWrapperType(current.type)) {
+      tokenized = true;
+      if (isImmediateToken(current)) params.push("immediate");
+    } else if (isPrecWrapper(current)) {
+      params.push(`${current.type}:${String(current.value)}`);
+    } else break;
+    current = current.content;
+  }
+  if (!tokenized && params.length > 0) return void 0;
+  if (!tokenized && current.type !== STRING && current.type !== PATTERN) return void 0;
+  const inner = current.type === STRING || current.type === PATTERN ? `${current.type}:${String(current.value)}` : JSON.stringify(stripRuleAnnotations(current));
+  return { key: [...params.sort(), inner].join("|"), anonymous: current.type === STRING };
+}
+function stripRuleAnnotations(rule) {
+  if (Array.isArray(rule)) return rule.map(stripRuleAnnotations);
+  if (rule === null || typeof rule !== "object") return rule;
+  const out = {};
+  for (const [key, value] of Object.entries(rule)) {
+    if (key === "annotations" || key === "metadata" || key === "id") continue;
+    out[key] = stripRuleAnnotations(value);
+  }
+  return out;
+}
+function tokenUseCounts(rules) {
+  const counts = /* @__PURE__ */ new Map();
+  const visit = (rule) => {
+    if (rule === void 0 || rule === null || typeof rule !== "object") return;
+    if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+      const token2 = extractedToken(rule);
+      if (token2 !== void 0) counts.set(token2.key, (counts.get(token2.key) ?? 0) + 1);
+      return;
+    }
+    if (rule.content !== void 0) visit(rule.content);
+    for (const member of rule.members ?? []) visit(member);
+  };
+  for (const rule of Object.values(rules)) visit(rule);
+  return counts;
+}
+function predictedSymbolSource(rules, externals, inline) {
+  const ctx = { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+  return {
+    rules,
+    externals: ctx.externals,
+    isTerminal: (name) => terminalSymbolOf(name, ctx),
+    isInlined: (name) => parserSymbolClassOf(name, ctx) === "inlined"
+  };
+}
+function choiceArmsOf(content) {
+  const rule = content;
+  if (rule.type !== CHOICE) return void 0;
+  return rule.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+function terminalContentOf(content, isTerminalSymbol) {
+  if (content.type === SYMBOL) return isTerminalSymbol(content.name);
+  if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
+  const arms = choiceArmsOf(content);
+  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, isTerminalSymbol));
+}
+function terminalSymbolOf(name, ctx) {
+  const cls = parserSymbolClassOf(name, ctx);
+  if (cls !== "inlined") return cls === "terminal";
+  const body = ctx.rules[name];
+  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, ctx));
+}
+function lexesAsOneToken(rule) {
+  return extractedToken(rule) !== void 0;
+}
+function parserSymbolClassOf(name, ctx) {
+  if (ctx.externals.has(name)) return "terminal";
+  if (ctx.inline.has(name)) return "inlined";
+  const rule = ctx.rules[name];
+  if (rule === void 0) return "nonterminal";
+  const token2 = extractedToken(rule);
+  if (token2 === void 0 || ctx.tokenUses.get(token2.key) !== 1) return "nonterminal";
+  return token2.anonymous && isParserHiddenName(name) ? "nonterminal" : "terminal";
+}
+function selfReferentialFoldOf(name, rule) {
+  if (rule.type !== CHOICE) return void 0;
+  const fieldOf = (member) => member.type === FIELD ? member.name : void 0;
+  const operandOf = (member) => member.type === FIELD ? member.content : member;
+  const isSelfRef = (member) => {
+    const content = operandOf(member);
+    return content.type === SYMBOL && content.name === name && isParserHiddenName(content.name) && content.aliasedTo === void 0;
+  };
+  let fields;
+  let separator;
+  let sawSelfRef = false;
+  for (const arm2 of rule.members) {
+    if (arm2.type !== SEQ || arm2.members.length !== 3) return void 0;
+    const [m0, sep, m2] = arm2.members;
+    if (m0 === void 0 || sep === void 0 || m2 === void 0 || sep.type !== STRING) return void 0;
+    if (fields === void 0) fields = [fieldOf(m0), fieldOf(m2)];
+    else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return void 0;
+    if (separator === void 0) separator = sep;
+    else if (separator.type !== STRING || separator.value !== sep.value) return void 0;
+    if (isSelfRef(m0)) sawSelfRef = true;
+    else if (isSelfRef(m2)) return void 0;
+  }
+  if (!sawSelfRef || separator === void 0) return void 0;
+  return { separator };
+}
+function exclusiveFieldChoiceBranches(member, rulesBag) {
+  let target = member;
+  if (isSymbolType(member.type)) {
+    const name = member.name;
+    if (typeof name !== "string" || !name.startsWith("_")) return void 0;
+    target = rulesBag[name];
+  }
+  if (!target || !isChoiceType(target.type)) return void 0;
+  const branches = target.members;
+  if (!Array.isArray(branches) || branches.length < 2) return void 0;
+  const names = /* @__PURE__ */ new Set();
+  for (const branch of branches) {
+    if (!isFieldType(branch.type)) return void 0;
+    const name = branch.name;
+    if (typeof name !== "string") return void 0;
+    names.add(name);
+  }
+  return names.size === branches.length ? branches : void 0;
+}
+function normalizeMember(m) {
+  if (typeof m === "string") return { type: "STRING", value: m };
+  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
+  return m ?? { type: "UNKNOWN" };
+}
+function withOptionalContent(rule, content) {
+  if (rule.type === OPTIONAL) return { ...rule, content };
+  const members = rule.members;
+  return { ...rule, members: members.map((m) => isBlank(m) ? m : content) };
+}
+function optionalSeqBodyOf(rule) {
+  const content = optionalContentOf(rule);
+  return content !== void 0 && content.type === SEQ ? content : void 0;
+}
+function listSeparatorOfOptionalSeq(rule, symbols) {
+  const seqBody = optionalSeqBodyOf(rule);
+  if (seqBody === void 0) return null;
+  const seqMembers = seqBody.members;
+  if (!Array.isArray(seqMembers)) return null;
+  for (const m of seqMembers) {
+    if (!isRepeatType(m.type)) continue;
+    const sepAttr = m.separator;
+    if (typeof sepAttr === "string") return sepAttr;
+    const content = m.content;
+    if (content) {
+      const detected = separatorOf(content, symbols);
+      if (detected) {
+        const sep = detected.separator;
+        if (typeEq(sep.type, "STRING")) return sep.value;
+        if (typeEq(sep.type, "CHOICE")) {
+          const lit = leadingLiteralOf(sep);
+          if (lit !== null) return lit;
+        }
+      }
+    }
+  }
+  return null;
+}
+function optionalStringLiteral(rule) {
+  const inner = optionalContentOf(rule);
+  if (inner === void 0) return null;
+  const innerN = normalizeMember(inner);
+  if (isStringType(innerN.type) && typeof innerN.value === "string") return innerN.value;
+  return null;
+}
+function separatedListElementName(rule) {
+  const t = rule.type;
+  if (typeof t !== "string") return null;
+  if (isFieldType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name : null;
+  }
+  if (isSymbolType(t)) {
+    const name = rule.name;
+    return typeof name === "string" ? name.replace(/^_+/, "") : null;
+  }
+  if (isChoiceType(t)) {
+    const members = rule.members;
+    if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]);
+    return null;
+  }
+  if (isPrecWrapper(rule) || typeEq(t, "ALIAS")) {
+    const content = rule.content;
+    return content ? separatedListElementName(content) : null;
+  }
+  return null;
+}
+function separatedListBodyInfo(body, symbols) {
+  if (!isSeqType(body.type)) return null;
+  const members = body.members;
+  if (!Array.isArray(members) || members.length === 0) return null;
+  const separatorRepeatOf = (m) => {
+    if (!isRepeatType(m.type)) return null;
+    const content = m.content;
+    return content ? separatorOf(content, symbols) : null;
+  };
+  if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
+    const nestedIdx = members.findIndex((m) => {
+      if (!isSeqType(m.type)) return false;
+      const inner = m.members;
+      return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
+    });
+    if (nestedIdx !== -1) {
+      const headMembers = members[nestedIdx].members;
+      return separatedListBodyInfo({
+        ...body,
+        members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
+      }, symbols);
+    }
+  }
+  const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
+  if (repeatIdx === -1) return null;
+  const detected = separatorRepeatOf(members[repeatIdx]);
+  const separatorIsChoice = typeEq(detected.separator.type, "CHOICE");
+  const separatorLiteral = typeEq(detected.separator.type, "STRING") ? detected.separator.value : null;
+  const elementName = separatedListElementName(detected.content);
+  if (detected.trailing !== true) {
+    if (repeatIdx === 0) {
+      if (!typeEq(members[0].type, "REPEAT1")) return null;
+      if (members.length !== 2) return null;
+      const flank = optionalContentOf(members[1]);
+      const flankLit = flank && isStringType(flank.type) ? flank.value : null;
+      if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
+      return {
+        elementName,
+        flankCarrying: true,
+        form: "leading",
+        element: detected.content,
+        separatorRule: detected.separator,
+        flatMembers: members
+      };
+    }
+    const head = members[repeatIdx - 1];
+    if (separatedListElementName(head) !== elementName || elementName === null) {
+      if (ruleKey(head) !== ruleKey(detected.content)) return null;
+    }
+    let flankCarrying = separatorIsChoice;
+    for (const [i, m] of members.entries()) {
+      if (i === repeatIdx || i === repeatIdx - 1) continue;
+      if (isStringType(m.type) && m.value === separatorLiteral) {
+        continue;
+      }
+      const inner = optionalContentOf(m);
+      const innerLit = inner && isStringType(inner.type) ? inner.value : null;
+      const innerMatchesChoiceSep = inner !== void 0 && separatorIsChoice && isChoiceType(inner.type ?? "");
+      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral) || innerMatchesChoiceSep) {
+        flankCarrying = true;
+        continue;
+      }
+      return null;
+    }
+    return {
+      elementName,
+      flankCarrying,
+      form: "head",
+      element: detected.content,
+      separatorRule: detected.separator,
+      flatMembers: members
+    };
+  }
+  if (repeatIdx !== 0 || members.length !== 2) return null;
+  const tail = optionalContentOf(members[1]);
+  if (tail === void 0) return null;
+  if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
+  if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
+  return {
+    elementName,
+    flankCarrying: true,
+    form: "tail",
+    element: detected.content,
+    separatorRule: detected.separator,
+    flatMembers: members
+  };
+}
+function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) {
+  if (seen.has(rule)) return void 0;
+  seen.add(rule);
+  const t = rule.type;
+  if (typeof t !== "string") return void 0;
+  if (isSymbolType(t)) {
+    const name = rule.name;
+    if (typeof name !== "string") return void 0;
+    const body = rulesBag[name];
+    if (body?.hidden !== true) return name;
+    return body ? armLeadingSymbolName(body, rulesBag, seen) ?? name : name;
+  }
+  if (isSeqType(t)) {
+    const members = rule.members;
+    const first = Array.isArray(members) ? members[0] : void 0;
+    return first ? armLeadingSymbolName(first, rulesBag, seen) : void 0;
+  }
+  if (isChoiceType(t)) {
+    return void 0;
+  }
+  const content = rule.content;
+  return content ? armLeadingSymbolName(content, rulesBag, seen) : void 0;
+}
+function armStartsWithSymbol(rule, collidingLeadingNames, rulesBag) {
+  if (collidingLeadingNames.size === 0) return false;
+  const name = armLeadingSymbolName(rule, rulesBag);
+  return name !== void 0 && collidingLeadingNames.has(name);
+}
+function isLiteralChoiceContent(rule) {
+  if (isStringType(rule.type)) return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
+  }
+  return false;
+}
+function isHiddenKind(name, inlineList) {
+  if (name.startsWith("_")) return true;
+  if (inlineList && inlineList.includes(name)) return true;
+  return false;
+}
+function armsDifferOnlyByLiteralChoice(a, b) {
+  let literalDeltas = 0;
+  const peel = (r) => {
+    while (isPrecWrapper(r) && r.content) {
+      r = r.content;
+    }
+    return r;
+  };
+  const same = (x, y) => {
+    x = peel(x);
+    y = peel(y);
+    if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
+      if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
+      return true;
+    }
+    const tx = x.type;
+    const ty = y.type;
+    if (tx !== ty || typeof tx !== "string") return false;
+    if (isSymbolType(tx)) return x.name === y.name;
+    if (isFieldType(tx)) {
+      return x.name === y.name && same(x.content, y.content);
+    }
+    const mx = x.members;
+    const my = y.members;
+    if (Array.isArray(mx) || Array.isArray(my)) {
+      if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
+      return mx.every((m, i) => same(m, my[i]));
+    }
+    const cx = x.content;
+    const cy = y.content;
+    if (cx !== void 0 || cy !== void 0) {
+      return cx !== void 0 && cy !== void 0 && same(cx, cy);
+    }
+    return JSON.stringify(x) === JSON.stringify(y);
+  };
+  return same(a, b) && literalDeltas === 1;
+}
+
 // packages/codegen/src/dsl/transform/token-forms.ts
-var typeOf = (rule) => rule.type ?? "";
+var typeOf2 = (rule) => rule.type ?? "";
 var membersOf2 = (rule) => rule.members ?? [];
 var contentOf2 = (rule) => rule.content;
 var rebuilt = (rule, patch) => ({ ...rule, ...patch });
-var isBlank = (rule) => typeOf(rule) === "BLANK";
-var isString = (rule) => typeOf(rule) === "STRING";
+var isString = (rule) => typeOf2(rule) === "STRING";
 function isTokenWrapper(rule) {
-  return isTokenWrapperType(typeOf(rule));
+  return isTokenWrapperType(typeOf2(rule));
 }
 function classifyTokenChoice(choice2) {
   const arms = membersOf2(choice2);
@@ -754,28 +1533,18 @@ function classifyTokenChoice(choice2) {
 }
 function flattenFormArms(arms) {
   return arms.flatMap(
-    (arm2) => isChoiceType(typeOf(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
+    (arm2) => isChoiceType(typeOf2(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
   );
 }
 function findOutermostForms(rule, path) {
-  const t = typeOf(rule);
-  if (isChoiceType(t)) {
-    const cls = classifyTokenChoice(rule);
-    if (cls === "forms") return { path, arms: flattenFormArms(membersOf2(rule)) };
-    if (cls === "spelling") return void 0;
-    const live = membersOf2(rule).filter((m) => !isBlank(m));
-    const only = live.length === 1 ? live[0] : void 0;
-    if (only !== void 0 && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(only)), membersOf2(rule).find(isBlank)] };
-    }
-    return void 0;
+  const t = typeOf2(rule);
+  const optional2 = optionalContentOf(rule);
+  if (optional2 !== void 0) {
+    const forms = isChoiceType(typeOf2(optional2)) && classifyTokenChoice(optional2) === "forms";
+    return forms ? { path, arms: [...flattenFormArms(membersOf2(optional2)), BLANK] } : void 0;
   }
-  if (t === "OPTIONAL") {
-    const inner = contentOf2(rule);
-    if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(inner)), BLANK] };
-    }
-    return void 0;
+  if (isChoiceType(t)) {
+    return classifyTokenChoice(rule) === "forms" ? { path, arms: flattenFormArms(membersOf2(rule)) } : void 0;
   }
   if (isSeqType(t)) {
     const members = membersOf2(rule);
@@ -941,861 +1710,6 @@ function supertypeMemberName(memberKind, supertypeKind) {
 }
 function armNameOf(owner, display, ownerIsSupertype) {
   return ownerIsSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
-}
-
-// packages/codegen/src/util/word-matcher.ts
-function compileWordMatcher(word, rules) {
-  if (!word) return void 0;
-  const wordRule = rules[word];
-  if (!wordRule) return void 0;
-  const src = ruleToRegexSource(wordRule);
-  if (src === null) return void 0;
-  const full = `^(?:${src})$`;
-  try {
-    return new RegExp(full, "u");
-  } catch {
-    try {
-      return new RegExp(full);
-    } catch {
-      return void 0;
-    }
-  }
-}
-function matchesWordShape(value, wordMatcher) {
-  return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
-}
-function ruleToRegexSource(rule) {
-  const shaped = rule;
-  switch (rule.type) {
-    case PATTERN:
-      return shaped.value ?? null;
-    case STRING:
-      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
-    case TOKEN:
-      return shaped.content ? ruleToRegexSource(shaped.content) : null;
-    case SEQ: {
-      const parts = [];
-      for (const m of shaped.members ?? []) {
-        const p = ruleToRegexSource(m);
-        if (p === null) return null;
-        parts.push(`(?:${p})`);
-      }
-      return parts.join("");
-    }
-    case CHOICE: {
-      const parts = [];
-      for (const m of shaped.members ?? []) {
-        const p = ruleToRegexSource(m);
-        if (p === null) return null;
-        parts.push(p);
-      }
-      return `(?:${parts.join("|")})`;
-    }
-    case OPTIONAL: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})?`;
-    }
-    case REPEAT: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})*`;
-    }
-    case REPEAT1: {
-      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
-      if (p === null) return null;
-      return `(?:${p})+`;
-    }
-    default:
-      return null;
-  }
-}
-function escapeRegexLiteral(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-// packages/codegen/src/dsl/shared.ts
-function ruleKey(rule) {
-  return JSON.stringify(canonicalize(rule));
-}
-function canonicalize(rule) {
-  if (typeof rule !== "object" || rule === null) return rule;
-  const r = rule;
-  const type = r.type ?? null;
-  const name = typeof r.name === "string" ? r.name : null;
-  const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
-  const named = typeof r.named === "boolean" ? r.named : null;
-  const separator = "separator" in r ? canonicalizeSeparator(r.separator) : null;
-  const members = r.members;
-  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalize)];
-  const content = r.content;
-  if (content !== void 0) return [type, name, value, named, separator, [canonicalize(content)]];
-  return [type, name, value, named, separator, null];
-}
-function canonicalizeSeparator(separator) {
-  if (typeof separator !== "object" || separator === null) return separator;
-  const sep = separator;
-  return [
-    "fact",
-    typeof sep.trailing === "string" ? sep.trailing : null,
-    typeof sep.leading === "string" ? sep.leading : null,
-    canonicalize(sep.value)
-  ];
-}
-var DSL_RULES_KEY = /* @__PURE__ */ Symbol.for("sittir.dslRules");
-function baseRulesOf(base2) {
-  if (!base2 || typeof base2 !== "object") return void 0;
-  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
-  if (!grammar2 || typeof grammar2 !== "object") return void 0;
-  const dslRules = grammar2[DSL_RULES_KEY];
-  return dslRules ?? grammar2.rules;
-}
-
-// packages/codegen/src/dsl/rule-patterns.ts
-function isEnumChoiceRule(rule) {
-  return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING || m.type === SYMBOL && m.literal !== void 0);
-}
-function leadingLiteralOf(r) {
-  if (!typeEq(r.type, "CHOICE")) return null;
-  const members = r.members ?? [];
-  const lit = members.find((m) => typeEq(m.type, "STRING"));
-  return lit ? lit.value : null;
-}
-function separatorOf(resolved, symbols) {
-  if (!typeEq(resolved.type, "SEQ")) return null;
-  const members = resolved.members;
-  if (!members || members.length !== 2) return null;
-  const [first, second] = members;
-  const firstIsStr = typeEq(first.type, "STRING");
-  const secondIsStr = typeEq(second.type, "STRING");
-  if (firstIsStr && !secondIsStr) return { content: second, separator: first };
-  if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.isTerminal);
-  if (isToken(first) && !secondIsStr) return { content: second, separator: first };
-  if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
-  return null;
-}
-function ruleMatchesEmpty(rule) {
-  if (!rule || typeof rule !== "object") return false;
-  const r = rule;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (isOptionalType(t) || isPlainRepeatType2(t) || isBlankType(t)) return true;
-  if (typeEq(t, "REPEAT1")) {
-    return ruleMatchesEmpty(r.content);
-  }
-  if (isSeqType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length === 0) return true;
-    return members.every((m) => ruleMatchesEmpty(m));
-  }
-  if (typeEq(t, "CHOICE")) {
-    const members = r.members;
-    if (!Array.isArray(members)) return false;
-    return members.some((m) => ruleMatchesEmpty(m));
-  }
-  if (isFieldType(t) || isPrecWrapper(r)) {
-    return ruleMatchesEmpty(r.content);
-  }
-  if (isStringType(t) || isSymbolType(t) || typeEq(t, "TOKEN") || typeEq(t, "PATTERN")) return false;
-  return false;
-}
-function isPlainRepeatType2(t) {
-  return t === "REPEAT";
-}
-function collectSlots(members, rulesBag) {
-  const slots = [];
-  for (const m of members) {
-    if (!m || typeof m !== "object") continue;
-    const r = m;
-    const t = typeof r.type === "string" ? r.type : "";
-    if (isStringType(t) || typeEq(t, "TOKEN") || isBlankType(t)) continue;
-    if (rulesBag && isSymbolType(t)) {
-      const name = typeof r.name === "string" ? r.name : void 0;
-      if (name !== void 0 && !(name in rulesBag)) continue;
-    }
-    slots.push(m);
-  }
-  return slots;
-}
-function isMultiSlotRepeatElement(content, symbols) {
-  const core = unwrapPrec(content);
-  if (!core || typeof core !== "object" || !isSeqType(core.type)) return false;
-  if (separatorOf(core, symbols) !== null || !("members" in core) || !Array.isArray(core.members)) return false;
-  return collectSlots(core.members, symbols.rules).length >= 2;
-}
-function unwrapPrec(rule) {
-  let cur = rule;
-  while (cur && typeof cur === "object") {
-    const r = cur;
-    if (isPrecWrapper(r)) {
-      cur = r.content;
-    } else {
-      break;
-    }
-  }
-  return cur;
-}
-function isRepeatLike(t) {
-  return isRepeatType(t) || typeEq(t, "REPEAT1");
-}
-function flattenSeqMembers(members) {
-  const out = [];
-  for (const m of members) {
-    const core = unwrapPrec(m);
-    if (core && typeof core === "object") {
-      const ct = core.type;
-      const inner = core.members;
-      if (typeof ct === "string" && isSeqType(ct) && Array.isArray(inner)) {
-        out.push(...flattenSeqMembers(inner));
-        continue;
-      }
-    }
-    out.push(m);
-  }
-  return out;
-}
-function seqHasTopLevelRepeat(members) {
-  for (const m of flattenSeqMembers(members)) {
-    const core = unwrapPrec(m);
-    if (!core || typeof core !== "object") continue;
-    const ct = core.type;
-    if (typeof ct === "string" && isRepeatLike(ct)) return true;
-  }
-  return false;
-}
-function isNonterminalSeparatorType(t) {
-  return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
-}
-function repeatHasNonterminalSeparator(repeatRule, symbols) {
-  const content = repeatRule.content;
-  if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content, symbols);
-  if (!detected) return false;
-  return isNonterminalSeparatorType(detected.separator.type);
-}
-function isOptionalSeparatorFlank(member, sepValue) {
-  if (!member || typeof member !== "object") return false;
-  const r = member;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (isOptionalType(t)) {
-    const content = r.content;
-    if (!content || typeof content !== "object") return false;
-    const cr = content;
-    return isStringType(typeof cr.type === "string" ? cr.type : "") && cr.value === sepValue;
-  }
-  if (isChoiceType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length !== 2) return false;
-    const hasBlank = members.some(
-      (m) => m && typeof m === "object" && isBlankType(m.type)
-    );
-    const hasMatchingLiteral = members.some(
-      (m) => m && typeof m === "object" && isStringType(
-        typeof m.type === "string" ? m.type : ""
-      ) && m.value === sepValue
-    );
-    return hasBlank && hasMatchingLiteral;
-  }
-  return false;
-}
-function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings, symbols) {
-  if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
-  const content = repeatRule.content;
-  if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content, symbols);
-  if (!detected || !isStringType(detected.separator.type)) return false;
-  const sepValue = detected.separator.value;
-  if (typeof sepValue !== "string") return false;
-  return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
-}
-function repeatHasGenuineSeparatorVariability(repeatRule, symbols) {
-  return repeatHasNonterminalSeparator(repeatRule, symbols);
-}
-function seqHasGenuineSeparatorVariability(members, symbols) {
-  const flat = flattenSeqMembers(members);
-  const repeatMembers = [];
-  for (const m of flat) {
-    const core = unwrapPrec(m);
-    if (!core || typeof core !== "object") continue;
-    const ct = core.type;
-    if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
-    const content = core.content;
-    if (content && typeof content === "object" && separatorOf(content, symbols) !== null) {
-      repeatMembers.push(core);
-    }
-  }
-  if (repeatMembers.length !== 1) return false;
-  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat, symbols);
-}
-function isInlineSafe(seqBody, symbols) {
-  if (!seqBody || typeof seqBody !== "object") return false;
-  const r = seqBody;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody, symbols);
-  if (typeEq(t, "ALIAS")) return true;
-  if (!isSeqType(t)) return false;
-  const members = r.members;
-  if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members, symbols);
-  const slots = collectSlots(members, symbols.rules);
-  if (slots.length !== 1) return false;
-  const core = unwrapPrec(slots[0]);
-  if (!core || typeof core !== "object") return false;
-  const coreType = core.type;
-  if (typeof coreType !== "string") return false;
-  return isFieldType(coreType) || isSymbolType(coreType);
-}
-function typeOf2(rule) {
-  return typeof rule?.type === "string" ? rule.type : void 0;
-}
-function isNamedAlias(rule) {
-  return typeEq(typeOf2(rule) ?? "", "ALIAS") && rule.named === true;
-}
-function isNamedArmChoice(body) {
-  const b = body;
-  if (!isChoiceType(typeOf2(b) ?? "") || !Array.isArray(b.members) || b.members.length === 0) return false;
-  return b.members.every((m) => isNamedAlias(m) && isSymbolType(typeOf2(m.content) ?? ""));
-}
-function isEnumMember(member, storageBodyOf) {
-  const t = typeOf2(member) ?? "";
-  if (isStringType(t)) return true;
-  if (isSymbolType(t)) return member.literal !== void 0;
-  if (!isNamedAlias(member)) return false;
-  const content = member.content;
-  if (isStringType(typeOf2(content) ?? "")) return true;
-  return isSymbolType(typeOf2(content) ?? "") && typeof content.name === "string" && isStringType(typeOf2(storageBodyOf(content.name)) ?? "");
-}
-function aliasesSymbol(content) {
-  const t = typeOf2(content) ?? "";
-  if (isSymbolType(t)) return true;
-  return typeEq(t, "TOKEN") && aliasesSymbol(content.content);
-}
-function isSupertypeMember(member) {
-  const t = typeOf2(member) ?? "";
-  if (isSymbolType(t) || isStringType(t)) return true;
-  return isNamedAlias(member) && (isStringType(typeOf2(member.content) ?? "") || aliasesSymbol(member.content));
-}
-function flattenChoiceMembers(members) {
-  return members.flatMap((m) => isChoiceType(typeOf2(m) ?? "") ? flattenChoiceMembers(m.members ?? []) : [m]);
-}
-function hiddenChoiceClass(body, storageBodyOf, namedArms) {
-  const b = body;
-  if (b?.annotations?.hoisted === true || !isChoiceType(typeOf2(b) ?? "") || !Array.isArray(b.members)) return void 0;
-  if (b.members.every((m) => isEnumMember(m, storageBodyOf))) return "enum";
-  if (namedArms) return "named-arms";
-  return flattenChoiceMembers(b.members).every(isSupertypeMember) ? "supertype" : void 0;
-}
-function throughPrec(rule, fn) {
-  const r = rule;
-  if (typeof r?.type !== "string" || !isPrecWrapper(r) || r.content === void 0) return fn(rule);
-  const content = throughPrec(r.content, fn);
-  return content === r.content ? rule : { ...rule, content };
-}
-function isSupertypeLike(body) {
-  const b = unwrapPrec(body);
-  if (!b || typeof b !== "object") return false;
-  const t = b.type;
-  if (typeof t !== "string" || !isChoiceType(t)) return false;
-  const members = b.members;
-  if (!Array.isArray(members) || members.length === 0) return false;
-  return members.every((m) => {
-    const core = unwrapPrec(m);
-    if (!core || typeof core !== "object") return false;
-    const c = core;
-    const coreType = c.type;
-    if (typeof coreType !== "string") return false;
-    if (isSymbolType(coreType) || isStringType(coreType)) return true;
-    if (typeEq(coreType, "ALIAS")) return c.named === true;
-    return false;
-  });
-}
-function isPermutationChoice(body, rulesBag, kwRules, wordMatcher) {
-  const b = unwrapPrec(body);
-  if (!b || typeof b !== "object") return false;
-  const t = b.type;
-  if (typeof t !== "string" || !isChoiceType(t)) return false;
-  const members = b.members;
-  if (!Array.isArray(members)) return false;
-  const arms = members.filter(
-    (m) => m && typeof m === "object" && !isBlankType(m.type ?? "")
-  );
-  if (arms.length < 2) return false;
-  const keySets = [];
-  for (const arm2 of arms) {
-    const keys = permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher);
-    if (keys === null) return false;
-    keySets.push(keys);
-  }
-  const first = keySets[0];
-  if (!keySets.every((s) => s.size === first.size && [...s].every((k) => first.has(k)))) return false;
-  return new Set(arms.map((a) => JSON.stringify(a))).size >= 2;
-}
-function permutationArmSlotKeys(arm2, rulesBag, kwRules, wordMatcher) {
-  const core = unwrapPrec(arm2);
-  if (!core || typeof core !== "object") return null;
-  const t = core.type;
-  if (typeof t !== "string" || !isSeqType(t)) return null;
-  const members = core.members;
-  if (!Array.isArray(members) || members.length < 2) return null;
-  const keys = /* @__PURE__ */ new Set();
-  for (const member of members) {
-    const key = permutationAtomKey(member, rulesBag, kwRules, wordMatcher);
-    if (key === null || keys.has(key)) return null;
-    keys.add(key);
-  }
-  return keys;
-}
-function permutationAtomKey(member, rulesBag, kwRules, wordMatcher) {
-  let core = unwrapPrec(member);
-  let fieldName;
-  for (; ; ) {
-    if (!core || typeof core !== "object") return null;
-    const r2 = core;
-    const t2 = typeof r2.type === "string" ? r2.type : "";
-    if (isFieldType(t2)) {
-      if (fieldName === void 0 && typeof r2.name === "string") fieldName = r2.name;
-      core = unwrapPrec(r2.content);
-      continue;
-    }
-    if (isOptionalType(t2)) {
-      core = unwrapPrec(r2.content);
-      continue;
-    }
-    if (isChoiceType(t2)) {
-      const ms = r2.members;
-      if (Array.isArray(ms) && ms.length === 2) {
-        const blankIdx = ms.findIndex(
-          (m) => m && typeof m === "object" && isBlankType(m.type ?? "")
-        );
-        if (blankIdx !== -1) {
-          core = unwrapPrec(ms[1 - blankIdx]);
-          continue;
-        }
-      }
-      return null;
-    }
-    break;
-  }
-  const r = core;
-  const t = typeof r.type === "string" ? r.type : "";
-  const keyed = (lit, fallback) => {
-    if (lit !== null && (fieldName === void 0 || fieldName === `${lit}_marker`)) return `lit:${lit}`;
-    const bare = lit !== null ? `lit:${lit}` : fallback;
-    return fieldName === void 0 ? bare : `field:${fieldName}=${bare}`;
-  };
-  if (isStringType(t)) {
-    const v = r.value;
-    if (typeof v !== "string" || !matchesWordShape(v, wordMatcher)) return null;
-    return keyed(v, "");
-  }
-  if (isSymbolType(t)) {
-    const name = typeof r.name === "string" ? r.name : void 0;
-    if (name === void 0) return null;
-    const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
-    return keyed(resolved, `sym:${name}`);
-  }
-  return null;
-}
-function resolveRuleLiteral(body) {
-  const core = unwrapPrec(body);
-  if (!core || typeof core !== "object") return null;
-  const r = core;
-  const t = typeof r.type === "string" ? r.type : "";
-  if (typeEq(t, "TOKEN")) return resolveRuleLiteral(r.content);
-  if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
-  return null;
-}
-function isParserHiddenName(name) {
-  return name.startsWith("_");
-}
-function extractedToken(rule) {
-  const params = [];
-  let tokenized = false;
-  let current = rule;
-  for (; ; ) {
-    if (isTokenWrapperType(current.type)) {
-      tokenized = true;
-      if (current.type === IMMEDIATE_TOKEN) params.push("immediate");
-    } else if (isPrecWrapper(current)) {
-      params.push(`${current.type}:${String(current.value)}`);
-    } else break;
-    current = current.content;
-  }
-  if (!tokenized && params.length > 0) return void 0;
-  if (!tokenized && current.type !== STRING && current.type !== PATTERN) return void 0;
-  const inner = current.type === STRING || current.type === PATTERN ? `${current.type}:${String(current.value)}` : JSON.stringify(stripRuleAnnotations(current));
-  return { key: [...params.sort(), inner].join("|"), anonymous: current.type === STRING };
-}
-function stripRuleAnnotations(rule) {
-  if (Array.isArray(rule)) return rule.map(stripRuleAnnotations);
-  if (rule === null || typeof rule !== "object") return rule;
-  const out = {};
-  for (const [key, value] of Object.entries(rule)) {
-    if (key === "annotations" || key === "metadata" || key === "id") continue;
-    out[key] = stripRuleAnnotations(value);
-  }
-  return out;
-}
-function tokenUseCounts(rules) {
-  const counts = /* @__PURE__ */ new Map();
-  const visit = (rule) => {
-    if (rule === void 0 || rule === null || typeof rule !== "object") return;
-    if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
-      const token2 = extractedToken(rule);
-      if (token2 !== void 0) counts.set(token2.key, (counts.get(token2.key) ?? 0) + 1);
-      return;
-    }
-    if (rule.content !== void 0) visit(rule.content);
-    for (const member of rule.members ?? []) visit(member);
-  };
-  for (const rule of Object.values(rules)) visit(rule);
-  return counts;
-}
-function predictedSymbolSource(rules, externals, inline) {
-  const ctx = { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
-  return {
-    rules,
-    externals: ctx.externals,
-    isTerminal: (name) => terminalSymbolOf(name, ctx),
-    isInlined: (name) => parserSymbolClassOf(name, ctx) === "inlined"
-  };
-}
-function choiceArmsOf(content) {
-  const rule = content;
-  if (rule.type !== CHOICE) return void 0;
-  return rule.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
-}
-function terminalContentOf(content, isTerminalSymbol) {
-  if (content.type === SYMBOL) return isTerminalSymbol(content.name);
-  if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
-  const arms = choiceArmsOf(content);
-  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, isTerminalSymbol));
-}
-function terminalSymbolOf(name, ctx) {
-  const cls = parserSymbolClassOf(name, ctx);
-  if (cls !== "inlined") return cls === "terminal";
-  const body = ctx.rules[name];
-  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, ctx));
-}
-function lexesAsOneToken(rule) {
-  return extractedToken(rule) !== void 0;
-}
-function parserSymbolClassOf(name, ctx) {
-  if (ctx.externals.has(name)) return "terminal";
-  if (ctx.inline.has(name)) return "inlined";
-  const rule = ctx.rules[name];
-  if (rule === void 0) return "nonterminal";
-  const token2 = extractedToken(rule);
-  if (token2 === void 0 || ctx.tokenUses.get(token2.key) !== 1) return "nonterminal";
-  return token2.anonymous && isParserHiddenName(name) ? "nonterminal" : "terminal";
-}
-function selfReferentialFoldOf(name, rule) {
-  if (rule.type !== CHOICE) return void 0;
-  const fieldOf = (member) => member.type === FIELD ? member.name : void 0;
-  const operandOf = (member) => member.type === FIELD ? member.content : member;
-  const isSelfRef = (member) => {
-    const content = operandOf(member);
-    return content.type === SYMBOL && content.name === name && isParserHiddenName(content.name) && content.aliasedTo === void 0;
-  };
-  let fields;
-  let separator;
-  let sawSelfRef = false;
-  for (const arm2 of rule.members) {
-    if (arm2.type !== SEQ || arm2.members.length !== 3) return void 0;
-    const [m0, sep, m2] = arm2.members;
-    if (m0 === void 0 || sep === void 0 || m2 === void 0 || sep.type !== STRING) return void 0;
-    if (fields === void 0) fields = [fieldOf(m0), fieldOf(m2)];
-    else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return void 0;
-    if (separator === void 0) separator = sep;
-    else if (separator.type !== STRING || separator.value !== sep.value) return void 0;
-    if (isSelfRef(m0)) sawSelfRef = true;
-    else if (isSelfRef(m2)) return void 0;
-  }
-  if (!sawSelfRef || separator === void 0) return void 0;
-  return { separator };
-}
-function exclusiveFieldChoiceBranches(member, rulesBag) {
-  let target = member;
-  if (isSymbolType(member.type)) {
-    const name = member.name;
-    if (typeof name !== "string" || !name.startsWith("_")) return void 0;
-    target = rulesBag[name];
-  }
-  if (!target || !isChoiceType(target.type)) return void 0;
-  const branches = target.members;
-  if (!Array.isArray(branches) || branches.length < 2) return void 0;
-  const names = /* @__PURE__ */ new Set();
-  for (const branch of branches) {
-    if (!isFieldType(branch.type)) return void 0;
-    const name = branch.name;
-    if (typeof name !== "string") return void 0;
-    names.add(name);
-  }
-  return names.size === branches.length ? branches : void 0;
-}
-function normalizeMember(m) {
-  if (typeof m === "string") return { type: "STRING", value: m };
-  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
-  return m ?? { type: "UNKNOWN" };
-}
-function peelOptional(rule) {
-  if (isOptionalType(rule.type)) {
-    return {
-      inner: rule.content,
-      isOptional: true
-    };
-  }
-  if (isChoiceType(rule.type)) {
-    const members = rule.members;
-    if (members.length === 2) {
-      const blankIdx = members.findIndex((m) => m.type === "BLANK");
-      if (blankIdx !== -1) {
-        const inner = members[1 - blankIdx];
-        return { inner, isOptional: true };
-      }
-    }
-  }
-  return { inner: rule, isOptional: false };
-}
-function peelOptionalSeq(rule) {
-  if (isOptionalType(rule.type)) {
-    const content = rule.content;
-    if (content && isSeqType(content.type)) {
-      return { seqBody: content, form: "optional", seqIdx: -1 };
-    }
-    return null;
-  }
-  if (isChoiceType(rule.type)) {
-    const members = rule.members;
-    if (!Array.isArray(members) || members.length !== 2) return null;
-    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
-    const seqIdx = members.findIndex((m) => isSeqType(m.type));
-    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
-    return { seqBody: members[seqIdx], form: "choice", seqIdx };
-  }
-  return null;
-}
-function listSeparatorOfOptionalSeq(rule, symbols) {
-  const peeled = peelOptionalSeq(rule);
-  if (peeled === null) return null;
-  const seqMembers = peeled.seqBody.members;
-  if (!Array.isArray(seqMembers)) return null;
-  for (const m of seqMembers) {
-    if (!isRepeatType(m.type)) continue;
-    const sepAttr = m.separator;
-    if (typeof sepAttr === "string") return sepAttr;
-    const content = m.content;
-    if (content) {
-      const detected = separatorOf(content, symbols);
-      if (detected) {
-        const sep = detected.separator;
-        if (typeEq(sep.type, "STRING")) return sep.value;
-        if (typeEq(sep.type, "CHOICE")) {
-          const lit = leadingLiteralOf(sep);
-          if (lit !== null) return lit;
-        }
-      }
-    }
-  }
-  return null;
-}
-function optionalStringLiteral(rule) {
-  const peeled = peelOptional(rule);
-  if (!peeled.isOptional) return null;
-  const innerN = normalizeMember(peeled.inner);
-  if (isStringType(innerN.type) && typeof innerN.value === "string") return innerN.value;
-  return null;
-}
-function separatedListElementName(rule) {
-  const t = rule.type;
-  if (typeof t !== "string") return null;
-  if (isFieldType(t)) {
-    const name = rule.name;
-    return typeof name === "string" ? name : null;
-  }
-  if (isSymbolType(t)) {
-    const name = rule.name;
-    return typeof name === "string" ? name.replace(/^_+/, "") : null;
-  }
-  if (isChoiceType(t)) {
-    const members = rule.members;
-    if (Array.isArray(members) && members.length === 1) return separatedListElementName(members[0]);
-    return null;
-  }
-  if (isPrecWrapper(rule) || typeEq(t, "ALIAS")) {
-    const content = rule.content;
-    return content ? separatedListElementName(content) : null;
-  }
-  return null;
-}
-function peelOptionalEitherSpelling(rule) {
-  const peeled = peelOptional(rule);
-  return peeled.isOptional ? peeled.inner : null;
-}
-function separatedListBodyInfo(body, symbols) {
-  if (!isSeqType(body.type)) return null;
-  const members = body.members;
-  if (!Array.isArray(members) || members.length === 0) return null;
-  const separatorRepeatOf = (m) => {
-    if (!isRepeatType(m.type)) return null;
-    const content = m.content;
-    return content ? separatorOf(content, symbols) : null;
-  };
-  if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
-    const nestedIdx = members.findIndex((m) => {
-      if (!isSeqType(m.type)) return false;
-      const inner = m.members;
-      return Array.isArray(inner) && inner.some((im) => separatorRepeatOf(im) !== null);
-    });
-    if (nestedIdx !== -1) {
-      const headMembers = members[nestedIdx].members;
-      return separatedListBodyInfo({
-        ...body,
-        members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
-      }, symbols);
-    }
-  }
-  const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
-  if (repeatIdx === -1) return null;
-  const detected = separatorRepeatOf(members[repeatIdx]);
-  const separatorIsChoice = typeEq(detected.separator.type, "CHOICE");
-  const separatorLiteral = typeEq(detected.separator.type, "STRING") ? detected.separator.value : null;
-  const elementName = separatedListElementName(detected.content);
-  if (detected.trailing !== true) {
-    if (repeatIdx === 0) {
-      if (!typeEq(members[0].type, "REPEAT1")) return null;
-      if (members.length !== 2) return null;
-      const flank = peelOptionalEitherSpelling(members[1]);
-      const flankLit = flank && isStringType(flank.type) ? flank.value : null;
-      if (flankLit === null || separatorLiteral !== null && flankLit !== separatorLiteral) return null;
-      return {
-        elementName,
-        flankCarrying: true,
-        form: "leading",
-        element: detected.content,
-        separatorRule: detected.separator,
-        flatMembers: members
-      };
-    }
-    const head = members[repeatIdx - 1];
-    if (separatedListElementName(head) !== elementName || elementName === null) {
-      if (ruleKey(head) !== ruleKey(detected.content)) return null;
-    }
-    let flankCarrying = separatorIsChoice;
-    for (const [i, m] of members.entries()) {
-      if (i === repeatIdx || i === repeatIdx - 1) continue;
-      if (isStringType(m.type) && m.value === separatorLiteral) {
-        continue;
-      }
-      const inner = peelOptionalEitherSpelling(m);
-      const innerLit = inner && isStringType(inner.type) ? inner.value : null;
-      const innerMatchesChoiceSep = inner !== null && separatorIsChoice && isChoiceType(inner.type ?? "");
-      if (innerLit !== null && (separatorLiteral === null || innerLit === separatorLiteral) || innerMatchesChoiceSep) {
-        flankCarrying = true;
-        continue;
-      }
-      return null;
-    }
-    return {
-      elementName,
-      flankCarrying,
-      form: "head",
-      element: detected.content,
-      separatorRule: detected.separator,
-      flatMembers: members
-    };
-  }
-  if (repeatIdx !== 0 || members.length !== 2) return null;
-  const tail = peelOptionalEitherSpelling(members[1]);
-  if (tail === null) return null;
-  if (elementName !== null && separatedListElementName(tail) !== elementName) return null;
-  if (elementName === null && ruleKey(tail) !== ruleKey(detected.content)) return null;
-  return {
-    elementName,
-    flankCarrying: true,
-    form: "tail",
-    element: detected.content,
-    separatorRule: detected.separator,
-    flatMembers: members
-  };
-}
-function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) {
-  if (seen.has(rule)) return void 0;
-  seen.add(rule);
-  const t = rule.type;
-  if (typeof t !== "string") return void 0;
-  if (isSymbolType(t)) {
-    const name = rule.name;
-    if (typeof name !== "string") return void 0;
-    const body = rulesBag[name];
-    if (body?.hidden !== true) return name;
-    return body ? armLeadingSymbolName(body, rulesBag, seen) ?? name : name;
-  }
-  if (isSeqType(t)) {
-    const members = rule.members;
-    const first = Array.isArray(members) ? members[0] : void 0;
-    return first ? armLeadingSymbolName(first, rulesBag, seen) : void 0;
-  }
-  if (isChoiceType(t)) {
-    return void 0;
-  }
-  const content = rule.content;
-  return content ? armLeadingSymbolName(content, rulesBag, seen) : void 0;
-}
-function armStartsWithSymbol(rule, collidingLeadingNames, rulesBag) {
-  if (collidingLeadingNames.size === 0) return false;
-  const name = armLeadingSymbolName(rule, rulesBag);
-  return name !== void 0 && collidingLeadingNames.has(name);
-}
-function isLiteralChoiceContent(rule) {
-  if (isStringType(rule.type)) return true;
-  if (isChoiceType(rule.type)) {
-    const members = rule.members;
-    return Array.isArray(members) && members.every((m) => isLiteralChoiceContent(m));
-  }
-  return false;
-}
-function isHiddenKind(name, inlineList) {
-  if (name.startsWith("_")) return true;
-  if (inlineList && inlineList.includes(name)) return true;
-  return false;
-}
-function armsDifferOnlyByLiteralChoice(a, b) {
-  let literalDeltas = 0;
-  const peel = (r) => {
-    while (isPrecWrapper(r) && r.content) {
-      r = r.content;
-    }
-    return r;
-  };
-  const same = (x, y) => {
-    x = peel(x);
-    y = peel(y);
-    if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
-      if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
-      return true;
-    }
-    const tx = x.type;
-    const ty = y.type;
-    if (tx !== ty || typeof tx !== "string") return false;
-    if (isSymbolType(tx)) return x.name === y.name;
-    if (isFieldType(tx)) {
-      return x.name === y.name && same(x.content, y.content);
-    }
-    const mx = x.members;
-    const my = y.members;
-    if (Array.isArray(mx) || Array.isArray(my)) {
-      if (!Array.isArray(mx) || !Array.isArray(my) || mx.length !== my.length) return false;
-      return mx.every((m, i) => same(m, my[i]));
-    }
-    const cx = x.content;
-    const cy = y.content;
-    if (cx !== void 0 || cy !== void 0) {
-      return cx !== void 0 && cy !== void 0 && same(cx, cy);
-    }
-    return JSON.stringify(x) === JSON.stringify(y);
-  };
-  return same(a, b) && literalDeltas === 1;
 }
 
 // packages/codegen/src/dsl/enrich-ctx.ts
@@ -2035,9 +1949,17 @@ function unaliasOverloadedDisplays(rules, ctx) {
 var flagWalker = new RuleWalker();
 var fuseHeadRepeatListsWalker = new RuleWalker();
 
+// packages/codegen/src/dsl/shared.ts
+function baseRulesOf(base2) {
+  if (!base2 || typeof base2 !== "object") return void 0;
+  const grammar2 = "grammar" in base2 ? base2.grammar : base2;
+  if (!grammar2 || typeof grammar2 !== "object") return void 0;
+  return grammar2.rules;
+}
+
 // packages/codegen/src/dsl/automatic-variants.ts
 var ENRICH_AUTOMATIC_VARIANTS_KEY = "__enrichedAutomaticVariants__";
-var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL", "BLANK"]);
+var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL"]);
 function coreOf(arm2) {
   return unwrapPrec(arm2);
 }
@@ -2074,7 +1996,7 @@ function withAutomaticLabel(core, label, automatic) {
 }
 function holdsChoice(node) {
   if (node === void 0) return false;
-  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => m.type !== "BLANK").length >= 2 || (node.members ?? []).some(holdsChoice);
+  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => !isBlank(m)).length >= 2 || (node.members ?? []).some(holdsChoice);
   if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return false;
   return (node.members ?? []).some(holdsChoice) || node.content !== void 0 && holdsChoice(node.content);
 }
@@ -2097,8 +2019,8 @@ function stampRuleVariants(owner, rule, ruleOf, automatic) {
   };
   const visit = (node) => {
     if (node.type === "CHOICE" && node.members !== void 0) {
-      const choosable = node.members.filter((m) => m.type !== "BLANK").length >= 2;
-      const members = node.members.map((member) => choosable && member.type !== "BLANK" ? stamp(member) : visit(member));
+      const choosable = node.members.filter((m) => !isBlank(m)).length >= 2;
+      const members = node.members.map((member) => choosable && !isBlank(member) ? stamp(member) : visit(member));
       return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
     }
     if (node.type === "SYMBOL" && typeof node.name === "string" && annotationsOf(node)?.variantOf === void 0) {
@@ -3004,9 +2926,9 @@ function collectFieldNamesRuntime(rule) {
       names.add(m.name);
       continue;
     }
-    const peeled = peelOptional(m);
-    if (peeled.isOptional) {
-      const innerN = normalizeMember(peeled.inner);
+    const inner = optionalContentOf(m);
+    if (inner !== void 0) {
+      const innerN = normalizeMember(inner);
       if (isFieldType(innerN.type) && typeof innerN.name === "string") {
         names.add(innerN.name);
       }
@@ -3031,18 +2953,18 @@ function detectSymbolTarget(member) {
       wrap: (fieldNode) => fieldNode
     };
   }
-  const peeled = peelOptional(member);
-  if (!peeled.isOptional) return null;
-  const innerN = normalizeMember(peeled.inner);
+  const inner = optionalContentOf(member);
+  if (inner === void 0) return null;
+  const innerN = normalizeMember(inner);
   if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
     return {
       name: innerN.name,
-      symbolRule: peeled.inner,
-      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+      symbolRule: inner,
+      wrap: (fieldNode) => withOptionalContent(member, fieldNode)
     };
   }
   if (!isSeqType(innerN.type)) return null;
-  const seqMembers = peeled.inner.members;
+  const seqMembers = inner.members;
   let symIdx = -1;
   for (let i = 0; i < seqMembers.length; i++) {
     const sn2 = normalizeMember(seqMembers[i]);
@@ -3057,14 +2979,14 @@ function detectSymbolTarget(member) {
   const symMember = seqMembers[symIdx];
   const sn = normalizeMember(symMember);
   if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
-  const seqRule = peeled.inner;
+  const seqRule = inner;
   return {
     name: sn.name,
     symbolRule: symMember,
     wrap: (fieldNode) => {
       const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
       const newSeq = { ...seqRule, members: newSeqMembers };
-      return rebuildOptional(member, newSeq);
+      return withOptionalContent(member, newSeq);
     }
   };
 }
@@ -3325,13 +3247,13 @@ function peelPrec(rule) {
   return cursor;
 }
 function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, ctx) {
-  const peeled = peelOptional(rule);
-  if (!peeled.isOptional) return { matched: false, result: null };
-  const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, ctx);
+  const inner = optionalContentOf(rule);
+  if (inner === void 0) return { matched: false, result: null };
+  const replacement = tryPromoteInnerKeyword(ruleName, rule, inner, claimedAtSeqLevel, ctx);
   if (replacement !== null) return { matched: true, result: replacement };
-  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, ctx);
+  const innerRewritten = walkOptionalKeyword(ruleName, inner, claimedAtSeqLevel, ctx);
   if (innerRewritten !== null) {
-    return { matched: true, result: rebuildOptional(rule, innerRewritten) };
+    return { matched: true, result: withOptionalContent(rule, innerRewritten) };
   }
   return { matched: true, result: null };
 }
@@ -3397,25 +3319,13 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, ctx) {
     return null;
   }
   const fieldNode = makeField(fieldName, symbolRef2);
-  return rebuildOptional(optionalRule, fieldNode);
-}
-function rebuildOptional(optionalRule, newInner) {
-  if (isOptionalType(optionalRule.type)) {
-    return withContent(optionalRule, newInner);
-  }
-  const members = optionalRule.members;
-  const newMembers = members.map((m) => {
-    const t = m.type;
-    return t === "BLANK" ? m : newInner;
-  });
-  return { ...optionalRule, members: newMembers };
+  return withOptionalContent(optionalRule, fieldNode);
 }
 function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
-  const peeled = peelOptionalSeq(optSeqRule);
-  const seqBody = peeled.seqBody;
+  const seqBody = optionalSeqBodyOf(optSeqRule);
   const seqMembers = seqBody.members;
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
-  return rebuildOptional(optSeqRule, newSeqBody);
+  return withOptionalContent(optSeqRule, newSeqBody);
 }
 function detectInlineSeparatedListRuns(members, symbols) {
   const carriesRepeat = (m) => {
@@ -3530,33 +3440,19 @@ function absorbTrailingListSeparators(members, symbols) {
 }
 function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosingFieldName) {
   const { rulesBag, visibleGroupSources, clauseGroupOwners } = ctx;
-  const peeled = peelOptionalSeq(rule);
-  if (peeled !== null) {
-    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, ctx, counter, ambientPrec, enclosingFieldName);
-    if (ruleMatchesEmpty(recursedSeqBody)) {
+  const seqBody = optionalSeqBodyOf(rule);
+  if (seqBody !== void 0) {
+    const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
+    if (matchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
-      if (recursedSeqBody === peeled.seqBody) return rule;
-      if (peeled.form === "optional") {
-        return rebuildOptional(rule, recursedSeqBody);
-      } else {
-        const members = rule.members;
-        const newMembers = members.slice();
-        newMembers[peeled.seqIdx] = recursedSeqBody;
-        return { ...rule, members: newMembers };
-      }
+      if (recursedSeqBody === seqBody) return rule;
+      return withOptionalContent(rule, recursedSeqBody);
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule, name);
-        if (peeled.form === "optional") {
-          return rebuildOptional(rule, symbolRef2);
-        } else {
-          const members = rule.members;
-          const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = symbolRef2;
-          return { ...rule, members: newMembers };
-        }
+        return withOptionalContent(rule, symbolRef2);
       }
       return rule;
     } else {
@@ -3566,30 +3462,16 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
         visibleGroupSources.add(name);
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule, name);
-        if (peeled.form === "optional") {
-          return rebuildOptional(rule, groupRef);
-        } else {
-          const members = rule.members;
-          const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = groupRef;
-          return { ...rule, members: newMembers };
-        }
+        return withOptionalContent(rule, groupRef);
       }
-      if (recursedSeqBody === peeled.seqBody) return rule;
-      if (peeled.form === "optional") {
-        return rebuildOptional(rule, recursedSeqBody);
-      } else {
-        const members = rule.members;
-        const newMembers = members.slice();
-        newMembers[peeled.seqIdx] = recursedSeqBody;
-        return { ...rule, members: newMembers };
-      }
+      if (recursedSeqBody === seqBody) return rule;
+      return withOptionalContent(rule, recursedSeqBody);
     }
   }
   {
-    const opt = peelOptional(rule);
-    if (opt.isOptional) {
-      const recursed = applyClauseHoist(parentKind, opt.inner, ctx, counter, ambientPrec, enclosingFieldName);
+    const inner = optionalContentOf(rule);
+    if (inner !== void 0) {
+      const recursed = applyClauseHoist(parentKind, inner, ctx, counter, ambientPrec, enclosingFieldName);
       const promoted = mintStructuredChoiceArm(
         recursed,
         parentKind,
@@ -3600,15 +3482,8 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
         enclosingFieldName
       );
       const final = promoted ?? recursed;
-      if (final === opt.inner) return rule;
-      if (isOptionalType(rule.type)) {
-        return withContent(rule, final);
-      }
-      const members = rule.members;
-      const idx = members.findIndex((m) => m.type !== "BLANK");
-      const newMembers = members.slice();
-      newMembers[idx] = final;
-      return { ...rule, members: newMembers };
+      if (final === inner) return rule;
+      return withOptionalContent(rule, final);
     }
   }
   if (isSeqType(rule.type)) {
@@ -3908,7 +3783,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
-    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
+    if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
@@ -3918,7 +3793,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
+    if (matchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(arm2)) return null;
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
@@ -4410,17 +4285,14 @@ function planSiblingVariantHoist(rule, variantEntries, onBail = () => {
   }
   const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
   const emptyArm = choiceMembers.findIndex(
-    (arm2) => (isBlank2(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
+    (arm2) => matchesEmpty(arm2) && scaffolding.every((m) => matchesEmpty(m))
   );
   if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
   const bareArm = choiceMembers.findIndex(
-    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank2(arm2) ? [] : [arm2]] })
+    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
   );
   if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
   return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted };
-}
-function isBlank2(rule) {
-  return rule.type === "BLANK";
 }
 function hoistChoiceOf(rule, throughOptional) {
   if (!rule) return null;
@@ -4433,12 +4305,6 @@ function hoistChoiceOf(rule, throughOptional) {
   }
   if (throughOptional || !isChoiceType(rule.type)) return null;
   return { choice: rule, choiceMembers: [...membersOf3(rule)], absentIdx: void 0 };
-}
-function optionalContentOf(rule) {
-  if (rule.type === "OPTIONAL") return contentOf3(rule);
-  if (!isChoiceType(rule.type)) return void 0;
-  const members = membersOf3(rule);
-  return members.length === 2 && isBlank2(members[1]) && !isBlank2(members[0]) ? members[0] : void 0;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
   const { bail } = peelPrecWrappersFromRule(rule);
@@ -4488,7 +4354,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
 }
 function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack) {
   const hoist = (altContent) => {
-    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank2(altContent) ? [] : [altContent]);
+    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
     return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
   };
   const refs = [];
@@ -4531,7 +4397,7 @@ function countBodyAnchors(rule) {
   const t = rule.type;
   if (t === "STRING" || t === "PATTERN" || t === "TOKEN") return { tokens: 1, named: 0 };
   if (t === "SYMBOL") return { tokens: 0, named: 1 };
-  if (t === "BLANK") return { tokens: 0, named: 0 };
+  if (isBlank(rule)) return { tokens: 0, named: 0 };
   if (isSeqType(rule.type) || isChoiceType(rule.type)) {
     return membersOf3(rule).reduce(
       (acc, m) => {
@@ -4710,81 +4576,14 @@ function resolvePatch(patch, originalMember, key, precStack) {
 }
 function findEnrichShapedFieldThroughTransparentWrappers(node) {
   const r = node;
-  if (!r || typeof r !== "object") return null;
-  const t = r.type;
-  if (!t) return null;
-  const isSittirOptional = t === "OPTIONAL";
-  if (isSittirOptional) {
-    const inner = r.content;
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => ({ ...r, content: newInner })
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
-      };
-    }
-    return null;
-  }
-  if (isChoiceType(t)) {
-    const members = r.members;
-    if (!Array.isArray(members) || members.length !== 2) return null;
-    const blankIdx = members.findIndex((m) => {
-      const mt = m.type;
-      return mt === "BLANK";
-    });
-    if (blankIdx === -1) return null;
-    const contentIdx = 1 - blankIdx;
-    const inner = members[contentIdx];
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => {
-          const newMembers = [...members];
-          newMembers[contentIdx] = newInner;
-          return { ...r, members: newMembers };
-        }
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => {
-          const newMembers = [...members];
-          newMembers[contentIdx] = deeper.reconstruct(newInner);
-          return { ...r, members: newMembers };
-        }
-      };
-    }
-    return null;
-  }
-  if (isPrecWrapper(r)) {
-    const inner = r.content;
-    if (!inner || typeof inner !== "object") return null;
-    if (isEnrichShapedFieldWrapper(inner)) {
-      return {
-        found: inner,
-        reconstruct: (newInner) => ({ ...r, content: newInner })
-      };
-    }
-    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-    if (deeper) {
-      return {
-        found: deeper.found,
-        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
-      };
-    }
-    return null;
-  }
-  return null;
+  if (!r || typeof r !== "object" || typeof r.type !== "string") return null;
+  const optional2 = optionalContentOf(r);
+  const inner = optional2 ?? (isPrecWrapper(r) ? r.content : void 0);
+  if (!inner || typeof inner !== "object") return null;
+  const rebuild = (newInner) => optional2 !== void 0 ? withOptionalContent(r, newInner) : { ...r, content: newInner };
+  if (isEnrichShapedFieldWrapper(inner)) return { found: inner, reconstruct: rebuild };
+  const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
+  return deeper ? { found: deeper.found, reconstruct: (newInner) => rebuild(deeper.reconstruct(newInner)) } : null;
 }
 function unifyChoiceArmFieldNames(content, unifiedName) {
   const r = content;
@@ -4972,10 +4771,8 @@ function extractNonEmpty(rule) {
     };
     return { nonEmpty };
   }
-  if (isOptionalType(t)) {
-    const inner = contentOf3(rule);
-    return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
-  }
+  const optional2 = optionalContentOf(rule);
+  if (optional2 !== void 0) return matchesEmpty(optional2) ? extractNonEmpty(optional2) : { nonEmpty: optional2 };
   if (isChoiceType(t)) {
     const members = membersOf3(rule);
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
@@ -5624,7 +5421,7 @@ function adoptMintedGroups(baseArg, base2, groups) {
   for (const minted of getEnrichVisibleGroupSources(base2)) {
     const body = baseRules[minted];
     if (body === void 0) continue;
-    const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+    const owner = authored.find((pattern) => rulesEqual(unwrapPrec(body), pattern.body));
     if (owner === void 0) continue;
     adopted.set(minted, owner.key);
     delete baseRules[minted];
@@ -5652,52 +5449,11 @@ function isComplexBodyRt(rule) {
   }
   return false;
 }
-function unwrapOptionalChoiceRt(node) {
-  if (!node || typeof node !== "object") return node;
-  const r = node;
-  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
-    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
-    if (blankIdx !== -1) return { type: "OPTIONAL", content: r.members[1 - blankIdx] };
-  }
-  return node;
-}
-function patternBodyEqual(aIn, bIn) {
-  const a = unwrapOptionalChoiceRt(aIn);
-  const b = unwrapOptionalChoiceRt(bIn);
-  if (!a || typeof a !== "object") return a === b;
-  if (!b || typeof b !== "object") return false;
-  const ra = a;
-  const rb = b;
-  if (ra.type !== rb.type) return false;
-  const t = ra.type;
-  if (t === "STRING" || t === "PATTERN") return ra.value === rb.value;
-  if (t === "SYMBOL") return ra.name === rb.name;
-  if (t === "BLANK") return true;
-  if (t === "SEQ" || t === "CHOICE") {
-    const ma = ra.members;
-    const mb = rb.members;
-    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
-    if (ma.length !== mb.length) return false;
-    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
-  }
-  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1") {
-    return patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "FIELD") {
-    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "ALIAS") {
-    const raa = ra;
-    const rba = rb;
-    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
-  }
-  return false;
-}
 function replaceInBodyRt(rule, candidates, automatic) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
   for (const c of candidates) {
-    if (patternBodyEqual(rule, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
+    if (rulesEqual(rule, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule, automatic());
     }
@@ -5837,18 +5593,10 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   if (isStringType(c.type)) {
     return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
   }
-  if (isOptionalType(c.type)) {
-    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
-  }
-  if (isChoiceType(c.type)) {
-    const members = content.members;
-    if (Array.isArray(members) && members.length === 2) {
-      const blankIdx = members.findIndex((m) => m?.type === "BLANK");
-      if (blankIdx !== -1) {
-        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
-      }
-    }
-    return content;
+  const optional2 = optionalContentOf(c);
+  if (optional2 !== void 0) {
+    const rewritten = maybeKeywordSymbol(fieldName, optional2, wrapSyntheticBody);
+    return rewritten === optional2 ? content : withOptionalContent(c, rewritten);
   }
   return content;
 }
@@ -5866,26 +5614,6 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
     type: "SYMBOL",
     name: hiddenName
   };
-}
-function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
-  let inner;
-  if (wrapperKind === "optional") {
-    inner = content.content;
-  } else {
-    const members = content.members;
-    const nonBlank = members.find((m) => m.type !== "BLANK");
-    inner = nonBlank;
-  }
-  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
-  if (rewritten === inner) return content;
-  if (wrapperKind === "optional") {
-    const nativeOptional = globalThis.optional;
-    if (typeof nativeOptional !== "function") return content;
-    return nativeOptional(rewritten);
-  }
-  const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" ? m : rewritten);
-  return { ...c, members: newMembers };
 }
 function isFieldPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";

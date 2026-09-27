@@ -2193,19 +2193,25 @@ export const charLiteral: {
 };
 
 export const escapeSequence: {
-	readonly strict: typeof B.escapeSequenceSimple.strict;
-	readonly coerce: typeof B.escapeSequenceSimple.coerce;
-	readonly simple: typeof B.escapeSequenceSimple;
-	readonly unicodeFixed: typeof B.escapeSequenceUnicodeFixed;
-	readonly unicodeBraced: typeof B.escapeSequenceUnicodeBraced;
-	readonly hex: typeof B.escapeSequenceHex;
+	readonly strict: typeof F.buildEscapeSequenceSimple;
+	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
+	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
+	readonly unicodeFixed: {
+		strict: typeof F.buildEscapeSequenceUnicodeFixed;
+		coerce: typeof C.coerceToEscapeSequenceUnicodeFixed;
+	};
+	readonly unicodeBraced: {
+		strict: typeof F.buildEscapeSequenceUnicodeBraced;
+		coerce: typeof C.coerceToEscapeSequenceUnicodeBraced;
+	};
+	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
 } = {
-	strict: B.escapeSequenceSimple.strict,
-	coerce: B.escapeSequenceSimple.coerce,
-	simple: B.escapeSequenceSimple,
-	unicodeFixed: B.escapeSequenceUnicodeFixed,
-	unicodeBraced: B.escapeSequenceUnicodeBraced,
-	hex: B.escapeSequenceHex
+	strict: F.buildEscapeSequenceSimple,
+	coerce: C.coerceToEscapeSequenceSimple,
+	simple: { strict: F.buildEscapeSequenceSimple, coerce: C.coerceToEscapeSequenceSimple },
+	unicodeFixed: { strict: F.buildEscapeSequenceUnicodeFixed, coerce: C.coerceToEscapeSequenceUnicodeFixed },
+	unicodeBraced: { strict: F.buildEscapeSequenceUnicodeBraced, coerce: C.coerceToEscapeSequenceUnicodeBraced },
+	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex }
 };
 
 export const declarationStatement: {

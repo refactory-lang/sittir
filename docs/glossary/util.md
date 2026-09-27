@@ -200,7 +200,7 @@ matcher the class is `\w+`.
 Rules nothing reaches from the grammar's roots. The roots are every visible
 rule with a body plus `protectedNames` (the names the grammar machinery
 references outside rule bodies). A visible rule whose body is empty
-(`isEmptyBody`: a pre-registered placeholder nothing deposited into) is not
+(`isBlank`: a pre-registered placeholder nothing deposited into) is not
 a root, so it survives only while something references or protects it.
 Reachability rather than reference counting, so a rule kept alive only by
 other dead rules (or by itself) is still reported. Callers delete the

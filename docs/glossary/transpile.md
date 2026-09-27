@@ -217,7 +217,7 @@ for a placeholder that never deposited (a blank `_kw_<name>`, or a visible
 variant rule such as an unhoisted absent case), and enrich mints whose owner
 rule an override fully redeclares. Neither reaches parser.c/node-types.json;
 pruning keeps grammar.json, sittir's view of the parser, in agreement.
-`compiler/evaluate.ts`'s `prunePlaceholderOrphans` is the sittir-pipeline twin
+`compiler/canonical-rules.ts`'s `canonicalGrammar` orphan pass is the sittir-pipeline twin
 over the same traversal, and the two must stay in lockstep or the model
 diverges from the parser.
 

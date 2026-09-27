@@ -1995,25 +1995,34 @@ export const assignment: {
 };
 
 export const escapeSequence: {
-	readonly strict: typeof B.escapeSequenceSimple.strict;
-	readonly coerce: typeof B.escapeSequenceSimple.coerce;
-	readonly unicodeFixed: typeof B.escapeSequenceUnicodeFixed;
-	readonly unicodeWide: typeof B.escapeSequenceUnicodeWide;
-	readonly hex: typeof B.escapeSequenceHex;
-	readonly octal: typeof B.escapeSequenceOctal;
-	readonly lineBreak: typeof B.escapeSequenceLineBreak;
-	readonly simple: typeof B.escapeSequenceSimple;
-	readonly named: typeof B.escapeSequenceNamed;
+	readonly strict: typeof F.buildEscapeSequenceSimple;
+	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
+	readonly unicodeFixed: {
+		strict: typeof F.buildEscapeSequenceUnicodeFixed;
+		coerce: typeof C.coerceToEscapeSequenceUnicodeFixed;
+	};
+	readonly unicodeWide: {
+		strict: typeof F.buildEscapeSequenceUnicodeWide;
+		coerce: typeof C.coerceToEscapeSequenceUnicodeWide;
+	};
+	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
+	readonly octal: { strict: typeof F.buildEscapeSequenceOctal; coerce: typeof C.coerceToEscapeSequenceOctal };
+	readonly lineBreak: {
+		strict: typeof F.buildEscapeSequenceLineBreak;
+		coerce: typeof C.coerceToEscapeSequenceLineBreak;
+	};
+	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
+	readonly named: { strict: typeof F.buildEscapeSequenceNamed; coerce: typeof C.coerceToEscapeSequenceNamed };
 } = {
-	strict: B.escapeSequenceSimple.strict,
-	coerce: B.escapeSequenceSimple.coerce,
-	unicodeFixed: B.escapeSequenceUnicodeFixed,
-	unicodeWide: B.escapeSequenceUnicodeWide,
-	hex: B.escapeSequenceHex,
-	octal: B.escapeSequenceOctal,
-	lineBreak: B.escapeSequenceLineBreak,
-	simple: B.escapeSequenceSimple,
-	named: B.escapeSequenceNamed
+	strict: F.buildEscapeSequenceSimple,
+	coerce: C.coerceToEscapeSequenceSimple,
+	unicodeFixed: { strict: F.buildEscapeSequenceUnicodeFixed, coerce: C.coerceToEscapeSequenceUnicodeFixed },
+	unicodeWide: { strict: F.buildEscapeSequenceUnicodeWide, coerce: C.coerceToEscapeSequenceUnicodeWide },
+	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex },
+	octal: { strict: F.buildEscapeSequenceOctal, coerce: C.coerceToEscapeSequenceOctal },
+	lineBreak: { strict: F.buildEscapeSequenceLineBreak, coerce: C.coerceToEscapeSequenceLineBreak },
+	simple: { strict: F.buildEscapeSequenceSimple, coerce: C.coerceToEscapeSequenceSimple },
+	named: { strict: F.buildEscapeSequenceNamed, coerce: C.coerceToEscapeSequenceNamed }
 };
 
 export const integer: {

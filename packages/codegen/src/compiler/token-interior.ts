@@ -1,7 +1,7 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../types/rule.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
-import { composeTokenText } from '../dsl/rule-patterns.ts';
+import { composeTokenText, isBlank, optionalContentOf, withOptionalContent } from '../dsl/rule-patterns.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -10,10 +10,6 @@ const PREFIX_SLOT = 'prefix';
 const SUFFIX_SLOT = 'suffix';
 
 type Member = 'template' | 'flag' | 'enum' | 'slot' | 'group';
-
-function isBlank(rule: LinkRule): boolean {
-	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
-}
 
 function isEnumOfStrings(rule: LinkRule): boolean {
 	if (rule.type === CHOICE) {
@@ -61,47 +57,35 @@ function isField(rule: LinkRule): rule is LinkRule & { type: typeof FIELD } {
 }
 
 function groupArm(rule: LinkRule): (LinkRule & { type: typeof SEQ }) | undefined {
-	const arm =
-		rule.type === OPTIONAL
-			? rule.content
-			: rule.type === CHOICE && rule.members.some(isBlank)
-				? (() => {
-						const live = rule.members.filter((m) => !isBlank(m));
-						return live.length === 1 ? live[0] : undefined;
-					})()
-			: undefined;
+	const arm = optionalContentOf(rule);
 	return arm !== undefined && arm.type === SEQ && containsField(arm) ? (arm as LinkRule & { type: typeof SEQ }) : undefined;
 }
 
 function optionalArm(rule: LinkRule): LinkRule | undefined {
 	if (rule.type === REPEAT) return { ...rule, type: REPEAT1 } as LinkRule;
-	if (rule.type === OPTIONAL) return rule.content;
-	if (rule.type !== CHOICE || !rule.members.some(isBlank)) return undefined;
-	const live = rule.members.filter((m) => !isBlank(m));
-	return live.length === 1 ? live[0] : undefined;
+	return optionalContentOf(rule);
+}
+
+function isOptionalEnumOfStrings(rule: LinkRule): boolean {
+	const optional = optionalContentOf(rule);
+	return optional !== undefined && isEnumOfStrings(optional);
 }
 
 function memberClass(rule: LinkRule): Member {
 	if (rule.type === STRING) return 'template';
 	if (groupArm(rule) !== undefined) return 'group';
-	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || (rule.content.type === OPTIONAL && isEnumOfStrings(rule.content.content)) ? 'enum' : 'slot';
-	if (rule.type === OPTIONAL && rule.content.type === STRING) return 'flag';
-	if (rule.type === CHOICE && rule.members.length === 2 && rule.members.some(isBlank)) {
-		const arm = rule.members.find((m) => !isBlank(m));
-		if (arm?.type === STRING) return 'flag';
-	}
-	if (isEnumOfStrings(rule)) return 'enum';
-	if (rule.type === OPTIONAL && isEnumOfStrings(rule.content)) return 'enum';
+	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || isOptionalEnumOfStrings(rule.content) ? 'enum' : 'slot';
+	if (optionalContentOf<LinkRule>(rule)?.type === STRING) return 'flag';
+	if (isEnumOfStrings(rule) || isOptionalEnumOfStrings(rule)) return 'enum';
 	return 'slot';
 }
 
 function flagString(rule: LinkRule): LinkRule {
-	return (rule.type === OPTIONAL ? rule.content : rule.type === CHOICE ? rule.members.find((m) => !isBlank(m))! : rule) as LinkRule;
+	return optionalContentOf(rule) ?? rule;
 }
 
 function flagText(rule: LinkRule): string {
-	const inner = rule.type === OPTIONAL ? rule.content : rule.type === CHOICE ? rule.members.find((m) => !isBlank(m))! : rule;
-	return (inner as { value: string }).value;
+	return (flagString(rule) as { value: string }).value;
 }
 
 function fieldOf(name: string, content: LinkRule, id: LinkRule['id']): LinkRule {
@@ -147,11 +131,7 @@ function structureMembers(
 			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true);
 			if (inner === undefined) return undefined;
 			const rebuilt = { ...arm, members: inner } as LinkRule;
-			out.push(
-				member.type === OPTIONAL
-					? ({ ...member, content: rebuilt } as LinkRule)
-					: ({ ...member, members: (member as LinkRule & { type: typeof CHOICE }).members.map((m) => (isBlank(m) ? m : rebuilt)) } as LinkRule)
-			);
+			out.push(withOptionalContent(member, rebuilt));
 			i += 1;
 			continue;
 		}

@@ -154,15 +154,38 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::peelOptional`
+### `packages/codegen/src/dsl/rule-patterns.ts::isBlank`
 
-```text
-/**
- * Detect `optional(content)` across both runtimes:
- * - sittir:      `{ type: 'OPTIONAL', content }`
- * - tree-sitter: `{ type: 'CHOICE', members: [content, {BLANK}] }`
- */
-```
+True for every spelling of an empty rule: tree-sitter's `BLANK`, and the empty
+`CHOICE` or `SEQ` sittir's `blank()` builds. The one blank test; nothing else
+compares a rule type against `'BLANK'` or checks for zero members to mean
+"empty".
+
+### `packages/codegen/src/dsl/rule-patterns.ts::optionalContentOf`
+
+The content of an optional rule in either representation: `OPTIONAL(x)`, or a
+two-member `CHOICE` of `x` and a blank (either order). Returns `undefined` for
+anything else, including a choice whose two members are both blank. Every
+site that treats a rule as "optional x" reads through it, so an OPTIONAL and a
+CHOICE-with-blank always take the same path.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::withOptionalContent`
+
+Rebuilds an optional rule around new content in the representation it
+already has: `OPTIONAL` gets a new `content`; a CHOICE-with-blank keeps its
+blank member and replaces the other. The rebuild paired with
+`optionalContentOf`.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::optionalSeqBodyOf`
+
+The sequence an optional rule wraps, when its content (as `optionalContentOf`
+reads it) is a `SEQ`; else `undefined`.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isImmediateToken`
+
+True for tree-sitter's `IMMEDIATE_TOKEN` node and for the compile-side
+`TOKEN` with `immediate: true`. A `TOKEN` with `immediate` false or absent is
+not immediate.
 
 ### `packages/codegen/src/dsl/enrich.ts::isBareShapeTarget`
 
@@ -368,20 +391,6 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::peelOptionalSeq`
-
-```text
-/**
- * @internal — peel an optional wrapper from a rule node. Returns the inner
- * seq content if the rule is `optional(seq)` (sittir form) or
- * `CHOICE[seq, BLANK]` (tree-sitter normalized form). Returns null if the
- * rule is not an optional-wrapping-a-seq pattern.
- *
- * Also returns the seq member and the index of the seq in the members array
- * (for CHOICE form) so callers can rebuild the CHOICE with a different member.
- */
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::listSeparatorOfOptionalSeq`
 
 ```text
@@ -438,7 +447,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  * @internal — fold a stranded trailing `optional(sep)` into the preceding
  * `optional(seq(...))`'s body. Appends `trailingOptional` as the last seq
  * member and rebuilds the optional wrapper (both `optional` and
- * `CHOICE[seq,BLANK]` forms, via rebuildOptional).
+ * `CHOICE[seq,BLANK]` forms, via withOptionalContent).
  */
 ```
 
@@ -646,7 +655,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 
 ```text
 // Optional position with a NON-seq body (optional(seq) was peeled above).
-// `peelOptional` normalizes both runtime spellings — sittir's
+// `optionalContentOf` normalizes both runtime spellings — sittir's
 // `{ type: OPTIONAL, content }` and the tree-sitter CLI's desugared
 // `CHOICE[content, BLANK]` — into ONE hoist path. Before this branch the
 // desugared form reached the mint via the generic CHOICE arm walk while
@@ -730,7 +739,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 
 ```text
 // Descend into choice branches that are NOT optional(seq) wrappers
-// (those were handled above via peelOptionalSeq).
+// (those were handled above via optionalSeqBodyOf).
 ```
 
 #### body
@@ -1166,18 +1175,23 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 // `author: 'enrich'`, on the cased result.
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::ruleMatchesEmpty`
+### `packages/codegen/src/dsl/rule-patterns.ts::matchesEmpty`
 
 ```text
 /**
  * Conservative empty-matching predicate. Returns true iff the rule can produce
  * the empty string:
- *   - `optional` / `repeat` / `blank`                      → always matches empty
- *   - `repeat1`                                             → iff content matches empty
+ *   - `optional` / `repeat` / any blank                    → always matches empty
+ *   - `string`                                              → iff its value is empty
+ *   - `pattern`                                             → iff the pattern accepts the empty string
+ *   - `repeat1` / `field` / prec-wrapper                    → iff content matches empty
  *   - `seq`                                                 → iff ALL members match empty
  *   - `choice`                                              → iff ANY member matches empty
- *   - `field` / prec-wrapper                               → iff content matches empty
- *   - `string` / `symbol` / `token` / `pattern`            → false (non-empty)
+ *   - `symbol` / `token` / `alias`                          → false (non-empty)
+ *
+ * The one emptiness predicate: the transform's empty-arm factoring, the
+ * token-form split, enrich's hoist and element-mint guards and the group
+ * classifiers all ask it.
  */
 ```
 
@@ -1199,7 +1213,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  * Two exported functions, used by enrich (hoist decision) and, later, the
  * wire pass:
  *
- *   • `ruleMatchesEmpty(rule)` — conservative: returns true iff the rule can
+ *   • `matchesEmpty(rule)` — conservative: returns true iff the rule can
  *     produce the empty string. Guards both the inline-safe hoist and the
  *     inline-unsafe alias paths: tree-sitter rejects named rules (and aliases)
  *     that match the empty string.
@@ -1328,7 +1342,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
 /**
  * True iff `member` is an `optional(STRING sep)` or `choice(STRING sep,
  * blank)` flank whose literal value equals `sepValue` — mirrors the shape
- * `absorbTrailingListSeparators`/`peelOptionalSeq` (enrich.ts) already
+ * `absorbTrailingListSeparators`/`optionalSeqBodyOf` already
  * recognize for a stranded leading/trailing separator flank sibling to a
  * list's repeat (e.g. `commaSep1(E)`'s desugared
  * `seq(E, repeat(seq(SEP, E)), optional(SEP))`).
@@ -2750,16 +2764,6 @@ membership) through `withAutomaticLabel`, so the name matches what the site
 now spells and the new key is recorded. Used by `resolveAliasPlaceholder`'s
 lift/mint/rename branches and `replaceInBodyRt`'s group substitution.
 
-### `packages/codegen/src/dsl/rule-transforms.ts::structuralBuilder`
-
-```text
-/**
- * Structural builder: each method builds the plain node literal exactly as
- * the construction sites previously did. Byte-identical to hand-written
- * literals; used as the safe default when no ctx.builder is present.
- */
-```
-
 ### `packages/codegen/src/dsl/rule-transforms.ts::flagWalker`
 
 ```text
@@ -3088,7 +3092,7 @@ unwraps `prec` and a stamp on the wrapper is lost.
 ```text
 /** `prec(n, x)` with `prec.left` / `prec.right` / `prec.dynamic`, the DSL's
  *  spelling. On the normalize view the family is vocabulary only —
- *  precedence never reaches link (evaluate strips it), so
+ *  precedence never reaches link (the compile boundary strips it), so
  *  `attributeBuilder.prec` stamps `prec` but nothing routes through it. */
 ```
 
@@ -3216,333 +3220,19 @@ unwraps `prec` and a stamp on the wrapper is lost.
  *  `attributeAlias` are the same shape. */
 ```
 
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`
+### `packages/codegen/src/dsl/builders.ts::structuralBuilder`
 
-```text
-/**
- * Choice combinator's one-level shape recognition: an all-same-name FIELD
- * choice factors to a single FIELD wrapping a CHOICE of the arms' contents
- * (delegates to {@link collapseAllFieldChoiceMembers}); any other member
- * shape passes through as a plain CHOICE. The single-member collapse,
- * `choice(x, blank())` → `optional(x)`, and all-string → EnumRule
- * detection are evaluate's own sugar (compiler/evaluate.ts's `choice()`
- * wrapper) — they run before this is ever reached, not builder work.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::collapseAllFieldChoiceMembers`
-
-```text
-/**
- * Collapse an all-field choice into a factored field, or leave it as a
- * plain choice of (heterogeneously-named) fields.
- *
- * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
- * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
- *   name, otherwise a raw `choice` of the original `field()` members.
- * @remarks
- * All branches wrap the SAME field name — factor the field outward to
- * `field('x', choice(A, B))`. The choice content may itself simplify to an
- * enum when all inners are strings.
- *
- * Otherwise (different field names, or any branch wraps an alias — see below),
- * the choice passes through as-is: `choice(field('body', seq), field('semi',
- * seq))` stays exactly that. PR 2 (2026-07-21 union-slot design) retired the
- * prior VARIANT-retype encoding here (`FieldRule<'evaluate'>` / `VariantRule`
- * share the same `name`+`content` shape, so the retype was a pure discriminator
- * change) — that existed only for Link's now-deleted `promotePolymorph` pass to
- * recognize the shape and wrap the rule in a `PolymorphRule`;
- * `PolymorphRule`/`AssembledPolymorph` are fully gone from the pipeline, so the
- * fields now stay FIELD-typed and route into named slots via the per-arm
- * union-slot routing (`carriesNamedField`), same as any other heterogeneous
- * fielded choice.
- *
- * @remarks
- * Any branch wrapping an alias directly takes this same passthrough (checked
- * first, before the same-name factoring). Aliases are structural rename
- * markers; downstream passes (Link, assemble) depend on the alias appearing
- * inside a plain choice to route the synthetic kind into the NodeMap —
- * factoring or retyping shifts classification and leaves the alias target
- * unregistered (observed on rust `_line_doc_comment_marker` /
- * `_block_doc_comment_marker`).
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.optional`
-
-```text
-/**
- * Optional combinator's one-level shape recognition.
- *
- * @remarks
- * `optional(optional(x))` collapses to `optional(x)` — two layers of
- * "zero or one" is the same as one layer.
- *
- * @remarks
- * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
- * already optional in the config surface (`items?: T[]`, null-coalesced
- * to `[]` in the factory), so the wrapper adds no information.
- *
- * @remarks
- * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
- * parse-identical: tree-sitter surfaces "optional didn't fire" and
- * "repeat1 fired with zero items" identically (an empty children list).
- * The non-empty guarantee a bare `repeat1` carries only holds when there
- * is no `optional` wrapper to swallow the empty case.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat`
-
-```text
-/**
- * Zero-or-more repetition combinator's one-level shape recognition.
- *
- * @remarks
- * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
- * a distinct separator — the outer loop is redundant.
- *
- * @remarks
- * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
- * zero occurrences, so the optional wrapper is redundant.
- *
- * @remarks
- * The separator LIFT (`repeat(seq(sep, x))` → `repeat{separator}`) runs in
- * the link pass, not here — see compiler/lift-separators.ts.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat1`
-
-```text
-/**
- * One-or-more repetition combinator's one-level shape recognition.
- *
- * @remarks
- * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
- * more" of "one or more" accepts the same strings as the inner.
- *
- * @remarks
- * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
- * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
- * zero-or-more `x` (one outer iteration of zero inner matches), which
- * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
- * left alone to preserve grammar author intent.
- *
- * @remarks
- * The separator LIFT runs in the link pass, not here — see
- * compiler/lift-separators.ts.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.field`
-
-```text
-/**
- * Field combinator's one-level shape recognition: collapses
- * `optional(repeat(...))` and `optional(repeat1(...))` field content to
- * `repeat(...)` (delegates to {@link collapseOptionalRepeatInFieldContent}).
- * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any empty
- * case as an empty children list. Collapsing here keeps evaluate output
- * canonical across all the equivalent list encodings grammar authors write.
- *
- * @remarks
- * Ref-name propagation, the `content === undefined` placeholder sugar for
- * `resolvePatch`, and stopping at inner field/alias boundaries are
- * evaluate's own wrapper concern (compiler/evaluate.ts's `field()`), not
- * builder work — this only shapes the content.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::collapseOptionalRepeatInFieldContent`
-
-```text
-/**
- * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
- * `repeat(...)` inside a field's content.
- *
- * @param content - The field's already-resolved content rule.
- * @returns The canonicalized rule with the optional wrapper removed when
- *   the inner content is a repeat variant.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.token.immediate`
-
-```text
-/**
- * Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
- * `{type: TOKEN, immediate: true}` — see the `ImmediateTokenRule` entry
- * in `docs/glossary/types.md`. `grammarFn`'s `normalizeImmediateTokens`
- * (compiler/evaluate.ts) folds this into TOKEN+immediate once enrich's
- * minting decisions (which must see the same arm shape under both
- * runtimes) are locked in.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.choice`
-
-```text
-/**
- * Choice combinator's one-level shape recognition: an all-same-name FIELD
- * choice factors to a single FIELD wrapping a CHOICE of the arms' contents
- * (delegates to {@link collapseAllFieldChoiceMembers}); any other member
- * shape passes through as a plain CHOICE. The single-member collapse,
- * `choice(x, blank())` → `optional(x)`, and all-string → EnumRule
- * detection are evaluate's own sugar (compiler/evaluate.ts's `choice()`
- * wrapper) — they run before this is ever reached, not builder work.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::collapseAllFieldChoiceMembers`
-
-```text
-/**
- * Collapse an all-field choice into a factored field, or leave it as a
- * plain choice of (heterogeneously-named) fields.
- *
- * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
- * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
- *   name, otherwise a raw `choice` of the original `field()` members.
- * @remarks
- * All branches wrap the SAME field name — factor the field outward to
- * `field('x', choice(A, B))`. The choice content may itself simplify to an
- * enum when all inners are strings.
- *
- * Otherwise (different field names, or any branch wraps an alias — see below),
- * the choice passes through as-is: `choice(field('body', seq), field('semi',
- * seq))` stays exactly that. PR 2 (2026-07-21 union-slot design) retired the
- * prior VARIANT-retype encoding here (`FieldRule<'evaluate'>` / `VariantRule`
- * share the same `name`+`content` shape, so the retype was a pure discriminator
- * change) — that existed only for Link's now-deleted `promotePolymorph` pass to
- * recognize the shape and wrap the rule in a `PolymorphRule`;
- * `PolymorphRule`/`AssembledPolymorph` are fully gone from the pipeline, so the
- * fields now stay FIELD-typed and route into named slots via PR 1's per-arm
- * union-slot routing (`carriesNamedField`), same as any other heterogeneous
- * fielded choice.
- *
- * @remarks
- * Any branch wrapping an alias directly takes this same passthrough (checked
- * first, before the same-name factoring). Aliases are structural rename
- * markers; downstream passes (Link, assemble) depend on the alias appearing
- * inside a plain choice to route the synthetic kind into the NodeMap —
- * factoring or retyping shifts classification and leaves the alias target
- * unregistered (observed on rust `_line_doc_comment_marker` /
- * `_block_doc_comment_marker`).
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.optional`
-
-```text
-/**
- * Optional combinator's one-level shape recognition.
- *
- * @remarks
- * `optional(optional(x))` collapses to `optional(x)` — two layers of
- * "zero or one" is the same as one layer.
- *
- * @remarks
- * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
- * already optional in the config surface (`items?: T[]`, null-coalesced
- * to `[]` in the factory), so the wrapper adds no information.
- *
- * @remarks
- * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
- * parse-identical: tree-sitter surfaces "optional didn't fire" and
- * "repeat1 fired with zero items" identically (an empty children list).
- * The non-empty guarantee a bare `repeat1` carries only holds when there
- * is no `optional` wrapper to swallow the empty case.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat`
-
-```text
-/**
- * Zero-or-more repetition combinator's one-level shape recognition.
- *
- * @remarks
- * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
- * a distinct separator — the outer loop is redundant.
- *
- * @remarks
- * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
- * zero occurrences, so the optional wrapper is redundant.
- *
- * @remarks
- * The separator LIFT (`repeat(seq(sep, x))` → `repeat{separator}`) runs in
- * the link pass, not here — see compiler/lift-separators.ts.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.repeat1`
-
-```text
-/**
- * One-or-more repetition combinator's one-level shape recognition.
- *
- * @remarks
- * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
- * more" of "one or more" accepts the same strings as the inner.
- *
- * @remarks
- * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
- * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
- * zero-or-more `x` (one outer iteration of zero inner matches), which
- * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
- * left alone to preserve grammar author intent.
- *
- * @remarks
- * The separator LIFT runs in the link pass, not here — see
- * compiler/lift-separators.ts.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.field`
-
-```text
-/**
- * Field combinator's one-level shape recognition: collapses
- * `optional(repeat(...))` and `optional(repeat1(...))` field content to
- * `repeat(...)` (delegates to {@link collapseOptionalRepeatInFieldContent}).
- * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any empty
- * case as an empty children list. Collapsing here keeps evaluate output
- * canonical across all the equivalent list encodings grammar authors write.
- *
- * @remarks
- * Ref-name propagation, the `content === undefined` placeholder sugar for
- * `resolvePatch`, and stopping at inner field/alias boundaries are
- * evaluate's own wrapper concern (compiler/evaluate.ts's `field()`), not
- * builder work — this only shapes the content.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::collapseOptionalRepeatInFieldContent`
-
-```text
-/**
- * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
- * `repeat(...)` inside a field's content.
- *
- * @param content - The field's already-resolved content rule.
- * @returns The canonicalized rule with the optional wrapper removed when
- *   the inner content is a repeat variant.
- */
-```
-
-### `packages/codegen/src/dsl/builders.ts::structuralBuilder.token.immediate`
-
-```text
-/**
- * Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
- * `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
- * comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
- * (compiler/evaluate.ts) folds this into TOKEN+immediate once enrich's
- * minting decisions (which must see the same arm shape under both
- * runtimes) are locked in.
- */
-```
+Each method builds the node tree-sitter's own DSL builds for the same call:
+`seq` and `choice` keep every member, a single one included; `optional`,
+`repeat`, `repeat1` and `field` wrap their content as given; `token` carries
+no `immediate` flag and `token.immediate` builds its own `IMMEDIATE_TOKEN`
+node. Nothing collapses at construction, so enrich and wire — which run
+under both runtimes — read the same shape tree-sitter reads. The canonical
+shape the compiler phases read is produced once, at the compile boundary,
+by `compiler/canonical-rules.ts::canonicalRuleTree`. Evaluate's DSL wrappers
+only coerce their inputs before delegating here; the one exception is
+`choice(x, blank())`, which builds `optional(x)` (the same language, and the
+one representation difference `rulesEqual` treats as equal).
 
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.prec`
 
@@ -3693,11 +3383,11 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
-### `packages/codegen/src/dsl/shared.ts::module`
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleKey`
 
 ```text
 /**
- * dsl/shared.ts — canonical structural-identity key for rule shapes.
+ * The canonical structural-identity key for rule shapes.
  *
  * `ruleKey` gives every distinguishable rule shape a stable string, so a
  * many-way "have I already seen a rule structurally identical to this one"
@@ -3742,13 +3432,15 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
-### `packages/codegen/src/dsl/shared.ts::DSL_RULES_KEY`
-
-The non-enumerable key under which sittir's `grammar()` result carries its rules as the DSL built them, before sittir's compile-time canonicalization (precedence stripping, the immediate-token fold). Tree-sitter's `grammar()` result never carries it.
+The key also reads the DSL's representation pairs as one shape: every blank
+(`isBlank`), `OPTIONAL(x)` and `CHOICE[x, blank]` (`optionalContentOf`), and
+`IMMEDIATE_TOKEN(x)` and `TOKEN(x)` with `immediate: true`
+(`isImmediateToken`). A `TOKEN` whose `immediate` is false or absent keys as a
+plain token.
 
 ### `packages/codegen/src/dsl/shared.ts::baseRulesOf`
 
-The rules a grammar object offers when it is used as a base: the `DSL_RULES_KEY` rules when present, else `.rules`, through a `{ grammar }` wrapper or not. Every reader that treats a grammar as a base (enrich, wire, an extending `grammar()`) reads through it, so the bundled DSL code sees the same rule shapes under sittir's evaluation as under tree-sitter's; a base read that sees canonicalized rules makes enrich decide differently in the two executions and mints kinds the parser never has.
+The rules a grammar object offers when it is used as a base: its `.rules`, through a `{ grammar }` wrapper or not. sittir's `grammar()` returns rules exactly as its DSL built them — canonicalization runs later, at the compile boundary — so enrich, wire and an extending `grammar()` read the same shapes under sittir's evaluation as under tree-sitter's.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::module`
 
@@ -3803,7 +3495,7 @@ The rules a grammar object offers when it is used as a base: the `DSL_RULES_KEY`
  * else: terminality (`classifyByType` / `isNonterminalRuleType`), enum and
  * spliceable-seq shapes, separated-list detection (`separatorOf`), group
  * classification (`isInlineSafe` / `isSupertypeLike` / `isPermutationChoice`
- * / `ruleMatchesEmpty`), and the self-referential chain fold. Recognizers
+ * / `matchesEmpty`), and the self-referential chain fold. Recognizers
  * inspect and report; they never mutate. What a caller does with a
  * recognized shape is the caller's phase concern.
  *
@@ -3949,9 +3641,9 @@ non-token body.
 #### body
 
 ```text
-/* PREC family is stripped by evaluate.ts's `stripPrecedenceWrappers`
-		   before this runs — see that function's doc comment — so these
-		   cases are unreachable at runtime. Transparent single-child wrapper,
+/* PREC family is stripped at the compile boundary
+		   (`canonicalRuleTree`) before this runs, so these cases are
+		   unreachable at runtime. Transparent single-child wrapper,
 		   same as TOKEN/FIELD above. String literals (not rule-types.ts
 		   consts): that module is deprecated for new imports — see its
 		   header. */
@@ -3960,8 +3652,8 @@ non-token body.
 #### body
 
 ```text
-/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
-		   `normalizeImmediateTokens` before this runs — unreachable at
+/* IMMEDIATE_TOKEN is folded into TOKEN+immediate at the compile
+		   boundary (`canonicalRuleTree`) before this runs — unreachable at
 		   runtime, transparent single-child wrapper like TOKEN. */
 ```
 
@@ -4240,14 +3932,6 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
  * multi-arm choice or compound seq has no single name (`null` — the caller
  * falls back to the `elements` basis).
  */
-```
-
-### `packages/codegen/src/dsl/rule-patterns.ts::peelOptionalEitherSpelling`
-
-```text
-/** @internal — `rule` matches `optional(X)` in either runtime spelling
- *  (`OPTIONAL{content}` or the CLI-desugared `CHOICE[X, BLANK]`); returns the
- *  inner X, else null. */
 ```
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.elementName`
@@ -5634,7 +5318,7 @@ field labels instead of taking the minted `element` field.
 // tree-sitter's native optional() is sugar for choice(rule, blank()) —
 // it never produces a distinct OPTIONAL wrapper, so a CHOICE(X, BLANK)
 // arriving here (as opposed to sittir's own optional(), which preserves
-// OPTIONAL) IS an optional-shape and must be tried via peelOptional
+// OPTIONAL) IS an optional-shape and must be tried via optionalContentOf
 // before falling back to generic per-member CHOICE recursion below.
 ```
 
@@ -5673,7 +5357,7 @@ field labels instead of taking the minted `element` field.
 //
 // Handles both the sittir-shape `optional(seq(...))` and the tree-sitter-
 // normalized `CHOICE[seq, BLANK]` form (same descent as the existing
-// peelOptional helper).
+// optionalContentOf helper).
 //
 // Collision-aware: when the synthesized name is already claimed in
 // `rulesBag` (base.grammar.rules), skip with a stderr notice.

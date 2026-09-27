@@ -6,7 +6,7 @@
  * `base.grammar.rules`, so tree-sitter (kindId) AND the IR see it from one source.
  *
  * Predicate (generalized from old clause-only check):
- *   • `ruleMatchesEmpty(seqBody)` → leave un-hoisted (tree-sitter rejects empty named rules)
+ *   • `matchesEmpty(seqBody)` → leave un-hoisted (tree-sitter rejects empty named rules)
  *   • `isInlineSafe(seqBody)` → hoist (exactly ONE field/symbol slot after dropping literals)
  *   • else (inline-unsafe: bare-choice slot OR ≥2 slots) → leave inline for applyAutoGroups
  */

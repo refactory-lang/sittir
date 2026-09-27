@@ -345,8 +345,8 @@ patched a reference to it in.
  *      `blank()`, breaking every rule that uses the hidden symbol.
  *
  *   3. **`blank()` fallback** — when neither source has content.
- *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
- *      BLANK orphans don't pollute the grammar.
+ *      An orphaned blank rule is pruned at the compile boundary
+ *      (`canonicalGrammar`), so it doesn't pollute the grammar.
  */
 ```
 
@@ -556,27 +556,6 @@ patched a reference to it in.
  * - CHOICE with ≥2 members
  * - REPEAT/REPEAT1 wrapping a non-trivial content node
  */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
-
-```text
-/**
- * Normalize tree-sitter's `choice(x, BLANK)` to `optional(x)` so body-pattern
- * matching works on the wire/tree-sitter-CLI path, where the IR's later
- * `choice(x,BLANK)→optional(x)` normalization hasn't run yet. Without this,
- * an authored body fn that writes `optional($.x)` never matches the raw base
- * grammar's `choice($.x, BLANK)` form, so the alias-to-visible-kind never
- * fires (e.g. rust `attributed_parameter` stayed a phantom IR-only kind).
- */
-```
-
-#### body
-
-```text
-// Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
-// uses for its `CHOICE[seq, BLANK]` → optional handling), so the two wire
-// passes recognize the tree-sitter-lowered optional form identically.
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::replaceInBodyRt`
@@ -1417,28 +1396,6 @@ are what the shape-free half of the load-time check can promise.
 	 *  pattern entries; absent for legacy `_`-prefix candidates. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
-
-```text
-/**
- * Structural equality for two RuntimeRule bodies. Recursive.
- *
- * A candidate body evaluated in the sittir runtime matches a rule body
- * evaluated in tree-sitter's runtime because both agree on UPPERCASE
- * discriminants — no case reconciliation needed.
- *
- * Edge cases:
- * - PREC/PREC_LEFT/PREC_RIGHT wrappers: sittir's `prec()` helper strips the
- *   wrapper before storing the rule, so they won't appear in sittir-runtime
- *   bodies. Tree-sitter preserves them. We treat them as non-matching (return
- *   false for unknown types) — prec-wrapped patterns are more specific than
- *   the declared body and should NOT be replaced.
- * - FIELD wrappers: name AND content must match. A field carrying the same
- *   content but a different name is a different structural pattern.
- * - ALIAS: not handled — an alias is semantically distinct from its content.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
@@ -1699,7 +1656,7 @@ argument disables inference for the parameters after it; the grammars pass
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 // auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
 // `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
-// desugaring, per `peelOptionalSeq`): inline-SAFE into a hidden
+// desugaring, per `optionalSeqBodyOf`): inline-SAFE into a hidden
 // `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
 // `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
 // registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
@@ -1801,7 +1758,7 @@ authored declaration elsewhere (automatic arm labels vs `variant()`). The
 minted groups come only from enrich's own record
 (`getEnrichVisibleGroupSources`), never a name pattern. The minted body is
 compared with `unwrapPrec` applied, since enrich re-registers the ambient prec
-on it, using `patternBodyEqual`, the predicate the replacement itself uses. An
+on it, using `rulesEqual`, the predicate the replacement itself uses. An
 adopted group is deleted from the enriched base's rule map, which wire runs
 before `grammar()` copies it in both pipelines. Its references are rewritten to
 the authored alias by `replaceInBodyRt` through the candidate's `adopts` set.
@@ -1843,26 +1800,6 @@ Minted visible-group name → the authored `groups:` key that adopted it
 
 Minted group names this authored candidate adopted. `replaceInBodyRt` treats a
 reference to one of them as a match of the candidate's body.
-
-### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
-
-#### body
-
-```text
-// Types must match.
-```
-
-```text
-// BLANK is a singleton — type match is sufficient
-```
-
-#### body
-
-```text
-// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
-// in addition to `content`. Two aliases are structurally equal when all
-// three match — e.g. `alias($._not_in, 'not in')` vs itself.
-```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
 

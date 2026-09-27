@@ -135,17 +135,6 @@ export const printStatementChevron: Hoisted<typeof O.printStatementChevron> = ho
 export const printStatementPlain: Hoisted<typeof O.printStatementPlain> = hoist(O.printStatementPlain);
 export const parenthesizedImportList: Hoisted<typeof O.parenthesizedImportList> = hoist(O.parenthesizedImportList);
 export const comprehensionClauses: Hoisted<typeof O.comprehensionClauses> = hoist(O.comprehensionClauses);
-export const escapeSequenceUnicodeFixed: Hoisted<typeof O.escapeSequenceUnicodeFixed> = hoist(
-	O.escapeSequenceUnicodeFixed
-);
-export const escapeSequenceUnicodeWide: Hoisted<typeof O.escapeSequenceUnicodeWide> = hoist(
-	O.escapeSequenceUnicodeWide
-);
-export const escapeSequenceHex: Hoisted<typeof O.escapeSequenceHex> = hoist(O.escapeSequenceHex);
-export const escapeSequenceOctal: Hoisted<typeof O.escapeSequenceOctal> = hoist(O.escapeSequenceOctal);
-export const escapeSequenceLineBreak: Hoisted<typeof O.escapeSequenceLineBreak> = hoist(O.escapeSequenceLineBreak);
-export const escapeSequenceSimple: Hoisted<typeof O.escapeSequenceSimple> = hoist(O.escapeSequenceSimple);
-export const escapeSequenceNamed: Hoisted<typeof O.escapeSequenceNamed> = hoist(O.escapeSequenceNamed);
 export const expressionStatementTuple: Hoisted<typeof O.expressionStatementTuple> = hoist(O.expressionStatementTuple);
 export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoist(O.withClauseBare);
 export const simpleStatement: Hoisted<typeof O.simpleStatement> = hoistRoutes(O.simpleStatement);

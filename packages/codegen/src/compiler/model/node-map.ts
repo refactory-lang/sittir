@@ -13,7 +13,7 @@ import type {
 	RuleId,
 	RuleAnnotations
 } from '../../types/rule.ts';
-import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
+import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
 	literalTextOf,
 	isLinkSymbol,
@@ -917,8 +917,6 @@ export function deriveValuesForRule(
 					};
 				});
 			}
-			const isBlank = (r: RenderRule): boolean =>
-				(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
 			const nonBlank = members.filter((m) => !isBlank(m));
 			const hasBlank = nonBlank.length < members.length;
 			const armMult: Multiplicity =

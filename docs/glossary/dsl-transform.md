@@ -599,16 +599,6 @@ hoist to a transparent unit production (no anonymous token, at most one named
 child), by the same `variantBranchIsUnmaterializable` rule the per-arm form
 applies.
 
-### `packages/codegen/src/dsl/transform/transform.ts::optionalContentOf`
-
-The content of an optional in either runtime's spelling: sittir's `OPTIONAL`
-node, or tree-sitter's `choice(content, blank)`. Recognising only one would
-let a hoist fire in one pipeline and bail in the other.
-
-### `packages/codegen/src/dsl/transform/transform.ts::isBlank`
-
-Whether a rule is tree-sitter's `BLANK`, the absent arm `hoistChoiceOf` spells for an optional.
-
 ### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
 ```text
@@ -944,54 +934,14 @@ on the way in; an authored body of that name is left as authored.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
-```text
-/**
- * Descend through field-transparent wrappers (optional, prec/*) to find
- * the first enrich-shaped field inside (see `isEnrichShapedFieldWrapper`).
- * Returns a reconstruction function that rebuilds the wrapper chain with
- * a new inner value, plus the found field (if any). Does NOT descend into
- * seq/general-choice/repeat/field.
- *
- * Handles two shapes of "optional" wrapper:
- *   - Sittir pipeline: `{ type: 'OPTIONAL', content: ... }`.
- *   - Tree-sitter CLI pipeline: `{ type: 'CHOICE', members: [content, BLANK] }` —
- *     tree-sitter's `optional(x)` desugars to `choice(x, blank())`. The
- *     enrich pass uses `rebuildOptional` which preserves this CHOICE shape.
- *     We treat 2-member CHOICE-with-BLANK as transparent so the rename
- *     reaches the field inside.
- *
- * Only used by resolveFieldPlaceholder for the nested-enrich-shaped-field case.
- */
-```
-
-#### body
-
-```text
-// Shape A: the sittir/tree-sitter-native optional { type: 'OPTIONAL', content: ... }.
-```
-
-#### body
-
-```text
-// Shape B: tree-sitter CLI's CHOICE-with-BLANK — the canonical encoding of
-// optional(x) in tree-sitter's runtime: { type: 'CHOICE', members: [x, BLANK] }
-// or [BLANK, x]. Enrich's rebuildOptional preserves this shape.
-// Only treat as transparent when exactly 2 members and one is BLANK.
-```
-
-```text
-// a real choice, not an optional
-```
-
-#### body
-
-```text
-// Shape C: prec wrappers — transparent in path-addressing; content carries
-// the actual rule (value is separate). PREC/PREC_LEFT/PREC_RIGHT/
-// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
-// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
-// uppercase spellings ever appear here.
-```
+Descends through field-transparent wrappers — an optional in either
+representation (`optionalContentOf`) or a precedence wrapper — to the first
+enrich-shaped field inside (see `isEnrichShapedFieldWrapper`). Returns the
+found field and a function that rebuilds the wrapper chain around a new inner
+value, each optional in the representation it already had
+(`withOptionalContent`). Does not descend into a sequence, a general choice, a
+repeat or a field. Only `resolveFieldPlaceholder`'s nested enrich-shaped-field
+case uses it.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveRulePlaceholder`
 

@@ -1,4 +1,4 @@
-import { isEmptyBody } from '../types/runtime-shapes.ts';
+import { isBlank } from '../dsl/rule-patterns.ts';
 
 export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
 	return Object.keys(rules)[0];
@@ -26,7 +26,7 @@ export function collectOrphanedRules(
 		reachable.add(name);
 		queue.push(name);
 	};
-	const isRoot = (name: string): boolean => !name.startsWith('_') && !isEmptyBody(rules[name]);
+	const isRoot = (name: string): boolean => !name.startsWith('_') && !isBlank(rules[name]);
 	for (const name of Object.keys(rules)) {
 		if (isRoot(name)) enqueue(name);
 	}

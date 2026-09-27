@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 434,
+  "nodeCount": 433,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -4758,19 +4758,6 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n"
-    },
-    {
-      "kind": "_operator",
-      "modelType": "enum",
-      "typeName": "Operator",
-      "factoryName": "operator",
-      "irKey": "operator",
-      "hidden": false,
-      "values": [
-        "++",
-        "--"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_property_name",
@@ -27238,15 +27225,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_operator",
-              "parseKind": "_operator"
+              "value": "++",
+              "parseKind": "plus_plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--",
+              "parseKind": "dash_dash"
             }
           ]
         }
@@ -27277,15 +27268,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_operator",
-              "parseKind": "_operator"
+              "value": "++",
+              "parseKind": "plus_plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--",
+              "parseKind": "dash_dash"
             }
           ]
         },

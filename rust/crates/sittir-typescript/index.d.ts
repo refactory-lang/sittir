@@ -1705,13 +1705,13 @@ export interface UpdateExpressionPostfixTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _argument: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<OperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
 }
 
 export interface UpdateExpressionPrefixTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _operator: SlotValue<OperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 

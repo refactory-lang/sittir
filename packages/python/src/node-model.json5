@@ -6865,6 +6865,10 @@
       "factoryName": "escapeSequenceHex",
       "irKey": "escapeSequenceHex",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -6883,6 +6887,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -6913,6 +6918,10 @@
       "factoryName": "escapeSequenceLineBreak",
       "irKey": "escapeSequenceLineBreak",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -6931,6 +6940,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_line_break",
       "interior": {
         "entries": [
           {
@@ -6961,6 +6971,10 @@
       "factoryName": "escapeSequenceNamed",
       "irKey": "escapeSequenceNamed",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -6979,6 +6993,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_named",
       "interior": {
         "entries": [
           {
@@ -7009,6 +7024,10 @@
       "factoryName": "escapeSequenceOctal",
       "irKey": "escapeSequenceOctal",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7027,6 +7046,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_octal",
       "interior": {
         "entries": [
           {
@@ -7057,6 +7077,10 @@
       "factoryName": "escapeSequenceSimple",
       "irKey": "escapeSequenceSimple",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7075,6 +7099,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_simple",
       "interior": {
         "entries": [
           {
@@ -7105,6 +7130,10 @@
       "factoryName": "escapeSequenceUnicodeFixed",
       "irKey": "escapeSequenceUnicodeFixed",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7123,6 +7152,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_unicode_fixed",
       "interior": {
         "entries": [
           {
@@ -7153,6 +7183,10 @@
       "factoryName": "escapeSequenceUnicodeWide",
       "irKey": "escapeSequenceUnicodeWide",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7171,6 +7205,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_unicode_wide",
       "interior": {
         "entries": [
           {

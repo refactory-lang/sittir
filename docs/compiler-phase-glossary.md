@@ -178,9 +178,14 @@ Reference: [glossary/dsl.md](glossary/dsl.md).
 
 `evaluate(entryPath)` executes the grammar DSL (grammar.js or
 grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,
-`transform()`) and produces a `RawGrammar`. The DSL constructors normalize
-as they build (degenerate-nesting collapse, `choice(x, blank())` →
-optional, all-string choices → enum, comma-separated seq lift). Inline
+`transform()`) and produces a `RawGrammar`. The DSL constructors build
+the shapes tree-sitter's DSL builds — the one rewrite is
+`choice(x, blank())` → `optional(x)`, the same language; `isBlank`,
+`optionalContentOf` and `isImmediateToken` (dsl/rule-patterns.ts) read each
+representation pair as one shape. `evaluate` then crosses the compile
+boundary (`compiler/canonical-rules.ts`): precedence wrappers are peeled,
+immediate tokens folded and degenerate nesting collapsed, once, into the
+canonical shape the later phases read. Inline
 alias content is not rewritten here: enrich (Phase 0) distributes an alias
 over a choice and mints the storage of an alias over literals, and
 field-enum synthesis is enrich's job too, so the same rule tree-sitter

@@ -776,9 +776,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	143: ['predefined_type'],
 	144: ['predefined_type'],
 	145: ['predefined_type'],
-	150: ['__for_header_operator'],
-	166: ['_operator'],
-	167: ['_operator']
+	150: ['__for_header_operator']
 };
 
 function _resolveOne<T>(
@@ -10563,7 +10561,7 @@ export function resolveUpdateExpressionPostfix_operator(
 	value: T.UpdateExpressionPostfix.LooseConfig['operator']
 ): T.UpdateExpressionPostfix['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'++' | '--'>(value, '_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'++' | '--'>(value, _K2, _K2)),
 		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
 	);
 }
@@ -10591,7 +10589,7 @@ export function resolveUpdateExpressionPrefix_operator(
 	value: T.UpdateExpressionPrefix.LooseConfig['operator']
 ): T.UpdateExpressionPrefix['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'++' | '--'>(value, '_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'++' | '--'>(value, _K2, _K2)),
 		[['++', TSKindId.PlusPlus] as const, ['--', TSKindId.DashDash] as const]
 	);
 }
