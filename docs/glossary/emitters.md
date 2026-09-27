@@ -5548,6 +5548,31 @@ caller), so an optional `?.` reference folds `qmark_dot_before` and
 `qmark_dot_after` into its presence gate and an absent chain marker leaves no
 site behind.
 
+### `packages/codegen/src/emitters/render-body.ts::WordSeamNode`
+
+A seam whose payload is one space, written as a plain (non-token) seam: it
+coalesces with its neighbours like a site's space arm and drops at the render's
+edges, so a keyword that opens a standalone render gets no leading space.
+
+### `packages/codegen/src/emitters/render-body.ts::WORD_SEAM`
+
+The body holding one `WordSeamNode`; the Rust printer writes it as
+`w.seam(" ")`.
+
+### `packages/codegen/src/emitters/render-body.ts::gateKeywordSlotSeams`
+
+A slot preference addresses the slot's punctuation values; keyword values
+keep their word seam. For a slot whose values mix keywords and punctuation
+(`keywordKindsOf` returns the keyword kinds, supplied by the caller), the
+seam named `<slot>_after` right after the slot and the seam named
+`<slot>_before` right before it become a kind gate: when the rendered value is
+one of the keyword kinds the seam is `WORD_SEAM`, otherwise it is the slot's
+own site. A tight preference on an operator slot that holds both `!` and
+`typeof` renders `!x` tight while `typeof x` and `typeof (x)` keep their
+space. A slot that is not mixed, and a seam not beside its slot, is left as it
+is. `TemplateEmitter` applies it after `gateOptionalSlotSeams`, so a seam
+already folded into an optional slot's gate is gated inside that arm.
+
 ### `packages/codegen/src/emitters/render-body.ts::liftGates`
 
 Moves presence gates out of a body and onto the views. A gate that only
@@ -10379,6 +10404,13 @@ The seam names a slot owns on a node: the slot's own name, plus the token of
 each value that is a visible punctuation kind, through
 `punctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
 to `gateOptionalSlotSeams`.
+
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.mixedSlotKeywordKinds`
+
+The keyword kinds among a slot's literal values, through
+`keywordKindOfLiteral`, when the slot also has a value that is not a keyword;
+undefined for a slot whose values are all keywords or all punctuation. It is
+the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
 

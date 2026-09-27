@@ -3901,13 +3901,19 @@ rebuild, so `keywordSlotOf` can ask whether a member sat in an arm.
 
 Whether a member, or any arm of a choice member, is optional.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::keywordKindOfLiteral`
+
+The model kind of a literal when that kind is a keyword the grammar's `word`
+rule claims — the catalog entry's node is an `AssembledKeyword` — and
+undefined otherwise. A keyword is a word-shaped literal by construction
+(`assemble` builds one only when the text matches the grammar's word
+matcher), so the class test is the whole answer; no text is matched against
+a pattern here. The template emitter reads the kind to gate a mixed slot's
+seams on its keyword values.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
 
-Whether a literal's kind is a keyword the grammar's `word` rule claims: the
-catalog entry's node is an `AssembledKeyword`. A keyword is a word-shaped
-literal by construction (`assemble` builds one only when the text matches the
-grammar's word matcher), so the class test is the whole answer; no text is
-matched against a pattern here.
+Whether a literal's kind is a keyword: `keywordKindOfLiteral` finds one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
 

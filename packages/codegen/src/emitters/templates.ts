@@ -32,6 +32,7 @@ import {
 	flanksOf,
 	isSeamChoice,
 	punctuationTokenOfNode,
+	keywordKindOfLiteral,
 	seamChoiceDefault,
 	seamPartOf,
 	spacedSeparatorOf,
@@ -54,6 +55,7 @@ import {
 	equalNodes,
 	gate,
 	gateOptionalSlotSeams,
+	gateKeywordSlotSeams,
 	isExpression,
 	isPlainText,
 	mentions,
@@ -230,6 +232,18 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		return [slotName, ...tokens];
 	}
 
+	#mixedSlotKeywordKinds(node: AssembledNode, slotName: string): readonly string[] | undefined {
+		if (!(node instanceof AbstractAssembledCompound)) return undefined;
+		const texts = (node.slots.find((candidate) => candidate.name === slotName)?.values ?? []).flatMap((value) =>
+			isTerminalValue(value) && value.value !== '' ? [value.value] : []
+		);
+		const keywords = texts.flatMap((text) => {
+			const kind = keywordKindOfLiteral(text, this.#ctx.nodeMap, this.#kindEntries);
+			return kind === undefined ? [] : [kind];
+		});
+		return keywords.length > 0 && keywords.length < texts.length ? keywords : undefined;
+	}
+
 	#emitNode(node: AssembledNode): void {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
@@ -237,7 +251,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx.emittedSlotNames.clear();
 		const emitted = emitOne(node, this.#ctx);
 		const body =
-			emitted === undefined ? undefined : gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot));
+			emitted === undefined
+				? undefined
+				: gateKeywordSlotSeams(
+						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot)),
+						(slot) => this.#mixedSlotKeywordKinds(node, slot)
+					);
 
 		if (body === undefined) {
 			this.#bodies.set(node.kind, EMPTY);
@@ -979,6 +998,7 @@ function scanArmBody(body: Body): {
 					break;
 				case 'space':
 				case 'seam':
+				case 'wordSeam':
 					break;
 				case 'slot':
 					if (depth === 0) {

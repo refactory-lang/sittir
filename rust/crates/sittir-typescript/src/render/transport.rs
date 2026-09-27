@@ -98518,9 +98518,17 @@ fn render_binary_expression(node: &BinaryExpressionTransport, w: &mut dyn ::sitt
     let right = View::new(&node.right, "{}");
     left.render(w)?;
     if operator.is_present() {
-        w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE);
+        if operator.kind_in(&*w, &[::sittir_core::types::KindId(104)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE);
+        }
         operator.render(w)?;
-        w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER);
+        if operator.kind_in(&*w, &[::sittir_core::types::KindId(104)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER);
+        }
     }
     right.render(w)?;
     binary_expression_in.render(w)?;
@@ -98815,9 +98823,17 @@ fn render_method_definition(node: &MethodDefinitionTransport, w: &mut dyn ::sitt
         w.site_at(options::SITE_METHOD_DEFINITION_ASYNC_MARKER_AFTER);
     }
     if accessor_kind.is_present() {
-        w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE);
+        }
         accessor_kind.render(w)?;
-        w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER);
+        }
     }
     name.render(w)?;
     if optional_marker.is_present() {
@@ -98976,9 +98992,17 @@ fn render_method_signature(node: &MethodSignatureTransport, w: &mut dyn ::sittir
         w.site_at(options::SITE_METHOD_SIGNATURE_ASYNC_MARKER_AFTER);
     }
     if accessor_kind.is_present() {
-        w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+        }
         accessor_kind.render(w)?;
-        w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+        }
     }
     name.render(w)?;
     if optional_marker.is_present() {
@@ -99016,9 +99040,17 @@ fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, w: 
         w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER);
     }
     if accessor_kind.is_present() {
-        w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+        }
         accessor_kind.render(w)?;
-        w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+            w.seam(" ");
+        } else {
+            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+        }
     }
     name.render(w)?;
     if optional_marker.is_present() {

@@ -486,10 +486,15 @@ function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig
 	return r.type === SYMBOL && r.name !== undefined ? punctuationTokenOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
 }
 
+export function keywordKindOfLiteral(text: string, nodeMap: NodeMap, kindEntries: readonly KindEntryLike[]): string | undefined {
+	const entry = findEntryForLiteralText(kindEntries, text);
+	if (entry === undefined) return undefined;
+	const kind = modelKindOfEntry(entry, kindEntries);
+	return nodeMap.nodes.get(kind) instanceof AssembledKeyword ? kind : undefined;
+}
+
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
-	const entry = findEntryForLiteralText(config.kindEntries, text);
-	const node = entry === undefined ? undefined : config.nodeMap.nodes.get(modelKindOfEntry(entry, config.kindEntries));
-	return node instanceof AssembledKeyword;
+	return keywordKindOfLiteral(text, config.nodeMap, config.kindEntries) !== undefined;
 }
 
 function isKeywordSeam(rule: RenderRule, config: RenderRulesConfig): boolean {

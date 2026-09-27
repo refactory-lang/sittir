@@ -795,8 +795,27 @@
 			"name": "operators"
 		},
 		{
-			"kind": "seam",
-			"field": "operators_after"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "operators",
+					"kinds": [
+						"in_keyword",
+						"is_keyword"
+					],
+					"body": [
+						{
+							"kind": "wordSeam"
+						}
+					]
+				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "operators_after"
+				}
+			]
 		},
 		{
 			"kind": "slot",

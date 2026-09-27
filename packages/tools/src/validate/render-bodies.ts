@@ -45,6 +45,7 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					break;
 				case 'adjacent':
 				case 'seam':
+				case 'wordSeam':
 					break;
 				case 'slot':
 					out += `$${node.name.toUpperCase()}`;

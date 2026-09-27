@@ -143,16 +143,54 @@
 					"test": "accessor_kind",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "accessor_kind_before"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_before"
+								}
+							]
 						},
 						{
 							"kind": "slot",
 							"name": "accessor_kind"
 						},
 						{
-							"kind": "seam",
-							"field": "accessor_kind_after"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_after"
+								}
+							]
 						}
 					]
 				}
@@ -753,16 +791,52 @@
 					"test": "operator",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "operator_before"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "operator",
+									"kinds": [
+										"instanceof_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "operator_before"
+								}
+							]
 						},
 						{
 							"kind": "slot",
 							"name": "operator"
 						},
 						{
-							"kind": "seam",
-							"field": "operator_after"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "operator",
+									"kinds": [
+										"instanceof_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "operator_after"
+								}
+							]
 						}
 					]
 				}
@@ -4846,16 +4920,54 @@
 					"test": "accessor_kind",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "accessor_kind_before"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_before"
+								}
+							]
 						},
 						{
 							"kind": "slot",
 							"name": "accessor_kind"
 						},
 						{
-							"kind": "seam",
-							"field": "accessor_kind_after"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_after"
+								}
+							]
 						}
 					]
 				}
@@ -5046,16 +5158,54 @@
 					"test": "accessor_kind",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "accessor_kind_before"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_before"
+								}
+							]
 						},
 						{
 							"kind": "slot",
 							"name": "accessor_kind"
 						},
 						{
-							"kind": "seam",
-							"field": "accessor_kind_after"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "accessor_kind",
+									"kinds": [
+										"get_keyword",
+										"set_keyword"
+									],
+									"body": [
+										{
+											"kind": "wordSeam"
+										}
+									]
+								}
+							],
+							"fallback": [
+								{
+									"kind": "seam",
+									"field": "accessor_kind_after"
+								}
+							]
 						}
 					]
 				}
