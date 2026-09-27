@@ -102,11 +102,17 @@ export interface InlineAtReferenceCtx {
 	readonly selfReferencing: Map<string, boolean>;
 }
 export function inlinesAtReference(name: string, ctx: InlineAtReferenceCtx): boolean;
-export function predictedRenames(rules: Readonly<Record<string, AnyRule>>, symbols: SymbolSource): ReadonlyMap<string, string>;
-export function assertPredictionAgrees(predicted: SymbolSource, catalog: SymbolSource, renames: { predicted: ReadonlyMap<string, string>; catalog: ReadonlyMap<string, string> }): void;
+export function predictedRenames(rules: Readonly<Record<string, AnyRule>>, extras: ReadonlySet<string>, symbols: SymbolSource): ReadonlyMap<string, string>;
+export interface PredictionCheck {
+	readonly predicted: SymbolSource;
+	readonly catalog: SymbolSource;
+	readonly inlineNames: ReadonlySet<string>;
+	readonly renames: { readonly predicted: ReadonlyMap<string, string>; readonly catalog: ReadonlyMap<string, string> };
+}
+export function assertPredictionAgrees(check: PredictionCheck): void;
 ```
 
-`isHidden` is the parser's hiddenness excluding an aliased hidden rule (today `parserHiddenOf`: `entry.alias !== true && entry.hidden === true`). `isVisibleExternal` is today's `findOwnKindEntry(...).visibleExternal`. `assertPredictionAgrees` throws one error listing every `(fact, name, predicted, catalog)` disagreement over all rule names and externals.
+`isHidden` is the parser's hiddenness excluding an aliased hidden rule (today `parserHiddenOf`: `entry.alias !== true && entry.hidden === true`). `isVisibleExternal` is today's `findOwnKindEntry(...).visibleExternal`. `assertPredictionAgrees` runs `inlinesAtReference` under both sources, traced, at every name the renamed grammar references bare (a SYMBOL that is not an ALIAS's whole content, whose inline answer link's stamp discards; renames are compared on the evaluated rules, the inline facts on the grammar `stampParserVisibility` stamps, since the catalog is never asked about a renamed-away name), and throws one error listing every reference whose facts read or outcome differ, plus every rename that differs. It compares the facts the predicate reads, not every fact for every name: the predicate stops at its first deciding fact (a supertype is parser-hidden, but it returns on `isSupertype` first), so a comparison over all names reports disagreements that cannot change a verdict. `SymbolFacts` gains `extras` (the rename walk is over rules reachable from the start rule and the extras) and `visibleExternals` (the declared ones are visible externals in the catalog, e.g. python `_newline`).
 
 - [ ] **Step 1: Write the failing tests**
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { separatorOf, rulesEqual, predictedSymbolSource } from '../rule-patterns.ts';
+import { separatorOf, rulesEqual, predictedSymbolSource, symbolFactsOf } from '../rule-patterns.ts';
 
-const symbols = predictedSymbolSource({}, ['_semicolon'], []);
+const symbols = predictedSymbolSource(symbolFactsOf({ rules: {}, externals: ['_semicolon'], inline: [], supertypes: [], extras: [] }));
 
 describe('rulesEqual does not crash comparing mixed-phase repeat separators', () => {
 	it('returns false (not a throw) for an object-shaped separator vs a plain string', () => {

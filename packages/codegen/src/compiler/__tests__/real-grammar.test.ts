@@ -3,7 +3,7 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { resolveGrammarJsPath } from '../resolve-grammar.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 
 // Raw base grammars (no override() / variant() applied) still contain
@@ -46,8 +46,8 @@ describe('Evaluate — real tree-sitter grammars', () => {
 	});
 
 	it.each([
-		['python', (): string => pythonGrammar, [']', ')', '}']],
-		['typescript', (): string => tsGrammar, ['||']]
+		['python', (): string => resolveOverridesPath('python'), [']', ')', '}']],
+		['typescript', (): string => resolveOverridesPath('typescript'), ['||']]
 	])('%s keeps literal-text externals but mints no rule for them', async (_name, grammar, literals) => {
 		const raw = await evaluate(grammar());
 		expect(literals.every((t) => raw.externals.includes(t))).toBe(true);
@@ -56,9 +56,9 @@ describe('Evaluate — real tree-sitter grammars', () => {
 	});
 
 	it.each([
-		['python', (): string => pythonGrammar],
-		['rust', (): string => rustGrammar],
-		['typescript', (): string => tsGrammar]
+		['python', (): string => resolveOverridesPath('python')],
+		['rust', (): string => resolveOverridesPath('rust')],
+		['typescript', (): string => resolveOverridesPath('typescript')]
 	])('%s mints no rule keyed by literal token text', async (_name, grammar) => {
 		const raw = await evaluate(grammar());
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });

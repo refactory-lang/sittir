@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchesEmpty, isInlineSafe, predictedSymbolSource } from '../rule-patterns.ts';
+import { matchesEmpty, isInlineSafe, predictedSymbolSource, symbolFactsOf } from '../rule-patterns.ts';
 
 const str = (v: string) => ({ type: 'STRING', value: v });
 const sym = (n: string) => ({ type: 'SYMBOL', name: n });
@@ -9,9 +9,13 @@ const choice = (...m: any[]) => ({ type: 'CHOICE', members: m });
 const opt = (c: any) => ({ type: 'OPTIONAL', content: c });
 
 const symbols = predictedSymbolSource(
-	{ _semicolon: choice(sym('_automatic_semicolon'), str(';')) } as never,
-	['_automatic_semicolon'],
-	['_semicolon']
+	symbolFactsOf({
+		rules: { _semicolon: choice(sym('_automatic_semicolon'), str(';')) } as never,
+		externals: ['_automatic_semicolon'],
+		inline: ['_semicolon'],
+		supertypes: [],
+		extras: []
+	})
 );
 const inlineSafe = (rule: unknown) => isInlineSafe(rule, symbols);
 

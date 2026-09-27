@@ -10621,35 +10621,23 @@ A hidden rule the parser always shows under one tree name (`ts_symbol_names` giv
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 
+It is `collapseRenames` (which rules the catalog renames) then `renameRules` (the rewrite), and, when the catalog has rows, `assertParserPrediction` over the two, so both callers check the prediction against the renames they apply.
+
+### `packages/codegen/src/compiler/link.ts::collapseRenames`
+
+The renames the parser catalog records: each rule or external whose catalog row is a renamed entry (`isRenamedEntry`), mapped to its tree name.
+
+### `packages/codegen/src/compiler/link.ts::renameRules`
+
+Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged.
+
+### `packages/codegen/src/compiler/link.ts::assertParserPrediction`
+
+Runs `dsl/rule-patterns.ts::assertPredictionAgrees` for `collapseRenamedRules`. The renames are compared on the evaluated grammar: `predictedRenames` from the evaluated rules against the catalog's `collapseRenames`. The inline facts are compared on the renamed grammar, the one `stampParserVisibility` stamps: a renamed name no longer occurs there, so the catalog is never asked about a name link would not ask it about. It runs only when the catalog has rows; before the first generate there is nothing to agree with.
+
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 
-Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`inlinesAtReference`) from the parser catalog. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
-
-### `packages/codegen/src/compiler/link.ts::inlinesAtReference`
-
-The one decision whether a reference to `name` is spliced (`inline: true`), meaning the referenced rule has no node of its own in sittir's model of the tree. It follows the parser: a parser-hidden kind splices and a visible one does not; the grammar's `inline:` array splices whatever the spelling; and a hidden terminal the model can represent (`isModelableKind`) keeps its own leaf kind, since the parser gives it a token of its own.
-
-Three structural boundaries override the parser fact, each derived from the rule, never from the name:
-
-- a supertype (`parserSupertypeOf`) never splices, even when it is also in `inline:`: it is a dispatch over its members, and splicing it would leave its slot with no kind to dispatch on;
-- a rule that references itself (`referencesItself`) never splices: splicing a cycle has no finite result, and tree-sitter keeps the recursion as nested hidden nodes (flattening a hidden left-recursive rule into a repeat, as tree-sitter does, is not modelled yet);
-- a hidden rule whose body is only anonymous tokens (`isLiteralChoiceContent`: one STRING, or a choice of STRINGs) stays a leaf kind. This is the one boundary that is not a parser fact: the parser splices such a nonterminal, but sittir models it as a leaf so its members keep their enum's identity and seams (`enumKind`).
-
-### `packages/codegen/src/compiler/link.ts::ReferenceInlineCtx`
-
-What `inlinesAtReference` reads: the catalog rows, the rule bodies, the grammar's `inline:` and `supertypes:` names, and the per-name self-reference answers already computed (`selfReferencing`, filled by `isSelfReferencing`).
-
-### `packages/codegen/src/compiler/link.ts::isSelfReferencing`
-
-`referencesItself` for a rule, remembered per name in `ReferenceInlineCtx.selfReferencing`, so a rule body is walked once however many references reach it.
-
-### `packages/codegen/src/compiler/link.ts::referencesItself`
-
-Whether a rule body contains a SYMBOL reference to its own name (direct self-reference only; references are not followed).
-
-### `packages/codegen/src/compiler/link.ts::isModelableKind`
-
-Whether sittir can model a kind as a node: it has a rule body, or it is an external the grammar declares in `visibleExternals` (the catalog's `visibleExternal`). A hidden external scanner token with neither (rust `_error_sentinel`, typescript `__error_recovery`, python `_indent`/`_dedent`) has no text to model, so a reference to it splices even though the parser issues it as a terminal.
+Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`dsl/rule-patterns.ts::inlinesAtReference`) from the parser catalog, asked through `catalogSymbolSource`. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
 
 ### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
 

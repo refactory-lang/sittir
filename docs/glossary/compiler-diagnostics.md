@@ -407,9 +407,9 @@ no single model node to be wrong about. The known unnamed case is
 typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
 'unique symbol')`.
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolFacts`
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::CatalogSymbolFacts`
 
-The grammar facts `symbolSourceOf` builds a source from: rule bodies, external and `inline:` names, and the catalog rows (empty before the first generate).
+The grammar's `dsl/rule-patterns.ts::SymbolFacts` plus the catalog rows (empty before the first generate): what `symbolSourceOf` and `catalogSymbolSource` build a source from.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
 
@@ -420,7 +420,7 @@ Chooses the grammar diagnostics' `SymbolSource` (`dsl/rule-patterns.ts::SymbolSo
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`
 
-Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
+Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal. It is hidden when its own row is hidden and not an alias row (`parserHiddenOf`), a supertype when the row or the declared `supertypes:` say so (`parserSupertypeOf`), and a visible external when its row carries `visibleExternal`. Link stamps inlining through this source and asserts the prediction agrees with it.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
 

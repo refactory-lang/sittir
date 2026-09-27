@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { AnyRule } from '../../types/rule.ts';
 import { stableGrammars } from '../../grammars.ts';
-import { predictedSymbolSource } from '../rule-patterns.ts';
+import { predictedSymbolSource, symbolFactsOf } from '../rule-patterns.ts';
 
 type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
 
@@ -76,9 +76,13 @@ describe('the predicted symbol source agrees with the generated parser at every 
 		it(grammar, () => {
 			const json = JSON.parse(readFileSync(`${ROOT}packages/${grammar}/.sittir/src/grammar.json`, 'utf8')) as GrammarJson;
 			const symbols = predictedSymbolSource(
-				json.rules,
-				(json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : [])),
-				json.inline ?? []
+				symbolFactsOf({
+					rules: json.rules,
+					externals: (json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : [])),
+					inline: json.inline ?? [],
+					supertypes: [],
+					extras: []
+				})
 			);
 			const predictedClassOf = (name: string): ParserSymbolClass =>
 				symbols.isInlined(name) ? 'inlined' : symbols.isTerminal(name) ? 'terminal' : 'nonterminal';

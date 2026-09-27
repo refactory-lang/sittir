@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
 import { symbolSourceOf } from '../alias-distributed.ts';
-import type { SymbolSource } from '../../../dsl/rule-patterns.ts';
+import { symbolFactsOf, type SymbolSource } from '../../../dsl/rule-patterns.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { AnyRule } from '../../../types/rule.ts';
 
@@ -15,9 +15,13 @@ function symbolsOf(
 	opts: { inline?: string[]; externals?: string[]; kindEntries?: KindEntryLike[] } = {}
 ): SymbolSource {
 	return symbolSourceOf({
-		rules: rules as Record<string, AnyRule>,
-		externals: new Set(opts.externals ?? []),
-		inline: new Set(opts.inline ?? []),
+		...symbolFactsOf({
+			rules: rules as Record<string, AnyRule>,
+			externals: opts.externals ?? [],
+			inline: opts.inline ?? [],
+			supertypes: [],
+			extras: []
+		}),
 		kindEntries: opts.kindEntries ?? []
 	});
 }

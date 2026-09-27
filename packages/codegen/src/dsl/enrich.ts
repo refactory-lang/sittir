@@ -1,5 +1,5 @@
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
-import { EnrichCtx } from './enrich-ctx.ts';
+import { EnrichCtx, enrichSymbolFacts } from './enrich-ctx.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import {
 	distributeInlineAliasChoices,
@@ -93,6 +93,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		supertypeNames,
 		externals: extractGrammarSymbolNames(base, hasWrapper, 'externals'),
 		inline: inlineNames,
+		extras: extractGrammarSymbolNames(base, hasWrapper, 'extras'),
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
 	});
 	const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
@@ -120,7 +121,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
 		});
 	}
-	const enrichedSymbols = predictedSymbolSource(enrichedRules, ctx.externals, ctx.inline);
+	const enrichedSymbols = predictedSymbolSource(enrichSymbolFacts(ctx, enrichedRules));
 	Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -384,7 +385,7 @@ function addSupertypes(result: Record<string, unknown>, names: readonly string[]
 function extractGrammarSymbolNames(
 	base: unknown,
 	hasWrapper: boolean,
-	key: 'supertypes' | 'externals' | 'inline'
+	key: 'supertypes' | 'externals' | 'inline' | 'extras'
 ): ReadonlySet<string> {
 	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
 	const list = root?.[key];

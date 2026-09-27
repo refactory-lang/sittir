@@ -52,10 +52,7 @@ import {
 	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	findEntryForPatternValue,
-	findOwnKindEntry,
 	isParserHiddenKind,
-	parserHiddenOf,
-	parserSupertypeOf,
 	isRenamedEntry,
 	isSurfaceHiddenKind,
 	isAliasedHiddenStorage,
@@ -95,13 +92,18 @@ import {
 	isEnumChoiceRule,
 	hiddenChoiceClass,
 	isKindChoice,
-	isLiteralChoiceContent,
 	isNamedArmChoice,
 	rulesEqual,
 	separatorOf,
 	predictedSymbolSource,
+	inlinesAtReference,
+	predictedRenames,
+	assertPredictionAgrees,
+	symbolFactsOf,
+	type InlineAtReferenceCtx,
 	type SymbolSource
 } from '../dsl/rule-patterns.ts';
+import { catalogSymbolSource } from './diagnostics/alias-distributed.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -152,7 +154,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	#sourceSymbols?: SymbolSource;
 
 	get sourceSymbols(): SymbolSource {
-		this.#sourceSymbols ??= predictedSymbolSource(this.grammar.rules, this.grammar.externals, this.grammar.inline);
+		this.#sourceSymbols ??= predictedSymbolSource(symbolFactsOf(this.grammar));
 		return this.#sourceSymbols;
 	}
 }
@@ -744,7 +746,7 @@ function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 
 const renameWalker = new RuleWalker<Rule<'evaluate'>>({});
 
-export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<string, string> {
 	const renames = new Map<string, string>();
 	for (const name of [...Object.keys(raw.rules), ...raw.externals]) {
 		const entry = findEntryForKindName(ctx.kindEntries, name);
@@ -757,6 +759,36 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 			continue;
 		renames.set(name, entry.symbolName);
 	}
+	return renames;
+}
+
+function assertParserPrediction(
+	evaluated: RawGrammar,
+	collapsed: RawGrammar,
+	renames: ReadonlyMap<string, string>,
+	ctx: KindCatalogCtx
+): void {
+	const evaluatedFacts = symbolFactsOf(evaluated);
+	const collapsedFacts = symbolFactsOf(collapsed);
+	assertPredictionAgrees({
+		predicted: predictedSymbolSource(collapsedFacts),
+		catalog: catalogSymbolSource({ ...collapsedFacts, kindEntries: ctx.kindEntries }),
+		inlineNames: collapsedFacts.inline,
+		renames: {
+			predicted: predictedRenames(evaluated.rules, evaluatedFacts.extras, predictedSymbolSource(evaluatedFacts)),
+			catalog: renames
+		}
+	});
+}
+
+export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+	const renames = collapseRenames(raw, ctx);
+	const collapsed = renameRules(raw, renames);
+	if (ctx.kindEntries.length > 0) assertParserPrediction(raw, collapsed, renames, ctx);
+	return collapsed;
+}
+
+function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): RawGrammar {
 	if (renames.size === 0) return raw;
 	const targets = new Map<string, string>();
 	for (const [from, to] of renames) {
@@ -842,49 +874,10 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 
 const visibilityWalker = new RuleWalker<Rule<'evaluate'>>({});
 
-interface ReferenceInlineCtx extends KindCatalogCtx {
-	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
-	readonly inlineNames: ReadonlySet<string>;
-	readonly supertypes: ReadonlySet<string>;
-	readonly selfReferencing: Map<string, boolean>;
-}
-
-const selfReferenceWalker = new RuleWalker<Rule<'evaluate'>>({});
-
-function referencesItself(name: string, body: Rule<'evaluate'>): boolean {
-	return selfReferenceWalker.find(body, (rule) => rule.type === SYMBOL && rule.name === name) !== undefined;
-}
-
-function isSelfReferencing(name: string, body: Rule<'evaluate'>, ctx: ReferenceInlineCtx): boolean {
-	let known = ctx.selfReferencing.get(name);
-	if (known === undefined) {
-		known = referencesItself(name, body);
-		ctx.selfReferencing.set(name, known);
-	}
-	return known;
-}
-
-function isModelableKind(name: string, ctx: ReferenceInlineCtx): boolean {
-	return ctx.rules[name] !== undefined || findOwnKindEntry(ctx.kindEntries, name)?.visibleExternal === true;
-}
-
-function inlinesAtReference(name: string, ctx: ReferenceInlineCtx): boolean {
-	const entry = findOwnKindEntry(ctx.kindEntries, name);
-	if (parserSupertypeOf(entry, name, ctx.supertypes)) return false;
-	const target = ctx.rules[name];
-	if (target !== undefined && isSelfReferencing(name, target, ctx)) return false;
-	if (ctx.inlineNames.has(name)) return true;
-	if (!parserHiddenOf(entry, name)) return false;
-	if (entry?.terminal === true && isModelableKind(name, ctx)) return false;
-	return !(target !== undefined && isLiteralChoiceContent(target));
-}
-
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
-	const inlineCtx: ReferenceInlineCtx = {
-		kindEntries: ctx.kindEntries,
-		rules: raw.rules,
+	const inlineCtx: InlineAtReferenceCtx = {
+		symbols: catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries }),
 		inlineNames: new Set(raw.inline),
-		supertypes: new Set(raw.supertypes),
 		selfReferencing: new Map()
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {

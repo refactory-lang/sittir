@@ -709,6 +709,59 @@ function resolveRuleLiteral(body) {
 function isParserHiddenName(name) {
   return name.startsWith("_");
 }
+var selfReferenceWalker = new RuleWalker({});
+var symbolUseWalker = new RuleWalker({});
+function forEachSymbolUse(rule2, onUse) {
+  if (rule2.type === ALIAS && rule2.content.type === SYMBOL) return onUse(rule2.content.name, rule2);
+  if (rule2.type === SYMBOL) return onUse(rule2.name, void 0);
+  for (const child of symbolUseWalker.childrenOf(rule2)) forEachSymbolUse(child, onUse);
+}
+function reachableSymbolUses(rules, extras) {
+  const uses = /* @__PURE__ */ new Map();
+  const queue = [...Object.keys(rules).slice(0, 1), ...[...extras].filter((name) => rules[name] !== void 0)];
+  const seen = /* @__PURE__ */ new Set();
+  const onUse = (name, alias2) => {
+    let entry = uses.get(name);
+    if (entry === void 0) uses.set(name, entry = { namedAliases: /* @__PURE__ */ new Map(), bare: 0 });
+    if (alias2?.type === ALIAS && alias2.named) entry.namedAliases.set(alias2.value, (entry.namedAliases.get(alias2.value) ?? 0) + 1);
+    else entry.bare++;
+    queue.push(name);
+  };
+  for (let i = 0; i < queue.length; i++) {
+    const name = queue[i];
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const body = rules[name];
+    if (body !== void 0) forEachSymbolUse(body, onUse);
+  }
+  return uses;
+}
+function mostFrequentAlias(namedAliases) {
+  let best;
+  let bestCount = 0;
+  for (const [value, count] of namedAliases) {
+    if (count > bestCount) {
+      best = value;
+      bestCount = count;
+    }
+  }
+  return best;
+}
+function predictedRenames(rules, extras, symbols) {
+  const candidates = /* @__PURE__ */ new Map();
+  for (const [name, uses] of reachableSymbolUses(rules, extras)) {
+    if (uses.bare > 0 || symbols.isVisibleExternal(name)) continue;
+    const target = mostFrequentAlias(uses.namedAliases);
+    if (target !== void 0 && target !== name) candidates.set(name, target);
+  }
+  const claims = /* @__PURE__ */ new Map();
+  for (const target of candidates.values()) claims.set(target, (claims.get(target) ?? 0) + 1);
+  return new Map(
+    [...candidates].filter(
+      ([, target]) => claims.get(target) === 1 && (rules[target] === void 0 || candidates.has(target))
+    )
+  );
+}
 function extractedToken(rule2) {
   const params = [];
   let tokenized = false;
@@ -752,14 +805,20 @@ function tokenUseCounts(rules) {
   for (const rule2 of Object.values(rules)) visit(rule2);
   return counts;
 }
-function predictedSymbolSource(rules, externals, inline) {
-  const ctx = { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
-  return {
+function predictedSymbolSource(facts) {
+  const { rules, externals, supertypes, visibleExternals } = facts;
+  const ctx = { rules, externals, inline: facts.inline, tokenUses: tokenUseCounts(rules) };
+  let renames;
+  const symbols = {
     rules,
-    externals: ctx.externals,
+    externals,
     isTerminal: (name) => terminalSymbolOf(name, ctx),
-    isInlined: (name) => parserSymbolClassOf(name, ctx) === "inlined"
+    isInlined: (name) => parserSymbolClassOf(name, ctx) === "inlined",
+    isHidden: (name) => isParserHiddenName(name) && !(renames ??= predictedRenames(rules, facts.extras, symbols)).has(name),
+    isSupertype: (name) => supertypes.has(name),
+    isVisibleExternal: (name) => visibleExternals.has(name) || externals.has(name) && rules[name] === void 0 && !isParserHiddenName(name)
   };
+  return symbols;
 }
 function choiceArmsOf(content) {
   const rule2 = content;
@@ -1212,11 +1271,22 @@ function renameNameList(value, renames) {
 }
 
 // packages/codegen/src/dsl/enrich-ctx.ts
+function enrichSymbolFacts(init, rules) {
+  return {
+    rules,
+    externals: init.externals,
+    inline: init.inline,
+    supertypes: init.supertypeNames,
+    extras: init.extras,
+    visibleExternals: /* @__PURE__ */ new Set()
+  };
+}
 var EnrichCtx = class _EnrichCtx {
   rulesBag;
   supertypeNames;
   externals;
   inline;
+  extras;
   wordMatcher;
   sourceSymbols;
   kwRules;
@@ -1231,6 +1301,7 @@ var EnrichCtx = class _EnrichCtx {
     this.supertypeNames = fields.supertypeNames;
     this.externals = fields.externals;
     this.inline = fields.inline;
+    this.extras = fields.extras;
     this.wordMatcher = fields.wordMatcher;
     this.sourceSymbols = fields.sourceSymbols;
     this.kwRules = fields.kwRules;
@@ -1244,7 +1315,7 @@ var EnrichCtx = class _EnrichCtx {
   static create(init) {
     return new _EnrichCtx({
       ...init,
-      sourceSymbols: predictedSymbolSource(init.rulesBag, init.externals, init.inline),
+      sourceSymbols: predictedSymbolSource(enrichSymbolFacts(init, init.rulesBag)),
       kwRules: {},
       clauseGroupRules: {},
       clauseDedupeMap: {},
@@ -1779,6 +1850,7 @@ function enrich(baseInput) {
     supertypeNames,
     externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
     inline: inlineNames,
+    extras: extractGrammarSymbolNames(base2, hasWrapper, "extras"),
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
   });
   const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
@@ -1806,7 +1878,7 @@ function enrich(baseInput) {
       inlineBodyOf: (target) => inlineNames.has(target) ? enrichedRules[target] ?? rulesBag[target] : void 0
     });
   }
-  const enrichedSymbols = predictedSymbolSource(enrichedRules, ctx.externals, ctx.inline);
+  const enrichedSymbols = predictedSymbolSource(enrichSymbolFacts(ctx, enrichedRules));
   Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
   for (const name of Object.keys(enrichedRules)) {
     const rule2 = enrichedRules[name];
