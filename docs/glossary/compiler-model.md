@@ -4592,7 +4592,11 @@ The kind a loose trivia string builds, the literal delimiters its full spelling 
 
 ### `packages/codegen/src/compiler/model/trivia.ts::TriviaSibling`
 
-A non-default arm of the default comment kind: `lead`, the start-anchored regex of how its text can begin, and `builder`, the `ir` key that builds it (named in the refusal).
+A non-default arm of a polymorph with a full form: `lead`, the start-anchored regex of how its text can begin, `texts`, the same alternatives as literal texts when every one of them is a literal, and `builder`, the `ir` key that builds it (named in the refusal). A sibling with a pattern among its alternatives has no `texts`: it, and every sibling after it, is refused at runtime only, never at type level.
+
+### `packages/codegen/src/compiler/model/trivia.ts::LeadAlternative`
+
+One way a kind's text can begin: a literal text or a pattern source. `siblingLeads` derives both the runtime regex and the typed `texts` from one list of these, so the two refusals read one fact. A pattern counts as literal only through a kind's `fixedLiteralText`; a pattern terminal never does.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
 
@@ -4602,11 +4606,11 @@ When the default comment kind is a polymorph, every other arm is a sibling (`sib
 
 ### `packages/codegen/src/compiler/model/trivia.ts::siblingLeads`
 
-The non-default arms of a polymorph, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder; none for a kind that is not a polymorph. A full-form coercer refuses an interior that starts the way one of them can. An arm with no `ir` key throws.
+The non-default arms of a polymorph, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder; none for a kind that is not a polymorph. A full-form coercer refuses an interior that starts the way one of them can. An arm with no `ir` key throws. The regex escapes the literals and groups the patterns; `texts` is set only when every alternative is a literal.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::leadSources`
 
-The regex sources a kind's text can begin with: each literal escaped, each pattern grouped, and each symbol resolved through the node map. A kind that can begin empty throws, since any text could read as it, and so does one the node map cannot read.
+The alternatives a kind's text can begin with (`LeadAlternative`): each literal, each pattern, and each symbol resolved through the node map. A kind that can begin empty throws, since any text could read as it, and so does one the node map cannot read.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 

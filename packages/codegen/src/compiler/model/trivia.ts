@@ -21,8 +21,11 @@ export const COMMENT_IR_KEY = 'comment';
 
 export interface TriviaSibling {
 	readonly lead: RegExp;
+	readonly texts?: readonly string[];
 	readonly builder: string;
 }
+
+export type LeadAlternative = { readonly literal: string } | { readonly pattern: string };
 
 export interface TriviaForm {
 	readonly kind: string;
@@ -68,18 +71,26 @@ export function siblingLeads(nodeMap: NodeMap, node: AssembledNode): TriviaSibli
 		const arm = nodeMap.nodes.get(ref.name);
 		if (arm?.irKey === undefined) throw new Error(`trivia: '${node.kind}' arm '${ref.name}' has no builder`);
 		const leads = leadSources(nodeMap, ref.name, new Set());
-		return [{ lead: leadingRegex(ref.name, leads.join('|')), builder: `ir.${arm.irKey}` }];
+		const sources = leads.map((lead) => ('literal' in lead ? escapeRegexLiteral(lead.literal) : `(?:${lead.pattern})`));
+		const texts = leads.flatMap((lead) => ('literal' in lead ? [lead.literal] : []));
+		return [
+			{
+				lead: leadingRegex(ref.name, sources.join('|')),
+				...(texts.length === leads.length ? { texts } : {}),
+				builder: `ir.${arm.irKey}`
+			}
+		];
 	});
 }
 
-function leadSources(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): string[] {
+function leadSources(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): LeadAlternative[] {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) throw new Error(`trivia: cannot read how '${kind}' starts`);
 	const within = new Set([...seen, kind]);
 	return node.leadingTerminals.flatMap((terminal) => {
 		if (terminal === 'empty') throw new Error(`trivia: '${kind}' can start empty, so any text could read as it`);
 		if ('symbol' in terminal) return leadSources(nodeMap, terminal.symbol, within);
-		return ['literal' in terminal ? escapeRegexLiteral(terminal.literal) : `(?:${terminal.pattern})`];
+		return ['literal' in terminal ? { literal: terminal.literal } : { pattern: terminal.pattern }];
 	});
 }
 

@@ -1523,13 +1523,27 @@ The coercer of every kind with a full form (`fullForm`), `ir.comment`'s default 
 
 A delimiter that is a spelling choice goes through `spelledForm` instead, and the alternative typed becomes that slot's option: python `integer.hex('0XFF')` renders `0XFF`, `integer.hex('FF')` the default `0xFF`, and an explicit option wins over the typed text (`spelledOptionKeys`).
 
+The coercer's signature carries the same facts as types. With a spelled delimiter it is generic over the input and options (`<const I, const O>`) and returns `spelledReturnType`, so `integer.hex('0XFF').prefix()` is `'0X'`. With sibling leads its input is `I & SiblingLeadRefusal<…>` (`siblingLeadRefusalType`), so `blockComment('/*! x */')` fails to compile, naming `ir.blockCommentDocInner`. A plain `string` input keeps today's types and is checked at runtime. Delimiters with no slot and no siblings leave the signature as it was.
+
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
 An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
 
-### `packages/codegen/src/emitters/from.ts::spelledOptionKeys`
+### `packages/codegen/src/emitters/from.ts::spelledOptionSlots`
 
-The option key of each full-form side that is a spelling choice, found through the slot the affix names. A spelling slot that is not a registered option throws: the typed alternative has no option to go to.
+The registered option slot of each full-form side that is a spelling choice, found through the field the affix names. A spelling slot that is not a registered option throws: the typed alternative has no option to go to.
+
+### `packages/codegen/src/emitters/from.ts::literalUnion`
+
+A list of texts as a TypeScript union of string literal types.
+
+### `packages/codegen/src/emitters/from.ts::spelledReturnType`
+
+The return type of a coercer with a spelled delimiter: the built node wrapped in `WithSpelling` per spelling slot. The slot's type is the explicit option when `O` carries it, and otherwise `SpelledAffix` over the stamped alternatives with the slot's registered default (`optionDefaultArm`). A spelled closing delimiter throws; no grammar has one.
+
+### `packages/codegen/src/emitters/from.ts::siblingLeadRefusalType`
+
+The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the full form's delimiters and each sibling's literal lead texts, in the runtime's order, paired with the sibling's builder. The list stops at the first sibling without texts: from there the runtime refuses by pattern, and a later literal lead must never name input that pattern would catch first. Undefined when no sibling ahead of that point has texts, and the signature stays untyped (rust `line_comment`, whose first sibling `extra_slashes` leads with a pattern).
 
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 

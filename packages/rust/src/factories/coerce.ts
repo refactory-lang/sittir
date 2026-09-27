@@ -5,7 +5,7 @@ import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
-import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData, LooseValue, NonEmptyArray, SiblingLeadRefusal } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -7538,7 +7538,9 @@ export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['c
 	);
 }
 
-export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
+export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
+	input?: I & SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockCommentDocOuter'], ['!', 'ir.blockCommentDocInner']]>
+): ReturnType<typeof F.buildBlockComment> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.BlockComment)
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(

@@ -5,7 +5,7 @@ import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
-import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -6343,12 +6343,20 @@ export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['conte
 	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerHex(
-	input: T.IntegerHex.Loose,
-	options?: T.IntegerHex.Options
-): ReturnType<typeof F.buildIntegerHex> {
+export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerHex>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
-		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerHex>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value =
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
@@ -6363,19 +6371,31 @@ export function coerceToIntegerHex(
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
-	);
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerHex>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	>;
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
 	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerOctal(
-	input: T.IntegerOctal.Loose,
-	options?: T.IntegerOctal.Options
-): ReturnType<typeof F.buildIntegerOctal> {
+export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerOctal>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
-		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerOctal>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value =
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
@@ -6390,7 +6410,11 @@ export function coerceToIntegerOctal(
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
-	);
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerOctal>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	>;
 }
 
 export function resolveIntegerBinary_content(
@@ -6399,12 +6423,23 @@ export function resolveIntegerBinary_content(
 	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerBinary(
-	input: T.IntegerBinary.Loose,
-	options?: T.IntegerBinary.Options
-): ReturnType<typeof F.buildIntegerBinary> {
+export function coerceToIntegerBinary<
+	const I extends T.IntegerBinary.Loose,
+	const O extends T.IntegerBinary.Options = {}
+>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerBinary>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
-		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerBinary>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value =
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
@@ -6419,7 +6454,11 @@ export function coerceToIntegerBinary(
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
-	);
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerBinary>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	>;
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {

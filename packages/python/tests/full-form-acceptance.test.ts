@@ -14,6 +14,16 @@ describe('builders accept their kind spelled in full', () => {
 		expect(ir.integer.hex('0XFF', { prefix: '0x' }).$render()).toBe('0xFF');
 	});
 
+	it('types the spelling it takes from the text', () => {
+		const typed: '0X' = ir.integer.hex('0XFF').prefix();
+		const defaulted: '0x' = ir.integer.hex('FF').prefix();
+		const chosen: '0x' = ir.integer.hex('0XFF', { prefix: '0x' }).prefix();
+		const text: string = '0XFF';
+		// @ts-expect-error a plain string keeps both spellings
+		const unknown: '0x' = ir.integer.hex(text).prefix();
+		expect([typed, defaulted, chosen, unknown]).toEqual(['0X', '0x', '0x', '0X']);
+	});
+
 	it('takes the full form first where the delimiter can also begin the content', () => {
 		expect(ir.comment('# x').$render()).toBe('# x');
 	});
