@@ -600,11 +600,10 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
-type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
-
 export interface SymbolSource {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly externals: ReadonlySet<string>;
+	readonly hasSymbol: (name: string) => boolean;
 	readonly isTerminal: (name: string) => boolean;
 	readonly isInlined: (name: string) => boolean;
 	readonly isHidden: (name: string) => boolean;
@@ -622,6 +621,17 @@ export interface SymbolFacts {
 }
 
 export type RuleListEntry = GrammarSymbolRule | GrammarStringRule | GrammarPatternRule;
+
+export function ruleListEntryOf(value: unknown): RuleListEntry | undefined {
+	if (typeof value === 'string') return { type: STRING, value };
+	if (value instanceof RegExp) return { type: PATTERN, value: value.source };
+	if (value === null || typeof value !== 'object') return undefined;
+	const rule = value as { readonly type?: unknown; readonly name?: unknown; readonly value?: unknown };
+	if (rule.type === SYMBOL && typeof rule.name === 'string') return { type: SYMBOL, name: rule.name };
+	if (rule.type === STRING && typeof rule.value === 'string') return { type: STRING, value: rule.value };
+	if (rule.type === PATTERN && typeof rule.value === 'string') return { type: PATTERN, value: rule.value };
+	return undefined;
+}
 
 export interface RuleListParts {
 	readonly names: string[];
@@ -695,131 +705,6 @@ function isSelfReferencing(name: string, body: AnyRule, ctx: InlineAtReferenceCt
 	return known;
 }
 
-const symbolUseWalker = new RuleWalker<AnyRule>({});
-
-function forEachSymbolUse(rule: AnyRule, onUse: (name: string, alias: AnyRule | undefined) => void): void {
-	if (rule.type === ALIAS && rule.content.type === SYMBOL) return onUse(rule.content.name, rule);
-	if (rule.type === SYMBOL) return onUse(rule.name, undefined);
-	for (const child of symbolUseWalker.childrenOf(rule)) forEachSymbolUse(child, onUse);
-}
-
-interface SymbolUses {
-	readonly namedAliases: Map<string, number>;
-	bare: number;
-}
-
-function reachableSymbolUses(rules: Readonly<Record<string, AnyRule>>, extras: ReadonlySet<string>): Map<string, SymbolUses> {
-	const uses = new Map<string, SymbolUses>();
-	const queue = [...Object.keys(rules).slice(0, 1), ...[...extras].filter((name) => rules[name] !== undefined)];
-	const seen = new Set<string>();
-	const onUse = (name: string, alias: AnyRule | undefined): void => {
-		let entry = uses.get(name);
-		if (entry === undefined) uses.set(name, (entry = { namedAliases: new Map(), bare: 0 }));
-		if (alias?.type === ALIAS && alias.named) entry.namedAliases.set(alias.value, (entry.namedAliases.get(alias.value) ?? 0) + 1);
-		else entry.bare++;
-		queue.push(name);
-	};
-	for (let i = 0; i < queue.length; i++) {
-		const name = queue[i]!;
-		if (seen.has(name)) continue;
-		seen.add(name);
-		const body = rules[name];
-		if (body !== undefined) forEachSymbolUse(body, onUse);
-	}
-	return uses;
-}
-
-function mostFrequentAlias(namedAliases: ReadonlyMap<string, number>): string | undefined {
-	let best: string | undefined;
-	let bestCount = 0;
-	for (const [value, count] of namedAliases) {
-		if (count > bestCount) {
-			best = value;
-			bestCount = count;
-		}
-	}
-	return best;
-}
-
-export function predictedRenames(
-	rules: Readonly<Record<string, AnyRule>>,
-	extras: ReadonlySet<string>,
-	symbols: SymbolSource
-): ReadonlyMap<string, string> {
-	const candidates = new Map<string, string>();
-	for (const [name, uses] of reachableSymbolUses(rules, extras)) {
-		if (uses.bare > 0 || symbols.isVisibleExternal(name)) continue;
-		const target = mostFrequentAlias(uses.namedAliases);
-		if (target !== undefined && target !== name) candidates.set(name, target);
-	}
-	const claims = new Map<string, number>();
-	for (const target of candidates.values()) claims.set(target, (claims.get(target) ?? 0) + 1);
-	return new Map(
-		[...candidates].filter(
-			([, target]) => claims.get(target) === 1 && (rules[target] === undefined || candidates.has(target))
-		)
-	);
-}
-
-const SYMBOL_SOURCE_FACTS = ['isTerminal', 'isInlined', 'isHidden', 'isSupertype', 'isVisibleExternal'] as const;
-
-function tracedSymbolSource(symbols: SymbolSource, reads: string[]): SymbolSource {
-	const traced = { ...symbols };
-	for (const fact of SYMBOL_SOURCE_FACTS) {
-		traced[fact] = (name) => {
-			const value = symbols[fact](name);
-			reads.push(`${fact}(${name})=${value}`);
-			return value;
-		};
-	}
-	return traced;
-}
-
-export interface PredictionCheck {
-	readonly predicted: SymbolSource;
-	readonly catalog: SymbolSource;
-	readonly inlineNames: ReadonlySet<string>;
-	readonly renames: { readonly predicted: ReadonlyMap<string, string>; readonly catalog: ReadonlyMap<string, string> };
-}
-
-export function assertPredictionAgrees(check: PredictionCheck): void {
-	const references = new Set<string>();
-	for (const body of Object.values(check.predicted.rules))
-		forEachSymbolUse(body, (name, alias) => {
-			if (alias === undefined) references.add(name);
-		});
-	const traceOf = (symbols: SymbolSource, name: string): string => {
-		const reads: string[] = [];
-		const inline = inlinesAtReference(name, {
-			symbols: tracedSymbolSource(symbols, reads),
-			inlineNames: check.inlineNames,
-			selfReferencing: new Map()
-		});
-		return `${reads.join(', ')} -> inline=${inline}`;
-	};
-	const disagreements: string[] = [];
-	for (const name of [...references].sort()) {
-		const predicted = traceOf(check.predicted, name);
-		const catalog = traceOf(check.catalog, name);
-		if (predicted !== catalog) disagreements.push(`${name}: predicted [${predicted}], catalog [${catalog}]`);
-	}
-	const renamed = new Set([...check.renames.predicted.keys(), ...check.renames.catalog.keys()]);
-	for (const name of [...renamed].sort()) {
-		const predicted = check.renames.predicted.get(name);
-		const catalog = check.renames.catalog.get(name);
-		if (predicted !== catalog) disagreements.push(`${name}: renamed to ${predicted ?? '(none)'} predicted, ${catalog ?? '(none)'} in the catalog`);
-	}
-	if (disagreements.length > 0)
-		throw new Error(`link: the predicted parser facts disagree with the parser catalog:\n  ${disagreements.join('\n  ')}`);
-}
-
-interface ParserSymbolCtx {
-	readonly rules: Readonly<Record<string, AnyRule>>;
-	readonly externals: ReadonlySet<string>;
-	readonly inline: ReadonlySet<string>;
-	readonly tokenUses: ReadonlyMap<string, number>;
-}
-
 export type TokenShape = { readonly type: string; readonly value?: unknown; readonly content?: TokenShape };
 
 interface ExtractedToken {
@@ -857,39 +742,6 @@ function stripRuleAnnotations(rule: unknown): unknown {
 	return out;
 }
 
-function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<string, number> {
-	const counts = new Map<string, number>();
-	const visit = (rule: TokenShape | undefined): void => {
-		if (rule === undefined || rule === null || typeof rule !== 'object') return;
-		if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
-			const token = extractedToken(rule);
-			if (token !== undefined) counts.set(token.key, (counts.get(token.key) ?? 0) + 1);
-			return;
-		}
-		if (rule.content !== undefined) visit(rule.content);
-		for (const member of (rule as { members?: readonly TokenShape[] }).members ?? []) visit(member);
-	};
-	for (const rule of Object.values(rules)) visit(rule as unknown as TokenShape);
-	return counts;
-}
-
-export function predictedSymbolSource(facts: SymbolFacts): SymbolSource {
-	const { rules, externals, supertypes, visibleExternals } = facts;
-	const ctx: ParserSymbolCtx = { rules, externals, inline: facts.inline, tokenUses: tokenUseCounts(rules) };
-	let renames: ReadonlyMap<string, string> | undefined;
-	const symbols: SymbolSource = {
-		rules,
-		externals,
-		isTerminal: (name) => terminalSymbolOf(name, ctx),
-		isInlined: (name) => parserSymbolClassOf(name, ctx) === 'inlined',
-		isHidden: (name) => isParserHiddenName(name) && !(renames ??= predictedRenames(rules, facts.extras, symbols)).has(name),
-		isSupertype: (name) => supertypes.has(name),
-		isVisibleExternal: (name) =>
-			visibleExternals.has(name) || (externals.has(name) && rules[name] === undefined && !isParserHiddenName(name))
-	};
-	return symbols;
-}
-
 export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
 	const rule: AnyRule = content;
 	if (rule.type !== CHOICE) return undefined;
@@ -903,25 +755,8 @@ export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: str
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }
 
-function terminalSymbolOf(name: string, ctx: ParserSymbolCtx): boolean {
-	const cls = parserSymbolClassOf(name, ctx);
-	if (cls !== 'inlined') return cls === 'terminal';
-	const body = ctx.rules[name];
-	return body !== undefined && terminalContentOf(body, (member) => terminalSymbolOf(member, ctx));
-}
-
 export function lexesAsOneToken(rule: TokenShape): boolean {
 	return extractedToken(rule) !== undefined;
-}
-
-function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {
-	if (ctx.externals.has(name)) return 'terminal';
-	if (ctx.inline.has(name)) return 'inlined';
-	const rule = ctx.rules[name] as unknown as TokenShape | undefined;
-	if (rule === undefined) return 'nonterminal';
-	const token = extractedToken(rule);
-	if (token === undefined || ctx.tokenUses.get(token.key) !== 1) return 'nonterminal';
-	return token.anonymous && isParserHiddenName(name) ? 'nonterminal' : 'terminal';
 }
 
 export function selfReferentialFoldOf(name: string, rule: Rule<'link'>): { separator: Rule<'link'> } | undefined {

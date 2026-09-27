@@ -4027,7 +4027,7 @@ them. A kind with any non-lexical leaf is not, so a statement that merely
 contains a `_newline` external does not glue its list.
 
 This answers "can extras occur inside this node", not "does the parser issue
-this as a token" (`dsl/rule-patterns.ts::parserSymbolClassOf`). The two
+this as a token" (the catalog's `terminal` fact). The two
 differ both ways: a nonterminal made only of lexical leaves (`string_content`)
 admits no extras, and so does a `token(...)` rule the parser files as a
 nonterminal because it is used more than once. It reads the facts the render

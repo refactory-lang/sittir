@@ -46,7 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isRenamedEntry, isSurfaceHiddenKind, isAliasedHiddenStorage, stampVisibleExternals, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, stampVisibleExternals, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -88,7 +88,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { assertPredictedKindEntries, catalogSymbolSource, predictedEntriesOf } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, predictedEntriesOf } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -734,19 +734,7 @@ function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 const renameWalker = new RuleWalker<Rule<'evaluate'>>({});
 
 function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<string, string> {
-	const renames = new Map<string, string>();
-	for (const name of [...Object.keys(raw.rules), ...ruleListParts(raw.externals).names]) {
-		const entry = findEntryForKindName(ctx.kindEntries, name);
-		if (
-			entry === undefined ||
-			entry.kind !== name ||
-			entry.symbolName === undefined ||
-			!isRenamedEntry(entry, ctx.kindEntries)
-		)
-			continue;
-		renames.set(name, entry.symbolName);
-	}
-	return renames;
+	return catalogRenames([...Object.keys(raw.rules), ...ruleListParts(raw.externals).names], ctx.kindEntries);
 }
 
 function reportUnpredictedKinds(ctx: LinkCtx): void {

@@ -3519,28 +3519,21 @@ The rules a grammar object offers when it is used as a base: its `.rules`, throu
  */
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::ParserSymbolClass`
-
-```text
-How tree-sitter's extract_tokens step files a rule: `terminal` (a token, id below TOKEN_COUNT), `nonterminal`, or
-`inlined` (no symbol at all).
-```
-
 ### `packages/codegen/src/dsl/rule-patterns.ts::SymbolSource`
 
-The one interface every phase asks about a grammar's symbols, beside the rule bodies and external names: whether the parser issues a name as a terminal (`isTerminal`), inlines it (`isInlined`), hides it (`isHidden`: a hidden name the parser does not show under a default alias), dispatches on it as a supertype (`isSupertype`), and issues it as a visible external token (`isVisibleExternal`). These are every fact `inlinesAtReference` reads. The source is chosen by what exists: while grammar.js evaluates no catalog ever exists, so enrich, its separator detection and link's separator lift use `predictedSymbolSource`; link stamps inlining from the catalog (`compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`) and asserts the two agree (`assertPredictionAgrees`); the grammar diagnostics choose with `compiler/diagnostics/alias-distributed.ts::symbolSourceOf`.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::predictedSymbolSource`
-
-Builds the DSL-phase `SymbolSource` from a grammar's `SymbolFacts`: `isTerminal` is `terminalSymbolOf` and `isInlined` is `parserSymbolClassOf`'s `inlined` class, both over one private `ParserSymbolCtx` whose token-use counts come from the same rules; `isHidden` is a hidden name (`isParserHiddenName`) that `predictedRenames` does not rename, since the parser shows a default-aliased rule under its alias; `isSupertype` is membership in `supertypes:`; `isVisibleExternal` is a declared `visibleExternals` name, or an external with no rule body and a visible name. The renames are computed on the first `isHidden` question. The only way to build the prediction, so its facts are always derived together from one grammar.
+The one interface every phase asks about a grammar's symbols, beside the rule bodies and external names: whether the parser issues a symbol for a name at all (`hasSymbol`), issues it as a terminal (`isTerminal`), inlines it (`isInlined`), hides it (`isHidden`: a hidden name the parser does not show under a default alias), dispatches on it as a supertype (`isSupertype`), and issues it as a visible external token (`isVisibleExternal`). Every source answers from kind-catalog rows (`symbol-table.ts::catalogSymbolSource`); only the rows differ by phase. While grammar.js evaluates no parser.c exists, so enrich and its separator detection ask the predicted catalog of the rules at hand (`symbol-table.ts::predictedSymbolSourceOf`), the grammar diagnostics ask the catalog evaluate predicted (`RawGrammar.predictedKinds`), and link asks the same predicted catalog after asserting it against the parser's (`symbol-table.ts::assertPredictedKindEntries`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::SymbolFacts`
 
-The declared grammar facts a `SymbolSource` is built from: rule bodies, and the `externals`, `inline`, `supertypes`, `extras` and `visibleExternals` names. The rule order matters: the first rule is the start rule `predictedRenames` walks from.
+The declared grammar facts a `SymbolSource` is built from: rule bodies, and the `externals`, `inline`, `supertypes`, `extras` and `visibleExternals` names.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::RuleListEntry`
 
 One entry of a grammar's `extras` or `externals` list, in grammar.json's own shape: a SYMBOL (a rule or scanner token by name), a STRING (a literal text), or a PATTERN (a regex source). Externals hold SYMBOL and STRING entries; extras hold all three. The lists stay rule lists from evaluate to the serialized node model, in declaration order, so every reader sees each entry's rule type rather than a name-or-text string.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleListEntryOf`
+
+The `RuleListEntry` a grammar's list value stands for: a string is a STRING, a RegExp a PATTERN (its source), and a SYMBOL, STRING or PATTERN rule object is copied to grammar.json's shape without any other property. Anything else is `undefined`, for the caller to reject with its own list's name. The one reader of list entries, shared by evaluate's list callbacks and enrich's list harvest.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::RuleListParts`
 
@@ -3572,64 +3565,6 @@ Three structural boundaries override the parser fact, each derived from the rule
 
 Whether a rule body contains a SYMBOL reference to its own name (direct self-reference only; references are not followed), remembered per name in `InlineAtReferenceCtx.selfReferencing`, so a body is walked once however many references reach it.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::forEachSymbolUse`
-
-Visits every symbol use in a rule: a SYMBOL that is an ALIAS's whole content is reported with that alias; any other SYMBOL is reported bare. An alias over anything else is descended like any wrapper, so the symbols inside it are bare uses.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::SymbolUses`
-
-How one symbol is used: the count of each named alias value it is wrapped in, and the count of its other uses (`bare`, which includes anonymous aliases).
-
-### `packages/codegen/src/dsl/rule-patterns.ts::reachableSymbolUses`
-
-Every symbol's `SymbolUses` over the rules reachable from the start rule (the first rule) and the rules named in `extras`, found breadth-first, so the alias values are counted in first-site order. A rule nothing reaches contributes no uses, as in tree-sitter, which drops unreachable rules before it assigns names.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::mostFrequentAlias`
-
-The named alias value used most often; on a tie, the one met first.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::predictedRenames`
-
-Predicts tree-sitter's default aliases: which rules the parser shows under another name, so link's `collapseRenamedRules` renames them. A symbol with no bare use and at least one named alias takes its most frequent alias value (`mostFrequentAlias`), unless it is a visible external (the grammar declares its token visible, so it keeps its name). A candidate is dropped when another candidate claims the same name, or when the name belongs to a rule that is not itself renamed away (typescript `string_fragment`).
-
-### `packages/codegen/src/dsl/rule-patterns.ts::SYMBOL_SOURCE_FACTS`
-
-The `SymbolSource` facts a trace records: every predicate a source answers.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::tracedSymbolSource`
-
-A `SymbolSource` that answers as the given one and records each question and answer, in order, as `fact(name)=answer`.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::PredictionCheck`
-
-What `assertPredictionAgrees` compares: the predicted and catalog sources, the grammar's `inline:` names, and the two rename maps.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::assertPredictionAgrees`
-
-Link's check that the DSL-phase prediction is the parser's truth. For every name the sources' rules reference bare (a SYMBOL that is not an ALIAS's whole content; link's stamp discards the inline answer there, since the alias's node must materialize), it runs `inlinesAtReference` under both sources, traced, and compares the sequence of facts read and the outcome. The comparison is over the facts the predicate actually reads, not over every fact for every name: the predicate stops at the first deciding fact (a supertype is parser-hidden, but it returns on `isSupertype` first), so facts it never reads cannot change a verdict. It also compares the predicted renames with the catalog's. Every disagreement is listed in one error; a disagreement is a predictor bug.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::ParserSymbolCtx`
-
-```text
-The grammar facts `parserSymbolClassOf` needs: rule bodies, the `externals` and `inline` names, and how many times each
-extracted token occurs across all rules (`tokenUseCounts`). Private to rule-patterns: callers get a `SymbolSource`.
-```
-
-### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolClassOf`
-
-```text
-Predicts the parser class tree-sitter's extract_tokens gives a rule name, without generating a parser:
-- an external is a terminal;
-- a rule in `inline` has no symbol;
-- a body that is a single token — after merging nested token / immediate-token / precedence wrappers — used exactly
-  once in the grammar becomes that token, so the rule is terminal; except a plain string under a hidden name, which
-  is an anonymous token, leaving the rule a nonterminal with a unit production;
-- everything else (sequences, choices, repeated tokens) is a nonterminal.
-A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
-```
-
-It is a DSL-phase prediction only. Once parser.c exists, the catalog's `terminal` fact (the symbol id below `TOKEN_COUNT`) is the answer; the prediction disagrees with it on rows the anchor test does not cover (variant children such as rust `integer_literal_decimal`, python `pass_statement`).
-
 ### `packages/codegen/src/dsl/rule-patterns.ts::choiceArmsOf`
 
 The arms of a choice, nested choices flattened, or `undefined` for content
@@ -3640,24 +3575,17 @@ that is not a choice.
 Whether content the parser sees at a position is a terminal: a symbol by
 the caller's `isTerminalSymbol`, a string, pattern or token, or a choice
 whose every arm is terminal. The symbol test is a parameter so the one body
-walk serves every `SymbolSource`: the predicted source's `terminalSymbolOf`
-and the catalog source's `terminal` fact
-(`compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`).
-
-### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
-
-Whether a name is a terminal to the parser, predicted in the DSL phase: its
-`parserSymbolClassOf`, except that an inlined rule is classified by its body,
-since the parser substitutes it. It answers `predictedSymbolSource`'s
-`isTerminal`.
+walk serves an inlined name in `symbol-table.ts::catalogSymbolSource`, whose
+other names answer from their row's `terminal` fact.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
 Whether a rule body is one token as tree-sitter's extract_tokens sees it: a
 bare string or pattern, or anything under token / immediate-token, through
-precedence wrappers. It is the shape question alone. `parserSymbolClassOf`
-adds the grammar-wide facts (how often the token is used, externals,
-inline) to answer whether the *rule* becomes a terminal. A minted rule whose
+precedence wrappers. It is the shape question alone. Whether the *rule* becomes a terminal
+also depends on grammar-wide facts (how often the token is used, externals,
+inline), which only the predicted symbol table answers
+(`symbol-table.ts::predictSymbolTable`). A minted rule whose
 body lexes as one token is a subtype leaf, not a hoisted group
 (`transform.ts::hoistedUnlessToken`).
 
@@ -3665,14 +3593,6 @@ body lexes as one token is a subtype leaf, not a hoisted group
 
 The structural view of a rule `extractedToken` and `lexesAsOneToken` read:
 a type, a value and a content, so runtime and phase rules both fit.
-
-### `packages/codegen/src/dsl/rule-patterns.ts::tokenUseCounts`
-
-```text
-How many times each extracted token (keyed by its content and merged wrapper parameters) occurs across all rules.
-tree-sitter only turns a single-token rule into a terminal when that token is used once; a shared token stays
-anonymous and the rule stays a nonterminal.
-```
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::extractedToken`
 
@@ -3872,7 +3792,7 @@ Recognizes a two-member `seq` as one separated-list step: `seq(SEP, X)` (leading
 
 A choice of nonterminals is content, not a separator: regex's `term` is `seq(choice(<atoms>), optional(<quantifier>))`, an element followed by its quantifier. An optional token (`choice(tok, blank)`) is not one either — it may be absent, so it is a per-element flank.
 
-Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so the test is the same in enrich (before any parser catalog exists) and in link; the link caller (`LinkCtx.sourceSymbols`) depends on that classifier and moves with it if link switches to the parser catalog's terminal fact.
+Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `terminal` fact in both enrich (over the rules at hand) and link (`LinkCtx.sourceSymbols`, over the catalog evaluate predicted), so the test is the same in both.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::permutationAtomKey`
 
@@ -6055,7 +5975,9 @@ terminal when tree-sitter would give it a token (`SymbolSource.isTerminal`; an i
 - Display with no rule: two or more nonterminal storages are all split; a single nonterminal among terminals is
   split unless its stripped name is the display, in which case the terminals' aliases are dropped instead.
 
-Splitting drops the alias over a visible symbol or an inline literal, renames the alias over a hidden symbol to the
+Storages are classified by the predicted catalog of the enriched rules, so a storage under an alias site no rule
+reaches has no row and is a nonterminal, as tree-sitter issues it no symbol. Splitting drops the alias over a
+visible symbol or an inline literal, renames the alias over a hidden symbol to the
 symbol's name without underscores (or `<display>_<name>` when that is taken; a free name is required, else it
 throws), and throws for an inline nonterminal, which needs a rule of its own. Runs in enrich, so the parser and the
 model see the same kinds.
@@ -6071,7 +5993,7 @@ The content under a chain of named aliases.
 
 The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
-`sourceSymbols` is the predicted `SymbolSource` over the base rules — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
+`sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
 `hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
 
@@ -6089,12 +6011,12 @@ State that exists only while the clause hoist runs. `separatedListNameCounts` is
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
 
-The grammar-level inputs of an `enrich()` call: the base rules, the supertype, external, inline and extras names, and the compiled word matcher.
+The grammar-level inputs of an `enrich()` call: the base rules, the supertype and inline names, the externals and extras rule lists, the `word` rule's name, and the compiled word matcher.
 
 
-### `packages/codegen/src/dsl/enrich-ctx.ts::enrichSymbolFacts`
+### `packages/codegen/src/dsl/enrich-ctx.ts::enrichSymbolSource`
 
-The `SymbolFacts` of an `enrich()` call over a given rule set: the ctx's names, with no declared visible externals, since those are declared by wire, which runs after enrich. Both of enrich's predicted sources (`sourceSymbols` over the base rules, `enrichedSymbols` over the enriched ones) are built from it.
+The predicted `SymbolSource` of an `enrich()` call over a given rule set: the kind catalog tree-sitter would build from those rules and the ctx's lists (`symbol-table.ts::predictedSymbolSourceOf`). Wire, which runs after enrich, declares the visible externals, so enrich stands in for that declaration: an external with a visible name and no rule body is a visible external. Both of enrich's sources (`sourceSymbols` over the base rules, `enrichedSymbols` over the enriched ones) are built by it.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ParserSymbolTable`
 
@@ -6295,15 +6217,15 @@ same kinds, so the name and the fact cannot disagree.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::resolveAliasedTokenLiterals`
 
-The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is itself one of `D`'s literals is that literal (the identifier-safe case, where tree-sitter's C name spells the literal); (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. No part of tree-sitter's C-name mangling is re-implemented: a non-identifier literal (`'\-'` → `anon_sym_BSLASH_DASH`) is recovered by elimination, never by decoding the mangled name.
+The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is one of `D`'s literals as tree-sitter spells it in C (`sanitizeCIdentifier`, the same derivation the predicted table names its symbols by) is that literal; (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. A C name is only ever compared with a literal's C spelling, never decoded; (b) covers a symbol tree-sitter suffixed to keep its C name unique.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::aliasedLiterals`
 
-The literals a named alias wraps. Tree-sitter applies an alias to every step of its content, so the walk collects each `STRING` under a `CHOICE` or `SEQ` member, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`); any other content contributes none.
+The literals a named alias wraps. Tree-sitter applies an alias to every step of its content, so the walk collects each `STRING` under a `CHOICE` or `SEQ` member, looking through `LITERAL_WRAPPERS`; any other content (a symbol, a pattern, a nested alias) contributes none.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::LITERAL_WRAPPERS`
 
-Rule types that wrap a literal without changing the token it lexes.
+Rule types an alias reaches through to the steps it names: `token`, `token.immediate`, `prec*`, `optional`, `repeat`, `repeat1` and `field`.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::findEntryForKindName`
 
@@ -6497,11 +6419,15 @@ One catalog row. Beyond the id tables, it carries:
 
 ### `packages/codegen/src/dsl/symbol-table.ts::CatalogSymbolFacts`
 
-The grammar's `dsl/rule-patterns.ts::SymbolFacts` plus the catalog rows (empty before the first generate): what `symbolSourceOf` and `catalogSymbolSource` build a source from.
+The grammar's `dsl/rule-patterns.ts::SymbolFacts` plus the catalog rows (empty before the first generate): what `catalogSymbolSource` and `renameAwareSymbolSource` build a source from.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::catalogSymbolSource`
 
-Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal. It is hidden when its own row is hidden and not an alias row (`parserHiddenOf`), a supertype when the row or the declared `supertypes:` say so (`parserSupertypeOf`), and a visible external when its row carries `visibleExternal`. Link stamps inlining through this source and asserts the prediction agrees with it.
+Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal. It is hidden when its own row is hidden and not an alias row (`parserHiddenOf`), a supertype when the row or the declared `supertypes:` say so (`parserSupertypeOf`), and a visible external when its row carries `visibleExternal`. It answers `hasSymbol` by whether the name has a row. Link stamps inlining through it over the parser's rows; every earlier phase asks it over predicted rows.
+
+### `packages/codegen/src/dsl/symbol-table.ts::PredictorRule`
+
+A rule body the predictor accepts: an evaluated rule, or a grammar.json rule as the tree-sitter CLI's own grammar.json carries it (which spells an empty choice arm as `BLANK`), so one port predicts from either.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedGrammar`
 
@@ -6593,15 +6519,19 @@ Removes a default alias from each step that carries it, unless another productio
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictSymbolTable`
 
-Predicts the parser's symbol table from the evaluated grammar by porting tree-sitter's preparation: live rules (`liveRuleNames`), interning, token extraction (the `word` rule first), single-use whole-rule token replacement, externals (a literal external is an anonymous token), extras, repeat expansion, flattening, reachability from the start rule and the extras (every external is reachable), default aliases and their clearing. Symbols are ordered terminals, externals, then non-inlined nonterminals, then the aliases no symbol displays as, sorted by name and namedness; ids follow that order from 1 and C names come from `sanitizeCIdentifier` with numeric suffixes on collision. Each symbol's name is its display name — its default alias when it has one — and its visible, named, supertype and aliased-non-terminal flags follow tree-sitter's metadata. A reference that names no rule and no external is what tree-sitter rejects the grammar for; every such name is collected and thrown as one `UndefinedSymbolsError`. `kindTableOfSymbolTable` turns the table into rows exactly as it turns parser.c's.
+Predicts the parser's symbol table from the evaluated grammar by porting tree-sitter's preparation: live rules (`liveRuleNames`), interning, token extraction (the `word` rule first), single-use whole-rule token replacement, externals (a literal external is an anonymous token), extras, repeat expansion, flattening, reachability from the start rule and the extras (every external is reachable), default aliases and their clearing. Symbols are ordered terminals, externals, then non-inlined nonterminals, then the aliases no symbol displays as, sorted by name and namedness; ids follow that order from 1 and C names come from `sanitizeCIdentifier` with numeric suffixes on collision. Each symbol's name is its display name — its default alias when it has one — and its visible, named, supertype and aliased-non-terminal flags follow tree-sitter's metadata. A reference that names no rule and no external is what tree-sitter rejects the grammar for; the prediction does not stop there. Such a reference stays an opaque nonterminal step (so the rule holding it keeps its class) that is never issued a symbol, and every such name is returned in `undefinedNames` beside the table of the names that are defined. `kindTableOfSymbolTable` turns the table into rows exactly as it turns parser.c's.
 
-### `packages/codegen/src/dsl/symbol-table.ts::UndefinedSymbolsError`
+### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-The names a grammar references that are neither rules nor externals — tree-sitter rejects such a grammar, so no symbol table exists to predict.
+A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What evaluate stamps as `RawGrammar.predictedKinds`: the predicted kind catalog's rows, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+
+### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
+
+The names a failed prediction found undefined, or none when the prediction succeeded or found another cause. Hydrate skips these names (`compiler/assemble.ts::hydrateValues`), since link already records each as a dangling reference.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedEntriesOf`
 
@@ -6614,3 +6544,27 @@ The catalog-row fields the pipeline reads, and so the fields the predicted catal
 ### `packages/codegen/src/dsl/symbol-table.ts::assertPredictedKindEntries`
 
 Compares the predicted kind catalog with the parser's row by row on `PREDICTED_KIND_FIELDS`, plus each side's kind set, and throws listing every disagreement. Ids are not compared: nothing reads a predicted id.
+
+### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
+
+The rows `predictKindCatalog` predicts, with the grammar's undefined names beside them.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
+
+The kind-catalog rows tree-sitter would generate for a grammar: `predictSymbolTable` turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are, and without `lexicalRank`, which the prediction does not derive faithfully. A grammar with undefined names still gets the rows of its defined names; the names come back in `undefinedNames`, and an undefined name has no row.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedKindsOf`
+
+The one derivation of `PredictedKinds`: the rows when the grammar defines every name it references, else the failure, naming the undefined names, or the error of any other failure to build the table. `canonicalGrammar` stamps it (through `compiler/canonical-rules.ts::predictKinds`), and test fixtures stamp theirs with it rather than by hand.
+
+### `packages/codegen/src/dsl/symbol-table.ts::catalogRenames`
+
+The default aliases a kind catalog records: each given name whose own row is a renamed entry (`isRenamedEntry`), mapped to the tree name it shows as. Link's `collapseRenames` and the pre-rename sources (`renameAwareSymbolSource`) read the renames through it, so both derive them from rows the same way.
+
+### `packages/codegen/src/dsl/symbol-table.ts::renameAwareSymbolSource`
+
+A `catalogSymbolSource` for a grammar whose rules still carry the names the catalog renames away: every question about a renamed rule or external is asked about its tree name (`catalogRenames`). Enrich and the grammar diagnostics read the grammar before link's rename, so they ask through it; link, after the rename, asks the catalog directly.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedSymbolSourceOf`
+
+The `SymbolSource` of a grammar before any parser.c exists: its predicted kind catalog (`predictKindCatalog`), asked through `renameAwareSymbolSource`. A name the grammar leaves undefined has no row, so `hasSymbol` and `isTerminal` are false for it; the failure itself is reported from `RawGrammar.predictedKinds`, never here. Enrich builds one per rule set it classifies (`enrich-ctx.ts::enrichSymbolSource`).

@@ -7,7 +7,7 @@ import { collectGrammarDiagnosticsForGrammar, GrammarDiagnosticError } from './d
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
-import { stampVisibleExternals, type GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { stampVisibleExternals, undefinedNamesOf, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
 import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
@@ -48,6 +48,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 
 	hydrateSlotRefs(nodeMap, {
 		inline: new Set(raw.inline),
+		undefinedNames: new Set(undefinedNamesOf(raw.predictedKinds)),
 		diagnostics: compilerDiagnostics,
 		grammar: cfg.grammar
 	});

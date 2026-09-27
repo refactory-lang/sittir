@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { matchesEmpty, isInlineSafe, predictedSymbolSource, symbolFactsOf } from '../rule-patterns.ts';
+import { matchesEmpty, isInlineSafe } from '../rule-patterns.ts';
+import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const str = (v: string) => ({ type: 'STRING', value: v });
 const sym = (n: string) => ({ type: 'SYMBOL', name: n });
@@ -8,15 +9,14 @@ const seq = (...m: any[]) => ({ type: 'SEQ', members: m });
 const choice = (...m: any[]) => ({ type: 'CHOICE', members: m });
 const opt = (c: any) => ({ type: 'OPTIONAL', content: c });
 
-const symbols = predictedSymbolSource(
-	symbolFactsOf({
-		rules: { _semicolon: choice(sym('_automatic_semicolon'), str(';')) } as never,
-		externals: [{ type: 'SYMBOL', name: '_automatic_semicolon' }],
-		inline: ['_semicolon'],
-		supertypes: [],
-		extras: []
-	})
-);
+const symbols = predictedSymbolSourceOf({
+	rules: { source: sym('_semicolon'), _semicolon: choice(sym('_automatic_semicolon'), str(';')) } as never,
+	externals: [{ type: 'SYMBOL', name: '_automatic_semicolon' }],
+	inline: ['_semicolon'],
+	supertypes: [],
+	extras: [],
+	word: null
+});
 const inlineSafe = (rule: unknown) => isInlineSafe(rule, symbols);
 
 describe('matchesEmpty', () => {

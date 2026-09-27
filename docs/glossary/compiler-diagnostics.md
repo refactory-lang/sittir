@@ -407,13 +407,6 @@ no single model node to be wrong about. The known unnamed case is
 typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
 'unique symbol')`.
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
-
-Chooses the grammar diagnostics' `SymbolSource` (`dsl/rule-patterns.ts::SymbolSource`) once, so each alias diagnostic has a single code path:
-
-- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
-- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`dsl/rule-patterns.ts::predictedSymbolSource`), so the diagnostics still fire in that phase.
-
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
 
 The distributed shape an alias's content has, described for the message, or
@@ -425,7 +418,7 @@ An invariant guard, not a user-facing shape check: enrich
 (`unaliasOverloadedDisplays`) resolves every display that would sit over both
 a terminal and a nonterminal storage, so after enrich no display union holds
 both. Members are classified by the `SymbolSource` (`isTerminal`: the
-parser catalog after the first generate, the shape prediction before it),
+kind catalog evaluate predicted, which link asserts against the parser's),
 and a literal member is a terminal by its own stamp
 (`DisplayUnionMember.literal`).
 A member that is neither a rule, an external nor a literal is reported
@@ -433,9 +426,17 @@ rather than defaulted, since defaulting would make the guard guess.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
-Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from it (`symbolSourceOf`: the
-catalog's facts once parser.c exists, else the same prediction enrich
-classifies with), and hands it to both alias diagnostics.
+Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from the kind catalog evaluate predicted (`RawGrammar.predictedKinds`), asked through
+`dsl/symbol-table.ts::renameAwareSymbolSource` since the rules may still carry pre-rename names, and hands it to
+both alias diagnostics. When the prediction failed, those two checks are skipped, since answers over no rows
+are false, and the failure surfaces instead: link records it (`link.ts::reportUnpredictedKinds`) in the sink the
+collector runs it with, and the collector surfaces those records beside the kind-id stamp records
+(`SURFACED_COMPILER_CODE_PREFIXES`).
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODE_PREFIXES`
+
+The compiler-diagnostic codes the grammar diagnostics report as their own: the kind-id stamp records, and the
+failed-prediction records (`dangling-internal-ref`, `unpredictable-symbol-table`).
 
 
 #### body

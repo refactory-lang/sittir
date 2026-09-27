@@ -4,14 +4,9 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { DisplayUnions } from '../types.ts';
 import { isPrecWrapper } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import { predictedSymbolSource, type SymbolSource } from '../../dsl/rule-patterns.ts';
-import { catalogSymbolSource, type CatalogSymbolFacts } from '../../dsl/symbol-table.ts';
+import type { SymbolSource } from '../../dsl/rule-patterns.ts';
 
 type R = Rule<'evaluate'>;
-
-export function symbolSourceOf(facts: CatalogSymbolFacts): SymbolSource {
-	return facts.kindEntries.length > 0 ? catalogSymbolSource(facts) : predictedSymbolSource(facts);
-}
 
 function distributedShape(content: R, symbols: SymbolSource, seen: ReadonlySet<string>): string | undefined {
 	if (content.type === SEQ) return content.members.length >= 2 ? `a sequence of ${content.members.length} members` : undefined;

@@ -1,24 +1,30 @@
 import type { Rule } from '../types/rule.ts';
-import { predictedSymbolSource, type SymbolFacts, type SymbolSource } from './rule-patterns.ts';
+import { isParserHiddenName, ruleListParts, type RuleListEntry, type SymbolSource } from './rule-patterns.ts';
+import { predictedSymbolSourceOf } from './symbol-table.ts';
 
 export interface EnrichCtxInit {
 	readonly rulesBag: Record<string, Rule>;
 	readonly supertypeNames: ReadonlySet<string>;
-	readonly externals: ReadonlySet<string>;
+	readonly externals: readonly RuleListEntry[];
 	readonly inline: ReadonlySet<string>;
-	readonly extras: ReadonlySet<string>;
+	readonly extras: readonly RuleListEntry[];
+	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
 }
 
-export function enrichSymbolFacts(init: EnrichCtxInit, rules: Readonly<Record<string, Rule>>): SymbolFacts {
-	return {
+export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<string, Rule>>): SymbolSource {
+	const bodilessVisibleExternals = ruleListParts(init.externals).names.filter(
+		(name) => !isParserHiddenName(name) && !(name in rules)
+	);
+	return predictedSymbolSourceOf({
 		rules,
 		externals: init.externals,
-		inline: init.inline,
-		supertypes: init.supertypeNames,
 		extras: init.extras,
-		visibleExternals: new Set()
-	};
+		supertypes: [...init.supertypeNames],
+		inline: [...init.inline],
+		word: init.word,
+		visibleExternals: Object.fromEntries(bodilessVisibleExternals.map((name) => [name, true]))
+	});
 }
 
 export interface ClauseHoistState {
@@ -40,9 +46,10 @@ interface EnrichCtxFields extends EnrichCtxInit {
 export class EnrichCtx implements EnrichCtxFields {
 	readonly rulesBag: Record<string, Rule>;
 	readonly supertypeNames: ReadonlySet<string>;
-	readonly externals: ReadonlySet<string>;
+	readonly externals: readonly RuleListEntry[];
 	readonly inline: ReadonlySet<string>;
-	readonly extras: ReadonlySet<string>;
+	readonly extras: readonly RuleListEntry[];
+	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
 	readonly sourceSymbols: SymbolSource;
 	readonly kwRules: Record<string, Rule>;
@@ -59,6 +66,7 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.externals = fields.externals;
 		this.inline = fields.inline;
 		this.extras = fields.extras;
+		this.word = fields.word;
 		this.wordMatcher = fields.wordMatcher;
 		this.sourceSymbols = fields.sourceSymbols;
 		this.kwRules = fields.kwRules;
@@ -73,7 +81,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	static create(init: EnrichCtxInit): EnrichCtx {
 		return new EnrichCtx({
 			...init,
-			sourceSymbols: predictedSymbolSource(enrichSymbolFacts(init, init.rulesBag)),
+			sourceSymbols: enrichSymbolSource(init, init.rulesBag),
 			kwRules: {},
 			clauseGroupRules: {},
 			clauseDedupeMap: {},

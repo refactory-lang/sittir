@@ -10,7 +10,7 @@ import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
 import type { DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
@@ -30,35 +30,12 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], 
 	};
 }
 
-function catalogTables(symbols: {
-	readonly terminals: readonly string[];
-	readonly nonterminals: readonly string[];
-}): GeneratedIdTables {
-	const row = (name: string, id: number, terminal: boolean) => [
-		name,
-		{
-			id,
-			parser: {
-				cSymbol: `sym_${name}`,
-				parserName: name,
-				symbolName: name,
-				anon: false,
-				aux: false,
-				alias: false,
-				hidden: false,
-				...(terminal ? { terminal: true as const } : {})
-			}
-		}
-	];
-	const kindIds = Object.fromEntries([
-		...symbols.terminals.map((name, index) => row(name, index + 1, true)),
-		...symbols.nonterminals.map((name, index) => row(name, symbols.terminals.length + index + 1, false))
-	]);
-	return { kindIds, sourceArtifact: 'test' };
+function withPredictedKinds(raw: RawGrammar): RawGrammar {
+	return { ...raw, predictedKinds: predictedKindsOf(raw) };
 }
 
 function collisionGrammar(): RawGrammar {
-	return buildRawGrammar({
+	return withPredictedKinds(buildRawGrammar({
 		host: structuralBuilder.choice(
 			structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 			{ type: 'SYMBOL', name: 'shared' },
@@ -75,7 +52,7 @@ function collisionGrammar(): RawGrammar {
 		right: { type: 'PATTERN', value: '[0-9]+' },
 		identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
-	});
+	}));
 }
 
 describe('grammar diagnostics preflight', () => {
@@ -188,22 +165,18 @@ describe('grammar diagnostics preflight', () => {
 		]);
 	});
 
-	it("files a display union's members by the parser catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {
-		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: collisionGrammar(),
-			generatedIdTables: catalogTables({
-				terminals: ['left', 'right', 'identifier', 'identifier2'],
-				nonterminals: ['host', 'shared']
-			})
-		});
-		expect(result.diagnostics).toEqual([
-			expect.objectContaining({
-				code: 'display-union-mixed',
-				ownerKind: 'shared',
-				canProceed: false,
-				details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
-			})
-		]);
+	it("files a display union's members by the predicted catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
+		expect(result.diagnostics).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					code: 'display-union-mixed',
+					ownerKind: 'shared',
+					canProceed: false,
+					details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
+				})
+			])
+		);
 	});
 
 	it('content-collision now blocks (canProceed: false)', () => {

@@ -8,6 +8,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from '../assemble.ts';
 import { assertCompilation } from '../compile.ts';
 import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
+import { undefinedNamesOf } from '../../dsl/symbol-table.ts';
 
 async function compileGrammarSource(source: string): Promise<DiagnosticSink> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-hydrate-slot-refs-'));
@@ -19,7 +20,12 @@ async function compileGrammarSource(source: string): Promise<DiagnosticSink> {
 		const linked = link(raw, { diagnostics });
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
-		hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), diagnostics, grammar: 'dr' });
+		hydrateSlotRefs(nodeMap, {
+			inline: new Set(raw.inline),
+			undefinedNames: new Set(undefinedNamesOf(raw.predictedKinds)),
+			diagnostics,
+			grammar: 'dr'
+		});
 		return diagnostics;
 	} finally {
 		rmSync(dir, { recursive: true, force: true });

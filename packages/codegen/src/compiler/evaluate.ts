@@ -29,15 +29,7 @@ import type {
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, RuleProvenance, UpstreamEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
-import {
-	collectGeneratedKindEntries,
-	kindTableOfSymbolTable,
-	predictSymbolTable,
-	stampVisibleExternals,
-	UndefinedSymbolsError,
-	type PredictedKinds
-} from '../dsl/symbol-table.ts';
-import { isComplexBody, optionalContentOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
+import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import type { PatchSite, WireContext, RefineForm } from '../dsl/wire/wire.ts';
@@ -798,19 +790,6 @@ function appendMetadataRules(result: unknown, ctx: MetadataRuleListCtx): void {
 	}
 }
 
-function ruleListEntryOf(rule: Rule<'evaluate'>): RuleListEntry | undefined {
-	switch (rule.type) {
-		case SYMBOL:
-			return { type: SYMBOL, name: rule.name };
-		case STRING:
-			return { type: STRING, value: rule.value };
-		case PATTERN:
-			return { type: PATTERN, value: rule.value };
-		default:
-			return undefined;
-	}
-}
-
 function ruleListEntryKey(rule: RuleListEntry): string {
 	return rule.type === SYMBOL ? `${rule.type}:${rule.name}` : `${rule.type}:${rule.value}`;
 }
@@ -933,24 +912,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 let evaluateMutex: Promise<void> = Promise.resolve();
 
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	const evaluated = await evaluateDsl(entryPath);
-	return { ...canonicalGrammar(evaluated), predictedKinds: predictKinds(evaluated) };
-}
-
-function predictKinds(evaluated: EvaluatedGrammar): PredictedKinds {
-	const rules = Object.fromEntries(
-		Object.entries(evaluated.rules).filter(([name]) => evaluated.provenanceByKind.get(name) !== 'evaluate-synthesized')
-	);
-	try {
-		const kindIds = kindTableOfSymbolTable(predictSymbolTable({ ...evaluated, rules }), { rules });
-		const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, evaluated));
-		return { entries: entries.map(({ lexicalRank: _lexicalRank, ...entry }) => entry) };
-	} catch (error) {
-		return {
-			failure: error instanceof Error ? error.message : String(error),
-			undefinedNames: error instanceof UndefinedSymbolsError ? error.names : []
-		};
-	}
+	return canonicalGrammar(await evaluateDsl(entryPath));
 }
 
 export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {

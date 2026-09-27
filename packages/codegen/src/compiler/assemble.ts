@@ -614,6 +614,7 @@ function resolveHiddenRuleContent(
 
 export interface HydrateSlotRefsConfig {
 	readonly inline?: ReadonlySet<string>;
+	readonly undefinedNames?: ReadonlySet<string>;
 	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
@@ -632,6 +633,7 @@ export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {
 				nodes: nodeMap.nodes,
 				externals,
 				inline,
+				undefinedNames: cfg.undefinedNames,
 				diagnostics: cfg.diagnostics,
 				grammar: cfg.grammar
 			});
@@ -654,6 +656,7 @@ function hydrateSlots(
 			nodes,
 			externals,
 			inline,
+			undefinedNames: cfg.undefinedNames,
 			diagnostics: cfg.diagnostics,
 			grammar: cfg.grammar
 		});
@@ -666,12 +669,13 @@ interface HydrateValuesCtx {
 	readonly nodes: Map<string, AssembledNode>;
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
+	readonly undefinedNames?: ReadonlySet<string>;
 	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals, inline, diagnostics, grammar } = ctx;
+	const { parentKind, siteLabel, nodes, externals, inline, undefinedNames, diagnostics, grammar } = ctx;
 	for (const v of values) {
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
@@ -683,9 +687,7 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		}
 		if (externals.has(targetName)) continue;
 		if (inline.has(targetName)) continue;
-		if (diagnostics?.all().some((d) => d.code === 'dangling-internal-ref' && d.details?.targetName === targetName)) {
-			continue;
-		}
+		if (undefinedNames?.has(targetName)) continue;
 		diagnostics?.fail({
 			code: 'dangling-internal-ref',
 			message:

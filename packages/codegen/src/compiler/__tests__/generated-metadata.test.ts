@@ -575,7 +575,7 @@ static const char * const ts_field_names[] = {
 		)
 	});
 
-	it('recovers a non-identifier aliased literal from the grammar, not from the mangled C name', async () => {
+	it('recovers a non-identifier aliased literal from the grammar by its C spelling', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			aliasSource([['anon_sym_BSLASH_DASH', 19, 'identity_escape']]),
 			'parser.c',
@@ -599,16 +599,30 @@ static const char * const ts_field_names[] = {
 		expect(entries.find((e) => e.id === 21)?.literalText).toBe('\\-');
 	});
 
-	it('throws when several non-identifier literals alias to one name', async () => {
+	it('pairs several non-identifier literals aliased to one name by their C spellings', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([
+				['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
+				['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+			]),
+			'parser.c',
+			aliasedStrings('identity_escape', ['\\-', '\\.'])
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		expect(entries.find((e) => e.id === 19)?.literalText).toBe('\\-');
+		expect(entries.find((e) => e.id === 20)?.literalText).toBe('\\.');
+	});
+
+	it('throws when several aliased tokens match no literal by C spelling', async () => {
 		await expect(
 			deriveGeneratedIdTablesFromParserCSource(
 				aliasSource([
-					['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
-					['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+					['anon_sym_a2', 19, 'escape'],
+					['anon_sym_b2', 20, 'escape']
 				]),
 				'parser.c',
-				aliasedStrings('identity_escape', ['\\-', '\\.'])
+				aliasedStrings('escape', ['a', 'b'])
 			)
-		).rejects.toThrow('generated-metadata: aliased token anon_sym_BSLASH_DASH (display "identity_escape") has no verbatim literal');
+		).rejects.toThrow('generated-metadata: aliased token anon_sym_a2 (display "escape") has no verbatim literal');
 	});
 });

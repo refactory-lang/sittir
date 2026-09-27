@@ -6,6 +6,7 @@ import { RuleWalker } from '../dsl/rule-walker.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import type { EvaluatedGrammar, RawGrammar, UpstreamEvaluation } from './types.ts';
+import { predictedKindsOf, type PredictedKinds } from '../dsl/symbol-table.ts';
 
 type EvalRule = Rule<'evaluate'>;
 
@@ -124,6 +125,14 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),
 		renderAs: renderAs && canonicalRuleBodies(renderAs),
 		visibleExternals: visibleExternals && canonicalRuleBodies(visibleExternals),
-		upstream: canonicalUpstream(upstream)
+		upstream: canonicalUpstream(upstream),
+		predictedKinds: predictKinds(evaluated)
 	};
+}
+
+function predictKinds(evaluated: EvaluatedGrammar): PredictedKinds {
+	const rules = Object.fromEntries(
+		Object.entries(evaluated.rules).filter(([name]) => evaluated.provenanceByKind.get(name) !== 'evaluate-synthesized')
+	);
+	return predictedKindsOf({ ...evaluated, rules });
 }

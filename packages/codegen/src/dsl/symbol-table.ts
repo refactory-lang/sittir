@@ -16,7 +16,8 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule } from '../types/rule.ts';
+import type { AnyRule } from '../types/rule.ts';
+import type { GrammarRule } from '../grammar-shapes/grammar-json.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	isParserHiddenName,
@@ -24,6 +25,7 @@ import {
 	terminalContentOf,
 	type RuleListEntry,
 	type SymbolFacts,
+	symbolFactsOf,
 	type SymbolSource
 } from './rule-patterns.ts';
 import type { KindParserMetadata } from '../compiler/types.ts';
@@ -99,7 +101,18 @@ function walkGrammarNode(
 	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargets, literalRules);
 }
 
-const LITERAL_WRAPPERS = new Set(['TOKEN', 'IMMEDIATE_TOKEN', 'PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
+const LITERAL_WRAPPERS = new Set([
+	'TOKEN',
+	'IMMEDIATE_TOKEN',
+	'PREC',
+	'PREC_LEFT',
+	'PREC_RIGHT',
+	'PREC_DYNAMIC',
+	'OPTIONAL',
+	'REPEAT',
+	'REPEAT1',
+	'FIELD'
+]);
 
 function aliasedLiterals(content: unknown): readonly string[] {
 	if (content === null || typeof content !== 'object') return [];
@@ -125,10 +138,11 @@ function resolveAliasedTokenLiterals(
 	const resolved = new Map<string, string>();
 	for (const [displayName, cNames] of byDisplay) {
 		const literals = aliasTargets.get(displayName)!;
+		const literalOfCName = new Map([...literals].map((literal) => [sanitizeCIdentifier(literal), literal]));
 		const unresolved: string[] = [];
 		for (const cName of cNames) {
-			const suffix = cName.slice('anon_sym_'.length);
-			if (literals.has(suffix)) resolved.set(cName, suffix);
+			const literal = literalOfCName.get(cName.slice('anon_sym_'.length));
+			if (literal !== undefined) resolved.set(cName, literal);
 			else unresolved.push(cName);
 		}
 		const claimed = new Set(cNames.map((c) => resolved.get(c)).filter((l) => l !== undefined));
@@ -644,6 +658,7 @@ export function catalogSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
 	return {
 		rules: facts.rules,
 		externals: facts.externals,
+		hasSymbol: (name) => entryOf(name) !== undefined,
 		isTerminal,
 		isInlined,
 		isHidden: (name) => parserHiddenOf(entryOf(name), name),
@@ -652,8 +667,10 @@ export function catalogSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
 	};
 }
 
+export type PredictorRule = AnyRule | GrammarRule;
+
 export interface PredictedGrammar {
-	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly rules: Readonly<Record<string, PredictorRule>>;
 	readonly extras: readonly RuleListEntry[];
 	readonly externals: readonly RuleListEntry[];
 	readonly supertypes: readonly string[];
@@ -713,8 +730,10 @@ function withMeta(content: InternedRule, set: (params: MetaParams) => void): Int
 	return { type: 'META', params, rule: content };
 }
 
-function internRule(rule: Rule<'evaluate'>, resolve: (name: string) => string): InternedRule {
+function internRule(rule: PredictorRule, resolve: (name: string) => string): InternedRule {
 	switch (rule.type) {
+		case 'BLANK':
+			return BLANK_RULE;
 		case OPTIONAL:
 			return { type: 'CHOICE', members: [internRule(rule.content, resolve), BLANK_RULE] };
 		case STRING:
@@ -735,7 +754,7 @@ function internRule(rule: Rule<'evaluate'>, resolve: (name: string) => string): 
 		case TOKEN:
 			return withMeta(internRule(rule.content, resolve), (params) => {
 				params.token = true;
-				if (rule.immediate === true) params.immediate = true;
+				if ('immediate' in rule && rule.immediate === true) params.immediate = true;
 			});
 		case IMMEDIATE_TOKEN:
 			return withMeta(internRule(rule.content, resolve), (params) => {
@@ -930,7 +949,7 @@ function sanitizeCIdentifier(name: string): string {
 	return identifier;
 }
 
-function referencedNames(rule: Rule<'evaluate'>, into: string[]): void {
+function referencedNames(rule: PredictorRule, into: string[]): void {
 	if (rule.type === SYMBOL) into.push(rule.name);
 	if ('members' in rule) for (const member of rule.members) referencedNames(member, into);
 	if ('content' in rule) referencedNames(rule.content, into);
@@ -1043,21 +1062,20 @@ function clearDefaultAliases(
 	}
 }
 
-export class UndefinedSymbolsError extends Error {
-	constructor(readonly names: readonly string[]) {
-		super(`symbol-table: ${names.map((name) => `'${name}'`).join(', ')} name no rule and no external`);
-	}
+export interface PredictedSymbolTable extends ParserSymbolTable {
+	readonly undefinedNames: readonly string[];
 }
 
-export function predictSymbolTable(grammar: PredictedGrammar): ParserSymbolTable {
+export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTable {
 	const live = liveRuleNames(grammar);
 	const supertypes = new Set(grammar.supertypes);
 	const undefinedNames = new Set<string>();
 	const resolve = (name: string): string => {
 		if (live.has(name)) return `nt:${name}`;
 		const index = grammar.externals.findIndex((entry) => entry.type === SYMBOL && entry.name === name);
-		if (index < 0) undefinedNames.add(name);
-		return `ext:${index}`;
+		if (index >= 0) return `ext:${index}`;
+		undefinedNames.add(name);
+		return `undef:${name}`;
 	};
 	let variables: Variable[] = Object.keys(grammar.rules)
 		.filter((name) => live.has(name))
@@ -1100,7 +1118,6 @@ export function predictSymbolTable(grammar: PredictedGrammar): ParserSymbolTable
 		const index = tokens.lexical.findIndex((token) => sameShape(token.rule, lexical));
 		return index < 0 ? [] : [`t:${index}`];
 	});
-	if (undefinedNames.size > 0) throw new UndefinedSymbolsError([...undefinedNames]);
 	const externalKey = (index: number): string => {
 		const rule = externals[index]!.rule;
 		return rule.type === 'SYM' && rule.key.startsWith('t:') ? rule.key : `ext:${index}`;
@@ -1207,13 +1224,18 @@ export function predictSymbolTable(grammar: PredictedGrammar): ParserSymbolTable
 			named: namedFlags,
 			supertypes: supertypeCNames,
 			tokenCount
-		}
+		},
+		undefinedNames: [...undefinedNames]
 	};
 }
 
 export type PredictedKinds =
 	| { readonly entries: readonly GeneratedKindEntry[] }
 	| { readonly failure: string; readonly undefinedNames: readonly string[] };
+
+export function undefinedNamesOf(kinds: PredictedKinds | undefined): readonly string[] {
+	return kinds !== undefined && 'failure' in kinds ? kinds.undefinedNames : [];
+}
 
 export function predictedEntriesOf(kinds: PredictedKinds | undefined): readonly GeneratedKindEntry[] {
 	return kinds !== undefined && 'entries' in kinds ? kinds.entries : [];
@@ -1261,4 +1283,72 @@ export function assertPredictedKindEntries(
 	if (disagreements.length > 0) {
 		throw new Error(`symbol-table: the predicted kind catalog disagrees with the parser's:\n  ${disagreements.join('\n  ')}`);
 	}
+}
+
+export interface PredictedKindCatalog {
+	readonly entries: readonly GeneratedKindEntry[];
+	readonly undefinedNames: readonly string[];
+}
+
+export function predictKindCatalog(
+	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
+): PredictedKindCatalog {
+	const table = predictSymbolTable(grammar);
+	const kindIds = kindTableOfSymbolTable(table, grammar);
+	const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, grammar)).map(
+		({ lexicalRank: _lexicalRank, ...entry }) => entry
+	);
+	return { entries, undefinedNames: table.undefinedNames };
+}
+
+export function predictedKindsOf(
+	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
+): PredictedKinds {
+	try {
+		const { entries, undefinedNames } = predictKindCatalog(grammar);
+		if (undefinedNames.length === 0) return { entries };
+		return {
+			failure: `symbol-table: ${undefinedNames.map((name) => `'${name}'`).join(', ')} name no rule and no external`,
+			undefinedNames
+		};
+	} catch (error) {
+		return { failure: error instanceof Error ? error.message : String(error), undefinedNames: [] };
+	}
+}
+
+export function catalogRenames(names: Iterable<string>, entries: readonly KindEntryLike[]): ReadonlyMap<string, string> {
+	const renames = new Map<string, string>();
+	for (const name of names) {
+		const entry = findEntryForKindName(entries, name);
+		if (entry === undefined || entry.kind !== name || entry.symbolName === undefined || !isRenamedEntry(entry, entries)) {
+			continue;
+		}
+		renames.set(name, entry.symbolName);
+	}
+	return renames;
+}
+
+export function renameAwareSymbolSource(facts: CatalogSymbolFacts): SymbolSource {
+	const renames = catalogRenames([...Object.keys(facts.rules), ...facts.externals], facts.kindEntries);
+	const catalog = catalogSymbolSource(facts);
+	const asked = (name: string): string => renames.get(name) ?? name;
+	return {
+		rules: catalog.rules,
+		externals: catalog.externals,
+		hasSymbol: (name) => catalog.hasSymbol(asked(name)),
+		isTerminal: (name) => catalog.isTerminal(asked(name)),
+		isInlined: (name) => catalog.isInlined(asked(name)),
+		isHidden: (name) => catalog.isHidden(asked(name)),
+		isSupertype: (name) => catalog.isSupertype(asked(name)),
+		isVisibleExternal: (name) => catalog.isVisibleExternal(asked(name))
+	};
+}
+
+export function predictedSymbolSourceOf(
+	grammar: PredictedGrammar & {
+		readonly rules: Readonly<Record<string, AnyRule>>;
+		readonly visibleExternals?: Readonly<Record<string, unknown>>;
+	}
+): SymbolSource {
+	return renameAwareSymbolSource({ ...symbolFactsOf(grammar), kindEntries: predictKindCatalog(grammar).entries });
 }

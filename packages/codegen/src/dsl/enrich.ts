@@ -1,5 +1,5 @@
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
-import { EnrichCtx, enrichSymbolFacts } from './enrich-ctx.ts';
+import { EnrichCtx, enrichSymbolSource } from './enrich-ctx.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import {
 	distributeInlineAliasChoices,
@@ -46,11 +46,13 @@ import {
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
 	throughPrec,
-	predictedSymbolSource,
 	type SymbolSource,
 	ruleKey,
 	optionalContentOf,
-	withOptionalContent
+	withOptionalContent,
+	ruleListEntryOf,
+	ruleListParts,
+	type RuleListEntry
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -91,9 +93,10 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const ctx = EnrichCtx.create({
 		rulesBag,
 		supertypeNames,
-		externals: extractGrammarSymbolNames(base, hasWrapper, 'externals'),
+		externals: extractGrammarRuleList(base, hasWrapper, 'externals'),
 		inline: inlineNames,
-		extras: extractGrammarSymbolNames(base, hasWrapper, 'extras'),
+		extras: extractGrammarRuleList(base, hasWrapper, 'extras'),
+		word: extractWordName(grammarMeta?.word),
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
 	});
 	const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
@@ -121,7 +124,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
 		});
 	}
-	const enrichedSymbols = predictedSymbolSource(enrichSymbolFacts(ctx, enrichedRules));
+	const enrichedSymbols = enrichSymbolSource(ctx, { ...enrichedRules, ...ctx.kwRules, ...ctx.clauseGroupRules });
 	Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -129,7 +132,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
 	const wordName = extractWordName(grammarMeta?.word);
-	const unhoistableNames = new Set([...ctx.externals, ...(wordName === null ? [] : [wordName])]);
+	const unhoistableNames = new Set([...ruleListParts(ctx.externals).names, ...(wordName === null ? [] : [wordName])]);
 	const tokenFormParents: string[] = [];
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -382,15 +385,15 @@ function addSupertypes(result: Record<string, unknown>, names: readonly string[]
 	result.supertypes = [...base, ...names.filter((n) => !listed.has(n))];
 }
 
-function extractGrammarSymbolNames(
+function grammarListOf(
 	base: unknown,
 	hasWrapper: boolean,
 	key: 'supertypes' | 'externals' | 'inline' | 'extras'
-): ReadonlySet<string> {
+): readonly unknown[] {
 	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
 	const list = root?.[key];
-	if (Array.isArray(list)) return harvestSupertypeNames(list);
-	if (typeof list !== 'function') return new Set();
+	if (Array.isArray(list)) return list;
+	if (typeof list !== 'function') return [];
 	const dollar = new Proxy(
 		{},
 		{
@@ -399,7 +402,20 @@ function extractGrammarSymbolNames(
 			}
 		}
 	);
-	return harvestSupertypeNames((list as (proxy: unknown) => unknown)(dollar));
+	const result = (list as (proxy: unknown) => unknown)(dollar);
+	return Array.isArray(result) ? result : [];
+}
+
+function extractGrammarSymbolNames(base: unknown, hasWrapper: boolean, key: 'supertypes' | 'inline'): ReadonlySet<string> {
+	return harvestSupertypeNames(grammarListOf(base, hasWrapper, key));
+}
+
+function extractGrammarRuleList(base: unknown, hasWrapper: boolean, key: 'externals' | 'extras'): RuleListEntry[] {
+	return grammarListOf(base, hasWrapper, key).map((value) => {
+		const entry = ruleListEntryOf(value);
+		if (entry === undefined) throw new Error(`enrich: an entry of ${key} is not a SYMBOL, STRING or PATTERN rule`);
+		return entry;
+	});
 }
 
 function isAnonymousLiteralShapedRule(name: string, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {

@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
-import { symbolSourceOf } from '../alias-distributed.ts';
 import { symbolFactsOf, type SymbolSource } from '../../../dsl/rule-patterns.ts';
-import type { KindEntryLike } from '../../../dsl/symbol-table.ts';
+import { catalogSymbolSource, predictedSymbolSourceOf, type KindEntryLike } from '../../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../../types/rule.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
@@ -14,16 +13,17 @@ function symbolsOf(
 	rules: Record<string, unknown>,
 	opts: { inline?: string[]; externals?: string[]; kindEntries?: KindEntryLike[] } = {}
 ): SymbolSource {
-	return symbolSourceOf({
-		...symbolFactsOf({
-			rules: rules as Record<string, AnyRule>,
-			externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
-			inline: opts.inline ?? [],
-			supertypes: [],
-			extras: []
-		}),
-		kindEntries: opts.kindEntries ?? []
-	});
+	const grammar = {
+		rules: rules as Record<string, AnyRule>,
+		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
+		inline: opts.inline ?? [],
+		supertypes: [],
+		extras: [],
+		word: null
+	};
+	return opts.kindEntries === undefined
+		? predictedSymbolSourceOf(grammar)
+		: catalogSymbolSource({ ...symbolFactsOf(grammar), kindEntries: opts.kindEntries });
 }
 const distributed = (rules: Record<string, unknown>, opts?: { inline?: string[] }) =>
 	diagnoseDistributedAliases({ grammar: 'demo', symbols: symbolsOf(rules, opts) });
@@ -66,7 +66,13 @@ describe('alias-distributed', () => {
 });
 
 describe('display-union-mixed', () => {
-	const rules = { tok: { type: 'TOKEN', content: P('[a-z]+') }, node: { type: 'SEQ', members: [sym('tok'), S(';')] }, user: sym('tok'), other: sym('tok') };
+	const rules = {
+		source: { type: 'CHOICE', members: [sym('node'), sym('user'), sym('other')] },
+		tok: { type: 'TOKEN', content: P('[a-z]+') },
+		node: { type: 'SEQ', members: [sym('tok'), S(';')] },
+		user: sym('tok'),
+		other: sym('tok')
+	};
 	const kindEntries: KindEntryLike[] = [{ kind: 'tok', terminal: true }, { kind: 'node' }];
 	it('fires when one display sits over a terminal and a nonterminal', () => {
 		const out = diagnoseMixedDisplayUnions({

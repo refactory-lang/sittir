@@ -617,8 +617,10 @@ parents.
  * What hydration needs beside the NodeMap: `inline`, the grammar's declared
  * inline kinds (`.sittir/src/grammar.json` `inline` list), which the parser
  * never issues a node for and which may therefore be referenced without
- * being assembled; and `diagnostics`, the compilation's sink, where a
- * reference that is neither external nor inline is reported.
+ * being assembled; `undefinedNames`, the names the evaluate-phase
+ * prediction found undefined, which link already reported; and
+ * `diagnostics`, the compilation's sink, where any other reference that is
+ * neither external nor inline is reported.
  */
 ```
 
@@ -2759,11 +2761,7 @@ What `appendMetadataRules` needs for one list: its name for the error, the rule 
 
 ### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
 
-Appends the rules an `extras` or `externals` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
-
-### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryOf`
-
-The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
+Appends the rules an `extras` or `externals` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`dsl/rule-patterns.ts::ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
 
 ### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
 
@@ -6316,7 +6314,7 @@ that wants the keyword's own text (a literal arm's name) read `literalText`
 instead of stripping the suffix from the name. `collectGeneratedKindEntries`
 carries it onto `GeneratedKindEntry.keyword`.
 
-`terminal` is set when the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`): the parser issues it as a token. It is the parser fact after the catalog exists; the DSL phase, which runs before parser.c is generated, predicts it from rule shape instead (`dsl/rule-patterns.ts::parserSymbolClassOf`).
+`terminal` is set when the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`): the parser issues it as a token. It is the parser fact after the catalog exists; the DSL phase, which runs before parser.c is generated, reads the same fact off the predicted catalog (`dsl/symbol-table.ts::predictKindCatalog`).
 
 `aliasedNonTerminal` is set on a nonterminal that parser.c lists in
 `ts_non_terminal_alias_map` (see
@@ -7883,7 +7881,10 @@ own facts.
 Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads:
 canonicalizes every rule body, the `renderAs` and `visibleExternals` records,
 and the evaluated upstream; removes orphaned rules; then builds the rule
-catalog and the reference list over the canonical rules.
+catalog and the reference list over the canonical rules. The predicted kind
+catalog (`predictKinds`) is taken from the evaluated rules before any of
+this, since canonicalization peels wrappers the parser's symbol table
+depends on.
 
 The orphan pass removes the rules wire pre-registered for a placeholder that
 never deposited, and any other rule nothing reaches (`collectOrphanedRules`).
@@ -9767,7 +9768,7 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 // `assertCompilation`. All three grammars carry zero.
 ```
 
-A target the sink already records as a dangling reference — the evaluate-phase record for a name the grammar never defined — is skipped, so hydrate does not record the same fact again.
+A name the evaluate-phase prediction found undefined (`HydrateValuesCtx.undefinedNames`, stamped from `RawGrammar.predictedKinds` by `dsl/symbol-table.ts::undefinedNamesOf`) is skipped: link records it as `dangling-internal-ref` already, so hydrate does not record the same fact again.
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 
@@ -10264,7 +10265,7 @@ It is `collapseRenames` (which rules the catalog renames) then `renameRules` (th
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenames`
 
-The renames the parser catalog records: each rule or external whose catalog row is a renamed entry (`isRenamedEntry`), mapped to its tree name.
+The renames the parser catalog records for the grammar's rules and externals (`dsl/symbol-table.ts::catalogRenames`).
 
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
@@ -10286,9 +10287,9 @@ envelopes the same way element and value derivation does.
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
-### `packages/codegen/src/compiler/evaluate.ts::predictKinds`
+### `packages/codegen/src/compiler/canonical-rules.ts::predictKinds`
 
-The kind catalog predicted from the faithful evaluated grammar: `predictSymbolTable` over its rules without the evaluate-synthesized ones, turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are. The rows omit `lexicalRank`, which the prediction does not derive faithfully. A grammar the prediction cannot build a table for — one tree-sitter rejects — yields the failure instead of rows, so evaluate never throws on it. `evaluate` stamps the result as `predictedKinds`.
+The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its rules without the evaluate-synthesized ones. A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
 
 ### `packages/codegen/src/compiler/link.ts::reportUnpredictedKinds`
 

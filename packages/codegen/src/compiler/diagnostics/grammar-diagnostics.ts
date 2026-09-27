@@ -11,9 +11,9 @@ import type { AssembleWarning } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
-import { collectGeneratedKindEntries, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, predictedEntriesOf, renameAwareSymbolSource, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { symbolFactsOf } from '../../dsl/rule-patterns.ts';
 
 export type { GrammarDiagnostic };
@@ -171,6 +171,15 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
+const SURFACED_COMPILER_CODE_PREFIXES = [
+	'kindid-unstamped',
+	'kindid-vaporized',
+	'kindid-inline-excluded',
+	'kindid-unclassified',
+	'dangling-internal-ref',
+	'unpredictable-symbol-table'
+] as const;
+
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 	include?: IncludeFilter;
@@ -212,17 +221,15 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const symbols = symbolSourceOf({ ...symbolFactsOf(rawGrammar), kindEntries });
+	const predictionFailed = rawGrammar.predictedKinds !== undefined && 'failure' in rawGrammar.predictedKinds;
+	const symbols = renameAwareSymbolSource({
+		...symbolFactsOf(rawGrammar),
+		kindEntries: predictedEntriesOf(rawGrammar.predictedKinds)
+	});
 	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
-	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
+	const surfacedCompilerDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()
-		.filter(
-			(d) =>
-				d.code.startsWith('kindid-unstamped') ||
-				d.code.startsWith('kindid-vaporized') ||
-				d.code.startsWith('kindid-inline-excluded') ||
-				d.code.startsWith('kindid-unclassified')
-		)
+		.filter((d) => SURFACED_COMPILER_CODE_PREFIXES.some((prefix) => d.code.startsWith(prefix)))
 		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: rawGrammar.name }));
 	const allDiagnostics = [
 		...collectGrammarDiagnostics({
@@ -234,9 +241,13 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			expectDiagnostics: rawGrammar.expectDiagnostics
 		}).diagnostics,
 		...contentAliasDiagnostics,
-		...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
-		...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
-		...kindIdStampDiagnostics,
+		...(predictionFailed
+			? []
+			: [
+					...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+					...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols })
+				]),
+		...surfacedCompilerDiagnostics,
 		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
 		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
 	];
