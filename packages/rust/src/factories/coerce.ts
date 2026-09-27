@@ -6669,12 +6669,11 @@ export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): 
 	);
 }
 
-export function coerceToLetChain(input?: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
-	if (!_isLooseConfig<T.LetChain.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildLetChain>;
+export function coerceToLetChain(input: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
+	if (!_isLooseConfig<T.LetChain.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildLetChain>;
 	return F.buildLetChain({
-		left: resolveLetChain_left(input?.left),
-		right: resolveLetChain_rights(input?.right)
+		left: _requireField('_let_chain', 'left', resolveLetChain_left(input.left)),
+		right: resolveLetChain_rights(input.right)
 	});
 }
 

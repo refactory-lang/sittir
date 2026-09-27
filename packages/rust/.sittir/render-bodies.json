@@ -1,18 +1,8 @@
 {
 	"_let_chain": [
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "left",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "left"
-						}
-					]
-				}
-			]
+			"kind": "slot",
+			"name": "left"
 		},
 		{
 			"kind": "seam",

@@ -46551,7 +46551,7 @@ pub struct LetChainTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: Option<::sittir_core::SlotValue<Box<LetChainLeftTransportSlot>>>,
+    pub left: ::sittir_core::SlotValue<Box<LetChainLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Option<Vec<::sittir_core::SlotValue<LetChainRightTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_before"))]
@@ -78295,7 +78295,7 @@ fn render_let_condition(node: &LetConditionTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = View::new(&node.left, "{}");
+    let left = &node.left;
     let right = ListView {
         items: node.right.as_deref().unwrap_or(&[]),
         template: "{}",
@@ -78311,7 +78311,6 @@ fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render:
     w.site_at(options::SITE_LET_CHAIN_AMP_AMP_BEFORE);
     w.text("&&")?;
     w.site_at(options::SITE_LET_CHAIN_AMP_AMP_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "right", w)?;
     right.render(w)?;
     Ok(())
 }

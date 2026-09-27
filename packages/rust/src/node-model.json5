@@ -1864,7 +1864,7 @@
       "left": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       },
@@ -4179,7 +4179,7 @@
           "name": "left",
           "propertyName": "left",
           "paramName": "left",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "mixedEnum",
@@ -4191,19 +4191,19 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_let_chain",
               "parseKind": "_let_chain"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "let_condition",
               "parseKind": "let_condition"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_expression",
               "parseKind": "_expression"
             }

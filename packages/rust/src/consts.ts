@@ -2646,7 +2646,6 @@ export const TOKEN_INTERIORS = {
 
 /** The gaps an empty node of each kind holds inner trivia in, in render order. */
 export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
-	_let_chain: ['right'],
 	arguments: ['arguments_elements'],
 	array_expression_list: ['attributes'],
 	block: ['statements'],

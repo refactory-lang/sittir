@@ -7880,7 +7880,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.LetChain as const,
 			_left: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._left, 'left', false, data.$type, {
+				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'left',
@@ -7903,7 +7903,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 			),
 
 			left() {
-				return drillIn<T.LetChain | T.LetCondition | T.Expression | undefined>(this._left, tree);
+				return drillIn<T.LetChain | T.LetCondition | T.Expression>(this._left, tree);
 			},
 			rights() {
 				return drillInAll<T.LetCondition | T.Expression>(

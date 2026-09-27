@@ -7174,10 +7174,10 @@ export interface LetCondition {
 
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
-	readonly _left?: LetChain | LetCondition | Expression;
+	readonly _left: LetChain | LetCondition | Expression;
 	readonly _right?: readonly (LetCondition | Expression)[];
 	readonly __inputHints__?: {
-		readonly left?:
+		readonly left:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| LetChain
 			| LetCondition
@@ -7188,7 +7188,7 @@ export interface LetChain {
 			| Expression
 		)[];
 	};
-	left(): LetChain | LetCondition | Expression | undefined;
+	left(): LetChain | LetCondition | Expression;
 	rights(): readonly (LetCondition | Expression)[];
 }
 
@@ -19847,15 +19847,15 @@ export namespace LetChain {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			left(value?: NonNullable<T.LetChain.Config>['left']): T.LetChain.Built;
+			left(value: NonNullable<T.LetChain.Config>['left']): T.LetChain.Built;
 			rights(value?: NonNullable<T.LetChain.Config>['right']): T.LetChain.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LetChain>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LetChain>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.LetChain>>];
+	export type BuildArgs = [config: ConfigOf<T.LetChain>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.LetChain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LetChain
+		config: LooseConfigOf<T.LetChain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LetChain
 	];
 	export type Tree = TreeFor<TSKindId.LetChain>;
 	export type Kind = '_let_chain';

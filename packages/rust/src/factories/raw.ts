@@ -4473,7 +4473,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 	);
 }
 
-export function buildLetChain(config: Partial<T.LetChain.Config> = {}): T.LetChain.Built {
+export function buildLetChain(config: T.LetChain.Config): T.LetChain.Built {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.LetChain['_left']>>(config.left, []),
 		'LetChain.left',
@@ -4493,7 +4493,7 @@ export function buildLetChain(config: Partial<T.LetChain.Config> = {}): T.LetCha
 				_left,
 				_right,
 				$with: {
-					left: (value?: NonNullable<T.LetChain.Config>['left']) => buildLetChain({ ...config, left: value }),
+					left: (value: NonNullable<T.LetChain.Config>['left']) => buildLetChain({ ...config, left: value }),
 					rights: (value?: NonNullable<T.LetChain.Config>['right']) => buildLetChain({ ...config, right: value })
 				}
 			},

@@ -2120,10 +2120,15 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 
 ```text
 /**
- * Structural identity of two slot-bearing rules ignoring leaf attributes
- * (multiplicity / separator / fieldName / aliasedTo). Used to decide that a
- * head element and a repeat element are "the same list element".
+ * Structural identity of two slot-bearing rules ignoring multiplicity and
+ * separator. Used to decide that a head element and a repeat element are
+ * "the same list element".
  */
+```
+
+The field name is part of the identity at every level: a head in one field and a repeat in another are two slots (`_let_chain`'s `left` beside its `right` list), never one list.
+
+```text
 ```
 
 #### body
@@ -2140,6 +2145,8 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
  * element; otherwise `null`.
  */
 ```
+
+The fused element absorbs the head's id (and, for the separator-choice idiom, the choice's), so the render view's head occurrence still resolves to the list slot through `sourceRuleIds`.
 
 ```text
 // head is already multi — not a head+repeat pair
@@ -2171,18 +2178,6 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 			   check on the added `separator` key. */
 ```
 
-#### body
-
-```text
-/* Fall back to the choice's separator-string arm, marking it a
-			   genuinely OPTIONAL trailing separator — this codebase's
-			   convention (see `findRepeatFlag`'s doc comment) is that a bare
-			   `trailing` flag always meant "optional" (there's no
-			   mandatory-trailing shape anywhere in this compiler); confirmed
-			   via a full regen of all 3 grammars (with a temporary diagnostic)
-			   that this fallback never fires today — `repArm` already carries
-			   its own separator for every current grammar rule. */
-```
 
 ### `packages/codegen/src/dsl/rule-walker.ts::childEdgesOf`
 

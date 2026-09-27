@@ -1293,7 +1293,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (244, 2) => Some("bounds"),
         (272, 1) => Some("arguments_elements"),
         (278, 1) => Some("initializers"),
-        (284, 0) => Some("right"),
         (288, 1) => Some("match_block_arms"),
         (297, 1) => Some("parameters"),
         (308, 1) => Some("statements"),
