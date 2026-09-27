@@ -637,14 +637,18 @@ function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 	const supertypes = symbolNamesOf(
 		overriddenList(base?.grammar?.supertypes ?? base?.supertypes, (cfg as { supertypes?: unknown }).supertypes)
 	);
-	return extrasClosure(extras, (name) => {
+	return extrasClosure(extras, supertypes, (name) => {
 		if (!supertypes.has(name)) return undefined;
-		const body = cfg.rules?.[name] ?? base?.grammar?.rules?.[name] ?? base?.rules?.[name];
-		if (body === undefined) return undefined;
-		const rule = withStringGlobalShim(() => (body as (dollar: unknown) => unknown)(makeSimpleDollarProxy())) as {
-			type?: unknown;
-			members?: unknown;
-		};
+		const baseRule: unknown = base?.grammar?.rules?.[name] ?? base?.rules?.[name];
+		const own: unknown = cfg.rules?.[name];
+		const body = own ?? baseRule;
+		const rule = (
+			typeof body === 'function'
+				? withStringGlobalShim(() =>
+						(body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), baseRule)
+					)
+				: body
+		) as { type?: unknown; members?: unknown } | undefined;
 		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
 	});
 }

@@ -4241,7 +4241,7 @@ function resolveToEnumMembersOneLevelDeep(target) {
 }
 
 // packages/codegen/src/dsl/extras.ts
-function extrasClosure(extras, subtypesOf) {
+function extrasClosure(extras, supertypes, subtypesOf) {
   const names = /* @__PURE__ */ new Set();
   const add = (name) => {
     if (names.has(name)) return;
@@ -4249,6 +4249,17 @@ function extrasClosure(extras, subtypesOf) {
     for (const subtype of subtypesOf(name) ?? []) add(subtype);
   };
   for (const name of extras) add(name);
+  const pending = new Set([...supertypes].filter((name) => !names.has(name)));
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const name of pending) {
+      const members = [...subtypesOf(name) ?? []];
+      if (members.length === 0 || !members.every((member) => names.has(member))) continue;
+      pending.delete(name);
+      add(name);
+      grew = true;
+    }
+  }
   return names;
 }
 
@@ -4559,11 +4570,14 @@ function extraRuleNames(cfg, base2) {
   const supertypes = symbolNamesOf(
     overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, cfg.supertypes)
   );
-  return extrasClosure(extras, (name) => {
+  return extrasClosure(extras, supertypes, (name) => {
     if (!supertypes.has(name)) return void 0;
-    const body = cfg.rules?.[name] ?? base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
-    if (body === void 0) return void 0;
-    const rule2 = withStringGlobalShim(() => body(makeSimpleDollarProxy()));
+    const baseRule = base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
+    const own = cfg.rules?.[name];
+    const body = own ?? baseRule;
+    const rule2 = typeof body === "function" ? withStringGlobalShim(
+      () => body(makeSimpleDollarProxy(), baseRule)
+    ) : body;
     return rule2?.type === "CHOICE" ? symbolNamesOf(rule2.members) : void 0;
   });
 }

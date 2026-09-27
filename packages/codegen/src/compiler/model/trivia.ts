@@ -10,6 +10,7 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	if (cached !== undefined) return cached;
 	const kinds = extrasClosure(
 		[...(nodeMap.extras ?? [])].filter((kind) => nodeMap.nodes.has(kind)),
+		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AssembledSupertype ? [kind] : [])),
 		(kind) => {
 			const node = nodeMap.nodes.get(kind);
 			return node instanceof AssembledSupertype

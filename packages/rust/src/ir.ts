@@ -425,6 +425,8 @@ export const path: {
 
 export const expressionEndingWithBlock: typeof F.expressionEndingWithBlock = F.expressionEndingWithBlock;
 
+export const comment: typeof F.comment = F.comment;
+
 export const declarationStatement: typeof F.declarationStatement = F.declarationStatement;
 
 export const tokenPattern: typeof F.tokenPattern = F.tokenPattern;
@@ -637,6 +639,7 @@ export const ir: {
 	readonly literalPattern: typeof literalPattern;
 	readonly path: typeof path;
 	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
+	readonly comment: typeof comment;
 	readonly declarationStatement: typeof declarationStatement;
 	readonly tokenPattern: typeof tokenPattern;
 	readonly tokens: typeof tokens;
@@ -854,6 +857,7 @@ export const ir: {
 	literalPattern,
 	path,
 	expressionEndingWithBlock,
+	comment,
 	declarationStatement,
 	tokenPattern,
 	tokens,

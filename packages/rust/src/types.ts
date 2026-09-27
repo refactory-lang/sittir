@@ -3323,6 +3323,11 @@ export enum EscapeSequenceKind {
 	EscapeSequenceHex = 'escape_sequence_hex'
 }
 
+export enum CommentKind {
+	LineComment = 'line_comment',
+	BlockComment = 'block_comment'
+}
+
 export enum PathKind {
 	Self = 'self',
 	U8Keyword = 'u8_keyword',
@@ -11185,6 +11190,10 @@ export type EscapeSequenceTree =
 	| EscapeSequenceUnicodeBracedTree
 	| EscapeSequenceHexTree;
 
+export type Comment = LineComment | BlockComment;
+
+export type CommentTree = LineCommentTree | BlockCommentTree;
+
 export type Path =
 	| Self
 	| U8Keyword
@@ -11411,6 +11420,11 @@ export namespace CharLiteral {
 export namespace EscapeSequence {
 	export type Kind = 'escape_sequence';
 	export type Tree = EscapeSequenceTree;
+}
+
+export namespace Comment {
+	export type Kind = 'comment';
+	export type Tree = CommentTree;
 }
 
 export namespace Path {

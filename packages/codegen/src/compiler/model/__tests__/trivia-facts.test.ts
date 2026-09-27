@@ -15,14 +15,20 @@ function innerGapsOf(nodeMap: NodeMap, kind: string): unknown {
 }
 
 describe('trivia model facts', () => {
-	it('reads the trivia kinds from the grammar extras, through supertypes', async () => {
-		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual(['block_comment', 'line_comment']);
+	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
+		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual(['block_comment', 'comment', 'line_comment']);
 		expect([...triviaKinds(await nodeMapOf('python'))].sort()).toEqual([
 			'comment',
+			'line_continuation',
 			'line_continuation_newline',
 			'line_continuation_nul'
 		]);
-		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual(['comment_block', 'comment_line', 'html_comment']);
+		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual([
+			'comment',
+			'comment_block',
+			'comment_line',
+			'html_comment'
+		]);
 	});
 
 	it('marks a token line-terminated only when every arm ends in an open pattern that cannot cross a line', async () => {

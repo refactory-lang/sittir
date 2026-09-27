@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, LineContinuationNewline, LineContinuationNul, NamespaceMap } from './types.js';
+import type { Comment, LineContinuation, LineContinuationNewline, LineContinuationNul, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -62,15 +62,15 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Comment | LineContinuationNewline | LineContinuationNul | string)
+			| (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)
 			| {
-					leading?: (Comment | LineContinuationNewline | LineContinuationNul | string)[];
-					trailing?: (Comment | LineContinuationNewline | LineContinuationNul | string)[];
+					leading?: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[];
+					trailing?: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[];
 			  }
 		)[]
 	): Self;
-	leading(...items: (Comment | LineContinuationNewline | LineContinuationNul | string)[]): Self;
-	trailing(...items: (Comment | LineContinuationNewline | LineContinuationNul | string)[]): Self;
+	leading(...items: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[]): Self;
+	trailing(...items: (Comment | LineContinuation | LineContinuationNewline | LineContinuationNul | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

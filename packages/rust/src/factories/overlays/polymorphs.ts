@@ -2214,6 +2214,18 @@ export const escapeSequence: {
 	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex }
 };
 
+export const comment: {
+	readonly strict: typeof lineComment.strict;
+	readonly coerce: typeof lineComment.coerce;
+	readonly lineComment: typeof lineComment;
+	readonly blockComment: typeof blockComment;
+} = {
+	strict: lineComment.strict,
+	coerce: lineComment.coerce,
+	lineComment: lineComment,
+	blockComment: blockComment
+};
+
 export const declarationStatement: {
 	readonly const: typeof B.constItem;
 	readonly macroInvocation: typeof B.macroInvocation;

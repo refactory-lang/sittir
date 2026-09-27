@@ -182,6 +182,7 @@ export const orPattern: Hoisted<typeof O.orPattern> = hoistRoutes(O.orPattern);
 export const integerLiteral: Hoisted<typeof O.integerLiteral> = hoistRoutes(O.integerLiteral);
 export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
 export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.escapeSequence);
+export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
 export const declarationStatement: Hoisted<typeof O.declarationStatement> = hoistRoutes(O.declarationStatement);
 export const tokenPattern: Hoisted<typeof O.tokenPattern> = hoistRoutes(O.tokenPattern);
 export const tokens: Hoisted<typeof O.tokens> = hoistRoutes(O.tokens);

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 438,
+  "nodeCount": 439,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -23,6 +23,7 @@
     "array_expression",
     "char_literal",
     "closure_expression",
+    "comment",
     "delim_token_tree",
     "escape_sequence",
     "field_pattern",
@@ -8141,6 +8142,18 @@
       "isParameterless": true,
       "stampExpression": "\",\" as const",
       "text": ","
+    },
+    {
+      "kind": "comment",
+      "modelType": "supertype",
+      "typeName": "Comment",
+      "irKey": "comment",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "block_comment",
+        "line_comment"
+      ]
     },
     {
       "kind": "compound_assignment_expr",

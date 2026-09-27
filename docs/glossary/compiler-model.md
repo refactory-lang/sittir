@@ -4523,7 +4523,7 @@ A sequence's ends: its last member's, plus the ends of the members before it whe
 
 ### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
 
-The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, and every subtype of a supertype listed there, transitively (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineTerminated`
 

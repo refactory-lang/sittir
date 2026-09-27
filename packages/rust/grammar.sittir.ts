@@ -34,7 +34,7 @@ export default grammar(
 				[$._attributed_argument]
 			],
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
-			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace, $.comment],
 			visibleExternals: (_$) => ({
 				_tight: string(''),
 				_space: string(' '),
@@ -193,6 +193,7 @@ export default grammar(
 			},
 
 			patches: {
+				comment: { 0: arm.default },
 				bracketed_type: { 1: field('type') },
 				else_clause: { 1: field('body') },
 				generic_pattern: { 0: field('name') },

@@ -9,6 +9,7 @@ import type {
 	ArrayExpression,
 	CharLiteral,
 	ClosureExpression,
+	Comment,
 	Condition,
 	DeclarationStatement,
 	DelimTokenTree,
@@ -512,6 +513,7 @@ export interface IsGuards {
 	integerLiteral(v: { readonly $type: string | number } | number): v is IntegerLiteral;
 	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral;
 	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
+	comment(v: { readonly $type: string | number } | number): v is Comment;
 	path(v: { readonly $type: string | number } | number): v is Path;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
@@ -772,6 +774,7 @@ export interface AssertGuards {
 	integerLiteral(v: { readonly $type: string | number } | number): asserts v is IntegerLiteral;
 	charLiteral(v: { readonly $type: string | number } | number): asserts v is CharLiteral;
 	escapeSequence(v: { readonly $type: string | number } | number): asserts v is EscapeSequence;
+	comment(v: { readonly $type: string | number } | number): asserts v is Comment;
 	path(v: { readonly $type: string | number } | number): asserts v is Path;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
@@ -836,6 +839,7 @@ const _supertype_literalPattern_ids = new Set<number>([327, 328, 331, 159, 325])
 const _supertype_integerLiteral_ids = new Set<number>([138, 139, 140, 141]);
 const _supertype_charLiteral_ids = new Set<number>([142, 143, 144]);
 const _supertype_escapeSequence_ids = new Set<number>([145, 146, 147, 148]);
+const _supertype_comment_ids = new Set<number>([332, 335]);
 const _supertype_path_ids = new Set<number>([
 	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 258, 52, 33, 53
 ]);
@@ -1019,6 +1023,7 @@ export const is = {
 	integerLiteral: _sg(_supertype_integerLiteral_ids),
 	charLiteral: _sg(_supertype_charLiteral_ids),
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
+	comment: _sg(_supertype_comment_ids),
 	path: _sg(_supertype_path_ids),
 	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
@@ -1236,6 +1241,7 @@ export const assert = {
 	integerLiteral: _makeAssert('integerLiteral', is.integerLiteral as _AnyGuard),
 	charLiteral: _makeAssert('charLiteral', is.charLiteral as _AnyGuard),
 	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
+	comment: _makeAssert('comment', is.comment as _AnyGuard),
 	path: _makeAssert('path', is.path as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;

@@ -955,6 +955,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'escape_sequence_unicode_braced',
 		'escape_sequence_hex'
 	]),
+	comment: new Set(['line_comment', 'block_comment']),
 	_path: new Set([
 		'self',
 		'u8_keyword',

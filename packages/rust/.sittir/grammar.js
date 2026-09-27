@@ -5049,7 +5049,7 @@ function renameNameList(value, renames) {
 }
 
 // packages/codegen/src/dsl/extras.ts
-function extrasClosure(extras, subtypesOf) {
+function extrasClosure(extras, supertypes, subtypesOf) {
   const names = /* @__PURE__ */ new Set();
   const add = (name) => {
     if (names.has(name)) return;
@@ -5057,6 +5057,17 @@ function extrasClosure(extras, subtypesOf) {
     for (const subtype of subtypesOf(name) ?? []) add(subtype);
   };
   for (const name of extras) add(name);
+  const pending = new Set([...supertypes].filter((name) => !names.has(name)));
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const name of pending) {
+      const members = [...subtypesOf(name) ?? []];
+      if (members.length === 0 || !members.every((member) => names.has(member))) continue;
+      pending.delete(name);
+      add(name);
+      grew = true;
+    }
+  }
   return names;
 }
 
@@ -5362,11 +5373,14 @@ function extraRuleNames(cfg, base2) {
   const supertypes = symbolNamesOf(
     overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, cfg.supertypes)
   );
-  return extrasClosure(extras, (name) => {
+  return extrasClosure(extras, supertypes, (name) => {
     if (!supertypes.has(name)) return void 0;
-    const body = cfg.rules?.[name] ?? base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
-    if (body === void 0) return void 0;
-    const rule = withStringGlobalShim(() => body(makeSimpleDollarProxy()));
+    const baseRule = base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
+    const own = cfg.rules?.[name];
+    const body = own ?? baseRule;
+    const rule = typeof body === "function" ? withStringGlobalShim(
+      () => body(makeSimpleDollarProxy(), baseRule)
+    ) : body;
     return rule?.type === "CHOICE" ? symbolNamesOf(rule.members) : void 0;
   });
 }
@@ -5900,7 +5914,7 @@ var grammar_sittir_default = grammar(
         [$._attributed_argument]
       ],
       externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
-      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
+      supertypes: ($, previous) => [...previous ?? [], $._whitespace, $.comment],
       visibleExternals: (_$) => ({
         _tight: string(""),
         _space: string(" "),
@@ -6039,6 +6053,7 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        comment: { 0: arm.default },
         bracketed_type: { 1: field2("type") },
         else_clause: { 1: field2("body") },
         generic_pattern: { 0: field2("name") },

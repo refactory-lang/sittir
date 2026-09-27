@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { CommentBlock, CommentLine, HtmlComment, NamespaceMap } from './types.js';
+import type { Comment, CommentBlock, CommentLine, HtmlComment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -62,15 +62,15 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (CommentBlock | CommentLine | HtmlComment | string)
+			| (Comment | CommentBlock | CommentLine | HtmlComment | string)
 			| {
-					leading?: (CommentBlock | CommentLine | HtmlComment | string)[];
-					trailing?: (CommentBlock | CommentLine | HtmlComment | string)[];
+					leading?: (Comment | CommentBlock | CommentLine | HtmlComment | string)[];
+					trailing?: (Comment | CommentBlock | CommentLine | HtmlComment | string)[];
 			  }
 		)[]
 	): Self;
-	leading(...items: (CommentBlock | CommentLine | HtmlComment | string)[]): Self;
-	trailing(...items: (CommentBlock | CommentLine | HtmlComment | string)[]): Self;
+	leading(...items: (Comment | CommentBlock | CommentLine | HtmlComment | string)[]): Self;
+	trailing(...items: (Comment | CommentBlock | CommentLine | HtmlComment | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
