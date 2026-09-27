@@ -6539,11 +6539,11 @@ The predicted rows, or none when the prediction failed.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PREDICTED_KIND_FIELDS`
 
-The catalog-row fields the pipeline reads, and so the fields the predicted catalog must match: everything but the ids and `lexicalRank`.
+The catalog-row fields the predicted catalog must match: every field the pipeline reads, ids included (the front half runs on predicted ids exactly as on the parser's), and not `lexicalRank`, which the prediction does not derive.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::assertPredictedKindEntries`
 
-Compares the predicted kind catalog with the parser's row by row on `PREDICTED_KIND_FIELDS`, plus each side's kind set, and throws listing every disagreement. Ids are not compared: nothing reads a predicted id.
+Compares the predicted kind catalog with the parser's row by row on `PREDICTED_KIND_FIELDS`, plus each side's kind set, and throws listing every disagreement. An id disagreement is a stop like any other, which catches a tree-sitter upgrade that changes id assignment.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
@@ -6568,3 +6568,6 @@ A `catalogSymbolSource` for a grammar whose rules still carry the names the cata
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedSymbolSourceOf`
 
 The `SymbolSource` of a grammar before any parser.c exists: its predicted kind catalog (`predictKindCatalog`), asked through `renameAwareSymbolSource`. A name the grammar leaves undefined has no row, so `hasSymbol` and `isTerminal` are false for it; the failure itself is reported from `RawGrammar.predictedKinds`, never here. Enrich builds one per rule set it classifies (`enrich-ctx.ts::enrichSymbolSource`).
+### `packages/codegen/src/dsl/symbol-table.ts::kindCatalogOf`
+
+The one route to the kind catalog the front half reads: the parser's rows (with the declared visible externals stamped) when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.

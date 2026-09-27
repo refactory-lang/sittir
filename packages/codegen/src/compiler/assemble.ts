@@ -45,6 +45,7 @@ import {
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
+	enumValuesOf,
 	AssembledSupertype,
 	AssembledList,
 	AssembleDiagnosticsCollector,
@@ -114,13 +115,15 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink(),
-		grammarJsonAliasMap?: ReadonlyMap<string, string>
+		grammarJsonAliasMap?: ReadonlyMap<string, string>,
+		kindEntries?: readonly GeneratedKindEntry[]
 	): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
+			kindEntries,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
 			leafTextPatterns: normalized.leafTextPatterns,
 			grammarJsonAliasMap
@@ -132,6 +135,7 @@ export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
 	readonly deriveShapeDiagnostics: readonly DeriveShapeDiagnostic[];
 	readonly assembleWarnings: readonly AssembleWarning[];
+	readonly droppedKinds: ReadonlySet<string>;
 }
 
 export function assemble(ctx: AssembleCtx): AssembledNodeMap {
@@ -140,6 +144,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	const assembleDiagnostics = ctx.assembleDiagnostics;
+	const droppedKinds = new Set<string>();
 	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly VariantChild[]>();
 	const variantParents = new Set(variantChildrenByParent.keys());
 
@@ -161,13 +166,25 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			kindEntries
 		});
 		const variantChildKinds = variantChildrenByParent.get(kind);
+		const dropCtx: DroppedKindCtx = { assembleDiagnostics, droppedKinds };
+		if (modelType === undefined) {
+			recordDroppedKind(
+				{
+					code: 'unclassifiable-shape',
+					ownerKind: kind,
+					message: `[assemble] kind '${kind}' has no slots and no rule-type classification (rule type ${renderRule.type})`,
+					details: { ruleType: renderRule.type }
+				},
+				dropCtx
+			);
+			continue;
+		}
 
 		switch (modelType) {
 			case 'supertype': {
 				if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
-					throw new Error(
-						`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`
-					);
+					recordDroppedKind(kindShapeMismatch(kind, 'a supertype or choice', renderRule.type), dropCtx);
+					continue;
 				}
 				const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
 				nodes.set(
@@ -209,7 +226,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			case 'keyword':
 			case 'punctuation': {
 				if (simplifiedRule.type !== STRING) {
-					throw new Error(`[assemble] literal kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
+					recordDroppedKind(kindShapeMismatch(kind, 'a single literal', simplifiedRule.type), dropCtx);
+					continue;
 				}
 				const named = !isSurfaceHiddenKind(kind, kindEntries) && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
@@ -222,7 +240,23 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 			case 'enum': {
 				if (renderRule.type !== CHOICE) {
-					throw new Error(`[assemble] enum kind '${kind}' must be a choice of literals; found ${renderRule.type}`);
+					recordDroppedKind(kindShapeMismatch(kind, 'a choice of literals', renderRule.type), dropCtx);
+					continue;
+				}
+				const values = enumValuesOf(renderRule);
+				if (values.length < 2) {
+					recordDroppedKind(
+						{
+							code: 'single-literal-choice',
+							ownerKind: kind,
+							message:
+								`[assemble] kind '${kind}' is classified as a choice of literals but its arms yield ${values.length} ` +
+								`literal value(s); give each arm its own kind with variant(...) in grammar.sittir.ts`,
+							details: { values }
+						},
+						dropCtx
+					);
+					continue;
 				}
 				nodes.set(kind, new AssembledEnum(kind, renderRule, { kindEntries }));
 				break;
@@ -230,9 +264,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			case 'list': {
 				const listRule = peelSeparatedListCore(simplifiedRule);
 				if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
-					throw new Error(
-						`[assemble] list kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
-					);
+					recordDroppedKind(kindShapeMismatch(kind, 'a repeat of a symbol or a choice of symbols', listRule.type), dropCtx);
+					continue;
 				}
 				const sep = listRule.separator;
 				const separatorRule = sep && isNonterminalRuleType(sep.value) ? sep.value : undefined;
@@ -317,10 +350,30 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		deriveShapeDiagnostics: assembleDiagnostics.deriveShapeDiagnostics.all,
-		assembleWarnings: assembleDiagnostics.assembleWarnings.all
+		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
+		droppedKinds
 	};
 	computeFieldStorageInfo(assembled);
 	return assembled;
+}
+
+interface DroppedKindCtx {
+	readonly assembleDiagnostics: AssembleDiagnosticsCollector;
+	readonly droppedKinds: Set<string>;
+}
+
+function recordDroppedKind(warning: AssembleWarning & { readonly ownerKind: string }, ctx: DroppedKindCtx): void {
+	ctx.assembleDiagnostics.assembleWarnings.record(warning);
+	ctx.droppedKinds.add(warning.ownerKind);
+}
+
+function kindShapeMismatch(kind: string, expected: string, found: string): AssembleWarning & { readonly ownerKind: string } {
+	return {
+		code: 'kind-shape-mismatch',
+		ownerKind: kind,
+		message: `[assemble] kind '${kind}' must be ${expected}; found ${found}`,
+		details: { kind, expected, found }
+	};
 }
 
 function resolveSupertypeSubtypes(
@@ -614,7 +667,7 @@ function resolveHiddenRuleContent(
 
 export interface HydrateSlotRefsConfig {
 	readonly inline?: ReadonlySet<string>;
-	readonly undefinedNames?: ReadonlySet<string>;
+	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
@@ -633,7 +686,7 @@ export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {
 				nodes: nodeMap.nodes,
 				externals,
 				inline,
-				undefinedNames: cfg.undefinedNames,
+				reportedAbsentNames: cfg.reportedAbsentNames,
 				diagnostics: cfg.diagnostics,
 				grammar: cfg.grammar
 			});
@@ -656,7 +709,7 @@ function hydrateSlots(
 			nodes,
 			externals,
 			inline,
-			undefinedNames: cfg.undefinedNames,
+			reportedAbsentNames: cfg.reportedAbsentNames,
 			diagnostics: cfg.diagnostics,
 			grammar: cfg.grammar
 		});
@@ -669,13 +722,13 @@ interface HydrateValuesCtx {
 	readonly nodes: Map<string, AssembledNode>;
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
-	readonly undefinedNames?: ReadonlySet<string>;
+	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly diagnostics?: DiagnosticSink;
 	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals, inline, undefinedNames, diagnostics, grammar } = ctx;
+	const { parentKind, siteLabel, nodes, externals, inline, reportedAbsentNames, diagnostics, grammar } = ctx;
 	for (const v of values) {
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
@@ -687,7 +740,7 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		}
 		if (externals.has(targetName)) continue;
 		if (inline.has(targetName)) continue;
-		if (undefinedNames?.has(targetName)) continue;
+		if (reportedAbsentNames?.has(targetName)) continue;
 		diagnostics?.fail({
 			code: 'dangling-internal-ref',
 			message:
@@ -985,7 +1038,7 @@ export function classifyNode(
 		simplifiedRules?: Readonly<Record<string, SimplifiedRule>>;
 		kindEntries?: readonly GeneratedKindEntry[];
 	}
-): ModelType {
+): ModelType | undefined {
 	const compoundCtx: CompoundModelTypeCtx = {
 		simplifiedRules: opts?.simplifiedRules ?? {},
 		kindEntries: opts?.kindEntries ?? []
@@ -1008,7 +1061,7 @@ export function classifyNode(
 	if (isSeparatedListShape(rule)) return 'list';
 	if (hasSlotBearingContent(rule)) return compoundModelTypeFor(kind, rule, compoundCtx);
 	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
-	return classifyTerminalFallback(kind, rule);
+	return classifyTerminalFallback(rule);
 }
 
 function referencesKind(rule: RenderRule): boolean {
@@ -1053,13 +1106,10 @@ function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 	}
 }
 
-function classifyTerminalFallback(kind: string, rule: RenderRule): ModelType {
+function classifyTerminalFallback(rule: RenderRule): ModelType | undefined {
 	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
-	throw new Error(
-		`classifyNode: '${kind}' has no slots and no rule-type ` +
-			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
-	);
+	return undefined;
 }
 
 export function isAllTextShape(rule: AnyRule): boolean {

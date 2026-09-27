@@ -1242,6 +1242,8 @@ export function predictedEntriesOf(kinds: PredictedKinds | undefined): readonly 
 }
 
 const PREDICTED_KIND_FIELDS = [
+	'id',
+	'parseId',
 	'symbolName',
 	'literalText',
 	'anon',
@@ -1314,6 +1316,18 @@ export function predictedKindsOf(
 	} catch (error) {
 		return { failure: error instanceof Error ? error.message : String(error), undefinedNames: [] };
 	}
+}
+
+export function kindCatalogOf(
+	tables: GeneratedIdTables | undefined,
+	grammar: {
+		readonly predictedKinds?: PredictedKinds;
+		readonly visibleExternals?: Readonly<Record<string, unknown>>;
+	}
+): readonly GeneratedKindEntry[] {
+	return tables === undefined
+		? predictedEntriesOf(grammar.predictedKinds)
+		: collectGeneratedKindEntries(stampVisibleExternals(tables, grammar));
 }
 
 export function catalogRenames(names: Iterable<string>, entries: readonly KindEntryLike[]): ReadonlyMap<string, string> {

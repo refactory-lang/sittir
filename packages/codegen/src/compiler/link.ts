@@ -46,7 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, stampVisibleExternals, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -88,7 +88,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, predictedEntriesOf } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -149,7 +149,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 
 export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
-	const kindEntries = collectGeneratedKindEntries(stampVisibleExternals(ctx?.generatedIdTables, evaluated));
+	const kindEntries = kindCatalogOf(ctx?.generatedIdTables, evaluated);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
 	const raw = stampParserVisibility(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
@@ -225,6 +225,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 			rules,
 			groups: groupsConfig
 		});
+		for (const issue of lifted.issues) recordConfigIssue('groups-config-invalid', issue, linkCtx);
 		for (const key of Object.keys(rules)) {
 			if (!(key in lifted.rules)) delete rules[key];
 		}
@@ -276,14 +277,25 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
 		if (!rule) {
-			throw new Error(
-				`refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
+			recordConfigIssue(
+				'refine-config-invalid',
+				{
+					ownerKind: kind,
+					message: `refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
+				},
+				linkCtx
 			);
+			continue;
 		}
-		validateRefineForms(kind, rule, forms, rules);
+		const validForms = forms.filter((form) => {
+			const issue = refineFormIssue(kind, rule, form, rules);
+			if (issue !== undefined) recordConfigIssue('refine-config-invalid', { ownerKind: kind, message: issue }, linkCtx);
+			return issue === undefined;
+		});
+		if (validForms.length === 0) continue;
 		refineForms.set(
 			kind,
-			forms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
+			validForms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
 		);
 	}
 
@@ -2108,7 +2120,7 @@ export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'>
 		const seg = segments[i]!;
 		const idx = parseInt(seg, 10);
 		if (Number.isNaN(idx)) {
-			throw new Error(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
+			throw new ConfigError(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
 		}
 		cur = stepInto(cur, idx, path);
 	}
@@ -2120,7 +2132,7 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case CHOICE: {
 			const m = rule.members[idx];
 			if (!m) {
-				throw new Error(
+				throw new ConfigError(
 					`group path '${fullPath}' does not resolve: index ${idx} out of range in ${rule.type} of ${rule.members.length} members`
 				);
 			}
@@ -2133,19 +2145,40 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case TOKEN:
 		case ALIAS:
 			if (idx !== 0) {
-				throw new Error(
+				throw new ConfigError(
 					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
 				);
 			}
 			return (rule as { content: Rule<'link'> }).content;
 		default:
-			throw new Error(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
+			throw new ConfigError(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
 	}
 }
 
 export interface DeriveSynthesizedNameArgs {
 	parentKind: string;
 	discriminator: string;
+}
+
+export class ConfigError extends Error {}
+
+export interface ConfigIssue {
+	readonly ownerKind: string;
+	readonly message: string;
+}
+
+function recordConfigIssue(
+	code: 'groups-config-invalid' | 'refine-config-invalid',
+	issue: ConfigIssue,
+	ctx: LinkCtx
+): void {
+	ctx.diagnostics.fail({
+		code,
+		scope: 'compiler',
+		phase: 'link',
+		message: issue.message,
+		details: { grammar: ctx.grammar.name, kind: issue.ownerKind }
+	});
 }
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
@@ -2160,58 +2193,72 @@ export interface ValidateGroupsArgs {
 	warn?: (msg: string) => void;
 }
 
-export function validateGroupsConfig(args: ValidateGroupsArgs): void {
+export interface ValidGroupsConfig {
+	readonly groups: Record<string, Record<string, string>>;
+	readonly issues: readonly ConfigIssue[];
+}
+
+export function validateGroupsConfig(args: ValidateGroupsArgs): ValidGroupsConfig {
 	const { groups, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
+	const valid: Record<string, Record<string, string>> = {};
+	const issues: ConfigIssue[] = [];
 
 	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts) continue;
 		const root = rules[kind];
 		if (!root) {
-			throw new Error(`groups['${kind}']: kind not in rule map`);
+			issues.push({ ownerKind: kind, message: `groups['${kind}']: kind not in rule map` });
+			continue;
 		}
 		const liftPaths = Object.keys(lifts);
 
 		for (const path of liftPaths) {
-			const discriminator = lifts[path]!;
-
-			let target: Rule<'link'>;
-			try {
-				target = resolveGroupPath(root, path);
-			} catch (e) {
-				throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
+			const issue = groupLiftIssue(kind, path, { lifts, liftPaths, root, rules, emitWarn });
+			if (issue !== undefined) {
+				issues.push({ ownerKind: kind, message: issue });
+				continue;
 			}
-
-			if (discriminator.length === 0) {
-				throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
-			}
-			if (!isAsciiIdentifier(discriminator)) {
-				throw new Error(`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`);
-			}
-
-			for (const otherPath of liftPaths) {
-				if (otherPath === path) continue;
-				if (isAncestorPath(path, otherPath)) {
-					throw new Error(
-						`groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`
-					);
-				}
-			}
-
-			const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
-			if (synthName in rules) {
-				throw new Error(
-					`groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
-				);
-			}
-
-			if (!hasStructuralMember(target)) {
-				emitWarn(
-					`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`
-				);
-			}
+			valid[kind] = { ...valid[kind], [path]: lifts[path]! };
 		}
 	}
+	return { groups: valid, issues };
+}
+
+interface GroupLiftCtx {
+	readonly lifts: Record<string, string>;
+	readonly liftPaths: readonly string[];
+	readonly root: Rule<'link'>;
+	readonly rules: Record<string, Rule<'link'>>;
+	readonly emitWarn: (msg: string) => void;
+}
+
+function groupLiftIssue(kind: string, path: string, ctx: GroupLiftCtx): string | undefined {
+	const discriminator = ctx.lifts[path]!;
+	let target: Rule<'link'>;
+	try {
+		target = resolveGroupPath(ctx.root, path);
+	} catch (e) {
+		if (!(e instanceof ConfigError)) throw e;
+		return `groups['${kind}']['${path}']: ${e.message}`;
+	}
+	if (discriminator.length === 0) return `groups['${kind}']['${path}']: discriminator must be a non-empty identifier`;
+	if (!isAsciiIdentifier(discriminator)) {
+		return `groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`;
+	}
+	for (const otherPath of ctx.liftPaths) {
+		if (otherPath !== path && isAncestorPath(path, otherPath)) {
+			return `groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`;
+		}
+	}
+	const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
+	if (synthName in ctx.rules) {
+		return `groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`;
+	}
+	if (!hasStructuralMember(target)) {
+		ctx.emitWarn(`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`);
+	}
+	return undefined;
 }
 function isAncestorPath(ancestor: string, descendant: string): boolean {
 	if (ancestor === descendant) return false;
@@ -2252,15 +2299,16 @@ export interface ApplyGroupOverridesArgs {
 export interface ApplyGroupOverridesResult {
 	rules: Record<string, Rule<'link'>>;
 	synthesizedKinds: readonly string[];
+	issues: readonly ConfigIssue[];
 }
 
 export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
-	validateGroupsConfig(args);
+	const { groups, issues } = validateGroupsConfig(args);
 
 	const newRules: Record<string, Rule<'link'>> = { ...args.rules };
 	const synthesizedKinds: string[] = [];
 
-	for (const [kind, lifts] of Object.entries(args.groups)) {
+	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts || Object.keys(lifts).length === 0) continue;
 		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length);
 		let parentBody = clone(newRules[kind]!);
@@ -2286,7 +2334,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 		newRules[kind] = parentBody;
 	}
 
-	return { rules: newRules, synthesizedKinds };
+	return { rules: newRules, synthesizedKinds, issues };
 }
 function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 	switch (target.type) {
@@ -2449,17 +2497,21 @@ export interface RefinePathResolution {
 	readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
 
-export function validateRefineForms(
+export function refineFormIssue(
 	kind: string,
 	rule: Rule<'link'>,
-	forms: readonly RefineForm[],
+	form: RefineForm,
 	rules?: Readonly<Record<string, Rule<'link'>>>
-): void {
-	for (const form of forms) {
+): string | undefined {
+	try {
 		for (const [pathStr, selection] of Object.entries(form.selections)) {
 			const resolution = resolveRefinePath(kind, form.name, pathStr, rule, rules);
 			validateSelection(kind, form.name, pathStr, resolution.choice, selection);
 		}
+		return undefined;
+	} catch (e) {
+		if (!(e instanceof ConfigError)) throw e;
+		return e.message;
 	}
 }
 
@@ -2472,7 +2524,7 @@ export function resolveRefinePath(
 ): RefinePathResolution {
 	const segments = parsePath(pathStr);
 	if (segments.length === 0) {
-		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
+		throw new ConfigError(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
 	}
 	let cur: Rule<'link'> = rule;
 	let fieldName: string | undefined;
@@ -2484,7 +2536,7 @@ export function resolveRefinePath(
 	}
 	const final = unwrapToChoice(cur, rules);
 	if (!final) {
-		throw new Error(
+		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
 		);
 	}
@@ -2501,7 +2553,7 @@ function stepPath(
 		case 'fieldName': {
 			const target = findFieldByName(rule, seg.name);
 			if (!target) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`
 				);
 			}
@@ -2510,13 +2562,13 @@ function stepPath(
 		case 'index': {
 			const members = membersOf(rule);
 			if (!members) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`
 				);
 			}
 			const idx = seg.value < 0 ? members.length + seg.value : seg.value;
 			if (idx < 0 || idx >= members.length) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`
 				);
 			}
@@ -2529,16 +2581,16 @@ function stepPath(
 			}
 			const content = singleContentOf(rule);
 			if (content) return { next: content };
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`
 			);
 		}
 		case 'kind-match':
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
 			);
 		case 'literal':
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses literal '"${seg.text}"' — refine paths only support positional indices and 'name:' field traversal`
 			);
 	}
@@ -2591,7 +2643,7 @@ function validateSelection(
 	const arms: readonly Rule<'link'>[] = choice.members;
 	if (typeof selection === 'number') {
 		if (selection < 0 || selection >= arms.length) {
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`
 			);
 		}
@@ -2599,7 +2651,7 @@ function validateSelection(
 	}
 	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
 	if (!stringValues.includes(selection)) {
-		throw new Error(
+		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
 		);
 	}

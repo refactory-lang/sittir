@@ -428,15 +428,18 @@ rather than defaulted, since defaulting would make the guard guess.
 
 Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from the kind catalog evaluate predicted (`RawGrammar.predictedKinds`), asked through
 `dsl/symbol-table.ts::renameAwareSymbolSource` since the rules may still carry pre-rename names, and hands it to
-both alias diagnostics. When the prediction failed, those two checks are skipped, since answers over no rows
+both alias diagnostics. Link and assemble read one kind catalog (`dsl/symbol-table.ts::kindCatalogOf`): the
+parser's rows when id tables are passed, else the predicted rows, which match the parser's on every field
+including the ids. The tool and the upstream compile pass no tables, so they run on the predicted catalog. When the prediction failed, those two checks are skipped, since answers over no rows
 are false, and the failure surfaces instead: link records it (`link.ts::reportUnpredictedKinds`) in the sink the
 collector runs it with, and the collector surfaces those records beside the kind-id stamp records
 (`SURFACED_COMPILER_CODE_PREFIXES`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODE_PREFIXES`
 
-The compiler-diagnostic codes the grammar diagnostics report as their own: the kind-id stamp records, and the
-failed-prediction records (`dangling-internal-ref`, `unpredictable-symbol-table`).
+The compiler-diagnostic codes the grammar diagnostics report as their own: the kind-id stamp records, the
+failed-prediction records (`dangling-internal-ref`, `unpredictable-symbol-table`), and the invalid config records
+(`groups-config-invalid`, `refine-config-invalid`).
 
 
 #### body
@@ -470,6 +473,14 @@ failed-prediction records (`dangling-internal-ref`, `unpredictable-symbol-table`
 // occur in a real parse, so any diagnostic about it is phantom
 // regardless of code.
 ```
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
+
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) and a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`). Each is fixed at its cause, never accepted.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
+
+One blocking `expect-diagnostics-invalid` record per `expectDiagnostics` key in `UNEXPECTABLE_CODES`, so an entry that could never take effect is reported rather than silently ignored.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::module`
 

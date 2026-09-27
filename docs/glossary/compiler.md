@@ -306,6 +306,24 @@ parents.
 // attribute, and the class answers only whether the text is word-shaped.
 ```
 
+A kind whose rule does not fit the model type it was classified as is recorded and left out, so the run continues to the gate: `kind-shape-mismatch` {kind, expected, found} for a supertype, literal, enum or list body of the wrong shape (`kindShapeMismatch`), `unclassifiable-shape` for a kind nothing classifies, and `single-literal-choice` for a literal choice whose arms yield fewer than two values (`model/node-map.ts::enumValuesOf`; typescript's upstream `meta_property`, two keyword sequences). The left-out kinds are `AssembledNodeMap.droppedKinds`.
+
+### `packages/codegen/src/compiler/assemble.ts::AssembledNodeMap.droppedKinds`
+
+The kinds assemble recorded and left out of the model. Hydrate skips references to them (`HydrateSlotRefsConfig.reportedAbsentNames`), since their absence is already a record.
+
+### `packages/codegen/src/compiler/assemble.ts::DroppedKindCtx`
+
+Where `recordDroppedKind` writes: assemble's diagnostics collector and the set of kinds left out.
+
+### `packages/codegen/src/compiler/assemble.ts::recordDroppedKind`
+
+Records one assemble warning against its kind and adds the kind to the left-out set, so the record and the omission never disagree.
+
+### `packages/codegen/src/compiler/assemble.ts::kindShapeMismatch`
+
+The `kind-shape-mismatch` record for a kind whose rule is not the shape its model type requires: the kind, what was expected, and the rule type found.
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
 
 ```text
@@ -617,8 +635,9 @@ parents.
  * What hydration needs beside the NodeMap: `inline`, the grammar's declared
  * inline kinds (`.sittir/src/grammar.json` `inline` list), which the parser
  * never issues a node for and which may therefore be referenced without
- * being assembled; `undefinedNames`, the names the evaluate-phase
- * prediction found undefined, which link already reported; and
+ * being assembled; `reportedAbsentNames`, the names whose absence is already
+ * reported (the undefined names link records, and the kinds assemble
+ * left out with a shape record); and
  * `diagnostics`, the compilation's sink, where any other reference that is
  * neither external nor inline is reported.
  */
@@ -934,6 +953,8 @@ parents.
 // own switch on this function's 'token' return value, not here.
 ```
 
+A kind nothing classifies yields `undefined` (`classifyTerminalFallback`); assemble records it as `unclassifiable-shape` and leaves it out of the model.
+
 ### `packages/codegen/src/compiler/assemble.ts::referencesKind`
 
 ```text
@@ -972,28 +993,7 @@ parents.
 
 ### `packages/codegen/src/compiler/assemble.ts::classifyTerminalFallback`
 
-```text
-/**
- * Apply the terminal fallback classification after all structural checks
- * have failed to assign a model type.
- *
- * @param kind - The rule kind name, used in the error message.
- * @param rule - The rule body for that kind.
- * @returns `'pattern'` for all-text subtrees, `'enum'` for pure choice-of-strings.
- * @throws {Error} When the rule cannot be classified by any heuristic — indicates
- *   that Link should have wrapped it as a `TerminalRule`.
- * @remarks
- *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
- *   unclassifiable after this is a real pipeline error.
- */
-```
-
-#### body
-
-```text
-// isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule
-// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
-```
+The classification left after every structural check: an all-text subtree is `'pattern'`, a pure choice of strings is `'enum'`, and anything else is `undefined`, a shape no model type fits, which assemble records rather than guesses.
 
 ### `packages/codegen/src/compiler/assemble.ts::isAllTextShape`
 
@@ -3887,12 +3887,19 @@ declared-supertype override:
 
 ### `packages/codegen/src/compiler/link.ts::validateGroupsConfig`
 
-```text
-/**
- * Validate all groups config at config-load time. Throws on E1-E5,
- * warns on E6. See spec §"Error handling" for the full taxonomy.
- */
-```
+Splits a `groups:` block into the lifts that can be applied and the issues that rule the others out: a kind missing from the rule map, or per lift a path that does not resolve, a discriminator that is empty or not an identifier, a lift nested in another, or a synthesized name already taken (`groupLiftIssue`). A lifted body with no structural member still applies and only warns. Nothing throws, so one bad entry never stops the rest.
+
+### `packages/codegen/src/compiler/link.ts::ValidGroupsConfig`
+
+The lifts of a `groups:` block that apply, keyed by kind then path, and the issues of the ones that do not.
+
+### `packages/codegen/src/compiler/link.ts::GroupLiftCtx`
+
+What `groupLiftIssue` reads for one kind's lifts: the lifts and their paths, the kind's rule, the rule map and the warning sink.
+
+### `packages/codegen/src/compiler/link.ts::groupLiftIssue`
+
+Why one group lift cannot apply, or `undefined` when it can. A path the resolver rejects (`ConfigError`) becomes the issue's message; any other error is not a config fault and propagates.
 
 ### `packages/codegen/src/compiler/link.ts::unwrapAliasForCheck`
 
@@ -5568,6 +5575,8 @@ collector parameter.
  * per-node constructors that previously received it positionally.
  */
 ```
+
+`from` takes the kind catalog rows when the caller already has them (the grammar diagnostics pass `dsl/symbol-table.ts::kindCatalogOf`'s rows, so link and assemble read one catalog); otherwise assemble reads them from the id tables.
 
 ### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
@@ -8991,6 +9000,8 @@ every root rebuild so the assembled node still reads it.
  */
 ```
 
+A path that does not resolve throws `ConfigError`, which only the validators catch (`groupLiftIssue`): by the time `applyGroupOverrides` walks a path, validation has already kept only the ones that resolve.
+
 ### `packages/codegen/src/compiler/link.ts::deriveSynthesizedName`
 
 ```text
@@ -9035,6 +9046,7 @@ Each lifted body is registered with `annotations.hoisted` stamped, the same
 declaration every other minting route makes; `classifyHiddenRule` collects
 the set from that annotation alone.
 
+It applies only the lifts `validateGroupsConfig` keeps and returns the issues of the rest; link records each as `groups-config-invalid` (`recordConfigIssue`).
 
 ### `packages/codegen/src/compiler/link.ts::liftRule`
 
@@ -9226,23 +9238,9 @@ the set from that annotation alone.
  */
 ```
 
-### `packages/codegen/src/compiler/link.ts::validateRefineForms`
+### `packages/codegen/src/compiler/link.ts::refineFormIssue`
 
-```text
-/**
- * Validate every refine form's paths and selections for one kind.
- * Throws on the first failure — codegen fails loud when a refine
- * declaration is inconsistent with the rule shape.
- *
- * @param kind - Rule<'link'> kind being validated (used in error messages).
- * @param rule - Post-link rule tree for `kind`.
- * @param forms - Ordered list of refine forms declared for `kind`.
- * @param rules - Optional rules map for resolving symbol references
- *   introduced by evaluate's field-enum synthesis pass. When a path
- *   terminus resolves to a `SymbolRule<'link'>`, the target rule is looked up
- *   here to retrieve the underlying `EnumRule<'link'>`.
- */
-```
+Why one refine form cannot apply to a kind, or `undefined` when every path resolves to a choice and every selection names one of its branches (`resolveRefinePath`, `validateSelection`). The first failing path or selection (`ConfigError`) is the issue. Link records it as `refine-config-invalid` and keeps the kind's other forms, so an inconsistent declaration drops only itself.
 
 ### `packages/codegen/src/compiler/link.ts::resolveRefinePath`
 
@@ -9262,6 +9260,20 @@ the set from that annotation alone.
  */
 ```
 
+A path that does not resolve throws `ConfigError`; link validates every form first (`refineFormIssue`), so the emit-time callers only see paths that resolve.
+
+### `packages/codegen/src/compiler/link.ts::ConfigError`
+
+A `groups:` or `refine()` declaration that does not fit the grammar. The path resolvers throw it and only the validators catch it, so the message is written once where the fault is found and the fault still becomes a record rather than a throw out of link.
+
+### `packages/codegen/src/compiler/link.ts::ConfigIssue`
+
+One invalid config entry: the kind it is declared on and the message naming the entry and the fault.
+
+### `packages/codegen/src/compiler/link.ts::recordConfigIssue`
+
+Records a `ConfigIssue` in link's sink as `groups-config-invalid` or `refine-config-invalid`, fail severity. The grammar diagnostics surface both, and neither can be expected (`diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`): the fix is the declaration.
+
 ### `packages/codegen/src/compiler/link.ts::narrowedFieldLiteralsForForm`
 
 ```text
@@ -9270,7 +9282,7 @@ the set from that annotation alone.
  * whose single literal value should be narrowed for per-form Config
  * emission, along with the narrowed literal.
  *
- * Link calls it once per form at its end, after `validateRefineForms`,
+ * Link calls it once per form at its end, after `refineFormIssue` keeps it,
  * to stamp `LinkedRefineForm.narrowedFields`; the type/factory emitters
  * read that stamp. Returns an array because a form may narrow multiple
  * selections (e.g. `opening` and `closing` simultaneously).
@@ -9768,7 +9780,7 @@ Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstr
 // `assertCompilation`. All three grammars carry zero.
 ```
 
-A name the evaluate-phase prediction found undefined (`HydrateValuesCtx.undefinedNames`, stamped from `RawGrammar.predictedKinds` by `dsl/symbol-table.ts::undefinedNamesOf`) is skipped: link records it as `dangling-internal-ref` already, so hydrate does not record the same fact again.
+A name whose absence is already reported (`HydrateValuesCtx.reportedAbsentNames`) is skipped: an undefined name link records as `dangling-internal-ref` (`dsl/symbol-table.ts::undefinedNamesOf`), or a kind assemble left out with a shape record (`AssembledNodeMap.droppedKinds`). Hydrate does not record the same absence again.
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 

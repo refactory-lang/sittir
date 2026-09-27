@@ -3,6 +3,8 @@ import { inlinesAtReference, type SymbolSource } from '../rule-patterns.ts';
 import {
 	assertPredictedKindEntries,
 	catalogRenames,
+	kindCatalogOf,
+	predictedKindsOf,
 	predictKindCatalog,
 	predictedSymbolSourceOf,
 	type GeneratedKindEntry
@@ -108,11 +110,27 @@ describe('predictKindCatalog over a grammar tree-sitter rejects', () => {
 	});
 });
 
+describe('kindCatalogOf', () => {
+	const rules = { source: seq(sym('item'), str(';')), item: seq(str('i'), sym('word')), word: str('w') };
+	const predictedKinds = predictedKindsOf(grammarOf(rules));
+
+	it('without parser tables, is the predicted rows, ids included', () => {
+		expect(kindCatalogOf(undefined, { predictedKinds })).toEqual('entries' in predictedKinds ? predictedKinds.entries : []);
+	});
+	it('with parser tables, is the parser rows', () => {
+		const entries = kindCatalogOf({ kindIds: { item: 7 }, sourceArtifact: 'test' }, { predictedKinds });
+		expect(entries).toEqual([expect.objectContaining({ kind: 'item', id: 7 })]);
+	});
+});
+
 describe('assertPredictedKindEntries', () => {
 	const row = (kind: string, extra: Partial<GeneratedKindEntry> = {}): GeneratedKindEntry => ({ kind, id: 1, ...extra });
 
-	it('passes when every row agrees on every read field, whatever the ids', () => {
-		expect(() => assertPredictedKindEntries([row('a', { id: 7 })], [row('a')])).not.toThrow();
+	it('passes when every row agrees on every field', () => {
+		expect(() => assertPredictedKindEntries([row('a', { id: 7 })], [row('a', { id: 7 })])).not.toThrow();
+	});
+	it('lists an id disagreement like any other field', () => {
+		expect(() => assertPredictedKindEntries([row('a', { id: 7 })], [row('a')])).toThrow(/a\.id: predicted 7, catalog 1/);
 	});
 	it('lists each disagreeing field and each row only one side has', () => {
 		expect(() => assertPredictedKindEntries([row('a', { hidden: true }), row('b')], [row('a'), row('c')])).toThrow(

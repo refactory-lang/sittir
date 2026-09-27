@@ -3016,6 +3016,14 @@ The enum's literal arms with nested choices flattened, the list its `values` rea
 choice onto a display arrives as a choice inside a choice.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::enumLiteralMembersOf`
+
+The literal members of a choice as `AssembledEnum` reads them: nested choices flattened, one member per arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::enumValuesOf`
+
+The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the one derivation of an enum's values. Assemble counts them before it builds an `AssembledEnum`, and records `single-literal-choice` when there are fewer than two, so the constructor's own check is an invariant no grammar reaches.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body

@@ -11,7 +11,7 @@ import type { AssembleWarning } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
-import { collectGeneratedKindEntries, predictedEntriesOf, renameAwareSymbolSource, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { kindCatalogOf, predictedEntriesOf, renameAwareSymbolSource, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { symbolFactsOf } from '../../dsl/rule-patterns.ts';
@@ -94,6 +94,8 @@ function isBlockingAssembleWarningCode(code: string): boolean {
 		code === 'storagename-collision' ||
 		code === 'nonterminal-separator-unstamped' ||
 		code === 'unclassifiable-shape' ||
+		code === 'kind-shape-mismatch' ||
+		code === 'single-literal-choice' ||
 		code === 'union-slot-mixed-row'
 	);
 }
@@ -177,8 +179,34 @@ const SURFACED_COMPILER_CODE_PREFIXES = [
 	'kindid-inline-excluded',
 	'kindid-unclassified',
 	'dangling-internal-ref',
-	'unpredictable-symbol-table'
+	'unpredictable-symbol-table',
+	'groups-config-invalid',
+	'refine-config-invalid'
 ] as const;
+
+const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
+	'dangling-internal-ref',
+	'unpredictable-symbol-table',
+	'groups-config-invalid',
+	'refine-config-invalid'
+]);
+
+export function unexpectableExpectEntries(
+	grammar: string,
+	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined
+): GrammarDiagnostic[] {
+	return Object.keys(expectDiagnostics ?? {})
+		.filter((code) => UNEXPECTABLE_CODES.has(code))
+		.map((code) => ({
+			scope: 'grammar',
+			code: 'expect-diagnostics-invalid',
+			severity: 'error',
+			grammar,
+			message: `expectDiagnostics: '${code}' cannot be expected; it reports a grammar or config the compiler rejects, so fix its cause instead`,
+			canProceed: false,
+			details: { code }
+		}));
+}
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
@@ -193,7 +221,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const kindEntries = collectGeneratedKindEntries(input.generatedIdTables);
+	const kindEntries = kindCatalogOf(input.generatedIdTables, input.rawGrammar);
 	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
@@ -214,7 +242,13 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, input.generatedIdTables, compilerDiagnostics, loadGrammarJsonAliasMap(rawGrammar.name))
+		AssembleCtx.from(
+			normalized,
+			input.generatedIdTables,
+			compilerDiagnostics,
+			loadGrammarJsonAliasMap(rawGrammar.name),
+			kindEntries
+		)
 	);
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
@@ -248,6 +282,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 					...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols })
 				]),
 		...surfacedCompilerDiagnostics,
+		...unexpectableExpectEntries(rawGrammar.name, rawGrammar.expectDiagnostics),
 		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
 		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
 	];

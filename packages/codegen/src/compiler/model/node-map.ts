@@ -1979,6 +1979,16 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	}
 }
 
+export function enumLiteralMembersOf(rule: ChoiceRule): readonly RenderRule[] {
+	const flatten = (member: RenderRule): readonly RenderRule[] =>
+		member.type === CHOICE ? member.members.flatMap(flatten) : [member];
+	return rule.members.flatMap(flatten);
+}
+
+export function enumValuesOf(rule: ChoiceRule): string[] {
+	return [...new Set(enumLiteralMembersOf(rule).map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+}
+
 export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
@@ -2014,19 +2024,17 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(
-				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to a StringRule`
+				`AssembledEnum '${kind}' must have at least two members; assemble records single-literal-choice before constructing one`
 			);
 		}
 	}
 
 	get literalMembers(): readonly RenderRule[] {
-		const flatten = (member: RenderRule): readonly RenderRule[] =>
-			member.type === CHOICE ? member.members.flatMap(flatten) : [member];
-		return this.rule.members.flatMap(flatten);
+		return enumLiteralMembersOf(this.rule);
 	}
 
 	get values(): string[] {
-		return [...new Set(this.literalMembers.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+		return enumValuesOf(this.rule);
 	}
 
 	override get storage(): KindStorage {

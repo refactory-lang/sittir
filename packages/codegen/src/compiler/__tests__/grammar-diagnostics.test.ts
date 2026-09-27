@@ -56,26 +56,60 @@ function collisionGrammar(): RawGrammar {
 }
 
 describe('grammar diagnostics preflight', () => {
-	it('emits parsekind-noninjective from compiler-produced collisions, and display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
+	it('records single-literal-choice and leaves the kind out when a literal choice yields fewer than two values', () => {
+		const seq = (...values: string[]) => ({ type: 'SEQ', members: values.map((value) => ({ type: 'STRING', value })) });
+		const rawGrammar = withPredictedKinds(
+			buildRawGrammar({
+				program: { type: 'SYMBOL', name: 'meta_property' },
+				meta_property: { type: 'CHOICE', members: [seq('new', '.', 'target'), seq('import', '.', 'meta')] }
+			})
+		);
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: 'single-literal-choice', ownerKind: 'meta_property', canProceed: false })
+		);
+		expect(result.nodeMap.nodes.has('meta_property')).toBe(false);
+		expect(result.nodeMap.droppedKinds).toEqual(new Set(['meta_property']));
+	});
+
+	it('records groups-config-invalid for a lift that does not resolve and applies the others', () => {
+		const rawGrammar = withPredictedKinds({
+			...buildRawGrammar({
+				program: {
+					type: 'SEQ',
+					members: [
+						{ type: 'SYMBOL', name: 'a' },
+						{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'SYMBOL', name: 'b' }] }
+					]
+				},
+				a: { type: 'PATTERN', value: 'a' },
+				b: { type: 'PATTERN', value: 'b' }
+			}),
+			groups: { program: { '1': 'inner', '7': 'missing' } }
+		});
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({
+				code: 'groups-config-invalid',
+				canProceed: false,
+				message: expect.stringMatching(/groups\['program'\]\['7'\]/)
+			})
+		);
+		expect(result.linked.rules._program_inner).toBeDefined();
+	});
+
+	it('rejects an expectDiagnostics entry that names a code no entry can expect', () => {
+		const rawGrammar = { ...collisionGrammar(), expectDiagnostics: { 'refine-config-invalid': ['host'] } };
+		expect(collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics).toContainEqual(
+			expect.objectContaining({ code: 'expect-diagnostics-invalid', canProceed: false, details: { code: 'refine-config-invalid' } })
+		);
+	});
+
+	it('keeps aliased arms injective by their storage ids under the predicted catalog, and trips display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
 
-		expect(result.nodeMap.parseKindCollisions).toEqual([
-			expect.objectContaining({
-				code: 'parsekind-noninjective',
-				ownerKind: 'host',
-				slotName: 'content',
-				parseKind: 'shared'
-			})
-		]);
+		expect(result.nodeMap.parseKindCollisions).toEqual([]);
 		expect(result.diagnostics).toEqual([
-			expect.objectContaining({
-				scope: 'grammar',
-				code: 'parsekind-noninjective',
-				grammar: 'synth',
-				ownerKind: 'host',
-				slotName: 'content',
-				canProceed: false
-			}),
 			expect.objectContaining({
 				code: 'display-union-mixed',
 				ownerKind: 'shared',
@@ -157,12 +191,25 @@ describe('grammar diagnostics preflight', () => {
 		expect(error.message).toContain('parsekind-noninjective');
 	});
 
-	it('parsekind-noninjective now blocks (canProceed: false), beside the mixed-display guard an enrich-skipping fixture trips', () => {
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
-		expect(result.diagnostics).toEqual([
-			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false }),
-			expect.objectContaining({ code: 'display-union-mixed', ownerKind: 'shared', canProceed: false })
-		]);
+	it('parsekind-noninjective blocks (canProceed: false)', () => {
+		const { diagnostics } = collectGrammarDiagnostics({
+			grammar: 'synth',
+			parseKindCollisions: [
+				{
+					code: 'parsekind-noninjective',
+					severity: 'error',
+					message: "Slot 'content' of kind 'host' collapses [left, shared] onto parse kind 'shared'.",
+					canProceed: true,
+					ownerKind: 'host',
+					slotName: 'content',
+					shape: 'propose-distinct-alias',
+					parseKind: 'shared',
+					storageKinds: ['left', 'shared'],
+					proposal: 'Give each colliding arm a distinct alias.'
+				}
+			]
+		});
+		expect(diagnostics).toEqual([expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })]);
 	});
 
 	it("files a display union's members by the predicted catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {

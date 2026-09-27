@@ -22,7 +22,7 @@ async function compileGrammarSource(source: string): Promise<DiagnosticSink> {
 		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
 		hydrateSlotRefs(nodeMap, {
 			inline: new Set(raw.inline),
-			undefinedNames: new Set(undefinedNamesOf(raw.predictedKinds)),
+			reportedAbsentNames: new Set(undefinedNamesOf(raw.predictedKinds)),
 			diagnostics,
 			grammar: 'dr'
 		});
