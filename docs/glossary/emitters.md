@@ -9720,12 +9720,14 @@ there, not by the hoisted flag here.
  * tight. Derived from the grammar's own anonymous-literal inventory —
  * never hand-picked.
  *
- * Identical-char pairs are deliberately excluded: a real doubled-char
- * token (rust's `>>`) only exists with its own disambiguation context in
- * the grammar (nested-generic `>` `>` re-lexes correctly), and spacing
- * every repeated symbol char would make already-common constructs noisy
- * for no correctness gain — same exemption the SpacingWriter's seam check
- * applies.
+ * An identical-char pair `c|c` is never derived from the literal
+ * inventory: it comes from `sameCharMergePairs` over the grammar's render
+ * rules (the `rules` argument), which admits it only when the doubled
+ * token `cc` can begin what directly follows the single token `c`
+ * (typescript's `--` after a unary `-`, rust's `::` after a type-annotation
+ * `:`). A doubled token that begins nothing that follows its single char
+ * (`>>` after a nested-generic `>`) yields no pair, so those seams stay
+ * tight.
  *
  * Word-class and whitespace characters are excluded even when they occur
  * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
@@ -10803,9 +10805,9 @@ absent optional slot leaves no mark behind. The boundary is recorded as static-g
 
 ```text
 /**
- * The SpacingWriter's seam law — `word_seam(l, r) ∨ (l ≠ r ∧
- * literal_merge_pair(l, r))`, same word table, same pair table, including
- * the identical-char exclusion (see `spacing.rs::write_str`) — applied
+ * The SpacingWriter's seam law — `word_seam(l, r) ∨
+ * literal_merge_pair(l, r)`, same word table, same pair table (identical-char
+ * pairs included exactly when `literalMergePairs` derives them) — applied
  * STATICALLY to a list's interior boundaries, for the census:
  *
  * - `runtime-derivable`: the checks' outcome is a statically-known

@@ -153,7 +153,11 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(
+					literalMergePairs(
+						getTransportProjection(config.nodeMap).literals,
+						config.kindEntries ?? [],
+						config.nodeMap.normalizedRules
+					).map(
 						([a, b]) => a * 128 + b
 					)
 				);
@@ -168,7 +172,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const rights = new Set<string>();
 				for (const [a, b] of literalMergePairs(
 					getTransportProjection(config.nodeMap).literals,
-					config.kindEntries ?? []
+					config.kindEntries ?? [],
+					config.nodeMap.normalizedRules
 				)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
@@ -699,7 +704,7 @@ function staticListInterior(
 			let seams = 0;
 			for (const l of ends) {
 				for (const r of starts) {
-					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
+					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || ctx.isLiteralMergePair(l, r);
 					if (seam) seams++;
 				}
 			}

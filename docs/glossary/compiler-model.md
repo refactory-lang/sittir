@@ -3288,6 +3288,52 @@ both read this one fact.
  *  contributes and falls through). */
 ```
 
+`firstTokenSets` in `first-tokens.ts` reads the same predicate for nullability, so a rule the edge walkers treat as possibly-empty is possibly-empty to the FIRST computation too.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts`
+
+Token-level FIRST and direct-follow sets over the render rules (`NodeMap.normalizedRules`). They are grammar facts about which token can open a rule and which token can come straight after another; the lexer-merge guard is their consumer.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::OPAQUE_TOKEN`
+
+The stand-in for a terminal whose text is not fixed — a PATTERN or an INDENT/DEDENT/NEWLINE layout token — and for a symbol the rule set does not define. It can never start with a doubled punctuation char, so it never produces a merge pair.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::FirstTokenSets`
+
+The fixpoint result: the names of the nullable rules, and each rule's FIRST set (the token texts that can open it).
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::Rules`
+
+The render-rule set the walks read, keyed by kind: `NodeMap.normalizedRules`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::terminalOf`
+
+The terminal a render-rule node is, if any: a STRING's value, `OPAQUE_TOKEN` for a PATTERN or a layout token, and the link-stamped `literal` of a SYMBOL that names an anonymous token. Render rules carry optionality and repetition as `multiplicity` and fields as `fieldName`, so there are no wrapper nodes to see through.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::repeats`
+
+True for a rule whose multiplicity is `array` or `nonEmptyArray`: its content can follow itself.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleNullable`
+
+Whether a rule can render nothing: `isNullableMultiplicity`, an empty terminal, a nullable symbol, a SEQ of nullable members, or a CHOICE or SUPERTYPE with a nullable arm.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleFirst`
+
+The tokens that can open a rule, reading the current per-symbol FIRST sets: a SEQ contributes members up to and including its first non-nullable one; CHOICE and SUPERTYPE union their arms; a symbol missing from the rule set opens with `OPAQUE_TOKEN`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::firstTokenSets`
+
+Iterates `ruleNullable` and `ruleFirst` over every rule until neither the nullable set nor any FIRST set grows. Recursive rules (`expression` through `binary_expression`) resolve by the fixpoint, not by cutting cycles.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::directFollowers`
+
+For each terminal text, the tokens that can come immediately after it. Within a rule, a member's followers are the FIRST of the members after it, through nullable ones, plus the rule-level follow when everything after it can be empty; a repeating rule's own FIRST follows its content. A hidden rule (`hidden`, which is spliced into its parent) takes the follow of every site that references it, so a token inside `_unary_expression_operator` is followed by what follows the operator in `unary_expression`. A visible rule takes no follow from its reference sites: the tokens after a visible node belong to a different parse context, which is why `>>` after a nested generic's closing `>` is not a follower.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::sameCharMergePairs`
+
+The single-char tokens `c` for which some direct follower begins with `cc`: writing `c` and then that follower with no space would lex as the doubled token. `literalMergePairs` adds each as the pair `c|c`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
 ```text

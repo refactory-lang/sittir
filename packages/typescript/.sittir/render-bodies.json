@@ -3864,9 +3864,6 @@
 			"text": ","
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "comma_after"
 		},
@@ -4197,9 +4194,6 @@
 			"text": "]"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "rbrack_after"
 		},
@@ -4280,9 +4274,6 @@
 		{
 			"kind": "text",
 			"text": "]"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -5991,9 +5982,6 @@
 		{
 			"kind": "text",
 			"text": "?"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -8100,9 +8088,6 @@
 		{
 			"kind": "text",
 			"text": "!"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

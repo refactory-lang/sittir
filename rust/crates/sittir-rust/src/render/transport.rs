@@ -77603,7 +77603,6 @@ fn render_scoped_use_list(node: &ScopedUseListTransport, w: &mut dyn ::sittir_co
     path.render(w)?;
     w.site_at(options::SITE_SCOPED_USE_LIST_COLON_COLON_BEFORE);
     w.text("::")?;
-    w.adjacent();
     w.site_at(options::SITE_SCOPED_USE_LIST_COLON_COLON_AFTER);
     list.render(w)?;
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -77793,7 +77792,6 @@ fn render_for_lifetimes(node: &ForLifetimesTransport, w: &mut dyn ::sittir_core:
     w.site_at(options::SITE_FOR_LIFETIMES_FOR_KEYWORD_AFTER);
     w.site_at(options::SITE_FOR_LIFETIMES_LT_BEFORE);
     w.text("<")?;
-    w.adjacent();
     w.site_at(options::SITE_FOR_LIFETIMES_LT_AFTER);
     lifetimes.render(w)?;
     w.site_at(options::SITE_FOR_LIFETIMES_GT_BEFORE);
@@ -77844,7 +77842,6 @@ fn render_generic_function(node: &GenericFunctionTransport, w: &mut dyn ::sittir
     function.render(w)?;
     w.site_at(options::SITE_GENERIC_FUNCTION_COLON_COLON_BEFORE);
     w.text("::")?;
-    w.adjacent();
     w.site_at(options::SITE_GENERIC_FUNCTION_COLON_COLON_AFTER);
     type_arguments.render(w)?;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -77868,7 +77865,6 @@ fn render_generic_type_with_turbofish(node: &GenericTypeWithTurbofishTransport, 
     type_.render(w)?;
     w.site_at(options::SITE_GENERIC_TYPE_WITH_TURBOFISH_COLON_COLON_BEFORE);
     w.text("::")?;
-    w.adjacent();
     w.site_at(options::SITE_GENERIC_TYPE_WITH_TURBOFISH_COLON_COLON_AFTER);
     type_arguments.render(w)?;
     w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -78661,7 +78657,6 @@ fn render_generic_pattern(node: &GenericPatternTransport, w: &mut dyn ::sittir_c
     name.render(w)?;
     w.site_at(options::SITE_GENERIC_PATTERN_COLON_COLON_BEFORE);
     w.text("::")?;
-    w.adjacent();
     w.site_at(options::SITE_GENERIC_PATTERN_COLON_COLON_AFTER);
     type_arguments.render(w)?;
     w.edge(::sittir_core::types::KindId(310), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -81368,7 +81363,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (45, 62), (46, 61), (47, 61), (60, 61), (61, 62), (62, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" "->" ".=" "/=" "<=" "=>" ">=" "^=" "|="
+.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (45, 62), (46, 61), (47, 61), (58, 58), (60, 61), (61, 62), (62, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" "->" ".=" "/=" "::" "<=" "=>" ">=" "^=" "|="
 
 /// Render a transport tree to text. Takes the trait rather than
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through

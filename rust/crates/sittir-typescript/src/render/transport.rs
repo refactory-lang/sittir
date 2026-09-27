@@ -99570,7 +99570,6 @@ fn render_optional_tuple_parameter(node: &OptionalTupleParameterTransport, w: &m
     name.render(w)?;
     w.site_at(options::SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_BEFORE);
     w.text("?")?;
-    w.adjacent();
     w.site_at(options::SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(328), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -100246,7 +100245,6 @@ fn render_import_clause_group(node: &ImportClauseGroupTransport, w: &mut dyn ::s
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(386), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(",")?;
-    w.adjacent();
     w.site_at(options::SITE_IMPORT_CLAUSE_GROUP_COMMA_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(386), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -100621,7 +100619,6 @@ fn render_index_signature_colon(node: &IndexSignatureColonTransport, w: &mut dyn
     index_type.render(w)?;
     w.site_at(options::SITE_INDEX_SIGNATURE_COLON_RBRACK_BEFORE);
     w.text("]")?;
-    w.adjacent();
     w.site_at(options::SITE_INDEX_SIGNATURE_COLON_RBRACK_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(403), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -100649,7 +100646,6 @@ fn render_index_signature_mapped_type_clause(node: &IndexSignatureMappedTypeClau
     mapped_type_clause.render(w)?;
     w.site_at(options::SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_BEFORE);
     w.text("]")?;
-    w.adjacent();
     w.site_at(options::SITE_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_RBRACK_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(404), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -100962,7 +100958,6 @@ fn render_variable_declarator_definite(node: &VariableDeclaratorDefiniteTranspor
     name.render(w)?;
     w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_BEFORE);
     w.text("!")?;
-    w.adjacent();
     w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(428), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -101953,7 +101948,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (47, 61), (60, 61), (62, 61), (63, 46), (63, 61), (94, 61), (123, 124), (124, 61), (124, 125)]); // "!=" "%=" "&=" "*=" "+=" "-=" "/=" "<=" ">=" "?." "?=" "^=" "{|" "|=" "|}"
+.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 43), (43, 61), (45, 45), (45, 61), (47, 61), (60, 61), (62, 61), (63, 46), (63, 61), (94, 61), (123, 124), (124, 61), (124, 125)]); // "!=" "%=" "&=" "*=" "++" "+=" "--" "-=" "/=" "<=" ">=" "?." "?=" "^=" "{|" "|=" "|}"
 
 /// Render a transport tree to text. Takes the trait rather than
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through

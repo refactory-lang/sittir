@@ -2196,7 +2196,7 @@ export interface LeftImmediateCtx extends NodesCtx {
 	readonly normalizedRules?: Record<string, RenderRule>;
 }
 
-const isNullableMultiplicity = (rule: RenderRule): boolean =>
+export const isNullableMultiplicity = (rule: RenderRule): boolean =>
 	rule.multiplicity === 'optional' || rule.multiplicity === 'array';
 
 export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {

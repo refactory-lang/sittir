@@ -241,14 +241,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
                 let word_seam = self.word.is_word(last) && self.word.is_word(first);
-                // Identical-char seams (e.g. `>` closing nested generics in
-                // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
-                // doubled-char token like rust's `>>` shift operator only
-                // exists as its own grammar rule with its own disambiguation
-                // context, not as a blind concatenation hazard — spacing every
-                // repeated symbol char would make already-common, unambiguous
-                // constructs noisy for no correctness gain.
-                let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
+                // An identical-char pair is in `literal_merge_pairs` only when the
+                // grammar lets its doubled token begin what directly follows the
+                // single-char token (e.g. `--` after a unary `-`); `>>` closing
+                // nested generics is never such a pair and stays tight.
+                let symbol_seam = self.word.is_literal_merge_pair(last, first);
                 if word_seam || symbol_seam {
                     self.inner.write_str(" ")?;
                 }
@@ -526,12 +523,23 @@ mod word_matcher_tests {
     }
 
     #[test]
-    fn identical_symbol_seam_does_not_insert() {
+    fn identical_symbol_seam_outside_the_pairs_does_not_insert() {
         let word = with_range_arrow_pairs();
-        // Closing nested generics (`Vec<Vec<T>>`) must stay tight — a real
-        // doubled-char token like `>>` only exists in its own disambiguated
-        // grammar rule, not as a blind concatenation hazard.
+        // Closing nested generics (`Vec<Vec<T>>`) stays tight: `>>` begins
+        // nothing that can follow a `>`, so `>|>` is never a derived pair.
         assert_eq!(spaced_with(&word, &[">", ">"]), ">>");
+    }
+
+    #[test]
+    fn identical_symbol_pair_inserts() {
+        // `-|-` is a pair when `--` can begin what follows a unary `-`:
+        // `- -x` and `- --x` must not re-lex as a decrement.
+        let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
+            .with_literal_merge_pairs(&[(b'-', b'-')]);
+        assert_eq!(spaced_with(&word, &["-", "-", "x"]), "- -x");
+        assert_eq!(spaced_with(&word, &["-", "--", "x"]), "- --x");
+        assert_eq!(spaced_with(&word, &["-", "x"]), "-x");
+        assert_eq!(spaced_with(&word, &["+", "+"]), "++");
     }
 
     #[test]
@@ -646,6 +654,21 @@ mod sink_tests {
             }),
             "\na"
         );
+    }
+
+    #[test]
+    fn a_tight_site_between_a_same_char_pair_still_gets_the_space() {
+        let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
+            .with_literal_merge_pairs(&[(b'-', b'-')]);
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, &word).with_table(&TABLE);
+        w.text("-").unwrap();
+        w.site(TIGHT);
+        w.text("-").unwrap();
+        w.site(TIGHT);
+        w.text("x").unwrap();
+        w.finish().unwrap();
+        assert_eq!(s, "- -x");
     }
 
     #[test]
