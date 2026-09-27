@@ -28,7 +28,7 @@ import {
 	symbolFactsOf,
 	type SymbolSource
 } from './rule-patterns.ts';
-import type { KindParserMetadata } from '../compiler/types.ts';
+import type { KindParserMetadata, ReservedWordsets } from '../compiler/types.ts';
 
 export interface ParserSymbolTable {
 	readonly symbols: ReadonlyMap<string, CEnumEntry>;
@@ -521,6 +521,31 @@ export function findEntryForKindName<T extends KindEntryLike>(entries: readonly 
 		entries.find((entry) => entry.anon !== true && (entry.symbolName === name || entry.parseName === name)) ??
 		undefined
 	);
+}
+
+export interface ReservedWordset {
+	readonly words: readonly string[];
+	readonly nonLiteral: readonly string[];
+}
+
+export function reservedWordset(
+	reserved: ReservedWordsets | undefined,
+	wordset: string,
+	entries: readonly KindEntryLike[]
+): ReservedWordset {
+	const words: string[] = [];
+	const nonLiteral: string[] = [];
+	for (const member of reserved?.[wordset] ?? []) {
+		const text =
+			member.type === STRING
+				? member.value
+				: member.type === SYMBOL
+					? findEntryForKindName(entries, member.name)?.literalText
+					: undefined;
+		if (text === undefined) nonLiteral.push(member.type === SYMBOL ? member.name : member.type);
+		else words.push(text);
+	}
+	return { words, nonLiteral };
 }
 
 const visibleTreeNameCounts = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, number>>();

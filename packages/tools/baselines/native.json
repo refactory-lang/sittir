@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "363fb25",
+    "commit": "59883ea",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -29,15 +29,15 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 146,
-                    "total": 146
+                    "pass": 147,
+                    "total": 147
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1398,
+                    "astMatchPass": 1417,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1398,
-                    "total": 1398
+                    "pass": 1417,
+                    "total": 1417
                 },
                 "from": {
                     "failingKinds": [],
@@ -104,23 +104,23 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 2021,
-                "total": 2021
+                "pass": 2079,
+                "total": 2079
             },
             "supertypeKindCount": 19,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 199,
-                    "total": 199
+                    "pass": 200,
+                    "total": 200
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1274,
+                    "astMatchPass": 1300,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1274,
-                    "total": 1274
+                    "pass": 1300,
+                    "total": 1300
                 },
                 "from": {
                     "failingKinds": [],
@@ -140,7 +140,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11281,
-        "total": 11284
+        "pass": 11386,
+        "total": 11389
     }
 }

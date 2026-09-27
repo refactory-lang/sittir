@@ -350,6 +350,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "pattern": "object",
   "readTreeNode": "function",
   "rejectBareText": "function",
+  "rejectKeywordText": "function",
   "render": "function",
   "resolveAbstractType_trait": "function",
   "resolveAbstractType_typeParameters": "function",

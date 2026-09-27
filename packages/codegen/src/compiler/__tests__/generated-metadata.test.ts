@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { deriveGeneratedIdTablesFromLanguage, deriveGeneratedIdTablesFromParserCSource, type TreeSitterLanguageMetadata } from '../generated-metadata.ts';
-import { collectGeneratedKindEntries, findEntryForLiteralText } from '../../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
 	it('derives generated kind and field IDs from the tree-sitter language API', () => {
@@ -624,5 +624,21 @@ static const char * const ts_field_names[] = {
 				aliasedStrings('escape', ['a', 'b'])
 			)
 		).rejects.toThrow('generated-metadata: aliased token anon_sym_a2 (display "escape") has no verbatim literal');
+	});
+
+	it('reads a reserved wordset as literal text, naming the members that have none', () => {
+		const reserved = {
+			global: [
+				{ type: 'STRING', value: 'class' },
+				{ type: 'SYMBOL', name: 'async_keyword' },
+				{ type: 'PATTERN', value: '[a-z]+' }
+			]
+		} as never;
+		const entries = [{ kind: 'async_keyword', literalText: 'async', anon: true }];
+		expect(reservedWordset(reserved, 'global', entries)).toEqual({
+			words: ['class', 'async'],
+			nonLiteral: ['PATTERN']
+		});
+		expect(reservedWordset(reserved, 'properties', entries)).toEqual({ words: [], nonLiteral: [] });
 	});
 });

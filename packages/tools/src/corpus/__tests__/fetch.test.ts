@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { gzipSync } from 'node:zlib';
 import { upstreamPackage } from '@sittir/codegen/grammars';
-import { archiveCommit, candidateRefs, githubRepoOf } from '../fetch.ts';
+import { archiveCommit, candidateRefs, flattenCorpusFiles, githubRepoOf } from '../fetch.ts';
 
 const SHA = '0123456789abcdef0123456789abcdef01234567';
 
@@ -65,5 +65,20 @@ describe('archiveCommit', () => {
 
 	it('throws when the global header names no commit', () => {
 		expect(() => archiveCommit(paxGlobalHeaderTarball('16 path=a/b/c.x\n'))).toThrow(/names no commit/);
+	});
+});
+
+describe('flattenCorpusFiles', () => {
+	it('names a nested corpus file by its path joined with dashes', () => {
+		expect([...flattenCorpusFiles([['a/b.txt', 'x'], ['c.txt', 'y']])]).toEqual([
+			['a-b.txt', 'x'],
+			['c.txt', 'y']
+		]);
+	});
+
+	it('throws when two source paths flatten to the same name, naming both', () => {
+		expect(() => flattenCorpusFiles([['a-b.txt', 'x'], ['a/b.txt', 'y']])).toThrow(
+			"corpus: 'a-b.txt' and 'a/b.txt' both flatten to 'a-b.txt'"
+		);
 	});
 });

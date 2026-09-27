@@ -383,44 +383,6 @@ export const ir: {
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
-	readonly as: typeof F.asPattern;
-	readonly assert: typeof F.assertStatement;
-	readonly bare: typeof F.withClauseBare;
-	readonly binary: typeof F.binaryOperator;
-	readonly boolean: typeof F.booleanOperator;
-	readonly break: typeof F.buildBreakStatement;
-	readonly class: typeof F.classDefinition;
-	readonly comparison: typeof F.comparisonOperator;
-	readonly conditional: typeof F.conditionalExpression;
-	readonly continue: typeof F.buildContinueStatement;
-	readonly decorated: typeof F.decoratedDefinition;
-	readonly default: typeof F.defaultParameter;
-	readonly delete: typeof F.deleteStatement;
-	readonly exec: typeof F.execStatement;
-	readonly for: typeof F.forStatement;
-	readonly function: typeof F.functionDefinition;
-	readonly futureImport: typeof F.futureImportStatement;
-	readonly generator: typeof F.generatorExpression;
-	readonly global: typeof F.globalStatement;
-	readonly if: typeof F.ifStatement;
-	readonly import: typeof F.importStatement;
-	readonly importFrom: typeof F.importFromStatement;
-	readonly match: typeof F.matchStatement;
-	readonly named: typeof F.namedExpression;
-	readonly nonlocal: typeof F.nonlocalStatement;
-	readonly not: typeof F.notOperator;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly pass: typeof F.buildPassStatement;
-	readonly print: typeof F.printStatement;
-	readonly raise: typeof F.raiseStatement;
-	readonly return: typeof F.returnStatement;
-	readonly try: typeof F.tryStatement;
-	readonly typeAlias: typeof F.typeAliasStatement;
-	readonly typed: typeof F.typedParameter;
-	readonly typedDefault: typeof F.typedDefaultParameter;
-	readonly unary: typeof F.unaryOperator;
-	readonly while: typeof F.whileStatement;
-	readonly with: typeof F.withStatement;
 	readonly statement: typeof statement;
 	readonly namedExpressionLhs: typeof namedExpressionLhs;
 	readonly expressions: typeof expressions;
@@ -601,46 +563,6 @@ export const ir: {
 	stringFragment: F.buildStringFragment,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
-
-	// Supertype-stripped short aliases
-	as: F.asPattern,
-	assert: F.assertStatement,
-	bare: F.withClauseBare,
-	binary: F.binaryOperator,
-	boolean: F.booleanOperator,
-	break: F.buildBreakStatement,
-	class: F.classDefinition,
-	comparison: F.comparisonOperator,
-	conditional: F.conditionalExpression,
-	continue: F.buildContinueStatement,
-	decorated: F.decoratedDefinition,
-	default: F.defaultParameter,
-	delete: F.deleteStatement,
-	exec: F.execStatement,
-	for: F.forStatement,
-	function: F.functionDefinition,
-	futureImport: F.futureImportStatement,
-	generator: F.generatorExpression,
-	global: F.globalStatement,
-	if: F.ifStatement,
-	import: F.importStatement,
-	importFrom: F.importFromStatement,
-	match: F.matchStatement,
-	named: F.namedExpression,
-	nonlocal: F.nonlocalStatement,
-	not: F.notOperator,
-	parenthesized: F.parenthesizedExpression,
-	pass: F.buildPassStatement,
-	print: F.printStatement,
-	raise: F.raiseStatement,
-	return: F.returnStatement,
-	try: F.tryStatement,
-	typeAlias: F.typeAliasStatement,
-	typed: F.typedParameter,
-	typedDefault: F.typedDefaultParameter,
-	unary: F.unaryOperator,
-	while: F.whileStatement,
-	with: F.withStatement,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,

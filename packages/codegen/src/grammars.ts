@@ -45,6 +45,10 @@ export function isGrammar(name: string): boolean {
 	return grammarPackages().some((g) => g.name === name);
 }
 
+export function isStableGrammar(name: string): boolean {
+	return grammarPackages().some((g) => g.name === name && g.stable);
+}
+
 export function assertGrammar(name: string): GrammarName {
 	if (!isGrammar(name)) {
 		throw new Error(`unknown grammar '${name}' — known: ${allGrammars().join(', ')}`);

@@ -265,6 +265,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "primaryExpression": "object",
   "readTreeNode": "function",
   "rejectBareText": "function",
+  "rejectKeywordText": "function",
   "render": "function",
   "resolveAliasedImport_alias": "function",
   "resolveAliasedImport_name": "function",

@@ -75,12 +75,6 @@ export const ir: {
 	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
-	readonly character: typeof F.buildClassCharacter;
-	readonly control: typeof F.buildControlEscape;
-	readonly controlLetter: typeof F.buildControlLetterEscape;
-	readonly identity: typeof F.identityEscape;
-	readonly posixCharacter: typeof F.posixCharacterClass;
-	readonly range: typeof F.classRange;
 	readonly classAtom: typeof classAtom;
 	readonly characterEscape: typeof characterEscape;
 } = {
@@ -128,14 +122,6 @@ export const ir: {
 	controlLetterEscape: F.buildControlLetterEscape,
 	groupName: F.buildGroupName,
 	decimalDigits: F.buildDecimalDigits,
-
-	// Supertype-stripped short aliases
-	character: F.buildClassCharacter,
-	control: F.buildControlEscape,
-	controlLetter: F.buildControlLetterEscape,
-	identity: F.identityEscape,
-	posixCharacter: F.posixCharacterClass,
-	range: F.classRange,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	classAtom,

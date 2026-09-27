@@ -9,6 +9,7 @@ interface CompiledGrammarJson {
 	readonly externals?: readonly { readonly name?: string }[];
 	readonly inline?: readonly string[];
 	readonly conflicts?: readonly (readonly string[])[];
+	readonly reserved?: Readonly<Record<string, readonly unknown[]>>;
 }
 
 function compiledGrammarJson(grammar: string): CompiledGrammarJson {
@@ -34,5 +35,10 @@ describe.each(['rust', 'typescript', 'python'])('%s metadata lists match what tr
 		const compiled = compiledGrammarJson(grammar);
 		const live = compiledNames(compiled);
 		expect(raw.conflicts.filter((group) => group.every((name) => live.has(name)))).toEqual(compiled.conflicts ?? []);
+	});
+
+	it('reserved wordsets equal grammar.json reserved', async () => {
+		const raw = await evaluate(resolveOverridesPath(grammar));
+		expect(raw.reserved).toEqual(compiledGrammarJson(grammar).reserved);
 	});
 });

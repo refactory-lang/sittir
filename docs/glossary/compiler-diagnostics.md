@@ -378,6 +378,10 @@ and a literal member is a terminal by its own stamp
 A member that is neither a rule, an external nor a literal is reported
 rather than defaulted, since defaulting would make the guard guess.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::reservedMemberDiagnostics`
+
+One `reserved-member-not-literal` warning per reserved-wordset member that `reservedWordset` cannot read as literal text. The word builder's reserved guard cannot reject a word it cannot spell, so the member is named for the author to rewrite as a string or a single-literal symbol.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
 The front half of a compile over one evaluated stage: link, normalize and assemble, and the grammar diagnostics

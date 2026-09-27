@@ -355,9 +355,7 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | nu
 		if (!direct && envelope === undefined) continue;
 		const entry = _leafRegistry[kind]!;
 		if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;
-		return envelope !== undefined && _isFromKind(envelope)
-			? _resolveByKind(envelope, entry.factory(v))
-			: entry.factory(v);
+		return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, v) : entry.factory(v);
 	}
 	return undefined;
 }
@@ -375,6 +373,10 @@ function _kindNameOf(kind: unknown): string | undefined {
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
+}
+
+function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
+	return typeof v === 'string' ? keywords.find(([text]) => text === v)?.[1] : undefined;
 }
 
 /** A kind-enum slot's loose input. A stored kind id is already the slot's
@@ -2365,18 +2367,28 @@ export function coerceToExpressionStatement(
 }
 
 export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+			),
+			[
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]
+		)
 	);
 }
 
@@ -3394,32 +3406,40 @@ export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<type
 export function resolveSimplePattern_content(
 	value: T.SimplePattern.LooseConfig['content']
 ): T.SimplePattern['_content'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| 'True'
-				| 'False'
-				| 'None'
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| '_'
-			>(value, _K20, _K21)
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| 'True'
+					| 'False'
+					| 'None'
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| '_'
+				>(value, _K20, _K21)
+			),
+			[
+				['True', TSKindId.True] as const,
+				['False', TSKindId.False] as const,
+				['None', TSKindId.None] as const,
+				['_', TSKindId.WildcardPattern] as const
+			]
+		)
 	);
 }
 
@@ -3430,43 +3450,52 @@ export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<
 		_requireField(
 			'_simple_pattern',
 			'content',
-			coerceMixedEnumStorage(
-				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
-					() =>
-						_resolveOne<
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| '_'
-						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
-								: input,
-							_K20,
-							_K21
-						)
-				),
+			_keywordOf(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				[
 					['True', TSKindId.True] as const,
 					['False', TSKindId.False] as const,
 					['None', TSKindId.None] as const,
 					['_', TSKindId.WildcardPattern] as const
 				]
-			)
+			) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+							? input.content
+							: input,
+						() =>
+							_resolveOne<
+								| T.ClassPattern
+								| T.SplatPattern
+								| T.UnionPattern
+								| T.CaseListPattern
+								| T.CaseTuplePattern
+								| T.DictPattern
+								| T.String
+								| T.ConcatenatedString
+								| 'True'
+								| 'False'
+								| 'None'
+								| T.SimplePatternNegative
+								| T.ComplexPattern
+								| T.DottedName
+								| '_'
+							>(
+								input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+									? input.content
+									: input,
+								_K20,
+								_K21
+							)
+					),
+					[
+						['True', TSKindId.True] as const,
+						['False', TSKindId.False] as const,
+						['None', TSKindId.None] as const,
+						['_', TSKindId.WildcardPattern] as const
+					]
+				)
 		)
 	);
 }
@@ -3522,33 +3551,44 @@ export function coerceToUnionPattern(
 		const stored = (data as unknown as { _patterns?: unknown })._patterns;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUnionPattern(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () =>
-					_resolveMany<
-						| T.ClassPattern
-						| T.SplatPattern
-						| T.UnionPattern
-						| T.CaseListPattern
-						| T.CaseTuplePattern
-						| T.DictPattern
-						| T.String
-						| T.ConcatenatedString
-						| 'True'
-						| 'False'
-						| 'None'
-						| T.SimplePatternNegative
-						| T.ComplexPattern
-						| T.DottedName
-						| '_'
-					>(children, _K20, _K21)
-				),
-				[
-					['True', TSKindId.True] as const,
-					['False', TSKindId.False] as const,
-					['None', TSKindId.None] as const,
-					['_', TSKindId.WildcardPattern] as const
-				]
-			) as unknown as Parameters<typeof F.buildUnionPattern>)
+			...((children == null ? [] : Array.isArray(children) ? children : [children])
+				.map(
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['True', TSKindId.True] as const,
+							['False', TSKindId.False] as const,
+							['None', TSKindId.None] as const,
+							['_', TSKindId.WildcardPattern] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, () =>
+								_resolveOne<
+									| T.ClassPattern
+									| T.SplatPattern
+									| T.UnionPattern
+									| T.CaseListPattern
+									| T.CaseTuplePattern
+									| T.DictPattern
+									| T.String
+									| T.ConcatenatedString
+									| 'True'
+									| 'False'
+									| 'None'
+									| T.SimplePatternNegative
+									| T.ComplexPattern
+									| T.DottedName
+									| '_'
+								>(_e, _K20, _K21)
+							),
+							[
+								['True', TSKindId.True] as const,
+								['False', TSKindId.False] as const,
+								['None', TSKindId.None] as const,
+								['_', TSKindId.WildcardPattern] as const
+							]
+						)
+				)
+				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -3559,33 +3599,44 @@ export function coerceToUnionPattern(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildUnionPattern(
-		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () =>
-				_resolveMany<
-					| T.ClassPattern
-					| T.SplatPattern
-					| T.UnionPattern
-					| T.CaseListPattern
-					| T.CaseTuplePattern
-					| T.DictPattern
-					| T.String
-					| T.ConcatenatedString
-					| 'True'
-					| 'False'
-					| 'None'
-					| T.SimplePatternNegative
-					| T.ComplexPattern
-					| T.DottedName
-					| '_'
-				>(_elems, _K20, _K21)
-			),
-			[
-				['True', TSKindId.True] as const,
-				['False', TSKindId.False] as const,
-				['None', TSKindId.None] as const,
-				['_', TSKindId.WildcardPattern] as const
-			]
-		) as unknown as Parameters<typeof F.buildUnionPattern>)
+		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
+			.map(
+				(_e: _LooseFieldInput) =>
+					_keywordOf(_e, [
+						['True', TSKindId.True] as const,
+						['False', TSKindId.False] as const,
+						['None', TSKindId.None] as const,
+						['_', TSKindId.WildcardPattern] as const
+					]) ??
+					coerceMixedEnumStorage(
+						_resolveKindEnum(_e, () =>
+							_resolveOne<
+								| T.ClassPattern
+								| T.SplatPattern
+								| T.UnionPattern
+								| T.CaseListPattern
+								| T.CaseTuplePattern
+								| T.DictPattern
+								| T.String
+								| T.ConcatenatedString
+								| 'True'
+								| 'False'
+								| 'None'
+								| T.SimplePatternNegative
+								| T.ComplexPattern
+								| T.DottedName
+								| '_'
+							>(_e, _K20, _K21)
+						),
+						[
+							['True', TSKindId.True] as const,
+							['False', TSKindId.False] as const,
+							['None', TSKindId.None] as const,
+							['_', TSKindId.WildcardPattern] as const
+						]
+					)
+			)
+			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
 	);
 }
 
@@ -3611,32 +3662,40 @@ export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typ
 }
 
 export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig['key']): T.KeyValuePattern['_key'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| 'True'
-				| 'False'
-				| 'None'
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| '_'
-			>(value, _K20, _K21)
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| 'True'
+					| 'False'
+					| 'None'
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| '_'
+				>(value, _K20, _K21)
+			),
+			[
+				['True', TSKindId.True] as const,
+				['False', TSKindId.False] as const,
+				['None', TSKindId.None] as const,
+				['_', TSKindId.WildcardPattern] as const
+			]
+		)
 	);
 }
 
@@ -3660,32 +3719,40 @@ export function resolveKeywordPattern_name(value: T.KeywordPattern.LooseConfig['
 }
 
 export function resolveKeywordPattern_value(value: T.KeywordPattern.LooseConfig['value']): T.KeywordPattern['_value'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| 'True'
-				| 'False'
-				| 'None'
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| '_'
-			>(value, _K20, _K21)
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| 'True'
+					| 'False'
+					| 'None'
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| '_'
+				>(value, _K20, _K21)
+			),
+			[
+				['True', TSKindId.True] as const,
+				['False', TSKindId.False] as const,
+				['None', TSKindId.None] as const,
+				['_', TSKindId.WildcardPattern] as const
+			]
+		)
 	);
 }
 
@@ -3708,9 +3775,12 @@ export function resolveSplatPattern_operator(
 }
 
 export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): T.SplatPattern['_name'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
-		[['_', TSKindId.Underscore] as const]
+	return (
+		_keywordOf(value, [['_', TSKindId.Underscore] as const]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
+			[['_', TSKindId.Underscore] as const]
+		)
 	);
 }
 
@@ -3947,22 +4017,32 @@ export function coerceToTypedDefaultParameter(
 export function resolveListSplatPattern_target(
 	value: T.ListSplatPattern.LooseConfig['target']
 ): T.ListSplatPattern['_target'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
-				value,
-				_K14,
-				_K28
-			)
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
+					value,
+					_K14,
+					_K28
+				)
+			),
+			[
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]
+		)
 	);
 }
 
@@ -3973,20 +4053,8 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 		_requireField(
 			'list_splat_pattern',
 			'target',
-			coerceMixedEnumStorage(
-				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
-					() =>
-						_resolveOne<
-							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
-						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
-								? input.target
-								: input,
-							_K14,
-							_K28
-						)
-				),
+			_keywordOf(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
 				[
 					['print', TSKindId.PrintKeyword] as const,
 					['exec', TSKindId.ExecKeyword] as const,
@@ -3995,7 +4063,32 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 					['type', TSKindId.TypeKeyword] as const,
 					['match', TSKindId.MatchKeyword] as const
 				]
-			)
+			) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+							? input.target
+							: input,
+						() =>
+							_resolveOne<
+								T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+							>(
+								input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+									? input.target
+									: input,
+								_K14,
+								_K28
+							)
+					),
+					[
+						['print', TSKindId.PrintKeyword] as const,
+						['exec', TSKindId.ExecKeyword] as const,
+						['async', TSKindId.AsyncKeyword] as const,
+						['await', TSKindId.AwaitKeyword] as const,
+						['type', TSKindId.TypeKeyword] as const,
+						['match', TSKindId.MatchKeyword] as const
+					]
+				)
 		)
 	);
 }
@@ -4003,22 +4096,32 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 export function resolveDictionarySplatPattern_target(
 	value: T.DictionarySplatPattern.LooseConfig['target']
 ): T.DictionarySplatPattern['_target'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
-				value,
-				_K14,
-				_K28
-			)
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
+					value,
+					_K14,
+					_K28
+				)
+			),
+			[
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]
+		)
 	);
 }
 
@@ -4031,20 +4134,8 @@ export function coerceToDictionarySplatPattern(
 		_requireField(
 			'dictionary_splat_pattern',
 			'target',
-			coerceMixedEnumStorage(
-				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
-					() =>
-						_resolveOne<
-							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
-						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
-								? input.target
-								: input,
-							_K14,
-							_K28
-						)
-				),
+			_keywordOf(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
 				[
 					['print', TSKindId.PrintKeyword] as const,
 					['exec', TSKindId.ExecKeyword] as const,
@@ -4053,7 +4144,32 @@ export function coerceToDictionarySplatPattern(
 					['type', TSKindId.TypeKeyword] as const,
 					['match', TSKindId.MatchKeyword] as const
 				]
-			)
+			) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+							? input.target
+							: input,
+						() =>
+							_resolveOne<
+								T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+							>(
+								input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+									? input.target
+									: input,
+								_K14,
+								_K28
+							)
+					),
+					[
+						['print', TSKindId.PrintKeyword] as const,
+						['exec', TSKindId.ExecKeyword] as const,
+						['async', TSKindId.AsyncKeyword] as const,
+						['await', TSKindId.AwaitKeyword] as const,
+						['type', TSKindId.TypeKeyword] as const,
+						['match', TSKindId.MatchKeyword] as const
+					]
+				)
 		)
 	);
 }
@@ -4575,9 +4691,12 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 }
 
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
-		[['type', TSKindId.TypeKeyword] as const]
+	return (
+		_keywordOf(value, [['type', TSKindId.TypeKeyword] as const]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
+			[['type', TSKindId.TypeKeyword] as const]
+		)
 	);
 }
 
@@ -4650,18 +4769,28 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 }
 
 export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig['name']): T.KeywordArgument['_name'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
-		),
-		[
+	return (
+		_keywordOf(value, [
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]
+		]) ??
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+			),
+			[
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]
+		)
 	);
 }
 

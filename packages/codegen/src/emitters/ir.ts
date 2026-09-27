@@ -8,7 +8,7 @@ import {
 	AssembledSupertype,
 	AssembledPattern
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, irNamespacesChildFactory, compareOrdinal, lexedContentSlot } from './shared.ts';
+import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
@@ -171,51 +171,6 @@ export function emitIr(config: EmitIrConfig): string {
 		body.push(...groupBlocks);
 	}
 
-	const flatKeys = new Set<string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node.surfaceHidden || node.factoryInline) continue;
-		if (!node.irKey || !node.rawFactoryName) continue;
-		if (!isValidIdent(node.irKey)) continue;
-		const isStructuralFactory =
-			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) ||
-			node instanceof AssembledList;
-		const isLeafFactoryNode = isVisibleTextLeaf(node) || node instanceof AssembledPattern;
-		if (!isStructuralFactory && !isLeafFactoryNode) {
-			continue;
-		}
-		if (isStructuralFactory && !node.fromFunctionName) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		flatKeys.add(node.irKey);
-	}
-	const shortAliasBundles = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype)) continue;
-		const sup = node;
-		for (const subKind of sup.subtypeNames) {
-			if (isSurfaceHiddenIn(subKind, nodeMap)) continue;
-			const sub = nodeMap.nodes.get(subKind);
-			if (!sub?.rawFactoryName || sub.factoryInline || sub.annotations?.tokenForm === true) continue;
-			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
-			const alias = memberKeyFor(subKind, kind);
-			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
-			let bundle: string | undefined;
-			if (
-				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) ||
-				sub instanceof AssembledList
-			) {
-				if (!sub.fromFunctionName) continue;
-				bundle = bundleRef(sub);
-			} else if (isVisibleTextLeaf(sub) || sub instanceof AssembledPattern) {
-				if (!sub.rawFactoryName) continue;
-				bundle = `F.${sub.rawFactoryName}`;
-			} else {
-				continue;
-			}
-			if (shortAliasBundles.has(alias)) continue;
-			shortAliasBundles.set(alias, bundle);
-		}
-	}
-
 	const irTypeMembers: string[] = [];
 	const irValueLines: string[] = [];
 	irValueLines.push('  // Node factories');
@@ -253,14 +208,6 @@ export function emitIr(config: EmitIrConfig): string {
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
-	}
-	if (shortAliasBundles.size > 0) {
-		irValueLines.push('');
-		irValueLines.push('  // Supertype-stripped short aliases');
-		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => compareOrdinal(a, b))) {
-			irValueLines.push(`  ${alias}: ${bundle},`);
-			irTypeMembers.push(`  readonly ${alias}: typeof ${bundle};`);
-		}
 	}
 	if (groupNames.length > 0 || hasSynonyms) {
 		irValueLines.push('');

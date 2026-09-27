@@ -142,9 +142,7 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | nu
 		if (!direct && envelope === undefined) continue;
 		const entry = _leafRegistry[kind]!;
 		if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;
-		return envelope !== undefined && _isFromKind(envelope)
-			? _resolveByKind(envelope, entry.factory(v))
-			: entry.factory(v);
+		return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, v) : entry.factory(v);
 	}
 	return undefined;
 }
@@ -162,6 +160,10 @@ function _kindNameOf(kind: unknown): string | undefined {
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
+}
+
+function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
+	return typeof v === 'string' ? keywords.find(([text]) => text === v)?.[1] : undefined;
 }
 
 /** A kind-enum slot's loose input. A stored kind id is already the slot's

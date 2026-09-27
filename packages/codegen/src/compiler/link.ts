@@ -307,6 +307,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		extras: raw.extras,
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
+		reserved: raw.reserved,
 		references,
 		derivations,
 		displayUnions,
@@ -825,6 +826,10 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		conflicts: raw.conflicts.map((group) => group.map(rename)),
 		precedences: raw.precedences.map((group) => group.map(rename)),
 		word: raw.word === null ? null : rename(raw.word),
+		reserved:
+			raw.reserved === undefined
+				? undefined
+				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
 		groups:

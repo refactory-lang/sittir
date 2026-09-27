@@ -6306,6 +6306,10 @@ never land on another kind's row resolves through `findOwnKindEntry`
 `modelKindOfEntry` is the requested kind.
 ```
 
+### `packages/codegen/src/dsl/symbol-table.ts::reservedWordset`
+
+The one reader of a grammar's declared reserved wordsets. For the named wordset it returns the members' literal texts (`words`): a `STRING` member's value, a `SYMBOL` member's catalog `literalText`. Every other member is listed in `nonLiteral` (a symbol by name, anything else by rule type), which `reservedMemberDiagnostics` reports. An absent wordset reads as empty.
+
 ### `packages/codegen/src/dsl/symbol-table.ts::findAnonEntryForLiteralText`
 
 ```text
