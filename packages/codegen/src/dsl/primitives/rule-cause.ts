@@ -1,4 +1,4 @@
-export type RuleCause = 'lexical-interior' | 'alias-shape' | 'ambiguity';
+export type RuleCause = 'alias-shape' | 'ambiguity';
 
 export type RuleCauseDeclaration = { readonly kind: 'reauthored'; readonly cause: RuleCause } | { readonly kind: 'vocabulary' };
 

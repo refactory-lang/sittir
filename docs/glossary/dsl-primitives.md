@@ -238,8 +238,7 @@ Whether a patch value is a `rule()` placeholder.
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::reauthored`
 
 `reauthored(cause, body)` declares a `rules:` entry that replaces the upstream
-rule of the same name, and why: `'lexical-interior'` (upstream's token is
-opaque where the grammar addresses its interior), `'alias-shape'` (an alias or
+rule of the same name, and why: `'alias-shape'` (an alias or
 hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
 precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
 diagnostics judge the declaration against the upstream compile.

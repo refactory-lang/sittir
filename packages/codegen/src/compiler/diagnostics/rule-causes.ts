@@ -5,7 +5,6 @@ import type { UpstreamCompilation } from '../upstream.ts';
 import { isExpectedDiagnostic } from './grammar-diagnostics.ts';
 
 export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
-	'lexical-interior': ['parsekind-noninjective'],
 	'alias-shape': [
 		'alias-distributed',
 		'display-union-mixed',

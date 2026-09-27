@@ -59,7 +59,7 @@ describe('diagnoseRuleCauses', () => {
 
 	it('a provoked rule whose declared cause does not match the provoking code is rule-cause-mismatch', () => {
 		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'lexical-interior' } },
+			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
 			upstream: upstream({ ruleNames: new Set(['a']), diagnostics: [fired('unclassifiable-shape', 'a')] })
 		});
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:a']);

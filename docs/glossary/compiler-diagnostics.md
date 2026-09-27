@@ -509,7 +509,7 @@ Which upstream diagnostic codes justify each `reauthored` cause. A code
 counts on the rule it names (`ownerKind`), whether or not it blocks yet, so the
 judgement does not depend on which shape codes have been flipped to blocking.
 The table lists only codes the upstream compiles are observed to report:
-`'lexical-interior'` has `parsekind-noninjective`; `'alias-shape'` has the
+`'alias-shape'` has the
 alias codes and the four collect-slots shape codes; `'ambiguity'` has none,
 because no detector for an upstream generate conflict exists yet. A rule whose
 cause has no detector lands on its grammar's

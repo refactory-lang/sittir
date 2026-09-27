@@ -19,7 +19,7 @@ describe('rule-cause declarations', () => {
 	});
 
 	it('the tag is not enumerable, so spreading the rules map keeps functions plain', () => {
-		const tagged = reauthored('lexical-interior', () => 1);
+		const tagged = reauthored('alias-shape', () => 1);
 		expect(Object.keys(tagged)).toEqual([]);
 	});
 });
