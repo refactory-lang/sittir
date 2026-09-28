@@ -8,6 +8,7 @@ import type {
 	NamespaceMap,
 	ArrayExpression,
 	CharLiteral,
+	CharLiteralEscaped,
 	ClosureExpression,
 	Comment,
 	Condition,
@@ -516,6 +517,7 @@ export interface IsGuards {
 	comment(v: { readonly $type: string | number } | number): v is Comment;
 	path(v: { readonly $type: string | number } | number): v is Path;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	charLiteralEscaped(v: { readonly $type: string | number } | number): v is CharLiteralEscaped;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -777,6 +779,7 @@ export interface AssertGuards {
 	comment(v: { readonly $type: string | number } | number): asserts v is Comment;
 	path(v: { readonly $type: string | number } | number): asserts v is Path;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
+	charLiteralEscaped(v: { readonly $type: string | number } | number): asserts v is CharLiteralEscaped;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -788,62 +791,63 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_statement_ids = new Set<number>([
-	176, 202, 256, 175, 187, 188, 194, 195, 204, 205, 206, 211, 212, 220, 221, 201, 203
+	179, 205, 259, 178, 190, 191, 197, 198, 207, 208, 209, 214, 215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	202, 256, 175, 187, 188, 194, 195, 204, 205, 206, 211, 212, 220, 221, 201, 203
+	205, 259, 178, 190, 191, 197, 198, 207, 208, 209, 214, 215, 223, 224, 204, 206
 ]);
-const _supertype_macroDefinition_ids = new Set<number>([419, 420, 421]);
-const _supertype_tokenPattern_ids = new Set<number>([182, 181, 129]);
-const _supertype_tokenTreePattern_ids = new Set<number>([408, 409, 410]);
-const _supertype_tokens_ids = new Set<number>([185, 129]);
-const _supertype_tokenTree_ids = new Set<number>([411, 412, 413]);
-const _supertype_modItem_ids = new Set<number>([389, 390]);
-const _supertype_foreignModItem_ids = new Set<number>([399, 400]);
-const _supertype_structItem_ids = new Set<number>([426, 427, 428]);
-const _supertype_implItem_ids = new Set<number>([382, 383]);
+const _supertype_macroDefinition_ids = new Set<number>([423, 424, 425]);
+const _supertype_tokenPattern_ids = new Set<number>([185, 184, 129]);
+const _supertype_tokenTreePattern_ids = new Set<number>([412, 413, 414]);
+const _supertype_tokens_ids = new Set<number>([188, 129]);
+const _supertype_tokenTree_ids = new Set<number>([415, 416, 417]);
+const _supertype_modItem_ids = new Set<number>([393, 394]);
+const _supertype_foreignModItem_ids = new Set<number>([403, 404]);
+const _supertype_structItem_ids = new Set<number>([430, 431, 432]);
+const _supertype_implItem_ids = new Set<number>([386, 387]);
 const _supertype_useClause_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 260, 52, 33, 53, 225, 224,
-	223, 226
+	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 263, 52, 33, 53, 228, 227,
+	226, 229
 ]);
-const _supertype_type_ids = new Set<number>([252, 249, 129, 243, 262, 240, 241, 237, 239, 256, 251, 253, 245, 215]);
-const _supertype_pointerType_ids = new Set<number>([393, 394]);
+const _supertype_type_ids = new Set<number>([255, 252, 129, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218]);
+const _supertype_pointerType_ids = new Set<number>([397, 398]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	264, 265, 267, 268, 269, 270, 273, 271, 272, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	52, 33, 53, 126, 260, 242, 304, 305, 277, 256, 278, 301, 302, 303, 129, 276, 279, 306, 307, 308, 309, 310, 284, 289,
-	294, 295, 296, 297
+	267, 268, 270, 271, 272, 273, 276, 274, 275, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 263, 245, 307, 308, 280, 259, 281, 304, 305, 306, 129, 279, 282, 309, 310, 311, 312, 313, 287, 292,
+	297, 298, 299, 300
 ]);
 const _supertype_expression_ids = new Set<number>([
-	264, 265, 267, 268, 269, 270, 273, 271, 272, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	52, 33, 53, 126, 260, 242, 304, 305, 277, 256, 278, 301, 302, 303, 129, 276, 279, 306, 307, 308, 309, 310, 284, 289,
-	294, 295, 296, 297, 263
+	267, 268, 270, 271, 272, 273, 276, 274, 275, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 263, 245, 307, 308, 280, 259, 281, 304, 305, 306, 129, 279, 282, 309, 310, 311, 312, 313, 287, 292,
+	297, 298, 299, 300, 266
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	306, 307, 308, 309, 310, 284, 289, 294, 295, 296, 297
+	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300
 ]);
-const _supertype_delimTokenTree_ids = new Set<number>([414, 415, 416]);
-const _supertype_referenceExpression_ids = new Set<number>([376, 377, 378, 379]);
-const _supertype_arrayExpression_ids = new Set<number>([371, 372]);
-const _supertype_condition_ids = new Set<number>([285, 286]);
-const _supertype_matchArm_ids = new Set<number>([401, 402]);
-const _supertype_closureExpression_ids = new Set<number>([374, 375]);
+const _supertype_delimTokenTree_ids = new Set<number>([418, 419, 420]);
+const _supertype_referenceExpression_ids = new Set<number>([380, 381, 382, 383]);
+const _supertype_arrayExpression_ids = new Set<number>([375, 376]);
+const _supertype_condition_ids = new Set<number>([288, 289]);
+const _supertype_matchArm_ids = new Set<number>([405, 406]);
+const _supertype_closureExpression_ids = new Set<number>([378, 379]);
 const _supertype_pattern_ids = new Set<number>([
-	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 260, 312, 313, 315, 316, 52, 33, 53, 321, 314,
-	322, 323, 318, 319, 297, 256
+	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 263, 315, 316, 318, 319, 52, 33, 53, 324, 317,
+	325, 326, 321, 322, 300, 259
 ]);
-const _supertype_fieldPattern_ids = new Set<number>([417, 418]);
-const _supertype_rangePattern_ids = new Set<number>([425, 422]);
-const _supertype_orPattern_ids = new Set<number>([391, 392]);
-const _supertype_literal_ids = new Set<number>([329, 330, 333, 159]);
-const _supertype_literalPattern_ids = new Set<number>([329, 330, 333, 159, 327]);
+const _supertype_fieldPattern_ids = new Set<number>([421, 422]);
+const _supertype_rangePattern_ids = new Set<number>([429, 426]);
+const _supertype_orPattern_ids = new Set<number>([395, 396]);
+const _supertype_literal_ids = new Set<number>([332, 333, 336, 162]);
+const _supertype_literalPattern_ids = new Set<number>([332, 333, 336, 162, 330]);
 const _supertype_integerLiteral_ids = new Set<number>([138, 139, 140, 141]);
-const _supertype_charLiteral_ids = new Set<number>([142, 143, 144]);
-const _supertype_escapeSequence_ids = new Set<number>([145, 146, 147, 148]);
-const _supertype_comment_ids = new Set<number>([334, 337]);
+const _supertype_charLiteral_ids = new Set<number>([142, 143]);
+const _supertype_escapeSequence_ids = new Set<number>([148, 149, 150, 151]);
+const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_path_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 260, 52, 33, 53
+	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 263, 52, 33, 53
 ]);
-const _supertype_whitespace_ids = new Set<number>([165, 166, 167, 168, 169, 170, 171, 172]);
+const _supertype_whitespace_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
+const _supertype_charLiteralEscaped_ids = new Set<number>([144, 145, 146, 147]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -1026,7 +1030,8 @@ export const is = {
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	comment: _sg(_supertype_comment_ids),
 	path: _sg(_supertype_path_ids),
-	whitespace: _sg(_supertype_whitespace_ids)
+	whitespace: _sg(_supertype_whitespace_ids),
+	charLiteralEscaped: _sg(_supertype_charLiteralEscaped_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1244,7 +1249,8 @@ export const assert = {
 	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	comment: _makeAssert('comment', is.comment as _AnyGuard),
 	path: _makeAssert('path', is.path as _AnyGuard),
-	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard),
+	charLiteralEscaped: _makeAssert('charLiteralEscaped', is.charLiteralEscaped as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

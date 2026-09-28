@@ -48,6 +48,14 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 	});
 });
 
+describe('loose from() — a supertype kind tag', () => {
+	it('throws naming the arms when the supertype has no default', () => {
+		expect(() => ir.expressionStatement({ kind: 'primary_expression', text: '1' } as any)).toThrow(
+			/kind "primary_expression" has no default arm; name one of \[.*\binteger\b/
+		);
+	});
+});
+
 describe('loose from() — supertype subtype (T052d-iii)', () => {
 	it('expression field accepts any concrete expression subtype as kind-tagged input', () => {
 		// expression_statement has children of type expression. Loose:

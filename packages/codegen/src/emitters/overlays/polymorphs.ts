@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledList, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, AssembledSupertype, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -22,6 +22,7 @@ import {
 	flattenSeatOf,
 	tupleSeatOf,
 	subFactoriesOf,
+	variantArmsOf,
 	type FlattenSeat,
 	type SubFactory
 } from './sub-factories.ts';
@@ -66,7 +67,7 @@ function childRefs(
 		return { strict: `${base}.strict`, coerce: `${base}.coerce`, set: child.kind };
 	}
 	const childKey = keyByKind.get(child.kind);
-	if (childKey !== undefined && seated?.(child.kind) === true) {
+	if (childKey !== undefined && (child instanceof AssembledSupertype || seated?.(child.kind) === true)) {
 		return { strict: `${childKey}.strict`, coerce: `${childKey}.coerce`, set: child.kind };
 	}
 	const strict = `F.${child.rawFactoryName}`;
@@ -149,6 +150,7 @@ export function collectPolymorphWires(
 		if (node.rawFactoryName === undefined || !isEmitted(kind) || keyByKind.has(kind)) continue;
 		keyByKind.set(kind, node.factoryName);
 	}
+	for (const { key, node } of flattenedVariantParents(nodeMap, generatedIdTables)) if (!keyByKind.has(node.kind)) keyByKind.set(node.kind, key);
 	const warn = options.silent ? () => {} : (message: string) => console.warn(message);
 
 	const order: string[] = [];
@@ -181,9 +183,11 @@ export function collectPolymorphWires(
 			if (sub.arm.path.length > 0) {
 				const emitted = byKind.get(sub.arm.child.kind);
 				const step = sub.arm.path[0]!;
+				const child = sub.arm.child;
 				const present =
-					emitted !== undefined &&
-					(emitted.subs.some((e) => e.name === step) || emitted.aliases.some((a) => a.name === step));
+					emitted !== undefined
+						? emitted.subs.some((e) => e.name === step) || emitted.aliases.some((a) => a.name === step)
+						: child instanceof AssembledSupertype && variantArmsOf(child).some((arm) => arm.name === step);
 				if (!present) {
 					warn(
 						`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`
@@ -240,6 +244,20 @@ function withoutUnusedPrivateSets(chunks: readonly OverlayChunk[]): OverlayChunk
 	}
 }
 
+function inDependencyOrder(chunks: readonly OverlayChunk[]): OverlayChunk[] {
+	const provided = new Set(chunks.map((chunk) => chunk.kind));
+	const placed = new Set<string>();
+	const pending = [...chunks];
+	const ordered: OverlayChunk[] = [];
+	while (pending.length > 0) {
+		const ready = pending.findIndex((chunk) => [...chunk.uses].every((kind) => kind === chunk.kind || !provided.has(kind) || placed.has(kind)));
+		const [next] = pending.splice(ready === -1 ? 0 : ready, 1);
+		placed.add(next!.kind);
+		ordered.push(next!);
+	}
+	return ordered;
+}
+
 function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): boolean {
 	const set = wires.byKind.get(kind);
 	if (set === undefined) return false;
@@ -255,9 +273,13 @@ interface ArmEntry {
 	readonly children: Map<string, ArmEntry>;
 }
 
+function isNamespaceArm(sub: SubFactory): boolean {
+	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
+}
+
 function renderArm(name: string, entry: ArmEntry): { line: string; type: string } {
-	const parts = [entry.line];
-	const typeParts = [entry.type];
+	const parts = entry.line === '' ? [] : [entry.line];
+	const typeParts = entry.type === '' ? [] : [entry.type];
 	for (const [key, child] of entry.children) {
 		const rendered = renderArm(key, child);
 		parts.push(rendered.line);
@@ -879,6 +901,12 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const flat: { line: string; type: string }[] = [];
 		const built: { sub: SubFactory; entry: ArmEntry }[] = [];
 		for (const sub of wireSet.subs) {
+			if (isNamespaceArm(sub)) {
+				const entry: ArmEntry = { sub, line: '', type: '', children: new Map() };
+				built.push({ sub, entry });
+				armEntries.set(sub.name, entry);
+				continue;
+			}
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
 			methods.push(...emission.method);
@@ -1009,6 +1037,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				types.unshift(`	readonly strict: typeof ${target.strict};`, ...(target.coerce === undefined ? [] : [`	readonly coerce: typeof ${target.coerce};`]));
 			}
 			if (nestedParentKey !== undefined) {
+				uses.add(child.kind);
 				lines.push(`	${name}: ${nestedParentKey},`);
 				types.push(`	readonly ${name}: typeof ${nestedParentKey};`);
 				continue;
@@ -1017,10 +1046,10 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			lines.push(`	${name}: ${own.value},`);
 			types.push(`	readonly ${name}: ${own.type};`);
 		}
-		chunks.push({ kind: parent.key, isPrivate: false, lines: [`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', ''], uses, hasMethods: false });
+		chunks.push({ kind: parent.node.kind, isPrivate: false, lines: [`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', ''], uses, hasMethods: false });
 	}
 
-	const kept = withoutUnusedPrivateSets(chunks);
+	const kept = inDependencyOrder(withoutUnusedPrivateSets(chunks));
 	const helpersAt = kept.findIndex((chunk) => chunk.hasMethods);
 	const blocks = kept.flatMap((chunk, i) => (i === helpersAt ? [...ERASED_HELPERS, ...chunk.lines] : chunk.lines));
 

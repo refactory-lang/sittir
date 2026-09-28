@@ -196,7 +196,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			case 'envelope':
 			case 'polymorph':
 			case 'alias': {
-				const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: normalized.rules, kindEntries };
+				const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: normalized.rules, kindEntries, variantParents };
 				const CompoundClass = branchClassFor(kind, simplifiedRule, compoundCtx);
 				const aliasEntry = CompoundClass === AssembledAlias ? findEntryForKindName(kindEntries, kind) : undefined;
 				const aliasTypeId = aliasEntry !== undefined ? (aliasEntry.parseId ?? aliasEntry.id) : undefined;
@@ -1046,7 +1046,8 @@ export function classifyNode(
 ): ModelType | undefined {
 	const compoundCtx: CompoundModelTypeCtx = {
 		simplifiedRules: opts?.simplifiedRules ?? {},
-		kindEntries: opts?.kindEntries ?? []
+		kindEntries: opts?.kindEntries ?? [],
+		variantParents: opts?.variantParents
 	};
 	if (opts?.hoisted && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';

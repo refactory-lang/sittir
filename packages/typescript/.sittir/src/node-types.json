@@ -280,6 +280,28 @@
     ]
   },
   {
+    "type": "number_bigint",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "number_bigint_binary",
+        "named": true
+      },
+      {
+        "type": "number_bigint_decimal",
+        "named": true
+      },
+      {
+        "type": "number_bigint_hex",
+        "named": true
+      },
+      {
+        "type": "number_bigint_octal",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "parenthesized_expression",
     "named": true,
     "subtypes": [
@@ -8291,7 +8313,19 @@
     "named": false
   },
   {
-    "type": "number_bigint",
+    "type": "number_bigint_binary",
+    "named": true
+  },
+  {
+    "type": "number_bigint_decimal",
+    "named": true
+  },
+  {
+    "type": "number_bigint_hex",
+    "named": true
+  },
+  {
+    "type": "number_bigint_octal",
     "named": true
   },
   {

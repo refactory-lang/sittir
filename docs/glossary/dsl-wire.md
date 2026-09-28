@@ -882,6 +882,20 @@ body-pattern substitution.
 // ---------------------------------------------------------------------------
 ```
 
+`baseSupertypeNames` is the base grammar's supertypes list (`baseSupertypeNamesOf`): the one fact the rename path reads to tell a supertype lift from a hoisted group.
+
+### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
+
+The index paths each kind's authored patches mark with `field()`, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values before any patch is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseSupertypeNamesOf`
+
+The names in the base grammar's `supertypes`, evaluating the list when the base declares it as a callback.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireIsBaseSupertype`
+
+Whether the active wire context's base grammar lists a rule as a supertype.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.ruleCauses`
 
 The `rules:` entries' declarations by name (`reauthored` or `vocabulary`),

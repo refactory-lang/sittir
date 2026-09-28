@@ -148,7 +148,10 @@ export default sittirGrammar(base, {
 			0: variant('hex'),
 			1: variant('octal'),
 			2: variant('binary'),
-			3: variant('decimal', { default: true })
+			3: variant('decimal', { default: true }),
+			'3/0': variant('long'),
+			'3/1': variant('imaginary'),
+			'3/2': variant('plain', { default: true })
 		},
 		float: {
 			'0/0/0/0': field('integer'),

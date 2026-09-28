@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "670b926",
+    "commit": "f9c1a84",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -24,7 +24,7 @@
                 "pass": 1368,
                 "total": 1368
             },
-            "supertypeKindCount": 12,
+            "supertypeKindCount": 13,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -42,8 +42,8 @@
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 178,
-                    "total": 178
+                    "pass": 180,
+                    "total": 180
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -68,7 +68,7 @@
                 "pass": 2033,
                 "total": 2033
             },
-            "supertypeKindCount": 25,
+            "supertypeKindCount": 26,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -77,17 +77,17 @@
                     "total": 208
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1671,
+                    "astMatchPass": 1672,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1671,
-                    "total": 1671
+                    "pass": 1672,
+                    "total": 1672
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 241,
-                    "total": 241
+                    "pass": 243,
+                    "total": 243
                 },
                 "roundtrip": {
                     "astMatchPass": 148,
@@ -106,7 +106,7 @@
                 "pass": 2079,
                 "total": 2079
             },
-            "supertypeKindCount": 19,
+            "supertypeKindCount": 20,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -139,7 +139,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11403,
-        "total": 11406
+        "pass": 11408,
+        "total": 11411
     }
 }

@@ -325,7 +325,28 @@ export interface CapturedPatternTransport {
   _pattern: SlotValue<Box<PatternTransport>>
 }
 
-export interface CharLiteralEscapedTransport {
+export interface CharLiteralEscapedHexTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _b?: boolean
+  _content: string
+}
+
+export interface CharLiteralEscapedSimpleTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _b?: boolean
+  _content: string
+}
+
+export interface CharLiteralEscapedUnicodeBracedTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _b?: boolean
+  _content: string
+}
+
+export interface CharLiteralEscapedUnicodeFixedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _b?: boolean

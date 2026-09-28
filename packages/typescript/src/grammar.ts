@@ -111,6 +111,16 @@ export type TypescriptGrammar = {
 			{ type: 'number_octal'; named: true }
 		];
 	};
+	readonly number_bigint: {
+		type: 'number_bigint';
+		named: true;
+		subtypes: [
+			{ type: 'number_bigint_binary'; named: true },
+			{ type: 'number_bigint_decimal'; named: true },
+			{ type: 'number_bigint_hex'; named: true },
+			{ type: 'number_bigint_octal'; named: true }
+		];
+	};
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
 		named: true;
@@ -2913,7 +2923,10 @@ export type TypescriptGrammar = {
 	readonly _anonymous_new: { type: 'new'; named: false };
 	readonly null: { type: 'null'; named: true };
 	readonly _anonymous_number: { type: 'number'; named: false };
-	readonly number_bigint: { type: 'number_bigint'; named: true };
+	readonly number_bigint_binary: { type: 'number_bigint_binary'; named: true };
+	readonly number_bigint_decimal: { type: 'number_bigint_decimal'; named: true };
+	readonly number_bigint_hex: { type: 'number_bigint_hex'; named: true };
+	readonly number_bigint_octal: { type: 'number_bigint_octal'; named: true };
 	readonly number_binary: { type: 'number_binary'; named: true };
 	readonly number_decimal: { type: 'number_decimal'; named: true };
 	readonly number_float_leading_point: { type: 'number_float_leading_point'; named: true };

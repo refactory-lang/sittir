@@ -161,6 +161,16 @@ export type RustGrammar = {
 			{ type: 'char_literal_plain'; named: true }
 		];
 	};
+	readonly char_literal_escaped: {
+		type: 'char_literal_escaped';
+		named: true;
+		subtypes: [
+			{ type: 'char_literal_escaped_hex'; named: true },
+			{ type: 'char_literal_escaped_simple'; named: true },
+			{ type: 'char_literal_escaped_unicode_braced'; named: true },
+			{ type: 'char_literal_escaped_unicode_fixed'; named: true }
+		];
+	};
 	readonly closure_expression: {
 		type: 'closure_expression';
 		named: true;
@@ -2692,7 +2702,10 @@ export type RustGrammar = {
 	readonly _anonymous_break: { type: 'break'; named: false };
 	readonly _anonymous_char: { type: 'char'; named: false };
 	readonly char_literal_empty: { type: 'char_literal_empty'; named: true };
-	readonly char_literal_escaped: { type: 'char_literal_escaped'; named: true };
+	readonly char_literal_escaped_hex: { type: 'char_literal_escaped_hex'; named: true };
+	readonly char_literal_escaped_simple: { type: 'char_literal_escaped_simple'; named: true };
+	readonly char_literal_escaped_unicode_braced: { type: 'char_literal_escaped_unicode_braced'; named: true };
+	readonly char_literal_escaped_unicode_fixed: { type: 'char_literal_escaped_unicode_fixed'; named: true };
 	readonly char_literal_plain: { type: 'char_literal_plain'; named: true };
 	readonly _anonymous_const: { type: 'const'; named: false };
 	readonly _anonymous_continue: { type: 'continue'; named: false };

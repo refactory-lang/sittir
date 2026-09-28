@@ -270,11 +270,11 @@ export const identifier: typeof F.buildIdentifier & typeof F.identifier = attach
 
 export const pattern: typeof F.pattern = F.pattern;
 
-export const propertyName: typeof F.propertyName = F.propertyName;
-
 export const moduleExportName: typeof F.moduleExportName = F.moduleExportName;
 
 export const statement: typeof F.statement = F.statement;
+
+export const propertyName: typeof F.propertyName = F.propertyName;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -451,11 +451,12 @@ export const ir: {
 	readonly updateExpression: typeof F.updateExpression;
 	readonly string: typeof F.string;
 	readonly comment: typeof F.comment;
-	readonly number: typeof F.number;
 	readonly metaProperty: typeof F.metaProperty;
 	readonly indexSignature: typeof F.indexSignature;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
+	readonly numberBigint: typeof F.numberBigint;
 	readonly exportStatement: typeof F.exportStatement;
+	readonly number: typeof F.number;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -493,9 +494,9 @@ export const ir: {
 	readonly destructuringPattern: typeof destructuringPattern;
 	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
-	readonly propertyName: typeof propertyName;
 	readonly moduleExportName: typeof moduleExportName;
 	readonly statement: typeof statement;
+	readonly propertyName: typeof propertyName;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -673,11 +674,12 @@ export const ir: {
 	updateExpression: F.updateExpression,
 	string: F.string,
 	comment: F.comment,
-	number: F.number,
 	metaProperty: F.metaProperty,
 	indexSignature: F.indexSignature,
 	exportStatementDefault: F.exportStatementDefault,
+	numberBigint: F.numberBigint,
 	exportStatement: F.exportStatement,
+	number: F.number,
 
 	// Keyword factories
 	import: F.buildImport,
@@ -721,8 +723,8 @@ export const ir: {
 	destructuringPattern,
 	identifier,
 	pattern,
-	propertyName,
 	moduleExportName,
 	statement,
+	propertyName,
 	synonym
 };

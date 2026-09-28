@@ -63,7 +63,7 @@ import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { WHITESPACE_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
-import { distributeTokenForms } from './transform/token-forms.ts';
+import { distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
 import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
@@ -86,6 +86,7 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 export interface EnrichAuthoredConfig {
 	readonly groupBodies?: readonly RuntimeRule[];
 	readonly extras?: (...args: never[]) => unknown;
+	readonly fieldSites?: ReadonlyMap<string, readonly (readonly number[])[]>;
 }
 
 export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
@@ -146,15 +147,19 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	const wordName = extractWordName(grammarMeta?.word);
 	const unhoistableNames = new Set([...ruleListParts(ctx.externals).names, ...(wordName === null ? [] : [wordName])]);
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule) continue;
+		const factored = factorSharedOptional(rule as unknown as RuntimeRule) as unknown as Rule;
+		if (factored !== rule) enrichedRules[name] = factored;
+	}
 	const tokenFormParents: string[] = [];
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames);
-		if (hoisted === rule) continue;
-		enrichedRules[name] = hoisted;
-		tokenFormParents.push(name);
+		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, authored.fieldSites?.get(name) ?? []);
+		if (hoisted !== rule) enrichedRules[name] = hoisted;
 	}
 	const hoistCtx = ctx.withHoist({
 		separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
@@ -167,7 +172,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
-		if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
+		if (groupBody && !tokenFormParents.includes(groupName)) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
@@ -289,11 +294,14 @@ function hoistTokenForms(
 	rule: Rule,
 	ctx: EnrichCtx,
 	counter: ClauseHoistCounter,
-	unhoistableNames: ReadonlySet<string>
+	unhoistableNames: ReadonlySet<string>,
+	parents: string[],
+	fielded: readonly (readonly number[])[]
 ): Rule {
 	if (unhoistableNames.has(parentKind)) return rule;
-	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind) as unknown as Rule;
+	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind, fielded) as unknown as Rule;
 	if (distributed === rule) return rule;
+	parents.push(parentKind);
 	const precStack: Rule[] = [];
 	let core = distributed;
 	while (isPrecWrapper(core as { type: string })) {
@@ -314,6 +322,10 @@ function hoistTokenForms(
 		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
 		ctx.visibleGroupSources.add(minted);
 		if (!ctx.clauseGroupOwners.has(minted)) ctx.clauseGroupOwners.set(minted, parentKind);
+		const armBody = ctx.clauseGroupRules[minted]!;
+		const armFielded = fielded.flatMap((site) => (site[0] === i ? [site.slice(1)] : []));
+		const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armFielded);
+		if (nested !== armBody) ctx.clauseGroupRules[minted] = withAnnotations(nested, { tokenForm: true });
 		return makeGroupLiftSymbol(arm, minted);
 	});
 	let out = { ...core, members } as unknown as Rule;

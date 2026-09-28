@@ -212,7 +212,11 @@ export default sittirGrammar(base, {
 		char_literal: {
 			0: variant('escaped'),
 			1: variant('plain', { default: true }),
-			2: variant('empty')
+			2: variant('empty'),
+			'0/0': variant('simple', { default: true }),
+			'0/1': variant('unicode_fixed'),
+			'0/2': variant('unicode_braced'),
+			'0/3': variant('hex')
 		},
 		escape_sequence: {
 			0: variant('simple', { default: true }),

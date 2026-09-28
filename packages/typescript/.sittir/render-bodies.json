@@ -5565,7 +5565,46 @@
 			"field": "non_null_expression_after"
 		}
 	],
-	"number_bigint": [
+	"number_bigint_binary": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "n"
+		}
+	],
+	"number_bigint_decimal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "n"
+		}
+	],
+	"number_bigint_hex": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "n"
+		}
+	],
+	"number_bigint_octal": [
 		{
 			"kind": "slot",
 			"name": "content"

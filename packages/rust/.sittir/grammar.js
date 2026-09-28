@@ -1591,8 +1591,10 @@ function flattenFormArms(arms) {
     (arm2) => isChoiceType(typeOf2(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
   );
 }
-function findOutermostForms(rule, path) {
+var isFieldedAt = (fielded, path) => fielded.some((site) => site.length === path.length && site.every((index, i) => index === path[i]));
+function findOutermostForms(rule, path, fielded) {
   const t = typeOf2(rule);
+  if (t === "FIELD" || isChoiceType(t) && isFieldedAt(fielded, path)) return void 0;
   const optional2 = optionalContentOf(rule);
   if (optional2 !== void 0) {
     const forms = isChoiceType(typeOf2(optional2)) && classifyTokenChoice(optional2) === "forms";
@@ -1604,12 +1606,12 @@ function findOutermostForms(rule, path) {
   if (isSeqType(t)) {
     const members = membersOf2(rule);
     for (let i = 0; i < members.length; i++) {
-      const found = findOutermostForms(members[i], [...path, i]);
+      const found = findOutermostForms(members[i], [...path, i], fielded);
       if (found) return found;
     }
     return void 0;
   }
-  if (contentOf2(rule) !== void 0) return findOutermostForms(contentOf2(rule), [...path, 0]);
+  if (contentOf2(rule) !== void 0) return findOutermostForms(contentOf2(rule), [...path, 0], fielded);
   return void 0;
 }
 function replaceAt(rule, path, arm2) {
@@ -1632,17 +1634,37 @@ function dropAt(rule, path) {
   }
   return rebuilt(rule, { content: dropAt(contentOf2(rule), rest) });
 }
+function factorSharedOptional(rule) {
+  const typed = rule;
+  let out = rule;
+  if (Array.isArray(typed.members)) {
+    const members2 = typed.members.map(factorSharedOptional);
+    if (members2.some((member, i) => member !== typed.members[i])) out = rebuilt(rule, { members: members2 });
+  } else if (typed.content !== void 0) {
+    const content = factorSharedOptional(typed.content);
+    if (content !== typed.content) out = rebuilt(rule, { content });
+  }
+  if (!isChoiceType(typeOf2(out))) return out;
+  const members = membersOf2(out);
+  const contents = members.map((member) => optionalContentOf(member));
+  if (members.length < 2 || contents.some((content) => content === void 0)) return out;
+  const shared = { type: "CHOICE", members: contents };
+  return rebuilt(out, { members: [shared, BLANK] });
+}
 var canonicalRuleText = (rule) => JSON.stringify(rule, (key, value) => key === "id" || key === "metadata" ? void 0 : value);
-function distributeTokenForms(rule, kind) {
+var underWrapper = (fielded) => fielded.flatMap((site) => site[0] === 0 ? [site.slice(1)] : []);
+function distributeTokenForms(rule, kind, fielded = []) {
   const precStack = [];
   let core = rule;
+  let sites = fielded;
   while (isPrecWrapper(core)) {
     precStack.push(core);
     core = contentOf2(core);
+    sites = underWrapper(sites);
   }
   if (!isTokenWrapper(core)) return rule;
   const body = contentOf2(core);
-  const site = findOutermostForms(body, []);
+  const site = findOutermostForms(body, [], underWrapper(sites));
   if (site === void 0) return rule;
   const arms = site.arms.map((arm2) => isBlank(arm2) ? dropAt(body, site.path) : replaceAt(body, site.path, arm2));
   const empty = arms.findIndex(matchesEmpty);
@@ -1660,58 +1682,6 @@ function distributeTokenForms(rule, kind) {
   };
   for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
   return out;
-}
-
-// packages/codegen/src/dsl/primitives/variant.ts
-var ABSENT_VARIANT_NAME = "bare";
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name, options) {
-  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {}, ...options?.default === true ? { default: true } : {} };
-}
-function variantMintName(v) {
-  return [...v.nestedUnder ?? [], v.name].join("_");
-}
-function nestVariant(v, nestedUnder) {
-  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
-}
-
-// packages/codegen/src/dsl/primitives/arm.ts
-function isArmDefault(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
-}
-var arm = {
-  default: { __sittirPlaceholder: "default" }
-};
-
-// packages/codegen/src/dsl/primitives/preference.ts
-function isPreference(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
-}
-function preference(arm2) {
-  return { __sittirPlaceholder: "preference", default: arm2 };
-}
-
-// packages/codegen/src/dsl/primitives/group.ts
-function isGroupPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
-}
-
-// packages/codegen/src/dsl/primitives/flatten.ts
-function isFlattenPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "flatten";
-}
-function flatten() {
-  return { __sittirPlaceholder: "flatten" };
-}
-
-// packages/codegen/src/dsl/primitives/regex.ts
-function isRegexPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "regex";
-}
-function regex(pattern) {
-  return { __sittirPlaceholder: "regex", source: pattern.source };
 }
 
 // packages/codegen/src/dsl/arm-names.ts
@@ -1765,6 +1735,104 @@ function supertypeMemberName(memberKind, supertypeKind) {
 }
 function armNameOf(owner, display, ownerIsSupertype) {
   return ownerIsSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+var ABSENT_VARIANT_NAME = "bare";
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name, options) {
+  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {}, ...options?.default === true ? { default: true } : {} };
+}
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function variantOwnerKind(parentKind, v) {
+  return v.nestedUnder === void 0 || v.nestedUnder.length === 0 ? parentKind : polymorphVisibleName(parentKind, v.nestedUnder.join("_"));
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
+}
+
+// packages/codegen/src/dsl/primitives/arm.ts
+function isArmDefault(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
+}
+var arm = {
+  default: { __sittirPlaceholder: "default" }
+};
+
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
+}
+
+// packages/codegen/src/dsl/primitives/group.ts
+function isGroupPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
+}
+
+// packages/codegen/src/dsl/primitives/flatten.ts
+function isFlattenPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "flatten";
+}
+function flatten() {
+  return { __sittirPlaceholder: "flatten" };
+}
+
+// packages/codegen/src/dsl/primitives/regex.ts
+function isRegexPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "regex";
+}
+function regex(pattern) {
+  return { __sittirPlaceholder: "regex", source: pattern.source };
+}
+
+// packages/codegen/src/dsl/wire/symbol-renames.ts
+function resolveName(name, renames) {
+  let current = name;
+  for (let hops = 0; hops < renames.size; hops++) {
+    const next = renames.get(current);
+    if (next === void 0 || next === current) return current;
+    current = next;
+  }
+  return current;
+}
+function renameRule(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) {
+    const mapped = value.map((entry) => renameRule(entry, renames));
+    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
+  }
+  if (value === null || typeof value !== "object") return value;
+  const record = value;
+  const changes = {};
+  for (const [key, entry] of Object.entries(record)) {
+    const next = renameRule(entry, renames);
+    if (next !== entry) changes[key] = next;
+  }
+  if (record.type === "SYMBOL" && typeof record.name === "string") {
+    const name = resolveName(record.name, renames);
+    if (name !== record.name) changes.name = name;
+  }
+  if (typeof record.variantOf === "string") {
+    const owner = resolveName(record.variantOf, renames);
+    if (owner !== record.variantOf) changes.variantOf = owner;
+  }
+  if (Object.keys(changes).length === 0) return value;
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
+  return Object.create(Object.getPrototypeOf(value), descriptors);
+}
+function renameNameList(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
+  if (typeof value === "string") return resolveName(value, renames);
+  return renameRule(value, renames);
 }
 
 // packages/codegen/src/util/reachable-rules.ts
@@ -3250,15 +3318,19 @@ function enrich(baseInput, authored = {}) {
   }
   const wordName = extractWordName(grammarMeta?.word);
   const unhoistableNames = /* @__PURE__ */ new Set([...ruleListParts(ctx.externals).names, ...wordName === null ? [] : [wordName]]);
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    const factored = factorSharedOptional(rule);
+    if (factored !== rule) enrichedRules[name] = factored;
+  }
   const tokenFormParents = [];
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     const counter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-    const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames);
-    if (hoisted === rule) continue;
-    enrichedRules[name] = hoisted;
-    tokenFormParents.push(name);
+    const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, authored.fieldSites?.get(name) ?? []);
+    if (hoisted !== rule) enrichedRules[name] = hoisted;
   }
   const hoistCtx = ctx.withHoist({
     separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
@@ -3271,7 +3343,7 @@ function enrich(baseInput, authored = {}) {
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
-    if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
+    if (groupBody && !tokenFormParents.includes(groupName)) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
@@ -3375,10 +3447,11 @@ function applyFieldWrapPasses(ruleName, rule, ctx) {
   }
   return r;
 }
-function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames) {
+function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames, parents, fielded) {
   if (unhoistableNames.has(parentKind)) return rule;
-  const distributed = distributeTokenForms(rule, parentKind);
+  const distributed = distributeTokenForms(rule, parentKind, fielded);
   if (distributed === rule) return rule;
+  parents.push(parentKind);
   const precStack = [];
   let core = distributed;
   while (isPrecWrapper(core)) {
@@ -3399,6 +3472,10 @@ function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames) {
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
     ctx.visibleGroupSources.add(minted);
     if (!ctx.clauseGroupOwners.has(minted)) ctx.clauseGroupOwners.set(minted, parentKind);
+    const armBody = ctx.clauseGroupRules[minted];
+    const armFielded = fielded.flatMap((site) => site[0] === i ? [site.slice(1)] : []);
+    const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armFielded);
+    if (nested !== armBody) ctx.clauseGroupRules[minted] = withAnnotations(nested, { tokenForm: true });
     return makeGroupLiftSymbol(arm2, minted);
   });
   let out = { ...core, members };
@@ -5496,7 +5573,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
       throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
     }
-    refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
+    refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), altMember), name });
   }
   for (const { altIdx, lift } of lifted) {
     wireSetLiftBody(lift.liftName, hoist(lift.body));
@@ -5551,7 +5628,10 @@ function enrichLiftArmOf(member) {
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(member, lift, ruleName, nodeName) {
-  if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
+  if (!wireHasAuthoredRule(ruleName)) {
+    const body = renameRule(lift.body, /* @__PURE__ */ new Map([[lift.liftName, ruleName]]));
+    wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? body : withHoistedAnnotation(body));
+  }
   wireRenameLift(lift.liftName, ruleName);
   if (ruleName === nodeName) return { ...lift.symbol, name: nodeName };
   if (member.type !== "ALIAS") return ruleRef(ruleName, nodeName);
@@ -5679,7 +5759,7 @@ function resolvePatch(patch, originalMember, key, precStack) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
     const name = polymorphVisibleName(parentKind, variantMintName(patch));
-    const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind, patch.default === true ? { annotations: { default: true } } : void 0);
+    const annotated = (rule) => withVariantAnnotation(rule, patch.name, variantOwnerKind(parentKind, patch), patch.default === true ? { annotations: { default: true } } : void 0);
     const lift = enrichLiftArmOf(originalMember);
     if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
     if (originalMember.type === "ALIAS") {
@@ -5925,45 +6005,6 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/wire/symbol-renames.ts
-function resolveName(name, renames) {
-  let current = name;
-  for (let hops = 0; hops < renames.size; hops++) {
-    const next = renames.get(current);
-    if (next === void 0 || next === current) return current;
-    current = next;
-  }
-  return current;
-}
-function renameRule(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) {
-    const mapped = value.map((entry) => renameRule(entry, renames));
-    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
-  }
-  if (value === null || typeof value !== "object") return value;
-  const record = value;
-  const changes = {};
-  for (const [key, entry] of Object.entries(record)) {
-    const next = renameRule(entry, renames);
-    if (next !== entry) changes[key] = next;
-  }
-  if (record.type === "SYMBOL" && typeof record.name === "string") {
-    const name = resolveName(record.name, renames);
-    if (name !== record.name) changes.name = name;
-  }
-  if (Object.keys(changes).length === 0) return value;
-  const descriptors = Object.getOwnPropertyDescriptors(value);
-  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
-  return Object.create(Object.getPrototypeOf(value), descriptors);
-}
-function renameNameList(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
-  if (typeof value === "string") return resolveName(value, renames);
-  return renameRule(value, renames);
-}
-
 // packages/codegen/src/dsl/extras.ts
 function extrasClosure(extras, supertypes, subtypesOf) {
   const names = /* @__PURE__ */ new Set();
@@ -6106,6 +6147,12 @@ function wireSetLiftBody(name, body) {
 function baseRuleBodiesOf(base2) {
   return baseRulesOf(base2) ?? {};
 }
+function baseSupertypeNamesOf(base2) {
+  return symbolNamesOf(overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, void 0));
+}
+function wireIsBaseSupertype(name) {
+  return currentContext?.baseSupertypeNames.has(name) ?? false;
+}
 function wire(config, base2, source = base2) {
   return wireImpl(config, base2, source);
 }
@@ -6140,6 +6187,7 @@ function wireImpl(cfg, base2, source) {
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
     baseRuleBodies: baseRuleBodiesOf(baseArg),
+    baseSupertypeNames: baseSupertypeNamesOf(baseArg),
     liftBodies: /* @__PURE__ */ new Map(),
     liftClaims: /* @__PURE__ */ new Map(),
     activePatchSites: [],
@@ -6270,6 +6318,21 @@ function assertNoDeclaredGroupPatches(patches, groups, injects) {
       }
     }
   }
+}
+function authoredFieldSites(patches) {
+  const sites = /* @__PURE__ */ new Map();
+  for (const [kind, entry] of Object.entries(patches ?? {})) {
+    if (!entry) continue;
+    for (const set of patchSetsOf(entry)) {
+      for (const [key, value] of Object.entries(set)) {
+        if (!isFieldPlaceholder(value)) continue;
+        const path = parsePath(key);
+        const indices = path.flatMap((segment) => segment.kind === "index" ? [segment.value] : []);
+        if (indices.length === path.length) sites.set(kind, [...sites.get(kind) ?? [], indices]);
+      }
+    }
+  }
+  return sites;
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
@@ -6813,7 +6876,7 @@ function buildTwoArgFieldResult(native, name, content) {
 
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras, fieldSites: authoredFieldSites(config.patches) });
   const grammar2 = globalThis.grammar;
   return grammar2(enriched, wire(config, enriched, base2));
 }
@@ -6994,7 +7057,11 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     char_literal: {
       0: variant("escaped"),
       1: variant("plain", { default: true }),
-      2: variant("empty")
+      2: variant("empty"),
+      "0/0": variant("simple", { default: true }),
+      "0/1": variant("unicode_fixed"),
+      "0/2": variant("unicode_braced"),
+      "0/3": variant("hex")
     },
     escape_sequence: {
       0: variant("simple", { default: true }),

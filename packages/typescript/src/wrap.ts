@@ -506,6 +506,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_binary',
 		'number_octal',
 		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'string',
 		'string_double',
 		'string_single',
@@ -588,6 +592,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_binary',
 		'number_octal',
 		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'string',
 		'string_double',
 		'string_single',
@@ -663,6 +671,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_binary',
 		'number_octal',
 		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'string',
 		'string_double',
 		'string_single',
@@ -731,7 +743,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_decimal',
 		'number_binary',
 		'number_octal',
-		'number_bigint'
+		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal'
 	]),
 	_identifier: new Set(['undefined', 'identifier']),
 	meta_property: new Set(['meta_property_new_target', 'meta_property_import_meta']),
@@ -751,6 +767,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_binary',
 		'number_octal',
 		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'computed_property_name'
 	]),
 	_import_identifier: new Set(['identifier', 'type_keyword']),
@@ -885,7 +905,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_dedent',
 		'dedent'
 	]),
-	export_statement_default: new Set(['export_statement_default_from', 'export_statement_default_declaration'])
+	export_statement_default: new Set(['export_statement_default_from', 'export_statement_default_declaration']),
+	number_bigint: new Set(['number_bigint_hex', 'number_bigint_binary', 'number_bigint_octal', 'number_bigint_decimal'])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -1057,7 +1078,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle) {
 					slotName: 'statements',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			hashBangLine() {
@@ -1394,7 +1415,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			importClause() {
@@ -1744,7 +1765,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			expression() {
@@ -1786,7 +1807,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			declarators() {
@@ -1837,7 +1858,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			kind() {
@@ -1907,7 +1928,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
 					slotName: 'statements',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 			_automatic_semicolon: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._automatic_semicolon, 'automatic_semicolon', false, data.$type, {
@@ -1949,7 +1970,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			body() {
@@ -1983,7 +2004,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -2065,8 +2086,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'initializer',
 					span: (data as _NodeData).$span
 				}),
-				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, ';': 221 },
-				{ 20: 221 }
+				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, ';': 224 },
+				{ 20: 224 }
 			),
 			_condition: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._condition, 'condition', true, data.$type, {
@@ -2075,8 +2096,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, ';': 221 },
-				{ 20: 221 }
+				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, ';': 224 },
+				{ 20: 224 }
 			),
 			_increment: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._increment, 'increment', false, data.$type, {
@@ -2094,7 +2115,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			initializer() {
@@ -2155,7 +2176,7 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			awaitMarker() {
@@ -2230,7 +2251,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			condition() {
@@ -2264,7 +2285,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 			_condition: normalizeSingularWrapSlot(data._condition, 'condition', true, data.$type, {
 				tree,
@@ -2279,7 +2300,7 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			body() {
@@ -2370,7 +2391,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			object() {
@@ -2411,7 +2432,7 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			label() {
@@ -2453,7 +2474,7 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			label() {
@@ -2489,7 +2510,7 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			terminator() {
@@ -2529,7 +2550,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			expression() {
@@ -2574,7 +2595,7 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			expression() {
@@ -2642,7 +2663,7 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			label() {
@@ -2738,7 +2759,7 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			value() {
@@ -2771,7 +2792,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 221 }
+				{ ';': 224 }
 			),
 
 			bodies() {
@@ -2938,7 +2959,10 @@ export function wrapExpression(
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
-		'_number_bigint',
+		'_number_bigint_hex',
+		'_number_bigint_binary',
+		'_number_bigint_octal',
+		'_number_bigint_decimal',
 		'_string_double',
 		'_string_single',
 		'_template_string',
@@ -3013,7 +3037,10 @@ export function wrapExpression(
 		'number_decimal',
 		'number_binary',
 		'number_octal',
-		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'string_double',
 		'string_single',
 		'template_string',
@@ -3090,7 +3117,10 @@ export function wrapExpression(
 			'number_decimal',
 			'number_binary',
 			'number_octal',
-			'number_bigint',
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal',
 			'string_double',
 			'string_single',
 			'template_string',
@@ -3190,7 +3220,10 @@ export function wrapPrimaryExpression(
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
-		'_number_bigint',
+		'_number_bigint_hex',
+		'_number_bigint_binary',
+		'_number_bigint_octal',
+		'_number_bigint_decimal',
 		'_string_double',
 		'_string_single',
 		'_meta_property_new_target',
@@ -3254,7 +3287,10 @@ export function wrapPrimaryExpression(
 		'number_decimal',
 		'number_binary',
 		'number_octal',
-		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal',
 		'string_double',
 		'string_single',
 		'meta_property_new_target',
@@ -3320,7 +3356,10 @@ export function wrapPrimaryExpression(
 			'number_decimal',
 			'number_binary',
 			'number_octal',
-			'number_bigint',
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal',
 			'string_double',
 			'string_single',
 			'meta_property_new_target',
@@ -4568,8 +4607,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, import: 192 },
-				{ 9: 192 }
+				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, import: 195 },
+				{ 9: 195 }
 			),
 			_separator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(data._separator, 'separator', true, data.$type, {
@@ -4578,8 +4617,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					slotName: 'separator',
 					span: (data as _NodeData).$span
 				}),
-				{ '.': 60, '?.': 249 },
-				{ 64: 249 }
+				{ '.': 60, '?.': 252 },
+				{ 64: 252 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -5575,7 +5614,11 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
-		'_number_bigint'
+		'_number_bigint',
+		'_number_bigint_hex',
+		'_number_bigint_binary',
+		'_number_bigint_octal',
+		'_number_bigint_decimal'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'number_hex',
@@ -5585,7 +5628,11 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 		'number_decimal',
 		'number_binary',
 		'number_octal',
-		'number_bigint'
+		'number_bigint',
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal'
 	]) as T.Number | readonly T.Number[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -5597,7 +5644,11 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 			'number_decimal',
 			'number_binary',
 			'number_octal',
-			'number_bigint'
+			'number_bigint',
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal'
 		]);
 	if (
 		filtered === undefined &&
@@ -5801,8 +5852,8 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
 					slotName: 'content',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 401 },
-				{ 20: 401 }
+				{ ';': 405 },
+				{ 20: 405 }
 			),
 
 			contents() {
@@ -6507,7 +6558,10 @@ export function wrapPropertyName(
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
-		'_number_bigint'
+		'_number_bigint_hex',
+		'_number_bigint_binary',
+		'_number_bigint_octal',
+		'_number_bigint_decimal'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'property_identifier',
@@ -6525,7 +6579,10 @@ export function wrapPropertyName(
 		'number_decimal',
 		'number_binary',
 		'number_octal',
-		'number_bigint'
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal'
 	]) as T.PropertyName | readonly T.PropertyName[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -6545,7 +6602,10 @@ export function wrapPropertyName(
 			'number_decimal',
 			'number_binary',
 			'number_octal',
-			'number_bigint'
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal'
 		]);
 	if (
 		filtered === undefined &&
@@ -7344,7 +7404,7 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			asyncMarker() {
@@ -7489,10 +7549,10 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			expression() {
@@ -7546,10 +7606,10 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			expression() {
@@ -7740,10 +7800,10 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			types() {
@@ -7951,7 +8011,7 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			name() {
@@ -8310,10 +8370,10 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_terminator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
@@ -8322,7 +8382,7 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			name() {
@@ -8619,10 +8679,10 @@ export function wrapOmittingTypeAnnotation(data: T.OmittingTypeAnnotation, tree:
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -8662,10 +8722,10 @@ export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: Tre
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -8705,10 +8765,10 @@ export function wrapOptingTypeAnnotation(data: T.OptingTypeAnnotation, tree: Tre
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -8748,10 +8808,10 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -8787,8 +8847,8 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 192 },
-				{ 9: 192 }
+				{ import: 195 },
+				{ 9: 195 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -8838,8 +8898,8 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 192 },
-				{ 9: 192 }
+				{ import: 195 },
+				{ 9: 195 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -9122,10 +9182,10 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -9164,10 +9224,10 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -9348,10 +9408,10 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			abstractMarker() {
@@ -9495,10 +9555,10 @@ export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -9572,10 +9632,10 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			name() {
@@ -9618,10 +9678,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -9641,10 +9701,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_consequence: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._consequence, 'consequence', true, data.$type, {
@@ -9664,10 +9724,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_alternative: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._alternative, 'alternative', true, data.$type, {
@@ -9687,10 +9747,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			left() {
@@ -9784,7 +9844,7 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 					object: 44
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_type: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
@@ -9804,10 +9864,10 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			name() {
@@ -9965,7 +10025,7 @@ export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpre
 					object: 44
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			object() {
@@ -10020,8 +10080,8 @@ export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tre
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 192 },
-				{ 9: 192 }
+				{ import: 195 },
+				{ 9: 195 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -10066,8 +10126,8 @@ export function wrapTypeQueryInstantiationExpression(data: T.TypeQueryInstantiat
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ import: 192 },
-				{ 9: 192 }
+				{ import: 195 },
+				{ 9: 195 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
@@ -10158,10 +10218,10 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -10200,10 +10260,10 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_index_type: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._index_type, 'index_type', true, data.$type, {
@@ -10223,10 +10283,10 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -10276,10 +10336,10 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_alias: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._alias, 'alias', false, data.$type, {
@@ -10299,10 +10359,10 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			name() {
@@ -10399,10 +10459,10 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -10441,10 +10501,10 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -10866,10 +10926,10 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -10919,10 +10979,10 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			content() {
@@ -11058,10 +11118,10 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -11127,10 +11187,10 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			type() {
@@ -11169,10 +11229,10 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -11192,10 +11252,10 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			left() {
@@ -11238,10 +11298,10 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -11261,10 +11321,10 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			left() {
@@ -11321,10 +11381,10 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 
 			typeParameters() {
@@ -11753,10 +11813,10 @@ export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, t
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_terminator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
@@ -11765,7 +11825,7 @@ export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, t
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			name() {
@@ -11894,7 +11954,7 @@ export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamesp
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			name() {
@@ -11942,7 +12002,7 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			exportClause() {
@@ -11992,7 +12052,7 @@ export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExp
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			expression() {
@@ -12417,13 +12477,55 @@ export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNumberBigint(data: T.NumberBigint, tree: TreeHandle) {
+export function wrapNumberBigint(
+	data: T.NumberBigint & { readonly $other?: T.NumberBigint | readonly T.NumberBigint[] },
+	tree: TreeHandle
+) {
+	if (typeof data === 'number') return data;
+	const node = _keepModelledSlots(data, [
+		'_number_bigint_hex',
+		'_number_bigint_binary',
+		'_number_bigint_octal',
+		'_number_bigint_decimal'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(node, [
+		'number_bigint_hex',
+		'number_bigint_binary',
+		'number_bigint_octal',
+		'number_bigint_decimal'
+	]) as T.NumberBigint | readonly T.NumberBigint[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(node.$other, [
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal'
+		]);
+	if (
+		filtered === undefined &&
+		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
+	) {
+		return drillInSelf<T.NumberBigint>(node as T.NumberBigint, tree);
+	}
+	return drillIn<T.NumberBigint>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _NodeData).$span
+		}),
+		tree
+	);
+}
+
+export function wrapNumberBigintHex(data: T.NumberBigintHex, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
-	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint'], 'number_bigint');
+	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint_hex'], 'number_bigint_hex');
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId.NumberBigint as const,
+			$type: TSKindId.NumberBigintHex as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -12435,8 +12537,89 @@ export function wrapNumberBigint(data: T.NumberBigint, tree: TreeHandle) {
 				return drillIn<string>(this._content, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.NumberBigint['_content']>) =>
-					wrapNumberBigint({ ...$edited(data), _content: v }, tree)
+				content: (v: NonNullable<T.NumberBigintHex['_content']>) =>
+					wrapNumberBigintHex({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberBigintBinary(data: T.NumberBigintBinary, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint_binary'], 'number_bigint_binary');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberBigintBinary as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.NumberBigintBinary['_content']>) =>
+					wrapNumberBigintBinary({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberBigintOctal(data: T.NumberBigintOctal, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint_octal'], 'number_bigint_octal');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberBigintOctal as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.NumberBigintOctal['_content']>) =>
+					wrapNumberBigintOctal({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberBigintDecimal(data: T.NumberBigintDecimal, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint_decimal'], 'number_bigint_decimal');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberBigintDecimal as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.NumberBigintDecimal['_content']>) =>
+					wrapNumberBigintDecimal({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -12514,7 +12697,7 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			decorators() {
@@ -12561,7 +12744,7 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 175, ',': 14 }
+				{ '\n': 178, ',': 14 }
 			),
 
 			methodSignature() {
@@ -12603,7 +12786,7 @@ export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
 					slotName: 'terminator',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 170, ';': 20, ',': 14 }
+				{ '\n': 173, ';': 20, ',': 14 }
 			),
 
 			member() {
@@ -12702,10 +12885,10 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 					unknown: 144,
 					never: 145,
 					object: 44,
-					'*': 353
+					'*': 356
 				},
 				undefined,
-				[356]
+				[359]
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -13075,8 +13258,8 @@ export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHan
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, import: 192 },
-				{ 9: 192 }
+				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123, import: 195 },
+				{ 9: 195 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', false, data.$type, {
 				tree,
@@ -13287,7 +13470,7 @@ export function wrapUpdateExpressionPostfix(data: T.UpdateExpressionPostfix, tre
 					slotName: 'operator',
 					span: (data as _NodeData).$span
 				}),
-				{ '++': 166, '--': 167 }
+				{ '++': 169, '--': 170 }
 			),
 
 			argument() {
@@ -13323,7 +13506,7 @@ export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree:
 					slotName: 'operator',
 					span: (data as _NodeData).$span
 				}),
-				{ '++': 166, '--': 167 }
+				{ '++': 169, '--': 170 }
 			),
 			_argument: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
@@ -13538,7 +13721,7 @@ export function wrapExportStatementDefaultFrom(data: T.ExportStatementDefaultFro
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'automatic_semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			content() {
@@ -13768,7 +13951,7 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'automatic_semicolon', span: (data as _NodeData).$span }
 				),
-				{ '\n': 170, ';': 20 }
+				{ '\n': 173, ';': 20 }
 			),
 
 			value() {
@@ -14708,6 +14891,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NumberBinary]: (d, t) => wrapNumberBinary(d as unknown as T.NumberBinary, t),
 	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
 	[TSKindId.NumberBigint]: (d, t) => wrapNumberBigint(d as unknown as T.NumberBigint, t),
+	[TSKindId.NumberBigintHex]: (d, t) => wrapNumberBigintHex(d as unknown as T.NumberBigintHex, t),
+	[TSKindId.NumberBigintBinary]: (d, t) => wrapNumberBigintBinary(d as unknown as T.NumberBigintBinary, t),
+	[TSKindId.NumberBigintOctal]: (d, t) => wrapNumberBigintOctal(d as unknown as T.NumberBigintOctal, t),
+	[TSKindId.NumberBigintDecimal]: (d, t) => wrapNumberBigintDecimal(d as unknown as T.NumberBigintDecimal, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
 	[TSKindId.EmptyMember]: (d) => ({ ...d, $type: TSKindId.EmptyMember as const }),
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
@@ -15062,6 +15249,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.NumberBinary]: ReturnType<typeof wrapNumberBinary>;
 	[TSKindId.NumberOctal]: ReturnType<typeof wrapNumberOctal>;
 	[TSKindId.NumberBigint]: ReturnType<typeof wrapNumberBigint>;
+	[TSKindId.NumberBigintHex]: ReturnType<typeof wrapNumberBigintHex>;
+	[TSKindId.NumberBigintBinary]: ReturnType<typeof wrapNumberBigintBinary>;
+	[TSKindId.NumberBigintOctal]: ReturnType<typeof wrapNumberBigintOctal>;
+	[TSKindId.NumberBigintDecimal]: ReturnType<typeof wrapNumberBigintDecimal>;
 	[TSKindId.BinaryExpressionIn]: ReturnType<typeof wrapBinaryExpressionIn>;
 	[TSKindId.EmptyMember]: _NodeData & { readonly $type: TSKindId.EmptyMember };
 	[TSKindId.ClassBodyMethod]: ReturnType<typeof wrapClassBodyMethod>;

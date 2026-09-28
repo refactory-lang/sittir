@@ -23,6 +23,14 @@ the transport emitters, which need the same closure to decide what a slot's
 element type can hold — one derivation, so the sites addressed against a
 generated enum and the enum's own variants cannot disagree.
 
+### `packages/codegen/src/compiler/model/node-map.ts::defaultConcreteKindOf`
+
+The concrete kind a kind stands for by default: itself when it is not a
+supertype, otherwise its default variant subtype's, followed down the chain
+(python `integer` → `integer_decimal` → `integer_decimal_plain`). Undefined
+when a supertype on the way has no default. The same chain a namespace call
+takes, shared by the loose resolver's kind tags.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
@@ -274,6 +282,12 @@ edits.
  * with `default: true`, which the options catalog reads.
  */
 ```
+
+A literal below a tokenized rule is a lexeme fragment: the walk sets
+`lexical` on the ctx it recurses with, and under it a STRING or enum member
+skips the text-to-kind lookup, so the value stores as text with no kind (the
+parser emits no node inside a token). The tokenized rule itself keeps its
+lookup, because a tokenized STRING is the token.
 
 #### body
 
@@ -1309,6 +1323,9 @@ flatten and simplify joins use.
  * explicit parameter per CW6 — never ctx.
  */
 ```
+
+`lexical` marks a derivation scope below a tokenized compound, where
+literals are lexeme fragments and take no kind.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::kindEntries`
 
@@ -2542,11 +2559,23 @@ A SYMBOL body is 'alias' when the kind is an alias display
 the rule.
 ```
 
+A fielded leaf-shaped choice is a `'branch'` unless its kind is a registered
+variant parent (`ctx.variantParents`): only an unfielded choice, or one whose
+arms are registered variants, is a polymorph. A fielded choice without
+variants is one slot of a container (rust `else_clause`, typescript
+`template_type`).
+
 A leaf-shaped choice over hidden storage that the parser shows under an alias
 (`isAliasedHiddenStorage`: typescript `_lhs_expression`, python
 `_simple_pattern`) is an `'envelope'`, not a `'polymorph'`: the parser issues a
 node for the display, so the kind is a real container whose one slot is the
 choice, and a built value nests the same way a read one does.
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundModelTypeCtx`
+
+What `compoundModelTypeFor` reads besides the rule: the kind table (alias
+displays and hidden storage) and `variantParents`, the kinds whose arms are
+registered variants, which keeps a fielded leaf-shaped choice a polymorph.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
 
@@ -2831,6 +2860,10 @@ least two subtypes, every one stamped as a variant of this kind — or
 `undefined` otherwise. The model attribute emitters read instead of
 re-checking the subtype facts (sub-factory mounting through a slot, route
 emission).
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.defaultVariantSubtype`
+
+The variant subtype stamped as the default, when this supertype is variant-bearing and names one. Whether a variant-bearing supertype is callable without naming an arm is exactly whether this is defined.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 
@@ -5013,7 +5046,18 @@ A render member as a literal delimiter: a STRING, a reference to a fixed-text le
 
 ### `packages/codegen/src/compiler/model/full-form.ts::contentEdges`
 
-The edge classes the content starts and ends with: a pattern's leading and trailing classes, a leaf kind's (`edgeClassesOfKind`), or the classes the polymorph's arms agree on.
+The edge classes the content starts and ends with: a pattern's leading and trailing classes, a leaf kind's (`edgeClassesOfKind`), or the classes a choice's arms agree on, each arm a kind or a string (its first and last character).
+
+### `packages/codegen/src/compiler/model/full-form.ts::enumContentAsText`
+
+Takes the enum that is a token's whole content out of the affix list, so the
+run search sees it as the content between the delimiters. Applies only when
+every member is an affix and exactly one carries a slot.
+
+### `packages/codegen/src/compiler/model/full-form.ts::isEnumContent`
+
+A field over a choice of strings: the shape an enum takes when it is a
+token's content.
 
 ### `packages/codegen/src/compiler/model/full-form.ts::affixEdge`
 
@@ -5033,11 +5077,11 @@ One side's literal members as one affix: empty when there are none, the member i
 
 ### `packages/codegen/src/compiler/model/full-form.ts::isTextContent`
 
-Whether the one non-literal member between the runs is text: an inline pattern, a reference to a pattern leaf, or a choice of the polymorph's own arms, each of which is text (`FullForms.isText`).
+Whether the one non-literal member between the runs is text: an inline pattern, a reference to a pattern leaf, an enum that is the whole content (`isEnumContent`), or a choice of the polymorph's own arms, each of which is text (`FullForms.isText`).
 
 ### `packages/codegen/src/compiler/model/full-form.ts::fullFormOf`
 
-One compound's full form: find the literal runs at each end, require exactly one member between them that is text content and no word-shaped literal, and join each run.
+One compound's full form: find the literal runs at each end, require exactly one member between them that is text content and no word-shaped literal, and join each run. When every member reads as an affix, the one enum that is the whole content (`isSoleEnumContent`) is taken out of the runs first: Go's rune escape `'\\' (a|b|…) '\''` stamps open `'\\` and close `'`.
 
 ### `packages/codegen/src/compiler/model/full-form.ts::FullForms`
 

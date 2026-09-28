@@ -30,8 +30,14 @@ function flattenFormArms(arms: readonly RuntimeRule[]): RuntimeRule[] {
 
 type Site = { readonly path: readonly number[]; readonly arms: readonly RuntimeRule[] };
 
-function findOutermostForms(rule: RuntimeRule, path: readonly number[]): Site | undefined {
+type Fielded = readonly (readonly number[])[];
+
+const isFieldedAt = (fielded: Fielded, path: readonly number[]): boolean =>
+	fielded.some((site) => site.length === path.length && site.every((index, i) => index === path[i]));
+
+function findOutermostForms(rule: RuntimeRule, path: readonly number[], fielded: Fielded): Site | undefined {
 	const t = typeOf(rule);
+	if (t === 'FIELD' || (isChoiceType(t) && isFieldedAt(fielded, path))) return undefined;
 	const optional = optionalContentOf(rule);
 	if (optional !== undefined) {
 		const forms = isChoiceType(typeOf(optional)) && classifyTokenChoice(optional) === 'forms';
@@ -43,12 +49,12 @@ function findOutermostForms(rule: RuntimeRule, path: readonly number[]): Site | 
 	if (isSeqType(t)) {
 		const members = membersOf(rule);
 		for (let i = 0; i < members.length; i++) {
-			const found = findOutermostForms(members[i]!, [...path, i]);
+			const found = findOutermostForms(members[i]!, [...path, i], fielded);
 			if (found) return found;
 		}
 		return undefined;
 	}
-	if (contentOf(rule) !== undefined) return findOutermostForms(contentOf(rule), [...path, 0]);
+	if (contentOf(rule) !== undefined) return findOutermostForms(contentOf(rule), [...path, 0], fielded);
 	return undefined;
 }
 
@@ -75,19 +81,41 @@ function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {
 	return rebuilt(rule, { content: dropAt(contentOf(rule), rest) });
 }
 
+export function factorSharedOptional(rule: RuntimeRule): RuntimeRule {
+	const typed = rule as Typed;
+	let out = rule;
+	if (Array.isArray(typed.members)) {
+		const members = typed.members.map(factorSharedOptional);
+		if (members.some((member, i) => member !== typed.members![i])) out = rebuilt(rule, { members });
+	} else if (typed.content !== undefined) {
+		const content = factorSharedOptional(typed.content);
+		if (content !== typed.content) out = rebuilt(rule, { content });
+	}
+	if (!isChoiceType(typeOf(out))) return out;
+	const members = membersOf(out);
+	const contents = members.map((member) => optionalContentOf(member));
+	if (members.length < 2 || contents.some((content) => content === undefined)) return out;
+	const shared = { type: 'CHOICE', members: contents } as unknown as RuntimeRule;
+	return rebuilt(out, { members: [shared, BLANK] });
+}
+
 export const canonicalRuleText = (rule: RuntimeRule): string =>
 	JSON.stringify(rule, (key, value: unknown) => (key === 'id' || key === 'metadata' ? undefined : value));
 
-export function distributeTokenForms(rule: RuntimeRule, kind: string): RuntimeRule {
+const underWrapper = (fielded: Fielded): Fielded => fielded.flatMap((site) => (site[0] === 0 ? [site.slice(1)] : []));
+
+export function distributeTokenForms(rule: RuntimeRule, kind: string, fielded: Fielded = []): RuntimeRule {
 	const precStack: RuntimeRule[] = [];
 	let core = rule;
+	let sites = fielded;
 	while (isPrecWrapper(core)) {
 		precStack.push(core);
 		core = contentOf(core);
+		sites = underWrapper(sites);
 	}
 	if (!isTokenWrapper(core)) return rule;
 	const body = contentOf(core);
-	const site = findOutermostForms(body, []);
+	const site = findOutermostForms(body, [], underWrapper(sites));
 	if (site === undefined) return rule;
 	const arms = site.arms.map((arm) => (isBlank(arm) ? dropAt(body, site.path) : replaceAt(body, site.path, arm)));
 	const empty = arms.findIndex(matchesEmpty);

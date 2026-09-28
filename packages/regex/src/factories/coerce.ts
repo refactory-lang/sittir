@@ -164,10 +164,30 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
+const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
+	_class_atom: [
+		'class_character',
+		'bslash_dash',
+		'character_class_escape',
+		'control_escape',
+		'control_letter_escape',
+		'identity_escape',
+		'posix_character_class',
+		'class_range'
+	],
+	inline_flags_group: ['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable'],
+	_character_escape: ['control_escape', 'control_letter_escape', 'identity_escape'],
+	_whitespace: ['_tight', '_newline', '_blankline', '_double_blankline']
+};
+
 /** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name. */
+ *  stamped `TSKindId` enum value — both spellings resolve to the same name.
+ *  A supertype tag names its default arm; one without a default names no kind. */
 function _kindNameOf(kind: unknown): string | undefined {
-	return typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
+	if (tag === undefined || typeof tag === 'string') return tag ?? name;
+	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {

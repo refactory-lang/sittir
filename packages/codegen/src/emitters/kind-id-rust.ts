@@ -297,7 +297,7 @@ export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string
 				return;
 		}
 	};
-	if (node instanceof AbstractAssembledCompound) walk(node.renderRule, undefined);
+	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
 	return out;
 }
 

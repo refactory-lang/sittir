@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { defaultConcreteKindOf, isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -1164,15 +1164,27 @@ function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPatt
 	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
-function emitResolveByKindHelper(lines: string[]): void {
+function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('function _isFromKind(k: string): k is keyof _FromMap {');
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
 	lines.push('');
+	lines.push('const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {');
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype)) continue;
+		const concrete = defaultConcreteKindOf(kind, nodeMap);
+		lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(concrete ?? node.subtypeNames)},`);
+	}
+	lines.push('};');
+	lines.push('');
 	lines.push('/** A `kind:` discriminant names its kind by the grammar string or the');
-	lines.push(' *  stamped `TSKindId` enum value — both spellings resolve to the same name. */');
+	lines.push(' *  stamped `TSKindId` enum value — both spellings resolve to the same name.');
+	lines.push(' *  A supertype tag names its default arm; one without a default names no kind. */');
 	lines.push('function _kindNameOf(kind: unknown): string | undefined {');
-	lines.push('  return typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;');
+	lines.push('  const name = typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;');
+	lines.push('  const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];');
+	lines.push('  if (tag === undefined || typeof tag === "string") return tag ?? name;');
+	lines.push('  throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(", ")}]`);');
 	lines.push('}');
 	lines.push('');
 	lines.push('function _resolveByKind<K extends keyof _FromMap>(');
@@ -1607,7 +1619,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitResolveByKindHelper(lines);
+	emitResolveByKindHelper(lines, nodeMap);
 
 	lines.push(
 		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'

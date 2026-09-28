@@ -445,6 +445,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -533,6 +536,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -582,6 +588,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -625,6 +634,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -688,6 +700,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -745,6 +760,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'integer_octal',
 		'integer_binary',
 		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float',
 		'float_point',
 		'float_leading_point',
@@ -783,7 +801,15 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'escape_sequence_simple',
 		'escape_sequence_named'
 	]),
-	integer: new Set(['integer_hex', 'integer_octal', 'integer_binary', 'integer_decimal']),
+	integer: new Set([
+		'integer_hex',
+		'integer_octal',
+		'integer_binary',
+		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain'
+	]),
 	float: new Set(['float_point', 'float_leading_point', 'float_scientific']),
 	keyword_identifier: new Set([
 		'print_keyword',
@@ -807,7 +833,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'blankline',
 		'_double_blankline',
 		'double_blankline'
-	])
+	]),
+	integer_decimal: new Set(['integer_decimal_long', 'integer_decimal_imaginary', 'integer_decimal_plain'])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -1157,8 +1184,8 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '*': 135 },
-				{ 8: 135 }
+				{ '*': 137 },
+				{ 8: 137 }
 			),
 
 			moduleName() {
@@ -1760,7 +1787,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '\n': 113 }
+				{ '\n': 115 }
 			),
 
 			content() {
@@ -2878,8 +2905,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 281 },
+				{ 48: 281 }
 			),
 
 			content() {
@@ -2962,8 +2989,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 281 },
+				{ 48: 281 }
 			),
 
 			patterns() {
@@ -3058,8 +3085,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 281 },
+				{ 48: 281 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -3122,8 +3149,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 281 },
+				{ 48: 281 }
 			),
 
 			name() {
@@ -3776,7 +3803,9 @@ export function wrapExpressionWithinForInClause(
 		'_integer_hex',
 		'_integer_octal',
 		'_integer_binary',
-		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain',
 		'_float_point',
 		'_float_leading_point',
 		'_float_scientific',
@@ -3822,7 +3851,9 @@ export function wrapExpressionWithinForInClause(
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float_point',
 		'float_leading_point',
 		'float_scientific',
@@ -3870,7 +3901,9 @@ export function wrapExpressionWithinForInClause(
 			'integer_hex',
 			'integer_octal',
 			'integer_binary',
-			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain',
 			'float_point',
 			'float_leading_point',
 			'float_scientific',
@@ -3940,7 +3973,9 @@ export function wrapExpression(
 		'_integer_hex',
 		'_integer_octal',
 		'_integer_binary',
-		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain',
 		'_float_point',
 		'_float_leading_point',
 		'_float_scientific',
@@ -3985,7 +4020,9 @@ export function wrapExpression(
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float_point',
 		'float_leading_point',
 		'float_scientific',
@@ -4032,7 +4069,9 @@ export function wrapExpression(
 			'integer_hex',
 			'integer_octal',
 			'integer_binary',
-			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain',
 			'float_point',
 			'float_leading_point',
 			'float_scientific',
@@ -4112,7 +4151,9 @@ export function wrapPrimaryExpression(
 		'_integer_hex',
 		'_integer_octal',
 		'_integer_binary',
-		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain',
 		'_float_point',
 		'_float_leading_point',
 		'_float_scientific'
@@ -4152,7 +4193,9 @@ export function wrapPrimaryExpression(
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float_point',
 		'float_leading_point',
 		'float_scientific'
@@ -4194,7 +4237,9 @@ export function wrapPrimaryExpression(
 			'integer_hex',
 			'integer_octal',
 			'integer_binary',
-			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain',
 			'float_point',
 			'float_leading_point',
 			'float_scientific'
@@ -4709,7 +4754,9 @@ export function wrapRightHandSide(
 		'_integer_hex',
 		'_integer_octal',
 		'_integer_binary',
-		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain',
 		'_float_point',
 		'_float_leading_point',
 		'_float_scientific',
@@ -4762,7 +4809,9 @@ export function wrapRightHandSide(
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float_point',
 		'float_leading_point',
 		'float_scientific',
@@ -4817,7 +4866,9 @@ export function wrapRightHandSide(
 			'integer_hex',
 			'integer_octal',
 			'integer_binary',
-			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain',
 			'float_point',
 			'float_leading_point',
 			'float_scientific',
@@ -5992,8 +6043,8 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '\\': 250 },
-				{ 65: 250 }
+				{ '\\': 252 },
+				{ 65: 252 }
 			),
 
 			contents() {
@@ -6106,7 +6157,9 @@ export function wrapFExpression(
 		'_integer_hex',
 		'_integer_octal',
 		'_integer_binary',
-		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain',
 		'_float_point',
 		'_float_leading_point',
 		'_float_scientific',
@@ -6154,7 +6207,9 @@ export function wrapFExpression(
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
 		'float_point',
 		'float_leading_point',
 		'float_scientific',
@@ -6204,7 +6259,9 @@ export function wrapFExpression(
 			'integer_hex',
 			'integer_octal',
 			'integer_binary',
-			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain',
 			'float_point',
 			'float_leading_point',
 			'float_scientific',
@@ -6334,16 +6391,35 @@ export function wrapInteger(
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_integer_hex', '_integer_octal', '_integer_binary', '_integer_decimal']);
+	const node = _keepModelledSlots(data, [
+		'_integer_hex',
+		'_integer_octal',
+		'_integer_binary',
+		'_integer_decimal',
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain'
+	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'integer_hex',
 		'integer_octal',
 		'integer_binary',
-		'integer_decimal'
+		'integer_decimal',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain'
 	]) as T.Integer | readonly T.Integer[] | undefined;
 	const filtered =
 		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, ['integer_hex', 'integer_octal', 'integer_binary', 'integer_decimal']);
+		_filterWrapChildrenByKind(node.$other, [
+			'integer_hex',
+			'integer_octal',
+			'integer_binary',
+			'integer_decimal',
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain'
+		]);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -7262,6 +7338,45 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapIntegerDecimal(
+	data: T.IntegerDecimal & { readonly $other?: T.IntegerDecimal | readonly T.IntegerDecimal[] },
+	tree: TreeHandle
+) {
+	if (typeof data === 'number') return data;
+	const node = _keepModelledSlots(data, [
+		'_integer_decimal_long',
+		'_integer_decimal_imaginary',
+		'_integer_decimal_plain'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(node, [
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain'
+	]) as T.IntegerDecimal | readonly T.IntegerDecimal[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(node.$other, [
+			'integer_decimal_long',
+			'integer_decimal_imaginary',
+			'integer_decimal_plain'
+		]);
+	if (
+		filtered === undefined &&
+		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
+	) {
+		return drillInSelf<T.IntegerDecimal>(node as T.IntegerDecimal, tree);
+	}
+	return drillIn<T.IntegerDecimal>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _NodeData).$span
+		}),
+		tree
+	);
+}
+
 export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_integer', '_fraction', '_marker', '_exponent', '_imaginary']);
 	data = _projectLexed(data, TOKEN_INTERIORS['float_point'], 'float_point');
@@ -8054,7 +8169,7 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
 				),
-				{ '\n': 113 }
+				{ '\n': 115 }
 			),
 
 			newline() {
@@ -8085,17 +8200,17 @@ export function wrapComparisonOperatorComparator(data: T.ComparisonOperatorCompa
 					span: (data as _NodeData).$span
 				}),
 				{
-					'<': 106,
-					'<=': 107,
-					'==': 108,
-					'!=': 109,
-					'>=': 110,
-					'>': 111,
-					'<>': 112,
+					'<': 108,
+					'<=': 109,
+					'==': 110,
+					'!=': 111,
+					'>=': 112,
+					'>': 113,
+					'<>': 114,
 					in: 25,
-					'not in': 208,
+					'not in': 210,
 					is: 61,
-					'is not': 209
+					'is not': 211
 				}
 			),
 			_primary_expression: projectMixedEnumStorage(
@@ -8424,7 +8539,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.IntegerHex]: (d, t) => wrapIntegerHex(d as unknown as T.IntegerHex, t),
 	[TSKindId.IntegerOctal]: (d, t) => wrapIntegerOctal(d as unknown as T.IntegerOctal, t),
 	[TSKindId.IntegerBinary]: (d, t) => wrapIntegerBinary(d as unknown as T.IntegerBinary, t),
-	[TSKindId.IntegerDecimal]: (d) => ({ ...d, $type: TSKindId.IntegerDecimal as const }),
+	[TSKindId.IntegerDecimal]: (d, t) => wrapIntegerDecimal(d as unknown as T.IntegerDecimal, t),
+	[TSKindId.IntegerDecimalLong]: (d) => ({ ...d, $type: TSKindId.IntegerDecimalLong as const }),
+	[TSKindId.IntegerDecimalImaginary]: (d) => ({ ...d, $type: TSKindId.IntegerDecimalImaginary as const }),
+	[TSKindId.IntegerDecimalPlain]: (d) => ({ ...d, $type: TSKindId.IntegerDecimalPlain as const }),
 	[TSKindId.FloatPoint]: (d, t) => wrapFloatPoint(d as unknown as T.FloatPoint, t),
 	[TSKindId.FloatLeadingPoint]: (d, t) => wrapFloatLeadingPoint(d as unknown as T.FloatLeadingPoint, t),
 	[TSKindId.FloatScientific]: (d, t) => wrapFloatScientific(d as unknown as T.FloatScientific, t),
@@ -8673,7 +8791,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.IntegerHex]: ReturnType<typeof wrapIntegerHex>;
 	[TSKindId.IntegerOctal]: ReturnType<typeof wrapIntegerOctal>;
 	[TSKindId.IntegerBinary]: ReturnType<typeof wrapIntegerBinary>;
-	[TSKindId.IntegerDecimal]: _NodeData & { readonly $type: TSKindId.IntegerDecimal };
+	[TSKindId.IntegerDecimal]: ReturnType<typeof wrapIntegerDecimal>;
+	[TSKindId.IntegerDecimalLong]: _NodeData & { readonly $type: TSKindId.IntegerDecimalLong };
+	[TSKindId.IntegerDecimalImaginary]: _NodeData & { readonly $type: TSKindId.IntegerDecimalImaginary };
+	[TSKindId.IntegerDecimalPlain]: _NodeData & { readonly $type: TSKindId.IntegerDecimalPlain };
 	[TSKindId.FloatPoint]: ReturnType<typeof wrapFloatPoint>;
 	[TSKindId.FloatLeadingPoint]: ReturnType<typeof wrapFloatLeadingPoint>;
 	[TSKindId.FloatScientific]: ReturnType<typeof wrapFloatScientific>;

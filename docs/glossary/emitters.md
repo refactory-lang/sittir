@@ -2204,6 +2204,12 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
 // narrow the string parameter without an unchecked cast.
 ```
 
+It also emits `_SUPERTYPE_KIND_TAGS`, which maps each supertype to its
+default concrete kind (`defaultConcreteKindOf`) or, without a default, to its
+subtypes. It emits `_kindNameOf`, the one reading of a `kind:` discriminant:
+a supertype tag that is not itself a from kind resolves to its default arm,
+and one without a default throws naming the arms.
+
 ### `packages/codegen/src/emitters/from.ts::resolveScalarParamName`
 
 ```text
@@ -9158,6 +9164,12 @@ pipeline — which falls back to string equality.
 // error at runtime.
 ```
 
+A bare-text literal takes its kind id from the stamp alone
+(`resolvedKindId`): value derivation already looked its text up and left it
+kindless on purpose, as a lexeme fragment inside a token (rust integer
+suffixes, typescript exponent signs), so a second text lookup here would
+route those literals by kind ids the parser never issues there.
+
 ### `packages/codegen/src/emitters/shared.ts::stringConstructibleTexts`
 
 ```text
@@ -14787,6 +14799,8 @@ wiring const under the same `<childKey>.<path>` spelling. Whenever the refs
 spell a child's wiring const, they name that child in `set`, so the overlay
 knows which private consts are read.
 
+A supertype child (a variant-bearing kind with a flattened-parent const) is routed through that const's key, `<childKey>.strict` / `.coerce`, the same route a seated set takes; it has no raw factory of its own.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::OverlayChunk`
 
 One wiring const's emitted lines (its methods and its const), whether it is
@@ -14802,6 +14816,18 @@ exactly what the emitters wrote (`OverlayChunk.uses`): arms, seats, alias
 routes and supertype variant routes all report through their refs' `set`,
 so no reader is listed by hand. The helpers go before the first kept chunk
 that has methods.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::inDependencyOrder`
+
+Orders the overlay's chunks so each const is declared before any chunk that reads it. Each chunk is keyed by the node kind it provides, and a chunk waits until every kind in its `uses` that another chunk provides has been placed. Among ready chunks the original order wins, so chunks with no such dependency keep the order the overlay built them in. A sub-factory set that routes an arm through a flattened parent's const is placed after that const, and a flattened parent after the nested parents it names.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isNamespaceArm`
+
+Whether a direct arm is a namespace with no call of its own: its child is a variant-bearing supertype with no default variant. Such an arm is emitted as an object holding only its nested arms, the shape the flattened-parent const of a defaultless supertype has, so the arm is never a call through a `.strict` that does not exist.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::renderArm`
+
+Renders an arm entry and its nested children as one object literal and its type. An entry with an empty line (a namespace arm) contributes only its children.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
@@ -14883,7 +14909,8 @@ member, keyed by field name: `field(condition, choice(seq(_expressions, ';'),
 empty_statement))` tags the `;` with `condition`, so the reader would seat it
 as a second value. These join the repeated-slot separators in the
 punctuation table the reader consults (`is_slot_separator`), because the
-template prints them itself.
+template prints them itself. A lexed interior has none: the parser tags
+nothing inside a token.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::FLATTEN_HELPER`
 
@@ -14963,6 +14990,8 @@ An alias wire's child visits before its parent too, like a seat's group.
 `variantRouteOf` reads whether the child's entry is already emitted when the
 parent's route is written. A child emitted later would leave its route as a
 bare `{ strict, coerce }` pair and its own entry unreferenced.
+
+`keyByKind` also maps each flattened variant parent to its const's key, so a sub-factory arm whose child is a variant-bearing supertype resolves to that const. A nested arm through such a child is present when the supertype has a variant of that name (`variantArmsOf`), since the child has no wire set of its own.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
@@ -15060,6 +15089,10 @@ arms into the final wire set. A node with no labelled value in any slot
 derives nothing: a sub-factory arm exists exactly where a variant label
 sits at the end of wire, nowhere else.
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::isCallableArm`
+
+Whether a mounted child can be a node arm. A supertype qualifies when it is variant-bearing (`variantSubtypes`): its callable is its flattened-parent const, reached through `keyByKind`, the same way a nested polymorph is. Any other child needs its own raw factory, emitted, on a slot-bearing compound or a text leaf.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armValuesOf`
 
 The values `derive` walks for one slot. A value mounts one of two ways: a
@@ -15113,18 +15146,15 @@ Paired with `DIRECT` (0), the depth a directly-reached arm carries.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::nestedArmsOf`
 
-The arms a direct node arm's child contributes under it: every entry of
-the child's own sub-factory set (`subFactoriesInternal`), direct and nested
-alike, renamed `<host>$<inner>` and nested under the host's own
-`slot`/`residual`, with `path` naming the child's entry and `depth` one
-more than the inner entry's. The child's nested entries carry its own
-children's arms, so nesting reaches every depth with no cap: each arm's
-child carries its own arms under it. The only stop is the kind-keyed
-cycle guard — a child already on the derivation path contributes nothing,
-which cuts a kind arming itself (`ambient_declaration`,
-`parenthesized_list_splat`). `leaf` is the deepest kind the entry builds
-(`leafOf`). `settle` keeps a host's nested arms only when the host itself
-made it into the parent's final entries.
+The arms a direct node arm's child contributes under it (`innerArmsOf`), renamed `<host>$<inner>` and nested under the host's own `slot`/`residual`, with `path` naming the child's entry and `depth` one more than the inner entry's. A compound child's nested entries carry its own children's arms, so nesting reaches every depth with no cap. The only stop is the kind-keyed cycle guard: a child already on the derivation path contributes nothing, which cuts a kind arming itself (`ambient_declaration`, `parenthesized_list_splat`). `leaf` is the deepest kind the entry builds (`leafOf`). `settle` keeps a host's nested arms only when the host itself made it into the parent's final entries.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::innerArmsOf`
+
+The inner arms of a node arm's child: a compound's own sub-factory set (`subFactoriesInternal`), direct and nested alike, or a variant-bearing supertype's variants (`variantArmsOf`), each with that variant's kind as its leaf.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::variantArmsOf`
+
+A variant-bearing supertype's arms as sub-factory names: each variant subtype with its variant name in lower camel case. The one source for those names in the overlay: the nested-arm derivation and the wire filter's presence check both read it.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::leafOf`
 

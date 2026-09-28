@@ -103,6 +103,15 @@ export type PythonGrammar = {
 			{ type: 'integer_octal'; named: true }
 		];
 	};
+	readonly integer_decimal: {
+		type: 'integer_decimal';
+		named: true;
+		subtypes: [
+			{ type: 'integer_decimal_imaginary'; named: true },
+			{ type: 'integer_decimal_long'; named: true },
+			{ type: 'integer_decimal_plain'; named: true }
+		];
+	};
 	readonly parameter: {
 		type: 'parameter';
 		named: true;
@@ -1741,7 +1750,9 @@ export type PythonGrammar = {
 	readonly _anonymous_import: { type: 'import'; named: false };
 	readonly _anonymous_in: { type: 'in'; named: false };
 	readonly integer_binary: { type: 'integer_binary'; named: true };
-	readonly integer_decimal: { type: 'integer_decimal'; named: true };
+	readonly integer_decimal_imaginary: { type: 'integer_decimal_imaginary'; named: true };
+	readonly integer_decimal_long: { type: 'integer_decimal_long'; named: true };
+	readonly integer_decimal_plain: { type: 'integer_decimal_plain'; named: true };
 	readonly integer_hex: { type: 'integer_hex'; named: true };
 	readonly integer_octal: { type: 'integer_octal'; named: true };
 	readonly _anonymous_is: { type: 'is'; named: false };

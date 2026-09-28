@@ -53,107 +53,6 @@ export const expressionStatement: typeof B.expressionStatement & {
 	}
 };
 
-const nonSpecialToken$string =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const nonSpecialToken$rawString =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const nonSpecialToken$float =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const nonSpecialToken$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const nonSpecialToken$mutableSpecifier =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const nonSpecialToken$self =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const nonSpecialToken$super =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const nonSpecialToken$crate =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-export const nonSpecialToken: typeof B.nonSpecialToken & {
-	string: {
-		strict: (...args: ArgsOf<typeof F.buildStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-	};
-	rawString: {
-		strict: (...args: ArgsOf<typeof F.buildRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-	};
-	float: {
-		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
-	};
-	mutableSpecifier: {
-		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
-	};
-	self: {
-		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
-	};
-	super: {
-		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
-	};
-	crate: {
-		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
-	};
-} = {
-	...B.nonSpecialToken,
-	string: {
-		strict: nonSpecialToken$string(F.buildNonSpecialToken, F.buildStringLiteral),
-		coerce: nonSpecialToken$string(F.buildNonSpecialToken, C.coerceToStringLiteral)
-	},
-	rawString: {
-		strict: nonSpecialToken$rawString(F.buildNonSpecialToken, F.buildRawStringLiteral),
-		coerce: nonSpecialToken$rawString(F.buildNonSpecialToken, C.coerceToRawStringLiteral)
-	},
-	float: {
-		strict: nonSpecialToken$float(F.buildNonSpecialToken, F.buildFloatLiteral),
-		coerce: nonSpecialToken$float(F.buildNonSpecialToken, C.coerceToFloatLiteral)
-	},
-	identifier: {
-		strict: nonSpecialToken$identifier(F.buildNonSpecialToken, F.buildIdentifier),
-		coerce: nonSpecialToken$identifier(F.buildNonSpecialToken, C.coerceToIdentifier)
-	},
-	mutableSpecifier: {
-		strict: nonSpecialToken$mutableSpecifier(F.buildNonSpecialToken, TSKindId.MutableSpecifier),
-		coerce: nonSpecialToken$mutableSpecifier(C.coerceToNonSpecialToken, TSKindId.MutableSpecifier)
-	},
-	self: {
-		strict: nonSpecialToken$self(F.buildNonSpecialToken, TSKindId.Self),
-		coerce: nonSpecialToken$self(C.coerceToNonSpecialToken, TSKindId.Self)
-	},
-	super: {
-		strict: nonSpecialToken$super(F.buildNonSpecialToken, TSKindId.Super),
-		coerce: nonSpecialToken$super(C.coerceToNonSpecialToken, TSKindId.Super)
-	},
-	crate: {
-		strict: nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate),
-		coerce: nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate)
-	}
-};
-
 const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2209,20 +2108,6 @@ export const integerLiteral: {
 	octal: { strict: F.buildIntegerLiteralOctal, coerce: C.coerceToIntegerLiteralOctal }
 };
 
-export const charLiteral: {
-	readonly strict: typeof F.buildCharLiteralPlain;
-	readonly coerce: typeof C.coerceToCharLiteralPlain;
-	readonly escaped: { strict: typeof F.buildCharLiteralEscaped; coerce: typeof C.coerceToCharLiteralEscaped };
-	readonly plain: { strict: typeof F.buildCharLiteralPlain; coerce: typeof C.coerceToCharLiteralPlain };
-	readonly empty: { strict: typeof F.buildCharLiteralEmpty; coerce: typeof C.coerceToCharLiteralEmpty };
-} = {
-	strict: F.buildCharLiteralPlain,
-	coerce: C.coerceToCharLiteralPlain,
-	escaped: { strict: F.buildCharLiteralEscaped, coerce: C.coerceToCharLiteralEscaped },
-	plain: { strict: F.buildCharLiteralPlain, coerce: C.coerceToCharLiteralPlain },
-	empty: { strict: F.buildCharLiteralEmpty, coerce: C.coerceToCharLiteralEmpty }
-};
-
 export const escapeSequence: {
 	readonly strict: typeof F.buildEscapeSequenceSimple;
 	readonly coerce: typeof C.coerceToEscapeSequenceSimple;
@@ -2255,6 +2140,31 @@ export const comment: {
 	coerce: lineComment.coerce,
 	lineComment: lineComment,
 	blockComment: blockComment
+};
+
+export const charLiteralEscaped: {
+	readonly strict: typeof F.buildCharLiteralEscapedSimple;
+	readonly coerce: typeof C.coerceToCharLiteralEscapedSimple;
+	readonly simple: {
+		strict: typeof F.buildCharLiteralEscapedSimple;
+		coerce: typeof C.coerceToCharLiteralEscapedSimple;
+	};
+	readonly unicodeFixed: {
+		strict: typeof F.buildCharLiteralEscapedUnicodeFixed;
+		coerce: typeof C.coerceToCharLiteralEscapedUnicodeFixed;
+	};
+	readonly unicodeBraced: {
+		strict: typeof F.buildCharLiteralEscapedUnicodeBraced;
+		coerce: typeof C.coerceToCharLiteralEscapedUnicodeBraced;
+	};
+	readonly hex: { strict: typeof F.buildCharLiteralEscapedHex; coerce: typeof C.coerceToCharLiteralEscapedHex };
+} = {
+	strict: F.buildCharLiteralEscapedSimple,
+	coerce: C.coerceToCharLiteralEscapedSimple,
+	simple: { strict: F.buildCharLiteralEscapedSimple, coerce: C.coerceToCharLiteralEscapedSimple },
+	unicodeFixed: { strict: F.buildCharLiteralEscapedUnicodeFixed, coerce: C.coerceToCharLiteralEscapedUnicodeFixed },
+	unicodeBraced: { strict: F.buildCharLiteralEscapedUnicodeBraced, coerce: C.coerceToCharLiteralEscapedUnicodeBraced },
+	hex: { strict: F.buildCharLiteralEscapedHex, coerce: C.coerceToCharLiteralEscapedHex }
 };
 
 export const declarationStatement: {
@@ -2301,6 +2211,229 @@ export const declarationStatement: {
 	use: B.useDeclaration,
 	externCrate: B.externCrateDeclaration,
 	static: B.staticItem
+};
+
+export const charLiteral: {
+	readonly strict: typeof F.buildCharLiteralPlain;
+	readonly coerce: typeof C.coerceToCharLiteralPlain;
+	readonly escaped: typeof charLiteralEscaped;
+	readonly plain: { strict: typeof F.buildCharLiteralPlain; coerce: typeof C.coerceToCharLiteralPlain };
+	readonly empty: { strict: typeof F.buildCharLiteralEmpty; coerce: typeof C.coerceToCharLiteralEmpty };
+} = {
+	strict: F.buildCharLiteralPlain,
+	coerce: C.coerceToCharLiteralPlain,
+	escaped: charLiteralEscaped,
+	plain: { strict: F.buildCharLiteralPlain, coerce: C.coerceToCharLiteralPlain },
+	empty: { strict: F.buildCharLiteralEmpty, coerce: C.coerceToCharLiteralEmpty }
+};
+
+const nonSpecialToken$string =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$rawString =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$float =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$mutableSpecifier =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$self =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$super =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$crate =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$char$escaped =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$plain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$empty =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$decimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$hex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$octal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const nonSpecialToken: typeof B.nonSpecialToken & {
+	string: {
+		strict: (...args: ArgsOf<typeof F.buildStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	rawString: {
+		strict: (...args: ArgsOf<typeof F.buildRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	char: {
+		strict: (...args: ArgsOf<typeof charLiteral.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof charLiteral.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		escaped: {
+			strict: (...args: ArgsOf<typeof charLiteral.escaped.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof charLiteral.escaped.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+		plain: {
+			strict: (...args: ArgsOf<typeof charLiteral.plain.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof charLiteral.plain.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+		empty: {
+			strict: (...args: ArgsOf<typeof charLiteral.empty.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof charLiteral.empty.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+	};
+	integer: {
+		strict: (...args: ArgsOf<typeof integerLiteral.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof integerLiteral.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		decimal: {
+			strict: (...args: ArgsOf<typeof integerLiteral.decimal.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.decimal.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+		hex: {
+			strict: (...args: ArgsOf<typeof integerLiteral.hex.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.hex.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+		binary: {
+			strict: (...args: ArgsOf<typeof integerLiteral.binary.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.binary.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+		octal: {
+			strict: (...args: ArgsOf<typeof integerLiteral.octal.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.octal.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		};
+	};
+	float: {
+		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	mutableSpecifier: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	self: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	super: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	crate: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+} = {
+	...B.nonSpecialToken,
+	string: {
+		strict: nonSpecialToken$string(F.buildNonSpecialToken, F.buildStringLiteral),
+		coerce: nonSpecialToken$string(F.buildNonSpecialToken, C.coerceToStringLiteral)
+	},
+	rawString: {
+		strict: nonSpecialToken$rawString(F.buildNonSpecialToken, F.buildRawStringLiteral),
+		coerce: nonSpecialToken$rawString(F.buildNonSpecialToken, C.coerceToRawStringLiteral)
+	},
+	char: {
+		strict: nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.strict),
+		coerce: nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.coerce),
+		escaped: {
+			strict: nonSpecialToken$char$escaped(F.buildNonSpecialToken, charLiteral.escaped.strict),
+			coerce: nonSpecialToken$char$escaped(F.buildNonSpecialToken, charLiteral.escaped.coerce)
+		},
+		plain: {
+			strict: nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.strict),
+			coerce: nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.coerce)
+		},
+		empty: {
+			strict: nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.strict),
+			coerce: nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.coerce)
+		}
+	},
+	integer: {
+		strict: nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.strict),
+		coerce: nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.coerce),
+		decimal: {
+			strict: nonSpecialToken$integer$decimal(F.buildNonSpecialToken, integerLiteral.decimal.strict),
+			coerce: nonSpecialToken$integer$decimal(F.buildNonSpecialToken, integerLiteral.decimal.coerce)
+		},
+		hex: {
+			strict: nonSpecialToken$integer$hex(F.buildNonSpecialToken, integerLiteral.hex.strict),
+			coerce: nonSpecialToken$integer$hex(F.buildNonSpecialToken, integerLiteral.hex.coerce)
+		},
+		binary: {
+			strict: nonSpecialToken$integer$binary(F.buildNonSpecialToken, integerLiteral.binary.strict),
+			coerce: nonSpecialToken$integer$binary(F.buildNonSpecialToken, integerLiteral.binary.coerce)
+		},
+		octal: {
+			strict: nonSpecialToken$integer$octal(F.buildNonSpecialToken, integerLiteral.octal.strict),
+			coerce: nonSpecialToken$integer$octal(F.buildNonSpecialToken, integerLiteral.octal.coerce)
+		}
+	},
+	float: {
+		strict: nonSpecialToken$float(F.buildNonSpecialToken, F.buildFloatLiteral),
+		coerce: nonSpecialToken$float(F.buildNonSpecialToken, C.coerceToFloatLiteral)
+	},
+	identifier: {
+		strict: nonSpecialToken$identifier(F.buildNonSpecialToken, F.buildIdentifier),
+		coerce: nonSpecialToken$identifier(F.buildNonSpecialToken, C.coerceToIdentifier)
+	},
+	mutableSpecifier: {
+		strict: nonSpecialToken$mutableSpecifier(F.buildNonSpecialToken, TSKindId.MutableSpecifier),
+		coerce: nonSpecialToken$mutableSpecifier(C.coerceToNonSpecialToken, TSKindId.MutableSpecifier)
+	},
+	self: {
+		strict: nonSpecialToken$self(F.buildNonSpecialToken, TSKindId.Self),
+		coerce: nonSpecialToken$self(C.coerceToNonSpecialToken, TSKindId.Self)
+	},
+	super: {
+		strict: nonSpecialToken$super(F.buildNonSpecialToken, TSKindId.Super),
+		coerce: nonSpecialToken$super(C.coerceToNonSpecialToken, TSKindId.Super)
+	},
+	crate: {
+		strict: nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate),
+		coerce: nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate)
+	}
 };
 
 export const tokenPattern: {

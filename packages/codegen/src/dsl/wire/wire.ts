@@ -86,6 +86,7 @@ export interface WireContext {
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
+	readonly baseSupertypeNames: ReadonlySet<string>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 	readonly liftClaims: Map<string, Set<string>>;
 	activePatchSites: readonly string[];
@@ -230,6 +231,14 @@ function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, Ru
 	return baseRulesOf<RuntimeRule>(base) ?? {};
 }
 
+function baseSupertypeNamesOf(base: BaseArg | undefined): ReadonlySet<string> {
+	return symbolNamesOf(overriddenList(base?.grammar?.supertypes ?? base?.supertypes, undefined));
+}
+
+export function wireIsBaseSupertype(name: string): boolean {
+	return currentContext?.baseSupertypeNames.has(name) ?? false;
+}
+
 export function withWireContext<T>(
 	ruleKind: string | null,
 	fn: (ctx: WireContext) => T,
@@ -258,6 +267,7 @@ export function withWireContext<T>(
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
+		baseSupertypeNames: baseSupertypeNamesOf(base as BaseArg | undefined),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
 		activePatchSites: [],
@@ -449,6 +459,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
+		baseSupertypeNames: baseSupertypeNamesOf(baseArg),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
 		activePatchSites: [],
@@ -607,6 +618,22 @@ function assertNoDeclaredGroupPatches(patches: PatchesConfig, groups: GroupsConf
 			}
 		}
 	}
+}
+
+export function authoredFieldSites(patches: PatchesConfig | undefined): ReadonlyMap<string, readonly (readonly number[])[]> {
+	const sites = new Map<string, (readonly number[])[]>();
+	for (const [kind, entry] of Object.entries(patches ?? {})) {
+		if (!entry) continue;
+		for (const set of patchSetsOf(entry)) {
+			for (const [key, value] of Object.entries(set)) {
+				if (!isFieldPlaceholder(value)) continue;
+				const path = parsePath(key);
+				const indices = path.flatMap((segment) => (segment.kind === 'index' ? [segment.value] : []));
+				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), indices]);
+			}
+		}
+	}
+	return sites;
 }
 
 function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {

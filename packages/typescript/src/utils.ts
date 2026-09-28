@@ -83,7 +83,7 @@ export const methodsEngine = {
 		innerGaps: INNER_GAPS,
 		whitespace: {
 			run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-			kindIdByText: { ' ': 178, '\t': 179, '\n': 180, '\n\n': 181, '\n\n\n': 182 }
+			kindIdByText: { ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 }
 		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}

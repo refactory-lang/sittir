@@ -370,9 +370,10 @@ export const ir: {
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
 	readonly escapeSequence: typeof F.escapeSequence;
-	readonly integer: typeof F.integer;
 	readonly float: typeof F.float;
 	readonly lineContinuation: typeof F.lineContinuation;
+	readonly integerDecimal: typeof F.integerDecimal;
+	readonly integer: typeof F.integer;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -546,9 +547,10 @@ export const ir: {
 	suite: F.suite,
 	assignment: F.assignment,
 	escapeSequence: F.escapeSequence,
-	integer: F.integer,
 	float: F.float,
 	lineContinuation: F.lineContinuation,
+	integerDecimal: F.integerDecimal,
+	integer: F.integer,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,

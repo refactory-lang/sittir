@@ -2025,22 +2025,6 @@ export const escapeSequence: {
 	named: { strict: F.buildEscapeSequenceNamed, coerce: C.coerceToEscapeSequenceNamed }
 };
 
-export const integer: {
-	readonly strict: typeof F.buildIntegerDecimal;
-	readonly coerce: typeof C.coerceToIntegerDecimal;
-	readonly hex: { strict: typeof F.buildIntegerHex; coerce: typeof C.coerceToIntegerHex };
-	readonly octal: { strict: typeof F.buildIntegerOctal; coerce: typeof C.coerceToIntegerOctal };
-	readonly binary: { strict: typeof F.buildIntegerBinary; coerce: typeof C.coerceToIntegerBinary };
-	readonly decimal: { strict: typeof F.buildIntegerDecimal; coerce: typeof C.coerceToIntegerDecimal };
-} = {
-	strict: F.buildIntegerDecimal,
-	coerce: C.coerceToIntegerDecimal,
-	hex: { strict: F.buildIntegerHex, coerce: C.coerceToIntegerHex },
-	octal: { strict: F.buildIntegerOctal, coerce: C.coerceToIntegerOctal },
-	binary: { strict: F.buildIntegerBinary, coerce: C.coerceToIntegerBinary },
-	decimal: { strict: F.buildIntegerDecimal, coerce: C.coerceToIntegerDecimal }
-};
-
 export const float: {
 	readonly strict: typeof F.buildFloatPoint;
 	readonly coerce: typeof C.coerceToFloatPoint;
@@ -2065,4 +2049,37 @@ export const lineContinuation: {
 	coerce: C.coerceToLineContinuationNewline,
 	newline: { strict: F.buildLineContinuationNewline, coerce: C.coerceToLineContinuationNewline },
 	nul: { strict: F.buildLineContinuationNul, coerce: C.coerceToLineContinuationNul }
+};
+
+export const integerDecimal: {
+	readonly strict: typeof F.buildIntegerDecimalPlain;
+	readonly coerce: typeof C.coerceToIntegerDecimalPlain;
+	readonly long: { strict: typeof F.buildIntegerDecimalLong; coerce: typeof C.coerceToIntegerDecimalLong };
+	readonly imaginary: {
+		strict: typeof F.buildIntegerDecimalImaginary;
+		coerce: typeof C.coerceToIntegerDecimalImaginary;
+	};
+	readonly plain: { strict: typeof F.buildIntegerDecimalPlain; coerce: typeof C.coerceToIntegerDecimalPlain };
+} = {
+	strict: F.buildIntegerDecimalPlain,
+	coerce: C.coerceToIntegerDecimalPlain,
+	long: { strict: F.buildIntegerDecimalLong, coerce: C.coerceToIntegerDecimalLong },
+	imaginary: { strict: F.buildIntegerDecimalImaginary, coerce: C.coerceToIntegerDecimalImaginary },
+	plain: { strict: F.buildIntegerDecimalPlain, coerce: C.coerceToIntegerDecimalPlain }
+};
+
+export const integer: {
+	readonly strict: typeof F.buildIntegerDecimalPlain;
+	readonly coerce: typeof C.coerceToIntegerDecimalPlain;
+	readonly hex: { strict: typeof F.buildIntegerHex; coerce: typeof C.coerceToIntegerHex };
+	readonly octal: { strict: typeof F.buildIntegerOctal; coerce: typeof C.coerceToIntegerOctal };
+	readonly binary: { strict: typeof F.buildIntegerBinary; coerce: typeof C.coerceToIntegerBinary };
+	readonly decimal: typeof integerDecimal;
+} = {
+	strict: F.buildIntegerDecimalPlain,
+	coerce: C.coerceToIntegerDecimalPlain,
+	hex: { strict: F.buildIntegerHex, coerce: C.coerceToIntegerHex },
+	octal: { strict: F.buildIntegerOctal, coerce: C.coerceToIntegerOctal },
+	binary: { strict: F.buildIntegerBinary, coerce: C.coerceToIntegerBinary },
+	decimal: integerDecimal
 };

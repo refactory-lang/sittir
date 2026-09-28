@@ -260,6 +260,24 @@
     ]
   },
   {
+    "type": "integer_decimal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_decimal_imaginary",
+        "named": true
+      },
+      {
+        "type": "integer_decimal_long",
+        "named": true
+      },
+      {
+        "type": "integer_decimal_plain",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "parameter",
     "named": true,
     "subtypes": [
@@ -4890,7 +4908,15 @@
     "named": true
   },
   {
-    "type": "integer_decimal",
+    "type": "integer_decimal_imaginary",
+    "named": true
+  },
+  {
+    "type": "integer_decimal_long",
+    "named": true
+  },
+  {
+    "type": "integer_decimal_plain",
     "named": true
   },
   {

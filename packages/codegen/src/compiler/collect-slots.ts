@@ -3,9 +3,11 @@ import {
 	CHOICE,
 	FIELD,
 	OPTIONAL,
+	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
+	STRING,
 	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
@@ -286,7 +288,7 @@ function isSlotNode(rule: SimplifiedRule): boolean {
 	return isNonterminalRuleType(rule);
 }
 
-export type SlotDeriveCtx = Pick<DeriveCtx, 'kindEntries' | 'simplifiedRules'>;
+export type SlotDeriveCtx = Pick<DeriveCtx, 'kindEntries' | 'simplifiedRules' | 'lexical'>;
 
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
@@ -407,6 +409,9 @@ export function collectSlots(
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
 	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal[] {
+	if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN && deriveCtx?.lexical !== true) {
+		return collectSlots(rule, kindForName, { ...deriveCtx, lexical: true }, inherited, inheritedSeparator, diagnostics);
+	}
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;

@@ -117,6 +117,31 @@ function claimantOf(entry: SubFactory): string {
 	return [entry.arm.child.kind, ...entry.arm.path].join('.');
 }
 
+export function variantArmsOf(node: AssembledSupertype): readonly { readonly name: string; readonly ref: NodeBackedRef }[] {
+	return (node.variantSubtypes ?? []).map((ref) => ({ name: lowerCamelCase(ref.variant!), ref }));
+}
+
+function isCallableArm(child: AssembledNode, isEmitted: IsEmittedPredicate): boolean {
+	if (child instanceof AssembledSupertype) return child.variantSubtypes !== undefined;
+	return child.rawFactoryName !== undefined && isEmitted(child.kind) && (isSlotBearingCompound(child) || isTextLeaf(child));
+}
+
+interface InnerArm {
+	readonly name: string;
+	readonly depth: number;
+	readonly leaf?: AssembledNode;
+}
+
+function innerArmsOf(child: AssembledNode, nodeMap: NodeMap, isEmitted: IsEmittedPredicate, visiting: ReadonlySet<string>): readonly InnerArm[] {
+	if (child instanceof AssembledSupertype) {
+		return variantArmsOf(child).flatMap(({ name, ref }) => {
+			const leaf = nodeMap.nodes.get(storageKindOfRef(ref.node));
+			return leaf === undefined ? [] : [{ name, depth: DIRECT, leaf }];
+		});
+	}
+	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => ({ name: inner.name, depth: inner.depth, ...leafOf(inner) }));
+}
+
 function nestedArmsOf(
 	host: SubFactory,
 	nodeMap: NodeMap,
@@ -125,11 +150,11 @@ function nestedArmsOf(
 ): SubFactory[] {
 	if (host.arm.via !== 'node' || visiting.has(host.arm.child.kind)) return [];
 	const child = host.arm.child;
-	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => ({
+	return innerArmsOf(child, nodeMap, isEmitted, visiting).map((inner) => ({
 		name: `${host.name}$${inner.name}`,
 		slot: host.slot,
 		residual: host.residual,
-		arm: { via: 'node', child, path: [inner.name], ...leafOf(inner) },
+		arm: { via: 'node', child, path: [inner.name], ...(inner.leaf === undefined ? {} : { leaf: inner.leaf }) },
 		depth: inner.depth + NESTED,
 		merges: false
 	}));
@@ -161,10 +186,8 @@ function derive(
 				continue;
 			}
 			const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
-			if (child !== undefined && child.rawFactoryName !== undefined && isEmitted(child.kind)) {
-				if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
+			if (child !== undefined && isCallableArm(child, isEmitted)) {
 				direct.push({ name, slot, residual, arm: { via: 'node', child, path: [] }, depth: DIRECT, merges: false });
-				continue;
 			}
 		}
 	}

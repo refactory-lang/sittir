@@ -3762,12 +3762,6 @@ describe('literal_type sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('bigint builds the parent', () => {
-		const node = ir.literalType.bigint('1');
-		expect(node.$type).toBe(TSKindId.LiteralType);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 	it('double builds the parent', () => {
 		const node = ir.literalType.double({
 			$type: TSKindId.UnescapedDoubleStringFragment,

@@ -237,7 +237,7 @@ export function numericLeafKinds(nodeMap: NodeMap): readonly string[] {
 	const defaults = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledSupertype)) continue;
-		const chosen = (node.variantSubtypes ?? []).find((ref) => ref.default === true);
+		const chosen = node.defaultVariantSubtype;
 		if (chosen !== undefined) defaults.add(storageKindOfRef(chosen.node));
 	}
 	const found = [...numberSignatures(nodeMap)].filter(([, signature]) => signature === 'decimal' || signature === 'float').map(([kind]) => kind);

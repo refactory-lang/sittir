@@ -2081,10 +2081,9 @@ function resolveLiteralKindId(
 		return literal.resolvedKindId;
 	}
 	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
-	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
-	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
 	const isKindDerived = literal.kind !== literal.text;
-	const id = isKindDerived ? (byKind() ?? byText()) : (byText() ?? byKind());
+	if (!isKindDerived) return undefined;
+	const id = findKindEntry(kindEntries, literal.kind)?.id ?? findKindEntryForLiteral(kindEntries, literal.text)?.id;
 	if (id === undefined && isKindDerived && hasCatalogEntry(kindEntries, literal.kind)) {
 		throw new Error(
 			`resolveLiteralKindId: kind-derived literal '${literal.kind}' (text ${JSON.stringify(literal.text)}) ` +

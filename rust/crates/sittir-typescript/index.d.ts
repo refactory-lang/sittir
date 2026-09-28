@@ -1131,7 +1131,25 @@ export interface NonNullExpressionTransport {
   _expression: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface NumberBigintTransport {
+export interface NumberBigintBinaryTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: string
+}
+
+export interface NumberBigintDecimalTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: string
+}
+
+export interface NumberBigintHexTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: string
+}
+
+export interface NumberBigintOctalTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: string

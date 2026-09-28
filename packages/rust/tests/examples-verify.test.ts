@@ -228,7 +228,7 @@ describe('ir entry ratchet', () => {
 		// End, the comment-content patterns — are on the surface; the
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(178);
+		expect(builders.length).toBeLessThanOrEqual(179);
 	});
 });
 

@@ -1067,7 +1067,7 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(misses.symbols.size).toBe(0);
 	});
 
-	it('resolves a lexed-interior field literal to an anonymous token kind only, never to a named rule', () => {
+	it('leaves a lexed-interior field literal as text: the parser emits no node inside a token', () => {
 		const entries: GeneratedKindEntry[] = [
 			{ kind: 'blank_identifier', id: 5, literalRule: true, literalText: '_' },
 			{ kind: 'u8_keyword', id: 6, anon: true, symbolName: 'u8', literalText: 'u8' }
@@ -1089,7 +1089,7 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		};
 		const [separator, suffix] = result.content.members;
 		expect(separator!.content).toMatchObject({ type: STRING, value: '_' });
-		expect(suffix!.content).toMatchObject({ type: SYMBOL, name: 'u8_keyword' });
+		expect(suffix!.content).toMatchObject({ type: STRING, value: 'u8' });
 	});
 });
 

@@ -461,7 +461,7 @@ export function canonicalizeRuleLiterals(
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, syntactic, aliasBodies)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, syntactic, misses, syntactic, aliasBodies)
 			};
 		case ALIAS: {
 			const content = canonicalizeRuleLiterals(

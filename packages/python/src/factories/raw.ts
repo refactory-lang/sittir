@@ -65,7 +65,9 @@ const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWor
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildIntegerDecimal = /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u;
+const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
+const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
+const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
 const _leafRe_buildStringFragment = /^(?:(?:[^"'\\{}\n]+))$/u;
@@ -187,7 +189,7 @@ export function buildImportStatement(...args: unknown[]) {
 function _buildImportStatement(value: T.Names | T.Names.Types): T.ImportStatement.Built {
 	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(
 		rejectBareText(value, 'ImportStatement.names', 'a built Names'),
-		[[[133], (v: unknown) => buildNames(v as never)]]
+		[[[135], (v: unknown) => buildNames(v as never)]]
 	);
 	return withMethods(
 		withAccessors(
@@ -2353,8 +2355,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 		[
 			[
 				[
-					210, 204, 205, 211, 254, 206, 1, 68, 38, 69, 70, 39, 22, 245, 244, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73,
-					207, 218, 219, 221, 230, 235, 233, 236, 231, 237, 232, 239, 238, 64, 198, 243, 140, 200
+					212, 206, 207, 213, 256, 208, 1, 68, 38, 69, 70, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 71, 72,
+					73, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
 				],
 				(v: unknown) => buildAsPatternTarget(v as never)
 			]
@@ -3776,7 +3778,7 @@ export function buildFormatSpecifier(
 	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
 ): T.FormatSpecifier.Built {
 	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
-		[[247], (v: unknown) => buildFormatExpression(v as never)]
+		[[249], (v: unknown) => buildFormatExpression(v as never)]
 	]);
 	return withMethods(
 		withAccessors(
@@ -4973,13 +4975,44 @@ export function buildIntegerBinary(
 	);
 }
 
-export function buildIntegerDecimal(text: string | number | bigint): T.IntegerDecimal.Built {
-	text = numberText(10, '', text);
-	if (text.length === 0) throw new Error(`integer_decimal: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimal.test(text)) throw new Error(`integer_decimal: text does not match pattern: ${text}`);
+export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Built {
+	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
+	if (!_leafRe_buildIntegerDecimalLong.test(text))
+		throw new Error(`integer_decimal_long: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.IntegerDecimal as const,
+			$type: TSKindId.IntegerDecimalLong as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Built {
+	if (text.length === 0) throw new Error(`integer_decimal_imaginary: text must be non-empty`);
+	if (!_leafRe_buildIntegerDecimalImaginary.test(text))
+		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.IntegerDecimalImaginary as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildIntegerDecimalPlain(text: string | number | bigint): T.IntegerDecimalPlain.Built {
+	text = numberText(10, '', text);
+	if (text.length === 0) throw new Error(`integer_decimal_plain: text must be non-empty`);
+	if (!_leafRe_buildIntegerDecimalPlain.test(text))
+		throw new Error(`integer_decimal_plain: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.IntegerDecimalPlain as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -6165,7 +6198,9 @@ export type FluentKindMap = {
 	integer_hex: T.IntegerHex.Built;
 	integer_octal: T.IntegerOctal.Built;
 	integer_binary: T.IntegerBinary.Built;
-	integer_decimal: T.IntegerDecimal;
+	integer_decimal_long: T.IntegerDecimalLong;
+	integer_decimal_imaginary: T.IntegerDecimalImaginary;
+	integer_decimal_plain: T.IntegerDecimalPlain;
 	float_point: T.FloatPoint.Built;
 	float_leading_point: T.FloatLeadingPoint.Built;
 	float_scientific: T.FloatScientific.Built;
@@ -6360,7 +6395,9 @@ export const _factoryMap = {
 	integer_hex: buildIntegerHex,
 	integer_octal: buildIntegerOctal,
 	integer_binary: buildIntegerBinary,
-	integer_decimal: buildIntegerDecimal,
+	integer_decimal_long: buildIntegerDecimalLong,
+	integer_decimal_imaginary: buildIntegerDecimalImaginary,
+	integer_decimal_plain: buildIntegerDecimalPlain,
 	float_point: buildFloatPoint,
 	float_leading_point: buildFloatLeadingPoint,
 	float_scientific: buildFloatScientific,

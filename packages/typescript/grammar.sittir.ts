@@ -331,7 +331,11 @@ export default sittirGrammar(base, {
 			4: variant('decimal', { default: true }),
 			5: variant('binary'),
 			6: variant('octal'),
-			7: variant('bigint')
+			7: variant('bigint'),
+			'7/0': variant('hex'),
+			'7/1': variant('binary'),
+			'7/2': variant('octal'),
+			'7/3': variant('decimal', { default: true })
 		},
 		hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 		binary_expression: {
@@ -650,7 +654,7 @@ export default sittirGrammar(base, {
 		template_substitution: { 0: token.immediate('${'), 1: field('expression') },
 
 		update_expression: {
-			0: variant('postfix'),
+			0: variant('postfix', { default: true }),
 			1: variant('prefix')
 		},
 

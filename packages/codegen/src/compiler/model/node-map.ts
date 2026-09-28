@@ -510,6 +510,7 @@ export interface DeriveCtx {
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase>;
 	readonly stampArmFieldNamesAsParseName?: boolean;
+	readonly lexical?: boolean;
 	readonly diagnostics?: AssembleDiagnosticsCollector;
 }
 
@@ -718,6 +719,7 @@ export function deriveValuesForRule(
 	ctx: DeriveCtx | undefined,
 	multiplicity: Multiplicity
 ): NodeOrTerminal[] {
+	const inner: DeriveCtx | undefined = rule.tokenized === true && ctx?.lexical !== true ? { ...ctx, lexical: true } : ctx;
 	switch (rule.type) {
 		case SYMBOL: {
 			const armFacts = armFactsOf(
@@ -825,7 +827,7 @@ export function deriveValuesForRule(
 					}
 				];
 			}
-			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			const entry = ctx?.lexical === true ? undefined : findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
 			const rk = entry?.kind;
 			return [
 				{
@@ -846,7 +848,7 @@ export function deriveValuesForRule(
 					const text = literalTextOf(m) ?? '';
 					const symName = isLinkSymbol(m) ? m.name : undefined;
 					const entry =
-						(text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined) ??
+						(text && inner?.lexical !== true ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined) ??
 						(symName !== undefined ? findEntryForKindName(ctx?.kindEntries ?? [], symName) : undefined);
 					const rk = entry?.kind ?? symName;
 					return {
@@ -871,16 +873,16 @@ export function deriveValuesForRule(
 							: multiplicity
 					: multiplicity;
 			if (!ctx?.stampArmFieldNamesAsParseName) {
-				return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
+				return nonBlank.flatMap((m) => deriveValuesForRule(m, inner, armMult));
 			}
 			return nonBlank.flatMap((m) => {
-				const values = deriveValuesForRule(m, ctx, armMult);
+				const values = deriveValuesForRule(m, inner, armMult);
 				const fieldName = m.fieldName;
 				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
 			});
 		}
 		case SEQ:
-			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
+			return rule.members.flatMap((m) => deriveValuesForRule(m, inner, multiplicity));
 		default:
 			return [];
 	}
@@ -1211,6 +1213,13 @@ export function concreteKindsOf(kind: string, ctx: NodesCtx): string[] {
 		return [...concrete];
 	};
 	return walk(kind);
+}
+
+export function defaultConcreteKindOf(kind: string, ctx: NodesCtx): string | undefined {
+	const node = ctx.nodes.get(kind);
+	if (!(node instanceof AssembledSupertype)) return kind;
+	const chosen = node.defaultVariantSubtype;
+	return chosen === undefined ? undefined : defaultConcreteKindOf(storageKindOfRef(chosen.node), ctx);
 }
 
 export function kindsOf(slot: AssembledNonterminal): readonly string[] {
@@ -1863,6 +1872,7 @@ export type CompoundModelType = 'envelope' | 'branch' | 'polymorph' | 'alias';
 export interface CompoundModelTypeCtx {
 	readonly simplifiedRules: Readonly<Record<string, SimplifiedRule>>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly variantParents?: ReadonlySet<string>;
 }
 
 export function compoundModelTypeFor(
@@ -1876,8 +1886,10 @@ export function compoundModelTypeFor(
 	if (body.type === SEQ && body.members.length === 0) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
-	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember))
+	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) {
+		if (body.fieldName !== undefined && ctx.variantParents?.has(kind) !== true) return 'branch';
 		return isAliasedHiddenStorage(kind, ctx.kindEntries) ? 'envelope' : 'polymorph';
+	}
 	return 'branch';
 }
 
@@ -2163,6 +2175,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined)
 			? refs
 			: undefined;
+	}
+
+	get defaultVariantSubtype(): NodeBackedRef | undefined {
+		return this.variantSubtypes?.find((ref) => ref.default === true);
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

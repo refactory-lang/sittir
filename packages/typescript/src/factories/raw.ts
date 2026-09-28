@@ -60,8 +60,10 @@ const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
 const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
 const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
 const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
-const _slotRe_buildNumberBigint_content =
-	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*)))$/u;
+const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
+const _slotRe_buildNumberBigintOctal_content = /^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$/u;
+const _slotRe_buildNumberBigintDecimal_content = /^(?:(?:\d(_?\d)*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(config?: Partial<T.Program.Config>): T.Program.Built;
@@ -4640,7 +4642,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[358], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[361], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	return withMethods(
 		withAccessors(
@@ -8278,19 +8280,88 @@ export function buildNumberOctal(
 	);
 }
 
-export function buildNumberBigint(value: string | number | bigint): T.NumberBigint.Built {
+export function buildNumberBigintHex(value: string | number | bigint): T.NumberBigintHex.Built {
 	const _content = numberText(16, '0x', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigint_content.test(_content))
-		throw new Error(`number_bigint.content: text does not match pattern: ${_content}`);
+	if (_content !== undefined && !_slotRe_buildNumberBigintHex_content.test(_content))
+		throw new Error(`number_bigint_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.NumberBigint as const,
+				$type: TSKindId.NumberBigintHex as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: string | number | bigint) => buildNumberBigint(value)
+					content: (value: string | number | bigint) => buildNumberBigintHex(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintBinary(value: string | number | bigint): T.NumberBigintBinary.Built {
+	const _content = numberText(2, '0b', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintBinary_content.test(_content))
+		throw new Error(`number_bigint_binary.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintBinary as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintBinary(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintOctal(value: string | number | bigint): T.NumberBigintOctal.Built {
+	const _content = numberText(8, '0o', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintOctal_content.test(_content))
+		throw new Error(`number_bigint_octal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintOctal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintOctal(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintDecimal(value: string | number | bigint): T.NumberBigintDecimal.Built {
+	const _content = numberText(10, '', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintDecimal_content.test(_content))
+		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintDecimal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintDecimal(value)
 				}
 			},
 			{
@@ -10558,7 +10629,10 @@ export type FluentKindMap = {
 	number_decimal: T.NumberDecimal;
 	number_binary: T.NumberBinary.Built;
 	number_octal: T.NumberOctal.Built;
-	number_bigint: T.NumberBigint.Built;
+	number_bigint_hex: T.NumberBigintHex.Built;
+	number_bigint_binary: T.NumberBigintBinary.Built;
+	number_bigint_octal: T.NumberBigintOctal.Built;
+	number_bigint_decimal: T.NumberBigintDecimal.Built;
 	binary_expression_in: T.BinaryExpressionIn.Built;
 	empty_member: T.EmptyMember;
 	class_body_method: T.ClassBodyMethod.Built;
@@ -10813,7 +10887,10 @@ export const _factoryMap = {
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,
-	number_bigint: buildNumberBigint,
+	number_bigint_hex: buildNumberBigintHex,
+	number_bigint_binary: buildNumberBigintBinary,
+	number_bigint_octal: buildNumberBigintOctal,
+	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
 	empty_member: buildEmptyMember,
 	class_body_method: buildClassBodyMethod,
