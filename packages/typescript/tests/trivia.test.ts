@@ -16,6 +16,13 @@ describe('$trivia() on the typescript surface', () => {
 		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
 	});
 
+	it("writes an own-line trailing entry before the owner's separator, never in place of it", () => {
+		const statement = (name: string) => ir.expressionStatement(ir.identifier(name));
+		const trailing = (comment: unknown) => ir.program({ statements: [statement('a').$trivia.trailing(comment as never), statement('b')] });
+		expect(trailing(ir.comment.block(' c ')).$render()).toBe('a;\n/* c */\n\nb;');
+		expect(trailing(ir.comment.line(' c')).$render()).toBe('a;\n// c\n\nb;');
+	});
+
 	it('reads a loose block spelling as line-comment text, never as a block comment', () => {
 		expect(makeFn('f').$trivia('/* x */').$render()).toBe('///* x */\nfunction f() {}');
 	});

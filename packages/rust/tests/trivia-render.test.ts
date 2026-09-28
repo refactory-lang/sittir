@@ -20,6 +20,13 @@ describe('built trivia layout', () => {
 		expect(block.$render()).toBe('{\n    a;\n    // x\n    b;\n}');
 	});
 
+	it("writes an own-line trailing entry before the owner's separator, never in place of it", () => {
+		const fn = (name: string) => ir.functionItem({ name, parameters: ir.parameters(), body: ir.block() });
+		const trailing = (comment: unknown) => ir.sourceFile({ statements: [fn('g').$trivia.trailing(comment as never), fn('h')] });
+		expect(trailing(ir.blockComment(' t ')).$render()).toBe('fn g() {}\n/* t */\n\nfn h() {}');
+		expect(trailing(ir.lineComment(' t')).$render()).toBe('fn g() {}\n// t\n\nfn h() {}');
+	});
+
 	it('gives a blankline leading entry exactly one blank line', () => {
 		const block = ir.block({ statements: [statement('a'), statement('b').$trivia.leading(ir.whitespace.blankline())] });
 		expect(block.$render()).toBe('{\n    a;\n\n    b;\n}');

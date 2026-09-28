@@ -603,6 +603,38 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.line_end_held = true;
     }
 
+    fn take_seam(&mut self) -> Option<crate::render::HeldSeam> {
+        self.seam.take()?;
+        Some(crate::render::HeldSeam {
+            text: std::mem::take(&mut self.seam_text),
+            strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            token: std::mem::replace(&mut self.seam_is_token, false),
+        })
+    }
+
+    fn restore_seam(&mut self, mut held: crate::render::HeldSeam) {
+        if self.at_line_start() && held.text.starts_with('\n') {
+            held.text.remove(0);
+            if held.text.is_empty() {
+                return;
+            }
+        }
+        if crate::render::RenderSink::pending_break(self) && held.text.contains('\n') {
+            let rank = seam_rank(&held.text);
+            if self.seam.is_some_and(|current| rank > current) {
+                self.seam = Some(rank);
+                self.seam_text = held.text;
+            }
+            self.seam_strength = self.seam_strength.max(held.strength);
+            return;
+        }
+        let was = (self.seam, self.seam_strength);
+        self.merge_seam_with(&held.text, held.strength);
+        if held.token && (self.seam, self.seam_strength) != was {
+            self.seam_is_token = true;
+        }
+    }
+
     fn defer_trailing(
         &mut self,
         render: &mut dyn FnMut(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult,

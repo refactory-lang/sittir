@@ -201,7 +201,8 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
     /// same-line entry with no tokens between it and its owner is seated
     /// right after the owner; one after tokens is held past the tokens that
     /// follow the owner. Own-line entries seat the held ones first, then each
-    /// renders on its own line.
+    /// renders on its own line, and the seam the owner left (its after edge)
+    /// is written after them.
     pub fn render_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
         let own = trailing
@@ -223,6 +224,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
         }
         if !own_line.is_empty() {
             w.seat_trailing()?;
+            let owner_seam = w.take_seam();
             let mut gap_set = false;
             let mut after_entry = false;
             for entry in own_line {
@@ -236,6 +238,9 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
                 }
                 entry.render_entry(w)?;
                 after_entry = true;
+            }
+            if let Some(seam) = owner_seam {
+                w.restore_seam(seam);
             }
         }
         Ok(())

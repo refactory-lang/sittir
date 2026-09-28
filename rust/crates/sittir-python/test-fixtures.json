@@ -147151,9 +147151,9 @@
     "sourceIn": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\\\n\\\n",
+    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (typed_parameter name: (list_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (typed_parameter name: (dictionary_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer_decimal)) parameter: (dictionary_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (list_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
-    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\\\n\\\n",
+    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -148227,7 +148227,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def foo():\n    pass \\\n\n\\\n\\\n"
+    "expectedOutput": "def foo():\n    pass \\\n\\\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -148235,9 +148235,9 @@
     "sourceIn": "def foo():\n    pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo():\n    pass \\\n\n\\\n\\\n",
+    "expectedSourceOut": "def foo():\n    pass \\\n\\\n\\\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))",
-    "wrappedText": "def foo():\n    pass \\\n\n\\\n\\\n",
+    "wrappedText": "def foo():\n    pass \\\n\\\n\\\n",
     "wrappedOffset": 0
   },
   {

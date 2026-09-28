@@ -56,6 +56,19 @@ describe('read trivia layout, rendered detached', () => {
 		expect(engine.render(data as never as AnyNodeData).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
+	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
+		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}');
+	});
+
+	it("detached read seats an own-line comment as the next owner's leading entry", async () => {
+		const rust = await detachedRenderer('rust');
+		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n\n/* t */\nfn h() {}');
+		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n\n// t\nfn h() {}');
+		const typescript = await detachedRenderer('typescript');
+		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n\n/* c */\nb;');
+		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n\n// c\nb;');
+	});
+
 	it('lays root entries one per line, since the root gap starts a line', async () => {
 		const render = await detachedRenderer('rust');
 		expect(render('/* a */\n/* Comment */\n')).toBe('/* a */\n/* Comment */');
