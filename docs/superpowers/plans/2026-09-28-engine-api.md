@@ -74,6 +74,7 @@ import type { EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/
 export interface LanguageAPI {
   readonly name: string;
   readonly build: object;
+  readonly strictBuild: object;    // the strict flavour of every builder
   readonly is: object;
   readonly kinds: object;
   readonly types: object;          // kind name → node type, type-only
@@ -91,6 +92,7 @@ export interface Language<API extends LanguageAPI> {
 export interface LanguageHooks<API extends LanguageAPI> {
   readonly name: API['name'];
   readonly build: API['build'];
+  readonly strictBuild: API['strictBuild'];
   readonly is: API['is'];
   readonly kinds: API['kinds'];
   readonly trivia: TriviaFacts;    // today's methodsEngine.trivia; the stamp engine's facts
@@ -119,9 +121,9 @@ export interface Pending extends PromiseLike<void>, AsyncDisposable {
   diff(): { path: string; before: string | undefined; after: string };
 }
 
-export interface Engine<API extends LanguageAPI> {
+export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   readonly language: API['name'];
-  readonly build: API['build'];
+  readonly build: M extends 'strict' ? API['strictBuild'] : M extends 'portable' ? never : API['build'];
   readonly is: API['is'];
   readonly kinds: API['kinds'];
   readonly types: API['types'];
@@ -135,7 +137,10 @@ export interface Engine<API extends LanguageAPI> {
   dispose(): void;
 }
 
-export interface EngineOptions<API extends LanguageAPI> {
+export type ApiSurface = 'default' | 'strict' | 'portable';
+
+export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
+  api?: M;
   render?: API['options'];
   format?: FormatRecord;
   intercept?: readonly Interceptor<API>[];
@@ -330,7 +335,7 @@ git commit -m "feat(common): nodes carry the engine that built or read them" -- 
 
 **Interfaces:**
 - Consumes: Task 1's types; Task 2's `runWithEngine`, `stamp`, `engineOf`.
-- Produces: `createEngine<API>(language: Language<API>, options?: EngineOptions<API>): Promise<Engine<API>>`, and the internal `assembleEngine(hooks, options, files)` that Task 5 reuses with a project's file set.
+- Produces: `createEngine<API, const M extends ApiSurface = 'default'>(language: Language<API>, options?: EngineOptions<API, M>): Promise<Engine<API, M>>`, and the internal `assembleEngine(hooks, options, files)` that Task 5 reuses with a project's file set.
 
 Behaviour:
 - `load()` is cached per descriptor object in a `WeakMap<Language, Promise<LanguageHooks>>`. A rejected load is not cached. `createEngine` rejects with `failed to load language "<name>"` and the original error as `cause`.
@@ -341,6 +346,7 @@ Behaviour:
   - A node with no stamp, or one from another language, throws `node belongs to language "<x>", not "<y>"` (checked from `engineOf(node).language`).
   - If the node is from a different engine of the same language and its coordinates name that engine's tree (`!native.holdsTree(tree)`), it's rendered by that owning engine with this engine's options merged under the call's. Otherwise it's rendered here.
   - The result is a disposable `Rendered`.
+- **`api`:** `'default'` proxies `hooks.build`, and `'strict'` proxies `hooks.strictBuild`. `'portable'` rejects before `load()` with `api "portable" is not implemented`.
 - **Options:** `createNative` receives `{ render, format }`. Per-call render options are flat and merged over `options.render` key by key.
 - **Interceptors:** `composeInterceptors(list)` builds one chain per operation (first is outermost) when the engine is created. The `build` proxy's per-function wrapper, `render`, `parse` and (Task 4) the file commit call through the chain. With an empty list the chain is the identity, and no extra wrapper is allocated.
 - **`timing()`** (`packages/common/src/interceptors.ts`) is the built-in timing interceptor. It records through `metrics.ts`'s existing recorder, and the `SITTIR_METRICS` environment check is removed. Its callers go in Task 6 with `boundary.ts`.
@@ -360,6 +366,10 @@ function fakeLanguage(label: string) {
     build: {
       leaf: (text: string) => ({ $type: 1, text }),
       number: { bigint: (v: bigint) => ({ $type: 2, v }) },
+    },
+    strictBuild: {
+      leaf: (text: string) => ({ $type: 1, text, strict: true }),
+      number: { bigint: (v: bigint) => ({ $type: 2, v, strict: true }) },
     },
     is: {}, kinds: { Leaf: 1 },
     trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
@@ -425,6 +435,13 @@ describe('createEngine', () => {
     } as never) as any;
     e.build.number.bigint(1n);
     expect(seen).toEqual(['outer:number.bigint', 'inner:number.bigint']);
+  });
+
+  it('selects the strict surface and rejects portable', async () => {
+    const e = await createEngine(fakeLanguage('x').language as never, { api: 'strict' } as never) as any;
+    expect(e.build.leaf('a')).toMatchObject({ strict: true });
+    await expect(createEngine(fakeLanguage('x').language as never, { api: 'portable' } as never))
+      .rejects.toThrow('api "portable" is not implemented');
   });
 
   it('merges flat per-call render options over the engine options', async () => {
@@ -672,7 +689,7 @@ export default language;
 
 Use `const rust: Language<RustAPI> = { name: 'rust', load: … }` if it type-checks without a cast. The `__api` brand is optional, so a plain object literal should satisfy it; prefer that over the cast.
 
-- The generated `api-types.ts` declares `RustAPI extends LanguageAPI`: `build: typeof ir`, `is: typeof is`, `kinds: typeof TSKindId`, `types: KindTypeMap` (one emitted map from kind name to node type, the same map the static exports read), `root: SourceFile`, `node: AnyNode`, `options: Options & IndentOption<string, IndentChar>`.
+- The generated `api-types.ts` declares `RustAPI extends LanguageAPI`: `build: typeof ir`, `strictBuild` (the strict flavour of every builder, as one emitted namespace mirroring `ir`'s paths: today's `ir.x.strict` at `strictBuild.x`, variants included), `is: typeof is`, `kinds: typeof TSKindId`, `types: KindTypeMap` (one emitted map from kind name to node type, the same map the static exports read), `root: SourceFile`, `node: AnyNode`, `options: Options & IndentOption<string, IndentChar>`.
 - The generated `api.ts` exports `hooks: LanguageHooks<RustAPI>`, which wires `build: ir`, `is`, `kinds: TSKindId`, `createNative` (today's `createRenderEngine` body plus `parseAndRead` and `holdsTree`), and `wrap: wrapNode`.
 
 - [ ] **Step 1: Write the failing grammar-level test**

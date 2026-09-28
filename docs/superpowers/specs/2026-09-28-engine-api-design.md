@@ -58,10 +58,10 @@ type F = typeof rs.types.functionItem;         // = FunctionItem
 ### `createEngine`
 
 ```ts
-export async function createEngine<API extends LanguageAPI>(
+export async function createEngine<API extends LanguageAPI, const M extends ApiSurface = 'default'>(
   language: Language<API>,
-  options?: EngineOptions<API>,
-): Promise<Engine<API>>
+  options?: EngineOptions<API, M>,
+): Promise<Engine<API, M>>
 ```
 
 - It lives in `@sittir/common`, which is its one public runtime entry. `Language`,
@@ -71,12 +71,27 @@ export async function createEngine<API extends LanguageAPI>(
 - **Engine options** group by concern:
 
   ```ts
-  interface EngineOptions<API extends LanguageAPI> {
+  interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
+    api?: M;                                     // which builder surface `build` exposes
     render?: API['options'];                     // the render options (site preferences, indent)
     format?: FormatRecord;
     intercept?: readonly Interceptor<API>[];
   }
+  type ApiSurface = 'default' | 'strict' | 'portable';
   ```
+
+- **`api` selects the builder surface** that `engine.build` exposes, and the engine's
+  `build` type follows it (`Engine<API, M>`):
+  - `'default'` (the default): today's builders, which coerce loose input
+    (strings, plain objects, numbers), with the `.strict` flavour still reachable on
+    each.
+  - `'strict'`: the strict flavour directly (`build.x` is today's `ir.x.strict`). Loose
+    input is a type error and throws.
+  - `'portable'`: reserved for the portability surface. It is not implemented: its
+    `build` type is `never`, and `createEngine` rejects with
+    `api "portable" is not implemented`.
+  `API` carries both surfaces (`build` and `strictBuild`), so the choice is a lookup,
+  not a second generated package.
 
 - **Interceptors** wrap the engine's operations like middleware, for logging,
   instrumentation and tooling:
@@ -106,9 +121,9 @@ export async function createEngine<API extends LanguageAPI>(
 ### The engine
 
 ```ts
-interface Engine<API extends LanguageAPI> {
+interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   readonly language: API['name'];
-  readonly build: API['build'];
+  readonly build: M extends 'strict' ? API['strictBuild'] : M extends 'portable' ? never : API['build'];
   readonly is: API['is'];
   readonly kinds: API['kinds'];
   readonly types: API['types'];
@@ -129,7 +144,7 @@ interface Engine<API extends LanguageAPI> {
 }
 ```
 
-- **`build`** is today's `ir` namespace, bound to this engine.
+- **`build`** is the builder surface `api` selects, bound to this engine.
 - **`is`** is today's guards. **`kinds`** is today's kind-id enum (`TSKindId.Comma`
   becomes `rs.kinds.Comma`).
 - **`types`** is type-only: a phantom member mapping each kind to its node type, for
@@ -303,6 +318,8 @@ engine surface.
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
 - Two languages in one program share no state.
+- `api`: `'strict'` exposes the strict flavour as `build.x` and rejects loose input
+  (type and runtime); `'portable'` rejects at creation.
 - Interceptors: the order is first-outermost; a `build` interceptor sees nested variant
   builders; a `file` interceptor that skips `next` blocks the write; with none, no
   function is wrapped; `timing()` records what `SITTIR_METRICS` recorded.
