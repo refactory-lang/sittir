@@ -1,10 +1,10 @@
 {
   "grammar": "typescript",
-  "source_hash": "8277a0f4ee0ec22f6caaf07cc4c0b7961acfceacfa401d1f0cf661ef20856b40",
+  "source_hash": "2ffdcaf51727259e6924eab7c5e980cdd7ef9262d6ef3450279c5018cc0a79a2",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "00084035e8f7966c76b4bd1691d214fcd08a0d1493a95a52691b249036e5b119",
-    "packages/typescript/.sittir/grammar.js": "023efbbe9e3891d33e344c789116a20064e82c5ba9ac94ea7269ebf38a661a25",
-    "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
+    "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
+    "packages/typescript/.sittir/package.json": "ac3179f99a2d2e2462ed2460a70b662f7558befcf463838463183654f44f9dc3",
     "packages/typescript/.sittir/parser.wasm": "0936953c93e7ee1b001e9c72a16b18f993f4025c91f54566393805d24a2e0229",
     "packages/typescript/.sittir/render-bodies.json": "354b920731bbc7731b7802fb0b48e1469c2559ddc0f1e63dc3a591ef55dcdec0",
     "packages/typescript/.sittir/resolutions.json": "c5f1bc77d976ada7e7009d446f75ea3fb3da256c9f1cb22fd6d25151fd3f3ab6",

@@ -1031,7 +1031,7 @@ and is read with `readFileSync` on the path.
  * Load the best available parser for a grammar: override-compiled
  * WASM if it exists, otherwise the base grammar's WASM from npm.
  *
- * The override WASM is produced by `compileParser()` and lives at
+ * The override WASM is built by every regen (`buildParserWasm`) and lives at
  * `packages/<grammar>/.sittir/parser.wasm`. When present, it carries
  * all field labels from transform()/enrich() patches natively.
  */

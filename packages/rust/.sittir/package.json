@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-rust",
-  "type": "commonjs",
+  "type": "module",
   "tree-sitter": [
     {
       "scope": "source.rust",

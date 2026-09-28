@@ -26,13 +26,8 @@ export default defineConfig({
 	},
 	test: {
 		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', '**/.claude/worktrees/**'],
-		// Compile every grammar's override parser before any test runs.
-		// `.sittir/parser.wasm` is gitignored; on a fresh checkout / in CI
-		// the file doesn't exist and validators silently fall back to the
-		// base WASM (which lacks override fields), dropping corpus
-		// ceilings below floor. compileParser() is mtime-aware — local
-		// runs with a cached wasm are a no-op (~1ms). Cold compile pays
-		// ~10s total across the three grammars, paid once per session.
+		// Build any grammar's missing `.sittir/parser.wasm` before tests run;
+		// a present (committed) wasm is left as is.
 		globalSetup: ['./vitest.setup.ts'],
 		// JSON report as a side artifact of the SAME run (gitignored scratch
 		// path) — `scripts/test-and-record.ts` reads it to append a

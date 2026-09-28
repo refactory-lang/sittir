@@ -96,13 +96,13 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 /**
  * Run 'tree-sitter generate' in a grammar package's .sittir/ directory
  * (`sittirDirOf`) — produces grammar.json + node-types.json from the
- * transpiled grammar.js. The directory comes from the package, never from
+ * grammar entry that .sittir/grammar.js re-exports. The directory comes from the package, never from
  * the working directory, and the CLI is codegen's own tree-sitter-cli, so a
  * package outside the repo needs no CLI of its own.
  */
 ```
 
-It generates through the conflict loop (`transpile/conflict-driver.ts::generateWithDerivedConflicts`): the grammar's conflicts are derived by generating until tree-sitter reports none, and the last, clean run is the generate whose outputs are kept. An unchanged grammar reuses its saved resolutions in a single run.
+It first refuses a `node` on `PATH` below the floor (`transpile/tree-sitter-cli.ts::assertGrammarRuntimeFloor`). It generates through the conflict loop (`transpile/conflict-driver.ts::generateWithDerivedConflicts`): the grammar's conflicts are derived by generating until tree-sitter reports none, and the last, clean run is the generate whose outputs are kept. An unchanged grammar reuses its saved resolutions in a single run.
 
 ### `packages/codegen/src/run-codegen.ts::runStandaloneSteps`
 
@@ -726,6 +726,18 @@ values.
 ### `packages/codegen/src/grammars.ts::module`
 
 The grammar registry. The set of grammars is discovered from disk — every `packages/<name>/` holding a `grammar.sittir.ts` is a grammar — so adding a grammar package is the whole registration; no list of grammar names exists anywhere else. Package, crate and upstream locations are derived from the name here and nowhere else.
+
+### `packages/codegen/src/grammars.ts::GRAMMAR_TSCONFIG`
+
+Each grammar package's type-check config for its entry. It extends the root config of the same name, which turns on `erasableSyntaxOnly`, and includes only the entry, so the check covers exactly the files tree-sitter loads through Node's type stripping.
+
+### `packages/codegen/src/grammars.ts::GRAMMAR_TYPECHECK_SCRIPT`
+
+The package script that type-checks the entry with `GRAMMAR_TSCONFIG`. It stays out of `type-check`, because a grammar may carry errors up to its recorded ceiling.
+
+### `packages/codegen/src/grammars.ts::GRAMMAR_TYPECHECK_CEILING`
+
+Each grammar package's type-check ceiling: a file-to-maximum map in the same shape as `examples/generated-typecheck-ceiling.json`. An entry is a count, or a `{ max, issue }` pair for errors a tracking issue owns. The grammar type-check ratchet fails above a ceiling; a count below it lowers the ceiling in the same change.
 
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 

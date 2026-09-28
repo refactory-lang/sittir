@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-regex",
-  "type": "commonjs",
+  "type": "module",
   "tree-sitter": [
     {
       "scope": "source.regex",

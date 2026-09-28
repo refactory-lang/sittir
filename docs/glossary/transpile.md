@@ -61,89 +61,12 @@ run the CLI, and both resolve it through `treeSitterCliPath`.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::transpileOverrides`
 
-```text
-/**
- * Transpile a grammar package's `grammar.sittir.ts` to its
- * `.sittir/grammar.js`. Returns the output path
- * and basic stats. Throws on transpile errors with esbuild's diagnostic
- * messages attached.
- */
-```
+Writes a grammar package's `.sittir/` scaffolding for the tree-sitter CLI and returns the path of its `grammar.js`. Throws when the package has no `grammar.sittir.ts`.
 
-Writes the bundle's other inputs first, including an empty `resolutions.json` when the package has none yet (`ensureConflictResolutions`): `grammar.sittir.ts` imports it, so a new package's first bundle needs it to exist.
-
-#### body
-
-```text
-// Copy the base grammar's external scanner sources alongside the
-// bundled grammar.js so `tree-sitter generate` + parser.c
-// compilation can resolve the external scanner symbols
-// (`tree_sitter_<name>_external_scanner_*`). Without this, parsers
-// that use indent/dedent tracking (python, etc.) fail to link with
-// "Undefined symbols ... external_scanner_*".
-```
-
-#### body
-
-```text
-// Nested package.json serves two purposes:
-//   1. `type: 'commonjs'` overrides the parent package's `"type":
-//      "module"` so Node loads grammar.js as CJS — tree-sitter's
-//      CLI requires CJS-style `module.exports = ...`.
-//   2. `name` is required by tree-sitter's parser-generator —
-//      it reads the package name from the nearest package.json
-//      to identify the grammar.
-```
-
-#### body
-
-```text
-// Tree-sitter.json — required for ABI 15 (current). Without this,
-// tree-sitter generate falls back to ABI 14 with a warning.
-```
-
-#### body
-
-```text
-// The DSL primitives from @sittir/codegen/dsl get inlined so
-// the transpiled file has no external module imports.
-// Tree-sitter base grammars are externalized via a custom
-// resolver plugin that matches both package-name imports
-// (`tree-sitter-python/grammar.js`) and relative pnpm paths
-// (`../../node_modules/.pnpm/tree-sitter-python@.../grammar.js`).
-// Tree-sitter's CLI provides its own `grammar()` global at
-// runtime, so the externalized base call resolves there.
-```
-
-#### body
-
-```text
-// esbuild's CJS format wraps the default export as
-// `module.exports = { default: ..., __esModule: true }`.
-// Tree-sitter's CLI loads grammar.js and expects
-// `module.exports` to BE the grammar object directly. The
-// footer flattens the wrapper so tree-sitter sees the grammar
-// at the top level. Idempotent — re-running on an already-
-// flat module.exports is a no-op because `.default` is undefined.
-```
-
-#### body
-
-```text
-// `write: false` + writeFileIfChanged below: the bundle is
-// byte-deterministic for unchanged input, so skipping the
-// identical rewrite keeps grammar.js's mtime stable and
-// compileParser's regenerate-vs-skip guard honest.
-```
-
-#### body
-
-```text
-// Look up by explicit path keys instead of `Object.values(...)[0]`.
-// esbuild's metafile uses path strings (relative to cwd) as keys
-// and doesn't guarantee that the entry point is the first entry —
-// synthesized helpers and re-exports can precede it.
-```
+- `grammar.js` is the one-line re-export of the entry (`reExportOf`), so tree-sitter's loader imports `grammar.sittir.ts` itself and Node strips its types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to the entry and `tree-sitter generate`.
+- `package.json` sets `"type": "module"`, so Node loads the re-export as an ES module, and carries the `name` tree-sitter reads to identify the grammar.
+- `tree-sitter.json` is required for ABI 15; without it `generate` falls back to ABI 14.
+- The external scanner sources are copied in (`copyExternalScannerSources`), and an empty `resolutions.json` is written when the package has none (`ensureConflictResolutions`), since the entry imports it.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::copyExternalScannerSources`
 
@@ -160,72 +83,14 @@ When the upstream has no scanner at all, a stub (`stubScannerSource`) is written
 // expected; permission errors or a malformed package.json surface.
 ```
 
-### `packages/codegen/src/transpile/transpile-overrides.ts::externalizeTreeSitterBases`
+### `packages/codegen/src/transpile/transpile-overrides.ts::reExportOf`
 
-```text
-/**
- * esbuild plugin that marks any import resolving to a tree-sitter
- * base grammar (`tree-sitter-<lang>/grammar.js`) as external. Matches
- * both package-name imports and relative pnpm-store paths.
- *
- * Critically: when the import is externalized, the `require()` call
- * in the bundled output must use a path that tree-sitter's CLI can
- * resolve at runtime. We rewrite to the package-name form so it
- * resolves through normal Node module resolution.
- */
-```
-
-#### body
-
-```text
-// Match ANY tree-sitter-<lang> package import — including
-// transitive ones (e.g., typescript's grammar internally
-// requires tree-sitter-javascript). Without this, esbuild
-// bundles the whole grammar dependency chain, which loses
-// the runtime grammar() global and breaks tree-sitter's
-// parser-generator (it processes the bundled tree as if
-// sittir's overrides had replaced it).
-// Widened from `[a-z]+` to `[a-z][a-z0-9-]*` so names with
-// hyphens/digits also match (tree-sitter-c-sharp,
-// tree-sitter-typescript-tsx, tree-sitter-julia-ts, ...).
-```
-
-#### body
-
-```text
-// Strip any leading path components down to the
-// tree-sitter-<lang> package segment, then keep the
-// sub-path (or default to /grammar.js).
-```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::grammar`
-
-```text
-/** Grammar name — e.g. 'rust', 'python', 'typescript'. */
-```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::packagesRoot`
-
-```text
-/** Override the default packages root (used in tests). */
-```
+The source of `.sittir/grammar.js`: `export { default } from '<entry>';`, with the entry given relative to `.sittir/`. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists rather than pointing tree-sitter at the `.ts` entry.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::outputPath`
 
 ```text
 /** Absolute path to the generated `.sittir/grammar.js`. */
-```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::sourceBytes`
-
-```text
-/** Source size in bytes. */
-```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::outputBytes`
-
-```text
-/** Output size in bytes. */
 ```
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
@@ -260,8 +125,7 @@ pruning keeps grammar.json, sittir's view of the parser, in agreement.
 `compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same prune, so the
 model and the parser drop the same names.
 
-Called after every `tree-sitter generate` invocation
-(`run-codegen.ts::runTreeSitterGenerate` and `compile-parser.ts::compileParser`).
+Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerate`).
 
 #### body
 
@@ -276,43 +140,11 @@ Called after every `tree-sitter generate` invocation
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::module`
 
-```text
-/**
- * transpile/transpile-overrides.ts — TypeScript → CommonJS bridge for
- * tree-sitter CLI consumption.
- *
- * Sittir's pipeline loads `packages/<lang>/grammar.sittir.ts` directly via
- * `import()` (handled by tsx/Node's TS loader). Tree-sitter's CLI
- * cannot — it expects a CommonJS `grammar.js` file that calls the
- * baseline DSL functions (`grammar`, `seq`, `choice`, ...) which it
- * provides as globals via its own runtime.
- *
- * This transpile step bridges the two: it reads `grammar.sittir.ts`, runs
- * esbuild in CJS+bundle mode, and writes
- * `packages/<lang>/.sittir/grammar.js`. The `.sittir/` directory is
- * gitignored — it's a build artifact, not source.
- *
- * The sittir DSL extensions (`enrich`, `transform`, `role`, `alias`,
- * `insert`, `replace`) are bundled inline so the transpiled file has
- * no external module references. The base tree-sitter grammar package
- * (`tree-sitter-rust/grammar.js` etc.) stays external — tree-sitter's
- * CLI resolves it the same way it always does.
- */
-```
+Scaffolding that lets the tree-sitter CLI run a package's `grammar.sittir.ts`. The CLI loads `.sittir/grammar.js` with its own `grammar()`/`seq()`/`choice()` globals; that file re-exports the entry, and the `node` on `PATH` strips its types. The entry imports the DSL and the upstream base grammar by relative path, so no stripped file lives under `node_modules`, where Node refuses to strip types. Every file the entry reaches must use erasable syntax only; each grammar's `tsconfig.grammar-sittir.json` enforces that.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
-```text
-/**
- * Content-aware write: skip when the file already holds identical bytes.
- * Not just an mtime nicety — `compileParser`'s regenerate-vs-skip guard
- * compares `grammar.js`'s mtime against the compiled parser's, and a
- * same-content rewrite here would force a full (slow, non-atomic)
- * `tree-sitter generate` downstream, whose in-place rewrite of
- * `.sittir/src/grammar.json` races any concurrent reader hashing it
- * (the generated-manifest check under parallel vitest workers).
- */
-```
+Content-aware write: skips a file that already holds identical bytes, so rerunning the scaffolding leaves the committed `.sittir/` files and their mtimes untouched.
 
 #### body
 
@@ -461,7 +293,6 @@ is clean. It stops unresolvable when a conflict is reported a second time
 when the resolutions already number the grammar's rules (the cap: each
 resolution names at least one rule). A `generate` error throws — a grammar
 that fails to build for any other reason is broken, not conflicted.
-`generate` is awaited: the driver re-bundles the grammar between runs.
 ```
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationInput`
@@ -566,8 +397,8 @@ Where a package's derived resolutions live: `.sittir/resolutions.json`.
 
 ```text
 Writes the resolutions as tab-indented JSON, leaving the file untouched when
-its content is already the same, so an unchanged derivation does not touch the
-bundle input.
+its content is already the same, so an unchanged derivation leaves the
+committed file untouched.
 ```
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
@@ -595,17 +426,16 @@ read, and throws `GrammarDiagnosticError`.
 ### `packages/codegen/src/transpile/conflict-driver.ts::ConflictResolutionsStore`
 
 ```text
-Where a package's resolutions are read from and written to, and how its
-grammar is bundled for a `generate`. The package's store writes
-`resolutions.json` and re-bundles, since the bundle inlines it; `bundle`
-alone re-bundles for the reuse probe, which never writes.
+Where a package's resolutions are read from and written to. The grammar
+imports `resolutions.json` directly, so a write is all a probe needs before
+its `generate`.
 ```
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::settleConflictResolutions`
 
 ```text
 Reuses the saved resolutions or derives new ones against a store. The reuse
-probe leaves the saved file untouched: it bundles and generates, so a stale
+probe leaves the saved file untouched: it only generates, so a stale
 set stays stamped and keeps failing on every run until someone intervenes,
 rather than a rerun re-deriving and hiding an input the hash misses. Every
 derivation probe writes its candidate set with `UNVERIFIED_GRAMMAR_HASH`, and
@@ -621,8 +451,8 @@ stale.
 The conflict loop for one grammar package: read the saved resolutions
 (seeding them if missing), evaluate the grammar once in a fresh process for
 the hash, rule count and upstream context, then settle the resolutions
-(`settleConflictResolutions`). Each probe writes its candidate set,
-re-bundles, and runs `tree-sitter generate --json-summary`; the last, clean
+(`settleConflictResolutions`). Each probe writes its candidate set and
+runs `tree-sitter generate --json-summary`; the last, clean
 run leaves the generate outputs in place. Saved resolutions that turn
 out stale, or a derivation that cannot converge, become the blocking
 `conflict-resolutions-stale` or `conflict-unresolvable` record
@@ -639,3 +469,26 @@ and stderr captured, and returns the exit status with stderr: the
 `--json-summary` report is written to stderr.
 ```
 
+### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
+
+Builds `.sittir/parser.wasm` from the sources the last `tree-sitter generate` left in `.sittir/src/`, after putting the external scanner in place (`syncExternalScanner`). It never runs `generate` itself: a regen calls it right after its own generate, so every regen rebuilds the wasm.
+
+### `packages/codegen/src/transpile/compile-parser.ts::ensureParserWasm`
+
+Builds the wasm only when `.sittir/parser.wasm` is missing, and reports whether it did. The wasm is committed and every regen rebuilds it, so this is a backstop for a missing file (the vitest global setup), not a staleness check: a present wasm is never rebuilt, and a grammar edit reaches it through a regen.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::NODE_FLOOR`
+
+The oldest Node that runs a grammar entry, read from `engines.node` in codegen's `package.json`: the first release that strips TypeScript types by default.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::versionParts`
+
+Numeric parts of a Node version or an `engines` floor, with a leading `v` or `>=` dropped.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::nodeFloorViolation`
+
+The message for a Node version below the floor, or `undefined` when it meets it. Takes the version as a string, so the refusal is tested without spawning an old Node.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::assertGrammarRuntimeFloor`
+
+Throws `nodeFloorViolation`'s message for the `node` on `PATH`, which is what tree-sitter spawns to load `grammar.js`. Checked before a regen generates, because an older Node would otherwise fail inside the grammar with a syntax error.

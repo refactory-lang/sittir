@@ -36,3 +36,22 @@ export function runTreeSitterCliCapturing(args: readonly string[], cwd: string):
 	process.stdout.write(run.stdout);
 	return { status: run.status, stderr: run.stderr };
 }
+
+const NODE_FLOOR = (require('../../package.json') as { readonly engines: { readonly node: string } }).engines.node;
+
+function versionParts(version: string): number[] {
+	return version.replace(/^[v>=\s]+/, '').split('.').map(Number);
+}
+
+export function nodeFloorViolation(nodeVersion: string, floor: string = NODE_FLOOR): string | undefined {
+	const have = versionParts(nodeVersion);
+	const need = versionParts(floor);
+	const index = need.findIndex((part, i) => (have[i] ?? 0) !== part);
+	if (index === -1 || (have[index] ?? 0) > need[index]!) return undefined;
+	return `tree-sitter runs grammar.sittir.ts with the \`node\` on PATH, which is ${nodeVersion}; stripping its TypeScript types needs node ${floor}`;
+}
+
+export function assertGrammarRuntimeFloor(): void {
+	const violation = nodeFloorViolation(execFileSync('node', ['--version'], { encoding: 'utf8' }).trim());
+	if (violation !== undefined) throw new Error(violation);
+}

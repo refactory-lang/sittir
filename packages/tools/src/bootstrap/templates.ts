@@ -1,3 +1,5 @@
+import { GRAMMAR_ENTRY, GRAMMAR_TSCONFIG, GRAMMAR_TYPECHECK_CEILING, GRAMMAR_TYPECHECK_SCRIPT } from '@sittir/codegen/grammars';
+
 export interface GrammarTemplateVars {
 	readonly name: string;
 	readonly Name: string;
@@ -42,7 +44,8 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					dev: 'tsc -p tsconfig.build.json --watch',
 					test: 'vitest run',
 					'test:coverage': 'vitest run --coverage',
-					'type-check': 'tsc --noEmit'
+					'type-check': 'tsc --noEmit',
+					[GRAMMAR_TYPECHECK_SCRIPT]: `tsc -p ${GRAMMAR_TSCONFIG}`
 				},
 				dependencies: {
 					'@sittir/types': 'workspace:*',
@@ -83,6 +86,14 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				include: ['src'],
 				exclude: ['node_modules', 'dist', 'tests']
 			})
+		},
+		{
+			path: GRAMMAR_TSCONFIG,
+			contents: json({ extends: `../../${GRAMMAR_TSCONFIG}`, include: [GRAMMAR_ENTRY] })
+		},
+		{
+			path: GRAMMAR_TYPECHECK_CEILING,
+			contents: json({ [GRAMMAR_ENTRY]: 0 })
 		},
 		{
 			path: 'grammar.sittir.ts',

@@ -1,23 +1,16 @@
 /**
- * Global vitest setup — ensure every grammar's override parser is
- * compiled before any test runs.
+ * Global vitest setup — ensure every grammar has its override parser before
+ * any test runs.
  *
- * `.sittir/parser.wasm` is gitignored and regenerated on demand. On a
- * fresh checkout (or in CI) the file doesn't exist, and validators
- * that call `loadLanguageForGrammar` silently fall back to the base
- * WASM — which lacks override fields, which drops corpus-validation
- * ceilings below their floors, which fails the test.
- *
- * compileParser() is mtime-aware: if the WASM is newer than
- * grammar.js it's a no-op. Local developer runs skip the compile
- * step entirely. CI pays the compile cost (~5-10s per grammar) once
- * at the start of the test run.
+ * `.sittir/parser.wasm` is committed, and every regen rebuilds it after its
+ * own `tree-sitter generate`. Setup is only a backstop for a missing file:
+ * without it, validators that call `loadLanguageForGrammar` would fall back to
+ * the base WASM, which lacks override fields. A present wasm is never
+ * rebuilt here, so a grammar edit reaches tests through a regen.
  */
 
-import { compileParser } from './packages/codegen/src/transpile/compile-parser.ts';
+import { ensureParserWasm } from './packages/codegen/src/transpile/compile-parser.ts';
 import { allGrammars, grammarPackageDir } from './packages/codegen/src/grammars.ts';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 export async function setup() {
@@ -61,19 +54,8 @@ export async function setup() {
 	}
 
 	for (const grammar of allGrammars()) {
-		const grammarDir = grammarPackageDir(grammar);
-		const grammarJs = join(grammarDir, '.sittir', 'grammar.js');
-		if (!existsSync(grammarJs)) {
-			console.warn(`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`);
-			continue;
-		}
-		try {
-			const t0 = Date.now();
-			const wasm = await compileParser(grammarDir);
-			console.log(`[vitest-setup] ${grammar}: ${wasm} (${Date.now() - t0}ms)`);
-		} catch (e) {
-			console.error(`[vitest-setup] compileParser(${grammar}) failed:`, (e as Error).message?.slice(0, 200));
-			throw e;
-		}
+		const t0 = Date.now();
+		const { wasmPath, built } = ensureParserWasm(grammarPackageDir(grammar));
+		if (built) console.log(`[vitest-setup] ${grammar}: built ${wasmPath} (${Date.now() - t0}ms)`);
 	}
 }

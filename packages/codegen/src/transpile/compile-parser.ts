@@ -1,41 +1,19 @@
-import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
-import { pruneOrphanedPlaceholderRules } from './prune-grammar-json.ts';
 import { runTreeSitterCli } from './tree-sitter-cli.ts';
 import { upstreamPackage } from '../grammars.ts';
 
-export interface CompileOptions {
-	force?: boolean;
+export function buildParserWasm(grammarDir: string): string {
+	const sittirDir = join(grammarDir, '.sittir');
+	syncExternalScanner(grammarDir, sittirDir);
+	runTreeSitterCli(['build', '--wasm', '-o', 'parser.wasm'], sittirDir, 'pipe');
+	return join(sittirDir, 'parser.wasm');
 }
 
-export async function compileParser(grammarDir: string, options?: CompileOptions): Promise<string> {
-	const sittirDir = join(grammarDir, '.sittir');
-	const grammarJs = join(sittirDir, 'grammar.js');
-	const wasmPath = join(sittirDir, 'parser.wasm');
-
-	if (!existsSync(grammarJs)) {
-		throw new Error(
-			`compileParser: no .sittir/grammar.js at ${grammarJs}. ` +
-				`Run the transpile step first (codegen --grammar <name>).`
-		);
-	}
-
-	if (!options?.force && existsSync(wasmPath)) {
-		const grammarMtime = statSync(grammarJs).mtimeMs;
-		const wasmMtime = statSync(wasmPath).mtimeMs;
-		if (wasmMtime > grammarMtime) {
-			return wasmPath;
-		}
-	}
-
-	runTreeSitterCli(['generate'], sittirDir, 'pipe');
-	pruneOrphanedPlaceholderRules(sittirDir);
-
-	syncExternalScanner(grammarDir, sittirDir);
-
-	runTreeSitterCli(['build', '--wasm', '-o', 'parser.wasm'], sittirDir, 'pipe');
-
-	return wasmPath;
+export function ensureParserWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
+	const wasmPath = join(grammarDir, '.sittir', 'parser.wasm');
+	if (existsSync(wasmPath)) return { wasmPath, built: false };
+	return { wasmPath: buildParserWasm(grammarDir), built: true };
 }
 
 function syncExternalScanner(grammarDir: string, sittirDir: string): void {
