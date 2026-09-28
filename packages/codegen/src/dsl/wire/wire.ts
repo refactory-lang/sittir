@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichHiddenSubsequences, getEnrichSubsequenceOwners, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -64,7 +64,6 @@ export interface WireContext {
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
-	readonly orphanedSyntheticGroups: Set<string>;
 	readonly conflictGroups: string[][];
 	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
@@ -240,7 +239,6 @@ export function withWireContext<T>(
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
@@ -428,7 +426,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
@@ -476,17 +473,14 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
-		for (const name of getEnrichClauseGroups(base)) {
+		for (const name of getEnrichHiddenSubsequences(base)) {
 			context.syntheticInline.add(name);
 		}
-		for (const name of getEnrichVisibleGroupSources(base)) {
+		for (const name of getEnrichVisibleSubsequenceSources(base)) {
 			context.inlineRemovals.add(name);
 		}
-		const inlineSafeNames = getEnrichClauseGroups(base);
-		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
-			if (context.authoredRuleNames.has(ownerKind)) {
-				context.orphanedSyntheticGroups.add(syntheticName);
-			}
+		const inlineSafeNames = getEnrichHiddenSubsequences(base);
+		for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base)) {
 			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
 				const pairKey = [ownerKind, syntheticName].join('\u0000');
 				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
@@ -527,6 +521,15 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		configurable: true
 	});
 	return wired;
+}
+
+export function protectedWireRuleNames(opts: WiredOpts): string[] {
+	const context = opts.__wireContext__;
+	if (context === undefined) return [];
+	const $ = makeSimpleDollarProxy();
+	const keysOf = (config: RenderAsConfig | VisibleExternalsConfig | undefined): string[] =>
+		config === undefined ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
+	return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
 }
 
 function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
@@ -703,7 +706,7 @@ interface BaseArg {
 	supertypes?: unknown;
 }
 
-function symbolNamesOf(entries: unknown): Set<string> {
+export function symbolNamesOf(entries: unknown): Set<string> {
 	const names = new Set<string>();
 	for (const entry of Array.isArray(entries) ? entries : []) {
 		if (typeof entry === 'string') {
@@ -929,7 +932,6 @@ function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
 			if (context.inlineRemovals.has(name)) continue;
-			if (context.orphanedSyntheticGroups.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];
@@ -971,7 +973,7 @@ const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, p
 };
 
 function enrichLiftNames(base: unknown): Set<string> {
-	return new Set([...getEnrichClauseGroups(base), ...getEnrichVisibleGroupSources(base)]);
+	return new Set([...getEnrichHiddenSubsequences(base), ...getEnrichVisibleSubsequenceSources(base)]);
 }
 
 interface WirePatternCandidate {

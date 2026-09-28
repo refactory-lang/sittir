@@ -1,5 +1,6 @@
 import { enrich, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
 import { authoredGroupBodies, wire, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
+import { blankDeadEnrichMints } from './wire/dead-mints.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 
@@ -14,5 +15,8 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 ): GrammarResult {
 	const enriched = enrich(base, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
-	return grammar(enriched, wire<EnrichedGrammar<B>, P, O>(config, enriched, base));
+	const opts = wire<EnrichedGrammar<B>, P, O>(config, enriched, base);
+	const result = grammar(enriched, opts);
+	blankDeadEnrichMints(result.grammar, enriched, opts);
+	return result;
 }

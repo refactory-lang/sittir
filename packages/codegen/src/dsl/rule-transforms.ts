@@ -69,7 +69,12 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 	return visit(walker.map(rule, visit));
 }
 
-export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
+export interface LiteralAliasStorage<R> {
+	readonly rules: Record<string, R>;
+	readonly storageNames: readonly string[];
+}
+
+export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): LiteralAliasStorage<R> {
 	const walker = new SyntacticRuleWalker<R>();
 	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
@@ -97,7 +102,7 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 		const name = `_${display}`;
 		if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
 	}
-	if (storage.size === 0) return rules;
+	if (storage.size === 0) return { rules, storageNames: [] };
 	const visit = (r: R): R => {
 		const site = literalAliasOf(r);
 		const minted = site === undefined ? undefined : storage.get(site.display);
@@ -107,7 +112,7 @@ export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<s
 	const out: Record<string, R> = {};
 	for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
 	for (const { name, body } of storage.values()) out[name] = body;
-	return out;
+	return { rules: out, storageNames: [...storage.values()].map(({ name }) => name) };
 }
 
 export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {

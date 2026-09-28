@@ -2209,19 +2209,6 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::drainOrphanedSyntheticGroupsMetadata`
-
-```text
-/**
- * Read `WireContext.orphanedSyntheticGroups` — enrich-synthesized clause-hoist
- * names whose recorded owning parent this grammar's own `rules:` config
- * redeclares, so the synthesized name can no longer be referenced from
- * anywhere. Read by `collectGrammarDiagnosticsForGrammar` to suppress the
- * phantom content-collision/storagename-collision diagnostic these orphans
- * would otherwise raise.
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::drainRuleCausesMetadata`
 
 Copies `WireContext.ruleCauses` and `WireContext.undeclaredRules` onto
@@ -2869,6 +2856,8 @@ boundary; a caller that wants the DSL's own shape calls it directly.
  * @returns The RawGrammar produced by the module's top-level `grammar()` call.
  */
 ```
+
+The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -6470,19 +6459,7 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 
 ### `packages/codegen/src/compiler/types.ts::orphanedSyntheticGroups`
 
-```text
-/**
-	 * Enrich-synthesized clause-hoist rule names (`_<parent>_optional<N>` /
-	 * `_<parent>_group<N>`) whose recorded owning parent this grammar's own
-	 * `rules:` config redeclares — the override author could never reference
-	 * a name that doesn't exist until enrich() mints it from the base
-	 * grammar's pre-override shape, so redeclaring the owner unconditionally
-	 * orphans it. Read by `collectGrammarDiagnosticsForGrammar` to suppress
-	 * the phantom content-collision/storagename-collision diagnostic these
-	 * orphans would otherwise raise for a kind that can never occur in a
-	 * parse. See docs/KNOWN_ISSUES.md's `_object_type_group1` entry.
-	 */
-```
+The rules enrich added that the wired grammar never reaches: the dead set `blankDeadEnrichMints` computed and blanked (`getDeadEnrichMints`). The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
 
 ### `packages/codegen/src/compiler/types.ts::bodyPatternZeroMatches`
 
@@ -7907,7 +7884,7 @@ the orphan prune and the rule catalog: the grammar's own roots
 (`grammarRootNames`: the start rule and the rules the extras name, as
 tree-sitter keeps them), the declared supertypes (`_whitespace` is referenced
 by nothing but `supertypes:`), and the grammar's `protectedRuleNames`: wire's
-deposit names and the `renderAs` / `visibleExternals` names. `transpile/prune-grammar-json.ts` calls
+deposit names and the `renderAs` / `visibleExternals` names (`protectedWireRuleNames`). `transpile/prune-grammar-json.ts` calls
 the same prune: rules nothing reaches must vanish from the sittir-evaluated
 grammar exactly as they vanish from grammar.json, rules and inline list alike,
 or the model carries kinds the parser never emits.

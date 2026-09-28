@@ -261,6 +261,42 @@ Whether `name` is one of the grammar's `extras` rules in the active wire context
 
 The names of the grammar's extra rules: the `extras` list read through `overriddenList`, closed over supertypes by `extrasClosure` — a supertype listed in `extras` contributes each member of its choice body, and a supertype whose members are all extras is one. A supertype's body is the override's rule (called with the base rule as its original) or the base grammar's evaluated rule. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
 
+### `packages/codegen/src/dsl/wire/wire.ts::protectedWireRuleNames`
+
+The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs` and `visibleExternals` names, read off each callback's keys with a symbol proxy. `evaluate` joins them with the supertypes as `protectedRuleNames`, and `reachableRuleNames` counts them as roots, so the canonical prune and the dead-mint pass keep the same rules.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::DEAD_ENRICH_MINTS_KEY`
+
+The non-enumerable key under which `blankDeadEnrichMints` attaches the dead set to `result.grammar`. tree-sitter's loader serializes the grammar with an object spread, which copies only enumerable properties, so the key never reaches grammar.json.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::ruleListEntries`
+
+The rule-list entries of an `extras` value in either runtime's shape; an entry that is not a symbol, string or pattern contributes nothing.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::reachableRuleNames`
+
+The rules a wired grammar reaches, walking SYMBOL references from its roots: `grammarRootNames` (the start rule and the rules the extras name), the supertypes, the externals, the `word` rule and `protectedWireRuleNames`. It reads the grammar's final rules, so every wire rewrite, rename and pattern replacement is already in them.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadNames`
+
+A rule-name list (`inline`, `supertypes`) without the entries that name a dead rule. A value that is not a list is returned as is.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadConflicts`
+
+A `conflicts` list without the groups that name a dead rule.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::blankDeadEnrichMints`
+
+The dead-mint pass. It runs once, in `sittirGrammar`, on the `grammar()` result, and so runs in both runtimes. The dead set is the rules enrich adds (`getEnrichMints`) that the final grammar does not reach (`reachableRuleNames`). The pass covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite.
+
+Each dead rule's map entry is reassigned to the runtime's own `blank()`, and no rule object is changed, so a body another rule shares (a rename copies the body object) is untouched. Reassigning an existing key keeps the key order, which fixes parser symbol ids; the pass asserts the order is unchanged. The dead names are then dropped from `inline`, `supertypes` and `conflicts`, so tree-sitter never sees a list entry that names a blank rule. tree-sitter's generate drops the unreachable blank rule, `pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar.
+
+The dead set is attached to the grammar under `DEAD_ENRICH_MINTS_KEY` and becomes `orphanedSyntheticGroups`. It never reads `annotations.hoisted`.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::getDeadEnrichMints`
+
+The dead set `blankDeadEnrichMints` attached to a grammar; empty when it attached none.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
 The names in a list of rule references: bare strings and `SYMBOL` objects, anything else dropped. Shared by `baseExternalNames` and `extraRuleNames`.
@@ -1013,23 +1049,8 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 	 *  before table construction, vaporizing the alias — and the minted
 	 *  kind's entire parser identity — while the IR still models the kind
 	 *  (the phantom-kind divergence). Populated from
-	 *  `getEnrichVisibleGroupSources(base)`; applied by the wired inline
+	 *  `getEnrichVisibleSubsequenceSources(base)`; applied by the wired inline
 	 *  callback. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::orphanedSyntheticGroups`
-
-```text
-/** Enrich-synthesized clause-hoist names (both inline-safe and
-	 *  visible-aliased categories — see `getEnrichClauseGroupOwners`) whose
-	 *  recorded owning parent is redeclared in THIS grammar's own
-	 *  `rules:` config. An override author can never reference a
-	 *  synthesized name by hand (it doesn't exist until enrich() mints it
-	 *  from the base grammar's pre-override shape), so redeclaring the
-	 *  owner unconditionally orphans it. Read by
-	 *  `collectGrammarDiagnosticsForGrammar` to suppress the phantom
-	 *  content-collision/storagename-collision diagnostic these orphans
-	 *  would otherwise raise for a kind that can never occur in a parse. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
@@ -1704,8 +1725,8 @@ built it, the same object the upstream diagnostic stage reads.
 // appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
 // rules directly into base.grammar.rules before wire runs; without
 // inlining, tree-sitter creates LR conflicts for those hidden rules.
-// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
-// property that enrich() attaches to the grammar result.
+// getEnrichHiddenSubsequences reads the hidden-subsequence origins from the rule-origin
+// map that enrich() attaches to the grammar result.
 //
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 // auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
@@ -1724,19 +1745,12 @@ built it, the same object the upstream diagnostic stage reads.
 
 ```text
 // Visible-group mint SOURCES must not be inlined away — see
-// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+// `WireContext.inlineRemovals` / `getEnrichVisibleSubsequenceSources`.
 ```
 
 #### body
 
 ```text
-// A synthesized clause-hoist name (recorded owner = the parent kind
-// enrich() hoisted it FROM) is orphaned once THIS grammar's own
-// `rules:` config redeclares that owner — the override text could
-// never reference a name that didn't exist until this enrich() call
-// minted it from the base grammar's pre-override shape, so replacing
-// the owner's body necessarily drops the only reference. See
-// `WireContext.orphanedSyntheticGroups`.
 // PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
 // mint (the inline-UNSAFE category — excluded from `syntheticInline`
 // above precisely because we WANT it to stay a distinguishable kind,
