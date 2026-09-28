@@ -182,9 +182,14 @@ function buildLeafReConsts(
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
 	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words;
 	if (word?.rawFactoryName && reserved.length > 0) {
+		const listName = `_reservedWordList_${word.rawFactoryName}`;
 		const constName = `_reservedWords_${word.rawFactoryName}`;
+		const typeName = `_ReservedWord_${word.rawFactoryName}`;
 		leafReConsts.set(reservedGuardKey(word.kind), constName);
-		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${JSON.stringify(reserved)});`);
+		leafReConsts.set(reservedTypeKey(word.kind), typeName);
+		lines.push(`const ${listName} = ${JSON.stringify(reserved)} as const;`);
+		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
+		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		const declaration = leafReDeclaration(kind, node);
@@ -342,7 +347,11 @@ export namespace factory {
 				const shape = numericLeafShape(node.kind, node);
 				if (shape !== undefined) guards.unshift(`text = numberText(${numberTextArgs(shape)}, text);`);
 				const guard = guards.join(' ');
-				result = emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap);
+				const reservedType = leafReConsts.get(reservedTypeKey(node.kind));
+				result =
+					reservedType === undefined
+						? emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap)
+						: emitTextFactory(node, `text: W extends ${reservedType} ? never : W`, 'text', guard, kindEntries, nodeMap, '<const W extends string>');
 				break;
 			}
 			case 'keyword':
@@ -402,6 +411,10 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 
 function reservedGuardKey(kind: string): string {
 	return `${kind}\0\0reserved`;
+}
+
+function reservedTypeKey(kind: string): string {
+	return `${kind}\0\0reservedType`;
 }
 
 type FieldCarryingNode = AuthoredCompound;
@@ -1757,11 +1770,12 @@ function emitTextFactory(
 	textExpr: string,
 	guard?: string,
 	kindEntries?: readonly KindEnumEntry[],
-	nodeMap?: NodeMap
+	nodeMap?: NodeMap,
+	typeParams: string = ''
 ): string {
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
-	const body: string[] = [`export function ${fn}(${params}): T.${node.typeName}.Built {`];
+	const body: string[] = [`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Built {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  return withMethods({',

@@ -23,7 +23,7 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set([
+const _reservedWordList_buildIdentifier = [
 	'False',
 	'await',
 	'else',
@@ -59,7 +59,9 @@ const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set([
 	'if',
 	'or',
 	'yield'
-]);
+] as const;
+type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
+const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
@@ -3810,7 +3812,9 @@ export function buildTypeConversion(text: string): T.TypeConversion.Built {
 	);
 }
 
-export function buildIdentifier(text: string): T.Identifier.Built {
+export function buildIdentifier<const W extends string>(
+	text: W extends _ReservedWord_buildIdentifier ? never : W
+): T.Identifier.Built {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);

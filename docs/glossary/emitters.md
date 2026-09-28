@@ -214,7 +214,9 @@ The whole-text guard of every text-leaf factory. For each pattern-model kind tha
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
-The grammar's word kind also gets `_reservedWords_<factory>`, a set of the `reserved.global` words (`reservedWordset`), when the grammar declares any. Its map key is `reservedGuardKey(kind)`, which no slot guard key can equal because a slot name never contains `\0`.
+The grammar's word kind also gets the `reserved.global` words (`reservedWordset`), when the grammar declares any, as one `as const` list `_reservedWordList_<factory>`. Both its readers derive from that list: the runtime set `_reservedWords_<factory>` (map key `reservedGuardKey(kind)`) and the type `_ReservedWord_<factory>`, the list's element union (map key `reservedTypeKey(kind)`). Neither key can equal a slot guard key, because a slot name never contains `\0`.
+
+With the type present, the word builder is generic, `<const W extends string>(text: W extends _ReservedWord_<factory> ? never : W)`, so a reserved literal fails to compile where it is written and a wide `string` reaches the runtime set. Only python declares a wordset today. `W` rather than `T`, because `T` names the types namespace in the factories module.
 
 #### token interior
 
@@ -12234,6 +12236,8 @@ preference; the literal texts are not part of the surface.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
+
+`typeParams` is written between the builder's name and its parameter list; the word builder passes `<const W extends string>` for its reserved-word check (`buildLeafReConsts`).
 
 #### body
 

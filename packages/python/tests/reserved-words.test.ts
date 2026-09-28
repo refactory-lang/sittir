@@ -21,6 +21,15 @@ describe('the grammar reserved wordset', () => {
 	it('the identifier builder admits a contextual keyword the grammar does not reserve', () => {
 		expect(ir.identifier('print').$text).toBe('print');
 	});
+
+	it('refuses a reserved literal at compile time, and a wide string at run time', () => {
+		// @ts-expect-error 'class' is in the grammar's reserved wordset
+		expect(() => ir.identifier('class')).toThrow("identifier: 'class' is a reserved word");
+		// @ts-expect-error so is 'await'
+		expect(() => ir.identifier('await')).toThrow("identifier: 'await' is a reserved word");
+		const wide: string = 'async';
+		expect(() => ir.identifier(wide)).toThrow("identifier: 'async' is a reserved word");
+	});
 });
 
 describe('keyword extraction at a slot that declares keyword arms', () => {
