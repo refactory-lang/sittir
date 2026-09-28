@@ -37,7 +37,7 @@ Each PR is a branch stacked on the previous one (`feat/engine-api-1-surface` on 
 
 | PR | Tasks (parts) | Behaviour change | Gate |
 |---|---|---|---|
-| **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
+| **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 6b (dead surface); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
 | **2. Bound nodes** | 2; 3 (**cross-engine rendering, disposable `Rendered`**); 6 (**retire `boundary.ts`, `defaultEngine`, and `methodsEngine`'s `render`/`toEdit`**) | Engine render options reach `$render()` | Rows and fixtures identical under default options; the Task 2 and Task 6 stamp tests |
 | **3. Surfaces + interceptors** | 3 (**`api` option with the derived strict surface; interceptors; `timing()` replacing `SITTIR_METRICS`**), plus the `StrictSurface` tsc-cost check from Task 10 | Opt-in only | Rows and fixtures identical; the interceptor and surface tests; tsc cost within 10% |
 | **4. File verbs** | 4 | New API | The files and engine file-verb tests |
@@ -765,6 +765,32 @@ Expected: validation rows identical to Task 0, and the new test passes. Most oth
 
 ```bash
 git commit -m "feat(codegen): grammar packages export a language descriptor; the implementation moves to api.ts" -- packages/codegen/src packages/rust packages/typescript packages/python packages/scm packages/regex rust/crates docs/glossary
+```
+
+---
+
+### Task 6b: Remove the dead surface (PR 1)
+
+**Files:**
+- Modify: `packages/codegen/src/emitters/consts.ts` (emit only `INNER_GAPS` and `TOKEN_INTERIORS`), `packages/codegen/src/emitters/__tests__/emitter-consts.test.ts` (drop the removed tables' cases), `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` (read the kind catalog from the compiled model, not `packages/<g>/src/consts.ts`), `packages/common/src/*` (delete the dead functions), and `packages/common/src/index.ts`, `engine-boundary.ts` and `utils.ts` (trim the public exports).
+- Regenerate: all 5 grammars.
+
+What goes:
+- **From every generated `consts.ts`:** everything except `INNER_GAPS` and `TOKEN_INTERIORS`. That includes:
+  - `ALL_KINDS`, `KEYWORDS`, `OPERATORS`;
+  - the per-category literal lists and their `*Value` types (`ACCESSIBILITY_MODIFIERS`, `BOOLEAN_LITERALS`, `PRIMITIVE_TYPES`, `PREDEFINED_TYPES`, `QUANTIFIERS`, `TOKEN_TREE_PUNCTUATIONS`, `FRAGMENT_SPECIFIERS`, …), `_KINDS`, `KindValue`, and the `NodeKind`/`LeafKind`/`AnyKind`/`AnyOperator`/`Keyword` aliases, unless `types.ts` still reads one (keep only those, and move them into `types.ts`);
+  - the `TREE_SITTER_*` kind and field tables and `TSFieldId`, which duplicate `KIND_NAMES`/`TSKindId`.
+- **From `@sittir/common`, deleted outright** (zero callers at the time of the census): `toCst`, `normalizeNativeReadNode`, `replaceField`, `bindRange`, `isRenderableNodeData`, `applyFormat`, with their tests.
+- **From `@sittir/common`'s public index only, kept in the code:** `RenderEngine`, `EngineDiagnostics`, `GrammarEngineConfig`, `BackendStatusLike`, `TriviaFacts` (it moves to `@sittir/types` in Task 1), `TriviaSetterRuntime`, `WithMethodsRuntime`. The generated-code helpers (`numberText`, `lexedConfig`, `markEdited`, `refuseSiblingLead`, `spelledForm`, `spelledInterior`) move from the root export to `@sittir/common/utils`, which generated code already imports.
+
+- [ ] **Step 1: Re-confirm the census before deleting anything.** For every name above, run infigraph `find_all_references` (or `search` with `regex=true`) on the current branch. A name with any caller outside its own definition, export line and emitter stays, and gets reported. Record the census in the commit message.
+- [ ] **Step 2: Re-point the ratchet.** It reads kinds, keywords, operators and the parser-id kind names from the compiled model (`compileGrammar` output, the same source the consts emitter printed from). It must report the same phantom count for every grammar as before. Run it before touching the emitter: `pnpm exec vitest run packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`. Expected: pass with the same numbers.
+- [ ] **Step 3: Cut the emitter and the common exports; regenerate.**
+- [ ] **Step 4: Gates:** validation rows identical, the full suite with 0 failures, type-check, both examples checks, and `cargo test --workspace --no-default-features`.
+- [ ] **Step 5: Glossary (remove the deleted declarations' entries) and commit**
+
+```bash
+git commit -m "refactor: remove the dead generated consts and unused common exports" -- packages/codegen/src packages/common packages/rust packages/typescript packages/python packages/scm packages/regex docs/glossary
 ```
 
 ---
