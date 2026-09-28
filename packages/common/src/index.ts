@@ -14,3 +14,4 @@ export type { NumberBase } from './number.ts';
 export type { TokenInterior, InteriorSlot, ProjectedInterior } from './interior.ts';
 export { sliceSpan, spanSlicer, type ByteSpan } from './span.ts';
 export { mapTriviaEntries, type TriviaSides } from './trivia.ts';
+export { createEngine } from './create-engine.ts';

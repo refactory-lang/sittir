@@ -1,16 +1,20 @@
 import { writeFileSync } from 'node:fs';
-import type { AnyNodeData, Edit, FormatRecord, IndentOption, ParseOptions } from '@sittir/types';
+import type {
+	AnyNodeData,
+	Edit,
+	FormatRecord,
+	IndentOption,
+	NativeEngineOptions,
+	ParseOptions,
+	Rendered
+} from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
 import { toTransportData } from './transport-data.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
-export interface EngineOptions<O extends object = RenderOptionValues> {
-	readonly format?: FormatRecord;
-	/** Render options, resolved once by the native engine against the grammar's site table. */
-	readonly options?: O;
-}
+export type { NativeEngineOptions as EngineOptions };
 
 export interface RenderOptions<O extends object = RenderOptionValues> {
 	readonly ignoreFormat?: boolean;
@@ -18,20 +22,22 @@ export interface RenderOptions<O extends object = RenderOptionValues> {
 	readonly options?: O;
 }
 
-export interface RenderHandle {
-	save(path: string): void;
-	toString(): string;
-	print(): string;
-}
+export type { Rendered as RenderHandle };
 
-export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): RenderHandle {
+export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): Rendered {
 	let cached: string | undefined;
+	let disposed = false;
+	function live(): void {
+		if (disposed) throw new Error('rendered text disposed');
+	}
 	function getText(): string {
+		live();
 		if (cached === undefined) cached = renderText();
 		return cached;
 	}
 	return {
 		save(path: string): void {
+			live();
 			if (saveImpl?.(path) === true) return;
 			writeFileSync(path, getText(), 'utf8');
 		},
@@ -42,6 +48,10 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 			const text = getText();
 			process.stdout.write(text);
 			return text;
+		},
+		[Symbol.dispose](): void {
+			disposed = true;
+			cached = undefined;
 		}
 	};
 }
@@ -124,7 +134,7 @@ export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
-	render<const I extends string = string>(node: AnyNodeData, options?: RenderOptions<O & IndentOption<I, IndentChar>>): RenderHandle;
+	render<const I extends string = string>(node: AnyNodeData, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
@@ -217,7 +227,7 @@ export function createNativeEngine<
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
 >(
 	config: GrammarEngineConfig<TTransport, TModule>,
-	options?: EngineOptions<O & IndentOption<string, IndentChar>>
+	options?: NativeEngineOptions<O & IndentOption<string, IndentChar>>
 ): CreateNativeEngineResult<TRoot, O, IndentChar> {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') {
@@ -231,7 +241,7 @@ export function createNativeEngine<
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
-		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): RenderHandle {
+		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(

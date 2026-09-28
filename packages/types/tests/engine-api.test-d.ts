@@ -49,3 +49,22 @@ declare const engine: Engine<API>;
 export const rendered: string = engine.render((b) => b.leaf('a')).toString();
 // @ts-expect-error render options are the language's options
 engine.render(leaf, { indnet: '\t' });
+
+interface OtherNode {
+	readonly $type: 2;
+}
+interface OtherAPI extends LanguageAPI {
+	readonly name: 'other';
+	readonly build: { leaf(text: string): OtherNode };
+	readonly is: object;
+	readonly kinds: object;
+	readonly types: { readonly leaf: OtherNode };
+	readonly root: OtherNode;
+	readonly node: OtherNode;
+	readonly options: object;
+}
+declare const other: Engine<OtherAPI>;
+// @ts-expect-error a node of another language
+engine.render(other.build.leaf('a'));
+// @ts-expect-error a build callback returning another language's node
+engine.render(() => other.build.leaf('a'));

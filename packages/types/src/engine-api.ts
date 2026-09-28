@@ -45,7 +45,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyNodeData, options?: API['options'] & { ignoreFormat?: boolean }): { toString(): string };
+	render(node: AnyNodeData, options?: API['options'] & { ignoreFormat?: boolean }): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: unknown };
 	holdsTree(tree: unknown): boolean;

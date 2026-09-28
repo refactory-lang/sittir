@@ -62,7 +62,7 @@ What a language's `load()` resolves to: the builder table, guards, kind ids and 
 
 ### `packages/types/src/engine-api.ts::NativeLanguageEngine`
 
-One native engine instance: renders a node with render options already merged over the engine's, applies edits to source text, parses and reads a source, reports whether a tree handle belongs to it, and releases its native state on `dispose`.
+One native engine instance: renders a node lazily, resolving the call's render options over the ones it was created with; applies edits to source text; parses and reads a source; reports whether a tree handle belongs to it; and releases its native state on `dispose`.
 
 ### `packages/types/src/engine-api.ts::Rendered`
 
