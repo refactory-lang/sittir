@@ -29,7 +29,7 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 			promotedRules: [],
 			repeatedShapes: []
 		},
-		externals: new Set(),
+		externals: [],
 		word: undefined
 	} satisfies NodeMap;
 }

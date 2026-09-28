@@ -795,8 +795,27 @@
 			"name": "operators"
 		},
 		{
-			"kind": "seam",
-			"field": "operators_after"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "operators",
+					"kinds": [
+						"in_keyword",
+						"is_keyword"
+					],
+					"body": [
+						{
+							"kind": "wordSeam"
+						}
+					]
+				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "operators_after"
+				}
+			]
 		},
 		{
 			"kind": "slot",
@@ -2591,12 +2610,6 @@
 			"field": "keyword_argument_after"
 		}
 	],
-	"keyword_identifier": [
-		{
-			"kind": "text",
-			"text": "print"
-		}
-	],
 	"keyword_pattern": [
 		{
 			"kind": "seam",
@@ -4165,6 +4178,10 @@
 		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",

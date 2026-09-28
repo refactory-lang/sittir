@@ -304,7 +304,6 @@ function simplifyToFixpoint(
 	runToFixpoint({
 		name: 'simplify.simplifyToFixpoint',
 		cap: 16,
-		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 		step: () => {
 			const next = simplifyRule(inlineRefs(current, ictx), ctx);
 			const changed = !rulesStructurallyEqual(current, next);

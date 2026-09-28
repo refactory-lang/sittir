@@ -1,7 +1,7 @@
-import { findOwnKindEntry, reservedWordset } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
 import {
 	interiorEnumArms,
 	interiorOf,
@@ -11,7 +11,7 @@ import {
 	numericSlotShape,
 	optionalGroupPeers
 } from './interior.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	kindDiscriminantExprForId,
 	kindDiscriminantExprForLiteral,
@@ -46,9 +46,8 @@ import {
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
+import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
-	anchoredLeafRegexLiteral,
-	anchoredLeafRegex,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -57,7 +56,6 @@ import {
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
-	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
@@ -76,6 +74,7 @@ import {
 	enumMemberDiscriminant,
 	expandAndDedupeContentTypes,
 	registeredSlots,
+	withEmptyOverload,
 	pruneUnusedImports
 } from './shared.ts';
 import {
@@ -85,7 +84,7 @@ import {
 	type RefineKindInfo,
 	type RefineFormInfo
 } from './refine-emit.ts';
-import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
+import { buildSeparatedListContentSlot } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -285,7 +284,7 @@ function buildFactoryMapEntries(
 		const isHiddenGroup = node.surfaceHidden && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
+		if (isHiddenPresenceMarker(node)) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
@@ -348,7 +347,7 @@ export namespace factory {
 			}
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) {
+				if (isBuilderTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -1115,7 +1114,7 @@ export function constructorSurface(
 		}
 		case 'keyword':
 		case 'punctuation':
-			if (!isVisibleTextLeaf(target)) return undefined;
+			if (!isBuilderTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: leafTextParams(target), args: 'text' };
@@ -1140,14 +1139,6 @@ function emitFieldCarryingFactory(
 	const typeKind = node.kind;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
-
-	const flankField = slots.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
-	if (flankField !== undefined) {
-		throw new Error(
-			`emitFieldCarryingFactory: '${typeKind}' field '${flankField.name}' carries an optional delimiter — ` +
-				`a delimiter-bearing list must classify as its own separatedList kind (kind-level _delimiter storage)`
-		);
-	}
 
 	const builtName = `T.${node.typeName}.Built`;
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
@@ -1261,12 +1252,12 @@ function emitFieldCarryingFactory(
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
 		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
 		const overloadParams = [surface.params, ...targetOverloads].map(declarationParams);
-		const wrapper: string[] = [
+		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...[...overloadParams.filter((params) => params === ''), ...overloadParams.filter((params) => params !== '')].map(
 				(params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`
 			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
-		];
+		]);
 		if (registered.length > 0) {
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
@@ -1308,8 +1299,11 @@ function emitFieldCarryingFactory(
 			);
 		}
 		lines.unshift(...wrapper);
+		return renameUnusedConfigParam(lines);
 	}
-	return renameUnusedConfigParam(lines);
+	return renameUnusedConfigParam(
+		withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, lines, `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`)
+	);
 }
 
 export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {
@@ -1535,6 +1529,7 @@ export function separatedListSurface(
 	readonly separatorKindUnion: string;
 	readonly candidateKindNames: readonly string[];
 	readonly hasSeparatorKindOption: boolean;
+	readonly separatorRequired: boolean;
 	readonly hasDelimiterOption: boolean;
 	readonly optionsType: string | undefined;
 	readonly wrapper?: {
@@ -1569,7 +1564,7 @@ export function separatedListSurface(
 	const elementsType = elementsTypeOf(node.nonEmpty, elemType);
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
 	const candidateKindNames = hasSeparatorKindOption
-		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		? node.separatorCandidateKindNames.filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
 	const hasDelimiterOption = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
 	const separatorKindUnion =
@@ -1577,7 +1572,8 @@ export function separatedListSurface(
 			? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ')
 			: 'never';
 	const optionsTypeParts: string[] = [];
-	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
+	const required = separatorRequired(node);
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separator${required ? '' : '?'}: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
 	const optionsType = optionsTypeParts.length > 0 ? `{ ${optionsTypeParts.join('; ')} }` : undefined;
 	return {
@@ -1587,6 +1583,7 @@ export function separatedListSurface(
 		separatorKindUnion,
 		candidateKindNames,
 		hasSeparatorKindOption,
+		separatorRequired: required,
 		hasDelimiterOption,
 		optionsType,
 		wrapper,
@@ -1624,11 +1621,9 @@ export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
+): string | undefined {
 	const declared = node.resolvedSeparatorArm;
-	if (declared === undefined)
-		throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
-	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
+	return declared === undefined ? undefined : kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
 export function declaredDelimiterDefault(node: AssembledList): string {
@@ -1657,7 +1652,7 @@ function emitSeparatedListFactory(
 	const lines: string[] = [];
 	const listBuiltName = `T.${node.typeName}.Built`;
 	if (hasOptions) {
-		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
 			`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
 		);
@@ -1697,7 +1692,11 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = ${admitted};`);
 	}
 	if (hasSeparatorKindOption) {
-		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
+		const separatorDefault = declaredSeparatorDefault(node, nodeMap, kindEntries);
+		if (separatorDefault === undefined) {
+			lines.push(`  if (options.separator === undefined) throw new Error('${node.kind}: its separator has no declared default; pass options.separator');`);
+			lines.push('  const _separator = options.separator;');
+		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
 	}
 	if (hasDelimiterOption) {
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
@@ -1887,7 +1886,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) this.emitLeaf(node);
+				if (isBuilderTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

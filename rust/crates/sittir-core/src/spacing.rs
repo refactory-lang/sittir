@@ -122,13 +122,15 @@ pub const DEFAULT_INDENT: &str = "    ";
 pub type SeamRank = usize;
 
 /// How firmly a mark holds its gap against the mark meeting it there. A
-/// declared arm (a grammar row, or a value set on the node) beats one the
+/// whitespace trivia entry beats everything: it replaces the gap's default.
+/// A declared arm (a grammar row, or a value set on the node) beats one the
 /// kind edge took from its edge token's face (cascade), which beats the bare
 /// fallback; rank decides only between marks of one strength. Depth marks
 /// stay above the whole scale.
 pub const SEAM_FALLBACK: u8 = 0;
 pub const SEAM_CASCADE: u8 = 1;
 pub const SEAM_DECLARED: u8 = 2;
+pub const SEAM_TRIVIA: u8 = 3;
 
 pub fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
@@ -155,6 +157,32 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_is_token: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
+    deferring: Option<String>,
+    deferred: Vec<DeferredRun>,
+    line_end_held: bool,
+}
+
+/// A trailing run rendered ahead of where it is written: its text, and the
+/// seam its last entry left (its after edge) with the strength that seam
+/// holds and whether it is a line-terminated entry's break.
+struct DeferredRun {
+    text: String,
+    end: Option<(u8, String)>,
+    line_end: bool,
+}
+
+/// The writer's spacing state, set aside while a deferred run renders on its
+/// own and put back after.
+struct HeldContext {
+    last: Option<char>,
+    adjacent_next: bool,
+    indent_pending: bool,
+    indent_armed: bool,
+    seam: Option<SeamRank>,
+    seam_strength: u8,
+    seam_text: String,
+    seam_is_token: bool,
+    line_end_held: bool,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -175,6 +203,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_is_token: false,
             sources: None,
             options: None,
+            deferring: None,
+            deferred: Vec::new(),
+            line_end_held: false,
         }
     }
 
@@ -218,10 +249,88 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.indent_pending = false;
         for _ in 0..self.depth {
-            self.inner.write_str(self.indent)?;
+            self.emit(self.indent)?;
         }
         if self.depth > 0 {
             self.last = self.indent.chars().next_back();
+        }
+        Ok(())
+    }
+
+    fn at_line_start(&self) -> bool {
+        matches!(self.last, None | Some('\n'))
+    }
+
+    /// Where written text goes: the output, or the buffer of a deferred run.
+    fn emit(&mut self, s: &str) -> std::fmt::Result {
+        match self.deferring.as_mut() {
+            Some(buffer) => {
+                buffer.push_str(s);
+                Ok(())
+            }
+            None => self.inner.write_str(s),
+        }
+    }
+
+    /// Whether writing `s` next would start a new line: it opens with a line
+    /// break, or the held seam carries one.
+    fn breaks_line(&self, s: &str) -> bool {
+        s.starts_with('\n') || (self.seam.is_some() && self.seam_text.contains('\n'))
+    }
+
+    fn hold_context(&mut self) -> HeldContext {
+        HeldContext {
+            last: self.last.take(),
+            adjacent_next: std::mem::replace(&mut self.adjacent_next, false),
+            indent_pending: std::mem::replace(&mut self.indent_pending, false),
+            indent_armed: std::mem::replace(&mut self.indent_armed, false),
+            seam: self.seam.take(),
+            seam_strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            seam_text: std::mem::take(&mut self.seam_text),
+            seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
+            line_end_held: std::mem::replace(&mut self.line_end_held, false),
+        }
+    }
+
+    fn restore_context(&mut self, held: HeldContext) {
+        self.last = held.last;
+        self.adjacent_next = held.adjacent_next;
+        self.indent_pending = held.indent_pending;
+        self.indent_armed = held.indent_armed;
+        self.seam = held.seam;
+        self.seam_strength = held.seam_strength;
+        self.seam_text = held.seam_text;
+        self.seam_is_token = held.seam_is_token;
+        self.line_end_held = held.line_end_held;
+    }
+
+    /// Writes the held trailing runs where the output stands, ahead of any
+    /// held seam, each after a space. The seam the last run ended on (its
+    /// entry's after edge) then meets the held seam under the seam law, as it
+    /// would have had the run been written in place, unless `next` opens with
+    /// a line break of its own; a run whose text ended its line already wrote
+    /// one break of that seam. A line-terminated entry's break is held as
+    /// such.
+    fn write_deferred(&mut self, next: &str) -> std::fmt::Result {
+        if self.deferring.is_some() || self.deferred.is_empty() {
+            return Ok(());
+        }
+        let mut last = None;
+        for run in std::mem::take(&mut self.deferred) {
+            if !self.at_line_start() {
+                self.write_text(" ")?;
+            }
+            self.write_text(&run.text)?;
+            last = Some(run);
+        }
+        if let Some(DeferredRun { end: Some((strength, text)), line_end, .. }) = last {
+            let text = if self.at_line_start() { text.strip_prefix('\n').unwrap_or(&text) } else { &text };
+            if !next.starts_with('\n') && !text.is_empty() {
+                self.merge_seam_with(text, strength);
+                if line_end {
+                    crate::render::RenderSink::hold_line_end(self);
+                }
+            }
         }
         Ok(())
     }
@@ -241,20 +350,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if let Some(last) = self.last {
             if !adjacent && !last.is_whitespace() && !first.is_whitespace() {
                 let word_seam = self.word.is_word(last) && self.word.is_word(first);
-                // Identical-char seams (e.g. `>` closing nested generics in
-                // `Vec<Vec<T>>`) are excluded (never in `literal_merge_pairs`): a real
-                // doubled-char token like rust's `>>` shift operator only
-                // exists as its own grammar rule with its own disambiguation
-                // context, not as a blind concatenation hazard — spacing every
-                // repeated symbol char would make already-common, unambiguous
-                // constructs noisy for no correctness gain.
-                let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
+                // An identical-char pair is in `literal_merge_pairs` only when the
+                // grammar lets its doubled token begin what directly follows the
+                // single-char token (e.g. `--` after a unary `-`); `>>` closing
+                // nested generics is never such a pair and stays tight.
+                let symbol_seam = self.word.is_literal_merge_pair(last, first);
                 if word_seam || symbol_seam {
-                    self.inner.write_str(" ")?;
+                    self.emit(" ")?;
                 }
             }
         }
-        self.inner.write_str(s)?;
+        self.emit(s)?;
         self.last = s.chars().next_back();
         if self.last == Some('\n') {
             self.indent_pending = true;
@@ -266,6 +372,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// held rank. The payload's own buffer is kept (not dropped) so a
     /// following seam has a ready allocation to merge into.
     fn flush_seam(&mut self) -> std::fmt::Result {
+        self.line_end_held = false;
         let Some(rank) = self.seam.take() else {
             return Ok(());
         };
@@ -313,6 +420,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if s.is_empty() {
             return Ok(());
         }
+        if self.breaks_line(s) {
+            self.write_deferred(s)?;
+        }
         if s.starts_with('\n') && self.seam == Some(1) && !self.seam_is_token {
             self.seam = None;
             self.seam_text.clear();
@@ -325,10 +435,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// it is dropped, as a payload held before the first text is. A seam
     /// lies between two things; a node rendered on its own carries no edge
     /// whitespace. A payload a whitespace token contributed is written out
-    /// instead: the token is part of the node. The root render calls this
+    /// instead: the token is part of the node. So is the break a
+    /// line-terminated trivia entry left: without it, what follows the render
+    /// would read as that entry's text. The root render calls this
     /// once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
-        if self.seam_is_token {
+        self.write_deferred("")?;
+        if self.seam_is_token || (self.line_end_held && self.seam.is_some() && self.seam_text.contains('\n')) {
             self.flush_seam()?;
         }
         self.seam = None;
@@ -406,8 +519,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_is_token = true;
     }
 
+    fn trivia_seam(&mut self, text: &str) {
+        self.merge_seam_with(text, SEAM_TRIVIA);
+        self.seam_is_token = true;
+    }
+
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        self.sources.and_then(|sources| sources.kind_of(coord))
+        coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
@@ -418,6 +536,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 tree_id: coord.tree_id(),
             })?;
         let text = coord.resolve(sources)?;
+        let token = crate::render::RenderSink::kind_of(self, coord)
+            .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));
+        if !token {
+            self.write_deferred(text)?;
+        }
         self.write_chunk(text)?;
         Ok(())
     }
@@ -429,9 +552,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn dedent(&mut self, seam: &str) {
         self.depth = self.depth.saturating_sub(1);
-        if std::mem::replace(&mut self.indent_armed, false) {
+        let holds_trivia = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA;
+        if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.seam = None;
             self.seam_text.clear();
+            self.seam_is_token = false;
             return;
         }
         if !seam.is_empty() {
@@ -440,7 +565,97 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn ends_line(&self) -> bool {
-        matches!(self.last, None | Some('\n'))
+        self.at_line_start()
+    }
+
+    fn pending_break(&self) -> bool {
+        self.seam.is_some() && self.seam_text.contains('\n')
+    }
+
+    fn at_body_start(&self) -> bool {
+        self.indent_armed
+    }
+
+    fn kind_has(&self, kind: crate::types::KindId, flag: u8) -> bool {
+        self.options.is_some_and(|options| options.kind_has(kind, flag))
+    }
+
+    fn hold_line_end(&mut self) {
+        if self.at_line_start() {
+            if self.seam.is_some() && self.seam_text.starts_with('\n') {
+                self.seam_text.remove(0);
+                if self.seam_text.is_empty() {
+                    self.seam = None;
+                } else {
+                    self.seam = Some(seam_rank(&self.seam_text));
+                }
+            }
+            return;
+        }
+        if self.seam.is_some() && self.seam_text.contains('\n') {
+            self.seam_strength = self.seam_strength.max(SEAM_TRIVIA);
+        } else {
+            self.merge_seam_with("\n", SEAM_TRIVIA);
+        }
+        self.line_end_held = true;
+    }
+
+    fn take_seam(&mut self) -> Option<crate::render::HeldSeam> {
+        self.seam.take()?;
+        Some(crate::render::HeldSeam {
+            text: std::mem::take(&mut self.seam_text),
+            strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            token: std::mem::replace(&mut self.seam_is_token, false),
+        })
+    }
+
+    fn restore_seam(&mut self, mut held: crate::render::HeldSeam) {
+        if self.at_line_start() && held.text.starts_with('\n') {
+            held.text.remove(0);
+            if held.text.is_empty() {
+                return;
+            }
+        }
+        if crate::render::RenderSink::pending_break(self) && held.text.contains('\n') {
+            let rank = seam_rank(&held.text);
+            if self.seam.is_some_and(|current| rank > current) {
+                self.seam = Some(rank);
+                self.seam_text = held.text;
+            }
+            self.seam_strength = self.seam_strength.max(held.strength);
+            return;
+        }
+        let was = (self.seam, self.seam_strength);
+        self.merge_seam_with(&held.text, held.strength);
+        if held.token && (self.seam, self.seam_strength) != was {
+            self.seam_is_token = true;
+        }
+    }
+
+    fn defer_trailing(
+        &mut self,
+        render: &mut dyn FnMut(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult,
+    ) -> crate::render::RenderResult {
+        if self.deferring.is_some() {
+            return render(self);
+        }
+        let held = self.hold_context();
+        self.deferring = Some(String::new());
+        let result = render(self);
+        let run = self.deferring.take().unwrap_or_default();
+        let end = self.seam.map(|_| (self.seam_strength, self.seam_text.clone()));
+        let line_end = self.line_end_held && end.is_some();
+        self.restore_context(held);
+        result?;
+        if !run.is_empty() {
+            self.deferred.push(DeferredRun { text: run, end, line_end });
+        }
+        Ok(())
+    }
+
+    fn seat_trailing(&mut self) -> crate::render::RenderResult {
+        self.write_deferred("")?;
+        Ok(())
     }
 }
 
@@ -526,12 +741,23 @@ mod word_matcher_tests {
     }
 
     #[test]
-    fn identical_symbol_seam_does_not_insert() {
+    fn identical_symbol_seam_outside_the_pairs_does_not_insert() {
         let word = with_range_arrow_pairs();
-        // Closing nested generics (`Vec<Vec<T>>`) must stay tight — a real
-        // doubled-char token like `>>` only exists in its own disambiguated
-        // grammar rule, not as a blind concatenation hazard.
+        // Closing nested generics (`Vec<Vec<T>>`) stays tight: `>>` begins
+        // nothing that can follow a `>`, so `>|>` is never a derived pair.
         assert_eq!(spaced_with(&word, &[">", ">"]), ">>");
+    }
+
+    #[test]
+    fn identical_symbol_pair_inserts() {
+        // `-|-` is a pair when `--` can begin what follows a unary `-`:
+        // `- -x` and `- --x` must not re-lex as a decrement.
+        let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
+            .with_literal_merge_pairs(&[(b'-', b'-')]);
+        assert_eq!(spaced_with(&word, &["-", "-", "x"]), "- -x");
+        assert_eq!(spaced_with(&word, &["-", "--", "x"]), "- --x");
+        assert_eq!(spaced_with(&word, &["-", "x"]), "-x");
+        assert_eq!(spaced_with(&word, &["+", "+"]), "++");
     }
 
     #[test]
@@ -630,6 +856,30 @@ mod sink_tests {
     }
 
     #[test]
+    fn a_trivia_seam_replaces_the_gap_default_whatever_its_width() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam("\n");
+                w.trivia_seam(" ");
+                w.seam("\n");
+                w.text("b").unwrap();
+            }),
+            "a b"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.trivia_seam("\n\n");
+                w.dedent("\n");
+                w.text("}").unwrap();
+            }),
+            "{\n\n}"
+        );
+    }
+
+    #[test]
     fn a_token_seam_coalesces_but_survives_the_end() {
         assert_eq!(
             run(|w| {
@@ -646,6 +896,21 @@ mod sink_tests {
             }),
             "\na"
         );
+    }
+
+    #[test]
+    fn a_tight_site_between_a_same_char_pair_still_gets_the_space() {
+        let word = WordMatcher::new(default_ascii_table(), char::is_alphanumeric)
+            .with_literal_merge_pairs(&[(b'-', b'-')]);
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, &word).with_table(&TABLE);
+        w.text("-").unwrap();
+        w.site(TIGHT);
+        w.text("-").unwrap();
+        w.site(TIGHT);
+        w.text("x").unwrap();
+        w.finish().unwrap();
+        assert_eq!(s, "- -x");
     }
 
     #[test]

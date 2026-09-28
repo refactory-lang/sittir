@@ -2,7 +2,7 @@ import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { samplePattern } from '../types/runtime-shapes.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
-import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
@@ -11,7 +11,7 @@ import {
 	isNodeRef,
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -123,7 +123,7 @@ export function emitTests(config: EmitTestsConfig): string {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node) && node.annotations?.tokenForm !== true) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+				if (isBuilderTextLeaf(node) && node.annotations?.tokenForm !== true) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				break;
@@ -332,7 +332,7 @@ function childBareCallArgs(
 		}
 		case 'keyword':
 		case 'punctuation':
-			return isVisibleTextLeaf(child)
+			return isBuilderTextLeaf(child)
 				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
 				: undefined;
 		case 'enum': {
@@ -651,7 +651,7 @@ function emitKeywordTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (!isVisibleTextLeaf(node)) return;
+	if (!isBuilderTextLeaf(node)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);

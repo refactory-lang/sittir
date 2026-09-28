@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { AssembledList, AssembledPattern, type AssembledNode, type SeparatedListElementRule } from '../node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../../types/rule.ts';
 import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
-import { collectSitePreferences } from '../site-preferences.ts';
+import { collectSitePreferences, undeclaredSeparatorSites } from '../site-preferences.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 
 const SIMPLIFIED: SimplifiedRule = { type: SYMBOL, name: 'member' };
@@ -79,10 +79,22 @@ describe('collectSitePreferences — separator sites', () => {
 		});
 	});
 
-	it('an undeclared choice separator, a foreign arm, and a declaration naming no site are build errors', () => {
-		expect(() => collectSitePreferences({ nodeMap: listNodeMap(SEP), kindEntries })).toThrow(
-			/member_list\.member chooses its separator per instance \(comma, semi\); declare its kind under options:/
-		);
+	it('an undeclared choice separator is no option site and stamps no default; undeclaredSeparatorSites reports it with its arms', () => {
+		const nodeMap = listNodeMap(SEP);
+		expect(collectSitePreferences({ nodeMap, kindEntries }).some((s) => s.source === 'separator')).toBe(false);
+		const list = nodeMap.nodes.get('member_list');
+		expect(list instanceof AssembledList ? list.resolvedSeparatorArm : 'not a list').toBeUndefined();
+		expect(undeclaredSeparatorSites({ nodeMap: listNodeMap(SEP), kindEntries }).map((s) => [s.kind, s.arms.map((a) => a.value)])).toEqual([
+			['member_list', ['comma', 'semi']]
+		]);
+		expect(undeclaredSeparatorSites({ nodeMap: listNodeMap(SEP), kindEntries, options: { member_list: { 'member:/separator/kind': preference('semi') } } as never })).toEqual([]);
+	});
+
+	it('undeclaredSeparatorSites skips an address that names no site in its view, which lacks the spacing sites', () => {
+		expect(undeclaredSeparatorSites({ nodeMap: listNodeMap(SEP), kindEntries, options: { member_list: { 'member:/nowhere': preference('comma') } } as never })).toHaveLength(1);
+	});
+
+	it('a foreign arm and a declaration naming no site are build errors', () => {
 		expect(() =>
 			collectSitePreferences({
 				nodeMap: listNodeMap(SEP),

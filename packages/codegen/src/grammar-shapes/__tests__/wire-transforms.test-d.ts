@@ -6,6 +6,7 @@ import type { IsPath } from '../path-type.ts';
 import type { IsPreferencePath } from '../../dsl/primitives/preference-path.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import { field, variant, preference } from '../../dsl/index.ts';
+import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 type Rules = RustGrammarShape['rules'];
 type R<K extends keyof Rules> = EnrichRule<Rules[K]>;
@@ -78,7 +79,7 @@ describe('wire() checks patch keys per rule, from the base it is given', () => {
 	});
 
 	it('an unshaped base checks nothing', () => {
-		wire({ name: 'loose', patches: { anything: { '99/99': field('x') } } });
+		wire({ name: 'loose', patches: { anything: { '99/99': field('x') } } }, emptyBase);
 	});
 });
 

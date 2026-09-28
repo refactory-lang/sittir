@@ -372,7 +372,7 @@ export interface CompoundAssignmentExprTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _left: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<CompoundAssignmentExprOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -843,7 +843,7 @@ export interface LastMatchArmTransport {
 export interface LetChainTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _left?: SlotValue<Box<LetChainLeftTransportSlot>>
+  _left: SlotValue<Box<LetChainLeftTransportSlot>>
   _right?: Array<SlotValue<LetChainRightTransportSlot>>
   _right_separator_space_before?: number
   _right_separator_space_after?: number

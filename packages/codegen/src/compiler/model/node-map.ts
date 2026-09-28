@@ -2,6 +2,7 @@ import type { VariantChild } from '../variant-structural.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
+	Rule,
 	RuleBase,
 	RenderRule,
 	SimplifiedRule,
@@ -13,7 +14,7 @@ import type {
 	RuleId,
 	RuleAnnotations
 } from '../../types/rule.ts';
-import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
+import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
 	literalTextOf,
 	isLinkSymbol,
@@ -22,28 +23,77 @@ import {
 	aliasRestampRequired,
 	transitiveParseKinds
 } from '../../types/rule.ts';
-import { isStringType } from '../../types/runtime-shapes.ts';
+import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
-import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import {
-	findEntryForKindName,
-	findEntryForLiteralText,
-	findOwnKindEntry,
-	isAliasedHiddenStorage,
-	surfaceHiddenOf
-} from '../generated-metadata.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
+import { casingWords, lowerCamelCase, pascalCase } from './casing.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
-import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
-import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
+import { RuleWalker } from '../../dsl/rule-walker.ts';
+import { anchoredLeafRegex } from './leaf-pattern.ts';
+import { wordCharAsciiTable } from '../../util/word-matcher.ts';
+
+const renderRuleWalker = new RuleWalker<RenderRule>();
+const anyRuleWalker = new RuleWalker<AnyRule>();
+const LINE_PROBE = 'a b\t*/ -->#;';
+
+export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
+
+export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
+
+interface EdgeCtx {
+	readonly edge: 'start' | 'end';
+}
+
+interface LineEndCtx {
+	readonly kind: string;
+}
+
+function ruleEdgeTerminals(rule: AnyRule, ctx: EdgeCtx): EdgeTerminal[] {
+	switch (rule.type) {
+		case STRING:
+			return [rule.value === '' ? 'empty' : { literal: rule.value }];
+		case PATTERN:
+			return [{ pattern: rule.value }];
+		case SYMBOL:
+			return [{ symbol: rule.name }];
+		default:
+			break;
+	}
+	const children = anyRuleWalker.childrenOf(rule);
+	const terminals =
+		rule.type === SEQ
+			? seqEdgeTerminals(ctx.edge === 'end' ? [...children].reverse() : children, ctx)
+			: children.flatMap((child) => ruleEdgeTerminals(child, ctx));
+	const optional = 'multiplicity' in rule && (rule.multiplicity === 'optional' || rule.multiplicity === 'array');
+	return optional || children.length === 0 ? [...terminals, 'empty'] : terminals;
+}
+
+function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTerminal[] {
+	const outer = fromEdge[0];
+	if (outer === undefined) return ['empty'];
+	const terminals = ruleEdgeTerminals(outer, ctx);
+	if (!terminals.includes('empty')) return terminals;
+	return [...terminals.filter((terminal) => terminal !== 'empty'), ...seqEdgeTerminals(fromEdge.slice(1), ctx)];
+}
+
+function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
+	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
+		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
+		if ('literal' in terminal) return 'closed';
+		const anchored = anchoredLeafRegex(ctx.kind, terminal.pattern);
+		return anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed';
+	});
+}
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
@@ -55,15 +105,22 @@ function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string
 	].join(' ');
 }
 
-function deriveShapeKey(d: DeriveShapeDiagnostic): string {
-	return `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
-}
-
 export interface AssembleWarning {
 	readonly code: string;
 	readonly message: string;
 	readonly ownerKind?: string;
 	readonly details?: Record<string, unknown>;
+}
+
+export interface NamingEvent {
+	readonly kind: string;
+	readonly from: string;
+	readonly to: string;
+	readonly message: string;
+}
+
+function namingEventKey(e: NamingEvent): string {
+	return `${e.kind}|${e.to}`;
 }
 
 function assembleWarningKey(w: AssembleWarning): string {
@@ -89,18 +146,10 @@ export class DedupedCollector<T> {
 	}
 }
 
-/**
- * One instance per `assemble()` call — created locally by `assemble()` and
- * threaded through the `DeriveCtx`/`CompoundOpts` chain the node
- * constructors already receive, replacing the three module-level `let`
- * accumulators (`_parseKindCollisionDiagnostics`, `_deriveShapeDiagnostics`,
- * `_assembleWarnings`) that made concurrent `assemble()` calls unsafe to
- * interleave.
- */
 export class AssembleDiagnosticsCollector {
 	readonly parseKindCollisions = new DedupedCollector<ParseKindCollisionDiagnostic>(parseKindCollisionKey);
-	readonly deriveShapeDiagnostics = new DedupedCollector<DeriveShapeDiagnostic>(deriveShapeKey);
 	readonly assembleWarnings = new DedupedCollector<AssembleWarning>(assembleWarningKey);
+	readonly namingEvents = new DedupedCollector<NamingEvent>(namingEventKey);
 }
 
 export { type Multiplicity } from '../../types/rule.ts';
@@ -312,7 +361,8 @@ const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 ]);
 
 export function snakeToCamel(name: string): string {
-	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase()).replace(/_(\d)/g, '$1');
+	const [first = '', ...rest] = casingWords(name);
+	const camel = first + rest.map((word) => (word === '' ? '_' : word.charAt(0).toUpperCase() + word.slice(1))).join('');
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
@@ -378,145 +428,35 @@ export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
 }
 
-const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
-function deriveAuditMode(): 'strict' | 'report' | 'off' {
-	const v = process.env.SITTIR_AUDIT_DERIVE;
-	if (v === '1') return 'report';
-	if (v === 'off') return 'off';
-	return 'strict';
-}
-const auditCounts = new Map<string, number>();
-const auditKindsByShape = new Map<string, string[]>();
-let currentAuditKind: string | undefined;
-export function setAuditKindContext(kind: string | undefined): void {
-	currentAuditKind = kind;
-}
-function auditDerivationShape(
-	rule: SimplifiedRule,
-	context: 'fields' | 'children',
-	diagnostics?: AssembleDiagnosticsCollector
-): void {
-	const mode = deriveAuditMode();
-	if (mode === 'off') return;
-	const shape = classifyTopLevelShape(rule);
-	if (shape === 'canonical') return;
-	diagnostics?.deriveShapeDiagnostics.record(
-		describeDeriveShape({
-			rawShape: shape,
-			ruleType: rule.type,
-			context,
-			ownerKind: currentAuditKind,
-			ruleId: rule.id
-		})
-	);
-	const key = `${context}:${shape}`;
-	auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1);
-	if (currentAuditKind !== undefined) {
-		const kinds = auditKindsByShape.get(key) ?? [];
-		if (!kinds.includes(currentAuditKind)) kinds.push(currentAuditKind);
-		auditKindsByShape.set(key, kinds);
-		if (process.env.SITTIR_AUDIT_DUMP === currentAuditKind) {
-			console.error(`[audit-dump] ${currentAuditKind} (${key}):`);
-			console.error(JSON.stringify(rule, null, 2));
-		}
-	}
-}
-function classifyTopLevelShape(rule: SimplifiedRule): string {
-	switch (rule.type) {
-		case SEQ: {
-			for (const m of rule.members) {
-				if (m.type === SEQ) {
-					if (m.multiplicity !== undefined || m.separator !== undefined) continue;
-					return 'seq-with-nested-seq';
-				}
-				const inner = classifyTopLevelShape(m);
-				if (inner !== 'canonical') return `seq-member-${inner}`;
-			}
-			return 'canonical';
-		}
-		case SYMBOL:
-		case STRING:
-		case PATTERN:
-		case SUPERTYPE:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return 'canonical';
-		case CHOICE: {
-			const allTokenLike = rule.members.every(isTokenLikeChoiceMember);
-			if (allTokenLike) return 'canonical';
-			const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike);
-			if (allFlatSymbolSeq) return 'canonical';
-			return 'choice-needs-variant-or-merge';
-		}
-		default:
-			return assertNever(rule);
-	}
-}
-function isTokenLikeChoiceMember(m: SimplifiedRule): boolean {
-	const core = m;
-	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
-	if (core.type === STRING || core.type === PATTERN) return true;
-	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
-	return false;
-}
-
-function isFlatSymbolSeqOrTokenLike(m: SimplifiedRule): boolean {
-	if (m.type === SEQ) {
-		return m.members.every(isTokenLikeChoiceMember);
-	}
-	return isTokenLikeChoiceMember(m);
-}
-
-export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
-	if (!DERIVE_AUDIT || auditCounts.size === 0) return;
-	const sorted = [...auditCounts.entries()].sort((a, b) => b[1] - a[1]);
-	console.error(`[${label}] non-canonical shapes reaching derivation:`);
-	for (const [key, n] of sorted) {
-		const kinds = auditKindsByShape.get(key) ?? [];
-		console.error(`  ${n.toString().padStart(5)} ${key}  [${kinds.join(', ')}]`);
-	}
-	auditCounts.clear();
-	auditKindsByShape.clear();
-}
-
 function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const prevAuditKind = currentAuditKind;
-	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
-	try {
-		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields', ctx?.diagnostics);
-		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
-		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
-		if (unionChoiceIds.size > 0) {
-			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
-			const colliding = slots.filter(
-				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
-			);
-			if (colliding.length > 0) {
-				ctx?.diagnostics?.assembleWarnings.record({
-					code: 'union-slot-content-collision',
-					ownerKind: kindName,
-					message:
-						`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
-						`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
-						`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
-						`field() naming in overrides (named slots bypass the claim).`
-				});
-				const prev = setUnionSlotRouting(false);
-				try {
-					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
-				} finally {
-					setUnionSlotRouting(prev);
-					drainSynthesizedUnionChoiceIds();
-				}
+	const kindName = ctx?.kindName;
+	let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+	const unionChoiceIds = drainSynthesizedUnionChoiceIds();
+	if (unionChoiceIds.size > 0) {
+		const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
+		const colliding = slots.filter(
+			(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
+		);
+		if (colliding.length > 0) {
+			ctx?.diagnostics?.assembleWarnings.record({
+				code: 'union-slot-content-collision',
+				ownerKind: kindName,
+				message:
+					`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
+					`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
+					`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
+					`field() naming in overrides (named slots bypass the claim).`
+			});
+			const prev = setUnionSlotRouting(false);
+			try {
+				slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+			} finally {
+				setUnionSlotRouting(prev);
+				drainSynthesizedUnionChoiceIds();
 			}
 		}
-		return slots;
-	} finally {
-		setAuditKindContext(prevAuditKind);
 	}
+	return slots;
 }
 
 export function mergeDelimiterMode(
@@ -561,7 +501,6 @@ export interface ParseKindCollisionContext {
 export interface DeriveCtx {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly kindName?: string;
-	readonly shapeAudit?: false;
 	readonly collision?: ParseKindCollisionContext;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
@@ -917,8 +856,6 @@ export function deriveValuesForRule(
 					};
 				});
 			}
-			const isBlank = (r: RenderRule): boolean =>
-				(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
 			const nonBlank = members.filter((m) => !isBlank(m));
 			const hasBlank = nonBlank.length < members.length;
 			const armMult: Multiplicity =
@@ -1010,14 +947,10 @@ export function nameNode(kind: string): {
 } {
 	const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind);
 	const marked = prepareKindForPascalCase(normalized);
-	let typeName =
-		marked
-			.split('_')
-			.filter(Boolean)
-			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-			.join('') || 'Anonymous';
-	if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`;
-	let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1);
+	const pascal = pascalCase(marked) || 'Anonymous';
+	const leadingDigit = /^\d/.test(pascal);
+	const typeName = leadingDigit ? `Tok_${pascal}` : pascal;
+	let factoryName = leadingDigit ? `tok_${pascal}` : lowerCamelCase(marked) || 'anonymous';
 	const irKey = factoryName;
 	if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`;
 	return { typeName, factoryName, irKey };
@@ -1042,11 +975,20 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
+	readonly hidden: boolean;
 	irKey?: string;
 	abstract readonly modelType: ModelType;
 
 	get kindId(): number | undefined {
 		return this.kindEntry?.id;
+	}
+
+	get lineEnds(): readonly LineEnd[] {
+		return ruleLineEnds(this.rule, { kind: this.kind });
+	}
+
+	get leadingTerminals(): readonly EdgeTerminal[] {
+		return ruleEdgeTerminals(this.rule, { edge: 'start' });
 	}
 
 	get parameterless(): boolean {
@@ -1086,6 +1028,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
+	triviaInterior: boolean = false;
+
+	grammarRoot: boolean = false;
+
 	get annotations(): RuleAnnotations | undefined {
 		return this.rule.annotations;
 	}
@@ -1107,15 +1053,13 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.wordMatcher = opts?.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
-		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
+		this.hidden = opts?.hidden === true;
+		this.factoryName = this.hidden ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
-	get hidden(): boolean {
-		return this.factoryName === undefined;
-	}
 
 	get surfaceHidden(): boolean {
 		return surfaceHiddenOf(this.kindEntry, this.kind);
@@ -1552,8 +1496,16 @@ export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword |
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
-export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return isFixedTextLeaf(node) && !node.hidden;
+export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return isFixedTextLeaf(node) && node.factoryName !== undefined;
+}
+
+export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.factoryName === undefined;
+}
+
+export function isWordOrBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return node instanceof AssembledKeyword || isBuilderTextLeaf(node);
 }
 
 export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
@@ -1565,7 +1517,11 @@ export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledP
 }
 
 export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
+	return node instanceof AssembledKeyword || (isFixedTextLeaf(node) && !node.hidden);
+}
+
+export function isHiddenPresenceMarker(node: AssembledNode): node is AssembledKeyword {
+	return node instanceof AssembledKeyword && node.surfaceHidden;
 }
 
 export interface CompoundOpts {
@@ -1582,10 +1538,47 @@ export interface CompoundOpts {
 	aliasTypeId?: number;
 }
 
+interface GapWalkCtx {
+	readonly conditional: boolean;
+}
+
+interface SlotEmptinessCtx {
+	readonly slotById: ReadonlyMap<RuleId, AssembledNonterminal>;
+}
+
+function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): EmptinessCtx<RenderRule> {
+	return {
+		settled(rule) {
+			if (rule.multiplicity === 'optional' || rule.multiplicity === 'array' || rule.optionalElement === true) return true;
+			const slot = rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined && (rule !== root || isRequired(slot))) return false;
+			return renderRuleWalker.childrenOf(rule).length === 0 ? true : undefined;
+		},
+		children: (rule) => renderRuleWalker.childrenOf(rule),
+		isChoice: (rule) => rule.type === CHOICE
+	};
+}
+
+export interface InnerGap {
+	readonly key: string;
+	readonly precedingTokens: number;
+}
+
+export interface FullFormAffix {
+	readonly texts: readonly string[];
+	readonly slot?: string;
+}
+
+export interface FullForm {
+	readonly open: FullFormAffix;
+	readonly close: FullFormAffix;
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
+	fullForm?: FullForm;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
 
@@ -1696,6 +1689,57 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
 	}
 
+	get innerGaps(): readonly InnerGap[] {
+		if (this.triviaInterior) return [];
+		const root = this.renderRule;
+		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+		if (!realizesEmpty(root, slotEmptiness(root, { slotById }))) return [];
+		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
+		const immediateTokens: boolean[] = [];
+		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
+			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined) {
+				occurrences.push({ slot, precedingTokens: immediateTokens.length });
+				return;
+			}
+			if (rule.type === STRING) {
+				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
+				return;
+			}
+			const inner =
+				ctx.conditional ||
+				rule.type === CHOICE ||
+				rule.multiplicity === 'optional' ||
+				rule.multiplicity === 'array' ||
+				rule.optionalElement === true;
+			for (const child of renderRuleWalker.childrenOf(rule)) walk(child, { conditional: inner });
+		};
+		walk(root, { conditional: false });
+		const tokens = immediateTokens.length;
+		if (this._slots.length === 0) {
+			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
+		}
+		if (tokens === 0) {
+			if (!this.grammarRoot) return [];
+			const rootSlot = root.id === undefined ? undefined : slotById.get(root.id);
+			const repeat =
+				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
+				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
+			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0 }];
+		}
+		return occurrences
+			.filter(
+				(occurrence, i) => occurrences.findIndex((other) => other.precedingTokens === occurrence.precedingTokens) === i
+			)
+			.filter(
+				(occurrence) =>
+					occurrence.precedingTokens > 0 &&
+					occurrence.precedingTokens < tokens &&
+					!immediateTokens[occurrence.precedingTokens]
+			)
+			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
+	}
+
 	get separator(): string | undefined {
 		return undefined;
 	}
@@ -1788,6 +1832,19 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 }
 
 export type AuthoredCompound = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
+
+export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
+	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
+}
+
+export function optionalFlankSlots(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (!isAuthoredCompound(node)) return [];
+	return node.slots.filter((slot) => slot.leadingDelimiter === 'optional' || slot.trailingDelimiter === 'optional');
+}
+
+export function separatorRequired(list: AssembledList): boolean {
+	return list.separatorRule !== undefined && list.resolvedSeparatorArm === undefined;
+}
 
 export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
@@ -1987,6 +2044,16 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	}
 }
 
+export function enumLiteralMembersOf(rule: ChoiceRule): readonly RenderRule[] {
+	const flatten = (member: RenderRule): readonly RenderRule[] =>
+		member.type === CHOICE ? member.members.flatMap(flatten) : [member];
+	return rule.members.flatMap(flatten);
+}
+
+export function enumValuesOf(rule: ChoiceRule): string[] {
+	return [...new Set(enumLiteralMembersOf(rule).map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+}
+
 export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
@@ -2022,19 +2089,17 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(
-				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to a StringRule`
+				`AssembledEnum '${kind}' must have at least two members; assemble records single-literal-choice before constructing one`
 			);
 		}
 	}
 
 	get literalMembers(): readonly RenderRule[] {
-		const flatten = (member: RenderRule): readonly RenderRule[] =>
-			member.type === CHOICE ? member.members.flatMap(flatten) : [member];
-		return this.rule.members.flatMap(flatten);
+		return enumLiteralMembersOf(this.rule);
 	}
 
 	get values(): string[] {
-		return [...new Set(this.literalMembers.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+		return enumValuesOf(this.rule);
 	}
 
 	override get storage(): KindStorage {
@@ -2111,10 +2176,32 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 export type SeparatedListElementRule = SymbolRule | ChoiceRule;
 
+export type SeparatorTokenArm = StringRule | SymbolRule;
+
+export interface SeparatorArms {
+	readonly tokens: readonly SeparatorTokenArm[];
+	readonly others: readonly Rule<'normalize'>[];
+}
+
+export function separatorArmsOf(rule: Rule<'normalize'>): SeparatorArms {
+	switch (rule.type) {
+		case STRING:
+		case SYMBOL:
+			return { tokens: [rule], others: [] };
+		case CHOICE: {
+			const arms = rule.members.map(separatorArmsOf);
+			return { tokens: arms.flatMap((a) => a.tokens), others: arms.flatMap((a) => a.others) };
+		}
+		default:
+			return { tokens: [], others: [rule] };
+	}
+}
+
 export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, 'list'> {
 	override readonly modelType = 'list' as const;
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
+	readonly separatorTokenArms: readonly SeparatorTokenArm[];
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	resolvedDelimiterArm?: string;
@@ -2152,8 +2239,13 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			rule.multiplicity === 'nonEmptyArray' ? 'nonEmptyArray' : 'array'
 		);
 		this.separatorRule = opts.separatorRule;
+		this.separatorTokenArms = opts.separatorRule === undefined ? [] : separatorArmsOf(opts.separatorRule).tokens;
 		this.leadingDelimiter = sep?.leading ?? 'none';
 		this.trailingDelimiter = sep?.trailing ?? 'none';
+	}
+
+	get separatorCandidateKindNames(): readonly string[] {
+		return this.separatorTokenArms.map((arm) => (arm.type === STRING ? arm.value : arm.name));
 	}
 
 	override get parameterless(): boolean {
@@ -2196,7 +2288,7 @@ export interface LeftImmediateCtx extends NodesCtx {
 	readonly normalizedRules?: Record<string, RenderRule>;
 }
 
-const isNullableMultiplicity = (rule: RenderRule): boolean =>
+export const isNullableMultiplicity = (rule: RenderRule): boolean =>
 	rule.multiplicity === 'optional' || rule.multiplicity === 'array';
 
 export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolean {
@@ -2239,17 +2331,8 @@ export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: Lef
 	return coreLeftmostImmediate(rule, ctx);
 }
 
-export function isBoundaryLeftImmediate(
-	members: readonly RenderRule[],
-	fromIndex: number,
-	ctx: LeftmostWalkCtx
-): boolean {
-	for (let i = fromIndex; i < members.length; i++) {
-		const member = members[i]!;
-		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
-		if (!isNullableMultiplicity(member)) return true;
-	}
-	return false;
+export function startsImmediateWhenPresent(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	return coreLeftmostImmediate(rule, ctx);
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
@@ -2259,19 +2342,28 @@ export interface KindEdgeClasses {
 	readonly ends: SeamEdgeClass;
 }
 
+export function seamNeedsSpace(seam: { readonly left: SeamEdgeClass; readonly right: SeamEdgeClass }): boolean {
+	return seam.left === 'word' && seam.right === 'word';
+}
+
+export function wordCharPredicate(wordMatcher: RegExp | undefined): (c: string) => boolean {
+	const table = wordCharAsciiTable(wordMatcher ?? /\w/);
+	return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
+}
+
 export interface EdgeClassCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly isWordChar: (c: string) => boolean;
 }
 
-const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
+export const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
 	if (classes.length === 0) return 'varies';
 	const first = classes[0]!;
 	return classes.every((c) => c === first) ? first : 'varies';
 };
 
-const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
+export const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
 	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
 
 const REGEX_CONTROL_ESCAPES: Record<string, string> = {

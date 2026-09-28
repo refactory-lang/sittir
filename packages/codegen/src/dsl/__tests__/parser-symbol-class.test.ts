@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { AnyRule } from '../../types/rule.ts';
 import { stableGrammars } from '../../grammars.ts';
-import { predictedSymbolSource } from '../rule-patterns.ts';
+import { predictedSymbolSourceOf } from '../symbol-table.ts';
+import type { RuleListEntry } from '../rule-patterns.ts';
 
 type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
 
@@ -11,9 +12,11 @@ const ROOT = fileURLToPath(new URL('../../../../../', import.meta.url));
 
 interface GrammarJson {
 	readonly rules: Record<string, AnyRule>;
-	readonly extras?: readonly AnyRule[];
-	readonly externals?: readonly { readonly type: string; readonly name?: string }[];
+	readonly extras?: readonly RuleListEntry[];
+	readonly externals?: readonly RuleListEntry[];
 	readonly inline?: readonly string[];
+	readonly supertypes?: readonly string[];
+	readonly word?: string;
 }
 
 type Node = {
@@ -75,11 +78,14 @@ describe('the predicted symbol source agrees with the generated parser at every 
 	for (const grammar of stableGrammars()) {
 		it(grammar, () => {
 			const json = JSON.parse(readFileSync(`${ROOT}packages/${grammar}/.sittir/src/grammar.json`, 'utf8')) as GrammarJson;
-			const symbols = predictedSymbolSource(
-				json.rules,
-				(json.externals ?? []).flatMap((e) => (e.type === 'SYMBOL' && e.name ? [e.name] : [])),
-				json.inline ?? []
-			);
+			const symbols = predictedSymbolSourceOf({
+				rules: json.rules as never,
+				externals: json.externals ?? [],
+				extras: json.extras ?? [],
+				inline: json.inline ?? [],
+				supertypes: json.supertypes ?? [],
+				word: json.word ?? null
+			});
 			const predictedClassOf = (name: string): ParserSymbolClass =>
 				symbols.isInlined(name) ? 'inlined' : symbols.isTerminal(name) ? 'terminal' : 'nonterminal';
 			const parserClassOf = parserClasses(grammar);

@@ -1,6 +1,6 @@
 import type { SeamOrigin } from '../types/rule.ts';
-import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import type { KindEntryLike } from '../dsl/symbol-table.ts';
+import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -9,9 +9,10 @@ import { admitsDepth } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
-import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
+import { lineTerminatedTrivia } from '../compiler/model/trivia.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -81,7 +82,11 @@ export interface RenderOptionsPlan {
 	readonly indentId: number;
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
+	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
 }
+
+const KIND_ANON = 1;
+const KIND_LINE_TERMINATED = 2;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = {
 	'Delimiter.Leading': DelimiterFlags.leading,
@@ -107,6 +112,16 @@ function idOf(kindEntries: readonly IdEntry[], kind: string, at: string): number
 
 function screaming(s: string): string {
 	return toScreamingSnakeCase(s, s);
+}
+
+function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { readonly id: number; readonly flags: number }[] {
+	const flags = new Map<number, number>();
+	for (const entry of kindEntries) {
+		if (entry.id === undefined) continue;
+		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedTrivia(entry.kind, nodeMap) ? KIND_LINE_TERMINATED : 0);
+		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
+	}
+	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
 }
 
 export function planRenderOptions(
@@ -197,7 +212,8 @@ export function planRenderOptions(
 		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
-			.sort((a, b) => a.id - b.id)
+			.sort((a, b) => a.id - b.id),
+		kindFlags: kindFlagsOf(kindEntries, nodeMap)
 	};
 }
 
@@ -455,6 +471,16 @@ function siteOrNone(site: number | undefined): string {
 	return site === undefined ? NO_SITE : String(site);
 }
 
+function denseFlags(name: string, rows: readonly { readonly id: number; readonly flags: number }[]): string[] {
+	const byId = new Map(rows.map((row) => [row.id, row.flags]));
+	const width = rows.length === 0 ? 0 : Math.max(...byId.keys()) + 1;
+	const cells = Array.from({ length: width }, (_, id) => String(byId.get(id) ?? 0));
+	const L = [`pub static ${name}: &[u8] = &[`];
+	for (let i = 0; i < cells.length; i += 32) L.push(`    ${cells.slice(i, i + 32).join(', ')},`);
+	L.push('];', '');
+	return L;
+}
+
 function denseTable(name: string, entries: ReadonlyMap<number, number>): string[] {
 	const width = entries.size === 0 ? 0 : Math.max(...entries.keys()) + 1;
 	const cells = Array.from({ length: width }, (_, id) => siteOrNone(entries.get(id)));
@@ -487,6 +513,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('];', '');
 	L.push('/// Per kind id, its row in EDGE_SITES.');
 	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));
+	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED.');
+	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
@@ -524,6 +552,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        edges: EDGE_SITES,');
 	L.push('        edge_rows: EDGE_ROWS,');
+	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        sites: SITE_SPECS,');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');

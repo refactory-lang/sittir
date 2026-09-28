@@ -11,8 +11,6 @@ export function depthBreakOf(text: string): string {
 }
 export type SpacingArm = string;
 export type WhitespaceArm = string;
-export const SPACING_DEFAULT: SpacingArm = 'space';
-export const FLANK_DEFAULT: WhitespaceArm = 'space';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
 export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;
@@ -39,7 +37,9 @@ export function spacingLabel(token: string, side?: SeparatorSide): string {
 	return side === undefined ? `${token}_separator_space` : `${token}_separator_space_${side}`;
 }
 
-const SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+const LABEL_TOKEN = '[A-Za-z][A-Za-z0-9_]*?';
+
+const SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
 
 export function parseSpacingLabel(name: string): { readonly token: string; readonly side?: SeparatorSide } | undefined {
 	const m = SPACING_LABEL.exec(name);
@@ -54,7 +54,7 @@ export function seamLabel(token: string, side: SeparatorSide): string {
 	return `${token}_${side}`;
 }
 
-const SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+const SEAM_LABEL = new RegExp(`^(${LABEL_TOKEN})_(before|after)$`);
 
 export function parseSeamLabel(name: string): { readonly token: string; readonly side: SeparatorSide } | undefined {
 	if (parseSpacingLabel(name) !== undefined) return undefined;
@@ -72,7 +72,7 @@ export function flankAddress(publicKind: string, side: FlankSide): string {
 	return `${publicKind}_${side}`;
 }
 
-const FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
+const FLANK_ADDRESS = new RegExp(`^(_*${LABEL_TOKEN})_(start|end)$`);
 
 export function parseFlankAddress(key: string): { readonly kind: string; readonly side: FlankSide } | undefined {
 	const m = FLANK_ADDRESS.exec(key);

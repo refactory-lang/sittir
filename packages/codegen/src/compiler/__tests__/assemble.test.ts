@@ -1,3 +1,4 @@
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -23,12 +24,12 @@ import {
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPunctuation,
-	isVisibleTextLeaf,
+	isBuilderTextLeaf,
 	isHiddenPunctuationLeaf,
 	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
 import { makeNormalized } from './make-normalized.ts';
-import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
+import type { GeneratedIdTables, GeneratedIdEntry } from '../../dsl/symbol-table.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
@@ -194,7 +195,7 @@ describe('Assemble — classifyNode', () => {
 		const word = nodes.get('true')!;
 		expect(visible).toBeInstanceOf(AssembledPunctuation);
 		expect(hidden).toBeInstanceOf(AssembledPunctuation);
-		expect([visible, hidden, word].map(isVisibleTextLeaf)).toEqual([true, false, true]);
+		expect([visible, hidden, word].map(isBuilderTextLeaf)).toEqual([true, false, true]);
 		expect([visible, hidden, word].map(isHiddenPunctuationLeaf)).toEqual([false, true, false]);
 		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
 	});
@@ -1007,7 +1008,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(nodeMap.nodes.has(',')).toBe(false);
 	});
 
-	it('does not mint a literal with no anonymous parser symbol and records a diagnosable warning', () => {
+	it('does not mint a literal with no anonymous parser symbol and warns in the compiler sink', () => {
 		const normalized = makeNormalized({
 			root: {
 				type: SEQ,
@@ -1019,9 +1020,10 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ unrelated: anonEntry(9, '@@') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const diagnostics = new DiagnosticSink();
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
 		expect(nodeMap.nodes.has('::=')).toBe(false);
-		expect(nodeMap.assembleWarnings.some((w) => w.code === 'kindid-unstamped-anon-literal')).toBe(true);
+		expect(diagnostics.all().some((d) => d.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
 
 	it('skips minting an anonymous node when the catalog-resolved kind name is already a named node', () => {

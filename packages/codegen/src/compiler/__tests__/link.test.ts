@@ -30,7 +30,7 @@ import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../..
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
-import type { GeneratedKindEntry } from '../generated-metadata.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { evaluate } from '../evaluate.ts';
 import { resolveOverridesPath } from '../resolve-grammar.ts';
@@ -1065,6 +1065,31 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(result.content.resolvedKindId).toBeUndefined();
 		expect(misses.literals.size).toBe(0);
 		expect(misses.symbols.size).toBe(0);
+	});
+
+	it('resolves a lexed-interior field literal to an anonymous token kind only, never to a named rule', () => {
+		const entries: GeneratedKindEntry[] = [
+			{ kind: 'blank_identifier', id: 5, literalRule: true, literalText: '_' },
+			{ kind: 'u8_keyword', id: 6, anon: true, symbolName: 'u8', literalText: 'u8' }
+		];
+		const misses = noMisses();
+		const rule: Rule<'link'> = {
+			type: TOKEN,
+			immediate: false,
+			content: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'separator', content: { type: STRING, value: '_' } },
+					{ type: FIELD, name: 'suffix', content: { type: STRING, value: 'u8' } }
+				]
+			}
+		};
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as {
+			content: { members: { content: { type: string; name?: string; value?: string } }[] };
+		};
+		const [separator, suffix] = result.content.members;
+		expect(separator!.content).toMatchObject({ type: STRING, value: '_' });
+		expect(suffix!.content).toMatchObject({ type: SYMBOL, name: 'u8_keyword' });
 	});
 });
 

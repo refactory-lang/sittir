@@ -1,5 +1,5 @@
 import type { NodeMap } from '../../compiler/types.ts';
-import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledAlias,
@@ -13,9 +13,10 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
-import { camelCase } from '../refine-emit.ts';
+import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
+import { defaultTriviaForm } from '../../compiler/model/trivia.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
 export type OverlayName = (typeof OVERLAY_CHAIN)[number];
@@ -74,7 +75,7 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 		if (node instanceof AssembledAlias) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
-		const key = node.irKey ?? camelCase(kind);
+		const key = node.irKey ?? lowerCamelCase(kind);
 		if (!isValidIdent(key) || used.has(key)) continue;
 		used.add(key);
 		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node });
@@ -153,13 +154,13 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 				...(mintedBy(kind, childKind, ref.variant) ? { minted: true as const } : {})
 			};
 			if (nestedParentKey !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, nestedParentKey, ...facts });
 			} else if (child.rawFactoryName !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, ...facts });
 			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
 				waiting = true;
 			} else if (isKindIdStored(child) && !(child instanceof AssembledEnum)) {
-				routes.push({ name: camelCase(ref.variant), child, leaf: true, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, leaf: true, ...facts });
 			} else {
 				return null;
 			}
@@ -179,7 +180,7 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			pending.splice(i--, 1);
 			progressed = true;
 			if (routes === null) continue;
-			const key = node.irKey ?? camelCase(kind.replace(/^_+/, ''));
+			const key = node.irKey ?? lowerCamelCase(kind.replace(/^_+/, ''));
 			if (!isValidIdent(key) || taken.has(key)) continue;
 			taken.add(key);
 			keyByParent.set(kind, key);
@@ -211,10 +212,12 @@ export function emitFactoriesIndex(
 	config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }
 ): string {
 	const source = `./overlays/${head}.js`;
+	const form = defaultTriviaForm(config.nodeMap);
 	const lines: string[] = [
 		HEADER,
 		`import * as O from '${source}';`,
-		"import { hoist, hoistRoutes, type Hoisted } from '../utils.js';",
+		`import { hoist, hoistRoutes, ${form === undefined ? '' : 'methodsEngine, '}type Hoisted } from '../utils.js';`,
+		...(form === undefined ? [] : [`import { ${form.coercer} } from './coerce.js';`]),
 		`export * from '${source}';`,
 		''
 	];
@@ -224,6 +227,7 @@ export function emitFactoriesIndex(
 	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
 	}
+	if (form !== undefined) lines.push('', `methodsEngine.trivia.comment = ${form.coercer};`);
 	lines.push('');
 	return lines.join('\n');
 }

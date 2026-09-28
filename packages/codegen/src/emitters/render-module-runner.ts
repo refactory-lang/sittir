@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { RenderModuleBundle } from './render-module.ts';
@@ -35,7 +35,7 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) {
+				if (isBuilderTextLeaf(node)) {
 					templateEmitter.emitLeaf?.(node);
 					renderModuleEmitter.emitLeaf?.(node);
 				}

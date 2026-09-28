@@ -1,4 +1,5 @@
-import { isChoiceType, isPrecWrapper, isSeqType, isTokenWrapperType, matchesEmpty, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isChoiceType, isPrecWrapper, isSeqType, isTokenWrapperType, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isBlank, matchesEmpty, optionalContentOf } from '../rule-patterns.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
 
@@ -8,7 +9,6 @@ const typeOf = (rule: RuntimeRule): string => (rule as Typed).type ?? '';
 const membersOf = (rule: RuntimeRule): RuntimeRule[] => (rule as Typed).members ?? [];
 const contentOf = (rule: RuntimeRule): RuntimeRule => (rule as Typed).content!;
 const rebuilt = (rule: RuntimeRule, patch: Partial<Typed>): RuntimeRule => ({ ...rule, ...patch });
-const isBlank = (rule: RuntimeRule): boolean => typeOf(rule) === 'BLANK';
 const isString = (rule: RuntimeRule): boolean => typeOf(rule) === 'STRING';
 
 export function isTokenWrapper(rule: RuntimeRule): boolean {
@@ -32,23 +32,13 @@ type Site = { readonly path: readonly number[]; readonly arms: readonly RuntimeR
 
 function findOutermostForms(rule: RuntimeRule, path: readonly number[]): Site | undefined {
 	const t = typeOf(rule);
-	if (isChoiceType(t)) {
-		const cls = classifyTokenChoice(rule);
-		if (cls === 'forms') return { path, arms: flattenFormArms(membersOf(rule)) };
-		if (cls === 'spelling') return undefined;
-		const live = membersOf(rule).filter((m) => !isBlank(m));
-		const only = live.length === 1 ? live[0]! : undefined;
-		if (only !== undefined && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === 'forms') {
-			return { path, arms: [...flattenFormArms(membersOf(only)), membersOf(rule).find(isBlank)!] };
-		}
-		return undefined;
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) {
+		const forms = isChoiceType(typeOf(optional)) && classifyTokenChoice(optional) === 'forms';
+		return forms ? { path, arms: [...flattenFormArms(membersOf(optional)), BLANK] } : undefined;
 	}
-	if (t === 'OPTIONAL') {
-		const inner = contentOf(rule);
-		if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === 'forms') {
-			return { path, arms: [...flattenFormArms(membersOf(inner)), BLANK] };
-		}
-		return undefined;
+	if (isChoiceType(t)) {
+		return classifyTokenChoice(rule) === 'forms' ? { path, arms: flattenFormArms(membersOf(rule)) } : undefined;
 	}
 	if (isSeqType(t)) {
 		const members = membersOf(rule);

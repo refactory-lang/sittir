@@ -34,6 +34,7 @@
 
 use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
+use std::collections::BTreeMap;
 
 /// How far one read expands.
 ///
@@ -96,6 +97,23 @@ pub trait ReadModel {
     /// itself, so the wrap layer can seat it as the envelope's content.
     fn is_alias_envelope(&self, kind: KindId) -> bool {
         let _ = kind;
+        false
+    }
+
+    /// The gap an extra inside a node of this kind occupies when the node
+    /// has no named child to own it, named by the model slot whose position
+    /// the gap holds, given the count of anonymous tokens before the extra.
+    /// `None` when the model has no slot at that gap.
+    fn inner_gap_key(&self, kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+        let _ = (kind, preceding_tokens);
+        None
+    }
+
+    /// Whether the model stores a `child` of a `parent` node, reached under
+    /// the parser field `field`, as a scalar: a presence flag or a kind id.
+    /// Such a child keeps no trivia, so it never owns an extra.
+    fn stores_scalar(&self, parent: KindId, field: Option<&str>, child: KindId) -> bool {
+        let _ = (parent, field, child);
         false
     }
 }
@@ -252,36 +270,39 @@ fn read_ts_node(
         span: Some(span),
         node_handle,
         child_index: None,
-        trivia_data: compute_trivia(node, source, tree_handle, model),
+        trivia_data: node_trivia(node, source, tree_handle, model),
         slot_order,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 
-/// Compute `node`'s own leading/trailing trivia by walking its
-/// tree-sitter siblings directly. Self-contained -- depends only on
-/// `node`'s position in the tree, not on how it was reached -- because
-/// this crate's handle+child-index re-resolution can read `node` directly
-/// (bypassing its parent's `read_children` pass entirely), and any
-/// trivia attached only as a side effect of that pass would silently
-/// vanish on such a direct read.
+/// The trivia `node` owns, placed by its own position in the tree. Self-
+/// contained -- it depends only on `node`'s siblings and children, not on
+/// how `node` was reached -- because this crate's handle+child-index
+/// re-resolution can read `node` directly (bypassing its parent's
+/// `read_children` pass entirely), and trivia attached only as a side
+/// effect of that pass would silently vanish on such a direct read.
 ///
 /// Extras (tree-sitter's grammar-`extras`-matched nodes -- comments, line
-/// continuations, etc.) never carry a field name, so `read_children`
-/// simply skips them; they are recovered here instead. A run of extras
-/// attaches as LEADING trivia to the next named non-extra sibling
-/// (anonymous non-extra siblings, e.g. `,`, are transparent -- skipped
-/// without breaking the run). A run attaches as TRAILING trivia only
-/// when `node` is the last named sibling -- i.e. no named sibling follows
-/// before the end of the parent's children -- otherwise that run belongs
-/// to the following named sibling's leading trivia instead, computed
-/// independently when that sibling is read. An extra with no named
-/// sibling in either direction (a construct whose only children are
-/// extras, e.g. `{ // only a comment }`) has nowhere to attach --
-/// `NodeTrivia` is leading/trailing OF a sibling, not an interior-content
-/// slot on the parent itself -- so such extras are dropped. This is a
-/// known, documented round-trip fidelity floor, not a silent bug;
-/// recovering it would need a different mechanism (a parent-interior
-/// content slot).
+/// continuations, etc.) never carry a field name, so `read_children` skips
+/// them; they are recovered here. Only a named non-extra node -- an owner --
+/// holds trivia, and every extra has exactly one owner, the first rule that
+/// applies among the owners around it (anonymous non-extra siblings, e.g.
+/// `,`, are transparent):
+///
+/// 1. the previous owner ends on the row the extra starts: trailing of the
+///    previous owner, on its line, after the anonymous tokens between them;
+/// 2. a next owner exists: leading of the next owner, on its line when the
+///    extra ends on the row the owner starts;
+/// 3. a previous owner exists: trailing of the previous owner;
+/// 4. otherwise the parent has no owner child: inner of the parent, keyed by
+///    the gap the model names for the count of anonymous tokens before the
+///    extra. An extra in a gap the model cannot key is dropped.
+///
+/// Each owner computes its side of rules 1-3 from its own siblings and its
+/// rule-4 entries from its own children, so both ends of a rule agree
+/// without either read seeing the other.
 ///
 /// Trivia entries are fully materialized (recursively read via
 /// `read_ts_node`, not shallow stubs) since they are not independently
@@ -290,79 +311,174 @@ fn read_ts_node(
 /// Each entry still carries a coordinate — the tree's tag in `$nodeHandle`
 /// and its own `$span` — so an untouched comment renders as the bytes it
 /// spans, whatever its kind's transport would otherwise need.
-fn compute_trivia(
+/// An entry read with no fields and no children (rust's regular `/* a */`,
+/// whose content is not a node) carries its bytes as `$text`, so its text is a
+/// read fact rather than something only the span can recover.
+fn node_trivia(
     node: tree_sitter::Node<'_>,
     source: &str,
     tree_handle: Option<u64>,
     model: &dyn ReadModel,
 ) -> Option<NodeTrivia> {
-    // An extra never carries its own trivia -- it IS trivia.
     if node.is_extra() {
         return None;
     }
+    let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
+        let data = read_ts_node(
+            extra,
+            source,
+            tree_handle,
+            tree_handle,
+            ReadDepth::Deep,
+            model,
+        );
+        let childless = data.fields.is_none() && data.children.is_none();
+        let text = data.text.or_else(|| {
+            childless
+                .then(|| source.get(extra.byte_range()).map(str::to_string))
+                .flatten()
+        });
+        NodeData {
+            same_line,
+            tokens_between,
+            text,
+            ..data
+        }
+    };
 
-    let mut leading: Vec<NodeData> = Vec::new();
-    let mut cursor = node.prev_sibling();
-    while let Some(sib) = cursor {
-        if sib.is_extra() {
-            leading.push(read_ts_node(
-                sib,
-                source,
-                tree_handle,
-                tree_handle,
-                ReadDepth::Deep,
-                model,
-            ));
-            cursor = sib.prev_sibling();
-        } else if sib.is_named() {
-            break;
-        } else {
-            cursor = sib.prev_sibling();
+    let mut leading = Vec::new();
+    let mut trailing = Vec::new();
+    let owner = is_owner(&node, model);
+    if owner {
+        let (before, prev) = extras_run(node, |n| n.prev_sibling(), model);
+        for (extra, _) in before.into_iter().rev() {
+            let trails_prev = prev.is_some_and(|p| end_row(&p) == extra.start_position().row);
+            if !trails_prev {
+                leading.push(entry(
+                    extra,
+                    end_row(&extra) == node.start_position().row,
+                    0,
+                ));
+            }
+        }
+        let (after, next) = extras_run(node, |n| n.next_sibling(), model);
+        for (extra, tokens) in after {
+            let same_line = end_row(&node) == extra.start_position().row;
+            if same_line {
+                trailing.push(entry(extra, true, tokens));
+            } else if next.is_none() {
+                trailing.push(entry(extra, false, 0));
+            }
         }
     }
-    leading.reverse();
 
-    let mut trailing: Vec<NodeData> = Vec::new();
-    let mut is_last_named = true;
-    let mut cursor = node.next_sibling();
-    while let Some(sib) = cursor {
-        if sib.is_extra() {
-            trailing.push(read_ts_node(
-                sib,
-                source,
-                tree_handle,
-                tree_handle,
-                ReadDepth::Deep,
-                model,
-            ));
-            cursor = sib.next_sibling();
-        } else if sib.is_named() {
-            is_last_named = false;
-            break;
-        } else {
-            cursor = sib.next_sibling();
+    let mut inner: BTreeMap<String, Vec<NodeData>> = BTreeMap::new();
+    let mut cursor = node.walk();
+    let children: Vec<_> = node.children(&mut cursor).collect();
+    if !children.iter().any(|child| is_owner(child, model)) {
+        let mut preceding_tokens: u16 = 0;
+        let mut named_before = false;
+        for child in children {
+            if !child.is_extra() {
+                preceding_tokens += 1;
+                named_before |= child.is_named();
+            } else if let Some(key) = model.inner_gap_key(stamped_kind(&node), preceding_tokens) {
+                inner
+                    .entry(key.to_string())
+                    .or_default()
+                    .push(entry(child, false, 0));
+            } else if owner {
+                if named_before {
+                    trailing.push(entry(child, true, 0));
+                } else {
+                    leading.push(entry(child, true, 0));
+                }
+            }
         }
     }
-    if !is_last_named {
-        trailing.clear();
-    }
 
-    if leading.is_empty() && trailing.is_empty() {
-        None
+    let some = |entries: Vec<NodeData>| (!entries.is_empty()).then_some(entries);
+    let inner = (!inner.is_empty()).then_some(inner);
+    if leading.is_empty() && trailing.is_empty() && inner.is_none() {
+        return None;
+    }
+    Some(NodeTrivia {
+        leading: some(leading),
+        trailing: some(trailing),
+        inner,
+    })
+}
+
+/// The row a node ends on: the row of its last byte, so a span that ends
+/// with its line break (a doc comment includes its newline) ends on the row
+/// that break closes, not at column 0 of the next row.
+fn end_row(node: &tree_sitter::Node<'_>) -> usize {
+    let end = node.end_position();
+    if end.column == 0 && node.end_byte() > node.start_byte() {
+        end.row - 1
     } else {
-        Some(NodeTrivia {
-            leading: if leading.is_empty() {
-                None
-            } else {
-                Some(leading)
-            },
-            trailing: if trailing.is_empty() {
-                None
-            } else {
-                Some(trailing)
-            },
-        })
+        end.row
     }
+}
+
+/// A node that can own trivia: named, not itself an extra, spanning at
+/// least one byte, and stored by its slot as a node. A zero-width node
+/// (typescript's `automatic_semicolon`) is never written around, and a child
+/// its slot stores as a scalar (a flag or a kind id) keeps no trivia, so an
+/// entry either owned would have nowhere to render.
+fn is_owner(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    node.is_named() && !node.is_extra() && node.end_byte() > node.start_byte() && !stored_as_scalar(node, model)
+}
+
+fn stored_as_scalar(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    let Some(parent) = node.parent() else {
+        return false;
+    };
+    model.stores_scalar(stamped_kind(&parent), field_in_parent(node, &parent), stamped_kind(node))
+}
+
+/// The parser field `parent` tags `node` with, if any.
+fn field_in_parent(node: &tree_sitter::Node<'_>, parent: &tree_sitter::Node<'_>) -> Option<&'static str> {
+    let mut cursor = parent.walk();
+    if !cursor.goto_first_child() {
+        return None;
+    }
+    loop {
+        if cursor.node().id() == node.id() {
+            return cursor.field_name();
+        }
+        if !cursor.goto_next_sibling() {
+            return None;
+        }
+    }
+}
+
+/// The extras between `node` and the nearest owner in one direction, nearest
+/// first, each with the anonymous tokens between it and `node`, and that
+/// owner.
+fn extras_run<'t>(
+    node: tree_sitter::Node<'t>,
+    step: impl Fn(tree_sitter::Node<'t>) -> Option<tree_sitter::Node<'t>>,
+    model: &dyn ReadModel,
+) -> (
+    Vec<(tree_sitter::Node<'t>, u16)>,
+    Option<tree_sitter::Node<'t>>,
+) {
+    let mut extras = Vec::new();
+    let mut tokens: u16 = 0;
+    let mut cursor = step(node);
+    while let Some(sibling) = cursor {
+        if is_owner(&sibling, model) {
+            return (extras, Some(sibling));
+        }
+        if sibling.is_extra() {
+            extras.push((sibling, tokens));
+        } else {
+            tokens += 1;
+        }
+        cursor = step(sibling);
+    }
+    (extras, None)
 }
 
 /// Walk a node's children once, partitioning by whether the child
@@ -381,8 +497,8 @@ fn compute_trivia(
 /// named, so without special handling they'd fall into the kind-named
 /// slot path below and collapse into an opaque, never-wrapped `_<kind>`
 /// bucket. They are skipped entirely
-/// here; `compute_trivia` recovers them as leading/trailing trivia on
-/// the adjacent named sibling instead.
+/// here; `node_trivia` recovers them as trivia of the owner the
+/// placement rules pick.
 fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
@@ -423,12 +539,21 @@ fn read_children(
             // it is a child like any stub — the parent's handle and its index,
             // which the wrap layer may re-read. Under a deep read nothing is
             // re-read, so it carries the tree's tag and no index, as a trivia
-            // entry does: enough to fold and slice, never a stub's shape.
-            let (handle, child_index) = match depth {
-                ReadDepth::Shallow => (node_handle, Some(i as u16)),
-                ReadDepth::Deep => (tree_handle, None),
+            // entry does: enough to fold and slice, never a stub's shape. The
+            // same holds for its trivia: a shallow leaf's is read when the
+            // wrap layer re-reads it, a deep leaf's is read here.
+            let (handle, child_index, trivia_data) = match depth {
+                ReadDepth::Shallow => (node_handle, Some(i as u16), None),
+                ReadDepth::Deep => (
+                    tree_handle,
+                    None,
+                    node_trivia(child, source, tree_handle, model),
+                ),
             };
-            read_materialized_leaf(child, source, model, handle, child_index)
+            NodeData {
+                trivia_data,
+                ..read_materialized_leaf(child, source, model, handle, child_index)
+            }
         } else {
             match depth {
                 ReadDepth::Shallow => {
@@ -546,6 +671,8 @@ fn read_child_stub(
         child_index: Some(child_index),
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 
@@ -574,6 +701,8 @@ fn read_materialized_leaf(
         child_index,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 

@@ -4,6 +4,7 @@ import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '../../utils.js';
 import { TSKindId } from '../../types.js';
+import type * as T from '../../types.js';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -576,12 +577,24 @@ const matchBlock$flatten =
 		config === undefined || _built(config)
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
-const matchBlock$seated: (
+function matchBlock$seated(): T.EmptyMatchBlock;
+function matchBlock$seated(
 	config: ArgsOf<typeof F.buildMatchBlock>[0] | ArgsOf<typeof F.buildMatchBlockArms>[0]
-) => ReturnType<typeof F.buildMatchBlock> = matchBlock$flatten(F.buildMatchBlock, F.buildMatchBlockArms);
-const matchBlock$seatedCoerce: (
+): ReturnType<typeof F.buildMatchBlock>;
+function matchBlock$seated(
+	...args: [config?: ArgsOf<typeof F.buildMatchBlock>[0] | ArgsOf<typeof F.buildMatchBlockArms>[0]]
+): ReturnType<typeof F.buildMatchBlock> {
+	return matchBlock$flatten(F.buildMatchBlock, F.buildMatchBlockArms)(...args);
+}
+function matchBlock$seatedCoerce(): T.EmptyMatchBlock;
+function matchBlock$seatedCoerce(
 	config: ArgsOf<typeof C.coerceToMatchBlock>[0] | ArgsOf<typeof C.coerceToMatchBlockArms>[0]
-) => ReturnType<typeof C.coerceToMatchBlock> = matchBlock$flatten(C.coerceToMatchBlock, C.coerceToMatchBlockArms);
+): ReturnType<typeof C.coerceToMatchBlock>;
+function matchBlock$seatedCoerce(
+	...args: [config?: ArgsOf<typeof C.coerceToMatchBlock>[0] | ArgsOf<typeof C.coerceToMatchBlockArms>[0]]
+): ReturnType<typeof C.coerceToMatchBlock> {
+	return matchBlock$flatten(C.coerceToMatchBlock, C.coerceToMatchBlockArms)(...args);
+}
 export const matchBlock: typeof B.matchBlock & {
 	strict: typeof matchBlock$seated;
 	coerce: typeof matchBlock$seatedCoerce;
@@ -1346,26 +1359,44 @@ const arrayExpressionList$argumentsElements = <
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), argumentsElements: _c(child)(...seat) }, options);
 	};
 };
-const arrayExpressionList$seated: (
+function arrayExpressionList$seated(): T.EmptyArrayExpressionList;
+function arrayExpressionList$seated(
 	config:
 		| ArgsOf<typeof F.buildArrayExpressionList>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildArrayExpressionList>[0]>, 'argumentsElements'> & {
 				argumentsElements: ArgsOf<typeof argumentsElements.strict>;
 		  })
-) => ReturnType<typeof F.buildArrayExpressionList> = arrayExpressionList$argumentsElements(
-	F.buildArrayExpressionList,
-	argumentsElements.strict
-);
-const arrayExpressionList$seatedCoerce: (
+): ReturnType<typeof F.buildArrayExpressionList>;
+function arrayExpressionList$seated(
+	...args: [
+		config?:
+			| ArgsOf<typeof F.buildArrayExpressionList>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildArrayExpressionList>[0]>, 'argumentsElements'> & {
+					argumentsElements: ArgsOf<typeof argumentsElements.strict>;
+			  })
+	]
+): ReturnType<typeof F.buildArrayExpressionList> {
+	return arrayExpressionList$argumentsElements(F.buildArrayExpressionList, argumentsElements.strict)(...args);
+}
+function arrayExpressionList$seatedCoerce(): T.EmptyArrayExpressionList;
+function arrayExpressionList$seatedCoerce(
 	config:
 		| ArgsOf<typeof C.coerceToArrayExpressionList>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToArrayExpressionList>[0]>, 'argumentsElements'> & {
 				argumentsElements: ArgsOf<typeof argumentsElements.coerce>;
 		  })
-) => ReturnType<typeof C.coerceToArrayExpressionList> = arrayExpressionList$argumentsElements(
-	C.coerceToArrayExpressionList,
-	argumentsElements.coerce
-);
+): ReturnType<typeof C.coerceToArrayExpressionList>;
+function arrayExpressionList$seatedCoerce(
+	...args: [
+		config?:
+			| ArgsOf<typeof C.coerceToArrayExpressionList>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToArrayExpressionList>[0]>, 'argumentsElements'> & {
+					argumentsElements: ArgsOf<typeof argumentsElements.coerce>;
+			  })
+	]
+): ReturnType<typeof C.coerceToArrayExpressionList> {
+	return arrayExpressionList$argumentsElements(C.coerceToArrayExpressionList, argumentsElements.coerce)(...args);
+}
 const arrayExpressionList: {
 	strict: typeof arrayExpressionList$seated;
 	coerce: typeof arrayExpressionList$seatedCoerce;
@@ -2212,6 +2243,18 @@ export const escapeSequence: {
 	unicodeFixed: { strict: F.buildEscapeSequenceUnicodeFixed, coerce: C.coerceToEscapeSequenceUnicodeFixed },
 	unicodeBraced: { strict: F.buildEscapeSequenceUnicodeBraced, coerce: C.coerceToEscapeSequenceUnicodeBraced },
 	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex }
+};
+
+export const comment: {
+	readonly strict: typeof lineComment.strict;
+	readonly coerce: typeof lineComment.coerce;
+	readonly lineComment: typeof lineComment;
+	readonly blockComment: typeof blockComment;
+} = {
+	strict: lineComment.strict,
+	coerce: lineComment.coerce,
+	lineComment: lineComment,
+	blockComment: blockComment
 };
 
 export const declarationStatement: {

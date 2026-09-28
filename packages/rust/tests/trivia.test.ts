@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from 'vitest';
 import * as F from '../src/factories/index.js';
-import type { LineComment } from '../src/types.js';
+import { createEngine } from '../src/engine.js';
+import { TSKindId, type LineComment } from '../src/types.js';
 
 function makeFn(name: string) {
 	return F.buildFunctionItem({
@@ -23,7 +24,7 @@ function makeComment(text: string): LineComment {
  *  stashes entries here; probed structurally because the key is
  *  deliberately not part of the public node type surface. */
 type TriviaData = { leading?: unknown[]; trailing?: unknown[] };
-function triviaDataOf(node: object): TriviaData | undefined {
+function triviaDataOf(node: unknown): TriviaData | undefined {
 	return (node as { $_trivia?: TriviaData }).$_trivia;
 }
 
@@ -66,10 +67,14 @@ describe('$trivia() integration', () => {
 		expect(triviaDataOf(rebuilt)).toBe(triviaDataOf(fn));
 	});
 
-	it('accepts verbatim text as a trivia entry', () => {
+	it('builds loose text into line comments', () => {
 		const fn = makeFn('main');
 		fn.$trivia('// hello', '// a');
-		expect(triviaDataOf(fn)?.leading).toEqual(['// hello', '// a']);
+		expect((triviaDataOf(fn)?.leading as { $type: unknown }[] | undefined)?.map((entry) => entry.$type)).toEqual([
+			TSKindId.LineComment,
+			TSKindId.LineComment
+		]);
+		expect(fn.$render()).toBe('// hello\n// a\nfn main() {}');
 	});
 
 	// `line_comment.jinja` renders `//{{ content }}` — content is the text
@@ -97,7 +102,7 @@ describe('$trivia() integration', () => {
 		expect(fn.$render()).toBe('fn main() {}\n// bye\n');
 	});
 
-	it('verbatim text renders as written, before and after the node', () => {
+	it('loose text renders as the comment it spells, before and after the node', () => {
 		const fn = makeFn('main');
 		fn.$trivia({ leading: ['// top'], trailing: ['// bottom'] });
 		const out = fn.$render();
@@ -120,5 +125,26 @@ describe('$trivia() integration', () => {
 			trailing: [buildLineComment(' bottom')]
 		});
 		expect(fn.$render()).toBe('// top1\n// top2\nfn main() {}\n// bottom\n');
+	});
+
+	type WrappedEntry = { content(): unknown; $render(): string };
+
+	it('wraps read trivia entries like slot children', () => {
+		const letDecl = createEngine().parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0]!;
+		const lead = triviaDataOf(letDecl)!.leading as WrappedEntry[];
+		expect(lead.every((entry) => typeof entry.content === 'function')).toBe(true);
+		expect(lead.map((entry) => entry.$render())).toEqual(['//!\n', '/*!*/', '//', '///\n']);
+	});
+
+	it('wraps the entries of an inner gap', () => {
+		const fn = createEngine().parse('fn f() {\n    // only\n}\n').statements()[0] as unknown as {
+			body(): object;
+		};
+		const inner = (triviaDataOf(fn.body()) as { inner?: Record<string, WrappedEntry[]> }).inner!;
+		expect(
+			Object.values(inner)
+				.flat()
+				.map((entry) => entry.$render())
+		).toEqual(['// only']);
 	});
 });

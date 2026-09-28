@@ -27,6 +27,10 @@ export interface SeamNode {
 	readonly field: string;
 }
 
+export interface WordSeamNode {
+	readonly kind: 'wordSeam';
+}
+
 export interface IndentNode {
 	readonly kind: 'indent';
 }
@@ -64,7 +68,8 @@ export type BodyNode =
 	| IfNode
 	| IndentNode
 	| DedentNode
-	| TokenSeamNode;
+	| TokenSeamNode
+	| WordSeamNode;
 export type Body = readonly BodyNode[];
 
 export const EMPTY: Body = [];
@@ -107,6 +112,40 @@ function isBareSlotGate(node: BodyNode): node is IfNode & { readonly arms: reado
 	const arm = node.arms[0]!;
 	const only = arm.body.length === 1 ? arm.body[0]! : undefined;
 	return arm.kinds === undefined && only?.kind === 'slot' && only.name === arm.test;
+}
+
+export const WORD_SEAM: Body = [{ kind: 'wordSeam' }];
+
+export function gateKeywordSlotSeams(body: Body, keywordKindsOf: (slot: string) => readonly string[] | undefined): Body {
+	const out: BodyNode[] = [];
+	for (let i = 0; i < body.length; i++) {
+		const node = body[i]!;
+		if (node.kind === 'if') {
+			out.push({
+				...node,
+				arms: node.arms.map((arm) => ({ ...arm, body: gateKeywordSlotSeams(arm.body, keywordKindsOf) })),
+				fallback: node.fallback === undefined ? undefined : gateKeywordSlotSeams(node.fallback, keywordKindsOf)
+			});
+			continue;
+		}
+		const prev = out[out.length - 1];
+		const next = body[i + 1];
+		const slotName =
+			node.kind !== 'seam'
+				? undefined
+				: prev?.kind === 'slot' && node.field === `${prev.name}_after`
+					? prev.name
+					: next?.kind === 'slot' && node.field === `${next.name}_before`
+						? next.name
+						: undefined;
+		const kinds = slotName === undefined ? undefined : keywordKindsOf(slotName);
+		if (slotName === undefined || kinds === undefined) {
+			out.push(node);
+			continue;
+		}
+		out.push(...branches([{ test: slotName, kinds, body: WORD_SEAM }], [node]));
+	}
+	return out;
 }
 
 export function gateOptionalSlotSeams(body: Body, seamNamesOf: (slot: string) => readonly string[]): Body {
@@ -205,6 +244,7 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 		case 'if':
 			return DYNAMIC_EDGE;
 		case 'seam':
+		case 'wordSeam':
 		case 'indent':
 		case 'dedent':
 		case 'tokenSeam':
@@ -237,6 +277,7 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 			return a.field === (b as SeamNode).field;
 		case 'space':
 		case 'adjacent':
+		case 'wordSeam':
 		case 'indent':
 		case 'dedent':
 			return true;
@@ -331,6 +372,7 @@ export function weight(body: Body): number {
 				break;
 			case 'space':
 			case 'adjacent':
+			case 'wordSeam':
 				total += 1;
 				break;
 			case 'indent':
@@ -506,6 +548,7 @@ export interface RustBodyPrinter {
 	readonly site: (name: string) => string;
 	/** The Rust slice literal naming these kinds' ids, for a kind-gated arm. */
 	readonly kinds: (names: readonly string[]) => string;
+	readonly innerGap?: (name: string) => boolean;
 }
 
 export function escapeBraces(value: string): string {
@@ -527,9 +570,22 @@ function splitLeadingWhitespace(text: string): { readonly run: string; readonly 
 	return { run: text.slice(0, end), rest: text.slice(end) };
 }
 
-function printStatements(body: Body, printer: RustBodyPrinter, depth: number): string[] {
+function printStatements(
+	body: Body,
+	printer: RustBodyPrinter,
+	depth: number,
+	seatedGaps: ReadonlySet<string> = new Set()
+): string[] {
 	const pad = '    '.repeat(depth);
 	const lines: string[] = [];
+	const seated = new Set(seatedGaps);
+	const seatGap = (name: string): void => {
+		if (seated.has(name) || printer.innerGap?.(name) !== true) return;
+		seated.add(name);
+		lines.push(
+			`${pad}::sittir_core::trivia::render_inner(&node.transport_trivia_data, ${rustStringLiteral(name)}, w)?;`
+		);
+	};
 	let literal = '';
 	const flush = (): void => {
 		if (literal === '') return;
@@ -566,6 +622,7 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				break;
 			case 'slot':
 				flush();
+				seatGap(node.name);
 				lines.push(`${pad}${printer.field(node.name)}.render(w)?;`);
 				break;
 			case 'seam': {
@@ -596,22 +653,31 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				flush();
 				lines.push(`${pad}w.token_seam(${rustStringLiteral(node.text + payload)});`);
 				break;
-			case 'if':
+			case 'wordSeam':
 				flush();
+				lines.push(`${pad}w.seam(" ");`);
+				break;
+			case 'if': {
+				flush();
+				for (const arm of node.arms) {
+					if (arm.kinds === undefined) seatGap(arm.test);
+				}
+				const gatedGaps = new Set(seated);
 				node.arms.forEach((arm, i) => {
 					const test =
 						arm.kinds === undefined
 							? `${printer.field(arm.test)}.is_present()`
 							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
 					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);
-					lines.push(...printStatements(arm.body, printer, depth + 1));
+					lines.push(...printStatements(arm.body, printer, depth + 1, gatedGaps));
 				});
 				if (node.fallback !== undefined) {
 					lines.push(`${pad}} else {`);
-					lines.push(...printStatements(node.fallback, printer, depth + 1));
+					lines.push(...printStatements(node.fallback, printer, depth + 1, gatedGaps));
 				}
 				lines.push(`${pad}}`);
 				break;
+			}
 			default: {
 				const _exhaustive: never = node;
 				throw new Error(`printRustBody: unhandled node ${(_exhaustive as BodyNode).kind}`);

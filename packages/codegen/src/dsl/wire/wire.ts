@@ -1,7 +1,7 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
+import { typeEq } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference } from '../primitives/preference.ts';
@@ -24,16 +24,40 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
-import { unwrapPrec } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
+import { rulesEqual } from '../rule-patterns.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
+import { extrasClosure } from '../extras.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
+import { baseRulesOf } from '../shared.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
+
+export type PatchForm =
+	| 'field'
+	| 'variant'
+	| 'alias'
+	| 'rule'
+	| 'default'
+	| 'group'
+	| 'flatten'
+	| 'regex'
+	| 'preference'
+	| 'literal';
+
+export interface PatchSite {
+	readonly ownerKind: string;
+	readonly path: string;
+	readonly form: PatchForm;
+	readonly name?: string;
+	readonly lifts?: readonly string[];
+}
 
 export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
@@ -47,17 +71,25 @@ export interface WireContext {
 	readonly groups?: GroupsConfig;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
+	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
+	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
+	readonly undeclaredRules: ReadonlySet<string>;
+	readonly patchSites: Map<string, PatchSite>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
-	readonly adoptedGroups: ReadonlyMap<string, string>;
+	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
+	readonly liftBodies: Map<string, RuntimeRule>;
+	readonly liftClaims: Map<string, Set<string>>;
+	activePatchSites: readonly string[];
+	readonly source: unknown;
 }
 
 export interface RefineForm {
@@ -125,6 +157,11 @@ export function wireRegisterSymbolRename(oldName: string, newName: string): bool
 	return true;
 }
 
+export function wireRenameLift(liftName: string, newName: string): void {
+	recordLiftClaim(liftName);
+	wireRegisterSymbolRename(liftName, newName);
+}
+
 export function wireHasAuthoredRule(name: string): boolean {
 	return currentContext?.authoredRuleNames.has(name) ?? false;
 }
@@ -133,6 +170,34 @@ export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): bool
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
 	return true;
+}
+
+export function patchSiteKey(site: PatchSite): string {
+	return `${site.ownerKind}|${site.path}|${site.form}`;
+}
+
+export function wireRecordPatchSite(site: PatchSite): void {
+	currentContext?.patchSites.set(patchSiteKey(site), site);
+}
+
+export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T): T {
+	const context = currentContext;
+	if (!context) return fn();
+	const prior = context.activePatchSites;
+	context.activePatchSites = sites.map(patchSiteKey);
+	try {
+		return fn();
+	} finally {
+		context.activePatchSites = prior;
+	}
+}
+
+function recordLiftClaim(liftName: string): void {
+	if (!currentContext) return;
+	for (const key of currentContext.activePatchSites) {
+		const claims = currentContext.liftClaims.get(key) ?? new Set<string>();
+		currentContext.liftClaims.set(key, claims.add(liftName));
+	}
 }
 
 export function wireGetCurrentRuleKind(): string | null {
@@ -150,6 +215,19 @@ function automaticVariantsOf(context: WireContext | null | undefined): Automatic
 
 export function wireIsExtraRule(name: string): boolean {
 	return currentContext?.extraRuleNames.has(name) ?? false;
+}
+
+export function wireGetLiftBody(name: string): RuntimeRule | undefined {
+	return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
+}
+
+export function wireSetLiftBody(name: string, body: RuntimeRule): void {
+	recordLiftClaim(name);
+	currentContext?.liftBodies.set(name, body);
+}
+
+function baseRuleBodiesOf(base: BaseArg | undefined): Readonly<Record<string, RuntimeRule>> {
+	return baseRulesOf<RuntimeRule>(base) ?? {};
 }
 
 export function withWireContext<T>(
@@ -171,12 +249,19 @@ export function withWireContext<T>(
 		options: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set(),
+		ruleCauses: new Map(),
+		undeclaredRules: new Set(),
+		patchSites: new Map(),
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: new Map()
+		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
+		liftBodies: new Map(),
+		liftClaims: new Map(),
+		activePatchSites: [],
+		source: base
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -295,7 +380,6 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
 	readonly options?: OptionsConfig;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -303,7 +387,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 };
 
 export interface WiredOpts {
-	readonly name?: string;
+	readonly name: string;
 	readonly rules: Record<string, RuleFn>;
 	readonly conflicts?: ConflictsFn;
 	readonly externals?: DollarFn<unknown[]>;
@@ -314,7 +398,6 @@ export interface WiredOpts {
 	readonly word?: DollarFn<unknown>;
 	readonly precedences?: DollarFn<unknown[][]>;
 	readonly reserved?: Record<string, DollarFn<unknown[]>>;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly __wireContext__?: WireContext;
 }
 
@@ -325,10 +408,19 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
 	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
-	base?: B
+	base: B,
+	source: unknown = base
 ): WiredOpts {
-	const cfg = config as unknown as WireConfig<any>;
-	const baseArg = base as unknown as BaseArg | undefined;
+	return wireImpl(config as unknown as WireConfig<any>, base, source);
+}
+
+export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
+	return wireImpl({ name }, base, base);
+}
+
+function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
+	const baseArg = base as BaseArg | undefined;
+	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
 	const context: WireContext = {
@@ -342,18 +434,25 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		refineForms: new Map(),
 		groups: cfg.groups,
 		renderAs: cfg.renderAs,
-		visibleExternals: cfg.visibleExternals,
+		visibleExternals,
+		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
 		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+		...declaredRuleCauses(cfg.rules ?? {}),
+		patchSites: new Map(),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
-		adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base, cfg.groups) : new Map()
+		baseRuleBodies: baseRuleBodiesOf(baseArg),
+		liftBodies: new Map(),
+		liftClaims: new Map(),
+		activePatchSites: [],
+		source
 	};
 
 	const patches = cfg.patches ?? {};
@@ -361,28 +460,30 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
-	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
-		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || visibleExternals)) {
+		const baseRules = baseRulesOf<RuleFn>(baseArg) ?? {};
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
 			outRules[baseName] = passthroughBaseRuleFn;
 		}
 	}
+	for (const liftName of enrichLiftNames(base)) {
+		if (liftName in outRules || !(liftName in context.baseRuleBodies)) continue;
+		outRules[liftName] = passthroughBaseRuleFn;
+	}
 	wrapAllRuleFns(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
-	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
+	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);
 		}
 		for (const name of getEnrichVisibleGroupSources(base)) {
-			if (context.adoptedGroups.has(name)) continue;
 			context.inlineRemovals.add(name);
 		}
 		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
-			if (context.adoptedGroups.has(syntheticName)) continue;
 			if (context.authoredRuleNames.has(ownerKind)) {
 				context.orphanedSyntheticGroups.add(syntheticName);
 			}
@@ -428,6 +529,17 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	return wired;
 }
 
+function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
+	const ruleCauses = new Map<string, RuleCauseDeclaration>();
+	const undeclaredRules = new Set<string>();
+	for (const [name, fn] of Object.entries(rules)) {
+		const declaration = ruleCauseOf(fn);
+		if (declaration === undefined) undeclaredRules.add(name);
+		else ruleCauses.set(name, declaration);
+	}
+	return { ruleCauses, undeclaredRules };
+}
+
 function renamingReserved(reserved: unknown, context: WireContext): unknown {
 	if (reserved === null || typeof reserved !== 'object' || Array.isArray(reserved)) return reserved;
 	return Object.fromEntries(
@@ -458,7 +570,7 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
+	const baseRules = baseRulesOf<unknown>(base) ?? {};
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
@@ -577,11 +689,18 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 }
 
 interface BaseArg {
-	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown; extras?: unknown; precedences?: unknown };
+	grammar?: {
+		rules?: Record<string, RuleFn>;
+		externals?: unknown;
+		extras?: unknown;
+		precedences?: unknown;
+		supertypes?: unknown;
+	};
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
 	extras?: unknown;
 	precedences?: unknown;
+	supertypes?: unknown;
 }
 
 function symbolNamesOf(entries: unknown): Set<string> {
@@ -599,54 +718,59 @@ function symbolNamesOf(entries: unknown): Set<string> {
 	return names;
 }
 
-function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const basePrecedences = base?.grammar?.precedences ?? base?.precedences;
+function overriddenList(baseValue: unknown, own: unknown): unknown {
 	const previous = withStringGlobalShim(() =>
-		typeof basePrecedences === 'function'
-			? (basePrecedences as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
-			: basePrecedences
+		typeof baseValue === 'function'
+			? (baseValue as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
+			: baseValue
 	);
-	const own = (cfg as { precedences?: unknown }).precedences;
-	const groups =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? []))
-			: (own ?? previous);
+	return typeof own === 'function'
+		? withStringGlobalShim(() =>
+				(own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? [])
+			)
+		: (own ?? previous);
+}
+
+function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const groups = overriddenList(
+		base?.grammar?.precedences ?? base?.precedences,
+		(cfg as { precedences?: unknown }).precedences
+	);
 	const names = new Set<string>();
 	for (const group of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group)) names.add(name);
 	return names;
 }
 
 function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const baseExtras = base?.grammar?.extras ?? base?.extras;
-	const previous = withStringGlobalShim(() =>
-		typeof baseExtras === 'function' ? (baseExtras as (dollar: unknown) => unknown)(makeSimpleDollarProxy()) : baseExtras
+	const extras = symbolNamesOf(
+		overriddenList(base?.grammar?.extras ?? base?.extras, (cfg as { extras?: unknown }).extras)
 	);
-	const own = (cfg as { extras?: unknown }).extras;
-	const entries =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous))
-			: (own ?? previous);
-	return symbolNamesOf(entries);
+	const supertypes = symbolNamesOf(
+		overriddenList(base?.grammar?.supertypes ?? base?.supertypes, (cfg as { supertypes?: unknown }).supertypes)
+	);
+	return extrasClosure(extras, supertypes, (name) => {
+		if (!supertypes.has(name)) return undefined;
+		const baseRule: unknown = base?.grammar?.rules?.[name] ?? base?.rules?.[name];
+		const own: unknown = cfg.rules?.[name];
+		const body = own ?? baseRule;
+		const rule = (
+			typeof body === 'function'
+				? withStringGlobalShim(() =>
+						(body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), baseRule)
+					)
+				: body
+		) as { type?: unknown; members?: unknown } | undefined;
+		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
+	});
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
 	const externals = base?.grammar?.externals ?? base?.externals;
-	const entries =
+	return symbolNamesOf(
 		typeof externals === 'function'
 			? withStringGlobalShim(() => (externals as (dollar: unknown) => unknown)(makeSimpleDollarProxy()))
-			: externals;
-	const names = new Set<string>();
-	for (const external of Array.isArray(entries) ? entries : []) {
-		if (typeof external === 'string') {
-			names.add(external);
-			continue;
-		}
-		const symbol = external as { type?: unknown; name?: unknown } | null;
-		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
-			names.add(symbol.name);
-		}
-	}
-	return names;
+			: externals
+	);
 }
 
 function injectPlaceholderHiddenRules(
@@ -842,14 +966,18 @@ function hasBodyPatternGroups(groups: GroupsConfig): boolean {
 }
 
 const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
-	return previous;
+	const name = currentContext?.currentRuleKind;
+	return (name === null || name === undefined ? undefined : currentContext?.liftBodies.get(name)) ?? previous;
 };
+
+function enrichLiftNames(base: unknown): Set<string> {
+	return new Set([...getEnrichClauseGroups(base), ...getEnrichVisibleGroupSources(base)]);
+}
 
 interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
 	readonly aliasAs?: string;
-	readonly adopts?: ReadonlySet<string>;
 }
 
 interface DeclaredPattern {
@@ -894,20 +1022,8 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 	});
 }
 
-function adoptMintedGroups(baseArg: BaseArg, base: unknown, groups: GroupsConfig | undefined): Map<string, string> {
-	const adopted = new Map<string, string>();
-	const authored = declaredPatterns(groups, undefined);
-	if (authored.length === 0) return adopted;
-	const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, unknown>;
-	for (const minted of getEnrichVisibleGroupSources(base)) {
-		const body = baseRules[minted];
-		if (body === undefined) continue;
-		const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
-		if (owner === undefined) continue;
-		adopted.set(minted, owner.key);
-		delete baseRules[minted];
-	}
-	return adopted;
+export function authoredGroupBodies(groups: GroupsConfig | undefined): RuntimeRule[] {
+	return declaredPatterns(groups, undefined).map((pattern) => pattern.body);
 }
 
 export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
@@ -933,57 +1049,11 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 	return false;
 }
 
-function unwrapOptionalChoiceRt(node: unknown): unknown {
-	if (!node || typeof node !== 'object') return node;
-	const r = node as { type?: string; members?: unknown[] };
-	if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
-		const blankIdx = r.members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
-		if (blankIdx !== -1) return { type: 'OPTIONAL', content: r.members[1 - blankIdx] };
-	}
-	return node;
-}
-
-function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
-	const a = unwrapOptionalChoiceRt(aIn);
-	const b = unwrapOptionalChoiceRt(bIn);
-	if (!a || typeof a !== 'object') return a === b;
-	if (!b || typeof b !== 'object') return false;
-	const ra = a as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
-	const rb = b as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
-	if (ra.type !== rb.type) return false;
-	const t = ra.type;
-	if (t === 'STRING' || t === 'PATTERN') return ra.value === rb.value;
-	if (t === 'SYMBOL') return ra.name === rb.name;
-	if (t === 'BLANK') return true;
-	if (t === 'SEQ' || t === 'CHOICE') {
-		const ma = ra.members;
-		const mb = rb.members;
-		if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
-		if (ma.length !== mb.length) return false;
-		return ma.every((m, i) => patternBodyEqual(m, mb[i]));
-	}
-	if (t === 'OPTIONAL' || t === 'REPEAT' || t === 'REPEAT1') {
-		return patternBodyEqual(ra.content, rb.content);
-	}
-	if (t === 'FIELD') {
-		return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
-	}
-	if (t === 'ALIAS') {
-		const raa = ra as { type: string; content?: unknown; named?: boolean; value?: string };
-		const rba = rb as { type: string; content?: unknown; named?: boolean; value?: string };
-		return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
-	}
-	return false;
-}
-
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
-		if (
-			patternBodyEqual(rule, c.body) ||
-			(r.type === 'SYMBOL' && c.adopts?.has((r as { name?: string }).name ?? '') === true)
-		) {
+		if (rulesEqual(rule as RuntimeRule, c.body as RuntimeRule)) {
 			const site =
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
@@ -1098,6 +1168,20 @@ function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyM
 	};
 }
 
+function withEnrichedWhitespace(
+	config: VisibleExternalsConfig | undefined,
+	base: unknown
+): { readonly visibleExternals: VisibleExternalsConfig | undefined; readonly whitespaceCollisions: readonly WhitespaceCollision[] } {
+	const { bodies, collisions } = getEnrichWhitespace(base);
+	const declared = config === undefined ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
+	const whitespaceCollisions = [
+		...collisions,
+		...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: 'visibleExternals' as const }))
+	];
+	if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
+	return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
+}
+
 function applyWireVisibleExternalsRewrite(
 	rules: Record<string, RuleFn>,
 	config: VisibleExternalsConfig | undefined
@@ -1145,8 +1229,7 @@ export function applyWirePatternReplacement(
 	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
-		const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
-		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
+		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
 		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}

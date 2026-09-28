@@ -20,4 +20,12 @@ describe('tool grammar-diagnostics command', () => {
 		await program.parseAsync(['grammar-diagnostics'], { from: 'user' });
 		expect(vi.mocked(runGrammarDiagnostics)).toHaveBeenCalledWith({ grammar: 'rust' });
 	});
+
+	it('passes --stage through', async () => {
+		vi.clearAllMocks();
+		const program = new Command();
+		grammarDiagnosticsCmd.register(program);
+		await program.parseAsync(['grammar-diagnostics', '--grammar', 'python', '--stage', 'raw'], { from: 'user' });
+		expect(vi.mocked(runGrammarDiagnostics)).toHaveBeenCalledWith({ grammar: 'python', stage: 'raw' });
+	});
 });

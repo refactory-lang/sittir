@@ -131,7 +131,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).not.toContain('Record<string, number>');
 	});
 
-	it('a choice separator with no declared default is a build error', () => {
+	it('a choice separator with no declared default is a required construction input', () => {
 		const sepChoice: RenderRule = {
 			type: CHOICE,
 			members: [
@@ -145,9 +145,13 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
-		expect(() => emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }))).toThrow(
-			/member_list chooses its separator per instance and declares no default/
-		);
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+		expect(emitted).not.toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
+		expect(emitted).toContain('export function buildMemberList(options: ');
+		expect(emitted).toContain('separator: TSKindId.Comma | TSKindId.Semi');
+		expect(emitted).not.toContain('separator?:');
+		expect(emitted).toContain("if (options.separator === undefined) throw new Error('member_list: its separator has no declared default; pass options.separator');");
+		expect(emitted).toContain('const _separator = options.separator;');
 	});
 
 	it('literal separator with only an optional trailing flank (mirrors with_clause_bare/expression_statement_tuple/lambda_parameters): no separatorKind, no leading', () => {

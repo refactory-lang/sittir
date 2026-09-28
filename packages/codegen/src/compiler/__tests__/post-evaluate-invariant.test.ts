@@ -159,10 +159,24 @@ describe('post-evaluate invariant', () => {
 				// `expectTestFailures:` — read by emitTests (emitters/test.ts)
 				// for describe.skip emission.
 				'expectTestFailures',
+				// `rules:` entries' reauthored / vocabulary declarations and the
+				// bare bodies — read by the rule-cause diagnostics.
+				'ruleCauses',
+				'undeclaredRules',
+				'whitespaceCollisions',
+				// Every patches: entry by owner, path and placeholder form — read by the
+				// patch-site labelling and the override census.
+				'patchSites',
+				// The base evaluated with no wire config, before and after enrich — read
+				// by the stage diagnoses and the diagnostic records.
+				'stages',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
 				'orphanedSyntheticGroups',
+				// The kind catalog predicted from the evaluated grammar (or why it could
+				// not be) — link asserts it against the parser's catalog and reads it.
+				'predictedKinds',
 				// groups: body-pattern entries referenced nowhere after pattern
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.

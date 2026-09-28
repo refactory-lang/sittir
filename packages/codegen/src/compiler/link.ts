@@ -46,24 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import {
-	collectGeneratedKindEntries,
-	findEntryForKindName,
-	findAnonEntryForLiteralText,
-	findEntryForLiteralText,
-	findEntryForPatternValue,
-	findOwnKindEntry,
-	isParserHiddenKind,
-	parserHiddenOf,
-	parserSupertypeOf,
-	isRenamedEntry,
-	isSurfaceHiddenKind,
-	isAliasedHiddenStorage,
-	stampVisibleExternals,
-	modelKindOfEntry,
-	type GeneratedIdTables,
-	type GeneratedKindEntry
-} from './generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -78,10 +61,8 @@ import type {
 	DisplayUnions,
 	RuleProvenance
 } from './types.ts';
-import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import type { SymbolRuleWithRef } from './evaluate.ts';
+import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import { structureTokenInterior } from './token-interior.ts';
-import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -92,16 +73,22 @@ import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
+	nodelessExtrasRun,
+	isBlank,
 	isEnumChoiceRule,
 	hiddenChoiceClass,
 	isKindChoice,
-	isLiteralChoiceContent,
 	isNamedArmChoice,
 	rulesEqual,
 	separatorOf,
-	predictedSymbolSource,
-	type SymbolSource
+	inlinesAtReference,
+	symbolFactsOf,
+	type InlineAtReferenceCtx,
+	type SymbolSource,
+	ruleListParts,
+	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -123,6 +110,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly root: string | undefined;
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -143,6 +131,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries ?? [];
+		this.root = rootRuleName(init.grammar.rules);
 	}
 
 	get rules(): Record<string, Rule<'evaluate'>> {
@@ -152,14 +141,17 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	#sourceSymbols?: SymbolSource;
 
 	get sourceSymbols(): SymbolSource {
-		this.#sourceSymbols ??= predictedSymbolSource(this.grammar.rules, this.grammar.externals, this.grammar.inline);
+		this.#sourceSymbols ??= catalogSymbolSource({
+			...symbolFactsOf(this.grammar),
+			kindEntries: predictedEntriesOf(this.grammar.predictedKinds)
+		});
 		return this.#sourceSymbols;
 	}
 }
 
 export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
-	const kindEntries = collectGeneratedKindEntries(stampVisibleExternals(ctx?.generatedIdTables, evaluated));
+	const kindEntries = kindCatalogOf(ctx?.generatedIdTables, evaluated);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
 	const raw = stampParserVisibility(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
@@ -191,6 +183,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		hiddenNamedArmChoices,
 		kindEntries
 	});
+	assertPredictedKinds(linkCtx);
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		rules[name] = resolveRule(rule as Rule<'link'>, linkCtx, name);
@@ -206,7 +199,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 
 	stripResolvedRoleRules(rules);
-	createSyntheticExternalRules(rules, raw.externals, kindEntries);
+	createSyntheticExternalRules(rules, ruleListParts(raw.externals).names);
 	const visibleInlineNames = raw.inline.filter((name) => !isParserHiddenKind(name, kindEntries));
 	if (visibleInlineNames.length > 0) {
 		linkCtx.diagnostics.warn({
@@ -226,7 +219,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, stamped);
 	}
 
-	structureTokenInterior(rules);
+	structureTokenInterior(rules, linkCtx.diagnostics);
 
 	const groupsConfig = raw.groups ?? {};
 	if (Object.keys(groupsConfig).length > 0) {
@@ -234,6 +227,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 			rules,
 			groups: groupsConfig
 		});
+		for (const issue of lifted.issues) recordConfigIssue('groups-config-invalid', issue, linkCtx);
 		for (const key of Object.keys(rules)) {
 			if (!(key in lifted.rules)) delete rules[key];
 		}
@@ -274,10 +268,9 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
 		stampCtx
 	);
-	const grammarJsonInline = new Set(loadGrammarJsonInlineList(raw.name) ?? raw.inline);
-	const rootName = rootRuleName(raw.rules);
+	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline), reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
 	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
@@ -285,25 +278,38 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
 		if (!rule) {
-			throw new Error(
-				`refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
+			recordConfigIssue(
+				'refine-config-invalid',
+				{
+					ownerKind: kind,
+					message: `refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
+				},
+				linkCtx
 			);
+			continue;
 		}
-		validateRefineForms(kind, rule, forms, rules);
+		const validForms = forms.filter((form) => {
+			const issue = refineFormIssue(kind, rule, form, rules);
+			if (issue !== undefined) recordConfigIssue('refine-config-invalid', { ownerKind: kind, message: issue }, linkCtx);
+			return issue === undefined;
+		});
+		if (validForms.length === 0) continue;
 		refineForms.set(
 			kind,
-			forms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
+			validForms.map((form) => ({ ...form, narrowedFields: narrowedFieldLiteralsForForm(rule, form, rules) }))
 		);
 	}
 
 	return {
 		name: raw.name,
+		root: linkCtx.root,
 		rules,
 		supertypes,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
 		extras: raw.extras,
+		nodelessExtrasRun: nodelessExtrasRun(raw.extras, raw.rules),
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
@@ -344,12 +350,10 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 
 function createSyntheticExternalRules(
 	rules: Record<string, Rule<'link'>>,
-	externals: readonly string[],
-	kindEntries: readonly GeneratedKindEntry[]
+	externals: readonly string[]
 ): void {
 	for (const ext of externals) {
 		if (rules[ext]) continue;
-		if (findAnonEntryForLiteralText(kindEntries, ext)) continue;
 		rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
 	}
 }
@@ -417,7 +421,7 @@ export function canonicalizeRuleLiterals(
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean,
 	misses: KindIdStampMisses,
-	stampable = true,
+	syntactic = true,
 	aliasBodies?: ReadonlyMap<string, AliasRule<'link'>>
 ): Rule<'link'> {
 	switch (rule.type) {
@@ -425,14 +429,14 @@ export function canonicalizeRuleLiterals(
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, false, misses, syntactic, aliasBodies)
 				)
 			};
 		case CHOICE:
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, syntactic, aliasBodies)
 				)
 			};
 		case OPTIONAL:
@@ -445,7 +449,7 @@ export function canonicalizeRuleLiterals(
 					kindEntries,
 					allowLiteralRewrite,
 					misses,
-					stampable,
+					syntactic,
 					aliasBodies
 				)
 			};
@@ -457,7 +461,7 @@ export function canonicalizeRuleLiterals(
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodies)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, syntactic, aliasBodies)
 			};
 		case ALIAS: {
 			const content = canonicalizeRuleLiterals(
@@ -465,10 +469,10 @@ export function canonicalizeRuleLiterals(
 				kindEntries,
 				allowLiteralRewrite,
 				misses,
-				stampable,
+				syntactic,
 				aliasBodies
 			);
-			if (!stampable || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
+			if (!syntactic || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
 			const entry = findEntryForKindName(kindEntries, rule.value);
@@ -479,11 +483,11 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, content, kindId: entry.parseId ?? entry.id };
 		}
 		case SYMBOL:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodies });
 		case SUPERTYPE:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: {
 						...rule,
@@ -492,7 +496,7 @@ export function canonicalizeRuleLiterals(
 		case STRING: {
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
-				if (entry) {
+				if (entry && (syntactic || entry.anon === true)) {
 					return {
 						type: SYMBOL,
 						name: entry.kind,
@@ -504,7 +508,7 @@ export function canonicalizeRuleLiterals(
 					};
 				}
 			}
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				misses.literals.add(rule.value);
@@ -513,7 +517,7 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const patternEntry = findEntryForPatternValue(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
@@ -529,7 +533,13 @@ export function reportKindIdStampMisses(
 	inlineKinds: ReadonlySet<string>,
 	reachableFromRoot: ReadonlySet<string>
 ): void {
-	if (kindEntries.length === 0 || !diagnostics) return;
+	if (kindEntries.length === 0) return;
+	if (stampMisses.aliasTargets.size > 0) {
+		throw new Error(
+			`link: alias target(s) [${[...stampMisses.aliasTargets].sort().join(', ')}] resolved no named parser kindId; the parser never mints the aliased node`
+		);
+	}
+	if (!diagnostics) return;
 	if (stampMisses.symbols.size > 0) {
 		diagnostics.warn({
 			code: 'kindid-unstamped-symbols',
@@ -544,14 +554,6 @@ export function reportKindIdStampMisses(
 			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
 			canProceed: true,
 			details: { texts: [...stampMisses.literals].sort() }
-		});
-	}
-	if (stampMisses.aliasTargets.size > 0) {
-		diagnostics.warn({
-			code: 'alias-target-unminted',
-			message: `${stampMisses.aliasTargets.size} alias target(s) resolved no named parser kindId — the parser never mints the aliased node`,
-			canProceed: true,
-			details: { kinds: [...stampMisses.aliasTargets].sort() }
 		});
 	}
 	reportVaporizedKinds(stampMisses, inlineKinds, reachableFromRoot, diagnostics);
@@ -745,24 +747,34 @@ function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 
 const renameWalker = new RuleWalker<Rule<'evaluate'>>({});
 
+function collapseRenames(raw: RawGrammar, ctx: KindCatalogCtx): ReadonlyMap<string, string> {
+	return catalogRenames([...Object.keys(raw.rules), ...ruleListParts(raw.externals).names], ctx.kindEntries);
+}
+
+function assertPredictedKinds(ctx: LinkCtx): void {
+	const kinds = ctx.grammar.predictedKinds;
+	if (kinds === undefined || 'entries' in kinds) return;
+	throw new Error(
+		`link: '${ctx.grammar.name}' has no predicted symbol table (${kinds.failure}); a grammar tree-sitter rejects is recorded before link and never linked`
+	);
+}
+
 export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
-	const renames = new Map<string, string>();
-	for (const name of [...Object.keys(raw.rules), ...raw.externals]) {
-		const entry = findEntryForKindName(ctx.kindEntries, name);
-		if (
-			entry === undefined ||
-			entry.kind !== name ||
-			entry.symbolName === undefined ||
-			!isRenamedEntry(entry, ctx.kindEntries)
-		)
-			continue;
-		renames.set(name, entry.symbolName);
+	const renames = collapseRenames(raw, ctx);
+	const collapsed = renameRules(raw, renames);
+	if (ctx.kindEntries.length > 0 && raw.predictedKinds !== undefined && 'entries' in raw.predictedKinds) {
+		assertPredictedKindEntries(raw.predictedKinds.entries, ctx.kindEntries);
 	}
+	return collapsed;
+}
+
+function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): RawGrammar {
 	if (renames.size === 0) return raw;
 	const targets = new Map<string, string>();
 	for (const [from, to] of renames) {
 		const taken =
-			targets.get(to) ?? ((to in raw.rules || raw.externals.includes(to)) && !renames.has(to) ? to : undefined);
+			targets.get(to) ??
+			((to in raw.rules || ruleListParts(raw.externals).names.includes(to)) && !renames.has(to) ? to : undefined);
 		if (taken !== undefined)
 			throw new Error(`link: '${from}' collapses into its tree name '${to}', which '${taken}' already names`);
 		targets.set(to, from);
@@ -770,15 +782,7 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 	const rename = (name: string): string => renames.get(name) ?? name;
 	const renameKey = (key: string): string => key.split('\u0000').map(rename).join('\u0000');
 	const renameRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === SYMBOL) {
-			const ref = (rule as SymbolRuleWithRef)._ref;
-			const refMoves = ref !== undefined && (renames.has(ref.from) || renames.has(ref.to));
-			if (!renames.has(rule.name) && !refMoves) return rule;
-			const renamed: SymbolRuleWithRef = { ...rule, name: rename(rule.name) };
-			if (!refMoves) return renamed;
-			const withRef: SymbolRuleWithRef = { ...renamed, _ref: { ...ref, from: rename(ref.from), to: rename(ref.to) } };
-			return withRef;
-		}
+		if (rule.type === SYMBOL) return renames.has(rule.name) ? { ...rule, name: rename(rule.name) } : rule;
 		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
 			const content = rule.content.name;
 			if (targets.has(rename(content)) && rule.value === rename(content))
@@ -810,18 +814,17 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 		if (provenance !== undefined) provenanceByKind.set(rename(kind), provenance);
 	}
 	const supertypes = raw.supertypes.map(rename);
-	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes });
-	const references = attachReferenceRuleIds(
-		raw.references.map((ref) => ({ ...ref, from: rename(ref.from), to: rename(ref.to), fromRuleId: undefined })),
-		{ ruleCatalog: identified.ruleCatalog }
-	);
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes, sourceKindOf: targets });
+	const renameEntry = (entry: RuleListEntry): RuleListEntry =>
+		entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry;
+	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });
 	return {
 		...raw,
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		references,
-		extras: raw.extras.map(rename),
-		externals: raw.externals.map(rename),
+		extras: raw.extras.map(renameEntry),
+		externals: raw.externals.map(renameEntry),
 		supertypes,
 		factoryInline: raw.factoryInline.map(rename),
 		inline: raw.inline.map(rename),
@@ -858,49 +861,10 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 
 const visibilityWalker = new RuleWalker<Rule<'evaluate'>>({});
 
-interface ReferenceInlineCtx extends KindCatalogCtx {
-	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
-	readonly inlineNames: ReadonlySet<string>;
-	readonly supertypes: ReadonlySet<string>;
-	readonly selfReferencing: Map<string, boolean>;
-}
-
-const selfReferenceWalker = new RuleWalker<Rule<'evaluate'>>({});
-
-function referencesItself(name: string, body: Rule<'evaluate'>): boolean {
-	return selfReferenceWalker.find(body, (rule) => rule.type === SYMBOL && rule.name === name) !== undefined;
-}
-
-function isSelfReferencing(name: string, body: Rule<'evaluate'>, ctx: ReferenceInlineCtx): boolean {
-	let known = ctx.selfReferencing.get(name);
-	if (known === undefined) {
-		known = referencesItself(name, body);
-		ctx.selfReferencing.set(name, known);
-	}
-	return known;
-}
-
-function isModelableKind(name: string, ctx: ReferenceInlineCtx): boolean {
-	return ctx.rules[name] !== undefined || findOwnKindEntry(ctx.kindEntries, name)?.visibleExternal === true;
-}
-
-function inlinesAtReference(name: string, ctx: ReferenceInlineCtx): boolean {
-	const entry = findOwnKindEntry(ctx.kindEntries, name);
-	if (parserSupertypeOf(entry, name, ctx.supertypes)) return false;
-	const target = ctx.rules[name];
-	if (target !== undefined && isSelfReferencing(name, target, ctx)) return false;
-	if (ctx.inlineNames.has(name)) return true;
-	if (!parserHiddenOf(entry, name)) return false;
-	if (entry?.terminal === true && isModelableKind(name, ctx)) return false;
-	return !(target !== undefined && isLiteralChoiceContent(target));
-}
-
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
-	const inlineCtx: ReferenceInlineCtx = {
-		kindEntries: ctx.kindEntries,
-		rules: raw.rules,
+	const inlineCtx: InlineAtReferenceCtx = {
+		symbols: catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries }),
 		inlineNames: new Set(raw.inline),
-		supertypes: new Set(raw.supertypes),
 		selfReferencing: new Map()
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
@@ -949,10 +913,11 @@ function pruneInlinedAliasBodies(rules: Record<string, Rule<'link'>>, ctx: Stamp
 }
 
 function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
-	const rootName = rootRuleName(rules);
+	const rootName = ctx.root;
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
-	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras, ...ctx.supertypes]) {
+	const externals = ruleListParts(ctx.grammar.externals);
+	for (const keep of [...externals.names, ...externals.literals, ...ruleListParts(ctx.grammar.extras).names, ...ctx.supertypes]) {
 		for (const name of computeReachableFromRoot({ rules, rootName: keep })) reachable.add(name);
 	}
 	for (const name of Object.keys(rules)) {
@@ -962,7 +927,7 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	const cyclic = cyclicInlineTargets(rules);
-	const externals = new Set(ctx.grammar.externals);
+	const externals = new Set(ruleListParts(ctx.grammar.externals).names);
 	const inlineOne = (r: Rule<'link'>): Rule<'link'> => {
 		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name) || externals.has(r.name)) return r;
 		const body = rules[r.name];
@@ -978,7 +943,6 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 	runToFixpoint({
 		name: 'link.inlineReferences',
 		cap: 64,
-		diagnostics: ctx.diagnostics,
 		step: () => {
 			let changed = false;
 			for (const [name, rule] of Object.entries(rules)) {
@@ -2144,7 +2108,7 @@ export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'>
 		const seg = segments[i]!;
 		const idx = parseInt(seg, 10);
 		if (Number.isNaN(idx)) {
-			throw new Error(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
+			throw new ConfigError(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
 		}
 		cur = stepInto(cur, idx, path);
 	}
@@ -2156,7 +2120,7 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case CHOICE: {
 			const m = rule.members[idx];
 			if (!m) {
-				throw new Error(
+				throw new ConfigError(
 					`group path '${fullPath}' does not resolve: index ${idx} out of range in ${rule.type} of ${rule.members.length} members`
 				);
 			}
@@ -2169,19 +2133,40 @@ function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link
 		case TOKEN:
 		case ALIAS:
 			if (idx !== 0) {
-				throw new Error(
+				throw new ConfigError(
 					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
 				);
 			}
 			return (rule as { content: Rule<'link'> }).content;
 		default:
-			throw new Error(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
+			throw new ConfigError(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
 	}
 }
 
 export interface DeriveSynthesizedNameArgs {
 	parentKind: string;
 	discriminator: string;
+}
+
+export class ConfigError extends Error {}
+
+export interface ConfigIssue {
+	readonly ownerKind: string;
+	readonly message: string;
+}
+
+function recordConfigIssue(
+	code: 'groups-config-invalid' | 'refine-config-invalid',
+	issue: ConfigIssue,
+	ctx: LinkCtx
+): void {
+	ctx.diagnostics.fail({
+		code,
+		scope: 'compiler',
+		phase: 'link',
+		message: issue.message,
+		details: { grammar: ctx.grammar.name, kind: issue.ownerKind }
+	});
 }
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
@@ -2196,58 +2181,72 @@ export interface ValidateGroupsArgs {
 	warn?: (msg: string) => void;
 }
 
-export function validateGroupsConfig(args: ValidateGroupsArgs): void {
+export interface ValidGroupsConfig {
+	readonly groups: Record<string, Record<string, string>>;
+	readonly issues: readonly ConfigIssue[];
+}
+
+export function validateGroupsConfig(args: ValidateGroupsArgs): ValidGroupsConfig {
 	const { groups, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
+	const valid: Record<string, Record<string, string>> = {};
+	const issues: ConfigIssue[] = [];
 
 	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts) continue;
 		const root = rules[kind];
 		if (!root) {
-			throw new Error(`groups['${kind}']: kind not in rule map`);
+			issues.push({ ownerKind: kind, message: `groups['${kind}']: kind not in rule map` });
+			continue;
 		}
 		const liftPaths = Object.keys(lifts);
 
 		for (const path of liftPaths) {
-			const discriminator = lifts[path]!;
-
-			let target: Rule<'link'>;
-			try {
-				target = resolveGroupPath(root, path);
-			} catch (e) {
-				throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
+			const issue = groupLiftIssue(kind, path, { lifts, liftPaths, root, rules, emitWarn });
+			if (issue !== undefined) {
+				issues.push({ ownerKind: kind, message: issue });
+				continue;
 			}
-
-			if (discriminator.length === 0) {
-				throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
-			}
-			if (!isAsciiIdentifier(discriminator)) {
-				throw new Error(`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`);
-			}
-
-			for (const otherPath of liftPaths) {
-				if (otherPath === path) continue;
-				if (isAncestorPath(path, otherPath)) {
-					throw new Error(
-						`groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`
-					);
-				}
-			}
-
-			const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
-			if (synthName in rules) {
-				throw new Error(
-					`groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
-				);
-			}
-
-			if (!hasStructuralMember(target)) {
-				emitWarn(
-					`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`
-				);
-			}
+			valid[kind] = { ...valid[kind], [path]: lifts[path]! };
 		}
 	}
+	return { groups: valid, issues };
+}
+
+interface GroupLiftCtx {
+	readonly lifts: Record<string, string>;
+	readonly liftPaths: readonly string[];
+	readonly root: Rule<'link'>;
+	readonly rules: Record<string, Rule<'link'>>;
+	readonly emitWarn: (msg: string) => void;
+}
+
+function groupLiftIssue(kind: string, path: string, ctx: GroupLiftCtx): string | undefined {
+	const discriminator = ctx.lifts[path]!;
+	let target: Rule<'link'>;
+	try {
+		target = resolveGroupPath(ctx.root, path);
+	} catch (e) {
+		if (!(e instanceof ConfigError)) throw e;
+		return `groups['${kind}']['${path}']: ${e.message}`;
+	}
+	if (discriminator.length === 0) return `groups['${kind}']['${path}']: discriminator must be a non-empty identifier`;
+	if (!isAsciiIdentifier(discriminator)) {
+		return `groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`;
+	}
+	for (const otherPath of ctx.liftPaths) {
+		if (otherPath !== path && isAncestorPath(path, otherPath)) {
+			return `groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`;
+		}
+	}
+	const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
+	if (synthName in ctx.rules) {
+		return `groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`;
+	}
+	if (!hasStructuralMember(target)) {
+		ctx.emitWarn(`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`);
+	}
+	return undefined;
 }
 function isAncestorPath(ancestor: string, descendant: string): boolean {
 	if (ancestor === descendant) return false;
@@ -2288,15 +2287,16 @@ export interface ApplyGroupOverridesArgs {
 export interface ApplyGroupOverridesResult {
 	rules: Record<string, Rule<'link'>>;
 	synthesizedKinds: readonly string[];
+	issues: readonly ConfigIssue[];
 }
 
 export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
-	validateGroupsConfig(args);
+	const { groups, issues } = validateGroupsConfig(args);
 
 	const newRules: Record<string, Rule<'link'>> = { ...args.rules };
 	const synthesizedKinds: string[] = [];
 
-	for (const [kind, lifts] of Object.entries(args.groups)) {
+	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts || Object.keys(lifts).length === 0) continue;
 		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length);
 		let parentBody = clone(newRules[kind]!);
@@ -2322,7 +2322,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 		newRules[kind] = parentBody;
 	}
 
-	return { rules: newRules, synthesizedKinds };
+	return { rules: newRules, synthesizedKinds, issues };
 }
 function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 	switch (target.type) {
@@ -2331,7 +2331,7 @@ function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
 		case REPEAT1:
 			return namedAliasFaceOf(target.content);
 		case CHOICE: {
-			const arms = target.members.filter((m) => !isBlankRule(m));
+			const arms = target.members.filter((m) => !isBlank(m));
 			return arms.length === 1 ? namedAliasFaceOf(arms[0]!) : undefined;
 		}
 		case ALIAS:
@@ -2397,7 +2397,7 @@ export function stampStaticRenderAs(
 		if (body.type === STRING) renderStamps[sym] = { value: body.value, immediate: false };
 		else if (body.type === TOKEN && body.content.type === STRING) {
 			renderStamps[sym] = { value: body.content.value, immediate: body.immediate };
-		} else if (isBlankRule(body)) blankStamps.add(sym);
+		} else if (isBlank(body)) blankStamps.add(sym);
 	}
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
@@ -2420,9 +2420,6 @@ export function stampStaticRenderAs(
 		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
 	}
 	return out;
-}
-function isBlankRule(rule: Rule<'link'>): boolean {
-	return (rule.type === CHOICE && rule.members.length === 0) || (rule.type === SEQ && rule.members.length === 0);
 }
 function literalRuleForStamp(stamp: RenderAsLiteralStamp, id: RuleId | undefined): Rule<'link'> {
 	return stamp.immediate
@@ -2466,7 +2463,7 @@ function rewriteRuleForStamp(
 
 		case CHOICE: {
 			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
-			const nonBlank = members.filter((m) => !isBlankRule(m));
+			const nonBlank = members.filter((m) => !isBlank(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
 			if (nonBlank.length === 0) return withId({ type: CHOICE, members: [] }, rule.id);
@@ -2488,17 +2485,21 @@ export interface RefinePathResolution {
 	readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
 
-export function validateRefineForms(
+export function refineFormIssue(
 	kind: string,
 	rule: Rule<'link'>,
-	forms: readonly RefineForm[],
+	form: RefineForm,
 	rules?: Readonly<Record<string, Rule<'link'>>>
-): void {
-	for (const form of forms) {
+): string | undefined {
+	try {
 		for (const [pathStr, selection] of Object.entries(form.selections)) {
 			const resolution = resolveRefinePath(kind, form.name, pathStr, rule, rules);
 			validateSelection(kind, form.name, pathStr, resolution.choice, selection);
 		}
+		return undefined;
+	} catch (e) {
+		if (!(e instanceof ConfigError)) throw e;
+		return e.message;
 	}
 }
 
@@ -2511,7 +2512,7 @@ export function resolveRefinePath(
 ): RefinePathResolution {
 	const segments = parsePath(pathStr);
 	if (segments.length === 0) {
-		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
+		throw new ConfigError(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
 	}
 	let cur: Rule<'link'> = rule;
 	let fieldName: string | undefined;
@@ -2523,7 +2524,7 @@ export function resolveRefinePath(
 	}
 	const final = unwrapToChoice(cur, rules);
 	if (!final) {
-		throw new Error(
+		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
 		);
 	}
@@ -2540,7 +2541,7 @@ function stepPath(
 		case 'fieldName': {
 			const target = findFieldByName(rule, seg.name);
 			if (!target) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`
 				);
 			}
@@ -2549,13 +2550,13 @@ function stepPath(
 		case 'index': {
 			const members = membersOf(rule);
 			if (!members) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`
 				);
 			}
 			const idx = seg.value < 0 ? members.length + seg.value : seg.value;
 			if (idx < 0 || idx >= members.length) {
-				throw new Error(
+				throw new ConfigError(
 					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`
 				);
 			}
@@ -2568,16 +2569,16 @@ function stepPath(
 			}
 			const content = singleContentOf(rule);
 			if (content) return { next: content };
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`
 			);
 		}
 		case 'kind-match':
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
 			);
 		case 'literal':
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses literal '"${seg.text}"' — refine paths only support positional indices and 'name:' field traversal`
 			);
 	}
@@ -2630,7 +2631,7 @@ function validateSelection(
 	const arms: readonly Rule<'link'>[] = choice.members;
 	if (typeof selection === 'number') {
 		if (selection < 0 || selection >= arms.length) {
-			throw new Error(
+			throw new ConfigError(
 				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`
 			);
 		}
@@ -2638,7 +2639,7 @@ function validateSelection(
 	}
 	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
 	if (!stringValues.includes(selection)) {
-		throw new Error(
+		throw new ConfigError(
 			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
 		);
 	}

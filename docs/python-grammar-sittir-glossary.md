@@ -12,14 +12,14 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `enrichedBase` (`packages/python/grammar.sittir.ts:14`)
+### `sittirGrammar(base, …)` (`packages/python/grammar.sittir.ts:27`)
 
-`enrich(base)` is bound once and the SAME enriched grammar is handed to both
-`grammar()` and `wire()` (matching rust and typescript). `wire`'s
-base-dependent passes — auto-group synthesis, body-pattern groups, and the
-enrich-hoisted-clause inline registration — must see the post-enrich shape;
-enriching twice, or wiring against the raw base, desynchronises them from the
-grammar tree-sitter actually compiles.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `externals` (`packages/python/grammar.sittir.ts:20`)
 
@@ -60,34 +60,6 @@ LR(1) state.
 			// Inline the hoisted group into tree-sitter so the `as_pattern` LR overlap
 			// dissolves exactly as the base grammar resolves it (no extra conflict
 			// needed — the `as` is inline in `_except_clause_as` at parse time).
-```
-
-### `_whitespace` (`packages/python/grammar.sittir.ts:304`)
-
-The grammar's whitespace supertype, listed under `supertypes:` and declared
-as a choice over its whitespace externals. Codegen reads the vocabulary of
-every spacing site from it (`whitespaceArmsOf`): a separator gap admits the
-members other than `_indent`/`_dedent`, a flank or seam all of them, and the
-generated `options.ts` unions and the writer's whitespace text are derived
-from the same list. Each member is written as the visible alias
-`visibleExternals` registers for it. Python's list adds `_double_blankline`,
-the external that renders `'\n\n\n'` (two blank lines): the `module` rule's
-options put it after every top-level `function_definition`,
-`class_definition` and `decorated_definition`, and the writer ranks it
-above `blankline` by newline count when whitespace runs coalesce. A hidden
-supertype nothing references survives every reachability prune because a
-declared supertype is a root.
-
-### `visibleExternals` (`packages/python/grammar.sittir.ts:75`)
-
-```text
-			// _newline is python's statement-terminator EXTERNAL (the scanner
-			// consumes the newline character and drives indent tracking).
-			// visibleExternals materializes it as a real `newline` CST node —
-			// aliases don't touch the LR tables, so the parser behavior is
-			// identical — and renders emit a real '\n' terminator that
-			// re-parses to the SAME node type (round-trip-stable): the ts
-			// automatic_semicolon pattern applied to newline-as-syntax.
 ```
 
 ### `expression_statement` (`packages/python/grammar.sittir.ts:88`)
@@ -530,6 +502,15 @@ they need no entry in `transforms`.
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
+### `format_specifier` (`packages/python/grammar.sittir.ts`, `patches`)
+
+`format_specifier: [{ '1/0/0': token.immediate(prec(1, /[^{}\n]+/)) }, { '1/0': field('elements') }]`.
+The base rule is `seq(':', repeat(choice(token(prec(1, /[^{}\n]+/)), alias(interpolation, format_expression))))`.
+The first set makes the text arm immediate, so the render glues it to the `:`
+and to neighbouring interpolations. The second fields the repeated choice as
+`elements`; it comes second so the first set's path still reaches the text arm
+beneath it.
+
 ### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
@@ -691,3 +672,37 @@ they need no entry in `transforms`.
 				// contrast, are statically safe via the interpolation's fixed
 				// non-word '{'/'}' flanks.)
 ```
+
+### `options` — `unary_operator`
+
+`operator:/after` is tight, overriding the `_` cascade's space, so a
+factory-built `unary_operator` renders `-x`, `+x`, `~x`. Python has no `--`
+or `++` token, so a repeated sign renders tight too (`--x`), and it parses
+as the nested negation it is.
+
+### `expectDiagnostics` (`packages/python/grammar.sittir.ts`)
+
+The departure floors: `rules:` entries that replace an upstream rule
+(`rule-reauthored-without-cause`), and `rule()` patches
+(`patch-without-cause`), whose upstream shape no current diagnostic
+provokes. Each stays because
+deleting it makes the output worse or breaks generation; the floor only
+shrinks.
+
+- `primary_expression` (declared `'ambiguity'`, unverified: no detector): without it `from` and
+  read-render-parse each lose a case. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
+- `string_content` (declared `'alias-shape'`, unverified: no detector): upstream's arms `_string_content` and
+  `_not_escape_sequence` are hidden, so the repeated `elements` slot never sees a node and the reader throws;
+  the rule aliases them to the visible `string_fragment` / `not_escape_sequence`. Without it read-render-parse,
+  factory-render-parse and ir-render-parse all regress. missing detector: 'alias-shape' ← a repeated slot whose
+  every arm is a hidden terminal.
+- `_simple_pattern` (declared `'alias-shape'`, unverified: no detector): without it `from` loses a case.
+  missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+- `patch-without-cause` on `list_comprehension`, `dictionary_comprehension`,
+  `set_comprehension` and `generator_expression`: their
+  `rule('comprehension_clauses', …)` patches are unverified: no detector;
+  kept: `options:` is coupled to the `rule()` shape
+  (`comprehension_clauses/content:/separator` names no site without it).
+- `print_statement` (declared `'alias-shape'`, unverified: no detector): kept: an emitter is coupled to the
+  re-authored shape (without it `emitFieldCarryingFactory` throws on the
+  optional-delimiter `argument` field of `print_statement_arm1`). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.

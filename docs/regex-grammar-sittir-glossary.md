@@ -6,20 +6,14 @@ differs from upstream `tree-sitter-regex`.
 
 ---
 
-### `enrichedBase` (`packages/regex/grammar.sittir.ts:5`)
+### `sittirGrammar(base, …)` (`packages/regex/grammar.sittir.ts:10`)
 
-`enrich(base)` is bound once, and the same enriched grammar goes to both
-`grammar()` and `wire()`. Wire's base-dependent passes (body-pattern groups,
-the enrich-hoisted clause inline registration, adoption of enrich-minted
-groups) only run when wire receives the base, and they must see the
-post-enrich shape tree-sitter compiles.
-
-### `externals` / `supertypes` / `visibleExternals` / `_whitespace` (`packages/regex/grammar.sittir.ts:11`)
-
-The structural-whitespace vocabulary every sittir grammar carries: `_tight`,
-`_space` and `_newline` are external tokens that render as `''`, `' '` and
-`'\n'`, grouped under the `_whitespace` supertype. The renderer uses them
-for seams between tokens; upstream regex has no externals of its own.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `class_range` (`packages/regex/grammar.sittir.ts:19`)
 

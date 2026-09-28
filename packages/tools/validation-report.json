@@ -4,6 +4,134 @@
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "primary_expression",
+    "message": "rules: 'primary_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    },
+    "location": "primary_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "string_content",
+    "message": "rules: 'string_content' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "string_content"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "print_statement",
+    "message": "rules: 'print_statement' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "print_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_simple_pattern",
+    "message": "rules: '_simple_pattern' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "_simple_pattern"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "dictionary_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    },
+    "location": "dictionary_comprehension"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "generator_expression",
+    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    },
+    "location": "generator_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "list_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    },
+    "location": "list_comprehension"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "patch-without-cause",
+    "severity": "error",
+    "ownerKind": "set_comprehension",
+    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "canProceed": false,
+    "details": {
+      "path": "2",
+      "form": "rule",
+      "name": "comprehension_clauses"
+    },
+    "location": "set_comprehension"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
@@ -16,274 +144,6 @@
       ]
     },
     "location": "import_from_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    },
-    "location": "﷑\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    },
-    "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite",
-        "_unary_operator_operator"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "5 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-inline-excluded-symbols",
-    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_unary_operator_operator"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[5]",
-      "ruleId": "rule:_let_chain:root"
-    },
-    "location": "_let_chain"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "#!"
-    },
-    "location": "#!"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    },
-    "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    },
-    "location": "﷑\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator",
-        "_declaration_statement"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "7 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_declaration_statement"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator"
-      ]
-    },
-    "scope": "grammar"
   },
   {
     "source": "grammar",
@@ -300,14 +160,136 @@
   },
   {
     "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "tuple_type",
+    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "tuple_type"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "tuple_expression",
+    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "tuple_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_non_special_token",
+    "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    },
+    "location": "_non_special_token"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_primitive_type",
+    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    },
+    "location": "_primitive_type"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "reference_expression",
+    "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    },
+    "location": "reference_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "impl_item",
+    "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    },
+    "location": "impl_item"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    },
+    "location": "_let_chain"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "object_type",
+    "message": "rules: 'object_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    },
+    "location": "object_type"
+  },
+  {
+    "source": "grammar",
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
     "code": "unclassifiable-shape",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
-    "canProceed": true,
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[2]",
@@ -321,10 +303,10 @@
     "backend": "native",
     "scope": "grammar",
     "code": "union-slot-mixed-row",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in patches: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "canProceed": false,
     "location": "binary_expression",
     "sClass": "S4"
   },
@@ -334,10 +316,10 @@
     "backend": "native",
     "scope": "grammar",
     "code": "unclassifiable-shape",
-    "severity": "warning",
+    "severity": "error",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
-    "canProceed": true,
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[4]",
@@ -426,148 +408,6 @@
       ]
     },
     "location": "export_statement_default_declaration_default_kw"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "#!"
-    },
-    "location": "#!"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    },
-    "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    },
-    "location": "﷑\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Identifier",
-      "newType": "_Identifier",
-      "visibleKinds": [
-        "identifier"
-      ]
-    },
-    "location": "_identifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "7 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
-      ]
-    },
-    "scope": "grammar"
   },
   {
     "source": "validator",
@@ -2246,6 +2086,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "_simple_pattern",
+    "count": 124,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "_simple_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "case_list_pattern",
     "count": 14,
     "entries": [
@@ -4686,6 +4559,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "_simple_pattern",
+    "count": 124,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "_simple_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "case_list_pattern",
     "count": 14,
     "entries": [
@@ -5538,36 +5444,6 @@
   },
   {
     "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_simple_pattern",
-    "count": 1,
-    "entries": [
-      "simple_pattern"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_simple_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Block comments",
-    "kind": "block_comment_doc_outer",
-    "reason": "native-read-dropped-extra",
-    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
-    "stage": "from-trivia",
-    "code": "from-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extra",
-    "label": "Block comments (block_comment_doc_outer)",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
     "grammar": "rust",
     "backend": "native",
     "kind": "primitive_type",
@@ -5645,104 +5521,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "Block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Nested block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Nested block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line doc comments",
-    "reason": "native-read-dropped-extras",
-    "input": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line doc comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Block doc comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Block doc comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Nested doc block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Nested doc block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line doc comment with no EOL",
-    "reason": "native-read-dropped-extras",
-    "input": "\n//! Doc comment",
-    "stage": "read-render-parse-trivia",
-    "code": "read-render-parse-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line doc comment with no EOL",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "function_modifiers",
     "count": 9,
     "entries": [
@@ -6243,6 +6021,25 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "function_type_trait_form",
+    "count": 5,
+    "entries": [
+      "Function declarations",
+      "Function types",
+      "Trait objects",
+      "Type aliases",
+      "Where clauses"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "function_type_trait_form"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "type_arguments",
     "count": 56,
     "entries": [
@@ -6355,25 +6152,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "type_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "function_type_trait_form",
-    "count": 5,
-    "entries": [
-      "Function declarations",
-      "Function types",
-      "Trait objects",
-      "Type aliases",
-      "Where clauses"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "function_type_trait_form"
   },
   {
     "source": "validator",
@@ -7737,27 +7515,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "range_pattern_with_left_with_right"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "source_file",
-    "count": 7,
-    "entries": [
-      "Block comments",
-      "Block doc comments",
-      "Line comments",
-      "Line doc comment with no EOL",
-      "Line doc comments",
-      "Nested block comments",
-      "Nested doc block comments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "empty-render",
-    "label": "source_file"
   },
   {
     "source": "validator",
@@ -7825,104 +7582,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "Block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Nested block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Nested block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line doc comments",
-    "reason": "native-read-dropped-extras",
-    "input": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line doc comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Block doc comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Block doc comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Nested doc block comments",
-    "reason": "native-read-dropped-extras",
-    "input": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Nested doc block comments",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "entry": "Line doc comment with no EOL",
-    "reason": "native-read-dropped-extras",
-    "input": "\n//! Doc comment",
-    "stage": "read-render-parse-shallow-trivia",
-    "code": "read-render-parse-shallow-trivia",
-    "severity": "warning",
-    "message": "native-read-dropped-extras",
-    "label": "Line doc comment with no EOL",
-    "sClass": "trivia"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "function_modifiers",
     "count": 9,
     "entries": [
@@ -8423,6 +8082,25 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "function_type_trait_form",
+    "count": 5,
+    "entries": [
+      "Function declarations",
+      "Function types",
+      "Trait objects",
+      "Type aliases",
+      "Where clauses"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "function_type_trait_form"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "type_arguments",
     "count": 56,
     "entries": [
@@ -8535,25 +8213,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "type_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "function_type_trait_form",
-    "count": 5,
-    "entries": [
-      "Function declarations",
-      "Function types",
-      "Trait objects",
-      "Type aliases",
-      "Where clauses"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "function_type_trait_form"
   },
   {
     "source": "validator",
@@ -9917,27 +9576,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "range_pattern_with_left_with_right"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "source_file",
-    "count": 7,
-    "entries": [
-      "Block comments",
-      "Block doc comments",
-      "Line comments",
-      "Line doc comment with no EOL",
-      "Line doc comments",
-      "Nested block comments",
-      "Nested doc block comments"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "empty-render",
-    "label": "source_file"
   },
   {
     "source": "validator",
@@ -10793,6 +10431,24 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "_lhs_expression",
+    "count": 8,
+    "entries": [
+      "Ambiguity between function signature and function declaration",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Method declarations with keywords as names",
+      "Object types with call signatures"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "_lhs_expression"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "decorator",
     "count": 11,
     "entries": [
@@ -12241,6 +11897,24 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "_lhs_expression",
+    "count": 8,
+    "entries": [
+      "Ambiguity between function signature and function declaration",
+      "Classes with methods with and without trailing semicolons on one line",
+      "Method declarations with keywords as names",
+      "Object types with call signatures"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "_lhs_expression"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "decorator",
     "count": 11,
     "entries": [
@@ -13016,20 +12690,5 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_lhs_expression",
-    "count": 1,
-    "entries": [
-      "lhs_expression"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_lhs_expression"
   }
 ]

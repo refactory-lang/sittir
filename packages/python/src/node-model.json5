@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 304,
+  "nodeCount": 303,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -19,6 +19,7 @@
     "expression",
     "float",
     "integer",
+    "keyword_identifier",
     "line_continuation",
     "parameter",
     "pattern",
@@ -26,22 +27,88 @@
     "with_clause"
   ],
   "externals": [
-    ")",
-    "]",
-    "_blankline",
-    "_dedent",
-    "_double_blankline",
-    "_indent",
-    "_newline",
-    "_space",
-    "_tight",
-    "comment",
-    "escape_interpolation",
-    "except",
-    "string_end",
-    "string_fragment",
-    "string_start",
-    "}"
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "string_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "string_fragment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "escape_interpolation"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "string_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    },
+    {
+      "type": "STRING",
+      "value": "]"
+    },
+    {
+      "type": "STRING",
+      "value": ")"
+    },
+    {
+      "type": "STRING",
+      "value": "}"
+    },
+    {
+      "type": "STRING",
+      "value": "except"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    }
+  ],
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    },
+    {
+      "type": "PATTERN",
+      "value": "[\\s\\f\\uFEFF\\u2060\\u200B]|\\r?\\n"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_continuation_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_continuation_nul"
+    }
   ],
   "polymorphVariants": {
     "future_import_statement": {
@@ -1709,15 +1776,6 @@
         "nonEmpty": false
       }
     },
-    "keyword_identifier": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "await": {
       "expression": {
         "unnamed": false,
@@ -2371,6 +2429,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "__future___keyword",
@@ -2411,11 +2470,13 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_compound_statement",
@@ -2448,11 +2509,13 @@
       "kind": "_double_blankline",
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
       "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
-      "text": "\n\n\n"
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -2905,11 +2968,13 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_statement",
@@ -2949,24 +3014,12 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
-    },
-    {
-      "kind": "_unary_operator_operator",
-      "modelType": "enum",
-      "typeName": "UnaryOperatorOperator",
-      "factoryName": "unaryOperatorOperator",
-      "irKey": "unaryOperatorOperator",
-      "hidden": false,
-      "values": [
-        "+",
-        "-",
-        "~"
-      ],
+      "text": "",
       "factoryShape": "text"
     },
     {
@@ -5227,6 +5280,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6928,6 +6993,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6980,6 +7057,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -7034,6 +7123,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7086,6 +7187,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -7140,6 +7253,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7193,6 +7318,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7245,6 +7382,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -9706,6 +9855,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0b",
+            "0B"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9804,6 +9967,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0x",
+            "0X"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9887,6 +10064,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0o",
+            "0O"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -10272,34 +10463,18 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "envelope",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
-      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "identifier"
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "async_keyword",
+        "await_keyword",
+        "exec_keyword",
+        "match_keyword",
+        "print_keyword",
+        "type_keyword"
       ]
     },
     {
@@ -15224,15 +15399,25 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_unary_operator_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_unary_operator_operator",
-              "parseKind": "_unary_operator_operator"
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "~",
+              "parseKind": "tilde"
             }
           ]
         },

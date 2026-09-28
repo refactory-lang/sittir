@@ -111,48 +111,20 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
 // would throw "group-lift symbol has no name" (an alias has no `.name`).
 ```
 
-### `packages/codegen/src/dsl/transform/transform-path.ts::setGroupLiftRuleMap`
-
-```text
-/**
- * Register (or clear) the rule-map path-descent uses to resolve enrich
- * group-lift symbol bodies. Called by `enrich()` with its merged rules map
- * after synthesis; passing `undefined` clears it.
- */
-```
-
-### `packages/codegen/src/dsl/transform/transform-path.ts::getGroupLiftRuleBody`
-
-```text
-/**
- * (2026-07-21 union-slot design): read a group-lift rule's body by name,
- * for the transform.ts variant()/polymorphs rename path — when an arm
- * enrich already clause-hoisted into `_<parent>_group<N>` is ALSO
- * targeted by this grammar's own polymorphs/variant() config, the rename
- * needs to ADDITIONALLY deposit that same body under the name variant()
- * intends (`polymorphVisibleName`, e.g. `export_statement_default`) — not
- * to replace the enrich-minted name (re-keying was ruled out:
- * base-grammar rules can't be deleted, and other consumers snapshot the
- * enrich-assigned name before the rename runs), purely additive, so a
- * NESTED/cascaded polymorphs entry keyed on the intended name (e.g.
- * typescript's `export_statement_default: {0:'from_arm', 1:'decl_arm'}`)
- * finds real content instead of `undefined`.
- */
-```
-
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
 ```text
 /**
  * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
  * body (not by descending into carried content). Descends into the resolved
- * body without consuming a path segment, patches it, and writes the patched
- * body back into the rule-map so the hidden group rule — and thus its
- * materialized kind + the parser's seed — reflect the patch. The symbol ref
+ * body without consuming a path segment, patches it, and records the patched
+ * body in the active wire context's lift overlay (`wireSetLiftBody`). The
+ * lift's own wire rule fn (`passthroughBaseRuleFn`) returns that body, so the
+ * hidden group rule reflects the patch in both pipelines. The symbol ref
  * itself is returned unchanged (it still points at the same name).
  *
- * @throws {ApplyPathSkip} If no rule-map is registered or the referenced rule is
- *   absent — surfaces loudly rather than silently dropping the patch.
+ * @throws {ApplyPathSkip} If there is no active wire context or the referenced
+ *   rule is absent — surfaces loudly rather than silently dropping the patch.
  */
 ```
 
@@ -584,6 +556,12 @@ calls.
  */
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
+
+Applies a path-keyed patch set: every non-variant entry at its path, each as its own active patch site
+(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then clears sibling
+defaults an `arm.default` entry displaced.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
 Apply a patch set's `variant()` entries: try the whole-arm hoist
@@ -592,7 +570,8 @@ arm, then register the parent for flattening when it ended as a pure choice of
 its own variants. An absent variant only exists in the hoisted form, so when
 the set declares one (`variant(name, { absent: true })`) and the hoist does
 not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
-prints why the hoist bailed.
+prints why the hoist bailed. The hoist runs with every variant entry as the active patch sites, since it
+applies them together; each remaining entry runs as its own site.
 
 #### body
 
@@ -626,16 +605,6 @@ bails, since tree-sitter rejects such a rule; so does one whose arm would
 hoist to a transparent unit production (no anonymous token, at most one named
 child), by the same `variantBranchIsUnmaterializable` rule the per-arm form
 applies.
-
-### `packages/codegen/src/dsl/transform/transform.ts::optionalContentOf`
-
-The content of an optional in either runtime's spelling: sittir's `OPTIONAL`
-node, or tree-sitter's `choice(content, blank)`. Recognising only one would
-let a hoist fire in one pipeline and bail in the other.
-
-### `packages/codegen/src/dsl/transform/transform.ts::isBlank`
-
-Whether a rule is tree-sitter's `BLANK`, the absent arm `hoistChoiceOf` spells for an optional.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
@@ -883,7 +852,7 @@ on the way in; an authored body of that name is left as authored.
  * Strip field association from a rule so its position reads as an unnamed
  * body slot. Removes a leading `field(name, X)` wrapper AND the
  * `fieldName` annotation sittir propagates down through single-content
- * wrappers (prec/optional/repeat) to the leaf — both must go or the slot
+ * wrappers (prec/optional in either spelling/repeat) to the leaf — both must go or the slot
  * collector re-creates the named slot from the surviving `fieldName`.
  */
 ```
@@ -972,54 +941,14 @@ on the way in; an authored body of that name is left as authored.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::findEnrichShapedFieldThroughTransparentWrappers`
 
-```text
-/**
- * Descend through field-transparent wrappers (optional, prec/*) to find
- * the first enrich-shaped field inside (see `isEnrichShapedFieldWrapper`).
- * Returns a reconstruction function that rebuilds the wrapper chain with
- * a new inner value, plus the found field (if any). Does NOT descend into
- * seq/general-choice/repeat/field.
- *
- * Handles two shapes of "optional" wrapper:
- *   - Sittir pipeline: `{ type: 'OPTIONAL', content: ... }`.
- *   - Tree-sitter CLI pipeline: `{ type: 'CHOICE', members: [content, BLANK] }` —
- *     tree-sitter's `optional(x)` desugars to `choice(x, blank())`. The
- *     enrich pass uses `rebuildOptional` which preserves this CHOICE shape.
- *     We treat 2-member CHOICE-with-BLANK as transparent so the rename
- *     reaches the field inside.
- *
- * Only used by resolveFieldPlaceholder for the nested-enrich-shaped-field case.
- */
-```
-
-#### body
-
-```text
-// Shape A: the sittir/tree-sitter-native optional { type: 'OPTIONAL', content: ... }.
-```
-
-#### body
-
-```text
-// Shape B: tree-sitter CLI's CHOICE-with-BLANK — the canonical encoding of
-// optional(x) in tree-sitter's runtime: { type: 'CHOICE', members: [x, BLANK] }
-// or [BLANK, x]. Enrich's rebuildOptional preserves this shape.
-// Only treat as transparent when exactly 2 members and one is BLANK.
-```
-
-```text
-// a real choice, not an optional
-```
-
-#### body
-
-```text
-// Shape C: prec wrappers — transparent in path-addressing; content carries
-// the actual rule (value is separate). PREC/PREC_LEFT/PREC_RIGHT/
-// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
-// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
-// uppercase spellings ever appear here.
-```
+Descends through field-transparent wrappers — an optional in either
+representation (`optionalContentOf`) or a precedence wrapper — to the first
+enrich-shaped field inside (see `isEnrichShapedFieldWrapper`). Returns the
+found field and a function that rebuilds the wrapper chain around a new inner
+value, each optional in the representation it already had
+(`withOptionalContent`). Does not descend into a sequence, a general choice, a
+repeat or a field. Only `resolveFieldPlaceholder`'s nested enrich-shaped-field
+case uses it.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveRulePlaceholder`
 
@@ -1203,20 +1132,6 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
  * errors from nativeRequired, bugs in reconstruction helpers, throws
  * from user-supplied patch functions) propagates so real bugs aren't
  * masked as "wildcard matched zero".
- */
-```
-
-### `packages/codegen/src/dsl/transform/transform-path.ts::GroupLiftRuleMap`
-
-```text
-/**
- * Look up the body of an enrich group-lift's referenced hidden rule by name.
- * The body is NOT carried on the symbol (that leaks the seq into grammar.json);
- * enrich registers its merged rule-map here so path-descent can resolve and
- * patch the referenced `_<parent>_<kind><N>` rule. Both runtimes work: enrich
- * runs first (registering), rule fns run later (consuming), within one grammar's
- * processing. `set` writes a patched body back so the materialized group kind
- * AND the parser seed reflect the patch.
  */
 ```
 
@@ -1547,6 +1462,24 @@ A `flatten()` patch stamps `annotations.flattened` on the member at its path, th
 `regex(/.../)` replaces the regex of the pattern at the patched path, so a bare pattern can draw named groups
 that name its slots. The path of a rule that is itself a pattern is `.`.
 ```
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordPatchSites`
+
+Records each entry of a patch set as a `PatchSite` under the current rule
+kind before the set is applied. `transform()` is where every entry passes,
+including sibling `variant()` entries that hoist whole-arm without reaching
+`resolvePatch` and wildcard paths that reach it once per matching member.
+
+### `packages/codegen/src/dsl/transform/transform.ts::patchSitesOf`
+
+The `PatchSite` of each patch entry under the current rule kind; none outside a rule callback. Both the
+recording (`recordPatchSites`) and the application scopes (`wireWithPatchSites`) build sites here, so a lift
+claim lands on the same key the site was recorded under.
+
+### `packages/codegen/src/dsl/transform/transform.ts::patchFormOf`
+
+The `PatchForm` of a patch value, from the placeholder guards; a raw rule
+value is `literal`, and a one-argument or full `field()` is `field`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 

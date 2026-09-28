@@ -23,6 +23,7 @@ import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
+import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
 import { probeKind } from './probe-kind.ts';
 import { probeParity } from './probe-parity.ts';
@@ -34,6 +35,7 @@ import { propose14 } from './propose-14.ts';
 import { separatedLists } from './separated-lists.ts';
 import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
+import { triviaPlacement } from './trivia-placement.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
 
@@ -60,6 +62,7 @@ export const toolModules: readonly CommandModule[] = [
 	inspectRefs,
 	inspectType,
 	listKinds,
+	overrideCensus,
 	phantomKinds,
 	probeKind,
 	probeParity,
@@ -71,6 +74,7 @@ export const toolModules: readonly CommandModule[] = [
 	separatedLists,
 	testHistory,
 	textKindOverlap,
+	triviaPlacement,
 	variantDerivationProbe,
 	walk,
 ];

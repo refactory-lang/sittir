@@ -33,6 +33,18 @@ export const classAtom: {
 	range: F.classRange
 };
 
+export const whitespace: {
+	readonly tight: typeof F.buildTight;
+	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly doubleBlankline: typeof F.buildDoubleBlankline;
+} = {
+	tight: F.buildTight,
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	doubleBlankline: F.buildDoubleBlankline
+};
+
 export const characterEscape: typeof F.characterEscape = F.characterEscape;
 
 export const ir: {
@@ -76,6 +88,7 @@ export const ir: {
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
 	readonly classAtom: typeof classAtom;
+	readonly whitespace: typeof whitespace;
 	readonly characterEscape: typeof characterEscape;
 } = {
 	// Node factories
@@ -125,5 +138,6 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	classAtom,
+	whitespace,
 	characterEscape
 };

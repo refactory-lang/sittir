@@ -10,9 +10,8 @@
  * emitRenderModule) so they exercise the full codegen path including the emitter.
  */
 
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
@@ -23,12 +22,10 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
-import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
-const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -63,7 +60,7 @@ describe('buildSupertypeTransportSet', () => {
 			signatures: { signatures: new Map() },
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
-			externals: new Set(),
+			externals: [],
 			word: undefined
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);
@@ -134,12 +131,12 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
+		AssembleCtx.from(normalized, generatedIdTables)
 	);
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
@@ -179,6 +176,8 @@ async function getTypescriptTransportRs(): Promise<string> {
 	_typescriptTransportRs = await getTransportRsForGrammar('typescript');
 	return _typescriptTransportRs;
 }
+
+beforeAll(() => Promise.all([getRustTemplatesRs(), getTypescriptTransportRs()]), 120_000);
 
 /**
  * Extract the body of a `pub struct <name>` from a Rust source file.
@@ -320,7 +319,7 @@ async function buildRustFixtureForParity() {
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 
-	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
 	const renderRules =

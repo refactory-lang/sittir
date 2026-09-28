@@ -1,8 +1,10 @@
-import type { AuthoredCompound } from '../compiler/model/node-map.ts';
+import { type RuleListEntry } from '../dsl/rule-patterns.ts';
+import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
+import { innerGapsKeyed } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
@@ -23,7 +25,8 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
-import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
+import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
+import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf, type NodeInterior } from './interior.ts';
@@ -83,6 +86,7 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	slots: SerializedSlot[];
 	separator?: string;
 	interior?: NodeInterior;
+	fullForm?: FullForm;
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -132,11 +136,13 @@ interface SerializedNodeModel {
 	nodeCount: number;
 	word: string | null;
 	supertypes: string[];
-	externals: string[];
+	externals: readonly RuleListEntry[];
+	extras: readonly RuleListEntry[];
 	polymorphVariants: PolymorphVariantMap;
 	variantRoutes: Readonly<Record<string, string>>;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
+	innerGapsKeyed: boolean;
 	nodes: SerializedNode[];
 }
 
@@ -184,11 +190,13 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		nodeCount: nodeMap.nodes.size,
 		word: nodeMap.word ?? null,
 		supertypes,
-		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
+		externals: nodeMap.externals ?? [],
+		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
 		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
+		innerGapsKeyed: innerGapsKeyed(nodeMap),
 		nodes
 	};
 }
@@ -287,6 +295,7 @@ function serializeCompoundNode(
 	if (node.separator !== undefined) out.separator = node.separator;
 	const interior = interiorOf(node);
 	if (interior !== undefined) out.interior = interior;
+	if (node.fullForm !== undefined) out.fullForm = node.fullForm;
 	return out;
 }
 

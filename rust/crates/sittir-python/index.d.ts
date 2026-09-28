@@ -762,12 +762,6 @@ export interface KeywordArgumentTransport {
   _value: SlotValue<ExpressionTransport>
 }
 
-export interface KeywordIdentifierTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _identifier: string
-}
-
 export interface KeywordPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -1212,7 +1206,7 @@ export interface TypeTransport {
 export interface UnaryOperatorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _operator: SlotValue<UnaryOperatorOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<Box<PrimaryExpressionTransport>>
 }
 

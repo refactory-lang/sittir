@@ -26,7 +26,8 @@ describe('@sittir/common/utils runtime surface', () => {
 			endPos: typeof startOrRange === 'number' ? (endPos ?? startOrRange) : startOrRange.end.index,
 			insertedText: 'rendered'
 		}));
-		const node = withMethods({ $type: 1, $source: 2, _name: 'x' }, { render, toEdit });
+		const trivia = { kindName: (type: AnyNodeData['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {} };
+		const node = withMethods({ $type: 1, $source: 2, _name: 'x' }, { render, toEdit, trivia });
 
 		expect(node.$render()).toBe('rendered');
 		expect(node.$toEdit({ start: { index: 0 }, end: { index: 3 } })).toEqual({

@@ -1,37 +1,17 @@
-import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import {
-	findEntryForLiteralText,
-	modelKindOfEntry,
-	type GeneratedIdTables,
-	type KindEntryLike
-} from '../compiler/generated-metadata.ts';
+import { findEntryForLiteralText, modelKindOfEntry, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
 import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { reclaimsAnonymousChild, slotSeparatorTexts, wireRoutesOf } from './shared.ts';
+import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
-}
-
-export function toScreamingSnakeCase(memberName: string, rawKind: string): string {
-	const prefix = rawKind.match(/^_+/)?.[0] ?? '';
-	const cleaned = memberName.replace(/^_+/, '');
-
-	if (!/[a-z]/.test(cleaned)) {
-		return `${prefix}${cleaned}`;
-	}
-
-	const snake = cleaned
-		.replace(/([A-Z])/g, '_$1')
-		.replace(/^_/, '')
-		.toUpperCase();
-
-	return `${prefix}${snake}`;
 }
 
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
@@ -141,6 +121,19 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('    }');
 	lines.push('}');
 
+	lines.push('');
+	lines.push('/// The gap an extra occupies inside a node with no named child to own it,');
+	lines.push('/// by (kind id, anonymous tokens before the extra): the model slot whose');
+	lines.push('/// position the gap holds. `None` when the model has no slot there.');
+	lines.push("pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {");
+	lines.push('    match (kind.0, preceding_tokens) {');
+	for (const row of innerGapRows(nodeMap, entries)) {
+		lines.push(`        (${row.kindId}, ${row.precedingTokens}) => Some(${JSON.stringify(row.key)}),`);
+	}
+	lines.push('        _ => None,');
+	lines.push('    }');
+	lines.push('}');
+
 	const separatorRows: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
 		const parentId = findOwnKindEntry(entries, node.kind)?.id;
@@ -179,8 +172,73 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('}');
 
 	lines.push('');
+	lines.push('/// Whether the model stores a `child` of a `parent` node, reached under the');
+	lines.push('/// parser field `field` (`None` for an untagged child), as a scalar: a');
+	lines.push('/// presence flag or a kind id rather than a node. Such a child keeps no');
+	lines.push('/// trivia, so the reader never makes it an owner.');
+	lines.push('pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {');
+	lines.push('    match (parent.0, field) {');
+	for (const row of scalarChildRows(nodeMap, entries)) {
+		const fieldPattern = row.field === undefined ? 'None' : `Some(${JSON.stringify(row.field)})`;
+		lines.push(`        (${row.parentId}, ${fieldPattern}) => matches!(child.0, ${row.childIds.join(' | ')}),`);
+	}
+	lines.push('        _ => false,');
+	lines.push('    }');
+	lines.push('}');
+
+	lines.push('');
 
 	return lines.join('\n');
+}
+
+interface InnerGapRow {
+	readonly kindId: number;
+	readonly precedingTokens: number;
+	readonly key: string;
+}
+
+function innerGapRows(
+	nodeMap: NodeMap,
+	entries: readonly (KindEntryLike & { readonly id: number })[]
+): readonly InnerGapRow[] {
+	return [...nodeMap.nodes.values()]
+		.filter((node) => node instanceof AbstractAssembledCompound)
+		.flatMap((node) => {
+			const kindId = findOwnKindEntry(entries, node.kind)?.id;
+			return kindId === undefined ? [] : node.innerGaps.map((gap) => ({ kindId, ...gap }));
+		})
+		.sort((a, b) => a.kindId - b.kindId || a.precedingTokens - b.precedingTokens);
+}
+
+const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
+
+export interface ScalarChildRow {
+	readonly parentId: number;
+	readonly field?: string;
+	readonly childIds: readonly number[];
+}
+
+export function scalarChildRows(
+	nodeMap: NodeMap,
+	entries: readonly (KindEntryLike & { readonly id: number })[]
+): readonly ScalarChildRow[] {
+	const rows = new Map<string, { parentId: number; field?: string; childIds: Set<number> }>();
+	for (const [, node] of nodeMap.nodes) {
+		const parentId = findOwnKindEntry(entries, node.kind)?.id;
+		if (parentId === undefined) continue;
+		for (const slot of node.slots) {
+			const info = slot.storageInfo;
+			if (info === undefined || !SCALAR_STORAGE.has(info.kind) || info.enumKindsById.size === 0) continue;
+			const field = slot.fieldName;
+			const key = `${parentId} ${field ?? ''}`;
+			const row = rows.get(key) ?? { parentId, ...(field === undefined ? {} : { field }), childIds: new Set<number>() };
+			for (const id of info.enumKindsById.values()) row.childIds.add(id);
+			rows.set(key, row);
+		}
+	}
+	return [...rows.values()]
+		.map((row) => ({ ...row, childIds: [...row.childIds].sort((a, b) => a - b) }))
+		.sort((a, b) => a.parentId - b.parentId || (a.field ?? '').localeCompare(b.field ?? ''));
 }
 
 export interface WireSlotRow {

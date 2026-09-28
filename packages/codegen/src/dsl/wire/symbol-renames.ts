@@ -28,9 +28,9 @@ export function renameRule(value: unknown, renames: SymbolRenames): unknown {
 		if (name !== record.name) changes.name = name;
 	}
 	if (Object.keys(changes).length === 0) return value;
-	const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value)) as Record<string, unknown>;
-	for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
-	return copy;
+	const descriptors = Object.getOwnPropertyDescriptors(value);
+	for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
+	return Object.create(Object.getPrototypeOf(value), descriptors);
 }
 
 export function renameNameList(value: unknown, renames: SymbolRenames): unknown {

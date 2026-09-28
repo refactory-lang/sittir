@@ -1,134 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[5]",
-      "ruleId": "rule:_let_chain:root"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "#!"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    }
-  },
-  {
-    "code": "kindid-unstamped-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator",
-        "_declaration_statement"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-unstamped-literals",
-    "message": "7 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_declaration_statement"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-vaporized-literals",
-    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "#!",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_compound_assignment_expr_operator"
-      ]
-    },
-    "scope": "grammar",
-    "grammar": "rust"
-  },
-  {
-    "scope": "grammar",
     "code": "body-pattern-zero-match",
     "severity": "warning",
     "grammar": "rust",
@@ -136,5 +8,91 @@
     "message": "groups: body-pattern '_visibility_modifier_in_path' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
     "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
     "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "tuple_type",
+    "message": "rules: 'tuple_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "tuple_expression",
+    "message": "rules: 'tuple_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_non_special_token",
+    "message": "rules: '_non_special_token' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'alias-shape'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "alias-shape"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "_primitive_type",
+    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "reference_expression",
+    "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "rule-reauthored-without-cause",
+    "severity": "error",
+    "ownerKind": "impl_item",
+    "message": "rules: 'impl_item' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
+    "canProceed": false,
+    "details": {
+      "cause": "ambiguity"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_let_chain",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[5]",
+      "ruleId": "rule:_let_chain:root"
+    }
   }
 ]

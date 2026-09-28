@@ -225,7 +225,7 @@ const namedCapturingGroup$lparenQmarkLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
-const namedCapturingGroup$lparenQmarkpLt =
+const namedCapturingGroup$lparenQmarkPLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
@@ -240,7 +240,7 @@ export const namedCapturingGroup: typeof B.namedCapturingGroup & {
 			options?: OptionsArg<typeof C.coerceToNamedCapturingGroup>
 		) => ReturnType<typeof C.coerceToNamedCapturingGroup>;
 	};
-	lparenQmarkpLt: {
+	lparenQmarkPLt: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>,
 			options?: OptionsArg<typeof F.buildNamedCapturingGroup>
@@ -256,9 +256,9 @@ export const namedCapturingGroup: typeof B.namedCapturingGroup & {
 		strict: namedCapturingGroup$lparenQmarkLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkLt),
 		coerce: namedCapturingGroup$lparenQmarkLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkLt)
 	},
-	lparenQmarkpLt: {
-		strict: namedCapturingGroup$lparenQmarkpLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkpLt),
-		coerce: namedCapturingGroup$lparenQmarkpLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkpLt)
+	lparenQmarkPLt: {
+		strict: namedCapturingGroup$lparenQmarkPLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkPLt),
+		coerce: namedCapturingGroup$lparenQmarkPLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkPLt)
 	}
 };
 
@@ -461,7 +461,7 @@ const termGroup$namedCapturingGroup$lparenQmarkLt =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-const termGroup$namedCapturingGroup$lparenQmarkpLt =
+const termGroup$namedCapturingGroup$lparenQmarkPLt =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -780,16 +780,16 @@ export const termGroup: typeof B.termGroup & {
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 		};
-		lparenQmarkpLt: {
+		lparenQmarkPLt: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
-					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkpLt.strict>;
+					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.strict>;
 				},
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
-					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkpLt.coerce>;
+					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
@@ -982,11 +982,11 @@ export const termGroup: typeof B.termGroup & {
 			strict: termGroup$namedCapturingGroup$lparenQmarkLt(F.buildTermGroup, namedCapturingGroup.lparenQmarkLt.strict),
 			coerce: termGroup$namedCapturingGroup$lparenQmarkLt(C.coerceToTermGroup, namedCapturingGroup.lparenQmarkLt.coerce)
 		},
-		lparenQmarkpLt: {
-			strict: termGroup$namedCapturingGroup$lparenQmarkpLt(F.buildTermGroup, namedCapturingGroup.lparenQmarkpLt.strict),
-			coerce: termGroup$namedCapturingGroup$lparenQmarkpLt(
+		lparenQmarkPLt: {
+			strict: termGroup$namedCapturingGroup$lparenQmarkPLt(F.buildTermGroup, namedCapturingGroup.lparenQmarkPLt.strict),
+			coerce: termGroup$namedCapturingGroup$lparenQmarkPLt(
 				C.coerceToTermGroup,
-				namedCapturingGroup.lparenQmarkpLt.coerce
+				namedCapturingGroup.lparenQmarkPLt.coerce
 			)
 		}
 	},

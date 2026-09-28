@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
 import { undisplayedKindAddress } from '../../dsl/arm-names.ts';
@@ -35,7 +35,7 @@ export function displayOfParserName(name: string): string {
 }
 
 
-export function displayNameOf(kind: string, nodeMap: NodeMap): string {
+export function displayNameOf(kind: string, nodeMap: Pick<NodeMap, 'nodes'>): string {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) throw new Error(`display name: '${kind}' is not a kind of this grammar`);
 	return node.display.name;

@@ -13,10 +13,14 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { NamespaceMap } from './types.js';
+import type { Blankline, Comment, DoubleBlankline, Newline, Space, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
+import { KIND_NAMES } from './types.js';
+import { INNER_GAPS } from './consts.js';
+import type * as T from './types.js';
 import {
 	withMethods as withCommonMethods,
+	isEmptyNode as _isEmptyNode,
 	isNodeData as _isNodeData,
 	isTreeNode as _isTreeNode,
 	hasKind,
@@ -51,6 +55,13 @@ export const methodsEngine = {
 	},
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) {
 		return toEdit(node, startOrRange, endPos);
+	},
+	trivia: {
+		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
+		kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', 'comment']),
+		innerGaps: INNER_GAPS,
+		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\n': 26, '\n\n': 27, '\n\n\n': 28 } },
+		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
 
@@ -61,10 +72,18 @@ export const methodsEngine = {
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
 	(
-		...args: ((AnyNodeData | string) | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
+		...args: (
+			| (Blankline | Comment | DoubleBlankline | Newline | Space | string)
+			| {
+					leading?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
+					trailing?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
+			  }
+		)[]
 	): Self;
-	leading(...items: (AnyNodeData | string)[]): Self;
-	trailing(...items: (AnyNodeData | string)[]): Self;
+	leading(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	leading(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
+	trailing(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	trailing(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
@@ -78,6 +97,18 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 	// Grammar-local facade: T extends object to accept wrap.ts union-spread literals.
 	// Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.
 	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
+}
+
+export interface InnerTrivia<N> {
+	inner(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	inner(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): N;
+}
+
+export function isEmpty(node: T.Program): node is T.EmptyProgram;
+export function isEmpty(node: T.MissingNode): node is T.EmptyMissingNode;
+export function isEmpty(node: AnyNodeData): boolean {
+	const kind = methodsEngine.trivia.kindName(node.$type);
+	return kind !== undefined && INNER_GAPS[kind] !== undefined && _isEmptyNode(node);
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(

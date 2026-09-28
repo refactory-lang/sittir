@@ -1,5 +1,6 @@
 import type { VariantChild } from './variant-structural.ts';
 import { isHiddenPunctuationLeaf } from './model/node-map.ts';
+import { lowerCamelCase } from './model/casing.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -25,19 +26,16 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
+import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
+import { stampFullForms } from './model/full-form.ts';
+import { stampTriviaInterior } from './model/trivia.ts';
 import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
-import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
+import { admitsWhitespaceMember } from '../dsl/whitespace.ts';
+import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
-import {
-	collectGeneratedKindEntries,
-	findEntryForKindName,
-	findEntryForLiteralText,
-	type GeneratedIdTables,
-	type GeneratedKindEntry,
-	isSurfaceHiddenKind
-} from './generated-metadata.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind } from '../dsl/symbol-table.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
@@ -45,13 +43,14 @@ import type {
 	SubtypeRef,
 	UnresolvedRef
 } from './model/node-map.ts';
-import { armFactsOf } from './model/node-map.ts';
+import { armFactsOf, separatorArmsOf } from './model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
+	enumValuesOf,
 	AssembledSupertype,
 	AssembledList,
 	AssembleDiagnosticsCollector,
@@ -62,6 +61,7 @@ import {
 	isUnresolvedRef,
 	buildParseKindRuleSignatures,
 	type AssembleWarning,
+	type NamingEvent,
 	AssembledAlias,
 	branchClassFor,
 	aliasEnvelopeOf,
@@ -71,9 +71,7 @@ import {
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
-import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
@@ -82,7 +80,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
 	readonly leafTextPatterns: ReadonlyMap<string, string>;
-	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	readonly assembleDiagnostics = new AssembleDiagnosticsCollector();
 	private readonly _nodes: Map<string, AssembledNode>;
 
@@ -92,7 +89,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
 			leafTextPatterns?: ReadonlyMap<string, string>;
-			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
@@ -101,7 +97,6 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
 		this.leafTextPatterns = init.leafTextPatterns ?? new Map();
-		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
 
@@ -121,24 +116,25 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink(),
-		grammarJsonAliasMap?: ReadonlyMap<string, string>
+		kindEntries?: readonly GeneratedKindEntry[]
 	): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
+			kindEntries,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
-			leafTextPatterns: normalized.leafTextPatterns,
-			grammarJsonAliasMap
+			leafTextPatterns: normalized.leafTextPatterns
 		});
 	}
 }
 
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
-	readonly deriveShapeDiagnostics: readonly DeriveShapeDiagnostic[];
 	readonly assembleWarnings: readonly AssembleWarning[];
+	readonly namingEvents: readonly NamingEvent[];
+	readonly droppedKinds: ReadonlySet<string>;
 }
 
 export function assemble(ctx: AssembleCtx): AssembledNodeMap {
@@ -147,6 +143,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	const assembleDiagnostics = ctx.assembleDiagnostics;
+	const droppedKinds = new Set<string>();
 	const variantChildrenByParent = normalized.variantChildren ?? new Map<string, readonly VariantChild[]>();
 	const variantParents = new Set(variantChildrenByParent.keys());
 
@@ -168,13 +165,25 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			kindEntries
 		});
 		const variantChildKinds = variantChildrenByParent.get(kind);
+		const dropCtx: DroppedKindCtx = { assembleDiagnostics, droppedKinds };
+		if (modelType === undefined) {
+			recordDroppedKind(
+				{
+					code: 'unclassifiable-shape',
+					ownerKind: kind,
+					message: `[assemble] kind '${kind}' has no slots and no rule-type classification (rule type ${renderRule.type})`,
+					details: { ruleType: renderRule.type }
+				},
+				dropCtx
+			);
+			continue;
+		}
 
 		switch (modelType) {
 			case 'supertype': {
 				if (renderRule.type !== SUPERTYPE && renderRule.type !== CHOICE) {
-					throw new Error(
-						`[assemble] supertype kind '${kind}' must be a supertype or choice; found ${renderRule.type}`
-					);
+					recordDroppedKind(kindShapeMismatch(kind, 'a supertype or choice', renderRule.type), dropCtx);
+					continue;
 				}
 				const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
 				nodes.set(
@@ -216,7 +225,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			case 'keyword':
 			case 'punctuation': {
 				if (simplifiedRule.type !== STRING) {
-					throw new Error(`[assemble] literal kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
+					recordDroppedKind(kindShapeMismatch(kind, 'a single literal', simplifiedRule.type), dropCtx);
+					continue;
 				}
 				const named = !isSurfaceHiddenKind(kind, kindEntries) && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
@@ -229,7 +239,23 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 			case 'enum': {
 				if (renderRule.type !== CHOICE) {
-					throw new Error(`[assemble] enum kind '${kind}' must be a choice of literals; found ${renderRule.type}`);
+					recordDroppedKind(kindShapeMismatch(kind, 'a choice of literals', renderRule.type), dropCtx);
+					continue;
+				}
+				const values = enumValuesOf(renderRule);
+				if (values.length < 2) {
+					recordDroppedKind(
+						{
+							code: 'single-literal-choice',
+							ownerKind: kind,
+							message:
+								`[assemble] kind '${kind}' is classified as a choice of literals but its arms yield ${values.length} ` +
+								`literal value(s); give each arm its own kind with variant(...) in grammar.sittir.ts`,
+							details: { values }
+						},
+						dropCtx
+					);
+					continue;
 				}
 				nodes.set(kind, new AssembledEnum(kind, renderRule, { kindEntries }));
 				break;
@@ -237,12 +263,11 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			case 'list': {
 				const listRule = peelSeparatedListCore(simplifiedRule);
 				if (listRule.type !== SYMBOL && listRule.type !== CHOICE) {
-					throw new Error(
-						`[assemble] list kind '${kind}' must repeat a symbol or a choice of symbols; found ${listRule.type}`
-					);
+					recordDroppedKind(kindShapeMismatch(kind, 'a repeat of a symbol or a choice of symbols', listRule.type), dropCtx);
+					continue;
 				}
 				const sep = listRule.separator;
-				const separatorRule = sep && isNonterminalRuleType(sep.value) ? sep.value : undefined;
+				const separatorRule = sep && isNonterminalRuleType(sep.value) ? perInstanceSeparator({ kind, separator: sep.value }, dropCtx) : undefined;
 				nodes.set(
 					kind,
 					new AssembledList(
@@ -263,7 +288,9 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 	}
 
-	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, assembleDiagnostics);
+	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, ctx.diagnostics);
+	stampWhitespaceBuilders(nodes);
+	stampFullForms(nodes, wordMatcherRegex);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -278,7 +305,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 	const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 	for (const rule of Object.values(normalized.normalizedRules)) {
-		if (rule.type !== SUPERTYPE || !rule.variantArms || rule.name === WHITESPACE_SUPERTYPE) continue;
+		if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
 		for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 	}
 	const userFacingCtx: _UserFacingCtx = {
@@ -308,6 +335,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	const assembled: AssembledNodeMap = {
 		name: normalized.name,
+		root: normalized.root,
 		nodes,
 		nodeByRuleId,
 		nodeByKindId,
@@ -320,15 +348,39 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		word: normalized.word,
 		wordMatcher: normalized.wordMatcher,
 		reserved: normalized.reserved,
-		externals: normalized.externals ? new Set(normalized.externals) : undefined,
-		extras: normalized.extras ? new Set(normalized.extras) : undefined,
+		externals: normalized.externals,
+		extras: normalized.extras,
+		nodelessExtrasRun: normalized.nodelessExtrasRun,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
-		deriveShapeDiagnostics: assembleDiagnostics.deriveShapeDiagnostics.all,
-		assembleWarnings: assembleDiagnostics.assembleWarnings.all
+		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
+		namingEvents: assembleDiagnostics.namingEvents.all,
+		droppedKinds
 	};
+	assertWhitespaceAdmitted(assembled);
 	computeFieldStorageInfo(assembled);
+	stampTriviaInterior(assembled);
+	stampGrammarRoot(assembled);
 	return assembled;
+}
+
+interface DroppedKindCtx {
+	readonly assembleDiagnostics: AssembleDiagnosticsCollector;
+	readonly droppedKinds: Set<string>;
+}
+
+function recordDroppedKind(warning: AssembleWarning & { readonly ownerKind: string }, ctx: DroppedKindCtx): void {
+	ctx.assembleDiagnostics.assembleWarnings.record(warning);
+	ctx.droppedKinds.add(warning.ownerKind);
+}
+
+function kindShapeMismatch(kind: string, expected: string, found: string): AssembleWarning & { readonly ownerKind: string } {
+	return {
+		code: 'kind-shape-mismatch',
+		ownerKind: kind,
+		message: `[assemble] kind '${kind}' must be ${expected}; found ${found}`,
+		details: { kind, expected, found }
+	};
 }
 
 function resolveSupertypeSubtypes(
@@ -385,43 +437,38 @@ function stampFactoryInline(
 		}
 	}
 
-	const rootKind = rootRuleName(ctx.grammar.rules);
+	const rootKind = ctx.grammar.root;
 	for (const kind of declared) {
 		const node = nodes.get(kind);
 		if (!node) {
-			emitUnnestable(kind, ctx, 'no kind by that name exists in the grammar');
+			throw new FactoryInlineUnnestableError(kind, 'no kind by that name exists in the grammar');
 			continue;
 		}
 		node.factoryInline = true;
 		if (kind === rootKind) {
-			emitUnnestable(kind, ctx, 'it is the grammar root, so no slot can carry its config');
+			throw new FactoryInlineUnnestableError(kind, 'it is the grammar root, so no slot can carry its config');
 			continue;
 		}
 		const parents = parentsByKind.get(kind);
 		if (parents === undefined || parents.size === 0) {
-			emitUnnestable(kind, ctx, 'no slot references it');
+			throw new FactoryInlineUnnestableError(kind, 'no slot references it');
 			continue;
 		}
 		const escaped = (supertypesByMember.get(kind) ?? []).filter((supertype) =>
 			[...(parentsByKind.get(supertype) ?? [])].some((referrer) => !parents.has(referrer))
 		);
 		if (escaped.length > 0) {
-			emitUnnestable(
-				kind,
-				ctx,
-				`it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
+			throw new FactoryInlineUnnestableError(kind, `it is a member of supertype ${escaped.join(', ')}, referenced from a slot outside its own parents (${[...parents].sort().join(', ')})`
 			);
 		}
 	}
 }
 
-function emitUnnestable(kind: string, ctx: AssembleCtx, reason: string): void {
-	ctx.diagnostics.fail({
-		code: 'factory-inline-unnestable',
-		scope: 'compiler',
-		phase: 'assemble',
-		message: `factoryInline kind '${kind}' has nowhere to nest: ${reason}.`
-	});
+export class FactoryInlineUnnestableError extends Error {
+	constructor(kind: string, reason: string) {
+		super(`assemble: factoryInline kind '${kind}' has nowhere to nest: ${reason}.`);
+		this.name = 'FactoryInlineUnnestableError';
+	}
 }
 
 function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
@@ -622,12 +669,12 @@ function resolveHiddenRuleContent(
 
 export interface HydrateSlotRefsConfig {
 	readonly inline?: ReadonlySet<string>;
-	readonly diagnostics?: DiagnosticSink;
+	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly grammar?: string;
 }
 
 export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {}): void {
-	const externals = nodeMap.externals ?? new Set<string>();
+	const externals = new Set(ruleListParts(nodeMap.externals ?? []).names);
 	const inline = cfg.inline ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node instanceof AbstractAssembledCompound) {
@@ -640,7 +687,7 @@ export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {
 				nodes: nodeMap.nodes,
 				externals,
 				inline,
-				diagnostics: cfg.diagnostics,
+				reportedAbsentNames: cfg.reportedAbsentNames,
 				grammar: cfg.grammar
 			});
 		}
@@ -662,7 +709,7 @@ function hydrateSlots(
 			nodes,
 			externals,
 			inline,
-			diagnostics: cfg.diagnostics,
+			reportedAbsentNames: cfg.reportedAbsentNames,
 			grammar: cfg.grammar
 		});
 	}
@@ -674,12 +721,12 @@ interface HydrateValuesCtx {
 	readonly nodes: Map<string, AssembledNode>;
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
-	readonly diagnostics?: DiagnosticSink;
+	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals, inline, diagnostics, grammar } = ctx;
+	const { parentKind, siteLabel, nodes, externals, inline, reportedAbsentNames, grammar } = ctx;
 	for (const v of values) {
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
@@ -691,14 +738,11 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 		}
 		if (externals.has(targetName)) continue;
 		if (inline.has(targetName)) continue;
-		diagnostics?.fail({
-			code: 'dangling-internal-ref',
-			message:
-				`hydrateSlotRefs: unresolved slot reference — kind '${parentKind}' ${siteLabel} ` +
-				`references kind '${targetName}' which is absent from the assembled node map, ` +
-				`is not external, and is not in the grammar's inline: array.`,
-			details: { grammar, parentKind, siteLabel, targetName }
-		});
+		if (reportedAbsentNames?.has(targetName)) continue;
+		throw new Error(
+			`hydrateSlotRefs: kind '${parentKind}' ${siteLabel} references kind '${targetName}', which is absent from ` +
+				`the ${grammar ?? ''} node map, is not external, and is not in the grammar's inline: array`
+		);
 	}
 }
 
@@ -718,6 +762,27 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 		return;
 	}
 	node.userFacing = ctx.aliasSourceKinds.has(kind) || ctx.variantChildKinds.has(kind);
+}
+
+function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
+	if (!declaresWhitespace({ nodes })) return;
+	for (const kind of whitespaceSymbolsOf({ nodes }).values()) {
+		const node = nodes.get(kind);
+		if (!(node instanceof AssembledPunctuation)) throw new Error(`assemble: whitespace arm '${kind}' is not a literal kind`);
+		node.factoryName ??= nameNode(node.kind).factoryName;
+	}
+}
+
+export function assertWhitespaceAdmitted(nodeMap: Pick<NodeMap, 'nodes' | 'nodelessExtrasRun'>): void {
+	if (!declaresWhitespace(nodeMap)) return;
+	for (const kind of whitespaceSymbolsOf(nodeMap).values()) {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledPunctuation && !admitsWhitespaceMember(nodeMap.nodelessExtrasRun, kind, node.text)) {
+			throw new Error(
+				`assemble: '${WHITESPACE_SUPERTYPE}' lists '${kind}', but the grammar's extras do not admit its text; enrich's effective extras and the final grammar's extras disagree`
+			);
+		}
+	}
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>, ctx: AssembleCtx): void {
@@ -752,17 +817,16 @@ function renameCollidingHiddenKinds(
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message:
-				`[assemble] typeName collision: kind '${h.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')})`,
-			ownerKind: h.kind,
-			details: { typeName, newType, visibleKinds: visible.map((v) => v.kind) }
+		diagnostics.namingEvents.record({
+			kind: h.kind,
+			from: typeName,
+			to: newType,
+			message: `visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')}`
 		});
 		h.typeName = newType;
+		h.irKey = lowerCamelCase(newType);
 		if (h.factoryName !== undefined) {
-			h.factoryName = `_${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}`;
+			h.factoryName = `_${lowerCamelCase(typeName)}`;
 		}
 	}
 }
@@ -776,20 +840,19 @@ function renameCollidingVisibleKinds(
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
 		const newType = `${typeName}${i + 1}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message:
-				`[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (siblings: ${sorted
-					.slice(0, i)
-					.map((s) => `'${s.kind}'`)
-					.join(', ')})`,
-			ownerKind: n.kind,
-			details: { typeName, newType, siblingKinds: sorted.slice(0, i).map((s) => s.kind) }
+		diagnostics.namingEvents.record({
+			kind: n.kind,
+			from: typeName,
+			to: newType,
+			message: `visible siblings: ${sorted
+				.slice(0, i)
+				.map((s) => `'${s.kind}'`)
+				.join(', ')}`
 		});
 		n.typeName = newType;
+		n.irKey = lowerCamelCase(newType);
 		if (n.factoryName !== undefined) {
-			n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
+			n.factoryName = n.irKey;
 		}
 	}
 }
@@ -802,15 +865,11 @@ function renameCollidingHiddenOnlyKinds(
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
 		const newType = `${typeName}${i + 1}`;
-		diagnostics.assembleWarnings.record({
-			code: 'typename-collision',
-			message: `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
-			ownerKind: h.kind,
-			details: { typeName, newType }
-		});
+		diagnostics.namingEvents.record({ kind: h.kind, from: typeName, to: newType, message: 'hidden siblings' });
 		h.typeName = newType;
+		h.irKey = lowerCamelCase(newType);
 		if (h.factoryName !== undefined) {
-			h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
+			h.factoryName = h.irKey;
 		}
 	}
 }
@@ -871,11 +930,7 @@ function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): voi
 }
 
 function shortenIrKey(kind: string): string {
-	const stripped = kind;
-	const parts = stripped.split('_').filter(Boolean);
-	if (parts.length === 0) return nameNode(kind).irKey;
-	const camel = parts.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))).join('');
-	return camel;
+	return lowerCamelCase(kind) || nameNode(kind).irKey;
 }
 
 function collectAnonymousNodes(
@@ -883,7 +938,7 @@ function collectAnonymousNodes(
 	nodes: Map<string, AssembledNode>,
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[],
-	diagnostics: AssembleDiagnosticsCollector
+	diagnostics: DiagnosticSink
 ): void {
 	const seen = new Set<string>();
 	for (const rule of Object.values(rules)) {
@@ -895,10 +950,10 @@ function collectAnonymousNodes(
 		if (literalText === '' || /^\s+$/.test(literalText)) continue;
 		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
 		if (catalogEntry === undefined) {
-			diagnostics.assembleWarnings.record({
+			diagnostics.warn({
 				code: 'kindid-unstamped-anon-literal',
 				message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
-				ownerKind: literalText,
+				canProceed: true,
 				details: { literalText }
 			});
 			continue;
@@ -988,7 +1043,7 @@ export function classifyNode(
 		simplifiedRules?: Readonly<Record<string, SimplifiedRule>>;
 		kindEntries?: readonly GeneratedKindEntry[];
 	}
-): ModelType {
+): ModelType | undefined {
 	const compoundCtx: CompoundModelTypeCtx = {
 		simplifiedRules: opts?.simplifiedRules ?? {},
 		kindEntries: opts?.kindEntries ?? []
@@ -1011,7 +1066,7 @@ export function classifyNode(
 	if (isSeparatedListShape(rule)) return 'list';
 	if (hasSlotBearingContent(rule)) return compoundModelTypeFor(kind, rule, compoundCtx);
 	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
-	return classifyTerminalFallback(kind, rule);
+	return classifyTerminalFallback(rule);
 }
 
 function referencesKind(rule: RenderRule): boolean {
@@ -1056,13 +1111,10 @@ function hasSlotBearingContent(rule: SimplifiedRule): boolean {
 	}
 }
 
-function classifyTerminalFallback(kind: string, rule: RenderRule): ModelType {
+function classifyTerminalFallback(rule: RenderRule): ModelType | undefined {
 	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
-	throw new Error(
-		`classifyNode: '${kind}' has no slots and no rule-type ` +
-			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
-	);
+	return undefined;
 }
 
 export function isAllTextShape(rule: AnyRule): boolean {
@@ -1092,4 +1144,29 @@ export { nameNode } from './model/node-map.ts';
 
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
+}
+
+function stampGrammarRoot(nodeMap: AssembledNodeMap): void {
+	const root = nodeMap.root === undefined ? undefined : nodeMap.nodes.get(nodeMap.root);
+	if (root !== undefined) root.grammarRoot = true;
+}
+
+function perInstanceSeparator(list: { readonly kind: string; readonly separator: RenderRule }, ctx: DroppedKindCtx): RenderRule | undefined {
+	const { kind, separator } = list;
+	const { tokens, others } = separatorArmsOf(separator);
+	if (others.length === 0) return separator;
+	ctx.assembleDiagnostics.assembleWarnings.record({
+		code: 'separator-pattern',
+		ownerKind: kind,
+		message:
+			`[assemble] kind '${kind}': its separator has ${others.length} arm(s) that are not tokens ` +
+			`(${others.map(ruleLabel).join(', ')}); a separator arm must be a token or a choice of tokens. ` +
+			`Resolve with a rule() patch that gives each pattern a kind of its own.`,
+		details: { arms: others.map(ruleLabel) }
+	});
+	return tokens.some(isNonterminalRuleType) ? separator : undefined;
+}
+
+function ruleLabel(rule: Rule<'normalize'>): string {
+	return rule.type === PATTERN ? `/${rule.value}/` : rule.type;
 }

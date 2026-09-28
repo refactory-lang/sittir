@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
 import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
@@ -8,9 +8,10 @@ import { validateRenderableFromNodeMap, formatRenderableReport } from './validat
 
 import { generate } from './compiler/generate.ts';
 import { compileGrammar, type Compilation } from './compiler/compile.ts';
-import { loadGeneratedIdTables } from './compiler/generated-metadata.ts';
+import { loadPackageIdTables } from './compiler/generated-metadata.ts';
 import {
 	GrammarDiagnosticError,
+	blockedRecords,
 	formatGrammarDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
@@ -19,9 +20,10 @@ import {
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
+import { runTreeSitterCli } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
-import { isGrammar, nativeCrateDir, nativeCrateRelDir } from './grammars.ts';
+import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
@@ -65,33 +67,35 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	writeFileSync(path, finalContent, 'utf8');
 }
 
-export function runTreeSitterGenerate(grammar: string): void {
-	const sittirDir = resolve('packages', grammar, '.sittir');
+export function runTreeSitterGenerate(pkg: GrammarPackage): void {
+	const sittirDir = sittirDirOf(pkg);
 	console.log(`Running 'tree-sitter generate' in ${sittirDir}...`);
-	execSync('npx tree-sitter generate', {
-		cwd: sittirDir,
-		stdio: 'inherit'
-	});
+	runTreeSitterCli(['generate'], sittirDir, 'inherit');
 	pruneOrphanedPlaceholderRules(sittirDir);
 }
 
 export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 	const { grammar } = opts;
-	const grammarDir = resolve('packages', grammar);
+	const pkg = grammarPackage(grammar);
 	if (opts.transpile) {
 		console.log(`Transpiling ${grammar} overrides...`);
-		const tr = await transpileOverrides({ grammar });
+		const tr = await transpileOverrides({ package: pkg });
 		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
 	}
 	if (opts.tsGenerate) {
-		runTreeSitterGenerate(grammar);
+		runTreeSitterGenerate(pkg);
 	}
 	if (opts.compileParser) {
 		console.log(`Compiling ${grammar} parser to WASM...`);
 		const { compileParser } = await import('./transpile/compile-parser.ts');
-		const wasmPath = await compileParser(grammarDir);
+		const wasmPath = await compileParser(pkg.dir);
 		console.log(`  → ${wasmPath}`);
 	}
+}
+
+export interface PreflightOutcome {
+	readonly allowDiagnostics: ReadonlySet<string>;
+	readonly compilation?: Compilation;
 }
 
 export async function runGrammarDiagnosticsPreflight(input: {
@@ -99,42 +103,52 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	allowDiagnostics: ReadonlySet<string>;
 	isTTY: boolean;
 	injectedDiagnostics?: readonly GrammarDiagnostic[];
-	compilation?: Compilation;
 	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
-}): Promise<ReadonlySet<string>> {
-	let diagnostics: readonly GrammarDiagnostic[];
-	if (input.injectedDiagnostics !== undefined) {
-		diagnostics = input.injectedDiagnostics;
-	} else {
-		const compilation =
-			input.compilation ??
-			(await compileGrammar({ grammar: input.grammar, generatedIdTables: await loadGeneratedIdTables(input.grammar) }));
-		diagnostics = compilation.grammarDiagnostics;
-	}
+}): Promise<PreflightOutcome> {
+	let allowDiagnostics = input.allowDiagnostics;
+	const pkg = grammarPackage(input.grammar);
+	for (;;) {
+		const gated =
+			input.injectedDiagnostics === undefined
+				? await gatedCompilation(pkg, allowDiagnostics)
+				: {
+						records: input.injectedDiagnostics,
+						blocked: blockedRecords(input.injectedDiagnostics, undefined, allowDiagnostics)
+					};
+		const blockedSet = new Set(gated.blocked);
+		const nonBlocking = gated.records.filter((d) => !blockedSet.has(d));
+		if (nonBlocking.length > 0) process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		if (gated.blocked.length === 0) return { allowDiagnostics, compilation: gated.compilation };
 
-	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
-	const blocked = [...blockedSet];
-
-	const nonBlocking = diagnostics.filter((d) => !blockedSet.has(d));
-	if (nonBlocking.length > 0) {
-		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		process.stderr.write(formatGrammarDiagnostics(gated.blocked) + '\n');
+		if (!input.isTTY || !(await (input.confirm ?? confirmProceed)(gated.blocked))) {
+			throw new GrammarDiagnosticError(gated.blocked, gated.records);
+		}
+		allowDiagnostics = new Set([...allowDiagnostics, ...gated.blocked.map((d) => d.code)]);
+		if (input.injectedDiagnostics !== undefined) return { allowDiagnostics };
 	}
-	if (input.injectedDiagnostics === undefined) {
-		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
-	}
+}
 
-	if (blocked.length === 0) return input.allowDiagnostics;
+interface GatedCompilation {
+	readonly records: readonly GrammarDiagnostic[];
+	readonly blocked: readonly GrammarDiagnostic[];
+	readonly compilation?: Compilation;
+}
 
-	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
-
-	if (!input.isTTY) {
-		throw new GrammarDiagnosticError(blocked);
-	}
-	const proceed = await (input.confirm ?? confirmProceed)(blocked);
-	if (!proceed) {
-		throw new GrammarDiagnosticError(blocked);
-	}
-	return new Set([...input.allowDiagnostics, ...blocked.map((d) => d.code)]);
+async function gatedCompilation(pkg: GrammarPackage, allowDiagnostics: ReadonlySet<string>): Promise<GatedCompilation> {
+	const gated = await compileGrammar({
+		package: pkg,
+		generatedIdTables: await loadPackageIdTables(pkg),
+		allowDiagnostics
+	}).then(
+		(compilation): GatedCompilation => ({ records: compilation.grammarDiagnostics, blocked: [], compilation }),
+		(error: unknown): GatedCompilation => {
+			if (!(error instanceof GrammarDiagnosticError)) throw error;
+			return { records: error.records, blocked: error.diagnostics };
+		}
+	);
+	writeGrammarDiagnosticsJson(gated.records, join(sittirDirOf(pkg), 'grammar-diagnostics.json'));
+	return gated;
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
@@ -194,16 +208,10 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
 	}
 
-	const compilation = await compileGrammar({
-		grammar,
-		generatedIdTables: await loadGeneratedIdTables(grammar)
-	});
-
-	const allowDiagnostics = await runGrammarDiagnosticsPreflight({
+	const { allowDiagnostics, compilation } = await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
-		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY),
-		compilation
+		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
 	});
 
 	console.log(`Generating ${grammar} IR...`);
@@ -303,8 +311,8 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
+		for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
-			for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
 		}
@@ -398,7 +406,6 @@ Done! Generated:
   .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
-	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
 
 	return result.nodeMap;
 }
@@ -412,14 +419,14 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 
 	if (!skipTsChain && !transpile && !tsGenerate) {
 		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
-		const grammarDir = resolve('packages', grammar);
+		const pkg = grammarPackage(grammar);
 		console.log(`Transpiling ${grammar} overrides...`);
-		const tr = await transpileOverrides({ grammar });
+		const tr = await transpileOverrides({ package: pkg });
 		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
-		runTreeSitterGenerate(grammar);
+		runTreeSitterGenerate(pkg);
 		console.log(`Compiling ${grammar} parser to WASM...`);
 		const { compileParser } = await import('./transpile/compile-parser.ts');
-		const wasmPath = await compileParser(grammarDir);
+		const wasmPath = await compileParser(pkg.dir);
 		console.log(`  → ${wasmPath}`);
 	}
 

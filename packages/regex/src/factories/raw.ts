@@ -216,6 +216,19 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Built {
 	);
 }
 
+export function buildCharacterClass(): T.EmptyCharacterClass;
+export function buildCharacterClass(
+	...children: (
+		| T.ClassCharacter
+		| TSKindId.BslashDash
+		| T.CharacterClassEscape
+		| T.ControlEscape
+		| T.ControlLetterEscape
+		| T.IdentityEscape
+		| T.PosixCharacterClass
+		| T.ClassRange
+	)[]
+): T.CharacterClass.Built;
 export function buildCharacterClass(
 	...children: (
 		| T.ClassCharacter
@@ -402,7 +415,7 @@ function _buildAnonymousCapturingGroup(value: T.Pattern): T.AnonymousCapturingGr
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content, [
 		['(?<', TSKindId.LparenQmarkLt] as const,
-		['(?P<', TSKindId.LparenQmarkpLt] as const
+		['(?P<', TSKindId.LparenQmarkPLt] as const
 	]);
 	const _group_name = rejectBareText(config.groupName, 'NamedCapturingGroup.groupName', 'buildGroupName(…)');
 	const _pattern = rejectBareText(config.pattern, 'NamedCapturingGroup.pattern', 'a built Pattern');
@@ -1077,6 +1090,22 @@ export function buildInlineFlagsGroupDisable(
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
 export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(value, [['?', TSKindId.Qmark] as const]);
 	return withMethods(
@@ -1165,6 +1194,10 @@ export type FluentKindMap = {
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Built;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Built;
 	inline_flags_group_disable: T.InlineFlagsGroupDisable.Built;
+	_tight: T.Tight;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
 	lazy: T.Lazy.Built;
 	unicode_property_name: T.UnicodePropertyName.Built;
 };
@@ -1215,6 +1248,10 @@ export const _factoryMap = {
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,
 	inline_flags_group_disable: buildInlineFlagsGroupDisable,
+	_tight: buildTight,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
 	lazy: buildLazy,
 	unicode_property_name: buildUnicodePropertyName
 } as const;

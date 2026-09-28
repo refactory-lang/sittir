@@ -1,11 +1,16 @@
 # Unsupported shapes are diagnostics, and every hand-written rule states its cause
 
-**Status:** approved design, 2026-09-22. Implementation plan to follow.
+**Status:** approved design, 2026-09-22; amended 2026-09-26 (render bodies stay
+on `renderAs:`, all five grammars, measured ceilings, upstream taken from the
+base `wire()` receives); amended again 2026-09-26 (diagnostics are checks
+over the evaluated rule tree and gate link, §4); implemented 2026-09-27:
+ceilings typescript 6 / rust 13 / python 14 / scm 1 / regex 1, floors recorded
+in each grammar's `expectDiagnostics`.
 
 **Goal:** the compiler refuses every grammar shape it does not model, at the
 site, naming the shape and the patch form that resolves it; and every
-hand-authored departure from the upstream grammar (a `rules:` entry or a
-`patches:` entry) is justified by a diagnostic it resolves. Nothing is
+hand-authored departure from the upstream grammar (a `rules:` entry, a
+`renderAs:` entry or a `patches:` entry) is justified by a diagnostic it resolves. Nothing is
 "resolved by structural recursion" any more, and a departure the compiler no
 longer needs is itself reported.
 
@@ -19,32 +24,32 @@ Two things drift silently today.
 
 **Shapes.** `collect-slots` meets shapes it has no model for and falls back:
 `unclassifiable-shape` ("not a leaf or a choice of leaves — resolved by
-structural recursion", 3 sites), `union-slot-routed` (4), `union-slot-mixed-row`
-(1), `multi-slot-nested-seq` (1). All four are warnings with `canProceed: true`.
+structural recursion"), `union-slot-mixed-row` ("keeping status quo") and
+`multi-slot-nested-seq`. All three are warnings with `canProceed: true`.
 The fallback is a guess about the node's shape that the validator may or may
 not catch downstream. Only three codes block (`parsekind-noninjective`,
 `storagename-collision`, `nonterminal-separator-unstamped`).
 
-**Departures.** The three grammar files carry a large hand-authored surface
-and nothing records why any entry exists:
+**Departures.** The five grammar files (typescript, rust, python, scm,
+regex) carry a hand-authored surface and nothing records why any entry
+exists:
 
-| grammar | patched rules | hand-written rules | of which replace an upstream rule | new rules | re-author an external |
-| --- | --- | --- | --- | --- | --- |
-| typescript | ~88 | 17 | 10 | 4 | 3 |
-| rust | ~67 | 26 | 9 | 10 | 7 |
-| python | ~51 | 22 | 10 | 12 | 0 |
+| grammar | hand-written rules | of which replace an upstream rule | new rules | `renderAs:` entries |
+| --- | --- | --- | --- | --- |
+| typescript | 12 | 8 | 4 | 3 |
+| rust | 14 | 5 | 9 | 10 |
+| python | 15 | 5 | 10 | 4 |
+| scm | 1 | 0 | 1 | 0 |
+| regex | 1 | 0 | 1 | 0 |
 
-A hand-written rule is whole-rule re-authoring. Reading the 65 of them, three
-causes recur: lexical re-authoring where upstream's token is opaque
-(`string`, `template_*`, `string_literal`, `string_content`,
-`format_specifier`); alias or hoist restructuring that the alias-identity
-primitives now cover (`_reserved_identifier`, `tuple_type` and
-`_tuple_type_elements`, `_let_chain`, `_non_special_token`, the
-`print_statement` family, the comprehensions, `case_*_pattern`,
-`_wildcard_pattern`); and genuine ambiguity or precedence fixes
-(`primary_expression`, `arrow_function`, `class_body`, `object_type`,
-`impl_item`, `reference_expression`). The first two classes are compiler
-debt wearing an override; the third is authoring. Today they are
+A hand-written rule is whole-rule re-authoring. Three causes recur: lexical
+re-authoring where upstream's token is opaque (`string`, `template_*`,
+`string_content`, `format_specifier`); alias or hoist restructuring
+(`_reserved_identifier`, `tuple_type`, `tuple_expression`,
+`_non_special_token`, `print_statement`, `_simple_pattern`); and genuine
+ambiguity or precedence fixes (`primary_expression`, `arrow_function`,
+`object_type`, `impl_item`, `reference_expression`). The first two classes are
+compiler debt wearing an override; the third is authoring. Today they are
 indistinguishable, so the debt never shrinks and a re-authored rule outlives
 the compiler gap that justified it.
 
@@ -64,58 +69,64 @@ The `rules:` block's value shape becomes a declaration, not a bare body:
 
 ```ts
 rules: {
-  primary_expression: reauthored('ambiguity', ($, original) => …),
-  string:             reauthored('lexical-interior', ($, original) => …),
-  _let_chain:         reauthored('alias-shape', ($) => …),
-  _whitespace:        vocabulary(($) => choice($._tight, …)),
-  float_literal:      renderOnly(($) => …),
+  primary_expression:    reauthored('ambiguity', ($, original) => …),
+  tuple_type:            reauthored('alias-shape', ($) => …),
+  _whitespace:           vocabulary(($) => choice($._tight, …)),
+  _tuple_type_elements:  vocabulary(($) => …),
 }
 ```
 
 - `reauthored(cause, body)`: replaces an upstream rule of the same name.
-  `cause` is one of `'lexical-interior' | 'alias-shape' | 'ambiguity'`.
-- `vocabulary(body)`: a rule sittir adds by design (`_whitespace`); never
-  replaces an upstream rule.
-- `renderOnly(body)`: an external token given a render body; never reaches
-  the parser. The existing render-only-rules mechanism, now declared rather
-  than inferred from the externals list.
-- a bare body is a compile-time error: `rule-cause-missing`.
+  `cause` is one of `'alias-shape' | 'ambiguity'`.
+- `vocabulary(body)`: a rule sittir adds (the `_whitespace` vocabulary and
+  every helper rule a re-authoring introduces); never replaces an upstream
+  rule. `vocabulary-replaces-upstream`, blocking, otherwise.
+- a bare body is a compile-time error: `rule-cause-missing`, blocking.
 
-A new helper rule (one that replaces nothing and is not vocabulary) is not
-declared here at all: it is minted by a patch (`rule(name, body)` from the
-alias-identity spec) at the path that needs it, so its reason is the patch's
-claim (§2). The 26 current new rules migrate to that form; `_whitespace`
-stays as vocabulary.
+A helper minted by a patch (`rule(name, body)` in `patches:`) is not declared
+in `rules:`; its reason is the patch's claim (§2).
 
-### 1.2 A replacement must be provoked
+### 1.2 Render bodies stay on `renderAs:`
 
-For each `reauthored` rule, the compiler evaluates the **upstream** body of
-the same name through the same pipeline (the base grammar is already
-evaluated as `enrichedBase`). If no blocking diagnostic fires on the upstream
-shape, the replacement is unjustified: `rule-reauthored-without-cause`,
+An external token's render body is declared on the grammar's `renderAs:`
+block, the one surface for render-only bodies; it never reaches the parser
+and never appears in `rules:`. Every `renderAs:` key must name an upstream
+external; a key that names a parser rule is `render-only-not-external`,
+blocking.
+
+### 1.3 A replacement must be provoked
+
+For each `reauthored` rule, the compiler checks the **upstream** body of
+the same name with the same rule checks (§4): the base `wire(config, base)`
+receives (the grammar's `enrichedBase`, the same object it composes) is
+evaluated and checked with no wire config. The upstream is never located by
+package path; each grammar's own `base` import is the one source. Symbol
+facts in these checks, as everywhere in diagnostics, come from the
+predicted `SymbolSource` (§4.3). No stage but the final one is ever linked,
+normalized or assembled. If no blocking
+diagnostic fires on the upstream shape, the replacement is unjustified: `rule-reauthored-without-cause`,
 blocking, naming the rule and its declared cause. If a blocking diagnostic
 does fire, its code is recorded on the rule as the claim, and the diagnostic
 is suppressed for that rule only.
 
-`'lexical-interior'` is provoked by the token-interior diagnostics (an
-opaque token whose interior the grammar addresses); `'alias-shape'` by
+A token whose interior the grammar addresses but the token-interior pass
+cannot structure is not a replacement cause: it is
+`token-interior-unstructurable` (§3), resolved by a patch naming the group
+and claimed like every resolving patch (§2). `'alias-shape'` is provoked by
 `alias-distributed`, `display-union-mixed`, or the four shape codes of §3;
 `'ambiguity'` by a parser-generation failure or a corpus divergence recorded
-in `expectTestFailures`. A cause whose provoking diagnostic is not among
-those fired is a mismatch and is reported as `rule-cause-mismatch`.
-
-### 1.3 Externals are render-only
-
-A `renderOnly` rule must name an external. One that names a parser rule is
-`render-only-not-external`, blocking. The 10 current external re-authorings
-migrate as they are.
+in `expectTestFailures`. The provocation table records only codes the
+upstream compiles are observed to report. A cause whose provoking diagnostic
+is not among those fired is a mismatch and is reported as
+`rule-cause-mismatch`; a `reauthored` declaration on a name upstream does not
+define is the same mismatch.
 
 ### 1.4 Ratchet
 
-`hand-written rules: typescript 17, rust 26, python 22` become ceilings
-recorded beside the phantom-kind ceilings. A count above its ceiling fails
-the ratchet check; the alias-identity plan's Task 7 lowers rust to 24 and
-python to 20.
+`hand-written rules: typescript 12, rust 14, python 15, scm 1, regex 1` are
+ceilings recorded beside the phantom-kind ceilings, counted from the
+evaluated `rules:` entries (a duplicate key counts once, as evaluated). A
+count above its ceiling fails the ratchet check; ceilings only go down.
 
 ## 2. Patches claim a diagnostic
 
@@ -128,57 +139,218 @@ by one.
 - Each shape diagnostic names, in its message, the patch form that resolves
   it (`rule(...)` for a hidden helper, `alias(...)` for a promotion,
   `field(...)` for an unnamed nonterminal in a union row, `variant(...)` for
-  a mixed row).
+  a mixed row, a patch naming the group for an unstructurable token
+  interior).
 - A patch whose placeholder is one of those forms, at a path where no
   diagnostic fires on the upstream shape, is `patch-without-cause`,
-  blocking. This is `body-pattern-zero-match` generalized from groups to
+  blocking. The `rule(name, body)` placeholder is always a resolving form. This is `body-pattern-zero-match` generalized from groups to
   every resolving patch form.
 - Authoring placeholders (`field`, `options`, `variant` used only to name)
   are exempt: the check applies only when the placeholder's form is one a
   diagnostic could have demanded and the diagnostic did not fire.
 
-The initial census (plan Task 1) labels every current patch as authoring or
+The census labels every current patch as authoring or
 resolving; the resolving ones are the compiler's work list, per the rule
 that an audit's findings are the work list.
 
 ## 3. Shape diagnostics block
 
-The four collect-slots codes flip to `canProceed: false` and drop their
-fallback:
+The collect-slots codes that report a fallback are
+`canProceed: false`:
 
 | code | shape | resolving form |
 | --- | --- | --- |
 | `unclassifiable-shape` | a slot member that is neither a leaf nor a choice of leaves | `rule(...)` naming the structured arm |
-| `union-slot-routed` | an unnamed nonterminal arm routed into a union slot beside labelled arms | `field(...)` on the arm |
-| `union-slot-mixed-row` | a singular mixed row: structured named arm beside leaves | `variant(...)` splitting the row |
-| `multi-slot-nested-seq` | a multi-slot seq in a repeat or optional position | `rule(...)` hoisting the seq |
+| `union-slot-mixed-row` | a mixed row: structured named arm beside union arms | `variant(...)` splitting the row, until the structured-arm enrich mint gives each structured arm its own kind in the union slot |
+| `multi-slot-nested-seq` | a multi-slot seq in a repeat position | a visible `groups:` entry making each repetition one node |
+| `union-slot-unaddressable` | a fieldless structural choice that qualifies for union routing but carries no rule id, so its union slot cannot be addressed | fires only in upstream stages today (rust `function_type`, typescript `for_in_statement`); both wired grammars resolve it |
+| `token-interior-unstructurable` | a token whose interior the grammar addresses but the token-interior pass cannot structure: a named part inside an optional group beside an unnamed pattern, or a named-group pattern beside non-literal top-level regex; the token stays opaque | a patch naming the group (`field(...)` on the group's unnamed pattern, or a named group around the non-literal regex) |
+| `separator-pattern` | a list whose separator has an arm that is not a token or a choice of tokens (Go's `choice(/\n/, ';', '\0')`); floored, the pattern arms leave the separator's arm set, since a pattern has no kind and the parse tree gives no node for it, and the list keeps a per-instance separator only if a remaining token arm is nonterminal | a `rule(...)` patch giving each pattern a kind of its own |
+| `separator-default-undeclared` | a list slot whose separator is chosen per instance and has no declared default; floored, the separator is a required construction input of the list's factory and no option site is registered for it | an `options:` entry declaring the default separator kind (`<slot>_separator`) |
+| `field-optional-delimiter` | a field of a non-list kind that carries an optional leading or trailing delimiter, which a field factory cannot control; floored, the flank is off the factory surface and render keeps the flank as authored | a `groups:` entry or a `rule(...)` patch making the delimited list its own kind |
+
+`union-slot-routed` stays a warning: it reports the union-slot design's
+supported routing (unnamed nonterminal arms, with any label-routed arms, in
+one kind-dispatched `content` slot), and blocking it would demand patches
+that undo that design.
 
 `alias-distributed` (alias over a seq or repeat) and `display-union-mixed`
 (a display over terminal and nonterminal storage) join the table with
 `alias(...)` and `rule(...)` as their forms. `expectDiagnostics` keeps its
 role as the per-grammar accepted floor for a code, so the flip lands without
-a red gate: the current instances are listed, and the list only shrinks.
+a red gate: the current instances are listed, each with its resolving form
+named in the grammar's glossary, and the list only shrinks. A floor is per
+code: an owner kind floored for one code still blocks on another.
+`multi-slot-nested-seq` has no instance in any grammar and has an empty
+floor.
 
-## 4. Acceptance
+## 4. Where diagnostics run
 
-- Every `rules:` entry in the three grammar files is `reauthored`,
-  `vocabulary` or `renderOnly`; no bare body remains.
-- `rule-reauthored-without-cause` is silent on all three grammars at the
-  ceilings, and fires in a unit fixture where a `reauthored` rule replaces a
-  rule the compiler accepts.
-- `patch-without-cause` is silent on all three grammars after the census,
+### 4.1 Checks over the evaluated rules; link is gated
+
+A grammar diagnostic is a check over an **evaluated stage**: raw (the
+upstream grammar as written), enriched (after enrich, before wire), final
+(after wire). No check needs the parser: each stage runs the id-free front
+half (link, normalize, simplify, slot collection, assemble) over its
+predicted kind catalog (§4.3), with no tree-sitter generate, no parser tables
+and no generate output. A compile runs in this order:
+
+1. evaluate each stage and derive its records (§5);
+2. **gate before link:** if any final-stage record answerable from the
+   evaluated grammar alone (a failed catalog prediction, an invalid
+   `expectDiagnostics` entry, a cause or patch-site judgement against the
+   upstream stage) blocks (`canProceed: false`) and is not covered by
+   `expectDiagnostics`, the compile stops. Link does not run;
+3. run the final stage's front half;
+4. **gate after assemble:** the same test over the front half's records.
+
+One gate function serves both points. A grammar tree-sitter rejects never
+reaches link. A shape the front half cannot model is reported, not thrown;
+a phase that meets an impossible state asserts (§4.4).
+
+A non-blocking code (`union-slot-routed`) is recorded and never
+gated: it reports supported routing, and the gate's target of zero applies to
+blocking codes. `expectDiagnostics` floors stay the only exception to the
+gate, per code and per owner, and only shrink.
+
+### 4.2 Which checks are rule checks
+
+| family | codes | fact the check reads |
+| --- | --- | --- |
+| evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
+| causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
+| whitespace vocabulary | `whitespace-mint-collision` (new; unexpectable) | the collisions enrich and wire stamp: a `visibleExternals:` key or an upstream rule defining a name enrich mints for `_whitespace` differently |
+| alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
+| slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-unaddressable`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
+| token interiors | `token-interior-unstructurable` (new) | the token-interior pass over the linked rules: an opaque token's named parts and the patterns beside them |
+| list separators and flanks | `separator-pattern` (new), `separator-default-undeclared` (new), `field-optional-delimiter` (new) | assemble's list separator arms (`separatorArmsOf`, stamped on the list as its token arms); the option sites site-preferences resolves against `options:`, one resolution shared with emit; an authored compound's slot flanks |
+| literal sets | `single-literal-choice` (new) | a choice whose literal arms reduce to one value, which assemble today rejects by throwing (typescript `meta_property` upstream) |
+| inline list | `inline-array-visible-name` | the `inline:` list and predicted visibility |
+| symbol table | `dangling-internal-ref` (a reference that names no rule and no external), `unpredictable-symbol-table` (new), `kind-key-collision` (new; two parser symbols derive one kind key) | the catalog prediction (§4.3); tree-sitter rejects the first two grammars and sittir cannot name a kind for the third, so none is expectable |
+
+Detection moves to the rule checks, and classification stays in one place:
+the member-shape classifier and the storage-name derivation are single
+functions over rule nodes, called by the checks over the splice view and by
+collect-slots during assemble. No slot fact is derived twice.
+
+### 4.3 The splice view and predicted symbol facts
+
+Slot-shape checks must see a hidden kind's body where normalize will splice
+it. The splice view walks the evaluated rules through every SYMBOL whose
+reference inlines. `inlinesAtReference` takes a `SymbolSource` and is the
+one predicate: the splice view calls it with the predicted source, and link
+(stamping parser visibility, then normalize's splicing) calls it with the
+catalog source. `SymbolSource` answers every fact the predicate reads:
+hiddenness (including an aliased hidden rule), supertype, terminality,
+visible external and inlining. The predicted source is the catalog source
+over a predicted kind catalog: evaluate ports tree-sitter's symbol-table
+construction over the evaluated rules, externals, extras, `inline:`,
+`supertypes:` and `word`, and turns the predicted table into rows with the
+same derivation that turns parser.c's table into rows. It never reads
+parser.c.
+
+Renames that link applies from the parser's tables (a hidden rule that the
+parser always presents under an alias name) come from the same rows. Link
+asserts that the predicted catalog agrees with the parser's on every field
+the pipeline reads, row by row; every other fact, renames included, then
+agrees by construction. A disagreement is a predictor bug, fixed in the
+predictor; it is never absorbed by moving a floor. A grammar the prediction
+cannot build a table for is one tree-sitter rejects: it is recorded (§4.2),
+not thrown.
+
+### 4.4 What is not a grammar diagnostic
+
+- **Kind-id ratchet** (`kindid-*`): these compare sittir's kinds with the
+  parser's ids, so they are answerable only after tree-sitter generates the
+  parser. They stay the post-generate phantom-kind ratchet: ceilings that
+  only shrink, outside the gate.
+- **Compiler invariants**: a fixpoint that never converges, an alias target
+  the parser never mints, a `factoryInline` kind with nowhere to nest, and a
+  hydrate-time reference to a kind absent from the node map. Each throws in
+  the phase that owns it and is unreachable once the gate passes. An
+  invariant that fires is a missing rule check: its grammar-level cause gets
+  a check in §4.2, and the invariant stays an assertion. A reference that
+  names no rule and no external is not one of them: it is a failed catalog
+  prediction, recorded as `dangling-internal-ref` (§4.2). `unclassifiable-shape`
+  is the one verdict for a top-level or member shape the slot model has no
+  place for; no second postcondition audit re-derives it.
+- **Naming events**: an automatic type-name rename. It is codegen output,
+  printed in the gen log (`[naming]` lines), not a diagnostic.
+- **Emit-level reports** (`seam-word-hazard`, `unnamed-choice-slot`) are out
+  of scope for this gate.
+
+## 5. Diagnostic records
+
+Every stage's rule-check output folds into one record per key:
+
+```ts
+interface DiagnosticRecord {
+  code: string;
+  ruleId: RuleId;              // the owner kind's root rule id
+  ownerKind: string;
+  slotName?: string;
+  ruleProvenance: 'upstream' | 'enrich' | 'wire';
+  resolved: boolean;
+  resolvedBy?: { stage: 'enrich' | 'wire'; by: readonly ResolvedBy[] };
+}
+type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string; form: string } };
+```
+
+- The key is `(code, ruleId, slotName?)`. Diagnostics are owner-level, and
+  rule ids below the root are not stable across stages (enrich's field wraps
+  and hoists change paths), so the key uses the owner's root id. Owner
+  identity is that root id, stable across renames: a rule id points back to
+  the source rule, so a kind the catalog renames to its parser name keeps the
+  id it was minted with, and no rename canonicalization is needed.
+- `ruleProvenance` is where the owner kind comes from: `upstream` if the raw
+  stage declares it, `enrich` if enrich mints it, otherwise `wire`. The first
+  stage a key appears in is not stored; it is read from the stage records.
+- `resolved` is operational: the key is absent from the final stage's
+  exhaustive check.
+- `resolvedBy.by` lists the `rules:` entries and patch sites that resolved
+  the key. A patch site claims the records owned by its owner kind and by
+  every enrich lift the patch rewrites or renames; the lift writers record
+  that evidence, never a name match. An enrich resolution has an empty `by`:
+  nothing names the enrich pass that removed a diagnostic.
+- Patch-site labels (`authoring` / `resolving`) derive from the records: a
+  site is resolving iff it claims a key present in the enriched stage and
+  resolved by wire.
+- The compilation exposes the records as `diagnosticRecords`. Each stage's
+  diagnostics are read where they live: `stages.raw.diagnostics` and
+  `stages.enriched.diagnostics` for the evaluated stages, and
+  `grammarDiagnostics` for the final stage. No second copy of any stage is
+  stored.
+
+## 6. Acceptance
+
+- Every `rules:` entry in the five grammar files is `reauthored` or
+  `vocabulary`; no bare body remains. Every `renderAs:` key is an upstream
+  external.
+- `rule-reauthored-without-cause` is silent on all five grammars outside
+  their floors, and fires in a unit fixture where a `reauthored` rule
+  replaces a rule the compiler accepts.
+- `patch-without-cause` is silent on all five grammars after the census,
   and fires in a fixture where `rule(...)` is applied at a path with no
   diagnostic.
-- The four shape codes and the two alias codes report `canProceed: false`;
-  `expectDiagnostics` lists their current instances per grammar; no fallback
-  path remains in `collect-slots`.
-- Ratchet: hand-written rule counts at or below 17/26/22; the check runs
-  with the phantom-kind ratchet.
+- The three shape codes and the two alias codes report `canProceed: false`;
+  `expectDiagnostics` lists their current instances per grammar; the
+  structural-recursion fallback in `collect-slots` runs only for
+  floor-listed instances, and an unlisted instance blocks.
+- Ratchet: hand-written rule counts at or below 6/13/14/1/1 (typescript,
+  rust, python, scm, regex); the check runs with the phantom-kind ratchet.
+- No diagnostic reads link, normalize or assemble output. A grammar with an
+  unfloored blocking record stops before link; a unit fixture proves it.
+- Every stage, including typescript's raw stage, produces records; no stage
+  compile exists to fail.
+- In all five grammars, link's catalog agrees with the predicted
+  `SymbolSource` on every fact `inlinesAtReference` reads and on the renames.
+- The compiler invariants of §4.4 are assertions and fire on no grammar; the
+  final-stage floors are unchanged or smaller.
 - Native gate unchanged: read-render-parse, factory-render-parse and
-  ir-render-parse at baseline in all three grammars; the census and the
-  declaration migration are byte-identical on generated output.
+  ir-render-parse at baseline in every grammar; the declaration migration is
+  byte-identical on generated output.
 
-## 5. Out of scope
+## 7. Out of scope
 
 - Fixing any of the shapes the census surfaces; each is its own work item.
 - The `expectTestFailures` list: it stays as the corpus-divergence record and

@@ -10,6 +10,7 @@ import {
 import type { RuleAnnotations } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
+import { wireGetLiftBody, wireSetLiftBody } from '../wire/wire.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -193,25 +194,6 @@ export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	return meta?.symbolSource === 'group-lift';
 }
 
-export interface GroupLiftRuleMap {
-	get(name: string): RuntimeRule | undefined;
-	set(name: string, body: RuntimeRule): void;
-}
-
-let groupLiftRuleMap: GroupLiftRuleMap | undefined;
-
-export function setGroupLiftRuleMap(map: GroupLiftRuleMap | undefined): void {
-	groupLiftRuleMap = map;
-}
-
-export function getGroupLiftRuleBody(name: string): RuntimeRule | undefined {
-	return groupLiftRuleMap?.get(name);
-}
-
-export function setGroupLiftRuleBody(name: string, body: RuntimeRule): void {
-	groupLiftRuleMap?.set(name, body);
-}
-
 function descendThroughGroupLiftSymbol(
 	rule: RuntimeRule,
 	segments: readonly PathSegment[],
@@ -222,15 +204,14 @@ function descendThroughGroupLiftSymbol(
 	if (!name) {
 		throw new ApplyPathSkip('applyPath: enrich group-lift symbol has no name to resolve its body');
 	}
-	const body = groupLiftRuleMap?.get(name);
+	const body = wireGetLiftBody(name);
 	if (body === undefined) {
 		throw new ApplyPathSkip(
-			`applyPath: enrich group-lift symbol '${name}' — referenced rule not found in the group-lift rule map ` +
-				`(enrich resolver not registered, or the name was pruned)`
+			`applyPath: enrich group-lift symbol '${name}' — no body in the active wire() context ` +
+				`(no wire() context, or the name was pruned)`
 		);
 	}
-	const newBody = applyPath(body, segments, patch, precStack);
-	groupLiftRuleMap?.set(name, newBody);
+	wireSetLiftBody(name, applyPath(body, segments, patch, precStack));
 	return rule;
 }
 

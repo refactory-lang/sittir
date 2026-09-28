@@ -6,20 +6,14 @@ need explanation.
 
 ---
 
-### `enrichedBase` (`packages/scm/grammar.sittir.ts:5`)
+### `sittirGrammar(base, …)` (`packages/scm/grammar.sittir.ts:10`)
 
-`enrich(base)` is bound once, and the same enriched grammar goes to both
-`grammar()` and `wire()`. Wire's base-dependent passes (body-pattern groups,
-the enrich-hoisted clause inline registration, adoption of enrich-minted
-groups) only run when wire receives the base, and they must see the
-post-enrich shape tree-sitter compiles.
-
-### `externals` / `supertypes` / `visibleExternals` / `_whitespace` (`packages/scm/grammar.sittir.ts:11`)
-
-The structural-whitespace vocabulary every sittir grammar carries: `_tight`,
-`_space` and `_newline` are external tokens that render as `''`, `' '` and
-`'\n'`, grouped under the `_whitespace` supertype. The renderer uses them
-for seams between tokens.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `_group_expression` / `_named_node_expression` (`packages/scm/grammar.sittir.ts:19`)
 
@@ -37,3 +31,12 @@ list (`repeat(expr)`, then one more `expr` and a trailing `.` anchor). The
 variants name the two forms `children` and `anchored_last`, and
 `field('last')` names the anchored final child so it doesn't merge with the
 repeated children before it.
+
+### `expectDiagnostics` (`packages/scm/grammar.sittir.ts`)
+
+Shape floor (the compiler has no model for this shape yet; it blocks without
+its entry):
+
+- `unclassifiable-shape` on `predicate`: a nested seq that is neither a list
+  nor a leaf. Resolve with `rule(name, body)` in `patches:` naming the nested
+  seq as its own rule.

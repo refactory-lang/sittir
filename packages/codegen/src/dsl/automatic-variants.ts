@@ -1,7 +1,7 @@
 import { withAnnotations } from './annotations.ts';
 import type { Rule, RuleAnnotations } from '../types/rule.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
-import { hiddenChoiceClass, isNamedArmChoice, isParserHiddenName, throughPrec, unwrapPrec } from './rule-patterns.ts';
+import { hiddenChoiceClass, isBlank, isNamedArmChoice, isParserHiddenName, throughPrec, unwrapPrec } from './rule-patterns.ts';
 
 export const ENRICH_AUTOMATIC_VARIANTS_KEY = '__enrichedAutomaticVariants__' as const;
 
@@ -20,7 +20,7 @@ interface ArmShape {
 	readonly annotations?: RuleAnnotations;
 }
 
-const SLOT_BOUNDARIES = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS', 'PATTERN', 'STRING', 'SYMBOL', 'BLANK']);
+const SLOT_BOUNDARIES = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS', 'PATTERN', 'STRING', 'SYMBOL']);
 
 function coreOf(arm: ArmShape): ArmShape {
 	return unwrapPrec(arm) as ArmShape;
@@ -66,7 +66,7 @@ function withAutomaticLabel(core: ArmShape, label: RuleAnnotations, automatic: A
 
 function holdsChoice(node: ArmShape | undefined): boolean {
 	if (node === undefined) return false;
-	if (node.type === 'CHOICE') return (node.members ?? []).filter((m) => m.type !== 'BLANK').length >= 2 || (node.members ?? []).some(holdsChoice);
+	if (node.type === 'CHOICE') return (node.members ?? []).filter((m) => !isBlank(m)).length >= 2 || (node.members ?? []).some(holdsChoice);
 	if (node.type !== undefined && SLOT_BOUNDARIES.has(node.type)) return false;
 	return (node.members ?? []).some(holdsChoice) || (node.content !== undefined && holdsChoice(node.content));
 }
@@ -102,8 +102,8 @@ function stampRuleVariants(
 	};
 	const visit = (node: ArmShape): ArmShape => {
 		if (node.type === 'CHOICE' && node.members !== undefined) {
-			const choosable = node.members.filter((m) => m.type !== 'BLANK').length >= 2;
-			const members = node.members.map((member) => (choosable && member.type !== 'BLANK' ? stamp(member) : visit(member)));
+			const choosable = node.members.filter((m) => !isBlank(m)).length >= 2;
+			const members = node.members.map((member) => (choosable && !isBlank(member) ? stamp(member) : visit(member)));
 			return members.some((m, i) => m !== node.members![i]) ? { ...node, members } : node;
 		}
 		if (node.type === 'SYMBOL' && typeof node.name === 'string' && annotationsOf(node)?.variantOf === undefined) {

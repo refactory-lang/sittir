@@ -8,7 +8,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { emitTypes } from '../../emitters/types.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GeneratedIdTables } from '../generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 function makeMinimalFixture(): {
 	raw: RawGrammar;
@@ -72,6 +72,7 @@ describe('KindId emission', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const contents = emitTypes({
 			grammar: 'synth',
+			nodeTypes: [],
 			nodeMap,
 			generatedIdTables
 		});

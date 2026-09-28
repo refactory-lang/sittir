@@ -26,6 +26,9 @@ export { preference } from './primitives/preference.ts';
 export { enrich } from './enrich.ts';
 export type { GrammarResult } from './enrich.ts';
 export { wire } from './wire/wire.ts';
+export { sittirGrammar } from './sittir-grammar.ts';
+export { reauthored, vocabulary } from './primitives/rule-cause.ts';
+export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
 export type { WireConfig, WiredOpts } from './wire/wire.ts';
 
 interface AuthoringField {

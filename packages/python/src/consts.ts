@@ -73,7 +73,6 @@ const NODE_KINDS = [
 	'interpolation',
 	'key_value_pattern',
 	'keyword_argument',
-	'keyword_identifier',
 	'keyword_pattern',
 	'lambda',
 	'lambda_parameters',
@@ -148,7 +147,6 @@ const LEAF_KINDS = [
 	'_indent',
 	'_kw_async_marker',
 	'_newline',
-	'_unary_operator_operator',
 	'and_keyword',
 	'as_keyword',
 	'assert_keyword',
@@ -1955,6 +1953,22 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	argument_list: ['arguments'],
+	case_list_pattern: ['list_pattern_case_patterns'],
+	case_tuple_pattern: ['list_pattern_case_patterns'],
+	dict_pattern: ['dict_pattern_elements'],
+	dictionary: ['entries'],
+	list: ['collection_elements'],
+	list_pattern: ['patterns'],
+	match_block_block: ['alternative'],
+	module: ['statements'],
+	parameters: ['elements'],
+	tuple: ['collection_elements'],
+	tuple_pattern: ['patterns']
+};
+
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
 	'+=',
@@ -1972,7 +1986,3 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
 	'|='
 ] as const;
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
-
-/** Valid values for `_unary_operator_operator` nodes. */
-export const _UNARY_OPERATOR_OPERATORS = ['+', '-', '~'] as const;
-export type UnaryOperatorOperatorValue = (typeof _UNARY_OPERATOR_OPERATORS)[number];

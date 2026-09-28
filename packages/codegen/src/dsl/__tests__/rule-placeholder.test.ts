@@ -3,6 +3,7 @@ import { rule } from '../primitives/rule.ts';
 import { applyTransformForTest, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { wire } from '../wire/wire.ts';
 import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
+import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
 const sym = (name: string) => ({ type: 'SYMBOL', name });
@@ -38,7 +39,7 @@ describe('rule() declares a real rule at a path', () => {
 describe('wire() installs a rule() name as a rule of the grammar', () => {
 	const dollarOf = (owner: string) => new Proxy({}, { get: (_t, name: string) => ({ type: 'SYMBOL', name, owner }) });
 	const run = (patches: Record<string, Record<string, unknown>>, rules: Record<string, (...a: never[]) => unknown> = {}) => {
-		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never });
+		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never }, emptyBase);
 		const out: Record<string, unknown> = {};
 		for (const [name, fn] of Object.entries(wired.rules)) out[name] = (fn as (d: unknown, p?: unknown) => unknown)(dollarOf(name), bases[name]);
 		return { names: Object.keys(wired.rules), out };

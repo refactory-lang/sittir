@@ -55,12 +55,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	   may not. */
 ```
 
-#### body
-
-```text
-/* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
-	   `optional(STRING)`. */
-```
+An optional in either representation is read through `optionalContentOf`; the
+rewritten content is rebuilt in the representation it had
+(`withOptionalContent`).
 
 ### `packages/codegen/src/dsl/primitives/field.ts::synthesizeKwSymbol`
 
@@ -68,25 +65,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
  * `inline:`, and return a SYMBOL reference to it.
- */
-```
-
-### `packages/codegen/src/dsl/primitives/field.ts::descendOptional`
-
-```text
-/**
- * Recurse into an optional-shaped wrapper's content. If the inner is a
- * bare STRING that `maybeKeywordSymbol` would symbolize, rebuild the
- * wrapper around the new SYMBOL ref so the original optional semantics
- * are preserved while the inner STRING is routed through a hidden rule.
- *
- * `wrapperKind`:
- *   - `'optional'` — `{ type: 'OPTIONAL', content }` (both runtimes
- *     agree on this shape).
- *   - `'choice-blank'` — tree-sitter's `CHOICE` of `[content, BLANK]`
- *     normalized form of `optional(content)`.
- *
- * Returns the content unchanged if the inner isn't a symbolizable STRING.
  */
 ```
 
@@ -256,6 +234,26 @@ grammar's `$`. Inside `transform()` it resolves to a reference
 ### `packages/codegen/src/dsl/primitives/rule.ts::isRulePlaceholder`
 
 Whether a patch value is a `rule()` placeholder.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::reauthored`
+
+`reauthored(cause, body)` declares a `rules:` entry that replaces the upstream
+rule of the same name, and why: `'alias-shape'` (an alias or
+hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
+precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
+diagnostics judge the declaration against the enriched stage.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
+
+`vocabulary(body)` declares a `rules:` entry sittir adds and that replaces no
+upstream rule: every helper rule a re-authoring introduces. It returns `body` itself, tagged.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::ruleCauseOf`
+
+The declaration `reauthored` or `vocabulary` tagged onto a rule function, or
+`undefined` for a bare body. The tag is a non-enumerable symbol-keyed
+property, so a tagged function is still a plain `RuleFn` to `wire()` and to
+tree-sitter's CLI.
 
 ### `packages/codegen/src/dsl/primitives/alias.ts::module`
 
@@ -458,13 +456,14 @@ Builds the placeholder; `options.absent` and `options.default` are carried only 
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
-`_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
-and as a rule) listing the whitespace kinds it renders: each member is a
-never-scanned external with a kind id, `tight` renders nothing, and a
-grammar may add its own — python's `_double_blankline` leaves two blank
-lines. The model reads the arms of every spacing site from it
-(`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
-The supertype is protected from unreachable-rule pruning like any other.
+`_whitespace`, the hidden supertype enrich mints for every grammar
+(`enrichWhitespace`) listing the whitespace kinds it renders: the members
+its extras admit, each a never-scanned external with a kind id unless the
+upstream grammar already scans one of that name, and `tight`, which renders
+nothing, always. The model reads the arms of every spacing site from it
+(`whitespace-arms.ts`); nothing outside `dsl/whitespace.ts` lists whitespace
+kinds by name. The supertype is protected from unreachable-rule pruning
+like any other.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_ARMS`
 
@@ -594,6 +593,13 @@ The preference label of a token seam, `<token>_<before|after>`, the token
 being its catalog kind name (`lparen_before`). It is the site's field on
 the owning transport, its address under the kind, and a top-level key of
 the grammar's `Options` type and of its `defaults`.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::LABEL_TOKEN`
+
+The token part every spacing, seam and flank label shares, one pattern for all
+three: a letter of either case, then letters, digits and underscores. A label
+names its token by the kind key, which keeps a keyword's case
+(`MISSING_keyword_before`).
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
 

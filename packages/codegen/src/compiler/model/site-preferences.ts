@@ -1,7 +1,7 @@
 import type { NodeMap } from '../types.ts';
-import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
-import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule, SeamOrigin } from '../../types/rule.ts';
+import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
+import { STRING } from '../../types/rule-types.ts'; // @rule-type-consts
+import type { SeamOrigin } from '../../types/rule.ts';
 import { DELIMITER_LABEL, SEPARATOR_LABEL, VARIANT_LABEL } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
@@ -65,6 +65,20 @@ export interface SitePreferencesConfig {
 }
 
 export function collectSitePreferences(config: SitePreferencesConfig): SitePreference[] {
+	const sites = resolveSitePreferences(config, true).filter((site) => !isUndeclaredSeparator(site));
+	stampResolvedDefaults(sites, config.nodeMap);
+	return sites;
+}
+
+export function undeclaredSeparatorSites(config: SitePreferencesConfig): SitePreference[] {
+	return resolveSitePreferences(config, false).filter(isUndeclaredSeparator);
+}
+
+function isUndeclaredSeparator(site: SitePreference): boolean {
+	return site.source === 'separator' && site.defaultArm === UNDECLARED_ARM;
+}
+
+function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boolean): SitePreference[] {
 	const out: SitePreference[] = [];
 	const candidates: SiteCandidate[] = [];
 	for (const [kind, node] of config.nodeMap.nodes) {
@@ -111,7 +125,7 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
 		const slot = node.slots[0]?.name;
 		if (slot === undefined) continue;
-		const arms = separatorArmKinds(kind, node.separatorRule, config);
+		const arms = separatorArmKinds(node, config);
 		const address = `${slot}_${SEPARATOR_LABEL}`;
 		out.push({
 			kind,
@@ -123,15 +137,7 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 			source: 'separator'
 		});
 	}
-	const resolved = withDeclaredArms(out, candidates, config);
-	for (const site of resolved) {
-		if (site.source !== 'separator' || site.defaultArm !== UNDECLARED_ARM) continue;
-		throw new Error(
-			`options: ${displayNameOf(site.kind, config.nodeMap)}.${site.slot} chooses its separator per instance (${site.arms.map((a) => a.value).join(', ')}); declare its kind under options:`
-		);
-	}
-	stampResolvedDefaults(resolved, config.nodeMap);
-	return resolved;
+	return withDeclaredArms(out, candidates, config, requireHit);
 }
 
 function stampResolvedDefaults(sites: readonly SitePreference[], nodeMap: NodeMap): void {
@@ -150,7 +156,8 @@ function stampResolvedDefaults(sites: readonly SitePreference[], nodeMap: NodeMa
 function withDeclaredArms(
 	sites: readonly SitePreference[],
 	candidates: readonly SiteCandidate[],
-	config: SitePreferencesConfig
+	config: SitePreferencesConfig,
+	requireHit: boolean
 ): SitePreference[] {
 	if (config.options === undefined) return [...sites];
 	const kinds = displayedKinds(config.nodeMap);
@@ -180,7 +187,7 @@ function withDeclaredArms(
 	}
 
 	const out = [...sites];
-	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf)) {
+	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf, requireHit)) {
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
@@ -208,20 +215,17 @@ function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 
 	slot.registeredOption = mode;
 }
 
-function separatorArmKinds(kind: string, rule: RenderRule, config: SitePreferencesConfig): string[] {
-	const r = rule as { type: string; value?: string; name?: string; members?: RenderRule[] };
-	if (r.type === STRING && typeof r.value === 'string') {
-		const name = tokenKind(r.value, config);
-		if (name === undefined) throw new Error(`defaults: separator token '${r.value}' of ${displayNameOf(kind, config.nodeMap)} has no kind in the catalog`);
-		return [name];
-	}
-	if (r.type === SYMBOL && typeof r.name === 'string') {
-		const entry = findOwnKindEntry(config.kindEntries, r.name);
-		if (entry === undefined) throw new Error(`defaults: separator token '${r.name}' of ${displayNameOf(kind, config.nodeMap)} has no kind in the catalog`);
-		return [displayNameOfEntry(entry, config.kindEntries)];
-	}
-	if (r.type === CHOICE && r.members !== undefined) return r.members.flatMap((m) => separatorArmKinds(kind, m, config));
-	throw new Error(`defaults: ${displayNameOf(kind, config.nodeMap)} has a separator of shape ${r.type}; only a token or a choice of tokens is supported`);
+function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): string[] {
+	return node.separatorTokenArms.map((arm) => {
+		if (arm.type === STRING) {
+			const name = tokenKind(arm.value, config);
+			if (name === undefined) throw new Error(`defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
+			return name;
+		}
+		const entry = findOwnKindEntry(config.kindEntries, arm.name);
+		if (entry === undefined) throw new Error(`defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
+		return displayNameOfEntry(entry, config.kindEntries);
+	});
 }
 
 function tokenKind(text: string, config: SitePreferencesConfig): string | undefined {

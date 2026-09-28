@@ -1,7 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
-import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
+import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compiler/model/node-map.ts';
+import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
@@ -26,18 +26,20 @@ import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../ty
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
+import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
+import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
 	flanksOf,
 	isSeamChoice,
 	punctuationTokenOfNode,
+	keywordKindOfLiteral,
 	seamChoiceDefault,
 	seamPartOf,
 	spacedSeparatorOf,
 	type RenderRules
 } from '../compiler/model/render-rules.ts';
-import type { KindEntryLike } from '../compiler/generated-metadata.ts';
+import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import {
 	ADJACENT,
 	adjacentInto,
@@ -54,6 +56,7 @@ import {
 	equalNodes,
 	gate,
 	gateOptionalSlotSeams,
+	gateKeywordSlotSeams,
 	isExpression,
 	isPlainText,
 	mentions,
@@ -147,13 +150,14 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
-			isWordChar: (() => {
-				const table = wordCharAsciiTable(this.#wordMatcher);
-				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
-			})(),
+			isWordChar: wordCharPredicate(this.#wordMatcher),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(
+					literalMergePairs(
+						getTransportProjection(config.nodeMap).literals,
+						config.kindEntries ?? [],
+						config.nodeMap.normalizedRules
+					).map(
 						([a, b]) => a * 128 + b
 					)
 				);
@@ -168,7 +172,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const rights = new Set<string>();
 				for (const [a, b] of literalMergePairs(
 					getTransportProjection(config.nodeMap).literals,
-					config.kindEntries ?? []
+					config.kindEntries ?? [],
+					config.nodeMap.normalizedRules
 				)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
@@ -176,7 +181,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				}
 				return { mergePairClassCombos: combos, mergePairLeftChars: lefts, mergePairRightChars: rights };
 			})(),
-			externals: [...(config.nodeMap.externals ?? [])],
+			externals: ruleListParts(config.nodeMap.externals ?? []).names,
 			rules: config.renderRules?.rules ?? config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
 			emittedSlotNames: new Set<string>(),
@@ -225,6 +230,18 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		return [slotName, ...tokens];
 	}
 
+	#mixedSlotKeywordKinds(node: AssembledNode, slotName: string): readonly string[] | undefined {
+		if (!(node instanceof AbstractAssembledCompound)) return undefined;
+		const texts = (node.slots.find((candidate) => candidate.name === slotName)?.values ?? []).flatMap((value) =>
+			isTerminalValue(value) && value.value !== '' ? [value.value] : []
+		);
+		const keywords = texts.flatMap((text) => {
+			const kind = keywordKindOfLiteral(text, this.#ctx.nodeMap, this.#kindEntries);
+			return kind === undefined ? [] : [kind];
+		});
+		return keywords.length > 0 && keywords.length < texts.length ? keywords : undefined;
+	}
+
 	#emitNode(node: AssembledNode): void {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
@@ -232,7 +249,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx.emittedSlotNames.clear();
 		const emitted = emitOne(node, this.#ctx);
 		const body =
-			emitted === undefined ? undefined : gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot));
+			emitted === undefined
+				? undefined
+				: gateKeywordSlotSeams(
+						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot)),
+						(slot) => this.#mixedSlotKeywordKinds(node, slot)
+					);
 
 		if (body === undefined) {
 			this.#bodies.set(node.kind, EMPTY);
@@ -244,10 +266,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		}
 		this.#bodies.set(node.kind, body);
 	}
-}
-
-export function seamNeedsSpace(left: SeamEdgeClass, right: SeamEdgeClass): boolean {
-	return left === 'word' && right === 'word';
 }
 
 function renderRuleEdge(
@@ -365,7 +383,7 @@ function classifySeqBoundary(
 		const leftE = partEdge(leftRule, 'ends', l);
 		const rightE = partEdge(rightRule, 'starts', r);
 		if (leftE === 'varies' || rightE === 'varies') return RUNTIME_VARYING;
-		if (seamNeedsSpace(leftE, rightE)) return STATIC_SPACED;
+		if (seamNeedsSpace({ left: leftE, right: rightE })) return STATIC_SPACED;
 		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) return RUNTIME_VARYING;
 		return STATIC_GLUED;
 	}
@@ -384,7 +402,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 		case STRING: {
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
 			if (rule.nonterminal === true && stringFieldName !== undefined) {
-				return emitScalarSlot(stringFieldName.toLowerCase());
+				return emitScalarSlot(stringFieldName);
 			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
@@ -396,7 +414,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
-			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule, ctx);
+			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName, rule, ctx);
 			const ownerSlotNames = ctx.ownerSlots ? Object.keys(ctx.ownerSlots) : [];
 			if (ownerSlotNames.length === 1) {
 				return emitSlotReference(rule, ctx.ownerSlots![ownerSlotNames[0]!]!, ctx);
@@ -591,7 +609,7 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 	if (ctx.ownerSlots) {
 		const boundaryFieldName = (rule as { fieldName?: string }).fieldName;
 		if (boundaryFieldName !== undefined) {
-			const byFieldName = ctx.ownerSlots[boundaryFieldName.toLowerCase()];
+			const byFieldName = ctx.ownerSlots[boundaryFieldName];
 			if (byFieldName) {
 				recovered = byFieldName;
 			}
@@ -602,14 +620,14 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			(rule as { fieldName?: string }).fieldName === undefined &&
 			!isSurfaceHiddenIn(rule.name, ctx.nodeMap)
 		) {
-			const exactName = rule.name.toLowerCase();
+			const exactName = rule.name;
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
 				recovered = byExactName;
 			}
 		}
 		if (recovered === undefined && rule.type === SYMBOL && rule.aliasedTo !== undefined) {
-			const aliasSourceName = rule.name.replace(/^_+/, '').toLowerCase();
+			const aliasSourceName = rule.name.replace(/^_+/, '');
 			const byAliasSource = ctx.ownerSlots[aliasSourceName];
 			if (byAliasSource) {
 				recovered = byAliasSource;
@@ -699,7 +717,7 @@ function staticListInterior(
 			let seams = 0;
 			for (const l of ends) {
 				for (const r of starts) {
-					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
+					const seam = (ctx.isWordChar(l) && ctx.isWordChar(r)) || ctx.isLiteralMergePair(l, r);
 					if (seam) seams++;
 				}
 			}
@@ -748,7 +766,7 @@ function emitScalarSlot(slotName: string): Body {
 }
 
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): Body {
-	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+	const slotName = slot.storageName.replace(/^_+/, '') || 'children';
 	if (ctx.emittedSlotNames.has(slotName)) return EMPTY;
 	ctx.emittedSlotNames.add(slotName);
 	const mult = (rule as { multiplicity?: string }).multiplicity;
@@ -804,7 +822,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		if (slot) {
 			return emitSlotReference(rule, slot, ctx);
 		}
-		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule, ctx);
+		return emitFieldNameSlot(symbolFieldName, rule, ctx);
 	}
 
 	const slot = lookupSlot(rule, ctx);
@@ -815,7 +833,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		const targetNode = ctx.nodeMap.nodes.get(rule.name);
 		if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
 			if (ctx.visitingHelpers.has(rule.name)) {
-				const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				const slotName = rule.name.replace(/^_+/, '') || 'children';
 				return emitScalarSlot(slotName);
 			}
 			ctx.visitingHelpers.add(rule.name);
@@ -829,13 +847,13 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 					const listName = slot
-						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
+						? (slot.storageName.replace(/^_+/, '') || 'children')
 						: (pickConditionalKey(helperRenderRule, helperCtx) ??
-							(rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+							(rule.name.replace(/^_+/, '') || 'children'));
 					return emitListSlot(listName, rule, slot, helperCtx);
 				}
 				if (multiplicity === 'optional' && helperBody.length !== 0) {
-					const symbolFieldKey = symbolFieldName?.toLowerCase();
+					const symbolFieldKey = symbolFieldName;
 					const addressableFieldKey =
 						symbolFieldKey !== undefined &&
 						(ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
@@ -844,7 +862,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 					const condKey =
 						addressableFieldKey ??
 						pickConditionalKey(helperRenderRule, helperCtx) ??
-						(rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+						(rule.name.replace(/^_+/, '') || 'children');
 					return gate(condKey, helperBody);
 				}
 				return helperBody;
@@ -855,7 +873,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	}
 	if (rule.type === SYMBOL && rule.inline === true && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
-			const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+			const slotName = rule.name.replace(/^_+/, '') || 'children';
 			return emitScalarSlot(slotName);
 		}
 		ctx.visitingHelpers.add(rule.name);
@@ -865,12 +883,12 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 			if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 				const listName = slot
-					? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
-					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+					? (slot.storageName.replace(/^_+/, '') || 'children')
+					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children'));
 				return emitListSlot(listName, rule, slot, ctx);
 			}
 			if (multiplicity === 'optional' && helperBody.length !== 0) {
-				const condKey = pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				const condKey = pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children');
 				return gate(condKey, helperBody);
 			}
 			return helperBody;
@@ -878,7 +896,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			ctx.visitingHelpers.delete(rule.name);
 		}
 	}
-	const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+	const slotName = rule.name.replace(/^_+/, '') || 'children';
 	return emitScalarSlot(slotName);
 }
 
@@ -908,7 +926,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	if (isSeamChoice(content)) return undefined;
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
-		const key = contentFieldName.toLowerCase();
+		const key = contentFieldName;
 		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
 	}
 	if (content.type === SEQ) {
@@ -931,7 +949,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	}
 	if (content.type === SYMBOL) {
 		const sym = content as Extract<RenderRule, { type: 'SYMBOL' }>;
-		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
+		return sym.name.replace(/^_+/, '') || 'children';
 	}
 	return undefined;
 }
@@ -974,6 +992,7 @@ function scanArmBody(body: Body): {
 					break;
 				case 'space':
 				case 'seam':
+				case 'wordSeam':
 					break;
 				case 'slot':
 					if (depth === 0) {
@@ -1156,7 +1175,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			choiceRuleId !== undefined &&
 			slot.sourceRuleIds.includes(choiceRuleId);
 		if (unionBacked) {
-			const unionName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+			const unionName = slot.storageName.replace(/^_+/, '') || 'children';
 			const blockByKey = new Map<string, Body>();
 			const arraySlotDeltaByKey = new Map<string, string[]>();
 			for (const arm of rule.members) {
@@ -1183,7 +1202,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	}
 	const choiceFieldName = (rule as { fieldName?: string }).fieldName;
 	if (choiceFieldName !== undefined) {
-		return emitFieldNameSlot(choiceFieldName.toLowerCase(), rule, ctx);
+		return emitFieldNameSlot(choiceFieldName, rule, ctx);
 	}
 	if (rule.id === '__synthetic_exclusive_choice__') {
 		return concat(...rule.members.map((m) => emitRule(m, ctx)));
@@ -1426,7 +1445,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) te.emitLeaf(node);
+				if (isBuilderTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':
 			case 'envelope':

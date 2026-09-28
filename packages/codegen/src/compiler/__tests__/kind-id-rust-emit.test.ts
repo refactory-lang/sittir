@@ -7,7 +7,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { emitKindIdRust } from '../../emitters/kind-id-rust.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GeneratedIdTables } from '../generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 /** Minimal fixture matching the one used in kindid-emit.test.ts. */
 function makeMinimalFixture(): {
@@ -229,7 +229,7 @@ describe('emitKindIdRust', () => {
 		// constant-name logic without requiring a hidden kind to traverse the
 		// full assembly pipeline (hidden kinds are filtered out of nodeMap.nodes
 		// in the synth grammar fixtures used elsewhere in this file).
-		const { toScreamingSnakeCase } = await import('../../emitters/kind-id-rust.ts');
+		const { toScreamingSnakeCase } = await import('../model/casing.ts');
 
 		// Visible kind: PascalCase member, no leading underscore on rawKind.
 		expect(toScreamingSnakeCase('CallExpression', 'call_expression')).toBe('CALL_EXPRESSION');

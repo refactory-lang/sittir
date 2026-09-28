@@ -83,16 +83,10 @@ export const isSymbolType = <T>(t: T): t is T & { type: 'SYMBOL' } & SymbolRule 
 export const isStringType = <T>(t: T): t is T & { type: 'STRING' } & StringRule => typeEq(t, 'STRING');
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
-export const isBlankType = (t: unknown): boolean => typeEq(t, 'BLANK');
-export const isEmptyBody = (rule: unknown): boolean => {
-	const r = rule as { type?: unknown; members?: readonly unknown[] } | undefined;
-	return isBlankType(r?.type) || (typeEq(r?.type, 'CHOICE') && r?.members?.length === 0);
-};
-
 export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
 
-export function compileAnchoredPattern(source: string): CompiledPattern {
-	const anchored = `^(?:${source})$`;
+export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start' = 'whole'): CompiledPattern {
+	const anchored = anchor === 'whole' ? `^(?:${source})$` : `^(?:${source})`;
 	try {
 		return { regex: new RegExp(anchored, 'u') };
 	} catch {
@@ -208,14 +202,18 @@ export function samplePattern(source: string): string | null {
 	}
 }
 
-export function matchesEmpty(rule: RuntimeRule): boolean {
-	const t = rule.type;
-	if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-	if (t === 'STRING') return (rule as { value?: unknown }).value === '';
-	if (t === 'PATTERN') return patternAcceptsEmpty(String((rule as { value?: unknown }).value));
-	const members = (rule as { members?: readonly RuntimeRule[] }).members ?? [];
-	if (isChoiceType(t)) return members.some(matchesEmpty);
-	if (isSeqType(t)) return members.every(matchesEmpty);
-	if (isPrecWrapper(rule as { type: string })) return matchesEmpty((rule as { content?: RuntimeRule }).content!);
-	return false;
+export interface EmptinessCtx<R> {
+	settled(rule: R): boolean | undefined;
+	children(rule: R): readonly R[];
+	isChoice(rule: R): boolean;
 }
+
+export function realizesEmpty<R>(rule: R, ctx: EmptinessCtx<R>): boolean {
+	const settled = ctx.settled(rule);
+	if (settled !== undefined) return settled;
+	const children = ctx.children(rule);
+	return ctx.isChoice(rule)
+		? children.some((child) => realizesEmpty(child, ctx))
+		: children.every((child) => realizesEmpty(child, ctx));
+}
+

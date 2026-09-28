@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { extractGrammarRoles } from '../extract-roles.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 // Dynamic imports use computed paths to prevent TypeScript from following
 // cross-package references during type-check (codegen's tsconfig doesn't
@@ -27,7 +28,7 @@ async function loadSynonyms(path: string): Promise<{ synonym: any }> {
 
 describe('general role extraction', () => {
 	it('extracts string role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const stringKinds = roles.get('string');
 		expect(stringKinds.length).toBeGreaterThan(0);
 		// Rust has string_literal, char_literal, raw_string_literal
@@ -35,13 +36,13 @@ describe('general role extraction', () => {
 	});
 
 	it('extracts type role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const typeKinds = roles.get('type');
 		expect(typeKinds).toContain('type_identifier');
 	});
 
 	it('extracts type.builtin sub-role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const builtinTypes = roles.get('type.builtin');
 		expect(builtinTypes).toContain('primitive_type');
 		// type.builtin kinds should also appear in the base type role
@@ -50,31 +51,31 @@ describe('general role extraction', () => {
 	});
 
 	it('extracts definition.function from rust tags.scm', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const fnKinds = roles.get('definition.function');
 		expect(fnKinds).toContain('function_item');
 	});
 
 	it('extracts definition.class from python tags.scm', () => {
-		const roles = extractGrammarRoles('python');
+		const roles = extractGrammarRoles(grammarPackage('python'));
 		const classKinds = roles.get('definition.class');
 		expect(classKinds).toContain('class_definition');
 	});
 
 	it('extracts number role from javascript (typescript inherits)', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const numberKinds = roles.get('number');
 		expect(numberKinds).toContain('number');
 	});
 
 	it('extracts variable role from python', () => {
-		const roles = extractGrammarRoles('python');
+		const roles = extractGrammarRoles(grammarPackage('python'));
 		const varKinds = roles.get('variable');
 		expect(varKinds).toContain('identifier');
 	});
 
 	it('trivia still works after refactor', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const triviaKinds = roles.get('trivia');
 		expect(triviaKinds).toContain('line_comment');
 	});
@@ -82,7 +83,7 @@ describe('general role extraction', () => {
 
 describe('sub-role extraction', () => {
 	it('extracts function.method sub-role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const methodKinds = roles.get('function.method');
 		expect(methodKinds.length).toBeGreaterThan(0);
 		// function.method kinds should also appear in the base function role
@@ -93,13 +94,13 @@ describe('sub-role extraction', () => {
 	});
 
 	it('extracts function.macro sub-role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const macroKinds = roles.get('function.macro');
 		expect(macroKinds.length).toBeGreaterThan(0);
 	});
 
 	it('extracts string.special sub-role from javascript (via typescript)', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const specialKinds = roles.get('string.special');
 		expect(specialKinds).toContain('regex');
 		// string.special kinds should also appear in the base string role
@@ -108,7 +109,7 @@ describe('sub-role extraction', () => {
 	});
 
 	it('extracts variable.builtin sub-role from javascript (via typescript)', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const builtinVars = roles.get('variable.builtin');
 		expect(builtinVars.length).toBeGreaterThan(0);
 		// variable.builtin kinds should also appear in the base variable role
@@ -119,13 +120,13 @@ describe('sub-role extraction', () => {
 	});
 
 	it('extracts variable.parameter sub-role from rust', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		const paramKinds = roles.get('variable.parameter');
 		expect(paramKinds).toContain('identifier');
 	});
 
 	it('extracts function.builtin sub-role from python', () => {
-		const roles = extractGrammarRoles('python');
+		const roles = extractGrammarRoles(grammarPackage('python'));
 		const builtinFns = roles.get('function.builtin');
 		expect(builtinFns).toContain('identifier');
 		// function.builtin kinds should also appear in the base function role
@@ -134,7 +135,7 @@ describe('sub-role extraction', () => {
 	});
 
 	it('extracts number role from python (integer + float)', () => {
-		const roles = extractGrammarRoles('python');
+		const roles = extractGrammarRoles(grammarPackage('python'));
 		const numberKinds = roles.get('number');
 		expect(numberKinds).toContain('integer');
 		expect(numberKinds).toContain('float');
@@ -143,7 +144,7 @@ describe('sub-role extraction', () => {
 
 describe('tags.scm inheritance', () => {
 	it('typescript inherits definition.function from javascript tags.scm', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const fnKinds = roles.get('definition.function');
 		expect(fnKinds.length).toBeGreaterThan(0);
 		// TypeScript's own tags.scm has function_signature
@@ -151,19 +152,19 @@ describe('tags.scm inheritance', () => {
 	});
 
 	it('typescript inherits definition.class from javascript tags.scm', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const classKinds = roles.get('definition.class');
 		expect(classKinds.length).toBeGreaterThan(0);
 	});
 
 	it('typescript has definition.interface from its own tags.scm', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const ifaceKinds = roles.get('definition.interface');
 		expect(ifaceKinds).toContain('interface_declaration');
 	});
 
 	it('typescript inherits reference.call from javascript tags.scm', () => {
-		const roles = extractGrammarRoles('typescript');
+		const roles = extractGrammarRoles(grammarPackage('typescript'));
 		const callKinds = roles.get('reference.call');
 		expect(callKinds.length).toBeGreaterThan(0);
 	});
@@ -171,7 +172,7 @@ describe('tags.scm inheritance', () => {
 
 describe('GrammarRoles interface', () => {
 	it('get() returns empty array for missing role', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		// Rust doesn't have number captures (uses constant.builtin instead)
 		// Just test that an unmatched role returns []
 		const result = roles.get('definition.interface');
@@ -180,7 +181,7 @@ describe('GrammarRoles interface', () => {
 	});
 
 	it('entries array contains all extracted roles', () => {
-		const roles = extractGrammarRoles('rust');
+		const roles = extractGrammarRoles(grammarPackage('rust'));
 		expect(roles.entries.length).toBeGreaterThan(0);
 		// Every entry should have at least one kind
 		for (const entry of roles.entries) {
@@ -189,7 +190,7 @@ describe('GrammarRoles interface', () => {
 	});
 
 	it('grammar field is set correctly', () => {
-		const roles = extractGrammarRoles('python');
+		const roles = extractGrammarRoles(grammarPackage('python'));
 		expect(roles.grammar).toBe('python');
 	});
 });

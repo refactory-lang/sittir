@@ -423,7 +423,27 @@ export const path: {
 	scopedIdentifier: F.scopedIdentifier
 };
 
+export const whitespace: {
+	readonly tight: typeof F.buildTight;
+	readonly space: typeof F.buildSpace;
+	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly doubleBlankline: typeof F.buildDoubleBlankline;
+	readonly indent: typeof F.buildIndent;
+	readonly dedent: typeof F.buildDedent;
+} = {
+	tight: F.buildTight,
+	space: F.buildSpace,
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	doubleBlankline: F.buildDoubleBlankline,
+	indent: F.buildIndent,
+	dedent: F.buildDedent
+};
+
 export const expressionEndingWithBlock: typeof F.expressionEndingWithBlock = F.expressionEndingWithBlock;
+
+export const comment: typeof F.comment = F.comment;
 
 export const declarationStatement: typeof F.declarationStatement = F.declarationStatement;
 
@@ -636,7 +656,9 @@ export const ir: {
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
 	readonly path: typeof path;
+	readonly whitespace: typeof whitespace;
 	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
+	readonly comment: typeof comment;
 	readonly declarationStatement: typeof declarationStatement;
 	readonly tokenPattern: typeof tokenPattern;
 	readonly tokens: typeof tokens;
@@ -853,7 +875,9 @@ export const ir: {
 	literal,
 	literalPattern,
 	path,
+	whitespace,
 	expressionEndingWithBlock,
+	comment,
 	declarationStatement,
 	tokenPattern,
 	tokens,

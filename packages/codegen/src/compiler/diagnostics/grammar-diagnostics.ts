@@ -4,39 +4,62 @@ import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { collapseRenamedRules, link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { loadGrammarJsonInlineList, loadGrammarJsonAliasMap, buildInlinableKinds } from '../inline-sets.ts';
+import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
-import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
-import type { AssembleWarning } from '../model/node-map.ts';
+import { optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
+import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type {
-	RawGrammar,
-	LinkedGrammar,
-	NormalizedGrammar,
-	IncludeFilter,
-	DesugarDivergenceEvent,
-	ReservedWordsets
-} from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
-	collectGeneratedKindEntries,
+	kindCatalogOf,
+	predictedEntriesOf,
+	renameAwareSymbolSource,
 	reservedWordset,
 	type GeneratedIdTables,
 	type KindEntryLike
-} from '../generated-metadata.ts';
+} from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
+import { symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { lineTerminated, triviaKinds } from '../model/trivia.ts';
+import type { NodeMap } from '../types.ts';
 
 export type { GrammarDiagnostic };
 
 export class GrammarDiagnosticError extends Error {
 	readonly codes: readonly string[];
 
-	constructor(readonly diagnostics: readonly GrammarDiagnostic[]) {
+	constructor(
+		readonly diagnostics: readonly GrammarDiagnostic[],
+		readonly records: readonly GrammarDiagnostic[] = diagnostics
+	) {
 		super(diagnostics.map((diagnostic) => `${diagnostic.code}: ${diagnostic.message}`).join('\n'));
 		this.name = 'GrammarDiagnosticError';
 		this.codes = diagnostics.map((diagnostic) => diagnostic.code);
 	}
+}
+
+export type DiagnosticFloors = Readonly<Record<string, readonly string[]>> | undefined;
+
+export function blockedRecords(
+	records: readonly GrammarDiagnostic[],
+	floors: DiagnosticFloors,
+	allow: ReadonlySet<string> = new Set()
+): GrammarDiagnostic[] {
+	return records.filter(
+		(record) =>
+			record.canProceed === false && !allow.has(record.code) && !isExpectedDiagnostic(floors, record.code, record.ownerKind)
+	);
+}
+
+export function assertGatePasses(
+	records: readonly GrammarDiagnostic[],
+	floors: DiagnosticFloors,
+	allow: ReadonlySet<string> = new Set()
+): void {
+	const blocked = blockedRecords(records, floors, allow);
+	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, records);
 }
 
 export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCollisionDiagnostic): GrammarDiagnostic {
@@ -57,31 +80,16 @@ export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCol
 	};
 }
 
-export function fromDeriveShape(grammar: string, diagnostic: DeriveShapeDiagnostic): GrammarDiagnostic {
-	return {
-		scope: 'grammar',
-		code: diagnostic.code,
-		severity: diagnostic.severity,
-		grammar,
-		ownerKind: diagnostic.ownerKind ?? '(no-kind-context)',
-		ruleId: diagnostic.ruleId,
-		message: diagnostic.message,
-		proposal: diagnostic.proposal,
-		canProceed: true,
-		details: diagnostic.details
-	};
-}
-
 export function fromAssembleWarning(grammar: string, warning: AssembleWarning): GrammarDiagnostic {
-	const severity = warning.code === 'typename-collision' ? 'info' : 'warning';
+	const blocking = BLOCKING_SHAPE_CODES.has(warning.code);
 	return {
 		scope: 'grammar',
 		code: warning.code,
-		severity,
+		severity: blocking ? 'error' : 'warning',
 		grammar,
 		ownerKind: warning.ownerKind,
 		message: warning.message,
-		canProceed: true,
+		canProceed: !blocking,
 		details: warning.details
 	};
 }
@@ -100,11 +108,18 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 	};
 }
 
-function isBlockingAssembleWarningCode(code: string): boolean {
-	return code === 'storagename-collision' || code === 'nonterminal-separator-unstamped';
-}
+const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
+	'storagename-collision',
+	'nonterminal-separator-unstamped',
+	'unclassifiable-shape',
+	'kind-shape-mismatch',
+	'single-literal-choice',
+	'union-slot-mixed-row',
+	'union-slot-unaddressable',
+	'separator-pattern'
+]);
 
-function isExpectedDiagnostic(
+export function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
 	code: string,
 	ownerKind: string | undefined
@@ -143,6 +158,47 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 	};
 }
 
+export function optionalFlankFieldDiagnostics(grammar: string, nodeMap: AssembledNodeMap): GrammarDiagnostic[] {
+	return [...nodeMap.nodes].flatMap(([kind, node]) =>
+		optionalFlankSlots(node).map((slot) => {
+			const flanks = [
+				...(slot.leadingDelimiter === 'optional' ? ['leading'] : []),
+				...(slot.trailingDelimiter === 'optional' ? ['trailing'] : [])
+			];
+			return {
+				scope: 'grammar' as const,
+				code: 'field-optional-delimiter',
+				severity: 'error' as const,
+				grammar,
+				ownerKind: kind,
+				slotName: slot.name,
+				message: `kind '${kind}': field '${slot.name}' carries an optional ${flanks.join(' and ')} delimiter, which a field factory cannot control; only a list kind models an optional delimiter.`,
+				proposal: `Make the delimited list its own kind with a groups: entry or a rule() patch.`,
+				canProceed: false,
+				details: { field: slot.name, flanks }
+			};
+		})
+	);
+}
+
+export function undeclaredSeparatorDiagnostics(grammar: string, config: SitePreferencesConfig): GrammarDiagnostic[] {
+	return undeclaredSeparatorSites(config).map((site) => {
+		const arms = site.arms.map((arm) => arm.value);
+		return {
+			scope: 'grammar' as const,
+			code: 'separator-default-undeclared',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: site.kind,
+			slotName: site.slot,
+			message: `kind '${site.kind}': ${site.slot} chooses its separator per instance (${arms.join(', ')}) and declares no default.`,
+			proposal: `Declare the default separator kind under options: (${site.address}).`,
+			canProceed: false,
+			details: { arms }
+		};
+	});
+}
+
 export function reservedMemberDiagnostics(
 	grammar: string,
 	reserved: ReservedWordsets | undefined,
@@ -162,38 +218,68 @@ export function reservedMemberDiagnostics(
 	);
 }
 
+export function triviaLineEndDiagnostics(grammar: string, nodeMap: NodeMap): GrammarDiagnostic[] {
+	return [...triviaKinds(nodeMap)]
+		.filter((kind) => lineTerminated(nodeMap, kind) === undefined)
+		.map((kind) => ({
+			scope: 'grammar' as const,
+			code: 'trivia-line-end-undetermined',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: kind,
+			message: `trivia kind '${kind}' ends in an external token with no render rule, so whether it ends its line cannot be read from the grammar.`,
+			proposal: `Author a render-only rule for the external token in grammar.sittir.ts, giving the text it scans.`,
+			canProceed: false
+		}));
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
-	deriveShapeDiagnostics?: readonly DeriveShapeDiagnostic[];
 	assembleWarnings?: readonly AssembleWarning[];
 	slotGroupingDiagnostics?: readonly SlotGroupingDiagnostic[];
-	expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
 		...fromParseKindCollision(input.grammar, diagnostic),
 		canProceed: false
 	}));
-	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
-		fromDeriveShape(input.grammar, diagnostic)
+	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => fromAssembleWarning(input.grammar, warning));
+	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) =>
+		fromSlotGrouping(input.grammar, diagnostic)
 	);
-	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
-		const mapped = fromAssembleWarning(input.grammar, warning);
-		if (!isBlockingAssembleWarningCode(warning.code)) return mapped;
-		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
-		return { ...mapped, canProceed: false };
-	});
-	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
-		const mapped = fromSlotGrouping(input.grammar, diagnostic);
-		if (
-			diagnostic.code === 'content-collision' &&
-			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
-		) {
-			return { ...mapped, canProceed: true };
-		}
-		return mapped;
-	});
-	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
+	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
+}
+
+const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
+
+const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
+	'dangling-internal-ref',
+	'unpredictable-symbol-table',
+	'kind-key-collision',
+	'groups-config-invalid',
+	'refine-config-invalid',
+	'rule-cause-missing',
+	'rule-cause-mismatch',
+	'render-only-not-external',
+	'vocabulary-replaces-upstream',
+	'whitespace-mint-collision'
+]);
+
+export function unexpectableExpectEntries(
+	grammar: string,
+	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined
+): GrammarDiagnostic[] {
+	return Object.keys(expectDiagnostics ?? {})
+		.filter((code) => UNEXPECTABLE_CODES.has(code))
+		.map((code) => ({
+			scope: 'grammar',
+			code: 'expect-diagnostics-invalid',
+			severity: 'error',
+			grammar,
+			message: `expectDiagnostics: '${code}' cannot be expected; it reports a grammar or config the compiler rejects, so fix its cause instead`,
+			canProceed: false,
+			details: { code }
+		}));
 }
 
 export function collectGrammarDiagnosticsForGrammar(input: {
@@ -209,7 +295,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const kindEntries = collectGeneratedKindEntries(input.generatedIdTables);
+	const kindEntries = kindCatalogOf(input.generatedIdTables, input.rawGrammar);
 	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
@@ -218,7 +304,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});
-	const inlineKinds = buildInlinableKinds(new Set(loadGrammarJsonInlineList(rawGrammar.name) ?? []), linked);
+	const inlineKinds = buildInlinableKinds(new Set(rawGrammar.inline), linked);
 	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
 	const normalized = normalizeGrammar(
 		linked,
@@ -230,47 +316,26 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, input.generatedIdTables, compilerDiagnostics, loadGrammarJsonAliasMap(rawGrammar.name))
+		AssembleCtx.from(
+			normalized,
+			input.generatedIdTables,
+			compilerDiagnostics,
+			kindEntries
+		)
 	);
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const symbols = symbolSourceOf({
-		rules: rawGrammar.rules,
-		externals: new Set(rawGrammar.externals),
-		inline: new Set(rawGrammar.inline),
-		kindEntries
+	const symbols = renameAwareSymbolSource({
+		...symbolFactsOf(rawGrammar),
+		kindEntries: predictedEntriesOf(rawGrammar.predictedKinds)
 	});
-	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
-	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
+	const surfacedCompilerDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()
-		.filter(
-			(d) =>
-				d.code.startsWith('kindid-unstamped') ||
-				d.code.startsWith('kindid-vaporized') ||
-				d.code.startsWith('kindid-inline-excluded') ||
-				d.code.startsWith('kindid-unclassified')
-		)
+		.filter((d) => SURFACED_COMPILER_CODES.has(d.code))
 		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: rawGrammar.name }));
-	const allDiagnostics = [
-		...collectGrammarDiagnostics({
-			grammar: rawGrammar.name,
-			parseKindCollisions: nodeMap.parseKindCollisions,
-			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
-			assembleWarnings: nodeMap.assembleWarnings,
-			slotGroupingDiagnostics,
-			expectDiagnostics: rawGrammar.expectDiagnostics
-		}).diagnostics,
-		...contentAliasDiagnostics,
-		...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
-		...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
-		...kindIdStampDiagnostics,
-		...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
-		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
-		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
-	];
 	return {
 		raw: rawGrammar,
 		linked,
@@ -278,11 +343,87 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		nodeMap,
 		compilerDiagnostics,
 		slotGroupingDiagnostics,
-		diagnostics:
-			orphanedSyntheticGroups.size === 0
-				? allDiagnostics
-				: allDiagnostics.filter((d) => d.ownerKind === undefined || !orphanedSyntheticGroups.has(d.ownerKind))
+		diagnostics: withoutOrphanedGroups(rawGrammar, [
+			...collectGrammarDiagnostics({
+				grammar: rawGrammar.name,
+				parseKindCollisions: nodeMap.parseKindCollisions,
+				assembleWarnings: nodeMap.assembleWarnings,
+				slotGroupingDiagnostics
+			}).diagnostics,
+			...contentAliasDiagnostics,
+			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
+			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
+			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
+			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
+			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
+			...surfacedCompilerDiagnostics
+		])
 	};
+}
+
+export function predictionFailed(raw: Pick<RawGrammar, 'predictedKinds'>): boolean {
+	return raw.predictedKinds !== undefined && 'failure' in raw.predictedKinds;
+}
+
+export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
+	const kinds = raw.predictedKinds;
+	if (kinds === undefined) return [];
+	if ('entries' in kinds) {
+		return kinds.keyCollisions.map(({ key, symbols: [kept, dropped] }) => ({
+			scope: 'grammar',
+			code: 'kind-key-collision',
+			severity: 'error',
+			grammar: raw.name,
+			ownerKind: key,
+			message: `the kind key '${key}' names both ${kept} and ${dropped}; the catalog keeps ${kept}, so ${dropped} has no kind`,
+			canProceed: false,
+			details: { key, symbols: [kept, dropped] }
+		}));
+	}
+	if (kinds.undefinedNames.length === 0) {
+		return [
+			{
+				scope: 'grammar',
+				code: 'unpredictable-symbol-table',
+				severity: 'error',
+				grammar: raw.name,
+				message: `the parser's symbol table cannot be predicted from the grammar: ${kinds.failure}`,
+				canProceed: false,
+				details: { message: kinds.failure }
+			}
+		];
+	}
+	return kinds.undefinedNames.map((targetName) => ({
+		scope: 'grammar',
+		code: 'dangling-internal-ref',
+		severity: 'error',
+		grammar: raw.name,
+		message: `the grammar references '${targetName}', which names no rule and no external`,
+		canProceed: false,
+		details: { targetName }
+	}));
+}
+
+export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
+	return withoutOrphanedGroups(raw, [
+		...predictionRecords(raw),
+		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
+		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
+		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))
+	]);
+}
+
+export function diagnoseStage(raw: RawGrammar): { diagnostics: GrammarDiagnostic[]; ruleCatalog?: RuleCatalog } {
+	const records = evaluateRecords(raw);
+	if (predictionFailed(raw)) return { diagnostics: records };
+	const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+	return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
+}
+
+function withoutOrphanedGroups(raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>, records: GrammarDiagnostic[]): GrammarDiagnostic[] {
+	const orphaned = new Set(raw.orphanedSyntheticGroups ?? []);
+	return orphaned.size === 0 ? records : records.filter((d) => d.ownerKind === undefined || !orphaned.has(d.ownerKind));
 }
 
 export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic[]): string {
@@ -293,6 +434,10 @@ export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic
 				`[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`
 		)
 		.join('\n');
+}
+
+export function formatNamingEvents(events: readonly NamingEvent[]): string {
+	return events.map((e) => `[naming] ${e.kind}: type name '${e.from}' → '${e.to}' (${e.message})`).join('\n');
 }
 
 export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnostic[]): string {

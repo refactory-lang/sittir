@@ -1,7 +1,8 @@
 import type { Rule } from '../../types/rule.ts';
 import type { FieldLike } from '../../types/runtime-shapes.ts';
 import { wireRegisterSyntheticInline, wireRegisterSyntheticRule } from '../wire/wire.ts';
-import { isStringType, isOptionalType, isChoiceType } from '../../types/runtime-shapes.ts';
+import { isStringType } from '../../types/runtime-shapes.ts';
+import { optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 
@@ -17,19 +18,10 @@ export function maybeKeywordSymbol(
 		return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
 	}
 
-	if (isOptionalType(c.type)) {
-		return descendOptional(fieldName, content, wrapSyntheticBody, 'optional');
-	}
-
-	if (isChoiceType(c.type)) {
-		const members = (content as { members?: Array<{ type?: string }> }).members;
-		if (Array.isArray(members) && members.length === 2) {
-			const blankIdx = members.findIndex((m) => m?.type === 'BLANK');
-			if (blankIdx !== -1) {
-				return descendOptional(fieldName, content, wrapSyntheticBody, 'choice-blank');
-			}
-		}
-		return content;
+	const optional = optionalContentOf(c as { type: string });
+	if (optional !== undefined) {
+		const rewritten = maybeKeywordSymbol(fieldName, optional, wrapSyntheticBody);
+		return rewritten === optional ? content : withOptionalContent(c as { type: string }, rewritten as { type: string });
 	}
 
 	return content;
@@ -53,34 +45,6 @@ function synthesizeKwSymbol(
 		type: 'SYMBOL',
 		name: hiddenName
 	};
-}
-
-function descendOptional(
-	fieldName: string,
-	content: unknown,
-	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined,
-	wrapperKind: 'optional' | 'choice-blank'
-): unknown {
-	let inner: unknown;
-	if (wrapperKind === 'optional') {
-		inner = (content as { content?: unknown }).content;
-	} else {
-		const members = (content as { members: Array<{ type?: string }> }).members;
-		const nonBlank = members.find((m) => m.type !== 'BLANK');
-		inner = nonBlank;
-	}
-
-	const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
-	if (rewritten === inner) return content;
-
-	if (wrapperKind === 'optional') {
-		const nativeOptional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
-		if (typeof nativeOptional !== 'function') return content;
-		return nativeOptional(rewritten);
-	}
-	const c = content as { type: string; members: Array<{ type?: string }> };
-	const newMembers = c.members.map((m) => (m.type === 'BLANK' ? m : (rewritten as typeof m)));
-	return { ...c, members: newMembers };
 }
 
 type Input = string | RegExp | Rule;

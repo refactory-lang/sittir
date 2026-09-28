@@ -15,6 +15,7 @@ import type {
 	FExpression,
 	Float,
 	Integer,
+	KeywordIdentifier,
 	LeftHandSide,
 	LineContinuation,
 	NamedExpressionLhs,
@@ -417,6 +418,7 @@ export interface IsGuards {
 	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
 	integer(v: { readonly $type: string | number } | number): v is Integer;
 	float(v: { readonly $type: string | number } | number): v is Float;
+	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
@@ -631,6 +633,7 @@ export interface AssertGuards {
 	escapeSequence(v: { readonly $type: string | number } | number): asserts v is EscapeSequence;
 	integer(v: { readonly $type: string | number } | number): asserts v is Integer;
 	float(v: { readonly $type: string | number } | number): asserts v is Float;
+	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): asserts v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
@@ -667,8 +670,9 @@ const _supertype_fExpression_ids = new Set<number>([177, 214, 216]);
 const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
 const _supertype_float_ids = new Set<number>([94, 95, 96]);
+const _supertype_keywordIdentifier_ids = new Set<number>([68, 38, 69, 70, 39, 22]);
 const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
-const _supertype_whitespace_ids = new Set<number>([113]);
+const _supertype_whitespace_ids = new Set<number>([120, 121, 113, 122, 123]);
 
 export const is = {
 	module: _g(TSKindId.Module),
@@ -813,6 +817,7 @@ export const is = {
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	integer: _sg(_supertype_integer_ids),
 	float: _sg(_supertype_float_ids),
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	lineContinuation: _sg(_supertype_lineContinuation_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
@@ -982,6 +987,7 @@ export const assert = {
 	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	integer: _makeAssert('integer', is.integer as _AnyGuard),
 	float: _makeAssert('float', is.float as _AnyGuard),
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
 	lineContinuation: _makeAssert('lineContinuation', is.lineContinuation as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;

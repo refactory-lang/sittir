@@ -1,15 +1,9 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
 import { compareOrdinal } from './shared.ts';
+import { pascalCase } from '../compiler/model/casing.ts';
 
-export function toPascal(kind: string): string {
-	return kind
-		.replace(/^_/, '')
-		.split('_')
-		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-		.join('');
-}
 
 export interface KindEnumEntry {
 	readonly kind: string;
@@ -32,7 +26,7 @@ export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
 	const typeName = nodeMap.nodes.get(kind)?.typeName;
 	if (typeName) return typeName;
 	const prefix = kind.match(/^_+/)?.[0] ?? '';
-	return `${prefix}${toPascal(kind)}`;
+	return `${prefix}${pascalCase(kind)}`;
 }
 
 export function collectCatalogKinds(generatedIdTables: GeneratedIdTables): readonly string[] {

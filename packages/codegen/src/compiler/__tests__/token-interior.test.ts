@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../../types/rule.ts';
 import { structureTokenInterior } from '../token-interior.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -11,11 +12,14 @@ const seq = (...members: LinkRule[]): LinkRule => ({ type: SEQ, members }) as Li
 const choice = (...members: LinkRule[]): LinkRule => ({ type: CHOICE, members }) as LinkRule;
 const token = (content: LinkRule): LinkRule => ({ type: TOKEN, content, immediate: false }) as LinkRule;
 
-function structured(rule: LinkRule): LinkRule {
+function structuredWithRecords(rule: LinkRule): { readonly rule: LinkRule; readonly diagnostics: DiagnosticSink } {
 	const rules: Record<string, LinkRule> = { kind: rule };
-	structureTokenInterior(rules);
-	return rules.kind!;
+	const diagnostics = new DiagnosticSink();
+	structureTokenInterior(rules, diagnostics);
+	return { rule: rules.kind!, diagnostics };
 }
+
+const structured = (rule: LinkRule): LinkRule => structuredWithRecords(rule).rule;
 
 const membersOf = (rule: LinkRule): LinkRule[] => ((rule as { content: { members: LinkRule[] } }).content.members);
 
@@ -88,9 +92,19 @@ describe('structureTokenInterior — bare patterns', () => {
 		expect(structured(rule)).toBe(rule);
 	});
 
-	it('rejects a named group beside non-literal top-level regex', () => {
-		expect(() => structured(pat('(?<name>[a-z]+)\\d+'))).toThrow(/not literal text/);
-		expect(() => structured(pat('x*(?<name>[a-z]+)'))).toThrow(/not literal text/);
+	it('records a named group beside non-literal top-level regex as a blocking shape and leaves the pattern whole', () => {
+		for (const original of [pat('(?<name>[a-z]+)\\d+'), pat('x*(?<name>[a-z]+)')]) {
+			const { rule, diagnostics } = structuredWithRecords(original);
+			expect(rule).toBe(original);
+			expect(diagnostics.all()).toEqual([
+				expect.objectContaining({
+					code: 'token-interior-unstructurable',
+					ownerKind: 'kind',
+					canProceed: false,
+					message: expect.stringMatching(/not literal text/)
+				})
+			]);
+		}
 	});
 });
 
@@ -136,9 +150,19 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 		expect(members[1]).toMatchObject({ type: FIELD, name: 'fraction', content: { type: OPTIONAL, content: { type: PATTERN, value: '(?:(?:[0-9]+_?))+' } } });
 	});
 
-	it('rejects an unnamed pattern next to a named part inside an optional group', () => {
+	it('records an unnamed pattern next to a named part inside an optional group as a blocking shape and leaves the token opaque', () => {
 		const group = optional(seq(pat('[eE]'), named('exponent', pat('\\d+'))));
-		expect(() => structured(token(seq(named('integer', pat('\\d+')), group)))).toThrow(/names a part inside an optional group next to an unnamed pattern/);
+		const original = token(seq(named('integer', pat('\\d+')), group));
+		const { rule, diagnostics } = structuredWithRecords(original);
+		expect(rule).toBe(original);
+		expect(diagnostics.all()).toEqual([
+			expect.objectContaining({
+				code: 'token-interior-unstructurable',
+				ownerKind: 'kind',
+				canProceed: false,
+				message: expect.stringMatching(/names a part inside an optional group next to an unnamed pattern/)
+			})
+		]);
 	});
 
 	it('leaves a token with no named part on the composed path, so its output does not change', () => {

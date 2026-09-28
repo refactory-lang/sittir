@@ -37,7 +37,6 @@ pub enum AnyTransport {
     Grouping(GroupingTransport),
     MissingNode(MissingNodeTransport),
     AnonymousNode(AnonymousNodeTransport),
-    NamedNode(NamedNodeTransport),
     FieldDefinition(FieldDefinitionTransport),
     NegatedField(NegatedFieldTransport),
     Predicate(PredicateTransport),
@@ -45,12 +44,17 @@ pub enum AnyTransport {
     GroupExpressionArm(GroupExpressionArmTransport),
     NamedNodeExpressionArm(NamedNodeExpressionArmTransport),
     GroupingGroup(GroupingGroupTransport),
-    NamedNodeArm(NamedNodeArmTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     NamedNodeGroupChildren(NamedNodeGroupChildrenTransport),
     NamedNodeGroupAnchoredLast(NamedNodeGroupAnchoredLastTransport),
     Tight(TightTransport),
     Space(SpaceTransport),
     Newline(NewlineTransport),
+    Blankline(BlanklineTransport),
+    DoubleBlankline(DoubleBlanklineTransport),
+    Indent(IndentTransport),
+    Dedent(DedentTransport),
     Star(StarTransport),
     Plus(PlusTransport),
     Qmark(QmarkTransport),
@@ -60,7 +64,7 @@ pub enum AnyTransport {
     Rbrack(RbrackTransport),
     Lparen(LparenTransport),
     Rparen(RparenTransport),
-    MissingKeyword(MissingKeywordTransport),
+    MISSINGKeyword(MISSINGKeywordTransport),
     Underscore(UnderscoreTransport),
     Colon(ColonTransport),
     Bang(BangTransport),
@@ -96,7 +100,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Grouping(t) => t.prepare(ctx),
             AnyTransport::MissingNode(t) => t.prepare(ctx),
             AnyTransport::AnonymousNode(t) => t.prepare(ctx),
-            AnyTransport::NamedNode(t) => t.prepare(ctx),
             AnyTransport::FieldDefinition(t) => t.prepare(ctx),
             AnyTransport::NegatedField(t) => t.prepare(ctx),
             AnyTransport::Predicate(t) => t.prepare(ctx),
@@ -104,12 +107,17 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GroupExpressionArm(t) => t.prepare(ctx),
             AnyTransport::NamedNodeExpressionArm(t) => t.prepare(ctx),
             AnyTransport::GroupingGroup(t) => t.prepare(ctx),
-            AnyTransport::NamedNodeArm(t) => t.prepare(ctx),
+            AnyTransport::NamedNodePlain(t) => t.prepare(ctx),
+            AnyTransport::NamedNodeSupertyped(t) => t.prepare(ctx),
             AnyTransport::NamedNodeGroupChildren(t) => t.prepare(ctx),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.prepare(ctx),
             AnyTransport::Tight(t) => t.prepare(ctx),
             AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
+            AnyTransport::Blankline(t) => t.prepare(ctx),
+            AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
+            AnyTransport::Indent(t) => t.prepare(ctx),
+            AnyTransport::Dedent(t) => t.prepare(ctx),
             AnyTransport::Star(t) => t.prepare(ctx),
             AnyTransport::Plus(t) => t.prepare(ctx),
             AnyTransport::Qmark(t) => t.prepare(ctx),
@@ -119,7 +127,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack(t) => t.prepare(ctx),
             AnyTransport::Lparen(t) => t.prepare(ctx),
             AnyTransport::Rparen(t) => t.prepare(ctx),
-            AnyTransport::MissingKeyword(t) => t.prepare(ctx),
+            AnyTransport::MISSINGKeyword(t) => t.prepare(ctx),
             AnyTransport::Underscore(t) => t.prepare(ctx),
             AnyTransport::Colon(t) => t.prepare(ctx),
             AnyTransport::Bang(t) => t.prepare(ctx),
@@ -155,7 +163,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 // kind: program (PROGRAM)
-                27 => Ok(AnyTransport::Program(
+                31 => Ok(AnyTransport::Program(
                     ProgramTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: escape_sequence (ESCAPE_SEQUENCE)
@@ -163,7 +171,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     EscapeSequenceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: quantifier (QUANTIFIER)
-                31 => Ok(AnyTransport::Quantifier(
+                35 => Ok(AnyTransport::Quantifier(
                     QuantifierEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: identifier (IDENTIFIER)
@@ -175,23 +183,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: capture (CAPTURE)
-                33 => Ok(AnyTransport::Capture(
+                37 => Ok(AnyTransport::Capture(
                     CaptureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string (STRING)
-                34 => Ok(AnyTransport::String(
+                38 => Ok(AnyTransport::String(
                     StringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: immediate_string (IMMEDIATE_STRING)
-                35 => Ok(AnyTransport::ImmediateString(
+                39 => Ok(AnyTransport::ImmediateString(
                     ImmediateStringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string_content (STRING_CONTENT)
-                36 => Ok(AnyTransport::StringContent(
+                40 => Ok(AnyTransport::StringContent(
                     StringContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parameters (PARAMETERS)
-                37 => Ok(AnyTransport::Parameters(
+                41 => Ok(AnyTransport::Parameters(
                     ParametersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comment (COMMENT)
@@ -199,35 +207,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     CommentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list (LIST)
-                38 => Ok(AnyTransport::List(
+                42 => Ok(AnyTransport::List(
                     ListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: grouping (GROUPING)
-                39 => Ok(AnyTransport::Grouping(
+                43 => Ok(AnyTransport::Grouping(
                     GroupingTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: missing_node (MISSING_NODE)
-                40 => Ok(AnyTransport::MissingNode(
+                44 => Ok(AnyTransport::MissingNode(
                     MissingNodeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: anonymous_node (ANONYMOUS_NODE)
-                41 => Ok(AnyTransport::AnonymousNode(
+                45 => Ok(AnyTransport::AnonymousNode(
                     AnonymousNodeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: named_node (NAMED_NODE)
-                42 => Ok(AnyTransport::NamedNode(
-                    NamedNodeTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: field_definition (FIELD_DEFINITION)
-                44 => Ok(AnyTransport::FieldDefinition(
+                48 => Ok(AnyTransport::FieldDefinition(
                     FieldDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: negated_field (NEGATED_FIELD)
-                45 => Ok(AnyTransport::NegatedField(
+                49 => Ok(AnyTransport::NegatedField(
                     NegatedFieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: predicate (PREDICATE)
-                46 => Ok(AnyTransport::Predicate(
+                50 => Ok(AnyTransport::Predicate(
                     PredicateTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: predicate_type (PREDICATE_TYPE)
@@ -235,27 +239,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     PredicateTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: group_expression_arm (GROUP_EXPRESSION_ARM)
-                47 => Ok(AnyTransport::GroupExpressionArm(
+                51 => Ok(AnyTransport::GroupExpressionArm(
                     GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_node_expression_arm (NAMED_NODE_EXPRESSION_ARM)
-                48 => Ok(AnyTransport::NamedNodeExpressionArm(
+                52 => Ok(AnyTransport::NamedNodeExpressionArm(
                     NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: grouping_group (GROUPING_GROUP)
-                49 => Ok(AnyTransport::GroupingGroup(
+                53 => Ok(AnyTransport::GroupingGroup(
                     GroupingGroupTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: named_node_arm (NAMED_NODE_ARM)
-                50 => Ok(AnyTransport::NamedNodeArm(
-                    NamedNodeArmTransport::from_napi_value(env, napi_val)?
+                // kind: named_node_plain (NAMED_NODE_PLAIN)
+                55 => Ok(AnyTransport::NamedNodePlain(
+                    NamedNodePlainTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: named_node_supertyped (NAMED_NODE_SUPERTYPED)
+                56 => Ok(AnyTransport::NamedNodeSupertyped(
+                    NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_node_group_children (NAMED_NODE_GROUP_CHILDREN)
-                52 => Ok(AnyTransport::NamedNodeGroupChildren(
+                57 => Ok(AnyTransport::NamedNodeGroupChildren(
                     NamedNodeGroupChildrenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_node_group_anchored_last (NAMED_NODE_GROUP_ANCHORED_LAST)
-                53 => Ok(AnyTransport::NamedNodeGroupAnchoredLast(
+                58 => Ok(AnyTransport::NamedNodeGroupAnchoredLast(
                     NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tight (_TIGHT)
@@ -269,6 +277,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _newline (_NEWLINE)
                 26 => Ok(AnyTransport::Newline(
                     NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _blankline (_BLANKLINE)
+                27 => Ok(AnyTransport::Blankline(
+                    BlanklineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _double_blankline (_DOUBLE_BLANKLINE)
+                28 => Ok(AnyTransport::DoubleBlankline(
+                    DoubleBlanklineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _indent (_INDENT)
+                29 => Ok(AnyTransport::Indent(
+                    IndentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _dedent (_DEDENT)
+                30 => Ok(AnyTransport::Dedent(
+                    DedentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: star (STAR)
                 2 => Ok(AnyTransport::Star(
@@ -306,9 +330,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 16 => Ok(AnyTransport::Rparen(
                     RparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: missing_keyword (MISSING_KEYWORD)
-                17 => Ok(AnyTransport::MissingKeyword(
-                    MissingKeywordTransport::from_napi_value(env, napi_val)?
+                // kind: MISSING_keyword (MISSING_KEYWORD)
+                17 => Ok(AnyTransport::MISSINGKeyword(
+                    MISSINGKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: underscore (UNDERSCORE)
                 7 => Ok(AnyTransport::Underscore(
@@ -378,14 +402,24 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 #[derive(Debug, Clone)]
 pub enum TriviaTransport {
     Comment(CommentTransport),
+    Space(SpaceTransport),
+    Newline(NewlineTransport),
+    Blankline(BlanklineTransport),
+    DoubleBlankline(DoubleBlanklineTransport),
     Verbatim(VerbatimTransport),
+    Text(::sittir_core::trivia::TriviaText),
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             TriviaTransport::Comment(t) => t.prepare(ctx),
+            TriviaTransport::Space(t) => t.prepare(ctx),
+            TriviaTransport::Newline(t) => t.prepare(ctx),
+            TriviaTransport::Blankline(t) => t.prepare(ctx),
+            TriviaTransport::DoubleBlankline(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
+            TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
 }
@@ -394,7 +428,35 @@ impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TriviaTransport::Comment(t) => t.render(w),
+            TriviaTransport::Space(t) => t.render(w),
+            TriviaTransport::Newline(t) => t.render(w),
+            TriviaTransport::Blankline(t) => t.render(w),
+            TriviaTransport::DoubleBlankline(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
+            TriviaTransport::Text(t) => t.render(w),
+        }
+    }
+}
+
+impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
+    fn seam_text(&self) -> Option<&str> {
+        match self {
+            TriviaTransport::Space(t) => Some(&t.text),
+            TriviaTransport::Newline(t) => Some(&t.text),
+            TriviaTransport::Blankline(t) => Some(&t.text),
+            TriviaTransport::DoubleBlankline(t) => Some(&t.text),
+            _ => None,
+        }
+    }
+    fn kind(&self) -> Option<::sittir_core::types::KindId> {
+        match self {
+            TriviaTransport::Comment(_) => Some(::sittir_core::types::KindId(12)),
+            TriviaTransport::Space(_) => Some(::sittir_core::types::KindId(25)),
+            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(26)),
+            TriviaTransport::Blankline(_) => Some(::sittir_core::types::KindId(27)),
+            TriviaTransport::DoubleBlankline(_) => Some(::sittir_core::types::KindId(28)),
+            TriviaTransport::Text(t) => Some(t.kind),
+            _ => None,
         }
     }
 }
@@ -409,6 +471,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     12 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
+                    25 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    26 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    27 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    28 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -419,8 +485,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
+                let text: Option<String> = obj.get("$text")?;
                 match kind_id {
+                    12 if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(12), text: text.unwrap_or_default() })),
                     12 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
+                    25 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    26 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    27 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    28 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -442,47 +514,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
     }
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct TransportTrivia {
-    pub leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-    pub trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("leading")?;
-        let trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("trailing")?;
-        Ok(TransportTrivia { leading, trailing })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
-    fn type_name() -> &'static str {
-        "TransportTrivia"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
+pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;
 
 
 /// Text that is a slot's content with no kind of its own: a bare string in
@@ -539,7 +571,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefinitionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    28 => {
+                    32 => {
                         if let Ok(value) = AnonymousNodeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::AnonymousNode(value));
                         }
@@ -561,27 +593,33 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefinitionTransport {
                         if let Ok(value) = MissingNodeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MissingNode(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 28 in DefinitionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 32 in DefinitionTransport decodes as none of its members"))
                     },
-                    42 => Ok(Self::NamedNode(
+                    55 => Ok(Self::NamedNode(
                         NamedNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNode(
+                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    46 => Ok(Self::NamedNode(
+                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -595,7 +633,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefinitionTransport {
                     ::napi::Error::from_reason("$type property missing in DefinitionTransport")
                 )?;
                 match kind_id {
-                    28 => {
+                    32 => {
                         if let Ok(value) = AnonymousNodeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::AnonymousNode(value));
                         }
@@ -617,27 +655,33 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefinitionTransport {
                         if let Ok(value) = MissingNodeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::MissingNode(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 28 in DefinitionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 32 in DefinitionTransport decodes as none of its members"))
                     },
-                    42 => Ok(Self::NamedNode(
+                    55 => Ok(Self::NamedNode(
                         NamedNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNode(
+                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    46 => Ok(Self::NamedNode(
+                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -701,6 +745,133 @@ impl ::sittir_core::render::Render for DefinitionTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum NamedNodeTransport {
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            NamedNodeTransport::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeTransport::NamedNodeSupertyped(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    46 => {
+                        if let Ok(value) = NamedNodePlainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NamedNodePlain(value));
+                        }
+                        if let Ok(value) = NamedNodeSupertypedTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NamedNodeSupertyped(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 46 in NamedNodeTransport decodes as none of its members"))
+                    },
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodeTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in NamedNodeTransport")
+                )?;
+                match kind_id {
+                    46 => {
+                        if let Ok(value) = NamedNodePlainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NamedNodePlain(value));
+                        }
+                        if let Ok(value) = NamedNodeSupertypedTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NamedNodeSupertyped(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 46 in NamedNodeTransport decodes as none of its members"))
+                    },
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodeTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("NamedNodeTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("NamedNodeTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedNodeTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedNodeTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for NamedNodeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+fn named_node_transport_to_any(t: NamedNodeTransport) -> AnyTransport {
+    match t {
+        NamedNodeTransport::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeTransport::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
+    }
+}
+
+impl ::sittir_core::render::Render for NamedNodeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_named_node(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum NamedNodeGroupTransport {
     NamedNodeGroupChildren(NamedNodeGroupChildrenTransport),
     NamedNodeGroupAnchoredLast(NamedNodeGroupAnchoredLastTransport),
@@ -724,19 +895,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    51 => {
+                    54 => {
                         if let Ok(value) = NamedNodeGroupChildrenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NamedNodeGroupChildren(value));
                         }
                         if let Ok(value) = NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NamedNodeGroupAnchoredLast(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 51 in NamedNodeGroupTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 54 in NamedNodeGroupTransport decodes as none of its members"))
                     },
-                    52 => Ok(Self::NamedNodeGroupChildren(
+                    57 => Ok(Self::NamedNodeGroupChildren(
                         NamedNodeGroupChildrenTransport::from_napi_value(env, napi_val)?
                     )),
-                    53 => Ok(Self::NamedNodeGroupAnchoredLast(
+                    58 => Ok(Self::NamedNodeGroupAnchoredLast(
                         NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -750,19 +921,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupTransport {
                     ::napi::Error::from_reason("$type property missing in NamedNodeGroupTransport")
                 )?;
                 match kind_id {
-                    51 => {
+                    54 => {
                         if let Ok(value) = NamedNodeGroupChildrenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NamedNodeGroupChildren(value));
                         }
                         if let Ok(value) = NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NamedNodeGroupAnchoredLast(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 51 in NamedNodeGroupTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 54 in NamedNodeGroupTransport decodes as none of its members"))
                     },
-                    52 => Ok(Self::NamedNodeGroupChildren(
+                    57 => Ok(Self::NamedNodeGroupChildren(
                         NamedNodeGroupChildrenTransport::from_napi_value(env, napi_val)?
                     )),
-                    53 => Ok(Self::NamedNodeGroupAnchoredLast(
+                    58 => Ok(Self::NamedNodeGroupAnchoredLast(
                         NamedNodeGroupAnchoredLastTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -966,10 +1137,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParametersElementsTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     5 => Ok(Self::Identifier(
@@ -986,10 +1157,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParametersElementsTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ParametersElementsTransportSlot")
                 )?;
                 match kind_id {
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     5 => Ok(Self::Identifier(
@@ -1098,7 +1269,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListContentTransportSlot {
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1115,7 +1286,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListContentTransportSlot {
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1238,7 +1409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupingContentTransportSlot {
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1255,7 +1426,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupingContentTransportSlot {
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1375,7 +1546,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingNodeNameTransportSlot {
                     5 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1392,7 +1563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingNodeNameTransportSlot {
                     5 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1496,7 +1667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingNodeContentTransportSlot 
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1513,7 +1684,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingNodeContentTransportSlot 
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1628,7 +1799,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeNameTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1643,7 +1814,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeNameTransportSlot {
                 )?;
                 match kind_id {
                     7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
-                    34 => Ok(Self::String(
+                    38 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1749,7 +1920,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeContentTransportSlo
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1766,7 +1937,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousNodeContentTransportSlo
                     2 => Ok(Self::Literal1_73_74_61_72),
                     3 => Ok(Self::Literal2_70_6c_75_73),
                     4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    33 => Ok(Self::Capture(
+                    37 => Ok(Self::Capture(
                         CaptureTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -1837,249 +2008,6 @@ impl ::sittir_core::render::Render for AnonymousNodeContentTransportSlot {
                 Ok(())
             }
             AnonymousNodeContentTransportSlot::Literal3_71_6d_61_72_6b => {
-                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
-                let written = w.text("?");
-                written?;
-                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum NamedNodeNameTransportSlot {
-    Identifier(IdentifierTransport),
-    Literal4_75_6e_64_65_72_73_63_6f_72_65,
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for NamedNodeNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            NamedNodeNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            NamedNodeNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
-            NamedNodeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for NamedNodeNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Literal4_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeNameTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
-                    5 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeNameTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in NamedNodeNameTransportSlot")
-                )?;
-                match kind_id {
-                    7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
-                    5 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeNameTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("NamedNodeNameTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeNameTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NamedNodeNameTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeNameTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedNodeNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeNameTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedNodeNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_name_transport_slot_to_any(t: NamedNodeNameTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        NamedNodeNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal4_75_6e_64_65_72_73_63_6f_72_65,
-        NamedNodeNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for NamedNodeNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            NamedNodeNameTransportSlot::Identifier(inner) => inner.render(w),
-            NamedNodeNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
-            NamedNodeNameTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum NamedNodeQuantifierTransportSlot {
-    Literal1_73_74_61_72,
-    Literal2_70_6c_75_73,
-    Literal3_71_6d_61_72_6b,
-}
-
-impl ::sittir_core::prepare::Prepare for NamedNodeQuantifierTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            NamedNodeQuantifierTransportSlot::Literal1_73_74_61_72 => Ok(()),
-            NamedNodeQuantifierTransportSlot::Literal2_70_6c_75_73 => Ok(()),
-            NamedNodeQuantifierTransportSlot::Literal3_71_6d_61_72_6b => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for NamedNodeQuantifierTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Literal1_73_74_61_72 => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
-            Self::Literal2_70_6c_75_73 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
-            Self::Literal3_71_6d_61_72_6b => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeQuantifierTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    2 => Ok(Self::Literal1_73_74_61_72),
-                    3 => Ok(Self::Literal2_70_6c_75_73),
-                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeQuantifierTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in NamedNodeQuantifierTransportSlot")
-                )?;
-                match kind_id {
-                    2 => Ok(Self::Literal1_73_74_61_72),
-                    3 => Ok(Self::Literal2_70_6c_75_73),
-                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeQuantifierTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("NamedNodeQuantifierTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeQuantifierTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NamedNodeQuantifierTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeQuantifierTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedNodeQuantifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeQuantifierTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedNodeQuantifierTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn named_node_quantifier_transport_slot_to_any(t: NamedNodeQuantifierTransportSlot) -> AnyTransport {
-    match t {
-        NamedNodeQuantifierTransportSlot::Literal1_73_74_61_72 => AnyTransport::Literal1_73_74_61_72,
-        NamedNodeQuantifierTransportSlot::Literal2_70_6c_75_73 => AnyTransport::Literal2_70_6c_75_73,
-        NamedNodeQuantifierTransportSlot::Literal3_71_6d_61_72_6b => AnyTransport::Literal3_71_6d_61_72_6b,
-    }
-}
-
-impl ::sittir_core::render::Render for NamedNodeQuantifierTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            NamedNodeQuantifierTransportSlot::Literal1_73_74_61_72 => {
-                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
-                let written = w.text("*");
-                written?;
-                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
-                Ok(())
-            }
-            NamedNodeQuantifierTransportSlot::Literal2_70_6c_75_73 => {
-                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
-                let written = w.text("+");
-                written?;
-                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
-                Ok(())
-            }
-            NamedNodeQuantifierTransportSlot::Literal3_71_6d_61_72_6b => {
                 w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
                 let written = w.text("?");
                 written?;
@@ -2322,7 +2250,8 @@ impl ::sittir_core::render::Render for PredicateContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum GroupExpressionArmLeftTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -2335,7 +2264,8 @@ pub enum GroupExpressionArmLeftTransportSlot {
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            GroupExpressionArmLeftTransportSlot::NamedNode(t) => t.prepare(ctx),
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.prepare(ctx),
             GroupExpressionArmLeftTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -2350,7 +2280,8 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
 impl ::sittir_core::view::KindOf for GroupExpressionArmLeftTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -2371,28 +2302,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupExpressionArmLeftTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2406,28 +2340,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupExpressionArmLeftTransportS
                     ::napi::Error::from_reason("$type property missing in GroupExpressionArmLeftTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2472,7 +2409,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupExpressionArmLeftTranspor
 
 fn group_expression_arm_left_transport_slot_to_any(t: GroupExpressionArmLeftTransportSlot) -> AnyTransport {
     match t {
-        GroupExpressionArmLeftTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         GroupExpressionArmLeftTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         GroupExpressionArmLeftTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         GroupExpressionArmLeftTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -2486,7 +2424,8 @@ fn group_expression_arm_left_transport_slot_to_any(t: GroupExpressionArmLeftTran
 impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GroupExpressionArmLeftTransportSlot::NamedNode(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
             GroupExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
@@ -2500,7 +2439,8 @@ impl ::sittir_core::render::Render for GroupExpressionArmLeftTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum GroupExpressionArmRightTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -2513,7 +2453,8 @@ pub enum GroupExpressionArmRightTransportSlot {
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmRightTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            GroupExpressionArmRightTransportSlot::NamedNode(t) => t.prepare(ctx),
+            GroupExpressionArmRightTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             GroupExpressionArmRightTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             GroupExpressionArmRightTransportSlot::MissingNode(t) => t.prepare(ctx),
             GroupExpressionArmRightTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -2528,7 +2469,8 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmRightTransportSlot {
 impl ::sittir_core::view::KindOf for GroupExpressionArmRightTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -2549,28 +2491,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupExpressionArmRightTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2584,28 +2529,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupExpressionArmRightTransport
                     ::napi::Error::from_reason("$type property missing in GroupExpressionArmRightTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2650,7 +2598,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupExpressionArmRightTranspo
 
 fn group_expression_arm_right_transport_slot_to_any(t: GroupExpressionArmRightTransportSlot) -> AnyTransport {
     match t {
-        GroupExpressionArmRightTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        GroupExpressionArmRightTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         GroupExpressionArmRightTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         GroupExpressionArmRightTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         GroupExpressionArmRightTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -2664,7 +2613,8 @@ fn group_expression_arm_right_transport_slot_to_any(t: GroupExpressionArmRightTr
 impl ::sittir_core::render::Render for GroupExpressionArmRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GroupExpressionArmRightTransportSlot::NamedNode(inner) => inner.render(w),
+            GroupExpressionArmRightTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            GroupExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             GroupExpressionArmRightTransportSlot::AnonymousNode(inner) => inner.render(w),
             GroupExpressionArmRightTransportSlot::MissingNode(inner) => inner.render(w),
             GroupExpressionArmRightTransportSlot::Grouping(inner) => inner.render(w),
@@ -2678,7 +2628,8 @@ impl ::sittir_core::render::Render for GroupExpressionArmRightTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum NamedNodeExpressionArmLeftTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -2692,7 +2643,8 @@ pub enum NamedNodeExpressionArmLeftTransportSlot {
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNode(t) => t.prepare(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.prepare(ctx),
             NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -2708,7 +2660,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot
 impl ::sittir_core::view::KindOf for NamedNodeExpressionArmLeftTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -2730,31 +2683,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeExpressionArmLeftTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2768,31 +2724,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeExpressionArmLeftTransp
                     ::napi::Error::from_reason("$type property missing in NamedNodeExpressionArmLeftTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2837,7 +2796,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeExpressionArmLeftTran
 
 fn named_node_expression_arm_left_transport_slot_to_any(t: NamedNodeExpressionArmLeftTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeExpressionArmLeftTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         NamedNodeExpressionArmLeftTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -2852,7 +2812,8 @@ fn named_node_expression_arm_left_transport_slot_to_any(t: NamedNodeExpressionAr
 impl ::sittir_core::render::Render for NamedNodeExpressionArmLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNode(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeExpressionArmLeftTransportSlot::Grouping(inner) => inner.render(w),
@@ -2867,7 +2828,8 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmLeftTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum NamedNodeExpressionArmRightTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -2881,7 +2843,8 @@ pub enum NamedNodeExpressionArmRightTransportSlot {
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmRightTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeExpressionArmRightTransportSlot::NamedNode(t) => t.prepare(ctx),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             NamedNodeExpressionArmRightTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             NamedNodeExpressionArmRightTransportSlot::MissingNode(t) => t.prepare(ctx),
             NamedNodeExpressionArmRightTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -2897,7 +2860,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmRightTransportSlo
 impl ::sittir_core::view::KindOf for NamedNodeExpressionArmRightTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -2919,31 +2883,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeExpressionArmRightTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2957,31 +2924,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeExpressionArmRightTrans
                     ::napi::Error::from_reason("$type property missing in NamedNodeExpressionArmRightTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3026,7 +2996,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeExpressionArmRightTra
 
 fn named_node_expression_arm_right_transport_slot_to_any(t: NamedNodeExpressionArmRightTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeExpressionArmRightTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         NamedNodeExpressionArmRightTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         NamedNodeExpressionArmRightTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         NamedNodeExpressionArmRightTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -3041,7 +3012,8 @@ fn named_node_expression_arm_right_transport_slot_to_any(t: NamedNodeExpressionA
 impl ::sittir_core::render::Render for NamedNodeExpressionArmRightTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeExpressionArmRightTransportSlot::NamedNode(inner) => inner.render(w),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeExpressionArmRightTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeExpressionArmRightTransportSlot::AnonymousNode(inner) => inner.render(w),
             NamedNodeExpressionArmRightTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeExpressionArmRightTransportSlot::Grouping(inner) => inner.render(w),
@@ -3056,7 +3028,8 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmRightTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum GroupingGroupGroupExpressionTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -3069,7 +3042,8 @@ pub enum GroupingGroupGroupExpressionTransportSlot {
 impl ::sittir_core::prepare::Prepare for GroupingGroupGroupExpressionTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            GroupingGroupGroupExpressionTransportSlot::NamedNode(t) => t.prepare(ctx),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             GroupingGroupGroupExpressionTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             GroupingGroupGroupExpressionTransportSlot::MissingNode(t) => t.prepare(ctx),
             GroupingGroupGroupExpressionTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -3084,7 +3058,8 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupGroupExpressionTransportSl
 impl ::sittir_core::view::KindOf for GroupingGroupGroupExpressionTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -3105,28 +3080,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupingGroupGroupExpressionTran
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3140,28 +3118,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for GroupingGroupGroupExpressionTran
                     ::napi::Error::from_reason("$type property missing in GroupingGroupGroupExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    47 => Ok(Self::GroupExpressionArm(
+                    51 => Ok(Self::GroupExpressionArm(
                         GroupExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3206,7 +3187,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupingGroupGroupExpressionTr
 
 fn grouping_group_group_expression_transport_slot_to_any(t: GroupingGroupGroupExpressionTransportSlot) -> AnyTransport {
     match t {
-        GroupingGroupGroupExpressionTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         GroupingGroupGroupExpressionTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         GroupingGroupGroupExpressionTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         GroupingGroupGroupExpressionTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -3220,7 +3202,8 @@ fn grouping_group_group_expression_transport_slot_to_any(t: GroupingGroupGroupEx
 impl ::sittir_core::render::Render for GroupingGroupGroupExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GroupingGroupGroupExpressionTransportSlot::NamedNode(inner) => inner.render(w),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            GroupingGroupGroupExpressionTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             GroupingGroupGroupExpressionTransportSlot::AnonymousNode(inner) => inner.render(w),
             GroupingGroupGroupExpressionTransportSlot::MissingNode(inner) => inner.render(w),
             GroupingGroupGroupExpressionTransportSlot::Grouping(inner) => inner.render(w),
@@ -3233,23 +3216,283 @@ impl ::sittir_core::render::Render for GroupingGroupGroupExpressionTransportSlot
 }
 
 #[derive(Debug, Clone)]
-pub enum NamedNodeArmNameTransportSlot {
+pub enum NamedNodePlainNameTransportSlot {
+    Identifier(IdentifierTransport),
+    Literal4_75_6e_64_65_72_73_63_6f_72_65,
+    Verbatim(VerbatimTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for NamedNodePlainNameTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            NamedNodePlainNameTransportSlot::Identifier(t) => t.prepare(ctx),
+            NamedNodePlainNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
+            NamedNodePlainNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for NamedNodePlainNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Literal4_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NamedNodePlainNameTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
+                    5 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodePlainNameTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in NamedNodePlainNameTransportSlot")
+                )?;
+                match kind_id {
+                    7 => Ok(Self::Literal4_75_6e_64_65_72_73_63_6f_72_65),
+                    5 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodePlainNameTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
+            _ => Err(::napi::Error::from_reason("NamedNodePlainNameTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NamedNodePlainNameTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("NamedNodePlainNameTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodePlainNameTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedNodePlainNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodePlainNameTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedNodePlainNameTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn named_node_plain_name_transport_slot_to_any(t: NamedNodePlainNameTransportSlot) -> AnyTransport {
+    match t {
+        NamedNodePlainNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        NamedNodePlainNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal4_75_6e_64_65_72_73_63_6f_72_65,
+        NamedNodePlainNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl ::sittir_core::render::Render for NamedNodePlainNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NamedNodePlainNameTransportSlot::Identifier(inner) => inner.render(w),
+            NamedNodePlainNameTransportSlot::Literal4_75_6e_64_65_72_73_63_6f_72_65 => {
+                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE);
+                let written = w.text("_");
+                written?;
+                w.site_at(options::SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER);
+                Ok(())
+            }
+            NamedNodePlainNameTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum NamedNodePlainContentTransportSlot {
+    Capture(CaptureTransport),
+    Literal1_73_74_61_72,
+    Literal2_70_6c_75_73,
+    Literal3_71_6d_61_72_6b,
+}
+
+impl ::sittir_core::prepare::Prepare for NamedNodePlainContentTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            NamedNodePlainContentTransportSlot::Capture(t) => t.prepare(ctx),
+            NamedNodePlainContentTransportSlot::Literal1_73_74_61_72 => Ok(()),
+            NamedNodePlainContentTransportSlot::Literal2_70_6c_75_73 => Ok(()),
+            NamedNodePlainContentTransportSlot::Literal3_71_6d_61_72_6b => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for NamedNodePlainContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Capture(inner) => inner.kind_in(kinds),
+            Self::Literal1_73_74_61_72 => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
+            Self::Literal2_70_6c_75_73 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal3_71_6d_61_72_6b => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NamedNodePlainContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    2 => Ok(Self::Literal1_73_74_61_72),
+                    3 => Ok(Self::Literal2_70_6c_75_73),
+                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
+                    37 => Ok(Self::Capture(
+                        CaptureTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodePlainContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in NamedNodePlainContentTransportSlot")
+                )?;
+                match kind_id {
+                    2 => Ok(Self::Literal1_73_74_61_72),
+                    3 => Ok(Self::Literal2_70_6c_75_73),
+                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
+                    37 => Ok(Self::Capture(
+                        CaptureTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodePlainContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("NamedNodePlainContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NamedNodePlainContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("NamedNodePlainContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodePlainContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedNodePlainContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodePlainContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedNodePlainContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn named_node_plain_content_transport_slot_to_any(t: NamedNodePlainContentTransportSlot) -> AnyTransport {
+    match t {
+        NamedNodePlainContentTransportSlot::Capture(inner) => AnyTransport::Capture(inner),
+        NamedNodePlainContentTransportSlot::Literal1_73_74_61_72 => AnyTransport::Literal1_73_74_61_72,
+        NamedNodePlainContentTransportSlot::Literal2_70_6c_75_73 => AnyTransport::Literal2_70_6c_75_73,
+        NamedNodePlainContentTransportSlot::Literal3_71_6d_61_72_6b => AnyTransport::Literal3_71_6d_61_72_6b,
+    }
+}
+
+impl ::sittir_core::render::Render for NamedNodePlainContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NamedNodePlainContentTransportSlot::Capture(inner) => inner.render(w),
+            NamedNodePlainContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            NamedNodePlainContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            NamedNodePlainContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum NamedNodeSupertypedNameTransportSlot {
     ImmediateIdentifier(ImmediateIdentifierTransport),
     ImmediateString(ImmediateStringTransport),
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for NamedNodeArmNameTransportSlot {
+impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeArmNameTransportSlot::ImmediateIdentifier(t) => t.prepare(ctx),
-            NamedNodeArmNameTransportSlot::ImmediateString(t) => t.prepare(ctx),
-            NamedNodeArmNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.prepare(ctx),
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.prepare(ctx),
+            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for NamedNodeArmNameTransportSlot {
+impl ::sittir_core::view::KindOf for NamedNodeSupertypedNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ImmediateIdentifier(inner) => inner.kind_in(kinds),
@@ -3260,7 +3503,7 @@ impl ::sittir_core::view::KindOf for NamedNodeArmNameTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeArmNameTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeSupertypedNameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -3271,88 +3514,235 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeArmNameTransportSlot {
                     6 => Ok(Self::ImmediateIdentifier(
                         ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::ImmediateString(
+                    5 => Ok(Self::ImmediateIdentifier(
+                        ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::ImmediateString(
                         ImmediateStringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeArmNameTransportSlot",
+                        "unknown kind id {other} in NamedNodeSupertypedNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in NamedNodeArmNameTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in NamedNodeSupertypedNameTransportSlot")
                 )?;
                 match kind_id {
                     6 => Ok(Self::ImmediateIdentifier(
                         ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::ImmediateString(
+                    5 => Ok(Self::ImmediateIdentifier(
+                        ImmediateIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::ImmediateString(
                         ImmediateStringTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in NamedNodeArmNameTransportSlot",
+                        "unknown kind id {other} in NamedNodeSupertypedNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("NamedNodeArmNameTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("NamedNodeSupertypedNameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeArmNameTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeSupertypedNameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NamedNodeArmNameTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("NamedNodeSupertypedNameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeArmNameTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeSupertypedNameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NamedNodeArmNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        NamedNodeSupertypedNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeArmNameTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeSupertypedNameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedNodeArmNameTransportSlot::to_napi_value(env, *val)
+        NamedNodeSupertypedNameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn named_node_arm_name_transport_slot_to_any(t: NamedNodeArmNameTransportSlot) -> AnyTransport {
+fn named_node_supertyped_name_transport_slot_to_any(t: NamedNodeSupertypedNameTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeArmNameTransportSlot::ImmediateIdentifier(inner) => AnyTransport::ImmediateIdentifier(inner),
-        NamedNodeArmNameTransportSlot::ImmediateString(inner) => AnyTransport::ImmediateString(inner),
-        NamedNodeArmNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => AnyTransport::ImmediateIdentifier(inner),
+        NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => AnyTransport::ImmediateString(inner),
+        NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for NamedNodeArmNameTransportSlot {
+impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeArmNameTransportSlot::ImmediateIdentifier(inner) => inner.render(w),
-            NamedNodeArmNameTransportSlot::ImmediateString(inner) => { w.adjacent(); inner.render(w) },
-            NamedNodeArmNameTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
+            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(inner) => inner.render(w),
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(inner) => { w.adjacent(); inner.render(w) },
+            NamedNodeSupertypedNameTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum NamedNodeSupertypedContentTransportSlot {
+    Capture(CaptureTransport),
+    Literal1_73_74_61_72,
+    Literal2_70_6c_75_73,
+    Literal3_71_6d_61_72_6b,
+}
+
+impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedContentTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            NamedNodeSupertypedContentTransportSlot::Capture(t) => t.prepare(ctx),
+            NamedNodeSupertypedContentTransportSlot::Literal1_73_74_61_72 => Ok(()),
+            NamedNodeSupertypedContentTransportSlot::Literal2_70_6c_75_73 => Ok(()),
+            NamedNodeSupertypedContentTransportSlot::Literal3_71_6d_61_72_6b => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for NamedNodeSupertypedContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Capture(inner) => inner.kind_in(kinds),
+            Self::Literal1_73_74_61_72 => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
+            Self::Literal2_70_6c_75_73 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal3_71_6d_61_72_6b => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeSupertypedContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    2 => Ok(Self::Literal1_73_74_61_72),
+                    3 => Ok(Self::Literal2_70_6c_75_73),
+                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
+                    37 => Ok(Self::Capture(
+                        CaptureTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodeSupertypedContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in NamedNodeSupertypedContentTransportSlot")
+                )?;
+                match kind_id {
+                    2 => Ok(Self::Literal1_73_74_61_72),
+                    3 => Ok(Self::Literal2_70_6c_75_73),
+                    4 => Ok(Self::Literal3_71_6d_61_72_6b),
+                    37 => Ok(Self::Capture(
+                        CaptureTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in NamedNodeSupertypedContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("NamedNodeSupertypedContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NamedNodeSupertypedContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("NamedNodeSupertypedContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeSupertypedContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedNodeSupertypedContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeSupertypedContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedNodeSupertypedContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn named_node_supertyped_content_transport_slot_to_any(t: NamedNodeSupertypedContentTransportSlot) -> AnyTransport {
+    match t {
+        NamedNodeSupertypedContentTransportSlot::Capture(inner) => AnyTransport::Capture(inner),
+        NamedNodeSupertypedContentTransportSlot::Literal1_73_74_61_72 => AnyTransport::Literal1_73_74_61_72,
+        NamedNodeSupertypedContentTransportSlot::Literal2_70_6c_75_73 => AnyTransport::Literal2_70_6c_75_73,
+        NamedNodeSupertypedContentTransportSlot::Literal3_71_6d_61_72_6b => AnyTransport::Literal3_71_6d_61_72_6b,
+    }
+}
+
+impl ::sittir_core::render::Render for NamedNodeSupertypedContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NamedNodeSupertypedContentTransportSlot::Capture(inner) => inner.render(w),
+            NamedNodeSupertypedContentTransportSlot::Literal1_73_74_61_72 => {
+                w.site_at(options::SITE_QUANTIFIER_STAR_BEFORE);
+                let written = w.text("*");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_STAR_AFTER);
+                Ok(())
+            }
+            NamedNodeSupertypedContentTransportSlot::Literal2_70_6c_75_73 => {
+                w.site_at(options::SITE_QUANTIFIER_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_PLUS_AFTER);
+                Ok(())
+            }
+            NamedNodeSupertypedContentTransportSlot::Literal3_71_6d_61_72_6b => {
+                w.site_at(options::SITE_QUANTIFIER_QMARK_BEFORE);
+                let written = w.text("?");
+                written?;
+                w.site_at(options::SITE_QUANTIFIER_QMARK_AFTER);
+                Ok(())
+            }
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -3366,7 +3756,8 @@ pub enum NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNode(t) => t.prepare(ctx),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(t) => t.prepare(ctx),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -3382,7 +3773,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenNamedNodeExpressi
 impl ::sittir_core::view::KindOf for NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -3404,31 +3796,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupChildrenNamedNodeE
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3442,31 +3837,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupChildrenNamedNodeE
                     ::napi::Error::from_reason("$type property missing in NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3511,7 +3909,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupChildrenNamedNod
 
 fn named_node_group_children_named_node_expressions_transport_slot_to_any(t: NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -3526,7 +3925,8 @@ fn named_node_group_children_named_node_expressions_transport_slot_to_any(t: Nam
 impl ::sittir_core::render::Render for NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNode(inner) => inner.render(w),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => inner.render(w),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot::Grouping(inner) => inner.render(w),
@@ -3541,7 +3941,8 @@ impl ::sittir_core::render::Render for NamedNodeGroupChildrenNamedNodeExpression
 
 #[derive(Debug, Clone)]
 pub enum NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -3555,7 +3956,8 @@ pub enum NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNode(t) => t.prepare(ctx),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -3571,7 +3973,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastNamedNodeExpr
 impl ::sittir_core::view::KindOf for NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -3593,31 +3996,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupAnchoredLastNamedN
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3631,31 +4037,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupAnchoredLastNamedN
                     ::napi::Error::from_reason("$type property missing in NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3700,7 +4109,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastName
 
 fn named_node_group_anchored_last_named_node_expressions_transport_slot_to_any(t: NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -3715,7 +4125,8 @@ fn named_node_group_anchored_last_named_node_expressions_transport_slot_to_any(t
 impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNode(inner) => inner.render(w),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::AnonymousNode(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot::Grouping(inner) => inner.render(w),
@@ -3730,7 +4141,8 @@ impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastNamedNodeExpres
 
 #[derive(Debug, Clone)]
 pub enum NamedNodeGroupAnchoredLastLastTransportSlot {
-    NamedNode(NamedNodeTransport),
+    NamedNodePlain(NamedNodePlainTransport),
+    NamedNodeSupertyped(NamedNodeSupertypedTransport),
     AnonymousNode(AnonymousNodeTransport),
     MissingNode(MissingNodeTransport),
     Grouping(GroupingTransport),
@@ -3744,7 +4156,8 @@ pub enum NamedNodeGroupAnchoredLastLastTransportSlot {
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastLastTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNode(t) => t.prepare(ctx),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(t) => t.prepare(ctx),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(t) => t.prepare(ctx),
             NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(t) => t.prepare(ctx),
@@ -3760,7 +4173,8 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastLastTransport
 impl ::sittir_core::view::KindOf for NamedNodeGroupAnchoredLastLastTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::NamedNode(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::Grouping(inner) => inner.kind_in(kinds),
@@ -3782,31 +4196,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupAnchoredLastLastTr
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3820,31 +4237,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedNodeGroupAnchoredLastLastTr
                     ::napi::Error::from_reason("$type property missing in NamedNodeGroupAnchoredLastLastTransportSlot")
                 )?;
                 match kind_id {
-                    42 => Ok(Self::NamedNode(
-                        NamedNodeTransport::from_napi_value(env, napi_val)?
+                    55 => Ok(Self::NamedNodePlain(
+                        NamedNodePlainTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::AnonymousNode(
+                    56 => Ok(Self::NamedNodeSupertyped(
+                        NamedNodeSupertypedTransport::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::AnonymousNode(
                         AnonymousNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::MissingNode(
+                    44 => Ok(Self::MissingNode(
                         MissingNodeTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Grouping(
+                    43 => Ok(Self::Grouping(
                         GroupingTransport::from_napi_value(env, napi_val)?
                     )),
-                    46 => Ok(Self::Predicate(
+                    50 => Ok(Self::Predicate(
                         PredicateTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::List(
+                    42 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    44 => Ok(Self::FieldDefinition(
+                    48 => Ok(Self::FieldDefinition(
                         FieldDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    45 => Ok(Self::NegatedField(
+                    49 => Ok(Self::NegatedField(
                         NegatedFieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    48 => Ok(Self::NamedNodeExpressionArm(
+                    52 => Ok(Self::NamedNodeExpressionArm(
                         NamedNodeExpressionArmTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3889,7 +4309,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeGroupAnchoredLastLast
 
 fn named_node_group_anchored_last_last_transport_slot_to_any(t: NamedNodeGroupAnchoredLastLastTransportSlot) -> AnyTransport {
     match t {
-        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNode(inner) => AnyTransport::NamedNode(inner),
+        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(inner) => AnyTransport::NamedNodePlain(inner),
+        NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(inner) => AnyTransport::NamedNodeSupertyped(inner),
         NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(inner) => AnyTransport::AnonymousNode(inner),
         NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(inner) => AnyTransport::MissingNode(inner),
         NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(inner) => AnyTransport::Grouping(inner),
@@ -3904,7 +4325,8 @@ fn named_node_group_anchored_last_last_transport_slot_to_any(t: NamedNodeGroupAn
 impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastLastTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNode(inner) => inner.render(w),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodePlain(inner) => inner.render(w),
+            NamedNodeGroupAnchoredLastLastTransportSlot::NamedNodeSupertyped(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastLastTransportSlot::AnonymousNode(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastLastTransportSlot::MissingNode(inner) => inner.render(w),
             NamedNodeGroupAnchoredLastLastTransportSlot::Grouping(inner) => inner.render(w),
@@ -3933,12 +4355,12 @@ pub struct ProgramTransport {
 
 impl ::sittir_core::view::KindOf for ProgramTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ProgramTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(27) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(31) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -3951,6 +4373,8 @@ impl ::sittir_core::render::Render for ProgramTransport {
 
 impl ::sittir_core::prepare::Prepare for ProgramTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.definitions.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
@@ -4015,6 +4439,7 @@ impl ::sittir_core::render::Render for EscapeSequenceTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -4162,7 +4587,8 @@ impl ::sittir_core::render::Render for IdentifierTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for IdentifierTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -4264,7 +4690,8 @@ impl ::sittir_core::render::Render for ImmediateIdentifierTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for ImmediateIdentifierTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -4353,12 +4780,12 @@ pub struct CaptureTransport {
 
 impl ::sittir_core::view::KindOf for CaptureTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaptureTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(33) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(37) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4371,6 +4798,7 @@ impl ::sittir_core::render::Render for CaptureTransport {
 
 impl ::sittir_core::prepare::Prepare for CaptureTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         Ok(())
@@ -4410,12 +4838,12 @@ pub struct StringTransport {
 
 impl ::sittir_core::view::KindOf for StringTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StringTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(34) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(38) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4428,6 +4856,7 @@ impl ::sittir_core::render::Render for StringTransport {
 
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_content.prepare(ctx)?;
         Ok(())
@@ -4467,12 +4896,12 @@ pub struct ImmediateStringTransport {
 
 impl ::sittir_core::view::KindOf for ImmediateStringTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImmediateStringTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(35) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(39) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4485,6 +4914,7 @@ impl ::sittir_core::render::Render for ImmediateStringTransport {
 
 impl ::sittir_core::prepare::Prepare for ImmediateStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_content.prepare(ctx)?;
         Ok(())
@@ -4524,12 +4954,12 @@ pub struct StringContentTransport {
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StringContentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(36) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(40) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4542,6 +4972,7 @@ impl ::sittir_core::render::Render for StringContentTransport {
 
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -4582,12 +5013,12 @@ pub struct ParametersTransport {
 
 impl ::sittir_core::view::KindOf for ParametersTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParametersTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(37) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(41) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4600,6 +5031,8 @@ impl ::sittir_core::render::Render for ParametersTransport {
 
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.elements.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
@@ -4664,6 +5097,7 @@ impl ::sittir_core::render::Render for CommentTransport {
 
 impl ::sittir_core::prepare::Prepare for CommentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -4708,12 +5142,12 @@ pub struct ListTransport {
 
 impl ::sittir_core::view::KindOf for ListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(38) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(42) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4726,6 +5160,7 @@ impl ::sittir_core::render::Render for ListTransport {
 
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.definitions.iter().map(|item| item.coord()).collect();
@@ -4788,12 +5223,12 @@ pub struct GroupingTransport {
 
 impl ::sittir_core::view::KindOf for GroupingTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GroupingTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(39) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(43) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4806,6 +5241,7 @@ impl ::sittir_core::render::Render for GroupingTransport {
 
 impl ::sittir_core::prepare::Prepare for GroupingTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.grouping_group.iter().map(|item| item.coord()).collect();
@@ -4866,12 +5302,12 @@ pub struct MissingNodeTransport {
 
 impl ::sittir_core::view::KindOf for MissingNodeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MissingNodeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(40) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(44) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4884,6 +5320,7 @@ impl ::sittir_core::render::Render for MissingNodeTransport {
 
 impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -4936,12 +5373,12 @@ pub struct AnonymousNodeTransport {
 
 impl ::sittir_core::view::KindOf for AnonymousNodeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AnonymousNodeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(41) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(45) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -4954,6 +5391,7 @@ impl ::sittir_core::render::Render for AnonymousNodeTransport {
 
 impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -4991,75 +5429,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousNodeTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct NamedNodeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<::sittir_core::SlotValue<NamedNodeNameTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_quantifier"))]
-    pub quantifier: Option<Vec<::sittir_core::SlotValue<QuantifierEnum>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_arm"))]
-    pub named_node_arm: Option<::sittir_core::SlotValue<NamedNodeArmTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_group"))]
-    pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_capture"))]
-    pub capture: Option<Vec<::sittir_core::SlotValue<CaptureTransport>>>,
-}
-
-impl ::sittir_core::view::KindOf for NamedNodeTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for NamedNodeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(42) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for NamedNodeTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_named_node(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.name.prepare(ctx)?;
-        self.quantifier.prepare(ctx)?;
-        self.named_node_arm.prepare(ctx)?;
-        self.named_node_group.prepare(ctx)?;
-        self.capture.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        NamedNodeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedNodeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -5073,12 +5442,12 @@ pub struct FieldDefinitionTransport {
 
 impl ::sittir_core::view::KindOf for FieldDefinitionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldDefinitionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(44) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(48) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5091,6 +5460,7 @@ impl ::sittir_core::render::Render for FieldDefinitionTransport {
 
 impl ::sittir_core::prepare::Prepare for FieldDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.definition.prepare(ctx)?;
@@ -5131,12 +5501,12 @@ pub struct NegatedFieldTransport {
 
 impl ::sittir_core::view::KindOf for NegatedFieldTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NegatedFieldTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(45) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(49) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5149,6 +5519,7 @@ impl ::sittir_core::render::Render for NegatedFieldTransport {
 
 impl ::sittir_core::prepare::Prepare for NegatedFieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.identifier.prepare(ctx)?;
         Ok(())
@@ -5182,24 +5553,24 @@ pub struct PredicateTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<ParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_immediate_identifier"))]
-    pub immediate_identifier: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
 }
 
 impl ::sittir_core::view::KindOf for PredicateTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PredicateTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(46) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(50) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5212,11 +5583,12 @@ impl ::sittir_core::render::Render for PredicateTransport {
 
 impl ::sittir_core::prepare::Prepare for PredicateTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.parameters.prepare(ctx)?;
         self.content.prepare(ctx)?;
-        self.immediate_identifier.prepare(ctx)?;
         Ok(())
     }
 }
@@ -5344,12 +5716,12 @@ pub struct GroupExpressionArmTransport {
 
 impl ::sittir_core::view::KindOf for GroupExpressionArmTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GroupExpressionArmTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(47) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(51) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5362,6 +5734,7 @@ impl ::sittir_core::render::Render for GroupExpressionArmTransport {
 
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -5404,12 +5777,12 @@ pub struct NamedNodeExpressionArmTransport {
 
 impl ::sittir_core::view::KindOf for NamedNodeExpressionArmTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedNodeExpressionArmTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(48) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(52) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5422,6 +5795,7 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmTransport {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -5462,12 +5836,12 @@ pub struct GroupingGroupTransport {
 
 impl ::sittir_core::view::KindOf for GroupingGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GroupingGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(49) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(53) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5480,6 +5854,7 @@ impl ::sittir_core::render::Render for GroupingGroupTransport {
 
 impl ::sittir_core::prepare::Prepare for GroupingGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group_expression.prepare(ctx)?;
         Ok(())
@@ -5508,7 +5883,81 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GroupingGroupTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct NamedNodeArmTransport {
+pub struct NamedNodePlainTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
+    pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ::sittir_core::SlotValue<NamedNodePlainNameTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_group"))]
+    pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<::sittir_core::SlotValue<NamedNodePlainContentTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
+    pub content_separator_space: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for NamedNodePlainTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for NamedNodePlainTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(55) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for NamedNodePlainTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_named_node_plain(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_PLAIN_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.content_separator_space.is_none() { self.content_separator_space = before; }
+            let _ = after;
+        }
+        self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_PLAIN_CONTENT_SEPARATOR_SPACE].arm);
+        if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_CONTENT, ctx); }
+        self.name.prepare(ctx)?;
+        self.named_node_group.prepare(ctx)?;
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodePlainTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        NamedNodePlainTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodePlainTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        NamedNodePlainTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct NamedNodeSupertypedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
@@ -5516,53 +5965,70 @@ pub struct NamedNodeArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_supertype"))]
     pub supertype: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: ::sittir_core::SlotValue<NamedNodeArmNameTransportSlot, true>,
+    pub name: ::sittir_core::SlotValue<NamedNodeSupertypedNameTransportSlot, true>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_node_group"))]
+    pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<::sittir_core::SlotValue<NamedNodeSupertypedContentTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
+    pub content_separator_space: Option<u16>,
 }
 
-impl ::sittir_core::view::KindOf for NamedNodeArmTransport {
+impl ::sittir_core::view::KindOf for NamedNodeSupertypedTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for NamedNodeArmTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(50) }
+impl ::sittir_core::options::Edged for NamedNodeSupertypedTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(56) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for NamedNodeArmTransport {
+impl ::sittir_core::render::Render for NamedNodeSupertypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_named_node_arm(self, w))
+        render_with_trivia!(self, w, render_named_node_supertyped(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NamedNodeArmTransport {
+impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.content_separator_space.is_none() { self.content_separator_space = before; }
+            let _ = after;
+        }
+        self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_SUPERTYPED_CONTENT_SEPARATOR_SPACE].arm);
+        if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_CONTENT, ctx); }
         self.supertype.prepare(ctx)?;
         self.name.prepare(ctx)?;
+        self.named_node_group.prepare(ctx)?;
+        self.content.prepare(ctx)?;
         Ok(())
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeArmTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NamedNodeSupertypedTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NamedNodeArmTransport::from_napi_value(env, napi_val).map(Box::new)
+        NamedNodeSupertypedTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeArmTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedNodeSupertypedTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NamedNodeArmTransport::to_napi_value(env, *val)
+        NamedNodeSupertypedTransport::to_napi_value(env, *val)
     }
 }
 
@@ -5581,12 +6047,12 @@ pub struct NamedNodeGroupChildrenTransport {
 
 impl ::sittir_core::view::KindOf for NamedNodeGroupChildrenTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedNodeGroupChildrenTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(52) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(57) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5599,6 +6065,7 @@ impl ::sittir_core::render::Render for NamedNodeGroupChildrenTransport {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.named_node_expressions.iter().map(|item| item.coord()).collect();
@@ -5650,12 +6117,12 @@ pub struct NamedNodeGroupAnchoredLastTransport {
 
 impl ::sittir_core::view::KindOf for NamedNodeGroupAnchoredLastTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedNodeGroupAnchoredLastTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(53) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(58) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -5668,6 +6135,7 @@ impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastTransport {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.named_node_expressions.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -5729,7 +6197,8 @@ impl ::sittir_core::render::Render for TightTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for TightTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -5831,7 +6300,8 @@ impl ::sittir_core::render::Render for SpaceTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for SpaceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -5935,7 +6405,8 @@ impl ::sittir_core::render::Render for NewlineTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for NewlineTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6014,6 +6485,422 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct BlanklineTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for BlanklineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for BlanklineTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(27) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for BlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for BlanklineTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BlanklineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BlanklineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BlanklineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DoubleBlanklineTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(28) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for DoubleBlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n\n\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n\n\n".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DoubleBlanklineTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DoubleBlanklineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DoubleBlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DoubleBlanklineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IndentTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for IndentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for IndentTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(29) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for IndentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for IndentTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IndentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IndentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IndentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DedentTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DedentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for DedentTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(30) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for DedentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DedentTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DedentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DedentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DedentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct StarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -6034,12 +6921,13 @@ impl ::sittir_core::options::Edged for StarTransport {
 
 impl ::sittir_core::render::Render for StarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StarTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6138,12 +7026,13 @@ impl ::sittir_core::options::Edged for PlusTransport {
 
 impl ::sittir_core::render::Render for PlusTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PlusTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6242,12 +7131,13 @@ impl ::sittir_core::options::Edged for QmarkTransport {
 
 impl ::sittir_core::render::Render for QmarkTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for QmarkTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6346,12 +7236,13 @@ impl ::sittir_core::options::Edged for AtTransport {
 
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6450,12 +7341,13 @@ impl ::sittir_core::options::Edged for DquoteTransport {
 
 impl ::sittir_core::render::Render for DquoteTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DquoteTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6554,12 +7446,13 @@ impl ::sittir_core::options::Edged for LbrackTransport {
 
 impl ::sittir_core::render::Render for LbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LbrackTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6658,12 +7551,13 @@ impl ::sittir_core::options::Edged for RbrackTransport {
 
 impl ::sittir_core::render::Render for RbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RbrackTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6762,12 +7656,13 @@ impl ::sittir_core::options::Edged for LparenTransport {
 
 impl ::sittir_core::render::Render for LparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LparenTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6866,12 +7761,13 @@ impl ::sittir_core::options::Edged for RparenTransport {
 
 impl ::sittir_core::render::Render for RparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RparenTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -6950,38 +7846,39 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct MissingKeywordTransport {
+pub struct MISSINGKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for MissingKeywordTransport {
+impl ::sittir_core::view::KindOf for MISSINGKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for MissingKeywordTransport {
+impl ::sittir_core::options::Edged for MISSINGKeywordTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(17) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for MissingKeywordTransport {
+impl ::sittir_core::render::Render for MISSINGKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for MissingKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+impl ::sittir_core::prepare::Prepare for MISSINGKeywordTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MISSINGKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7006,7 +7903,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MISSINGKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7024,7 +7921,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for MISSINGKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -7034,22 +7931,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MissingKeywordTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MISSINGKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MissingKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+        MISSINGKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MissingKeywordTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MISSINGKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MissingKeywordTransport::to_napi_value(env, *val)
+        MISSINGKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -7074,12 +7971,13 @@ impl ::sittir_core::options::Edged for UnderscoreTransport {
 
 impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for UnderscoreTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7178,12 +8076,13 @@ impl ::sittir_core::options::Edged for ColonTransport {
 
 impl ::sittir_core::render::Render for ColonTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ColonTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7282,12 +8181,13 @@ impl ::sittir_core::options::Edged for BangTransport {
 
 impl ::sittir_core::render::Render for BangTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BangTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7386,12 +8286,13 @@ impl ::sittir_core::options::Edged for PoundTransport {
 
 impl ::sittir_core::render::Render for PoundTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PoundTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7490,12 +8391,13 @@ impl ::sittir_core::options::Edged for DotTransport {
 
 impl ::sittir_core::render::Render for DotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DotTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7594,12 +8496,13 @@ impl ::sittir_core::options::Edged for SlashTransport {
 
 impl ::sittir_core::render::Render for SlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SlashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -7679,7 +8582,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashTransport> {
 
 impl ::sittir_core::prepare::SeatTarget for CaptureTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(33)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(37)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7688,7 +8591,7 @@ impl ::sittir_core::prepare::SeatTarget for CaptureTransport {
 
 impl ::sittir_core::prepare::SeatTarget for StringTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(34)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(38)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7697,7 +8600,7 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ListTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(38)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(42)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7706,7 +8609,7 @@ impl ::sittir_core::prepare::SeatTarget for ListTransport {
 
 impl ::sittir_core::prepare::SeatTarget for GroupingTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(39)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(43)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7715,7 +8618,7 @@ impl ::sittir_core::prepare::SeatTarget for GroupingTransport {
 
 impl ::sittir_core::prepare::SeatTarget for MissingNodeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(40)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(44)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7724,16 +8627,7 @@ impl ::sittir_core::prepare::SeatTarget for MissingNodeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AnonymousNodeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(41)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for NamedNodeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(42)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(45)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7742,7 +8636,7 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for FieldDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(44)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(48)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7751,7 +8645,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldDefinitionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for NegatedFieldTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(45)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(49)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7760,7 +8654,7 @@ impl ::sittir_core::prepare::SeatTarget for NegatedFieldTransport {
 
 impl ::sittir_core::prepare::SeatTarget for PredicateTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(46)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(50)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7769,7 +8663,7 @@ impl ::sittir_core::prepare::SeatTarget for PredicateTransport {
 
 impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(48)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(52)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -7778,11 +8672,29 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmTransport {
 
 impl ::sittir_core::prepare::SeatTarget for GroupingGroupTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(49)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(53)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let ::sittir_core::SlotValue::Transport(inner) = &mut self.group_expression {
             return inner.seat_target(table);
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for NamedNodePlainTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(55)) {
+            return Some((self.edges.get_or_insert_with(Default::default), site));
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for NamedNodeSupertypedTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(56)) {
+            return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
     }
@@ -7798,6 +8710,17 @@ impl ::sittir_core::prepare::SeatTarget for DefinitionTransport {
             Self::Predicate(t) => t.seat_target(table),
             Self::List(t) => t.seat_target(table),
             Self::FieldDefinition(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for NamedNodeTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -7878,7 +8801,8 @@ impl ::sittir_core::prepare::SeatTarget for AnonymousNodeContentTransportSlot {
 impl ::sittir_core::prepare::SeatTarget for GroupExpressionArmLeftTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7894,7 +8818,8 @@ impl ::sittir_core::prepare::SeatTarget for GroupExpressionArmLeftTransportSlot 
 impl ::sittir_core::prepare::SeatTarget for GroupExpressionArmRightTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7910,7 +8835,8 @@ impl ::sittir_core::prepare::SeatTarget for GroupExpressionArmRightTransportSlot
 impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmLeftTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7928,7 +8854,8 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmLeftTransportS
 impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmRightTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7946,7 +8873,8 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeExpressionArmRightTransport
 impl ::sittir_core::prepare::SeatTarget for GroupingGroupGroupExpressionTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7959,10 +8887,31 @@ impl ::sittir_core::prepare::SeatTarget for GroupingGroupGroupExpressionTranspor
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for NamedNodePlainContentTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::Capture(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for NamedNodeSupertypedContentTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::Capture(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7980,7 +8929,8 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeGroupChildrenNamedNodeExpre
 impl ::sittir_core::prepare::SeatTarget for NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -7998,7 +8948,8 @@ impl ::sittir_core::prepare::SeatTarget for NamedNodeGroupAnchoredLastNamedNodeE
 impl ::sittir_core::prepare::SeatTarget for NamedNodeGroupAnchoredLastLastTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NamedNode(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::Grouping(t) => t.seat_target(table),
@@ -8022,12 +8973,13 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::Grouping(t) => t.seat_target(table),
             Self::MissingNode(t) => t.seat_target(table),
             Self::AnonymousNode(t) => t.seat_target(table),
-            Self::NamedNode(t) => t.seat_target(table),
             Self::FieldDefinition(t) => t.seat_target(table),
             Self::NegatedField(t) => t.seat_target(table),
             Self::Predicate(t) => t.seat_target(table),
             Self::NamedNodeExpressionArm(t) => t.seat_target(table),
             Self::GroupingGroup(t) => t.seat_target(table),
+            Self::NamedNodePlain(t) => t.seat_target(table),
+            Self::NamedNodeSupertyped(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -8045,10 +8997,13 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         after: node.definitions_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_PROGRAM_DEFINITIONS_START),
+        tail: Some(options::SITE_PROGRAM_DEFINITIONS_END),
     };
+    w.edge(::sittir_core::types::KindId(31), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "definitions", w)?;
     definitions.render(w)?;
+    w.edge(::sittir_core::types::KindId(31), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8075,21 +9030,21 @@ fn render_immediate_identifier(t: &ImmediateIdentifierTransport, w: &mut dyn ::s
 
 fn render_capture(node: &CaptureTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(37), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("@")?;
     w.adjacent();
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(37), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let string_content = View::new(&node.string_content, "{}");
-    w.edge(::sittir_core::types::KindId(34), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(38), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("\"")?;
     string_content.render(w)?;
     w.text("\"")?;
-    w.edge(::sittir_core::types::KindId(34), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(38), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8098,7 +9053,7 @@ fn render_immediate_string(node: &ImmediateStringTransport, w: &mut dyn ::sittir
     w.text("\"")?;
     string_content.render(w)?;
     w.text("\"")?;
-    w.edge(::sittir_core::types::KindId(35), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8127,10 +9082,12 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_PARAMETERS_ELEMENTS_START),
+        tail: Some(options::SITE_PARAMETERS_ELEMENTS_END),
     };
+    w.edge(::sittir_core::types::KindId(41), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     elements.render(w)?;
+    w.edge(::sittir_core::types::KindId(41), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8165,7 +9122,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(38), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(42), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
     definitions.render(w)?;
@@ -8173,7 +9130,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
     w.text("]")?;
     w.site_at(options::SITE_LIST_RBRACK_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(38), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(42), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8200,7 +9157,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(43), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_GROUPING_LPAREN_AFTER);
     grouping_group.render(w)?;
@@ -8208,7 +9165,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
     w.text(")")?;
     w.site_at(options::SITE_GROUPING_RPAREN_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(43), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8221,22 +9178,23 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
         after: node.content_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_MISSING_NODE_CONTENT_START),
+        tail: Some(options::SITE_MISSING_NODE_CONTENT_END),
     };
     let name = View::new(&node.name, "{}");
-    w.edge(::sittir_core::types::KindId(40), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_MISSING_NODE_LPAREN_AFTER);
     w.site_at(options::SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE);
     w.text("MISSING")?;
     w.site_at(options::SITE_MISSING_NODE_MISSING_KEYWORD_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "name", w)?;
     name.render(w)?;
     w.site_at(options::SITE_MISSING_NODE_RPAREN_BEFORE);
     w.text(")")?;
     w.site_at(options::SITE_MISSING_NODE_RPAREN_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(40), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8249,100 +9207,59 @@ fn render_anonymous_node(node: &AnonymousNodeTransport, w: &mut dyn ::sittir_cor
         after: node.content_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_ANONYMOUS_NODE_CONTENT_START),
+        tail: Some(options::SITE_ANONYMOUS_NODE_CONTENT_END),
     };
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(41), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(41), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
-    Ok(())
-}
-
-fn render_named_node(node: &NamedNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let capture = ListView {
-        items: node.capture.as_deref().unwrap_or(&[]),
-        template: "{}",
-        token: "",
-        before: 0,
-        after: 0,
-        leading: false,
-        trailing: false,
-        head: None,
-        tail: None,
-    };
-    let name = View::new(&node.name, "{}");
-    let named_node_arm = View::new(&node.named_node_arm, "{}");
-    let named_node_group = View::new(&node.named_node_group, "{}");
-    let quantifier = ListView {
-        items: node.quantifier.as_deref().unwrap_or(&[]),
-        template: "{}",
-        token: "",
-        before: 0,
-        after: 0,
-        leading: false,
-        trailing: false,
-        head: None,
-        tail: None,
-    };
-    w.edge(::sittir_core::types::KindId(42), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    w.text("(")?;
-    w.site_at(options::SITE_NAMED_NODE_LPAREN_AFTER);
-    name.render(w)?;
-    named_node_arm.render(w)?;
-    named_node_group.render(w)?;
-    w.site_at(options::SITE_NAMED_NODE_RPAREN_BEFORE);
-    w.text(")")?;
-    w.site_at(options::SITE_NAMED_NODE_RPAREN_AFTER);
-    capture.render(w)?;
-    quantifier.render(w)?;
-    w.edge(::sittir_core::types::KindId(42), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_field_definition(node: &FieldDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let definition = &node.definition;
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(48), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_FIELD_DEFINITION_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FIELD_DEFINITION_COLON_AFTER);
     definition.render(w)?;
-    w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(48), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_negated_field(node: &NegatedFieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let identifier = &node.identifier;
-    w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(49), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("!")?;
     w.adjacent();
     w.site_at(options::SITE_NEGATED_FIELD_BANG_AFTER);
     identifier.render(w)?;
-    w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(49), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let immediate_identifier = &node.immediate_identifier;
+    let name = &node.name;
     let parameters = View::new(&node.parameters, "{}");
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(46), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.adjacent();
     w.site_at(options::SITE_PREDICATE_LPAREN_AFTER);
     content.render(w)?;
     w.adjacent();
-    immediate_identifier.render(w)?;
+    name.render(w)?;
     w.adjacent();
     type_.render(w)?;
     parameters.render(w)?;
     w.site_at(options::SITE_PREDICATE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(46), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8354,46 +9271,94 @@ fn render_predicate_type(t: &PredicateTypeEnum, w: &mut dyn ::sittir_core::rende
 fn render_group_expression_arm(node: &GroupExpressionArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_GROUP_EXPRESSION_ARM_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_GROUP_EXPRESSION_ARM_DOT_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_named_node_expression_arm(node: &NamedNodeExpressionArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(48), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(52), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_NAMED_NODE_EXPRESSION_ARM_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_NAMED_NODE_EXPRESSION_ARM_DOT_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(48), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(52), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_grouping_group(node: &GroupingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_expression = &node.group_expression;
-    w.edge(::sittir_core::types::KindId(49), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(53), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     group_expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(49), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(53), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
-fn render_named_node_arm(node: &NamedNodeArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = ListView {
+        items: node.content.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: 0,
+        after: node.content_separator_space.unwrap_or(0),
+        leading: false,
+        trailing: false,
+        head: Some(options::SITE_NAMED_NODE_PLAIN_CONTENT_START),
+        tail: Some(options::SITE_NAMED_NODE_PLAIN_CONTENT_END),
+    };
     let name = &node.name;
+    let named_node_group = View::new(&node.named_node_group, "{}");
+    w.edge(::sittir_core::types::KindId(55), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.text("(")?;
+    w.adjacent();
+    w.site_at(options::SITE_NAMED_NODE_PLAIN_LPAREN_AFTER);
+    name.render(w)?;
+    named_node_group.render(w)?;
+    w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE);
+    w.text(")")?;
+    w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_AFTER);
+    content.render(w)?;
+    w.edge(::sittir_core::types::KindId(55), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    Ok(())
+}
+
+fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = ListView {
+        items: node.content.as_deref().unwrap_or(&[]),
+        template: "{}",
+        token: "",
+        before: 0,
+        after: node.content_separator_space.unwrap_or(0),
+        leading: false,
+        trailing: false,
+        head: Some(options::SITE_NAMED_NODE_SUPERTYPED_CONTENT_START),
+        tail: Some(options::SITE_NAMED_NODE_SUPERTYPED_CONTENT_END),
+    };
+    let name = &node.name;
+    let named_node_group = View::new(&node.named_node_group, "{}");
     let supertype = &node.supertype;
-    w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.text("(")?;
+    w.adjacent();
+    w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_LPAREN_AFTER);
     supertype.render(w)?;
     w.text("/")?;
     w.adjacent();
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    named_node_group.render(w)?;
+    w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE);
+    w.text(")")?;
+    w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_AFTER);
+    content.render(w)?;
+    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8406,12 +9371,12 @@ fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &
         after: node.named_node_expressions_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START),
+        tail: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END),
     };
-    w.edge(::sittir_core::types::KindId(52), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     named_node_expressions.render(w)?;
-    w.edge(::sittir_core::types::KindId(52), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8425,15 +9390,15 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
         after: node.named_node_expressions_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START),
+        tail: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END),
     };
-    w.edge(::sittir_core::types::KindId(53), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     named_node_expressions.render(w)?;
     last.render(w)?;
     w.site_at(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_BEFORE);
     w.text(".")?;
-    w.edge(::sittir_core::types::KindId(53), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -8447,6 +9412,22 @@ fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSin
 
 fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_double_blankline(t: &DoubleBlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_indent(t: &IndentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.indent(); w.seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
 fn render_star(t: &StarTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -8485,7 +9466,7 @@ fn render_rparen(t: &RparenTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_missing_keyword(t: &MissingKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_missingkeyword(t: &MISSINGKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -8522,6 +9503,13 @@ fn render_definition(t: &DefinitionTransport, w: &mut dyn ::sittir_core::render:
         DefinitionTransport::Predicate(inner) => inner.render(w),
         DefinitionTransport::List(inner) => inner.render(w),
         DefinitionTransport::FieldDefinition(inner) => inner.render(w),
+    }
+}
+
+fn render_named_node(t: &NamedNodeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        NamedNodeTransport::NamedNodePlain(inner) => inner.render(w),
+        NamedNodeTransport::NamedNodeSupertyped(inner) => inner.render(w),
     }
 }
 
@@ -8569,7 +9557,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Grouping(inner) => inner.kind_in(kinds),
             Self::MissingNode(inner) => inner.kind_in(kinds),
             Self::AnonymousNode(inner) => inner.kind_in(kinds),
-            Self::NamedNode(inner) => inner.kind_in(kinds),
             Self::FieldDefinition(inner) => inner.kind_in(kinds),
             Self::NegatedField(inner) => inner.kind_in(kinds),
             Self::Predicate(inner) => inner.kind_in(kinds),
@@ -8577,12 +9564,17 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::GroupExpressionArm(inner) => inner.kind_in(kinds),
             Self::NamedNodeExpressionArm(inner) => inner.kind_in(kinds),
             Self::GroupingGroup(inner) => inner.kind_in(kinds),
-            Self::NamedNodeArm(inner) => inner.kind_in(kinds),
+            Self::NamedNodePlain(inner) => inner.kind_in(kinds),
+            Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupChildren(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupAnchoredLast(inner) => inner.kind_in(kinds),
             Self::Tight(inner) => inner.kind_in(kinds),
             Self::Space(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
+            Self::Blankline(inner) => inner.kind_in(kinds),
+            Self::DoubleBlankline(inner) => inner.kind_in(kinds),
+            Self::Indent(inner) => inner.kind_in(kinds),
+            Self::Dedent(inner) => inner.kind_in(kinds),
             Self::Star(inner) => inner.kind_in(kinds),
             Self::Plus(inner) => inner.kind_in(kinds),
             Self::Qmark(inner) => inner.kind_in(kinds),
@@ -8592,7 +9584,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Rbrack(inner) => inner.kind_in(kinds),
             Self::Lparen(inner) => inner.kind_in(kinds),
             Self::Rparen(inner) => inner.kind_in(kinds),
-            Self::MissingKeyword(inner) => inner.kind_in(kinds),
+            Self::MISSINGKeyword(inner) => inner.kind_in(kinds),
             Self::Underscore(inner) => inner.kind_in(kinds),
             Self::Colon(inner) => inner.kind_in(kinds),
             Self::Bang(inner) => inner.kind_in(kinds),
@@ -8622,7 +9614,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Grouping(t) => t.render(w),
             AnyTransport::MissingNode(t) => t.render(w),
             AnyTransport::AnonymousNode(t) => t.render(w),
-            AnyTransport::NamedNode(t) => t.render(w),
             AnyTransport::FieldDefinition(t) => t.render(w),
             AnyTransport::NegatedField(t) => t.render(w),
             AnyTransport::Predicate(t) => t.render(w),
@@ -8630,12 +9621,17 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::GroupExpressionArm(t) => t.render(w),
             AnyTransport::NamedNodeExpressionArm(t) => t.render(w),
             AnyTransport::GroupingGroup(t) => t.render(w),
-            AnyTransport::NamedNodeArm(t) => t.render(w),
+            AnyTransport::NamedNodePlain(t) => t.render(w),
+            AnyTransport::NamedNodeSupertyped(t) => t.render(w),
             AnyTransport::NamedNodeGroupChildren(t) => t.render(w),
             AnyTransport::NamedNodeGroupAnchoredLast(t) => t.render(w),
             AnyTransport::Tight(t) => t.render(w),
             AnyTransport::Space(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
+            AnyTransport::Blankline(t) => t.render(w),
+            AnyTransport::DoubleBlankline(t) => t.render(w),
+            AnyTransport::Indent(t) => t.render(w),
+            AnyTransport::Dedent(t) => t.render(w),
             AnyTransport::Star(t) => t.render(w),
             AnyTransport::Plus(t) => t.render(w),
             AnyTransport::Qmark(t) => t.render(w),
@@ -8645,7 +9641,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Rbrack(t) => t.render(w),
             AnyTransport::Lparen(t) => t.render(w),
             AnyTransport::Rparen(t) => t.render(w),
-            AnyTransport::MissingKeyword(t) => t.render(w),
+            AnyTransport::MISSINGKeyword(t) => t.render(w),
             AnyTransport::Underscore(t) => t.render(w),
             AnyTransport::Colon(t) => t.render(w),
             AnyTransport::Bang(t) => t.render(w),

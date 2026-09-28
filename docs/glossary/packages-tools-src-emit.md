@@ -513,6 +513,30 @@ An alias kind's entry returns its argument unchanged: the printed source is the 
  */
 ```
 
+### `packages/tools/src/emit/factory-source.ts::spellTriviaTree`
+
+Spells every text-only trivia entry of a read tree (`spelledTriviaEntry`), bottom-up like `seatFormTree`, before the tree is printed.
+
+### `packages/tools/src/emit/factory-source.ts::spelledTriviaEntry`
+
+A trivia entry the reader gave only its text (rust's regular `/* a */`, whose content the parser gives no node) is rewritten to the shape a read of its content would have: the factory's field holds the slot's default content kind, with the interior the kind's `fullForm` delimiters leave (`fullFormInterior`). So it prints through its strict builder, `ir.blockComment.strict(ir.blockCommentContent(" a "))`, never as a coercion. A text leaf kind keeps its text. A kind with no full form, text its delimiters don't match, or no default content kind throws rather than guessing.
+
+### `packages/tools/src/emit/factory-source.ts::fullFormInterior`
+
+The text between a full form's `open` and `close` delimiters, over each pair of their alternatives, or `undefined` when no pair frames the text.
+
+### `packages/tools/src/emit/factory-source.ts::triviaSuffix`
+
+The `$trivia` calls after a printed node: leading and trailing entries, then each inner gap's entries through the surface the types emitted, `.$trivia.inner(…)` or, when the grammar keys its gaps (`PrintContext.innerGapsKeyed`), `.$trivia.innerAt(gap, …)`. Whitespace entries print nowhere: no read tree carries them, since read whitespace stays with the source coordinates.
+
+### `packages/tools/src/emit/factory-source.ts::printedSource`
+
+A printed node's call, or its `emptyCall` when it carries inner trivia. Only an empty node owns inner entries, and its no-argument call is the overload typed as the empty form, the one whose `$trivia` has `inner`; `strict({})` is typed as the plain form.
+
+### `packages/tools/src/emit/factory-source.ts::PrintedFacts.emptyCall`
+
+The no-argument call of a config-shaped node whose config printed empty.
+
 ### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.surface`
 
 ```text

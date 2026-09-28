@@ -7,6 +7,7 @@ import { field } from '../primitives/field.ts';
 import { alias } from '../primitives/alias.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import type { AuthoringRule, GrammarJson } from '../../grammar-shapes/grammar-json.ts';
+import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 // ---------------------------------------------------------------------------
 // Wire helpers — simulate what tree-sitter's grammar() / sittir's
@@ -49,7 +50,7 @@ describe('wire()', () => {
 
 	it('returns opts unchanged when no patches are declared', () => {
 		const ruleFn: RuleFn = (_$, _prev) => ({ type: 'SYMBOL', name: 'x' });
-		const wired = wire<GrammarJson>({ name: 'test', rules: { foo: ruleFn } });
+		const wired = wire<GrammarJson>({ name: 'test', rules: { foo: ruleFn } }, emptyBase);
 		expect(wired.name).toBe('test');
 		expect(Object.keys(wired.rules)).toEqual(['foo']);
 		const result = evaluateWiredRules(wired.rules);
@@ -65,7 +66,7 @@ describe('wire()', () => {
 			patches: {
 				assignment: { '0': variant('eq'), '1': variant('type') }
 			}
-		});
+		}, emptyBase);
 		// Variant rule names should be keys in opts.rules at wire-return time,
 		// which is what tree-sitter will snapshot for its ruleMap.
 		expect(Object.keys(wired.rules).sort()).toEqual(['assignment', 'assignment_eq', 'assignment_type']);
@@ -101,7 +102,7 @@ describe('wire()', () => {
 			patches: {
 				assignment: { '0': variant('eq'), '1': variant('type') }
 			}
-		});
+		}, emptyBase);
 		// Drive the synthesized `assignment` fn with `original = origSeq`.
 		const assignmentFn = wired.rules.assignment!;
 		const assignmentResult = assignmentFn.call({}, {}, origSeq);
@@ -137,7 +138,7 @@ describe('wire()', () => {
 			name: 'test',
 			rules: {},
 			patches: { assignment: { '0': variant('eq'), '1': variant('type') } }
-		});
+		}, emptyBase);
 		const out = wired.rules.assignment!.call({}, {}, origSeq) as { members: Array<{ type: string; name?: string }> };
 		expect(out.members[0]!.type).toBe('SYMBOL');
 		expect(out.members[0]!.name).toBe('a');
@@ -151,7 +152,7 @@ describe('wire()', () => {
 			name: 'test',
 			rules: {},
 			patches: { assignment: { '0': variant('eq') } }
-		});
+		}, emptyBase);
 		const eqFn = wired.rules.assignment_eq!;
 		const result = eqFn.call({}, {});
 		// Fake dsl has no blank(); fn falls back to { type: 'BLANK' }
@@ -196,7 +197,7 @@ describe('wire()', () => {
 			patches: {
 				assignment: { '0/0': variant('first'), '0/1': variant('second') }
 			}
-		});
+		}, emptyBase);
 		const assignmentFn = wired.rules.assignment!;
 		const out = assignmentFn.call({}, {}, origSeq);
 		// After user's fn, tree is: seq( seq(a, b), extra ). After wire's
@@ -226,7 +227,7 @@ describe('wire()', () => {
 					return { type: 'PATTERN', value: '[a-z]+' };
 				}
 			}
-		});
+		}, emptyBase);
 		evaluateWiredRules(wired.rules, {
 			assignment: { type: 'SYMBOL', name: 'ident' }
 		});
@@ -240,7 +241,7 @@ describe('wire()', () => {
 			rules: {
 				foo: (_$, _prev) => ({ type: 'SYMBOL', name: 'x' })
 			}
-		});
+		}, emptyBase);
 		expect(getCurrentWireContext()).toBeNull();
 		evaluateWiredRules(wired.rules);
 		expect(getCurrentWireContext()).toBeNull();
@@ -254,7 +255,7 @@ describe('wire()', () => {
 					throw new Error('intentional');
 				}
 			}
-		});
+		}, emptyBase);
 		expect(() => evaluateWiredRules(wired.rules)).toThrow('intentional');
 		expect(getCurrentWireContext()).toBeNull();
 	});
@@ -266,14 +267,14 @@ describe('wire()', () => {
 				assignment: ($, original) => original
 			},
 			patches: { assignment: { '0': variant('eq') } }
-		});
+		}, emptyBase);
 		const wiredB = wire<GrammarJson>({
 			name: 'b',
 			rules: {
 				assignment: ($, original) => original
 			},
 			patches: { assignment: { '0': variant('ne') } }
-		});
+		}, emptyBase);
 		const ctxA = (wiredA as unknown as { __wireContext__: unknown }).__wireContext__;
 		const ctxB = (wiredB as unknown as { __wireContext__: unknown }).__wireContext__;
 		expect(ctxA).not.toBe(ctxB);
@@ -345,7 +346,7 @@ describe('wire()', () => {
 			name: 'test',
 			rules: {},
 			patches: { assignment: { '1/0': variant('eq'), '1/1': variant('type') } }
-		});
+		}, emptyBase);
 		const assignmentFn = wired.rules.assignment!;
 		assignmentFn.call({}, {}, origSeq);
 		assignmentFn.call({}, {}, origSeq);
@@ -360,7 +361,7 @@ describe('wire()', () => {
 			patches: {
 				assignment: { '1/0': variant('eq'), '1/1': variant('type') }
 			}
-		});
+		}, emptyBase);
 		const origSeq = {
 			type: 'SEQ',
 			members: [
@@ -410,7 +411,7 @@ describe('wire()', () => {
 				const p = $ as Record<string, unknown>;
 				return [[p.user_conflict_a, p.user_conflict_b]] as readonly (readonly AuthoringRule[])[];
 			}
-		});
+		}, emptyBase);
 		// Drive assignment to populate deposits AND register hoist-conflicts.
 		wired.rules.assignment!.call({}, {}, origSeq);
 		// Drive conflicts via the $ proxy.
@@ -452,7 +453,7 @@ describe('wire()', () => {
 					2: field('z')
 				}
 			}
-		});
+		}, emptyBase);
 		// wire() synthesized `async_block`.
 		const fn = wired.rules.async_block!;
 		const out = fn.call({}, {}, origSeq) as {
@@ -483,7 +484,7 @@ describe('wire()', () => {
 					'0/0': field('wrapped')
 				}
 			}
-		});
+		}, emptyBase);
 		const fn = wired.rules.r!;
 		const out = fn.call({}, {}, origSeq) as { members: unknown[] };
 		// Structure: seq(seq(field('wrapped', a)), symbol(extra))
@@ -508,7 +509,7 @@ describe('wire()', () => {
 			patches: {
 				r: [{ 0: field('first') }, { 1: field('second') }]
 			}
-		});
+		}, emptyBase);
 		const fn = wired.rules.r!;
 		const out = fn.call({}, {}, origSeq) as {
 			members: Array<{ type: string; name?: string }>;
@@ -524,7 +525,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: field('async'), 1: field('move') }
 			}
-		});
+		}, emptyBase);
 		// Each field name produced a deferred `_kw_<name>` placeholder in opts.rules.
 		expect('_kw_async' in wired.rules).toBe(true);
 		expect('_kw_move' in wired.rules).toBe(true);
@@ -544,7 +545,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: field('async') }
 			}
-		});
+		}, emptyBase);
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(
 			{},
@@ -574,7 +575,7 @@ describe('wire()', () => {
 				...(previous ?? []),
 				($ as Record<string, unknown>)._kw_async
 			]) as WireConfig<GrammarJson>['inline']
-		});
+		}, emptyBase);
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(
 			{},
@@ -597,7 +598,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: field('async') }
 			}
-		});
+		}, emptyBase);
 		wired.rules.r!.call({}, {}, origSeq);
 		const asyncFn = wired.rules._kw_async!;
 		expect(asyncFn.call({}, {})).toEqual({ type: 'STRING', value: 'async' });
@@ -610,7 +611,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: alias('wildcard_pattern') }
 			}
-		});
+		}, emptyBase);
 		expect('_wildcard_pattern' in wired.rules).toBe(true);
 	});
 
@@ -647,7 +648,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: variant('a'), 1: variant('b') }
 			}
-		});
+		}, emptyBase);
 		expect('r_a' in wired.rules).toBe(true);
 		expect('r_b' in wired.rules).toBe(true);
 	});
@@ -663,7 +664,7 @@ describe('wire()', () => {
 			patches: {
 				r: { 0: field('async') }
 			}
-		});
+		}, emptyBase);
 		// Author's fn is wrapped but its identity is preserved as the inner
 		// callee. Calling it produces 'custom', not a blank.
 		const fn = wired.rules._kw_async!;
@@ -695,13 +696,13 @@ describe('a patch keyed by a groups: or injects: declaration', () => {
 
 	it('throws when the patch names the mint', () => {
 		expect(() =>
-			wire<GrammarJson>({ name: 'test', rules: {}, groups: { paren_x: pair as never }, patches: { _paren_x: { 1: field('inner') } } })
+			wire<GrammarJson>({ name: 'test', rules: {}, groups: { paren_x: pair as never }, patches: { _paren_x: { 1: field('inner') } } }, emptyBase)
 		).toThrow(/patches: '_paren_x' names the groups: declaration 'paren_x'/);
 	});
 
 	it('throws when the patch names the groups: key', () => {
 		expect(() =>
-			wire<GrammarJson>({ name: 'test', rules: {}, injects: { paren_x: pair as never }, patches: { paren_x: { 1: field('inner') } } })
+			wire<GrammarJson>({ name: 'test', rules: {}, injects: { paren_x: pair as never }, patches: { paren_x: { 1: field('inner') } } }, emptyBase)
 		).toThrow(/patches: 'paren_x' names the injects: declaration 'paren_x'/);
 	});
 
@@ -711,7 +712,7 @@ describe('a patch keyed by a groups: or injects: declaration', () => {
 			rules: { call: () => ({ type: 'SEQ', members: [{ type: 'SYMBOL', name: 'callee' }, { type: 'SYMBOL', name: 'args' }] }) },
 			groups: { paren_x: pair as never },
 			patches: { call: { 0: field('function') } }
-		});
+		}, emptyBase);
 		const call = evaluateWiredRules(wired.rules).call as { members: unknown[] };
 		expect(call.members[0]).toMatchObject({ type: 'FIELD', name: 'function' });
 	});

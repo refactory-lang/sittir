@@ -59,7 +59,7 @@ function nodeMapOf(
 		nodes,
 		normalizedRules: rules,
 		slotByRuleId,
-		externals: new Set(opts.externals ?? [])
+		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name }))
 	} as unknown as NodeMap;
 }
 
@@ -84,6 +84,13 @@ describe('spaceRenderRules', () => {
 		};
 		expect(choice.members.map((m) => m.name)).toEqual(['_tight', '_space', '_newline', '_blankline']);
 		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', arm: 'space', default: true });
+	});
+
+	it('defaults a gap to tight when the whitespace supertype has no space member', () => {
+		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' }, { supertypes: { _whitespace: ['_tight', '_newline', '_blankline'] } });
+		const spaced = spacedSeparatorOf(spaceRenderRules({ nodeMap, kindEntries }).rules.list!)!;
+		expect(spaced.before?.defaultArm).toBe('tight');
+		expect(spaced.before?.arms).toEqual(['tight', 'newline', 'blankline']);
 	});
 
 	it('gives an unseparated repeat the empty gap choice as its separator', () => {
@@ -368,7 +375,7 @@ describe('seamRenderRules', () => {
 		};
 		const { out, config } = seamed(rules);
 		expect(memberNames(out.rules.binary!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
-		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(sign_after)']);
+		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(Sign_after)']);
 		expect(memberNames(out.rules.linked!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
 		expect(out.rules.mixed).toBe(rules.mixed);
 		expect(memberNames(out.rules.words!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
@@ -376,7 +383,7 @@ describe('seamRenderRules', () => {
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} @${s.address}`)).toEqual([
 			'binary.operator @operator_before',
 			'binary.operator @operator_after',
-			'unary.sign @sign_after',
+			'unary.Sign @Sign_after',
 			'linked.operator @operator_before',
 			'linked.operator @operator_after',
 			'words.operator @operator_before',

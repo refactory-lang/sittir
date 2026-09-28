@@ -76,10 +76,11 @@ generated enum and the enum's own variants cannot disagree.
 
 ```text
 /**
- * Convert a snake_case name to camelCase — the single source of truth for
- * this transformation in the codegen pipeline. Used by field/child
- * `propertyName` derivation here, and re-exported for emitters and
- * validators that need the same canonical form.
+ * Convert a snake_case name to camelCase for config keys and accessors, over
+ * the words of `casingWords`: the first word is kept verbatim (case and all,
+ * so `MISSING_keyword` → `MISSINGKeyword`), every later word gets its first
+ * letter upper-cased, and each extra underscore stays one `_`
+ * (`future___keyword` → `future__Keyword`).
  *
  * Appends a trailing underscore when the camelCased result collides with a
  * reserved `Object.prototype` member name (see `RESERVED_ACCESSOR_NAMES`) —
@@ -116,117 +117,10 @@ generated enum and the enum's own variants cannot disagree.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isTokenLikeChoiceMember`
-
-```text
-/**
- * Test a single `choice` member for being structurally "token-like" — a
- * bare kind reference (symbol / supertype / enum) or a repeat1 of
- * strings / enums. Both forms surface at parse time as a SINGLE child
- * with one typed union, not as a heterogeneous structure the trivial
- * derive walk would need to branch on.
- *
- * @remarks
- * Peels transparent wrappers (`alias`, `token`) before classifying — an
- * alias's surface kind lives in its target, and a `token` wrapper marks
- * a lexeme-level production that behaves like a terminal for derivation
- * purposes. `repeat1(enum(...))` / `repeat1(choice(string, string,
- * ...))` captures the `_non_special_token` pattern in tree-sitter
- * grammars — a run of operator punctuation tokens that tree-sitter
- * lexes as a single token stream; the derive walker treats this as a
- * single-value child slot just like a symbol member.
- */
-```
-
-#### body
-
-```text
-// Bare `string` / `pattern` members — token-literal alternatives.
-// `_non_special_token` has a choice containing dozens of bare
-// keyword strings alongside symbol refs; each contributes a
-// single-token alternative to the union, not a structural branch.
-```
-
-#### body
-
-```text
-// Structural-whitespace tokens (python-style indent/dedent/newline).
-// These behave as anonymous token separators — they don't surface
-// as addressable children, so they never contribute structural
-// branching to a choice arm.
-```
-
-#### body
-
-```text
-// TERMINAL case removed — terminal-shaped rules now arrive as their original unwrapped
-// type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
-// `optional(token-like)` preserves the union shape — the branch contributes either the
-// wrapped token or nothing. Rust's `reference_expression` has `choice(choice-of-syms,
-// optional(sym))` for the raw-pointer-modifier spot; both arms are union-safe even though
-// one is an optional. Recurse to classify the inner.
-```
-
-#### body
-
-```text
-// Nested choice of token-like members — simplify should have
-// flattened this, but when flattening is blocked (e.g. by a
-// variant wrapper on the inner choice), the nested shape is still
-// structurally a union of tokens. `_lhs_expression` hits this
-// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isFlatSymbolSeqOrTokenLike`
-
-```text
-/**
- * Test a choice member for being a flat seq of token-like atoms — the
- * canonical shape for left-recursive operator chains and similar
- * "scalar list" productions.
- *
- * @remarks
- * `_let_chain` expands to `choice(seq(_let_chain, '&&', let_condition),
- * ...)` — every branch is a fixed-length seq of symbol/literal
- * references with no fields and no nested structure. Each branch
- * contributes a flat alternative to the union; the walker enumerates
- * each alternative's symbols as child values, which is a canonical
- * shape even though the raw rule.type is `seq`, not `symbol`. Falls
- * through to `isTokenLikeChoiceMember` for non-seq members so a mixed
- * choice `(seq(X, '&&', Y), bareY)` still qualifies.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::dumpDerivationAudit`
-
-```text
-/** Log accumulated audit counts. Called by codegen entry points. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
-```text
-/**
- * Internal — fields-side walk over the SIMPLIFIED rule. The exported
- * derivation surface is `deriveSlots`; this helper is its fields-portion.
- *
- * Consumes the simplified tree exactly as `computeSimplifiedRules` produced
- * it — no re-flattening. A nested bare seq that simplify left behind reaches
- * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
- * derive-audit is there to surface); re-splicing it here would mask that.
- * `DeriveCtx.shapeAudit` lets a caller opt a rule out of the audit
- * (`shapeAudit: false`); every current caller derives slots straight from
- * the simplified tree and leaves the audit on.
- */
-```
-
-#### body
-
-```text
-// Set the audit kind context for the duration of this derivation so
-// auditDerivationShape() can attribute shapes to their originating kind.
-// Save/restore guards against cross-kind bleed if derivations nest.
-```
+The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
+`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`.
 
 #### body
 
@@ -439,15 +333,12 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::nameNode`
 
-```text
-/**
- * Derive `typeName`, `factoryName`, and `irKey` from a raw grammar kind string.
- *
- * Moved here from assemble.ts so the `AssembledNodeBase` constructor can call
- * it directly, eliminating the need for callers to pre-compute and pass these
- * derived fields.
- */
-```
+Derives `typeName` (`pascalCase`), `factoryName` and `irKey`
+(`lowerCamelCase`) from a kind key, so the `AssembledNodeBase` constructor
+names every node the same way. A key whose Pascal form starts with a digit is
+prefixed `Tok_`/`tok_`. The derivations are not injective (C's
+`_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
+type-name renames resolve that as a naming event.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
 
@@ -608,12 +499,13 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::hidden`
 
-```text
-/** A node is hidden when it has no factory (supertype, group, token). */
-```
-
-This is factory absence, not parser visibility: whether the kind is hidden on
-the generated surface is `surfaceHidden`.
+Whether the kind is not a named node, as the grammar says at construction: a
+literal that is not `named`, a supertype, a synthetic keyword. It is stored,
+so stamping a builder later (`stampWhitespaceBuilders`) never flips it, and
+the facts derived from it (node-model `hidden`, the `consts` keyword and
+operator tables, the `$named` stamp) stay the grammar's. Whether the kind has
+a builder is `factoryName !== undefined`; whether it is hidden on the
+generated surface is `surfaceHidden`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::surfaceHidden`
 
@@ -1126,17 +1018,6 @@ can't be unified.
 	 * fallback-chain comment (and its call site) don't need to change in
 	 * this pass. `AssembledList` overrides this getter to return the real
 	 * separator text.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.attachNodeMap`
-
-```text
-/**
-	 * Attach the assembled node map so the `parameterless` getter can resolve
-	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. Called by
-	 * assemble() after all nodes are populated. Safe to call multiple times
-	 * (idempotent for the same map reference).
 	 */
 ```
 
@@ -1656,32 +1537,6 @@ The regex source the kind's whole text must match: the pattern composed from the
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DERIVE_AUDIT`
-
-```text
-/**
- * Dev audit — log shapes that reach derivation in a non-canonical form.
- * Simplify's canonicalization should produce a top-level `seq` (or a
- * single atomic member) with members that are
- * fields / literals / repeats / symbols. Anything else means simplify
- * didn't finish normalizing, and the trivialized `projectFields` /
- * `projectChildren` walks won't see the content.
- *
- * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
- * normal codegen runs). Captures per-kind shape signatures so we can
- * count distinct non-canonical patterns across the corpus and decide
- * which simplify passes still need work.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::currentAuditKind`
-
-```text
-/** Transient — each AssembledNode's constructor sets this before the lazy
- * `fields` / `children` getters fire, so the audit can attribute shapes
- * to their originating kind. */
-```
-
 ---
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.keywordConstructibleText`
@@ -1725,8 +1580,8 @@ The regex source the kind's whole text must match: the pattern composed from the
  * co-located rather than forming a cyclic two-file pair. Major sections are
  * delimited by `// ===` banners:
  *
- *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the audit-context module pointer.
+ *   1. Diagnostics — the parse-kind, assemble-warning and naming-event
+ *      collectors.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
  *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
@@ -1761,11 +1616,18 @@ The regex source the kind's whole text must match: the pattern composed from the
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::NamingEvent`
+
+An automatic type-name rename assemble applied to resolve a collision: `kind` was renamed from `from` to `to`, and
+`message` names the siblings it collided with. A naming event is codegen output, not a grammar diagnostic:
+`generate()` prints it in the gen log (`formatNamingEvents`). Deduped per kind and new name
+(`namingEventKey`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembleDiagnosticsCollector`
 
 ```text
-The assemble phase's three diagnostic streams (parse-kind collisions,
-derive-shape diagnostics, assemble warnings) live on one collector per
+The assemble phase's record streams (parse-kind collisions, assemble
+warnings, naming events) live on one collector per
 `assemble()` call, never at module scope, so two grammars compiling in one
 process cannot see each other's. One `AssembleDiagnosticsCollector`
 instance is born with each `AssembleCtx` (`ctx.assembleDiagnostics`) and
@@ -1774,7 +1636,7 @@ threaded down through `CompoundOpts.assembleDiagnostics` →
 `AbstractAssembledCompound`'s constructor already builds for `deriveSlots`/
 `resolveParseKindCollisions` — reaching collect-slots.ts's `resolveMember`/
 `buildSlot`/`recordUnclassifiableShape` and node-map.ts's own
-`auditDerivationShape`/`resolveParseKindCollisionsInSlot` call sites.
+`resolveParseKindCollisionsInSlot` call sites.
 
 `AssembledList` is the one class that does NOT forward this transparently:
 its constructor builds its OWN opts object for the `super()` call into
@@ -1786,8 +1648,7 @@ choice-shaped as often as branch/envelope kinds are, so this is not a
 theoretical case; a real grammar's `enum_body_elements` list caught it).
 
 `DedupedCollector<T>` is the shared generic underneath: a keyed
-record-once-then-push, replacing the three near-identical
-key/seen-Set/push trios. `record()` returns whether the item was newly
+record-once-then-push. `record()` returns whether the item was newly
 added (not already deduped), which the slot-grouping caller
 (`simplify.ts`'s `computeSimplifiedRules`) uses to gate a one-time
 `ctx.diagnostics.info()` emission per distinct diagnostic.
@@ -2033,117 +1894,6 @@ from the model instead of recovering them from the subtype's name.
 
 ```text
 // TypeScript reserved words that must be avoided as parameter names.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::deriveAuditMode`
-
-```text
-// Audit default is now 'strict' — every non-canonical shape across the
-// curated grammars has been drained via variant adoption + inline
-// (`rust`, `python`, `typescript` all audit clean). Any non-canonical
-// rule reaching derivation throws with a diagnostic so the walker can
-// safely assume canonical input.
-//
-// Opt-outs:
-//   SITTIR_AUDIT_DERIVE=1        → 'report' mode (log + accumulate,
-//                                   don't throw). Used by tests that
-//                                   consume raw base grammars without
-//                                   override() / variant() applied.
-//   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::auditDerivationShape`
-
-#### body
-
-```text
-// Record a structured diagnostic and continue — the old strict-mode throw
-// is replaced by accumulation so codegen completes and the preflight can
-// surface all derive-shape issues in a single pass. drainDeriveShapeDiagnostics()
-// is called by assemble() to attach them to AssembledNodeMap.
-```
-
-#### body
-
-```text
-// SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::classifyTopLevelShape`
-
-#### body
-
-```text
-// Canonical for the trivial walk: the tree rooted at `rule`
-// — traversed through the structural wrappers the walker descends
-// (seq, optional, repeat, repeat1, choice, clause) — must
-// satisfy:
-//
-//  - Every choice encountered during the traversal is "union-shaped"
-//    (token-like or flat-symbol-seq). No choice anywhere in the
-//    field/child-finding path has heterogeneous structural branches.
-//    A heterogeneous choice is a polymorph by any other name; the
-//    walker would have to case-analyze it, so flag it for variant()
-//    adoption (or hoisting into a proper polymorph parent).
-//  - Field contents are opaque to this classifier — `deriveValuesForRule`
-//    owns that subtree and its own simplification.
-//
-// Non-canonical shapes:
-//
-//  - `seq-with-nested-seq`: flattening gap (should be caught by the
-//     simplify fixpoint + flatten).
-//  - `*-with-heterogeneous-choice`: an inner choice with field-bearing
-//     branches. Needs variant() adoption at the parent kind or the
-//     branches hoisted / merged.
-//  - `group` / `alias` / `token` wrappers mid-tree: simplify should
-//     peel them.
-//  - `polymorph` anywhere: the PolymorphRule IR type (and its
-//     AssembledPolymorph node class) are retired. Reaching derivation
-//     with one means a legacy/synthetic rule object leaked in.
-```
-
-#### body
-
-```text
-// A nested seq that carries its OWN cardinality
-// (multiplicity / separator) is a canonical repeated /
-// optional GROUP, not a flattening gap. simplify deliberately
-// does NOT splice such a seq (splicing would lose the shared
-// cardinality and hoist any inner choice to this seq's
-// position). `deriveSlotsRaw` threads the group's multiplicity
-// into its members and handles an inner choice via its own
-// choice case, so we accept it here WITHOUT recursing.
-```
-
-#### body
-
-```text
-// ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above. PR-P Task 2:
-// TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-#### body
-
-```text
-// Every choice in the traversal must be a simple union — no
-// structural branches with fields. Flag heterogeneous
-// choices here instead of leaving the walker to merge them:
-// they are polymorphs in all but declaration.
-```
-
-#### body
-
-```text
-// Distinct-named-fields choice: every branch is either a
-// `field(A, ...)` with its own name or a token-like atom.
-// Rust's `function_modifiers` (`choice(field('async', …),
-// field('const', …), field('unsafe', …), extern_modifier)`)
-// is the canonical example — the branches contribute
-// different fields to the enclosing kind rather than
-// different kinds themselves, so this is a legitimate
-// "one-of-these-fields" shape, NOT a polymorph. The walker's
-// choice case enumerates each branch and downgrades every
-// field to `optional` multiplicity; that's correct behavior.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`
@@ -2495,11 +2245,27 @@ a pass rebuilds.
  *  `isFixedTextLeaf`. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isVisibleTextLeaf`
+### `packages/codegen/src/compiler/model/node-map.ts::isBuilderTextLeaf`
 
-A fixed-text leaf that is not hidden: a visible kind that owns a factory and
-a type. Visibility is the leaf's `hidden` attribute, never its class; the
-class answers only whether the text is word-shaped.
+A fixed-text leaf that has a builder (`factoryName` set): a visible kind, or
+a `_whitespace` member, which is hidden but gets a builder. The class answers
+only whether the text is word-shaped. Emitters that produce a leaf's builder,
+coercer, type, `ir` member, wrap entry or keyword test ask this, never
+`hidden`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isBuilderlessPunctuationLeaf`
+
+A non-word fixed-text leaf with no builder: an anonymous or `_`-prefixed
+delimiter. Emitters that skip factories and types for delimiters ask this, so
+neither a visible non-word literal nor a `_whitespace` member is skipped with
+them.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isWordOrBuilderTextLeaf`
+
+A fixed-text leaf that gets a text factory shape or a keyword type row: a
+word-shaped keyword of either visibility, or a non-word token with a builder.
+It is the complement of `isBuilderlessPunctuationLeaf` within the fixed-text
+leaves. `classifyFactoryShape` and the type tables (`types`) ask it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isVisiblePunctuationLeaf`
 
@@ -2508,24 +2274,24 @@ whole body is punctuation, such as typescript `optional_chain` (`?.`) or
 rust `unit_expression`. A grammar-wide `_` literal row addresses punctuation
 faces, and a keyword resolves its face through the word default instead, so
 the rule that seats a token seam for a node arm of a choice asks this class
-and not `isVisibleTextLeaf`.
+and not `isBuilderTextLeaf`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
 
-A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
-Emitters that skip factories and types for delimiters ask this, so a visible
-non-word literal is not skipped with them.
+A non-word fixed-text leaf the grammar hides: `hidden`, not builder presence.
+The `consts` operator table and `markUserFacing` ask it, so a `_whitespace`
+member with a builder is still an operator, not a keyword.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isWordOrVisibleTextLeaf`
 
-A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
-keyword of either visibility, or a visible non-word token. It is the
-complement of `isHiddenPunctuationLeaf` within the fixed-text leaves.
+A word-shaped keyword of either visibility, or a non-word token the grammar
+shows: the complement of `isHiddenPunctuationLeaf` within the fixed-text
+leaves. The `consts` keyword table and the edge classes and edge char sets of
+a kind ask it; they read the grammar, so a builder never changes them.
 
-Only the sites that must see hidden keywords use it: the kind-id and type
-tables (`consts`, `types`), `classifyFactoryShape`, and the edge classes and
-edge char sets of a kind. Every other emitter site asks `isVisibleTextLeaf`;
-tightening any of the four regenerates all three grammars differently.
+### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPresenceMarker`
+
+A surface-hidden keyword: the `_kw_*` presence markers, whose builders exist but are stored as a flag on their parent, so no top-level factory is emitted for them.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
@@ -3016,6 +2782,14 @@ The enum's literal arms with nested choices flattened, the list its `values` rea
 choice onto a display arrives as a choice inside a choice.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::enumLiteralMembersOf`
+
+The literal members of a choice as `AssembledEnum` reads them: nested choices flattened, one member per arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::enumValuesOf`
+
+The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the one derivation of an enum's values. Assemble counts them before it builds an `AssembledEnum`, and records `single-literal-choice` when there are fewer than two, so the constructor's own check is an invariant no grammar reaches.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body
@@ -3157,6 +2931,60 @@ display. A supertype with no row is stamped `supertype`.
 	 */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorTokenArms`
+
+The separator's token arms (STRING or SYMBOL rules), flattened once from
+`separatorRule` by `separatorArmsOf`; empty when the list has no
+per-instance separator. Every reader of the separator's arms (the wrap
+capture, the render-module match, the kind-literal table, the factory
+option type, the separator option site) reads this stamp, so no reader
+walks the separator rule itself and none meets a non-token arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorCandidateKindNames`
+
+The kind name each token arm resolves by: a string arm's text, a symbol
+arm's name.
+
+### `packages/codegen/src/compiler/model/node-map.ts::separatorArmsOf`
+
+Splits a separator rule into its token arms (STRING and SYMBOL leaves,
+through CHOICE) and every other arm (a PATTERN, or any other shape). The
+one walk over a separator's arms: assemble reports the non-token arms as
+`separator-pattern`, and the list stamps the token arms.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SeparatorArms`
+
+`separatorArmsOf`'s result: the token arms and the other arms.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SeparatorTokenArm`
+
+A separator arm a kind can name: a STRING or a SYMBOL rule.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isAuthoredCompound`
+
+A compound that is not a list: `AssembledBranch`, `AssembledEnvelope` or
+`AssembledPolymorph`, hoisted or not. Hoisting seats a kind on its parent; it
+does not make the kind unnameable to the from() coercer, whose keyword and
+string routes build through the raw factory — `ir.visibilityModifier('pub')`
+routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
+would otherwise fall through to the in-path arm and render `pub(in pub)`.
+emitters/shared.ts re-exports it for the emitters.
+
+### `packages/codegen/src/compiler/model/node-map.ts::optionalFlankSlots`
+
+The slots of an authored compound (never a list) that carry an optional
+leading or trailing delimiter. A field factory has no control for such a
+flank, so each one is a blocking `field-optional-delimiter` record.
+
+### `packages/codegen/src/compiler/model/node-map.ts::separatorRequired`
+
+Whether a list's separator must be passed at construction: it has a
+separator site (`separatorRule`) and site preferences stamped no default arm
+(`resolvedSeparatorArm`), which is the case for an undeclared separator
+floored as `separator-default-undeclared`. The factory's options type, its
+runtime throw, the loose coercer's rest parameter and the polymorph seat
+all read it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.leadingDelimiter`
 
 ```text
@@ -3244,6 +3072,12 @@ both read this one fact.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::startsImmediateWhenPresent`
+
+Whether a rule's leftmost terminal is immediate whatever its multiplicity: the
+present case of `leftmostTerminalImmediate`, which answers false for a member
+that may be absent. A choice is immediate when every arm is.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::leftmostTerminalImmediate`
 
 #### body
@@ -3287,6 +3121,52 @@ both read this one fact.
  *  class `varies`, no edge char set (except as a nullable SEQ member, which
  *  contributes and falls through). */
 ```
+
+`firstTokenSets` in `first-tokens.ts` reads the same predicate for nullability, so a rule the edge walkers treat as possibly-empty is possibly-empty to the FIRST computation too.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts`
+
+Token-level FIRST and direct-follow sets over the render rules (`NodeMap.normalizedRules`). They are grammar facts about which token can open a rule and which token can come straight after another; the lexer-merge guard is their consumer.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::OPAQUE_TOKEN`
+
+The stand-in for a terminal whose text is not fixed — a PATTERN or an INDENT/DEDENT/NEWLINE layout token — and for a symbol the rule set does not define. It can never start with a doubled punctuation char, so it never produces a merge pair.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::FirstTokenSets`
+
+The fixpoint result: the names of the nullable rules, and each rule's FIRST set (the token texts that can open it).
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::Rules`
+
+The render-rule set the walks read, keyed by kind: `NodeMap.normalizedRules`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::terminalOf`
+
+The terminal a render-rule node is, if any: a STRING's value, `OPAQUE_TOKEN` for a PATTERN or a layout token, and the link-stamped `literal` of a SYMBOL that names an anonymous token. Render rules carry optionality and repetition as `multiplicity` and fields as `fieldName`, so there are no wrapper nodes to see through.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::repeats`
+
+True for a rule whose multiplicity is `array` or `nonEmptyArray`: its content can follow itself.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleNullable`
+
+Whether a rule can render nothing: `isNullableMultiplicity`, an empty terminal, a nullable symbol, a SEQ of nullable members, or a CHOICE or SUPERTYPE with a nullable arm.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleFirst`
+
+The tokens that can open a rule, reading the current per-symbol FIRST sets: a SEQ contributes members up to and including its first non-nullable one; CHOICE and SUPERTYPE union their arms; a symbol missing from the rule set opens with `OPAQUE_TOKEN`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::firstTokenSets`
+
+Iterates `ruleNullable` and `ruleFirst` over every rule until neither the nullable set nor any FIRST set grows. Recursive rules (`expression` through `binary_expression`) resolve by the fixpoint, not by cutting cycles.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::directFollowers`
+
+For each terminal text, the tokens that can come immediately after it. Within a rule, a member's followers are the FIRST of the members after it, through nullable ones, plus the rule-level follow when everything after it can be empty; a repeating rule's own FIRST follows its content. A hidden rule (`hidden`, which is spliced into its parent) takes the follow of every site that references it, so a token inside `_unary_expression_operator` is followed by what follows the operator in `unary_expression`. A visible rule takes no follow from its reference sites: the tokens after a visible node belong to a different parse context, which is why `>>` after a nested generic's closing `>` is not a follower.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::sameCharMergePairs`
+
+The single-char tokens `c` for which some direct follower begins with `cc`: writing `c` and then that follower with no space would lex as the doubled token. `literalMergePairs` adds each as the pair `c|c`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
@@ -3520,6 +3400,12 @@ address may span sites of different arm spaces without failing on the ones it
 does not fit. An address that names sites and is admitted by none of them is
 refused — the arm is wrong, not merely inapplicable.
 
+`requireHit` is false only for `undeclaredSeparatorSites`, which the
+grammar-diagnostics pass calls before any render rules exist: its site set
+lacks the spacing sites, so an address naming none of its sites is skipped
+rather than refused, since it may name a spacing site. Every other caller
+refuses an address that names no site.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3570,9 +3456,30 @@ A separated list whose separator is a choice of literal tokens is a
 `separator` site on the list kind (`<slot>_separator`, label
 `separator`): its arms are the choice's literal kinds
 (`separatorArmKinds`) and its default is the one the `options:` block
-declares at `<kind>/<slot>:/separator/kind`. Unlike the delimiter, the
-default is required: a choice separator with no declaration is a build
-error, as is a declared arm no site admits (`withDeclaredArms`).
+declares at `<kind>/<slot>:/separator/kind`. A separator site with no
+declared default is not an option site: it is left out of the returned
+sites and no default is stamped, so the list's factory takes the
+separator as a required input. The grammar reports it as a blocking
+`separator-default-undeclared` record from `undeclaredSeparatorSites`,
+the same resolution. A declared arm no site admits is a build error
+(`withDeclaredArms`).
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::resolveSitePreferences`
+
+Every site with its resolved default, before undeclared separator sites
+are set apart: the one resolution `collectSitePreferences` and
+`undeclaredSeparatorSites` both read. `requireHit` is passed through to
+`withDeclaredArms`.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::undeclaredSeparatorSites`
+
+The separator sites no `options:` entry gives a default. The
+`separator-default-undeclared` check reports these; the emitter leaves
+them out of the option sites.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::isUndeclaredSeparator`
+
+A separator site whose default is still the undeclared arm.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
 
@@ -3584,7 +3491,7 @@ and `separator` sites are per-kind keys with no top-level label.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
 
-The catalog kinds of a list's separator tokens: one for a literal or a terminal symbol, the members' kinds for a choice of them — the token shape `separatorOf` detects. A token with no catalog kind, or a separator of any other shape, is a build error naming the list.
+The catalog kinds of a list's separator token arms (`AssembledList.separatorTokenArms`): a string arm's token kind, a symbol arm's display name. A token with no catalog kind is a build error naming the list.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
 
@@ -3670,6 +3577,9 @@ render function, so no address inside it can carry a preference. The kind still 
 spacing comes from the parent's seams.
 ```
 
+The same holds for a trivia kind's token interior (`triviaInterior`): no interior seams, and a kind inside it owns
+no edges; the trivia kind's own edges stay.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
 A kind's edge seams: when the kind's rule is a seq, a whitespace choice
@@ -3695,6 +3605,8 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
+The after edge of a line-terminated trivia kind (`lineTerminatedTrivia`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
 Whether a kind gets edge seams: it is a compound node, and it is either
@@ -3707,6 +3619,14 @@ since the two would claim the same `<kind>_before` key.
 A lexed kind owns no edges: a token that reads as one text spaces against its neighbours through the parent's
 seams, exactly as a text leaf does.
 ```
+
+### `packages/codegen/src/compiler/model/trivia.ts::lineTerminatedTrivia`
+
+True for a trivia kind (`triviaKinds`) that is line-terminated (`lineTerminated`): a comment that ends only at a line break. Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after the comment on its row would be read as comment text.
+
+At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` is a pattern leaf and owns none. After a line-terminated entry, the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end`). The edge may widen it to a blank line; no later seam narrows it, and it survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
+
+An owner's after edge belongs after its trailing entries, so the sink sets it aside while an own-line trailing run renders (`RenderSink::take_seam`) and merges it back after the run (`restore_seam`). Two line breaks merge by width whatever their strengths: the wider wins, and a break is never narrowed or added to. A blank-line separator after `fn g() {}` therefore still follows a trailing `// t`, as `fn g() {}\n// t\n\nfn h() {}`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
 
@@ -3835,7 +3755,7 @@ slot, else nothing.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`
 
-The slot name of a member that is a field referencing a keyword node
+The slot name, the field name as the model spells it (case kept, like the key it may derive from), of a member that is a field referencing a keyword node
 (`AssembledKeyword` with the `word` flag), such as an arrow function's
 `async_marker`. It names a seam like an enum slot does, so a cascaded
 opener after the marker meets the keyword's face instead of nothing. A
@@ -3855,13 +3775,19 @@ rebuild, so `keywordSlotOf` can ask whether a member sat in an arm.
 
 Whether a member, or any arm of a choice member, is optional.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::keywordKindOfLiteral`
+
+The model kind of a literal when that kind is a keyword the grammar's `word`
+rule claims — the catalog entry's node is an `AssembledKeyword` — and
+undefined otherwise. A keyword is a word-shaped literal by construction
+(`assemble` builds one only when the text matches the grammar's word
+matcher), so the class test is the whole answer; no text is matched against
+a pattern here. The template emitter reads the kind to gate a mixed slot's
+seams on its keyword values.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
 
-Whether a literal's kind is a keyword the grammar's `word` rule claims: the
-catalog entry's node is an `AssembledKeyword`. A keyword is a word-shaped
-literal by construction (`assemble` builds one only when the text matches the
-grammar's word matcher), so the class test is the whole answer; no text is
-matched against a pattern here.
+Whether a literal's kind is a keyword: `keywordKindOfLiteral` finds one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
 
@@ -3898,6 +3824,8 @@ renders indentation, on both sides of every token, since an indent may
 open after a token or before one (`lbrace_after`, a method chain's
 `dot_before`) and its dedent close wherever the kind's depth walk pairs
 it.
+
+A site whose arms are narrower than the grammar's (a line-terminated after edge) carries its own `defaultArm`, which `resolveSeam` takes in place of the grammar default when no declaration reaches the site.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isSeamChoice`
 
@@ -3975,7 +3903,7 @@ them. A kind with any non-lexical leaf is not, so a statement that merely
 contains a `_newline` external does not glue its list.
 
 This answers "can extras occur inside this node", not "does the parser issue
-this as a token" (`dsl/rule-patterns.ts::parserSymbolClassOf`). The two
+this as a token" (the catalog's `terminal` fact). The two
 differ both ways: a nonterminal made only of lexical leaves (`string_content`)
 admits no extras, and so does a `token(...)` rule the parser files as a
 nonterminal because it is used more than once. It reads the facts the render
@@ -4014,10 +3942,10 @@ under, so the two can never name it differently.
 Resolves each site's default: the arm the `options:` block declares for it
 (`declaredOptionArms`, keyed by kind and address, with supertype and
 wildcard declarations already matched to the sites they reach), otherwise
-the fallback — `space` for a separator gap, `tight` for a flank, and for a
-token seam the arm the seam-stamping dry run baked (`space` where the body
-had a static space, `tight` otherwise). A site's label is its address; a
-seam's resolved arm must be one its site admits.
+the grammar's default arm, derived once in the constructor
+(`defaultWhitespaceArmOf`) and the same for a separator gap, a flank and a
+seam. A site's label is its address; a seam's resolved arm must be one its
+site admits.
 
 `declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
 `origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
@@ -4034,7 +3962,7 @@ to be nameable there without importing back up from this module.
 separator gaps and flanks are outside the seam census's origin tracking.
 
 A `'word-default'` origin marks a seam on a keyword that no row reaches:
-`resolveSeam` gives it the fallback arm (`space`) but at the declared
+`resolveSeam` gives it the grammar's default arm but at the declared
 strength, so a keyword never loses its space to a cascaded tight — `return
 (x)`, `typeof (x)`, `case (1)` — while a declared tight (`return;`,
 `pub(crate)`) still wins by rank. It applies to token seams, literal and
@@ -4048,6 +3976,8 @@ A fourth origin, `'cascade'`, marks a site whose arm came from its edge
 token's `_`-scope face through the cascade path rather than from a row
 naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
 turns it into the middle strength tier the writer honours.
+
+A seam site that states its own default (`SeamArms.defaultArm`) uses it instead of the grammar's. There is no positional fallback: a site whose arms exclude the grammar default and that states none stops codegen with the address and its arms.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::DisplaySource`
 
@@ -4298,14 +4228,31 @@ member symbol: the members of its `_whitespace` supertype
 codegen lists whitespace kinds by name, so every spacing site, `options.ts`
 union, whitespace text and choice member symbol is read from here.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::declaresWhitespace`
+
+Whether the grammar has a `_whitespace` supertype. Every real grammar does; a unit-test grammar may not, and the model passes that read the vocabulary during assembly skip it there.
+
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
 
 The arms of `whitespaceSymbolsOf`, in declaration order.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::defaultWhitespaceArmOf`
+
+The arm every site falls back to when no declaration reaches it: the arm of
+`_space` when the grammar's `_whitespace` supertype lists it, otherwise the
+arm of `_tight`. Enrich admits `_space` only when the grammar's extras accept
+a space, so a grammar that cannot lex one between tokens (regex) renders
+tight by default instead of emitting text its parser rejects. `_tight` is
+always a member; a supertype listing neither is an error.
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
 
 `whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
 separator gap admits, where moving depth has no meaning.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::lineBreakingArms`
+
+The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_whitespace` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 
@@ -4480,6 +4427,141 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerGaps`
+
+Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
+
+- A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
+- A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
+- A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
+- Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
+- A slot is found by its source rule ids, never at the rule root.
+- When several slots share a span, only the first in render order keys it.
+- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
+- A compound with no slots and at least two tokens has the one gap `interior` after its first token.
+
+Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `()` no longer records its token split, so an inner comment there is a read diagnostic and a count in the trivia validation row.
+
+### `packages/codegen/src/compiler/model/node-map.ts::InnerGap`
+
+One inner-comment position of a kind: the empty slot that keys it (or `interior`) and the number of the kind's unconditional literal tokens before it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
+
+How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
+
+The probe proves `open`, so it can under-report but never over-report. A pattern that is open but narrow, such as `[a-z]*`, rejects the probe line and reads `closed`. That gives the kind no newline default, never a wrong one. No trivia arm in the three grammars has such a pattern today.
+
+### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
+
+One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `symbol`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
+
+`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is probed with the leaf guards' own anchored regex (`anchoredLeafRegex`). It is `open` when it accepts the probe line and rejects two probe lines joined by a line break.
+
+### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
+
+What a rule can begin or end with: a `literal`, a `pattern`, another kind (`symbol`), or nothing (`empty`, which an empty literal also reads as).
+
+### `packages/codegen/src/compiler/model/node-map.ts::EdgeCtx`
+
+Which end of a rule `ruleEdgeTerminals` reads: `start` or `end`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::LineEndCtx`
+
+The kind whose rule `ruleLineEnds` classifies, which names its patterns in the anchored-regex error.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeTerminals`
+
+The one walk over a rule's edge. A sequence reads its outermost member on that edge, falling inward through members that can be empty; a choice reads each of its arms; an optional or repeated rule adds `empty`. `lineEnds` classifies the `end` terminals and `leadingTerminals` returns the `start` ones, so both edges share one reading of the rule.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.leadingTerminals`
+
+How this kind's text can begin, read from its own rule by `ruleEdgeTerminals`. Symbols are left for the caller to resolve through the node map, as `lineTerminated` does for the end edge.
+
+### `packages/codegen/src/compiler/model/node-map.ts::slotEmptiness`
+
+The emptiness reader `innerGaps` passes to the shared law (`realizesEmpty`): whether a render rule can realise with no slot value. Optional, repeat and optional-element rules can; a slot occurrence cannot; a rule with no children (a token, a non-slot symbol) can. The root is a slot occurrence only when its slot is required, because a kind's sole slot also carries the root's id while the root is the whole body around it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotEmptinessCtx`
+
+The slots of the kind whose emptiness `slotEmptiness` reads, by source rule id.
+
+### `packages/codegen/src/compiler/model/node-map.ts::GapWalkCtx`
+
+Whether the `innerGaps` walk is under an optional, repeat or choice member, where tokens are conditional.
+
+### `packages/codegen/src/compiler/model/node-map.ts::seqEdgeTerminals`
+
+A sequence's terminals on one edge, given its members ordered from that edge inward: the first member's, plus the next member's when the first can be empty.
+
+### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
+
+The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
+
+A text made of one or more of the grammar's node-less extras: the `nodelessExtrasRun` link stamped on the node map, over the PATTERN and STRING extras and the SYMBOL extras naming hidden rules. A visible extra such as a comment is a node, never part of the run. Undefined for a grammar with no lexical extra.
+
+### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
+
+The `_whitespace` members that are extras: those whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras. Rust and typescript get `space`, `newline` and `blankline`, and python adds `double_blankline`. `tight` is excluded because an empty text is no run, and the depth marks because their text is not whitespace. The builders of the rest still exist; a trivia position refuses them.
+
+### `packages/codegen/src/compiler/model/trivia.ts::WhitespaceTrivia`
+
+The runtime's reading of loose whitespace text: `run`, the lexical-extras regex, and `kindIdByText`, each whitespace trivia kind's literal to its kind id.
+
+### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTrivia`
+
+`WhitespaceTrivia` for a grammar, undefined when it has no lexical extra. Text the run accepts names the kind whose literal it is exactly; there is no nearest match.
+
+### `packages/codegen/src/compiler/model/trivia.ts::lineTerminated`
+
+Whether a kind's text always ends its line, so the next token must start on a new line: `true` when every arm ends in an open pattern (`lineEnds`, with symbol arms resolved through the node map), `false` when any arm ends in a literal, a closed pattern or nothing, and `undefined` when an arm ends in a kind with no rule to read. An external token is read through its render-only rule. Examples: rust `line_comment` reaches `_line_doc_content` (`.*\n?`) through its doc arms and is true; block comments, typescript `html_comment` and both python line continuations are false. Memoised per node map and kind. An undetermined trivia kind is the `trivia-line-end-undetermined` grammar diagnostic.
+
+### `packages/codegen/src/compiler/model/trivia.ts::COMMENT_IR_KEY`
+
+The `ir` key a loose trivia string is built through: every grammar's `comment`.
+
+### `packages/codegen/src/compiler/model/trivia.ts::TriviaForm`
+
+The kind a loose trivia string builds, the literal delimiters its full spelling carries (`open`, `close`; empty when the arm has none on that side), the coercer that builds it (the kind's `fromFunctionName`, which `ir.comment`'s coerce flavor also calls), and the sibling arms whose start a loose interior must not have.
+
+### `packages/codegen/src/compiler/model/trivia.ts::TriviaSibling`
+
+A non-default arm of a polymorph with a full form: `lead`, the start-anchored regex of how its text can begin, `texts`, the same alternatives as literal texts when every one of them is a literal, and `builder`, the `ir` key that builds it (named in the refusal). A sibling with a pattern among its alternatives has no `texts`: it, and every sibling after it, is refused at runtime only, never at type level.
+
+### `packages/codegen/src/compiler/model/trivia.ts::LeadAlternative`
+
+One way a kind's text can begin: a literal text or a pattern source. `siblingLeads` derives both the runtime regex and the typed `texts` from one list of these, so the two refusals read one fact. A pattern counts as literal only through a kind's `fixedLiteralText`; a pattern terminal never does.
+
+### `packages/codegen/src/compiler/model/trivia.ts::defaultTriviaForm`
+
+The loose trivia form: the `comment` kind itself, or, when it is a supertype, its `arm.default` subtype; `open` and `close` are that kind's `fullForm` delimiters. Rust `line_comment` (`//`), python `comment` (`#`), typescript `comment_line` (`//`); none has a close. Undefined for a grammar with no `comment`; a default arm with no full form, or with a spelled delimiter, throws. There is no ranking across trivia kinds: a block or html comment is built only through its strict builder.
+
+When the default comment kind is a polymorph, every other arm is a sibling (`siblingLeads`). A loose interior that starts the way a sibling can is refused, because its rendered text would read back as that sibling, or at best be ambiguous with it. The check needs no lexer precedence: whether a sibling could start there is enough. Rust `line_comment` refuses `/…` (doc_outer), `!…` (doc_inner) and `//…` (extra_slashes); python `comment` and typescript `comment_line` have no siblings.
+
+### `packages/codegen/src/compiler/model/trivia.ts::siblingLeads`
+
+The non-default arms of a polymorph, each with its leading regex (the `leadSources` alternatives, compiled by `leadingRegex`) and its builder; none for a kind that is not a polymorph. A full-form coercer refuses an interior that starts the way one of them can. An arm with no `ir` key throws. The regex escapes the literals and groups the patterns; `texts` is set only when every alternative is a literal.
+
+### `packages/codegen/src/compiler/model/trivia.ts::leadSources`
+
+The alternatives a kind's text can begin with (`LeadAlternative`): each literal, each pattern, and each symbol resolved through the node map. A kind that can begin empty throws, since any text could read as it, and so does one the node map cannot read.
+
+### `packages/codegen/src/compiler/model/trivia.ts::emptyForms`
+
+The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and at least one inner gap. Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::innerGapsKeyed`
+
+True when some kind's empty form has more than one inner gap, so a gap has to be named when writing to it. Only then does `InnerTrivia` take a `Gap` parameter and an `innerAt(gap, ...)` method. With one gap per kind, `inner(...)` already says where the entries go.
+
+### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
+
+One kind's empty form: the emitted type name (`Empty<TypeName>`) and the keys of its inner gaps, in render order. When some kind has more than one gap (`innerGapsKeyed`), those keys are the `Gap` union of its `InnerTrivia`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 
 ```text
@@ -4500,6 +4582,34 @@ True for a slot value that is free text constrained by a pattern rather than a l
 ```text
 True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
 ```
+
+### `packages/codegen/src/compiler/model/trivia.ts::stampTriviaInterior`
+
+The token-interior rule applied to trivia kinds. A trivia kind (`triviaKinds`)
+is lexically one unit: a comment body or a line continuation has no seam a
+space could go in without changing what it reads as (`/*!*/` spaced reads as a
+doc comment with a space of content; `\ ` before a newline is not a
+continuation). The token interior of a trivia kind covers the kinds reachable
+only through it, found as a fixpoint over the grammar's normalized rules' references (the
+doc-comment variants and their markers). Those own no seams; the trivia kind's
+own edges stay, since it still sits among its neighbours. Stamped once at the end of assemble as `AssembledNodeBase.triviaInterior`; render-rules and `innerGaps` read the stamp.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.grammarRoot`
+
+Whether the kind is the grammar's root rule, stamped once in assemble (`stampGrammarRoot`) from the root link records. Only the root holds extras outside its own tokens.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.triviaInterior`
+
+Whether the kind is a trivia kind or reachable only through one (`stampTriviaInterior`): lexically one unit, with no interior seam and no inner gap.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateWhenPresent`
+
+Whether the boundary before a seq member is immediate: the member, when it is
+present, starts with an immediate token (`startsImmediateWhenPresent`). Such a
+boundary is not a site: `withTokenSeams` writes neither the left token's after
+face nor the member's before face there. When a nullable member is absent, the
+member after it keeps its own before face, so the absent case is never left
+without a seam of its own.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
 
@@ -4567,3 +4677,191 @@ Whether a slot value's node is hidden on the surface: the node's own `surfaceHid
 ### `packages/codegen/src/compiler/model/node-map.ts::isSurfaceHiddenIn`
 
 Whether a kind is hidden on the surface, read from its node in the map (`surfaceHidden`), or by name through `surfaceHiddenOf` when the map has no node for it. Emitters ask this instead of testing a name's leading underscore.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegex`
+
+The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::leadingRegex`
+
+A pattern compiled to match at the start of a text only (`^(?:<pattern>)`), with the same escape stripping, flags and error as `anchoredLeafRegex` (`compiledLeafRegex` serves both).
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::compiledLeafRegex`
+
+The shared compile behind `anchoredLeafRegex` and `leadingRegex`: strips useless escapes, anchors the whole text or its start, and stops codegen with the kind and pattern when neither flag compiles it.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegexLiteral`
+
+The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::stripUselessEscapes`
+
+```text
+/**
+ * Strip ESLint-flagged useless escapes that occur inside tree-sitter
+ * grammar regex patterns. These cases appear in real grammars and
+ * are safe to strip:
+ *
+ *   - `\[` inside a character class — `[` has no special meaning inside
+ *     `[...]`, so the backslash is decorative.
+ *   - `\-` at the end of a character class — a literal `-` after a prior
+ *     character set needs no escape when it's the last char in the class.
+ *   - `\^` anywhere in a class except its first character — `^` negates
+ *     only directly after `[`, so `[\^a]` keeps its escape while
+ *     `[^\^$]` becomes `[^^$]`.
+ *
+ * The stripped pattern must still compile as a RegExp. If it doesn't
+ * (some grammar regex we didn't anticipate), fall back to the original
+ * pattern so semantics stay identical. Full set-equivalence cannot be
+ * checked at codegen time without running both regexes against a corpus
+ * — the two specific transformations above are provably safe by the
+ * JavaScript regex grammar, so compile-success is the strongest static
+ * check we can offer.
+ */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Inside character class.
+```
+
+#### body
+
+```text
+// `\[` inside a class → `[`
+```
+
+#### body
+
+```text
+// `\-` at end of class (next-next is `]`) → `-`
+```
+
+#### body
+
+```text
+// Otherwise keep the escape verbatim.
+```
+
+#### body
+
+```text
+// If the stripped pattern fails to compile, the transformation broke
+// something — fall back to the original (which we know compiled;
+// otherwise this function wouldn't have been called).
+```
+
+An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
+
+### `packages/codegen/src/compiler/model/node-map.ts::seamNeedsSpace`
+
+```text
+/**
+ * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
+ * exactly where word-class text meets word-class text. The one seam
+ * decision shared by every static bake — fixed×fixed (classes of the
+ * concrete chars) and tag boundaries (classes derived per kind) — so a
+ * baked outcome can never disagree with the runtime writer's.
+ * Punctuation merge-hazard pairs are decided from concrete characters
+ * (`isLiteralMergePair`), never from classes, and are layered on by the
+ * caller where characters are known.
+ */
+```
+
+The template emitter's static seams and the full-form stamp (`stampFullForms`) both apply it, so whether a delimiter is separated from its content is the render's own law.
+
+### `packages/codegen/src/compiler/model/node-map.ts::wordCharPredicate`
+
+The grammar's word-class test for one character: the ASCII table (`wordCharAsciiTable`) over the word matcher, with a Unicode letter-or-number fallback above ASCII, and `\w` when the grammar has no word matcher. The template emitter's `isWordChar` and the full-form stamp's edge context are both this predicate.
+
+### `packages/codegen/src/compiler/model/node-map.ts::FullForm`
+
+The literal delimiters a kind's text carries around its one text content: `open` and `close`, each a `FullFormAffix`. A builder that takes the content also takes the whole text (`fullForm`).
+
+### `packages/codegen/src/compiler/model/node-map.ts::FullFormAffix`
+
+One side of a full form: the `texts` it may be spelled with (one for a fixed delimiter, several for a spelling choice), and the `slot` (a field name) that records which was typed, when there is a choice.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.fullForm`
+
+The kind's full form, stamped by `stampFullForms`; undefined when the kind's text is not literal delimiters around one text content.
+
+### `packages/codegen/src/compiler/model/full-form.ts::stampFullForms`
+
+Stamps `fullForm` on every compound whose render SEQ is literal runs around exactly one text content. Text content is a pattern, a pattern leaf, or a choice of the polymorph's own arms that are each a pattern or a kind with a full form (rust `line_comment`, `block_comment`). A kind whose delimiter can be separated from its content by a word seam (`isSeparated`) has none: `global x` or `* as x` hold a space, so they are source text, not the spelling of one token, and those kinds take only their content. Kinds around node content (`parenthesized_expression`) or a fragment list (every `string`) have no full form, and neither does one whose delimiter is an optional flag (rust `char_literal`'s `b`).
+
+### `packages/codegen/src/compiler/model/full-form.ts::affixOf`
+
+A render member as a literal delimiter: a STRING, a reference to a fixed-text leaf (its text; rust `outer_line_doc_comment_marker` is `/`), or a field over a choice of strings (a spelling slot, its alternatives). A member with a multiplicity is an optional slot, never a delimiter.
+
+### `packages/codegen/src/compiler/model/full-form.ts::contentEdges`
+
+The edge classes the content starts and ends with: a pattern's leading and trailing classes, a leaf kind's (`edgeClassesOfKind`), or the classes the polymorph's arms agree on.
+
+### `packages/codegen/src/compiler/model/full-form.ts::affixEdge`
+
+The edge class a delimiter meets its content with: the class of the last character of the open side, or the first of the close side, uniform across spelling alternatives; none when that side is empty.
+
+### `packages/codegen/src/compiler/model/full-form.ts::isSeparated`
+
+Whether the render can put a word seam between a delimiter and the content (`maySpace`). A token interior (`lexedInterior`) never has one, so number and escape prefixes stay glued.
+
+### `packages/codegen/src/compiler/model/full-form.ts::maySpace`
+
+`seamNeedsSpace` over every concrete class an edge can take: a `varies` edge is word or not-word, so a delimiter ending in a word character before a content that can start with one is separated (typescript `* as` before an identifier).
+
+### `packages/codegen/src/compiler/model/full-form.ts::joinRun`
+
+One side's literal members as one affix: empty when there are none, the member itself when there is one, and the concatenation of fixed texts otherwise. A spelling slot beside other literals has no single text to record, so that run has no full form.
+
+### `packages/codegen/src/compiler/model/full-form.ts::isTextContent`
+
+Whether the one non-literal member between the runs is text: an inline pattern, a reference to a pattern leaf, or a choice of the polymorph's own arms, each of which is text (`FullForms.isText`).
+
+### `packages/codegen/src/compiler/model/full-form.ts::fullFormOf`
+
+One compound's full form: find the literal runs at each end, require exactly one member between them that is text content and no word-shaped literal, and join each run.
+
+### `packages/codegen/src/compiler/model/full-form.ts::FullForms`
+
+The memo `stampFullForms` walks with: each compound's full form computed once, so a polymorph can ask whether its arms have one in any order. A kind is marked undefined while it is being computed, so a cycle reads as no full form. It carries the edge context (`edges`) the separation check reads.
+
+
+### `packages/codegen/src/compiler/model/casing.ts::casingWords`
+
+The one word-splitter behind every casing a kind key, field name or label is
+turned into: splits on `_`, whitespace and `-`, then at a lower-to-upper
+boundary, and treats a run of capitals as one word (`MISSING_keyword` →
+`MISSING`, `keyword`; `JSXElement` → `JSX`, `Element`). Case is kept; each
+casing decides what to fold.
+
+### `packages/codegen/src/compiler/model/casing.ts::pascalCase`
+
+Every word of `casingWords` with its first letter upper-cased, joined:
+`MISSING_keyword` → `MISSINGKeyword`, `_field_identifier` → `FieldIdentifier`.
+
+### `packages/codegen/src/compiler/model/casing.ts::lowerCamelCase`
+
+`pascalCase` with the first word lowered: a first word that is a run of
+capitals lowers whole (`MISSING_keyword` → `missingKeyword`), any other only its
+first letter (`AlignofKeyword2` → `alignofKeyword2`).
+
+### `packages/codegen/src/compiler/model/casing.ts::screamingSnakeCase`
+
+Every word of `casingWords` upper-cased, joined with `_`: `MISSINGKeyword` →
+`MISSING_KEYWORD`.
+
+### `packages/codegen/src/compiler/model/casing.ts::toScreamingSnakeCase`
+
+The rust const name for a kind: `screamingSnakeCase` of its PascalCase member
+name, re-attaching exactly the leading underscores the raw kind carries
+(`FieldIdentifier` for `_field_identifier` → `_FIELD_IDENTIFIER`). The member
+name's own leading underscores are dropped first so they never double up, and a
+member name with no lower-case letter is already screaming and passes through.

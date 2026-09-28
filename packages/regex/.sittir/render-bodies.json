@@ -654,7 +654,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "lparen_qmarkp_eq_after"
+			"field": "lparen_qmarkP_eq_after"
 		},
 		{
 			"kind": "slot",

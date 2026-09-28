@@ -94,11 +94,11 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 
 ```text
 /**
- * Run 'tree-sitter generate' in a grammar's .sittir/ directory — produces
- * grammar.json + node-types.json from the transpiled grammar.js. Uses
- * execSync (shell-level) rather than spawnSync; tree-sitter is a native
- * binary so either would launch a separate OS process (no Node module
- * sharing concern) — exec is just simpler for a bare command.
+ * Run 'tree-sitter generate' in a grammar package's .sittir/ directory
+ * (`sittirDirOf`) — produces grammar.json + node-types.json from the
+ * transpiled grammar.js. The directory comes from the package, never from
+ * the working directory, and the CLI is codegen's own tree-sitter-cli
+ * (`runTreeSitterCli`), so a package outside the repo needs no CLI of its own.
  */
 ```
 
@@ -118,16 +118,28 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 ### `packages/codegen/src/run-codegen.ts::runGrammarDiagnosticsPreflight`
 
 ```text
-/**
- * Runs the grammar-diagnostics preflight check for the given grammar.
- *
- * - If `injectedDiagnostics` is provided, those are used directly (test seam).
- * - Otherwise, the grammar is loaded and evaluated to derive diagnostics.
- * - Blocked diagnostics (canProceed === false) that are NOT in the allow-list
- *   cause an error to be thrown in non-interactive mode, or a prompt in
- *   interactive mode.
- * - `confirm` overrides the default stdin-based TTY prompt (test seam).
- */
+Compiles the grammar through the gate (`compile.ts::compileGrammar`) and persists every record the gate saw to
+`.sittir/grammar-diagnostics.json`, whether or not it passed. Records the gate lets through are printed as
+non-fatal output. A blocked compile throws in a non-interactive run. In an interactive run a confirmation adds
+the blocked codes to the allow set and compiles again, until the compile passes or the user declines; the
+returned `PreflightOutcome` carries the allow set and the passing compilation for `generate()` to reuse.
+`injectedDiagnostics` replaces the compile with a fixed record list (test seam) and `confirm` replaces the stdin
+prompt.
+
+### `packages/codegen/src/run-codegen.ts::PreflightOutcome`
+
+The allow set a preflight ends with, and the compilation that passed the gate with it (absent on the injected
+test seam).
+
+### `packages/codegen/src/run-codegen.ts::GatedCompilation`
+
+`gatedCompilation`'s result: every record the gate saw, the blocked ones, and the compilation when it passed.
+
+### `packages/codegen/src/run-codegen.ts::gatedCompilation`
+
+One gated compile for the preflight: the compilation when it passes, or the blocked records and every record the
+gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` into the package's `.sittir/`
+either way.
 ```
 
 ```text
@@ -412,14 +424,6 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 // --no-emit-diff and silently when git is unavailable. Printed here (right
 // after the manifest write, before validation) so it reflects the same on-disk
 // state the manifest just captured.
-```
-
-#### body
-
-```text
-// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
-// No-op otherwise. Used to validate simplify's canonicalization before
-// shrinking `deriveFields` / `deriveChildren` to trivial walks.
 ```
 
 #### body
@@ -723,7 +727,7 @@ The grammar registry. The set of grammars is discovered from disk — every `pac
 
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 
-Every grammar package, sorted by name, with its `stable` flag read from `package.json`'s `sittir.stable`. Cached for the process: packages are not created mid-run.
+Every grammar package under `packages/`, sorted by name, each resolved by `grammarPackage`. Cached for the process: packages are not created mid-run.
 
 ### `packages/codegen/src/grammars.ts::allGrammars`
 
@@ -743,7 +747,24 @@ The dependency name a grammar package declares for its upstream tree-sitter gram
 
 ### `packages/codegen/src/grammars.ts::grammarRequire`
 
-A `require` rooted at the grammar package, so the upstream grammar resolves through the grammar package's own dependencies rather than through whatever happens to be hoisted next to codegen.
+`packageRequire` for the grammar's own package directory.
+
+### `packages/codegen/src/grammars.ts::packageRequire`
+
+A `require` rooted at a grammar package, so the upstream grammar resolves through the grammar package's own dependencies rather than through whatever happens to be hoisted next to codegen.
+
+### `packages/codegen/src/grammars.ts::grammarPackage`
+
+The one resolver of a grammar package: its name, its directory (`packages/<name>` unless given), its `stable`
+flag from `package.json`'s `sittir.stable` (false when the package has no manifest), and its declared
+`sittir.displayName`, which `grammarDisplayName` prefers over the name's casing. Every path into a package —
+the entry, `.sittir/`, the parser tables, node types, grammar.json, the upstream `require` — derives from the
+package's `dir`, so a package outside the repo (a bootstrap in a temp directory) runs the same pipeline.
+
+### `packages/codegen/src/grammars.ts::sittirDirOf`
+
+A grammar package's `.sittir/` directory: the transpiled grammar, tree-sitter's output and the persisted
+diagnostics.
 
 ### `packages/codegen/src/grammars.ts::sourceAliases`
 
@@ -751,5 +772,5 @@ Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir
 
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
-PascalCase display name derived from the grammar name (`scm` → `Scm`, `my_lang` → `MyLang`), used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`).
+The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
 

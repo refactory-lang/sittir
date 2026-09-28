@@ -138,7 +138,6 @@ pub enum AnyTransport {
     FormatSpecifier(FormatSpecifierTransport),
     TypeConversion(TypeConversionTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -160,7 +159,6 @@ pub enum AnyTransport {
     Subscripts(SubscriptsTransport),
     DictionaryElements(DictionaryElementsTransport),
     SliceGroup(SliceGroupTransport),
-    UnaryOperatorOperator(UnaryOperatorOperatorEnum),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     ExceptClauseExceptionAs(ExceptClauseExceptionAsTransport),
     CaseTuplePattern(CaseTuplePatternTransport),
@@ -207,11 +205,11 @@ pub enum AnyTransport {
     StringFragment(StringFragmentTransport),
     EscapeInterpolation(EscapeInterpolationTransport),
     StringEnd(StringEndTransport),
+    Tight(TightTransport),
+    Space(SpaceTransport),
     Newline(NewlineTransport),
     Blankline(BlanklineTransport),
     DoubleBlankline(DoubleBlanklineTransport),
-    Tight(TightTransport),
-    Space(SpaceTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
     Names(NamesTransport),
@@ -278,10 +276,10 @@ pub enum AnyTransport {
     Amp(AmpTransport),
     Caret(CaretTransport),
     LtLt(LtLtTransport),
+    Tilde(TildeTransport),
     LambdaKeyword(LambdaKeywordTransport),
     YieldKeyword(YieldKeywordTransport),
     Bslash(BslashTransport),
-    Tilde(TildeTransport),
     PlusEq(PlusEqTransport),
     DashEq(DashEqTransport),
     StarEq(StarEqTransport),
@@ -352,24 +350,23 @@ pub enum AnyTransport {
     Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65,
     Literal45_65_71,
     Literal46_5b_5e_7b_7d_5c_6e_5d_2b,
-    Literal47_69_64_65_6e_74_69_66_69_65_72,
-    Literal48_30_78,
-    Literal49_30_58,
-    Literal50_30_6f,
-    Literal51_30_4f,
-    Literal52_30_62,
-    Literal53_30_42,
-    Literal54_6c_74,
-    Literal55_6c_74_5f_65_71,
-    Literal56_65_71_5f_65_71,
-    Literal57_62_61_6e_67_5f_65_71,
-    Literal58_67_74_5f_65_71,
-    Literal59_67_74,
-    Literal60_6c_74_5f_67_74,
-    Literal61_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal62_5f_6e_6f_74_5f_69_6e,
-    Literal63_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal64_5f_69_73_5f_6e_6f_74,
+    Literal47_30_78,
+    Literal48_30_58,
+    Literal49_30_6f,
+    Literal50_30_4f,
+    Literal51_30_62,
+    Literal52_30_42,
+    Literal53_6c_74,
+    Literal54_6c_74_5f_65_71,
+    Literal55_65_71_5f_65_71,
+    Literal56_62_61_6e_67_5f_65_71,
+    Literal57_67_74_5f_65_71,
+    Literal58_67_74,
+    Literal59_6c_74_5f_67_74,
+    Literal60_69_6e_5f_6b_65_79_77_6f_72_64,
+    Literal61_5f_6e_6f_74_5f_69_6e,
+    Literal62_69_73_5f_6b_65_79_77_6f_72_64,
+    Literal63_5f_69_73_5f_6e_6f_74,
     Verbatim(VerbatimTransport),
 }
 
@@ -492,7 +489,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FormatSpecifier(t) => t.prepare(ctx),
             AnyTransport::TypeConversion(t) => t.prepare(ctx),
             AnyTransport::Identifier(t) => t.prepare(ctx),
-            AnyTransport::KeywordIdentifier(t) => t.prepare(ctx),
             AnyTransport::True(t) => t.prepare(ctx),
             AnyTransport::False(t) => t.prepare(ctx),
             AnyTransport::None(t) => t.prepare(ctx),
@@ -514,7 +510,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Subscripts(t) => t.prepare(ctx),
             AnyTransport::DictionaryElements(t) => t.prepare(ctx),
             AnyTransport::SliceGroup(t) => t.prepare(ctx),
-            AnyTransport::UnaryOperatorOperator(t) => t.prepare(ctx),
             AnyTransport::AugmentedAssignmentOperator(t) => t.prepare(ctx),
             AnyTransport::ExceptClauseExceptionAs(t) => t.prepare(ctx),
             AnyTransport::CaseTuplePattern(t) => t.prepare(ctx),
@@ -561,11 +556,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StringFragment(t) => t.prepare(ctx),
             AnyTransport::EscapeInterpolation(t) => t.prepare(ctx),
             AnyTransport::StringEnd(t) => t.prepare(ctx),
+            AnyTransport::Tight(t) => t.prepare(ctx),
+            AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
             AnyTransport::Blankline(t) => t.prepare(ctx),
             AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
-            AnyTransport::Tight(t) => t.prepare(ctx),
-            AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Indent(t) => t.prepare(ctx),
             AnyTransport::Dedent(t) => t.prepare(ctx),
             AnyTransport::Names(t) => t.prepare(ctx),
@@ -632,10 +627,10 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Amp(t) => t.prepare(ctx),
             AnyTransport::Caret(t) => t.prepare(ctx),
             AnyTransport::LtLt(t) => t.prepare(ctx),
+            AnyTransport::Tilde(t) => t.prepare(ctx),
             AnyTransport::LambdaKeyword(t) => t.prepare(ctx),
             AnyTransport::YieldKeyword(t) => t.prepare(ctx),
             AnyTransport::Bslash(t) => t.prepare(ctx),
-            AnyTransport::Tilde(t) => t.prepare(ctx),
             AnyTransport::PlusEq(t) => t.prepare(ctx),
             AnyTransport::DashEq(t) => t.prepare(ctx),
             AnyTransport::StarEq(t) => t.prepare(ctx),
@@ -706,24 +701,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => Ok(()),
             AnyTransport::Literal45_65_71 => Ok(()),
             AnyTransport::Literal46_5b_5e_7b_7d_5c_6e_5d_2b => Ok(()),
-            AnyTransport::Literal47_69_64_65_6e_74_69_66_69_65_72 => Ok(()),
-            AnyTransport::Literal48_30_78 => Ok(()),
-            AnyTransport::Literal49_30_58 => Ok(()),
-            AnyTransport::Literal50_30_6f => Ok(()),
-            AnyTransport::Literal51_30_4f => Ok(()),
-            AnyTransport::Literal52_30_62 => Ok(()),
-            AnyTransport::Literal53_30_42 => Ok(()),
-            AnyTransport::Literal54_6c_74 => Ok(()),
-            AnyTransport::Literal55_6c_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal56_65_71_5f_65_71 => Ok(()),
-            AnyTransport::Literal57_62_61_6e_67_5f_65_71 => Ok(()),
-            AnyTransport::Literal58_67_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal59_67_74 => Ok(()),
-            AnyTransport::Literal60_6c_74_5f_67_74 => Ok(()),
-            AnyTransport::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal62_5f_6e_6f_74_5f_69_6e => Ok(()),
-            AnyTransport::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal64_5f_69_73_5f_6e_6f_74 => Ok(()),
+            AnyTransport::Literal47_30_78 => Ok(()),
+            AnyTransport::Literal48_30_58 => Ok(()),
+            AnyTransport::Literal49_30_6f => Ok(()),
+            AnyTransport::Literal50_30_4f => Ok(()),
+            AnyTransport::Literal51_30_62 => Ok(()),
+            AnyTransport::Literal52_30_42 => Ok(()),
+            AnyTransport::Literal53_6c_74 => Ok(()),
+            AnyTransport::Literal54_6c_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal55_65_71_5f_65_71 => Ok(()),
+            AnyTransport::Literal56_62_61_6e_67_5f_65_71 => Ok(()),
+            AnyTransport::Literal57_67_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal58_67_74 => Ok(()),
+            AnyTransport::Literal59_6c_74_5f_67_74 => Ok(()),
+            AnyTransport::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            AnyTransport::Literal61_5f_6e_6f_74_5f_69_6e => Ok(()),
+            AnyTransport::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            AnyTransport::Literal63_5f_69_73_5f_6e_6f_74 => Ok(()),
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -1476,6 +1470,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 119 => Ok(AnyTransport::StringEnd(
                     StringEndTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _tight (_TIGHT)
+                120 => Ok(AnyTransport::Tight(
+                    TightTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _space (_SPACE)
+                121 => Ok(AnyTransport::Space(
+                    SpaceTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _newline (_NEWLINE)
                 113 => Ok(AnyTransport::Newline(
                     NewlineTransport::from_napi_value(env, napi_val)?
@@ -1487,14 +1489,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _double_blankline (_DOUBLE_BLANKLINE)
                 123 => Ok(AnyTransport::DoubleBlankline(
                     DoubleBlanklineTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _tight (_TIGHT)
-                120 => Ok(AnyTransport::Tight(
-                    TightTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _space (_SPACE)
-                121 => Ok(AnyTransport::Space(
-                    SpaceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _indent (_INDENT)
                 114 => Ok(AnyTransport::Indent(
@@ -1760,6 +1754,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 59 => Ok(AnyTransport::LtLt(
                     LtLtTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: tilde (TILDE)
+                60 => Ok(AnyTransport::Tilde(
+                    TildeTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: lambda_keyword (LAMBDA_KEYWORD)
                 62 => Ok(AnyTransport::LambdaKeyword(
                     LambdaKeywordTransport::from_napi_value(env, napi_val)?
@@ -1771,10 +1769,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: bslash (BSLASH)
                 65 => Ok(AnyTransport::Bslash(
                     BslashTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: tilde (TILDE)
-                60 => Ok(AnyTransport::Tilde(
-                    TildeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: plus_eq (PLUS_EQ)
                 77 => Ok(AnyTransport::PlusEq(
@@ -1914,7 +1908,12 @@ pub enum TriviaTransport {
     Comment(CommentTransport),
     LineContinuationNewline(LineContinuationNewlineTransport),
     LineContinuationNul(LineContinuationNulTransport),
+    Space(SpaceTransport),
+    Newline(NewlineTransport),
+    Blankline(BlanklineTransport),
+    DoubleBlankline(DoubleBlanklineTransport),
     Verbatim(VerbatimTransport),
+    Text(::sittir_core::trivia::TriviaText),
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
@@ -1923,7 +1922,12 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNewline(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNul(t) => t.prepare(ctx),
+            TriviaTransport::Space(t) => t.prepare(ctx),
+            TriviaTransport::Newline(t) => t.prepare(ctx),
+            TriviaTransport::Blankline(t) => t.prepare(ctx),
+            TriviaTransport::DoubleBlankline(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
+            TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
 }
@@ -1934,7 +1938,37 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Comment(t) => t.render(w),
             TriviaTransport::LineContinuationNewline(t) => t.render(w),
             TriviaTransport::LineContinuationNul(t) => t.render(w),
+            TriviaTransport::Space(t) => t.render(w),
+            TriviaTransport::Newline(t) => t.render(w),
+            TriviaTransport::Blankline(t) => t.render(w),
+            TriviaTransport::DoubleBlankline(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
+            TriviaTransport::Text(t) => t.render(w),
+        }
+    }
+}
+
+impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
+    fn seam_text(&self) -> Option<&str> {
+        match self {
+            TriviaTransport::Space(t) => Some(&t.text),
+            TriviaTransport::Newline(t) => Some(&t.text),
+            TriviaTransport::Blankline(t) => Some(&t.text),
+            TriviaTransport::DoubleBlankline(t) => Some(&t.text),
+            _ => None,
+        }
+    }
+    fn kind(&self) -> Option<::sittir_core::types::KindId> {
+        match self {
+            TriviaTransport::Comment(_) => Some(::sittir_core::types::KindId(74)),
+            TriviaTransport::LineContinuationNewline(_) => Some(::sittir_core::types::KindId(104)),
+            TriviaTransport::LineContinuationNul(_) => Some(::sittir_core::types::KindId(105)),
+            TriviaTransport::Space(_) => Some(::sittir_core::types::KindId(121)),
+            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(113)),
+            TriviaTransport::Blankline(_) => Some(::sittir_core::types::KindId(122)),
+            TriviaTransport::DoubleBlankline(_) => Some(::sittir_core::types::KindId(123)),
+            TriviaTransport::Text(t) => Some(t.kind),
+            _ => None,
         }
     }
 }
@@ -1951,6 +1985,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     74 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
                     104 => Ok(Self::LineContinuationNewline(LineContinuationNewlineTransport::from_napi_value(env, napi_val)?)),
                     105 => Ok(Self::LineContinuationNul(LineContinuationNulTransport::from_napi_value(env, napi_val)?)),
+                    121 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    113 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    122 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    123 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -1961,10 +1999,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
+                let text: Option<String> = obj.get("$text")?;
                 match kind_id {
+                    74 if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(74), text: text.unwrap_or_default() })),
                     74 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
                     104 => Ok(Self::LineContinuationNewline(LineContinuationNewlineTransport::from_napi_value(env, napi_val)?)),
                     105 => Ok(Self::LineContinuationNul(LineContinuationNulTransport::from_napi_value(env, napi_val)?)),
+                    121 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    113 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
+                    122 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    123 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -1986,47 +2030,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
     }
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct TransportTrivia {
-    pub leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-    pub trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("leading")?;
-        let trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("trailing")?;
-        Ok(TransportTrivia { leading, trailing })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
-    fn type_name() -> &'static str {
-        "TransportTrivia"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
+pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;
 
 
 /// Text that is a slot's content with no kind of its own: a bare string in
@@ -12637,27 +12641,9 @@ fn unary_operator_operator_transport_slot_to_any(t: UnaryOperatorOperatorTranspo
 impl ::sittir_core::render::Render for UnaryOperatorOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryOperatorOperatorTransportSlot::Literal18_70_6c_75_73 => {
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE);
-                let written = w.text("+");
-                written?;
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER);
-                Ok(())
-            }
-            UnaryOperatorOperatorTransportSlot::Literal17_64_61_73_68 => {
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE);
-                let written = w.text("-");
-                written?;
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER);
-                Ok(())
-            }
-            UnaryOperatorOperatorTransportSlot::Literal30_74_69_6c_64_65 => {
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE);
-                let written = w.text("~");
-                written?;
-                w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER);
-                Ok(())
-            }
+            UnaryOperatorOperatorTransportSlot::Literal18_70_6c_75_73 => w.text("+"),
+            UnaryOperatorOperatorTransportSlot::Literal17_64_61_73_68 => w.text("-"),
+            UnaryOperatorOperatorTransportSlot::Literal30_74_69_6c_64_65 => w.text("~"),
         }
     }
 }
@@ -19708,103 +19694,6 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum KeywordIdentifierIdentifierTransportSlot {
-    Literal47_69_64_65_6e_74_69_66_69_65_72,
-}
-
-impl ::sittir_core::prepare::Prepare for KeywordIdentifierIdentifierTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            KeywordIdentifierIdentifierTransportSlot::Literal47_69_64_65_6e_74_69_66_69_65_72 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for KeywordIdentifierIdentifierTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Literal47_69_64_65_6e_74_69_66_69_65_72 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for KeywordIdentifierIdentifierTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    68 => Ok(Self::Literal47_69_64_65_6e_74_69_66_69_65_72),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in KeywordIdentifierIdentifierTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in KeywordIdentifierIdentifierTransportSlot")
-                )?;
-                match kind_id {
-                    68 => Ok(Self::Literal47_69_64_65_6e_74_69_66_69_65_72),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in KeywordIdentifierIdentifierTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("KeywordIdentifierIdentifierTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for KeywordIdentifierIdentifierTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("KeywordIdentifierIdentifierTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierIdentifierTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KeywordIdentifierIdentifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierIdentifierTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordIdentifierIdentifierTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn keyword_identifier_identifier_transport_slot_to_any(t: KeywordIdentifierIdentifierTransportSlot) -> AnyTransport {
-    match t {
-        KeywordIdentifierIdentifierTransportSlot::Literal47_69_64_65_6e_74_69_66_69_65_72 => AnyTransport::Literal47_69_64_65_6e_74_69_66_69_65_72,
-    }
-}
-
-impl ::sittir_core::render::Render for KeywordIdentifierIdentifierTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            KeywordIdentifierIdentifierTransportSlot::Literal47_69_64_65_6e_74_69_66_69_65_72 => w.text("print"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ArgumentListElementsElementTransportSlot {
     ComparisonOperator(ComparisonOperatorTransport),
     NotOperator(NotOperatorTransport),
@@ -21448,15 +21337,15 @@ impl ::sittir_core::render::Render for ComprehensionClausesContentTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum IntegerHexPrefixTransportSlot {
-    Literal48_30_78,
-    Literal49_30_58,
+    Literal47_30_78,
+    Literal48_30_58,
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerHexPrefixTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            IntegerHexPrefixTransportSlot::Literal48_30_78 => Ok(()),
-            IntegerHexPrefixTransportSlot::Literal49_30_58 => Ok(()),
+            IntegerHexPrefixTransportSlot::Literal47_30_78 => Ok(()),
+            IntegerHexPrefixTransportSlot::Literal48_30_58 => Ok(()),
         }
     }
 }
@@ -21464,8 +21353,8 @@ impl ::sittir_core::prepare::Prepare for IntegerHexPrefixTransportSlot {
 impl ::sittir_core::view::KindOf for IntegerHexPrefixTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal48_30_78 => false,
-            Self::Literal49_30_58 => false,
+            Self::Literal47_30_78 => false,
+            Self::Literal48_30_58 => false,
         }
     }
 }
@@ -21532,31 +21421,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerHexPrefixTransportSlot>
 
 fn integer_hex_prefix_transport_slot_to_any(t: IntegerHexPrefixTransportSlot) -> AnyTransport {
     match t {
-        IntegerHexPrefixTransportSlot::Literal48_30_78 => AnyTransport::Literal48_30_78,
-        IntegerHexPrefixTransportSlot::Literal49_30_58 => AnyTransport::Literal49_30_58,
+        IntegerHexPrefixTransportSlot::Literal47_30_78 => AnyTransport::Literal47_30_78,
+        IntegerHexPrefixTransportSlot::Literal48_30_58 => AnyTransport::Literal48_30_58,
     }
 }
 
 impl ::sittir_core::render::Render for IntegerHexPrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IntegerHexPrefixTransportSlot::Literal48_30_78 => w.text("0x"),
-            IntegerHexPrefixTransportSlot::Literal49_30_58 => w.text("0X"),
+            IntegerHexPrefixTransportSlot::Literal47_30_78 => w.text("0x"),
+            IntegerHexPrefixTransportSlot::Literal48_30_58 => w.text("0X"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum IntegerOctalPrefixTransportSlot {
-    Literal50_30_6f,
-    Literal51_30_4f,
+    Literal49_30_6f,
+    Literal50_30_4f,
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerOctalPrefixTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            IntegerOctalPrefixTransportSlot::Literal50_30_6f => Ok(()),
-            IntegerOctalPrefixTransportSlot::Literal51_30_4f => Ok(()),
+            IntegerOctalPrefixTransportSlot::Literal49_30_6f => Ok(()),
+            IntegerOctalPrefixTransportSlot::Literal50_30_4f => Ok(()),
         }
     }
 }
@@ -21564,8 +21453,8 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalPrefixTransportSlot {
 impl ::sittir_core::view::KindOf for IntegerOctalPrefixTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal50_30_6f => false,
-            Self::Literal51_30_4f => false,
+            Self::Literal49_30_6f => false,
+            Self::Literal50_30_4f => false,
         }
     }
 }
@@ -21632,31 +21521,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerOctalPrefixTransportSlo
 
 fn integer_octal_prefix_transport_slot_to_any(t: IntegerOctalPrefixTransportSlot) -> AnyTransport {
     match t {
-        IntegerOctalPrefixTransportSlot::Literal50_30_6f => AnyTransport::Literal50_30_6f,
-        IntegerOctalPrefixTransportSlot::Literal51_30_4f => AnyTransport::Literal51_30_4f,
+        IntegerOctalPrefixTransportSlot::Literal49_30_6f => AnyTransport::Literal49_30_6f,
+        IntegerOctalPrefixTransportSlot::Literal50_30_4f => AnyTransport::Literal50_30_4f,
     }
 }
 
 impl ::sittir_core::render::Render for IntegerOctalPrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IntegerOctalPrefixTransportSlot::Literal50_30_6f => w.text("0o"),
-            IntegerOctalPrefixTransportSlot::Literal51_30_4f => w.text("0O"),
+            IntegerOctalPrefixTransportSlot::Literal49_30_6f => w.text("0o"),
+            IntegerOctalPrefixTransportSlot::Literal50_30_4f => w.text("0O"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum IntegerBinaryPrefixTransportSlot {
-    Literal52_30_62,
-    Literal53_30_42,
+    Literal51_30_62,
+    Literal52_30_42,
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerBinaryPrefixTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            IntegerBinaryPrefixTransportSlot::Literal52_30_62 => Ok(()),
-            IntegerBinaryPrefixTransportSlot::Literal53_30_42 => Ok(()),
+            IntegerBinaryPrefixTransportSlot::Literal51_30_62 => Ok(()),
+            IntegerBinaryPrefixTransportSlot::Literal52_30_42 => Ok(()),
         }
     }
 }
@@ -21664,8 +21553,8 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryPrefixTransportSlot {
 impl ::sittir_core::view::KindOf for IntegerBinaryPrefixTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal52_30_62 => false,
-            Self::Literal53_30_42 => false,
+            Self::Literal51_30_62 => false,
+            Self::Literal52_30_42 => false,
         }
     }
 }
@@ -21732,16 +21621,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerBinaryPrefixTransportSl
 
 fn integer_binary_prefix_transport_slot_to_any(t: IntegerBinaryPrefixTransportSlot) -> AnyTransport {
     match t {
-        IntegerBinaryPrefixTransportSlot::Literal52_30_62 => AnyTransport::Literal52_30_62,
-        IntegerBinaryPrefixTransportSlot::Literal53_30_42 => AnyTransport::Literal53_30_42,
+        IntegerBinaryPrefixTransportSlot::Literal51_30_62 => AnyTransport::Literal51_30_62,
+        IntegerBinaryPrefixTransportSlot::Literal52_30_42 => AnyTransport::Literal52_30_42,
     }
 }
 
 impl ::sittir_core::render::Render for IntegerBinaryPrefixTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IntegerBinaryPrefixTransportSlot::Literal52_30_62 => w.text("0b"),
-            IntegerBinaryPrefixTransportSlot::Literal53_30_42 => w.text("0B"),
+            IntegerBinaryPrefixTransportSlot::Literal51_30_62 => w.text("0b"),
+            IntegerBinaryPrefixTransportSlot::Literal52_30_42 => w.text("0B"),
         }
     }
 }
@@ -24236,33 +24125,33 @@ impl ::sittir_core::render::Render for SuiteEmptyNewlineTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
-    Literal54_6c_74,
-    Literal55_6c_74_5f_65_71,
-    Literal56_65_71_5f_65_71,
-    Literal57_62_61_6e_67_5f_65_71,
-    Literal58_67_74_5f_65_71,
-    Literal59_67_74,
-    Literal60_6c_74_5f_67_74,
-    Literal61_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal62_5f_6e_6f_74_5f_69_6e,
-    Literal63_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal64_5f_69_73_5f_6e_6f_74,
+    Literal53_6c_74,
+    Literal54_6c_74_5f_65_71,
+    Literal55_65_71_5f_65_71,
+    Literal56_62_61_6e_67_5f_65_71,
+    Literal57_67_74_5f_65_71,
+    Literal58_67_74,
+    Literal59_6c_74_5f_67_74,
+    Literal60_69_6e_5f_6b_65_79_77_6f_72_64,
+    Literal61_5f_6e_6f_74_5f_69_6e,
+    Literal62_69_73_5f_6b_65_79_77_6f_72_64,
+    Literal63_5f_69_73_5f_6e_6f_74,
 }
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_6c_74_5f_65_71 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_65_71_5f_65_71 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_62_61_6e_67_5f_65_71 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74_5f_65_71 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_67_74 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_6c_74_5f_67_74 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_5f_6e_6f_74_5f_69_6e => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal64_5f_69_73_5f_6e_6f_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_6c_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_65_71_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_62_61_6e_67_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_67_74_5f_65_71 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_6c_74_5f_67_74 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_6e_6f_74_5f_69_6e => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_5f_69_73_5f_6e_6f_74 => Ok(()),
         }
     }
 }
@@ -24270,17 +24159,17 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsTr
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal54_6c_74 => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
-            Self::Literal55_6c_74_5f_65_71 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::Literal56_65_71_5f_65_71 => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
-            Self::Literal57_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_67_74_5f_65_71 => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
-            Self::Literal59_67_74 => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
-            Self::Literal60_6c_74_5f_67_74 => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
-            Self::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
-            Self::Literal62_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k)),
-            Self::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::Literal64_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k)),
+            Self::Literal53_6c_74 => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::Literal54_6c_74_5f_65_71 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::Literal55_65_71_5f_65_71 => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::Literal56_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::Literal57_67_74_5f_65_71 => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::Literal58_67_74 => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_6c_74_5f_67_74 => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k)),
+            Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::Literal63_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -24294,17 +24183,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    106 => Ok(Self::Literal54_6c_74),
-                    107 => Ok(Self::Literal55_6c_74_5f_65_71),
-                    108 => Ok(Self::Literal56_65_71_5f_65_71),
-                    109 => Ok(Self::Literal57_62_61_6e_67_5f_65_71),
-                    110 => Ok(Self::Literal58_67_74_5f_65_71),
-                    111 => Ok(Self::Literal59_67_74),
-                    112 => Ok(Self::Literal60_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal61_69_6e_5f_6b_65_79_77_6f_72_64),
-                    207 => Ok(Self::Literal62_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal63_69_73_5f_6b_65_79_77_6f_72_64),
-                    208 => Ok(Self::Literal64_5f_69_73_5f_6e_6f_74),
+                    106 => Ok(Self::Literal53_6c_74),
+                    107 => Ok(Self::Literal54_6c_74_5f_65_71),
+                    108 => Ok(Self::Literal55_65_71_5f_65_71),
+                    109 => Ok(Self::Literal56_62_61_6e_67_5f_65_71),
+                    110 => Ok(Self::Literal57_67_74_5f_65_71),
+                    111 => Ok(Self::Literal58_67_74),
+                    112 => Ok(Self::Literal59_6c_74_5f_67_74),
+                    25 => Ok(Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64),
+                    207 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
+                    61 => Ok(Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64),
+                    208 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -24316,17 +24205,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     ::napi::Error::from_reason("$type property missing in ComparisonOperatorComparatorOperatorsTransportSlot")
                 )?;
                 match kind_id {
-                    106 => Ok(Self::Literal54_6c_74),
-                    107 => Ok(Self::Literal55_6c_74_5f_65_71),
-                    108 => Ok(Self::Literal56_65_71_5f_65_71),
-                    109 => Ok(Self::Literal57_62_61_6e_67_5f_65_71),
-                    110 => Ok(Self::Literal58_67_74_5f_65_71),
-                    111 => Ok(Self::Literal59_67_74),
-                    112 => Ok(Self::Literal60_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal61_69_6e_5f_6b_65_79_77_6f_72_64),
-                    207 => Ok(Self::Literal62_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal63_69_73_5f_6b_65_79_77_6f_72_64),
-                    208 => Ok(Self::Literal64_5f_69_73_5f_6e_6f_74),
+                    106 => Ok(Self::Literal53_6c_74),
+                    107 => Ok(Self::Literal54_6c_74_5f_65_71),
+                    108 => Ok(Self::Literal55_65_71_5f_65_71),
+                    109 => Ok(Self::Literal56_62_61_6e_67_5f_65_71),
+                    110 => Ok(Self::Literal57_67_74_5f_65_71),
+                    111 => Ok(Self::Literal58_67_74),
+                    112 => Ok(Self::Literal59_6c_74_5f_67_74),
+                    25 => Ok(Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64),
+                    207 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
+                    61 => Ok(Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64),
+                    208 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -24369,34 +24258,34 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorOp
 
 fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonOperatorComparatorOperatorsTransportSlot) -> AnyTransport {
     match t {
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74 => AnyTransport::Literal54_6c_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_6c_74_5f_65_71 => AnyTransport::Literal55_6c_74_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_65_71_5f_65_71 => AnyTransport::Literal56_65_71_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_62_61_6e_67_5f_65_71 => AnyTransport::Literal57_62_61_6e_67_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74_5f_65_71 => AnyTransport::Literal58_67_74_5f_65_71,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_67_74 => AnyTransport::Literal59_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_6c_74_5f_67_74 => AnyTransport::Literal60_6c_74_5f_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal61_69_6e_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal62_5f_6e_6f_74_5f_69_6e,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal63_69_73_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal64_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal64_5f_69_73_5f_6e_6f_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_6c_74 => AnyTransport::Literal53_6c_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74_5f_65_71 => AnyTransport::Literal54_6c_74_5f_65_71,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_65_71_5f_65_71 => AnyTransport::Literal55_65_71_5f_65_71,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_62_61_6e_67_5f_65_71 => AnyTransport::Literal56_62_61_6e_67_5f_65_71,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_67_74_5f_65_71 => AnyTransport::Literal57_67_74_5f_65_71,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74 => AnyTransport::Literal58_67_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_6c_74_5f_67_74 => AnyTransport::Literal59_6c_74_5f_67_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal60_69_6e_5f_6b_65_79_77_6f_72_64,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal61_5f_6e_6f_74_5f_69_6e,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal62_69_73_5f_6b_65_79_77_6f_72_64,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal63_5f_69_73_5f_6e_6f_74,
     }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74 => w.text("<"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_6c_74_5f_65_71 => w.text("<="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_65_71_5f_65_71 => w.text("=="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_62_61_6e_67_5f_65_71 => w.text("!="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74_5f_65_71 => w.text(">="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_67_74 => w.text(">"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_6c_74_5f_67_74 => w.text("<>"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_5f_6e_6f_74_5f_69_6e => w.text("not in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal64_5f_69_73_5f_6e_6f_74 => w.text("is not"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal53_6c_74 => w.text("<"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal54_6c_74_5f_65_71 => w.text("<="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal55_65_71_5f_65_71 => w.text("=="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal56_62_61_6e_67_5f_65_71 => w.text("!="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal57_67_74_5f_65_71 => w.text(">="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal58_67_74 => w.text(">"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal59_6c_74_5f_67_74 => w.text("<>"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal61_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal63_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
 }
@@ -24435,6 +24324,7 @@ impl ::sittir_core::render::Render for ModuleTransport {
 
 impl ::sittir_core::prepare::Prepare for ModuleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
@@ -24499,6 +24389,7 @@ impl ::sittir_core::render::Render for SimpleStatementsTransport {
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.simple_statements_elements.prepare(ctx)?;
         Ok(())
@@ -24556,6 +24447,7 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.names.prepare(ctx)?;
         Ok(())
@@ -24608,7 +24500,8 @@ impl ::sittir_core::render::Render for ImportPrefixTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for ImportPrefixTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -24717,6 +24610,7 @@ impl ::sittir_core::render::Render for RelativeImportTransport {
 
 impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.prefix.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -24775,6 +24669,7 @@ impl ::sittir_core::render::Render for FutureImportStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -24834,6 +24729,7 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.module_name.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -24898,6 +24794,7 @@ impl ::sittir_core::render::Render for ImportListTransport {
 
 impl ::sittir_core::prepare::Prepare for ImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.name.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -24966,6 +24863,7 @@ impl ::sittir_core::render::Render for AliasedImportTransport {
 
 impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -25019,7 +24917,8 @@ impl ::sittir_core::render::Render for WildcardImportTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for WildcardImportTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -25128,6 +25027,7 @@ impl ::sittir_core::render::Render for PrintStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -25184,6 +25084,7 @@ impl ::sittir_core::render::Render for ChevronTransport {
 
 impl ::sittir_core::prepare::Prepare for ChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -25245,6 +25146,7 @@ impl ::sittir_core::render::Render for AssertStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
@@ -25311,6 +25213,7 @@ impl ::sittir_core::render::Render for ExpressionStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -25369,6 +25272,7 @@ impl ::sittir_core::render::Render for NamedExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -25427,6 +25331,7 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -25484,6 +25389,7 @@ impl ::sittir_core::render::Render for DeleteStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -25543,6 +25449,7 @@ impl ::sittir_core::render::Render for RaiseStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.cause.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
@@ -25596,7 +25503,8 @@ impl ::sittir_core::render::Render for PassStatementTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for PassStatementTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -25700,7 +25608,8 @@ impl ::sittir_core::render::Render for BreakStatementTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for BreakStatementTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -25804,7 +25713,8 @@ impl ::sittir_core::render::Render for ContinueStatementTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for ContinueStatementTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -25919,6 +25829,7 @@ impl ::sittir_core::render::Render for IfStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.alternative.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -25988,6 +25899,7 @@ impl ::sittir_core::render::Render for ElifClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
@@ -26046,6 +25958,7 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
@@ -26105,6 +26018,7 @@ impl ::sittir_core::render::Render for MatchStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.subjects.prepare(ctx)?;
@@ -26163,6 +26077,7 @@ impl ::sittir_core::render::Render for MatchBlockTransport {
 
 impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -26223,6 +26138,7 @@ impl ::sittir_core::render::Render for CaseClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.guard.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
@@ -26290,6 +26206,7 @@ impl ::sittir_core::render::Render for ForStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_marker.prepare(ctx)?;
         self.left.prepare(ctx)?;
@@ -26355,6 +26272,7 @@ impl ::sittir_core::render::Render for WhileStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -26422,6 +26340,7 @@ impl ::sittir_core::render::Render for TryStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.except_clauses.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -26494,6 +26413,7 @@ impl ::sittir_core::render::Render for ExceptClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.star_marker.prepare(ctx)?;
         self.exception.prepare(ctx)?;
@@ -26553,6 +26473,7 @@ impl ::sittir_core::render::Render for FinallyClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
@@ -26614,6 +26535,7 @@ impl ::sittir_core::render::Render for WithStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_marker.prepare(ctx)?;
         self.with_clause.prepare(ctx)?;
@@ -26673,6 +26595,7 @@ impl ::sittir_core::render::Render for WithItemTransport {
 
 impl ::sittir_core::prepare::Prepare for WithItemTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
@@ -26739,6 +26662,7 @@ impl ::sittir_core::render::Render for FunctionDefinitionTransport {
 
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_marker.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -26801,6 +26725,7 @@ impl ::sittir_core::render::Render for ParametersTransport {
 
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -26858,6 +26783,7 @@ impl ::sittir_core::render::Render for LambdaParametersTransport {
 
 impl ::sittir_core::prepare::Prepare for LambdaParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.parameters_elements.prepare(ctx)?;
         Ok(())
     }
@@ -26914,6 +26840,7 @@ impl ::sittir_core::render::Render for ListSplatTransport {
 
 impl ::sittir_core::prepare::Prepare for ListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -26971,6 +26898,7 @@ impl ::sittir_core::render::Render for DictionarySplatTransport {
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -27032,6 +26960,7 @@ impl ::sittir_core::render::Render for GlobalStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
@@ -27101,6 +27030,7 @@ impl ::sittir_core::render::Render for NonlocalStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
@@ -27172,6 +27102,7 @@ impl ::sittir_core::render::Render for ExecStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.in_clause.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -27241,6 +27172,7 @@ impl ::sittir_core::render::Render for TypeAliasStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -27305,6 +27237,7 @@ impl ::sittir_core::render::Render for ClassDefinitionTransport {
 
 impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -27365,6 +27298,7 @@ impl ::sittir_core::render::Render for TypeParameterTransport {
 
 impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.types.prepare(ctx)?;
         Ok(())
@@ -27422,6 +27356,7 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -27479,6 +27414,7 @@ impl ::sittir_core::render::Render for ArgumentListTransport {
 
 impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.arguments.prepare(ctx)?;
         Ok(())
@@ -27540,6 +27476,7 @@ impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
 
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.decorator.iter().map(|item| item.coord()).collect();
@@ -27606,6 +27543,7 @@ impl ::sittir_core::render::Render for DecoratorTransport {
 
 impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -27665,6 +27603,7 @@ impl ::sittir_core::render::Render for BlockTransport {
 
 impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -27732,6 +27671,7 @@ impl ::sittir_core::render::Render for ExpressionListTransport {
 
 impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.tail.prepare(ctx)?;
         self.expression.prepare(ctx)?;
@@ -27794,6 +27734,7 @@ impl ::sittir_core::render::Render for DottedNameTransport {
 
 impl ::sittir_core::prepare::Prepare for DottedNameTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ".", options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -27858,6 +27799,7 @@ impl ::sittir_core::render::Render for CasePatternTransport {
 
 impl ::sittir_core::prepare::Prepare for CasePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -27914,6 +27856,7 @@ impl ::sittir_core::render::Render for SimplePatternTransport {
 
 impl ::sittir_core::prepare::Prepare for SimplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -27972,6 +27915,7 @@ impl ::sittir_core::render::Render for CaseAsPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.case_pattern.prepare(ctx)?;
         self.identifier.prepare(ctx)?;
@@ -28034,6 +27978,7 @@ impl ::sittir_core::render::Render for UnionPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.patterns.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "|", options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -28099,6 +28044,7 @@ impl ::sittir_core::render::Render for DictPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.dict_pattern_elements.prepare(ctx)?;
         Ok(())
@@ -28158,6 +28104,7 @@ impl ::sittir_core::render::Render for KeyValuePatternTransport {
 
 impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -28218,6 +28165,7 @@ impl ::sittir_core::render::Render for KeywordPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -28278,6 +28226,7 @@ impl ::sittir_core::render::Render for SplatPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -28338,6 +28287,7 @@ impl ::sittir_core::render::Render for ClassPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
@@ -28402,6 +28352,7 @@ impl ::sittir_core::render::Render for ComplexPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.real.prepare(ctx)?;
@@ -28468,6 +28419,7 @@ impl ::sittir_core::render::Render for ParametersElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.parameter.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -28540,6 +28492,7 @@ impl ::sittir_core::render::Render for PatternsTransport {
 
 impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -28606,6 +28559,7 @@ impl ::sittir_core::render::Render for TuplePatternTransport {
 
 impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
@@ -28663,6 +28617,7 @@ impl ::sittir_core::render::Render for ListPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for ListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
@@ -28722,6 +28677,7 @@ impl ::sittir_core::render::Render for DefaultParameterTransport {
 
 impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -28784,6 +28740,7 @@ impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
 
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -28843,6 +28800,7 @@ impl ::sittir_core::render::Render for ListSplatPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
@@ -28900,6 +28858,7 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
@@ -28959,6 +28918,7 @@ impl ::sittir_core::render::Render for AsPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for AsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -29017,6 +28977,7 @@ impl ::sittir_core::render::Render for NotOperatorTransport {
 
 impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.argument.prepare(ctx)?;
         Ok(())
@@ -29078,6 +29039,7 @@ impl ::sittir_core::render::Render for BooleanOperatorTransport {
 
 impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -29141,6 +29103,7 @@ impl ::sittir_core::render::Render for BinaryOperatorTransport {
 
 impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -29177,7 +29140,7 @@ pub struct UnaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ::sittir_core::SlotValue<UnaryOperatorOperatorEnum>,
+    pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
@@ -29202,6 +29165,7 @@ impl ::sittir_core::render::Render for UnaryOperatorTransport {
 
 impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.argument.prepare(ctx)?;
@@ -29264,6 +29228,7 @@ impl ::sittir_core::render::Render for ComparisonOperatorTransport {
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.comparators.iter().map(|item| item.coord()).collect();
@@ -29332,6 +29297,7 @@ impl ::sittir_core::render::Render for LambdaTransport {
 
 impl ::sittir_core::prepare::Prepare for LambdaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -29392,6 +29358,7 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -29454,6 +29421,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -29515,6 +29483,7 @@ impl ::sittir_core::render::Render for PatternListTransport {
 
 impl ::sittir_core::prepare::Prepare for PatternListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.tail.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
@@ -29573,6 +29542,7 @@ impl ::sittir_core::render::Render for YieldTransport {
 
 impl ::sittir_core::prepare::Prepare for YieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
@@ -29632,6 +29602,7 @@ impl ::sittir_core::render::Render for AttributeTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
         self.attribute.prepare(ctx)?;
@@ -29692,6 +29663,7 @@ impl ::sittir_core::render::Render for SubscriptTransport {
 
 impl ::sittir_core::prepare::Prepare for SubscriptTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.subscripts.prepare(ctx)?;
@@ -29754,6 +29726,7 @@ impl ::sittir_core::render::Render for SliceTransport {
 
 impl ::sittir_core::prepare::Prepare for SliceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.start.prepare(ctx)?;
         self.stop.prepare(ctx)?;
@@ -29808,7 +29781,8 @@ impl ::sittir_core::render::Render for EllipsisTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for EllipsisTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -29919,6 +29893,7 @@ impl ::sittir_core::render::Render for CallTransport {
 
 impl ::sittir_core::prepare::Prepare for CallTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.function.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
@@ -29979,6 +29954,7 @@ impl ::sittir_core::render::Render for TypedParameterTransport {
 
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -30037,6 +30013,7 @@ impl ::sittir_core::render::Render for TypeTransport {
 
 impl ::sittir_core::prepare::Prepare for TypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -30095,6 +30072,7 @@ impl ::sittir_core::render::Render for SplatTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -30155,6 +30133,7 @@ impl ::sittir_core::render::Render for GenericTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameter.prepare(ctx)?;
@@ -30215,6 +30194,7 @@ impl ::sittir_core::render::Render for UnionTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -30275,6 +30255,7 @@ impl ::sittir_core::render::Render for ConstrainedTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.constraint.prepare(ctx)?;
@@ -30335,6 +30316,7 @@ impl ::sittir_core::render::Render for MemberTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -30395,6 +30377,7 @@ impl ::sittir_core::render::Render for KeywordArgumentTransport {
 
 impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -30453,6 +30436,7 @@ impl ::sittir_core::render::Render for ListTransport {
 
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
@@ -30510,6 +30494,7 @@ impl ::sittir_core::render::Render for SetTransport {
 
 impl ::sittir_core::prepare::Prepare for SetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
@@ -30567,6 +30552,7 @@ impl ::sittir_core::render::Render for TupleTransport {
 
 impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
@@ -30624,6 +30610,7 @@ impl ::sittir_core::render::Render for DictionaryTransport {
 
 impl ::sittir_core::prepare::Prepare for DictionaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.entries.prepare(ctx)?;
         Ok(())
@@ -30683,6 +30670,7 @@ impl ::sittir_core::render::Render for PairTransport {
 
 impl ::sittir_core::prepare::Prepare for PairTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -30743,6 +30731,7 @@ impl ::sittir_core::render::Render for ListComprehensionTransport {
 
 impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -30803,6 +30792,7 @@ impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
 
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -30863,6 +30853,7 @@ impl ::sittir_core::render::Render for SetComprehensionTransport {
 
 impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -30923,6 +30914,7 @@ impl ::sittir_core::render::Render for GeneratorExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
@@ -30981,6 +30973,7 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -31044,6 +31037,7 @@ impl ::sittir_core::render::Render for CollectionElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -31120,6 +31114,7 @@ impl ::sittir_core::render::Render for ForInClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.right.iter().map(|item| item.coord()).collect();
@@ -31189,6 +31184,7 @@ impl ::sittir_core::render::Render for IfClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for IfClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         Ok(())
@@ -31250,6 +31246,7 @@ impl ::sittir_core::render::Render for ConditionalExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.condition.prepare(ctx)?;
@@ -31311,6 +31308,7 @@ impl ::sittir_core::render::Render for ConcatenatedStringTransport {
 
 impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.string.iter().map(|item| item.coord()).collect();
@@ -31380,6 +31378,7 @@ impl ::sittir_core::render::Render for StringTransport {
 
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_start.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -31439,6 +31438,7 @@ impl ::sittir_core::render::Render for StringContentTransport {
 
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -31501,6 +31501,7 @@ impl ::sittir_core::render::Render for InterpolationTransport {
 
 impl ::sittir_core::prepare::Prepare for InterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.eq_marker.prepare(ctx)?;
@@ -31556,7 +31557,8 @@ impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for NotEscapeSequenceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -31665,6 +31667,7 @@ impl ::sittir_core::render::Render for FormatSpecifierTransport {
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
@@ -31717,7 +31720,8 @@ impl ::sittir_core::render::Render for TypeConversionTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -31819,7 +31823,8 @@ impl ::sittir_core::render::Render for IdentifierTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for IdentifierTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -31895,56 +31900,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct KeywordIdentifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
-    pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
-    pub identifier: String,
-}
-
-impl ::sittir_core::view::KindOf for KeywordIdentifierTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        false
-    }
-}
-
-impl ::sittir_core::render::Render for KeywordIdentifierTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_keyword_identifier(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for KeywordIdentifierTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.identifier.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KeywordIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordIdentifierTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct TrueTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -31971,7 +31926,8 @@ impl ::sittir_core::render::Render for TrueTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for TrueTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32075,7 +32031,8 @@ impl ::sittir_core::render::Render for FalseTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for FalseTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32179,7 +32136,8 @@ impl ::sittir_core::render::Render for NoneTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for NoneTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32288,6 +32246,7 @@ impl ::sittir_core::render::Render for AwaitTransport {
 
 impl ::sittir_core::prepare::Prepare for AwaitTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -32345,6 +32304,7 @@ impl ::sittir_core::render::Render for CommentTransport {
 
 impl ::sittir_core::prepare::Prepare for CommentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -32396,7 +32356,8 @@ impl ::sittir_core::render::Render for PositionalSeparatorTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for PositionalSeparatorTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32500,7 +32461,8 @@ impl ::sittir_core::render::Render for KeywordSeparatorTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for KeywordSeparatorTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32604,7 +32566,8 @@ impl ::sittir_core::render::Render for KwAsyncMarkerTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for KwAsyncMarkerTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -32746,6 +32709,7 @@ impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.simple_statement.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -32818,6 +32782,7 @@ impl ::sittir_core::render::Render for SubjectsTransport {
 
 impl ::sittir_core::prepare::Prepare for SubjectsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.subject.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -32890,6 +32855,7 @@ impl ::sittir_core::render::Render for CasePatternsTransport {
 
 impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.case_pattern.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -32962,6 +32928,7 @@ impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
 
 impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.with_item.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33033,6 +33000,7 @@ impl ::sittir_core::render::Render for TypesTransport {
 
 impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33105,6 +33073,7 @@ impl ::sittir_core::render::Render for ArgumentListElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33177,6 +33146,7 @@ impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
 
 impl ::sittir_core::prepare::Prepare for ExpressionListExpressionsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33249,6 +33219,7 @@ impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
 
 impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.case_pattern.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33321,6 +33292,7 @@ impl ::sittir_core::render::Render for DictPatternElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33393,6 +33365,7 @@ impl ::sittir_core::render::Render for PatternListPatternsTransport {
 
 impl ::sittir_core::prepare::Prepare for PatternListPatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33465,6 +33438,7 @@ impl ::sittir_core::render::Render for SubscriptsTransport {
 
 impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.subscript.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33537,6 +33511,7 @@ impl ::sittir_core::render::Render for DictionaryElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -33603,6 +33578,7 @@ impl ::sittir_core::render::Render for SliceGroupTransport {
 
 impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -33626,102 +33602,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroupTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SliceGroupTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UnaryOperatorOperatorEnum {
-    Plus,
-    Minus,
-    Tilde,
-}
-
-impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorEnum {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        49 => return Ok(Self::Plus), // "+"
-                        50 => return Ok(Self::Minus), // "-"
-                        60 => return Ok(Self::Tilde), // "~"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "+" => return Ok(Self::Plus),
-                    "-" => return Ok(Self::Minus),
-                    "~" => return Ok(Self::Tilde),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        49 => return Ok(Self::Plus), // "+"
-                        50 => return Ok(Self::Minus), // "-"
-                        60 => return Ok(Self::Tilde), // "~"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "+" => return Ok(Self::Plus),
-                        "-" => return Ok(Self::Minus),
-                        "~" => return Ok(Self::Tilde),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_-")?.is_some() { return Ok(Self::Minus); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_~")?.is_some() { return Ok(Self::Tilde); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
-    }
-}
-
-impl ::sittir_core::view::KindOf for UnaryOperatorOperatorEnum {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Plus => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::Minus => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::Tilde => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for UnaryOperatorOperatorEnum {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            Self::Plus => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE); w.text("+")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER); Ok(()) }
-            Self::Minus => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE); w.text("-")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER); Ok(()) }
-            Self::Tilde => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE); w.text("~")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER); Ok(()) }
-        }
     }
 }
 
@@ -33934,6 +33814,7 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.alias.prepare(ctx)?;
@@ -33992,6 +33873,7 @@ impl ::sittir_core::render::Render for CaseTuplePatternTransport {
 
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
@@ -34049,6 +33931,7 @@ impl ::sittir_core::render::Render for CaseListPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
@@ -34112,6 +33995,7 @@ impl ::sittir_core::render::Render for PrintArgumentsTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.argument.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -34184,6 +34068,7 @@ impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.argument.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -34252,6 +34137,7 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.chevron.prepare(ctx)?;
         self.print_chevron_arguments.prepare(ctx)?;
@@ -34310,6 +34196,7 @@ impl ::sittir_core::render::Render for PrintStatementPlainTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.print_arguments.prepare(ctx)?;
         Ok(())
@@ -34362,7 +34249,8 @@ impl ::sittir_core::render::Render for WildcardPatternTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for WildcardPatternTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -34471,6 +34359,7 @@ impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.import_list.prepare(ctx)?;
         Ok(())
@@ -34530,6 +34419,7 @@ impl ::sittir_core::render::Render for ComprehensionClausesTransport {
 
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE);
@@ -34596,6 +34486,7 @@ impl ::sittir_core::render::Render for IntegerHexTransport {
 
 impl ::sittir_core::prepare::Prepare for IntegerHexTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -34655,6 +34546,7 @@ impl ::sittir_core::render::Render for IntegerOctalTransport {
 
 impl ::sittir_core::prepare::Prepare for IntegerOctalTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -34714,6 +34606,7 @@ impl ::sittir_core::render::Render for IntegerBinaryTransport {
 
 impl ::sittir_core::prepare::Prepare for IntegerBinaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.prefix.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -34766,7 +34659,8 @@ impl ::sittir_core::render::Render for IntegerDecimalTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for IntegerDecimalTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -34881,6 +34775,7 @@ impl ::sittir_core::render::Render for FloatPointTransport {
 
 impl ::sittir_core::prepare::Prepare for FloatPointTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.fraction.prepare(ctx)?;
         self.marker.prepare(ctx)?;
@@ -34949,6 +34844,7 @@ impl ::sittir_core::render::Render for FloatLeadingPointTransport {
 
 impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.fraction.prepare(ctx)?;
         self.marker.prepare(ctx)?;
@@ -35015,6 +34911,7 @@ impl ::sittir_core::render::Render for FloatScientificTransport {
 
 impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.integer.prepare(ctx)?;
         self.marker.prepare(ctx)?;
         self.exponent.prepare(ctx)?;
@@ -35074,6 +34971,7 @@ impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35130,6 +35028,7 @@ impl ::sittir_core::render::Render for EscapeSequenceUnicodeWideTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35186,6 +35085,7 @@ impl ::sittir_core::render::Render for EscapeSequenceHexTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35242,6 +35142,7 @@ impl ::sittir_core::render::Render for EscapeSequenceOctalTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35298,6 +35199,7 @@ impl ::sittir_core::render::Render for EscapeSequenceLineBreakTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35354,6 +35256,7 @@ impl ::sittir_core::render::Render for EscapeSequenceSimpleTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35410,6 +35313,7 @@ impl ::sittir_core::render::Render for EscapeSequenceNamedTransport {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35461,7 +35365,8 @@ impl ::sittir_core::render::Render for LineContinuationNewlineTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for LineContinuationNewlineTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -35563,7 +35468,8 @@ impl ::sittir_core::render::Render for LineContinuationNulTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for LineContinuationNulTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -35674,6 +35580,7 @@ impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
 
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -35736,6 +35643,7 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.value.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -35801,6 +35709,7 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
 
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35859,6 +35768,7 @@ impl ::sittir_core::render::Render for AssignmentEqTransport {
 
 impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -35919,6 +35829,7 @@ impl ::sittir_core::render::Render for AssignmentTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -35981,6 +35892,7 @@ impl ::sittir_core::render::Render for AssignmentTypedTransport {
 
 impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -36046,6 +35958,7 @@ impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -36118,6 +36031,7 @@ impl ::sittir_core::render::Render for WithClauseBareTransport {
 
 impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.with_item.iter().map(|item| item.coord()).collect();
             let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
@@ -36183,6 +36097,7 @@ impl ::sittir_core::render::Render for WithClauseParenTransport {
 
 impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.with_clause_with_items.prepare(ctx)?;
         Ok(())
@@ -36242,6 +36157,7 @@ impl ::sittir_core::render::Render for MatchBlockBlockTransport {
 
 impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.alternative.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
@@ -36307,6 +36223,7 @@ impl ::sittir_core::render::Render for SuiteInlineTransport {
 
 impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.simple_statements_elements.prepare(ctx)?;
         Ok(())
@@ -36364,6 +36281,7 @@ impl ::sittir_core::render::Render for SuiteBlockTransport {
 
 impl ::sittir_core::prepare::Prepare for SuiteBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
@@ -36421,6 +36339,7 @@ impl ::sittir_core::render::Render for SuiteEmptyTransport {
 
 impl ::sittir_core::prepare::Prepare for SuiteEmptyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.newline.prepare(ctx)?;
         Ok(())
     }
@@ -36479,6 +36398,7 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
 
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operators.prepare(ctx)?;
         self.primary_expression.prepare(ctx)?;
@@ -36537,6 +36457,7 @@ impl ::sittir_core::render::Render for YieldFromClauseTransport {
 
 impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -36589,7 +36510,8 @@ impl ::sittir_core::render::Render for StringStartTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for StringStartTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -36691,7 +36613,8 @@ impl ::sittir_core::render::Render for StringFragmentTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for StringFragmentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -36793,7 +36716,8 @@ impl ::sittir_core::render::Render for EscapeInterpolationTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for EscapeInterpolationTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -36895,7 +36819,8 @@ impl ::sittir_core::render::Render for StringEndTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for StringEndTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -36972,6 +36897,214 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringEndTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct TightTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TightTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TightTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(120) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for TightTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TightTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TightTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TightTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TightTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TightTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SpaceTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for SpaceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for SpaceTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(121) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for SpaceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SpaceTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => " ".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| " ".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| " ".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SpaceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SpaceTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SpaceTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SpaceTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -36997,7 +37130,8 @@ impl ::sittir_core::render::Render for NewlineTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for NewlineTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37101,7 +37235,8 @@ impl ::sittir_core::render::Render for BlanklineTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for BlanklineTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37205,7 +37340,8 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37284,212 +37420,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct TightTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for TightTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for TightTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(120) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TightTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TightTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TightTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TightTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TightTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TightTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct SpaceTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for SpaceTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for SpaceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(121) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for SpaceTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SpaceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => " ".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| " ".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| " ".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SpaceTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SpaceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SpaceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SpaceTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct IndentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -37515,7 +37445,8 @@ impl ::sittir_core::render::Render for IndentTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for IndentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37617,7 +37548,8 @@ impl ::sittir_core::render::Render for DedentTransport {
 }
 
 impl ::sittir_core::prepare::Prepare for DedentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37724,6 +37656,7 @@ impl ::sittir_core::render::Render for NamesTransport {
 
 impl ::sittir_core::prepare::Prepare for NamesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -37780,6 +37713,7 @@ impl ::sittir_core::render::Render for AsPatternTargetTransport {
 
 impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -37836,6 +37770,7 @@ impl ::sittir_core::render::Render for FormatExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for FormatExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -37882,12 +37817,13 @@ impl ::sittir_core::options::Edged for ImportKeywordTransport {
 
 impl ::sittir_core::render::Render for ImportKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ImportKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -37986,12 +37922,13 @@ impl ::sittir_core::options::Edged for DotTransport {
 
 impl ::sittir_core::render::Render for DotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DotTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38090,12 +38027,13 @@ impl ::sittir_core::options::Edged for FromKeywordTransport {
 
 impl ::sittir_core::render::Render for FromKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FromKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38188,12 +38126,13 @@ impl ::sittir_core::view::KindOf for FutureUKeywordTransport {
 
 impl ::sittir_core::render::Render for FutureUKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FutureUKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38292,12 +38231,13 @@ impl ::sittir_core::options::Edged for AsKeywordTransport {
 
 impl ::sittir_core::render::Render for AsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AsKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38396,12 +38336,13 @@ impl ::sittir_core::options::Edged for StarTransport {
 
 impl ::sittir_core::render::Render for StarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StarTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38500,12 +38441,13 @@ impl ::sittir_core::options::Edged for GtGtTransport {
 
 impl ::sittir_core::render::Render for GtGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GtGtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38604,12 +38546,13 @@ impl ::sittir_core::options::Edged for AssertKeywordTransport {
 
 impl ::sittir_core::render::Render for AssertKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AssertKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38708,12 +38651,13 @@ impl ::sittir_core::options::Edged for PrintKeywordTransport {
 
 impl ::sittir_core::render::Render for PrintKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PrintKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38812,12 +38756,13 @@ impl ::sittir_core::options::Edged for ExecKeywordTransport {
 
 impl ::sittir_core::render::Render for ExecKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExecKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -38916,12 +38861,13 @@ impl ::sittir_core::options::Edged for AsyncKeywordTransport {
 
 impl ::sittir_core::render::Render for AsyncKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39020,12 +38966,13 @@ impl ::sittir_core::options::Edged for AwaitKeywordTransport {
 
 impl ::sittir_core::render::Render for AwaitKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39124,12 +39071,13 @@ impl ::sittir_core::options::Edged for TypeKeywordTransport {
 
 impl ::sittir_core::render::Render for TypeKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39228,12 +39176,13 @@ impl ::sittir_core::options::Edged for MatchKeywordTransport {
 
 impl ::sittir_core::render::Render for MatchKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39332,12 +39281,13 @@ impl ::sittir_core::options::Edged for ColonEqTransport {
 
 impl ::sittir_core::render::Render for ColonEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ColonEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39436,12 +39386,13 @@ impl ::sittir_core::options::Edged for ReturnKeywordTransport {
 
 impl ::sittir_core::render::Render for ReturnKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39540,12 +39491,13 @@ impl ::sittir_core::options::Edged for DelKeywordTransport {
 
 impl ::sittir_core::render::Render for DelKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DelKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39644,12 +39596,13 @@ impl ::sittir_core::options::Edged for RaiseKeywordTransport {
 
 impl ::sittir_core::render::Render for RaiseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RaiseKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39748,12 +39701,13 @@ impl ::sittir_core::options::Edged for PassKeywordTransport {
 
 impl ::sittir_core::render::Render for PassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PassKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39852,12 +39806,13 @@ impl ::sittir_core::options::Edged for BreakKeywordTransport {
 
 impl ::sittir_core::render::Render for BreakKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BreakKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -39956,12 +39911,13 @@ impl ::sittir_core::options::Edged for ContinueKeywordTransport {
 
 impl ::sittir_core::render::Render for ContinueKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ContinueKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40060,12 +40016,13 @@ impl ::sittir_core::options::Edged for IfKeywordTransport {
 
 impl ::sittir_core::render::Render for IfKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IfKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40164,12 +40121,13 @@ impl ::sittir_core::options::Edged for ColonTransport {
 
 impl ::sittir_core::render::Render for ColonTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ColonTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40268,12 +40226,13 @@ impl ::sittir_core::options::Edged for ElifKeywordTransport {
 
 impl ::sittir_core::render::Render for ElifKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ElifKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40372,12 +40331,13 @@ impl ::sittir_core::options::Edged for ElseKeywordTransport {
 
 impl ::sittir_core::render::Render for ElseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ElseKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40476,12 +40436,13 @@ impl ::sittir_core::options::Edged for CaseKeywordTransport {
 
 impl ::sittir_core::render::Render for CaseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaseKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40580,12 +40541,13 @@ impl ::sittir_core::options::Edged for ForKeywordTransport {
 
 impl ::sittir_core::render::Render for ForKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ForKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40684,12 +40646,13 @@ impl ::sittir_core::options::Edged for InKeywordTransport {
 
 impl ::sittir_core::render::Render for InKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for InKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40788,12 +40751,13 @@ impl ::sittir_core::options::Edged for WhileKeywordTransport {
 
 impl ::sittir_core::render::Render for WhileKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WhileKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40892,12 +40856,13 @@ impl ::sittir_core::options::Edged for TryKeywordTransport {
 
 impl ::sittir_core::render::Render for TryKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for TryKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -40996,12 +40961,13 @@ impl ::sittir_core::options::Edged for ExceptKeywordTransport {
 
 impl ::sittir_core::render::Render for ExceptKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ExceptKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41100,12 +41066,13 @@ impl ::sittir_core::options::Edged for FinallyKeywordTransport {
 
 impl ::sittir_core::render::Render for FinallyKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FinallyKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41204,12 +41171,13 @@ impl ::sittir_core::options::Edged for WithKeywordTransport {
 
 impl ::sittir_core::render::Render for WithKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for WithKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41308,12 +41276,13 @@ impl ::sittir_core::options::Edged for DefKeywordTransport {
 
 impl ::sittir_core::render::Render for DefKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DefKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41412,12 +41381,13 @@ impl ::sittir_core::options::Edged for DashGtTransport {
 
 impl ::sittir_core::render::Render for DashGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DashGtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41516,12 +41486,13 @@ impl ::sittir_core::options::Edged for LparenTransport {
 
 impl ::sittir_core::render::Render for LparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LparenTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41620,12 +41591,13 @@ impl ::sittir_core::options::Edged for RparenTransport {
 
 impl ::sittir_core::render::Render for RparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RparenTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41724,12 +41696,13 @@ impl ::sittir_core::options::Edged for StarStarTransport {
 
 impl ::sittir_core::render::Render for StarStarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StarStarTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41828,12 +41801,13 @@ impl ::sittir_core::options::Edged for GlobalKeywordTransport {
 
 impl ::sittir_core::render::Render for GlobalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GlobalKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -41932,12 +41906,13 @@ impl ::sittir_core::options::Edged for NonlocalKeywordTransport {
 
 impl ::sittir_core::render::Render for NonlocalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NonlocalKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42036,12 +42011,13 @@ impl ::sittir_core::options::Edged for EqTransport {
 
 impl ::sittir_core::render::Render for EqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42140,12 +42116,13 @@ impl ::sittir_core::options::Edged for ClassKeywordTransport {
 
 impl ::sittir_core::render::Render for ClassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ClassKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42244,12 +42221,13 @@ impl ::sittir_core::options::Edged for LbrackTransport {
 
 impl ::sittir_core::render::Render for LbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LbrackTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42348,12 +42326,13 @@ impl ::sittir_core::options::Edged for RbrackTransport {
 
 impl ::sittir_core::render::Render for RbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RbrackTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42452,12 +42431,13 @@ impl ::sittir_core::options::Edged for AtTransport {
 
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42556,12 +42536,13 @@ impl ::sittir_core::options::Edged for CommaTransport {
 
 impl ::sittir_core::render::Render for CommaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CommaTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42660,12 +42641,13 @@ impl ::sittir_core::options::Edged for LbraceTransport {
 
 impl ::sittir_core::render::Render for LbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LbraceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42764,12 +42746,13 @@ impl ::sittir_core::options::Edged for RbraceTransport {
 
 impl ::sittir_core::render::Render for RbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for RbraceTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42868,12 +42851,13 @@ impl ::sittir_core::options::Edged for UnderscoreTransport {
 
 impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for UnderscoreTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -42972,12 +42956,13 @@ impl ::sittir_core::options::Edged for DashTransport {
 
 impl ::sittir_core::render::Render for DashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43076,12 +43061,13 @@ impl ::sittir_core::options::Edged for PlusTransport {
 
 impl ::sittir_core::render::Render for PlusTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PlusTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43180,12 +43166,13 @@ impl ::sittir_core::options::Edged for NotKeywordTransport {
 
 impl ::sittir_core::render::Render for NotKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NotKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43284,12 +43271,13 @@ impl ::sittir_core::options::Edged for AndKeywordTransport {
 
 impl ::sittir_core::render::Render for AndKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AndKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43388,12 +43376,13 @@ impl ::sittir_core::options::Edged for OrKeywordTransport {
 
 impl ::sittir_core::render::Render for OrKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for OrKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43492,12 +43481,13 @@ impl ::sittir_core::options::Edged for SlashTransport {
 
 impl ::sittir_core::render::Render for SlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SlashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43596,12 +43586,13 @@ impl ::sittir_core::options::Edged for PercentTransport {
 
 impl ::sittir_core::render::Render for PercentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PercentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43700,12 +43691,13 @@ impl ::sittir_core::options::Edged for SlashSlashTransport {
 
 impl ::sittir_core::render::Render for SlashSlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SlashSlashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43804,12 +43796,13 @@ impl ::sittir_core::options::Edged for PipeTransport {
 
 impl ::sittir_core::render::Render for PipeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PipeTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -43908,12 +43901,13 @@ impl ::sittir_core::options::Edged for AmpTransport {
 
 impl ::sittir_core::render::Render for AmpTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AmpTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44012,12 +44006,13 @@ impl ::sittir_core::options::Edged for CaretTransport {
 
 impl ::sittir_core::render::Render for CaretTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaretTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44116,12 +44111,13 @@ impl ::sittir_core::options::Edged for LtLtTransport {
 
 impl ::sittir_core::render::Render for LtLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LtLtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44200,6 +44196,111 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct TildeTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TildeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TildeTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(60) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for TildeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(token self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TildeTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "~".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "~".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "~".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TildeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TildeTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TildeTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TildeTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TildeTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct LambdaKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -44220,12 +44321,13 @@ impl ::sittir_core::options::Edged for LambdaKeywordTransport {
 
 impl ::sittir_core::render::Render for LambdaKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LambdaKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44324,12 +44426,13 @@ impl ::sittir_core::options::Edged for YieldKeywordTransport {
 
 impl ::sittir_core::render::Render for YieldKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for YieldKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44428,12 +44531,13 @@ impl ::sittir_core::options::Edged for BslashTransport {
 
 impl ::sittir_core::render::Render for BslashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BslashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44512,110 +44616,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct TildeTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub edges: Option<::sittir_core::options::Edges>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for TildeTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for TildeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(60) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
-}
-
-impl ::sittir_core::render::Render for TildeTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TildeTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "~".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "~".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            edges: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "~".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        let edges = obj.get("$_edges")?;
-        Ok(Self {
-            transport_trivia_data,
-            edges,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TildeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TildeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TildeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TildeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TildeTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct PlusEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -44636,12 +44636,13 @@ impl ::sittir_core::options::Edged for PlusEqTransport {
 
 impl ::sittir_core::render::Render for PlusEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PlusEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44740,12 +44741,13 @@ impl ::sittir_core::options::Edged for DashEqTransport {
 
 impl ::sittir_core::render::Render for DashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for DashEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44844,12 +44846,13 @@ impl ::sittir_core::options::Edged for StarEqTransport {
 
 impl ::sittir_core::render::Render for StarEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StarEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -44948,12 +44951,13 @@ impl ::sittir_core::options::Edged for SlashEqTransport {
 
 impl ::sittir_core::render::Render for SlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SlashEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45052,12 +45056,13 @@ impl ::sittir_core::options::Edged for AtEqTransport {
 
 impl ::sittir_core::render::Render for AtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AtEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45156,12 +45161,13 @@ impl ::sittir_core::options::Edged for SlashSlashEqTransport {
 
 impl ::sittir_core::render::Render for SlashSlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for SlashSlashEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45260,12 +45266,13 @@ impl ::sittir_core::options::Edged for PercentEqTransport {
 
 impl ::sittir_core::render::Render for PercentEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PercentEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45364,12 +45371,13 @@ impl ::sittir_core::options::Edged for StarStarEqTransport {
 
 impl ::sittir_core::render::Render for StarStarEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for StarStarEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45468,12 +45476,13 @@ impl ::sittir_core::options::Edged for GtGtEqTransport {
 
 impl ::sittir_core::render::Render for GtGtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GtGtEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45572,12 +45581,13 @@ impl ::sittir_core::options::Edged for LtLtEqTransport {
 
 impl ::sittir_core::render::Render for LtLtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LtLtEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45676,12 +45686,13 @@ impl ::sittir_core::options::Edged for AmpEqTransport {
 
 impl ::sittir_core::render::Render for AmpEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for AmpEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45780,12 +45791,13 @@ impl ::sittir_core::options::Edged for CaretEqTransport {
 
 impl ::sittir_core::render::Render for CaretEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CaretEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45884,12 +45896,13 @@ impl ::sittir_core::options::Edged for PipeEqTransport {
 
 impl ::sittir_core::render::Render for PipeEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for PipeEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -45988,12 +46001,13 @@ impl ::sittir_core::options::Edged for LtTransport {
 
 impl ::sittir_core::render::Render for LtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46092,12 +46106,13 @@ impl ::sittir_core::options::Edged for LtEqTransport {
 
 impl ::sittir_core::render::Render for LtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LtEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46196,12 +46211,13 @@ impl ::sittir_core::options::Edged for EqEqTransport {
 
 impl ::sittir_core::render::Render for EqEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for EqEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46300,12 +46316,13 @@ impl ::sittir_core::options::Edged for BangEqTransport {
 
 impl ::sittir_core::render::Render for BangEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for BangEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46404,12 +46421,13 @@ impl ::sittir_core::options::Edged for GtEqTransport {
 
 impl ::sittir_core::render::Render for GtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GtEqTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46508,12 +46526,13 @@ impl ::sittir_core::options::Edged for GtTransport {
 
 impl ::sittir_core::render::Render for GtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for GtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46612,12 +46631,13 @@ impl ::sittir_core::options::Edged for LtGtTransport {
 
 impl ::sittir_core::render::Render for LtGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for LtGtTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46716,12 +46736,13 @@ impl ::sittir_core::options::Edged for NotInTransport {
 
 impl ::sittir_core::render::Render for NotInTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for NotInTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46820,12 +46841,13 @@ impl ::sittir_core::options::Edged for IsKeywordTransport {
 
 impl ::sittir_core::render::Render for IsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IsKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46924,12 +46946,13 @@ impl ::sittir_core::options::Edged for IsNotTransport {
 
 impl ::sittir_core::render::Render for IsNotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, w.text(&self.text))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for IsNotTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
         Ok(())
     }
 }
@@ -49056,6 +49079,7 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
         head: None,
         tail: None,
     };
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "statements", w)?;
     statements.render(w)?;
     Ok(())
 }
@@ -49528,6 +49552,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
     w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
@@ -49692,6 +49717,7 @@ fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "arguments", w)?;
     arguments.render(w)?;
     w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
@@ -49823,6 +49849,7 @@ fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::r
     w.edge(::sittir_core::types::KindId(183), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "dict_pattern_elements", w)?;
     dict_pattern_elements.render(w)?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
@@ -49938,6 +49965,7 @@ fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -49950,6 +49978,7 @@ fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::r
     w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
@@ -50064,6 +50093,7 @@ fn render_unary_operator(node: &UnaryOperatorTransport, w: &mut dyn ::sittir_cor
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
+    w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_AFTER);
     argument.render(w)?;
     w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50305,6 +50335,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
     w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "collection_elements", w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
@@ -50329,6 +50360,7 @@ fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::Render
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "collection_elements", w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
@@ -50341,6 +50373,7 @@ fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::rend
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "entries", w)?;
     entries.render(w)?;
     w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
@@ -50620,11 +50653,6 @@ fn render_identifier(t: &IdentifierTransport, w: &mut dyn ::sittir_core::render:
     w.text(&t.text)
 }
 
-fn render_keyword_identifier(node: &KeywordIdentifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text("print")?;
-    Ok(())
-}
-
 fn render_true(t: &TrueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -50869,10 +50897,6 @@ fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::ren
     Ok(())
 }
 
-fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    t.render(w)
-}
-
 fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     t.render(w)
 }
@@ -50897,6 +50921,7 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
     w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -50909,6 +50934,7 @@ fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sitti
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
@@ -51310,6 +51336,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
     w.indent();
     w.seam("\n");
     w.adjacent();
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "alternative", w)?;
     alternative.render(w)?;
     w.adjacent();
     w.dedent("");
@@ -51348,7 +51375,11 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
     let primary_expression = &node.primary_expression;
     w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operators.render(w)?;
-    w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
+    if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(61)]) {
+        w.seam(" ");
+    } else {
+        w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
+    }
     primary_expression.render(w)?;
     w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51383,6 +51414,14 @@ fn render_string_end(t: &StringEndTransport, w: &mut dyn ::sittir_core::render::
     w.text(&t.text)
 }
 
+fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
 fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
@@ -51392,14 +51431,6 @@ fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::R
 }
 
 fn render_double_blankline(t: &DoubleBlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
-}
-
-fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
-}
-
-fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
@@ -51673,6 +51704,10 @@ fn render_lt_lt(t: &LtLtTransport, w: &mut dyn ::sittir_core::render::RenderSink
     w.text(&t.text)
 }
 
+fn render_tilde(t: &TildeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
 fn render_lambda_keyword(t: &LambdaKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -51682,10 +51717,6 @@ fn render_yield_keyword(t: &YieldKeywordTransport, w: &mut dyn ::sittir_core::re
 }
 
 fn render_bslash(t: &BslashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_tilde(t: &TildeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -52057,7 +52088,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::FormatSpecifier(inner) => inner.kind_in(kinds),
             Self::TypeConversion(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::KeywordIdentifier(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -52079,7 +52109,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Subscripts(inner) => inner.kind_in(kinds),
             Self::DictionaryElements(inner) => inner.kind_in(kinds),
             Self::SliceGroup(inner) => inner.kind_in(kinds),
-            Self::UnaryOperatorOperator(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignmentOperator(inner) => inner.kind_in(kinds),
             Self::ExceptClauseExceptionAs(inner) => inner.kind_in(kinds),
             Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
@@ -52126,11 +52155,11 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StringFragment(inner) => inner.kind_in(kinds),
             Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
             Self::StringEnd(inner) => inner.kind_in(kinds),
+            Self::Tight(inner) => inner.kind_in(kinds),
+            Self::Space(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
             Self::Blankline(inner) => inner.kind_in(kinds),
             Self::DoubleBlankline(inner) => inner.kind_in(kinds),
-            Self::Tight(inner) => inner.kind_in(kinds),
-            Self::Space(inner) => inner.kind_in(kinds),
             Self::Indent(inner) => inner.kind_in(kinds),
             Self::Dedent(inner) => inner.kind_in(kinds),
             Self::Names(inner) => inner.kind_in(kinds),
@@ -52197,10 +52226,10 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Amp(inner) => inner.kind_in(kinds),
             Self::Caret(inner) => inner.kind_in(kinds),
             Self::LtLt(inner) => inner.kind_in(kinds),
+            Self::Tilde(inner) => inner.kind_in(kinds),
             Self::LambdaKeyword(inner) => inner.kind_in(kinds),
             Self::YieldKeyword(inner) => inner.kind_in(kinds),
             Self::Bslash(inner) => inner.kind_in(kinds),
-            Self::Tilde(inner) => inner.kind_in(kinds),
             Self::PlusEq(inner) => inner.kind_in(kinds),
             Self::DashEq(inner) => inner.kind_in(kinds),
             Self::StarEq(inner) => inner.kind_in(kinds),
@@ -52348,7 +52377,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::FormatSpecifier(t) => t.render(w),
             AnyTransport::TypeConversion(t) => t.render(w),
             AnyTransport::Identifier(t) => t.render(w),
-            AnyTransport::KeywordIdentifier(t) => t.render(w),
             AnyTransport::True(t) => t.render(w),
             AnyTransport::False(t) => t.render(w),
             AnyTransport::None(t) => t.render(w),
@@ -52370,7 +52398,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Subscripts(t) => t.render(w),
             AnyTransport::DictionaryElements(t) => t.render(w),
             AnyTransport::SliceGroup(t) => t.render(w),
-            AnyTransport::UnaryOperatorOperator(t) => t.render(w),
             AnyTransport::AugmentedAssignmentOperator(t) => t.render(w),
             AnyTransport::ExceptClauseExceptionAs(t) => t.render(w),
             AnyTransport::CaseTuplePattern(t) => t.render(w),
@@ -52417,11 +52444,11 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StringFragment(t) => t.render(w),
             AnyTransport::EscapeInterpolation(t) => t.render(w),
             AnyTransport::StringEnd(t) => t.render(w),
+            AnyTransport::Tight(t) => t.render(w),
+            AnyTransport::Space(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
             AnyTransport::Blankline(t) => t.render(w),
             AnyTransport::DoubleBlankline(t) => t.render(w),
-            AnyTransport::Tight(t) => t.render(w),
-            AnyTransport::Space(t) => t.render(w),
             AnyTransport::Indent(t) => t.render(w),
             AnyTransport::Dedent(t) => t.render(w),
             AnyTransport::Names(t) => t.render(w),
@@ -52488,10 +52515,10 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Amp(t) => t.render(w),
             AnyTransport::Caret(t) => t.render(w),
             AnyTransport::LtLt(t) => t.render(w),
+            AnyTransport::Tilde(t) => t.render(w),
             AnyTransport::LambdaKeyword(t) => t.render(w),
             AnyTransport::YieldKeyword(t) => t.render(w),
             AnyTransport::Bslash(t) => t.render(w),
-            AnyTransport::Tilde(t) => t.render(w),
             AnyTransport::PlusEq(t) => t.render(w),
             AnyTransport::DashEq(t) => t.render(w),
             AnyTransport::StarEq(t) => t.render(w),
@@ -52562,24 +52589,23 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => w.text("\\"),
             AnyTransport::Literal45_65_71 => w.text("="),
             AnyTransport::Literal46_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
-            AnyTransport::Literal47_69_64_65_6e_74_69_66_69_65_72 => w.text("print"),
-            AnyTransport::Literal48_30_78 => w.text("0x"),
-            AnyTransport::Literal49_30_58 => w.text("0X"),
-            AnyTransport::Literal50_30_6f => w.text("0o"),
-            AnyTransport::Literal51_30_4f => w.text("0O"),
-            AnyTransport::Literal52_30_62 => w.text("0b"),
-            AnyTransport::Literal53_30_42 => w.text("0B"),
-            AnyTransport::Literal54_6c_74 => w.text("<"),
-            AnyTransport::Literal55_6c_74_5f_65_71 => w.text("<="),
-            AnyTransport::Literal56_65_71_5f_65_71 => w.text("=="),
-            AnyTransport::Literal57_62_61_6e_67_5f_65_71 => w.text("!="),
-            AnyTransport::Literal58_67_74_5f_65_71 => w.text(">="),
-            AnyTransport::Literal59_67_74 => w.text(">"),
-            AnyTransport::Literal60_6c_74_5f_67_74 => w.text("<>"),
-            AnyTransport::Literal61_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            AnyTransport::Literal62_5f_6e_6f_74_5f_69_6e => w.text("not in"),
-            AnyTransport::Literal63_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            AnyTransport::Literal64_5f_69_73_5f_6e_6f_74 => w.text("is not"),
+            AnyTransport::Literal47_30_78 => w.text("0x"),
+            AnyTransport::Literal48_30_58 => w.text("0X"),
+            AnyTransport::Literal49_30_6f => w.text("0o"),
+            AnyTransport::Literal50_30_4f => w.text("0O"),
+            AnyTransport::Literal51_30_62 => w.text("0b"),
+            AnyTransport::Literal52_30_42 => w.text("0B"),
+            AnyTransport::Literal53_6c_74 => w.text("<"),
+            AnyTransport::Literal54_6c_74_5f_65_71 => w.text("<="),
+            AnyTransport::Literal55_65_71_5f_65_71 => w.text("=="),
+            AnyTransport::Literal56_62_61_6e_67_5f_65_71 => w.text("!="),
+            AnyTransport::Literal57_67_74_5f_65_71 => w.text(">="),
+            AnyTransport::Literal58_67_74 => w.text(">"),
+            AnyTransport::Literal59_6c_74_5f_67_74 => w.text("<>"),
+            AnyTransport::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
+            AnyTransport::Literal61_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            AnyTransport::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
+            AnyTransport::Literal63_5f_69_73_5f_6e_6f_74 => w.text("is not"),
             AnyTransport::Verbatim(t) => t.render(w),
         }
     }

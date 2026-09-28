@@ -1,6 +1,6 @@
 {
   "name": "regex",
-  "nodeCount": 80,
+  "nodeCount": 81,
   "word": null,
   "supertypes": [
     "_character_escape",
@@ -9,9 +9,28 @@
     "inline_flags_group"
   ],
   "externals": [
-    "_newline",
-    "_space",
-    "_tight"
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    }
+  ],
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
   ],
   "polymorphVariants": {
     "pattern": {
@@ -421,7 +440,20 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
+    {
+      "kind": "_blankline",
+      "modelType": "punctuation",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "text": "\n\n",
+      "factoryShape": "text"
+    },
     {
       "kind": "_character_escape",
       "modelType": "supertype",
@@ -454,34 +486,40 @@
       ]
     },
     {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
+      "factoryName": "newline",
       "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
-    },
-    {
-      "kind": "_space",
-      "modelType": "punctuation",
-      "typeName": "Space",
-      "irKey": "space",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\" \" as const",
-      "text": " "
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_whitespace",
@@ -491,8 +529,9 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_blankline",
+        "_double_blankline",
         "_newline",
-        "_space",
         "_tight"
       ]
     },
@@ -611,6 +650,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\k<"
+          ]
+        },
+        "close": {
+          "texts": [
+            ">"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "group_name",
       "factoryFields": [
@@ -1164,6 +1215,18 @@
         }
       ],
       "name": "count_quantifier_group",
+      "fullForm": {
+        "open": {
+          "texts": [
+            ","
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "decimal_digits",
       "factoryFields": [
@@ -1301,6 +1364,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -1764,6 +1839,26 @@
       "text": "(?"
     },
     {
+      "kind": "lparen_qmarkP_eq",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPEq",
+      "irKey": "lparenQmarkPEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P=\" as const",
+      "text": "(?P="
+    },
+    {
+      "kind": "lparen_qmarkP_lt",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPLt",
+      "irKey": "lparenQmarkPLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P<\" as const",
+      "text": "(?P<"
+    },
+    {
       "kind": "lparen_qmark_colon",
       "modelType": "punctuation",
       "typeName": "LparenQmarkColon",
@@ -1782,26 +1877,6 @@
       "isParameterless": true,
       "stampExpression": "\"(?<\" as const",
       "text": "(?<"
-    },
-    {
-      "kind": "lparen_qmarkp_eq",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpEq",
-      "irKey": "lparenQmarkpEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P=\" as const",
-      "text": "(?P="
-    },
-    {
-      "kind": "lparen_qmarkp_lt",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpLt",
-      "irKey": "lparenQmarkpLt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P<\" as const",
-      "text": "(?P<"
     },
     {
       "kind": "lt",
@@ -1841,7 +1916,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "(?P<",
-              "parseKind": "lparen_qmarkp_lt"
+              "parseKind": "lparen_qmarkP_lt"
             }
           ]
         },
@@ -1922,6 +1997,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "(?P="
+          ]
+        },
+        "close": {
+          "texts": [
+            ")"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "group_name",
       "factoryFields": [
@@ -2098,6 +2185,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "[:"
+          ]
+        },
+        "close": {
+          "texts": [
+            ":]"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "posix_class_name",
       "factoryFields": [
@@ -2573,6 +2672,18 @@
         }
       ],
       "name": "unicode_property_value_expression_group",
+      "fullForm": {
+        "open": {
+          "texts": [
+            ""
+          ]
+        },
+        "close": {
+          "texts": [
+            "="
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "unicode_property_name",
       "factoryFields": [

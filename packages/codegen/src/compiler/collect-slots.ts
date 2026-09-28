@@ -10,8 +10,8 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SimplifiedRule } from '../types/rule.ts';
-import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
+import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SeqRule, SimplifiedRule } from '../types/rule.ts';
+import { isLiteralChoiceContent, isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
@@ -410,9 +410,21 @@ export function collectSlots(
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-		return rule.members.flatMap((m) => resolveMember(m, kindForName, deriveCtx, seqMult, seqSep, diagnostics));
+		return withFieldNamedChild(rule).members.flatMap((m) =>
+			resolveMember(m, kindForName, deriveCtx, seqMult, seqSep, diagnostics)
+		);
 	}
 	return resolveMember(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
+}
+
+function withFieldNamedChild(rule: SeqRule<'simplify'>): SeqRule<'simplify'> {
+	const fieldName = (rule as { fieldName?: string }).fieldName;
+	if (fieldName === undefined) return rule;
+	const named = rule.members.filter(
+		(m) => (m as { fieldName?: string }).fieldName === undefined && isSlotNode(m) && !isLiteralChoiceContent(m)
+	);
+	if (named.length !== 1) return rule;
+	return { ...rule, members: rule.members.map((m) => (m === named[0] ? { ...m, fieldName } : m)) };
 }
 
 function recordUnclassifiableShape(
@@ -426,7 +438,8 @@ function recordUnclassifiableShape(
 		ownerKind: kindForName,
 		message:
 			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
-			`choice of leaves (${bucket}: ${describeArmShape(member)}) — resolved by structural recursion`,
+			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in patches: ` +
+			`naming the structured arm as its own rule`,
 		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
 	});
 }
@@ -476,8 +489,8 @@ function resolveMember(
 								(partition.degenerateNamedArms.length > 0
 									? ` and degenerate arm(s) [${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]`
 									: '') +
-								`. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind ` +
-								`(PR 3 mint) and join one kind-dispatched union slot.`
+								`. Resolve with variant(name) in patches: splitting the row, until the structured-arm ` +
+								`enrich mint gives each structured arm a kind of its own in the union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
 						diagnostics?.assembleWarnings.record({
