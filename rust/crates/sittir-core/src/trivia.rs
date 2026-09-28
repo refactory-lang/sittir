@@ -36,15 +36,6 @@ pub trait TriviaSeam {
     fn seam_text(&self) -> Option<&str> {
         None
     }
-    /// The kind of this entry, when it has one.
-    fn kind(&self) -> Option<KindId> {
-        None
-    }
-    /// Whether this entry's kind ends only at a line break (a line comment),
-    /// from the kind flag table the sink holds.
-    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
-        self.kind().is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED))
-    }
 }
 
 impl<T: Render + TriviaSeam> TriviaEntry<T> {
@@ -53,24 +44,6 @@ impl<T: Render + TriviaSeam> TriviaEntry<T> {
             SlotValue::Transport(value) => value.seam_text(),
             SlotValue::Coord(_) => None,
         }
-    }
-
-    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
-        match &self.value {
-            SlotValue::Transport(value) => value.line_terminated(w),
-            SlotValue::Coord(coord) => w
-                .kind_of(coord)
-                .is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED)),
-        }
-    }
-
-    /// Render the entry, and hold the break a line-terminated entry leaves.
-    fn render_entry(&self, w: &mut dyn RenderSink) -> RenderResult {
-        self.value.render(w)?;
-        if self.line_terminated(w) {
-            w.hold_line_end();
-        }
-        Ok(())
     }
 }
 
@@ -101,6 +74,7 @@ impl Render for TriviaText {
         w.edge(self.kind, Side::Before, None);
         w.text(&self.text)?;
         w.edge(self.kind, Side::After, None);
+        w.end_line_after(self.kind);
         Ok(())
     }
 }
@@ -168,7 +142,7 @@ fn render_joined<T: Render + TriviaSeam>(
         if let Some(previous) = previous {
             join(between(previous), w);
         }
-        entry.render_entry(w)?;
+        entry.render(w)?;
         previous = Some(entry);
     }
     Ok(())
@@ -178,7 +152,7 @@ fn render_joined<T: Render + TriviaSeam>(
 fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
     w.defer_trailing(&mut |w| {
         for entry in run {
-            entry.render_entry(w)?;
+            entry.render(w)?;
         }
         Ok(())
     })
@@ -236,7 +210,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
                 if !std::mem::replace(&mut gap_set, false) {
                     join("\n", w);
                 }
-                entry.render_entry(w)?;
+                entry.render(w)?;
                 after_entry = true;
             }
             if let Some(seam) = owner_seam {

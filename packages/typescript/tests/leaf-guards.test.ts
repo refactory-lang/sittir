@@ -4,7 +4,7 @@ import { ir } from '../src/index.ts';
 describe('typescript text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => ir.identifier('abc')).not.toThrow();
-		expect(ir.comment.line(' hello').$render!()).toBe('// hello');
+		expect(ir.comment.line(' hello').$render!()).toBe('// hello\n');
 		expect(ir.comment.block(' hello ').$render!()).toBe('/* hello */');
 		expect(ir.privatePropertyIdentifier('x').$render!()).toBe('#x');
 		expect(() => ir.number('1_000')).not.toThrow();

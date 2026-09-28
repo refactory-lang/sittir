@@ -12,7 +12,7 @@ import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } 
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
-import { lineTerminatedTrivia } from '../compiler/model/trivia.ts';
+import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -118,7 +118,7 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
-		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedTrivia(entry.kind, nodeMap) ? KIND_LINE_TERMINATED : 0);
+		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);

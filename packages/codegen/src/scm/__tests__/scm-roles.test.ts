@@ -258,7 +258,7 @@ describe('ir.synonym.* canonical factories — TypeScript', () => {
 	it('synonym.comment(" hello") produces a line comment', async () => {
 		const { synonym } = await loadSynonyms(TS_IR);
 		const node = synonym.comment(' hello');
-		expect(node.$render()).toBe('// hello');
+		expect(node.$render()).toBe('// hello\n');
 	});
 
 	it('synonym.type("String") produces type_identifier', async () => {
@@ -302,7 +302,7 @@ describe('ir.synonym.* canonical factories — Python', () => {
 	it('synonym.comment("# hello") produces comment', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
 		const node = synonym.comment(' hello');
-		expect(node.$render()).toBe('# hello');
+		expect(node.$render()).toBe('# hello\n');
 	});
 
 	it('synonym.type("str") produces identifier', async () => {

@@ -222,6 +222,22 @@ export function innerGapsKeyed(nodeMap: NodeMap): boolean {
 	return [...emptyForms(nodeMap).values()].some((form) => form.gaps.length > 1);
 }
 
-export function lineTerminatedTrivia(kind: string, nodeMap: NodeMap): boolean {
-	return triviaKinds(nodeMap).has(kind) && lineTerminated(nodeMap, kind) === true;
+const lineTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function lineTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = lineTerminatedKindsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const terminated = [...nodeMap.nodes.keys()].filter((kind) => lineTerminated(nodeMap, kind) === true);
+	const ending = new Set<string>();
+	const visit = (kind: string): void => {
+		for (const end of nodeMap.nodes.get(kind)?.lineEnds ?? []) {
+			if (typeof end === 'string' || ending.has(end.symbol)) continue;
+			ending.add(end.symbol);
+			visit(end.symbol);
+		}
+	};
+	terminated.forEach(visit);
+	const outermost = new Set(terminated.filter((kind) => !ending.has(kind)));
+	lineTerminatedKindsByNodeMap.set(nodeMap, outermost);
+	return outermost;
 }

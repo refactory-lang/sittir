@@ -1958,19 +1958,6 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
             _ => None,
         }
     }
-    fn kind(&self) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TriviaTransport::Comment(_) => Some(::sittir_core::types::KindId(74)),
-            TriviaTransport::LineContinuationNewline(_) => Some(::sittir_core::types::KindId(104)),
-            TriviaTransport::LineContinuationNul(_) => Some(::sittir_core::types::KindId(105)),
-            TriviaTransport::Space(_) => Some(::sittir_core::types::KindId(121)),
-            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(113)),
-            TriviaTransport::Blankline(_) => Some(::sittir_core::types::KindId(122)),
-            TriviaTransport::DoubleBlankline(_) => Some(::sittir_core::types::KindId(123)),
-            TriviaTransport::Text(t) => Some(t.kind),
-            _ => None,
-        }
-    }
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -24318,7 +24305,7 @@ impl ::sittir_core::options::Edged for ModuleTransport {
 
 impl ::sittir_core::render::Render for ModuleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_module(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(124)), render_module(self, w))
     }
 }
 
@@ -24383,7 +24370,7 @@ impl ::sittir_core::options::Edged for SimpleStatementsTransport {
 
 impl ::sittir_core::render::Render for SimpleStatementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_simple_statements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(126)), render_simple_statements(self, w))
     }
 }
 
@@ -24441,7 +24428,7 @@ impl ::sittir_core::options::Edged for ImportStatementTransport {
 
 impl ::sittir_core::render::Render for ImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_import_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(127)), render_import_statement(self, w))
     }
 }
 
@@ -24495,7 +24482,7 @@ impl ::sittir_core::options::Edged for ImportPrefixTransport {
 
 impl ::sittir_core::render::Render for ImportPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(128)), w.text(&self.text))
     }
 }
 
@@ -24604,7 +24591,7 @@ impl ::sittir_core::options::Edged for RelativeImportTransport {
 
 impl ::sittir_core::render::Render for RelativeImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_relative_import(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(129)), render_relative_import(self, w))
     }
 }
 
@@ -24663,7 +24650,7 @@ impl ::sittir_core::options::Edged for FutureImportStatementTransport {
 
 impl ::sittir_core::render::Render for FutureImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_future_import_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(130)), render_future_import_statement(self, w))
     }
 }
 
@@ -24723,7 +24710,7 @@ impl ::sittir_core::options::Edged for ImportFromStatementTransport {
 
 impl ::sittir_core::render::Render for ImportFromStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_import_from_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(131)), render_import_from_statement(self, w))
     }
 }
 
@@ -24788,7 +24775,7 @@ impl ::sittir_core::options::Edged for ImportListTransport {
 
 impl ::sittir_core::render::Render for ImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_import_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(132)), render_import_list(self, w))
     }
 }
 
@@ -24857,7 +24844,7 @@ impl ::sittir_core::options::Edged for AliasedImportTransport {
 
 impl ::sittir_core::render::Render for AliasedImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_aliased_import(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(133)), render_aliased_import(self, w))
     }
 }
 
@@ -24912,7 +24899,7 @@ impl ::sittir_core::options::Edged for WildcardImportTransport {
 
 impl ::sittir_core::render::Render for WildcardImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(134)), w.text(&self.text))
     }
 }
 
@@ -25021,7 +25008,7 @@ impl ::sittir_core::options::Edged for PrintStatementTransport {
 
 impl ::sittir_core::render::Render for PrintStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_print_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(135)), render_print_statement(self, w))
     }
 }
 
@@ -25078,7 +25065,7 @@ impl ::sittir_core::options::Edged for ChevronTransport {
 
 impl ::sittir_core::render::Render for ChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_chevron(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(136)), render_chevron(self, w))
     }
 }
 
@@ -25140,7 +25127,7 @@ impl ::sittir_core::options::Edged for AssertStatementTransport {
 
 impl ::sittir_core::render::Render for AssertStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_assert_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(137)), render_assert_statement(self, w))
     }
 }
 
@@ -25207,7 +25194,7 @@ impl ::sittir_core::options::Edged for ExpressionStatementTransport {
 
 impl ::sittir_core::render::Render for ExpressionStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_expression_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(138)), render_expression_statement(self, w))
     }
 }
 
@@ -25266,7 +25253,7 @@ impl ::sittir_core::options::Edged for NamedExpressionTransport {
 
 impl ::sittir_core::render::Render for NamedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_named_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(139)), render_named_expression(self, w))
     }
 }
 
@@ -25325,7 +25312,7 @@ impl ::sittir_core::options::Edged for ReturnStatementTransport {
 
 impl ::sittir_core::render::Render for ReturnStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_return_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(141)), render_return_statement(self, w))
     }
 }
 
@@ -25383,7 +25370,7 @@ impl ::sittir_core::options::Edged for DeleteStatementTransport {
 
 impl ::sittir_core::render::Render for DeleteStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_delete_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(142)), render_delete_statement(self, w))
     }
 }
 
@@ -25443,7 +25430,7 @@ impl ::sittir_core::options::Edged for RaiseStatementTransport {
 
 impl ::sittir_core::render::Render for RaiseStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_raise_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(143)), render_raise_statement(self, w))
     }
 }
 
@@ -25498,7 +25485,7 @@ impl ::sittir_core::options::Edged for PassStatementTransport {
 
 impl ::sittir_core::render::Render for PassStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(144)), w.text(&self.text))
     }
 }
 
@@ -25603,7 +25590,7 @@ impl ::sittir_core::options::Edged for BreakStatementTransport {
 
 impl ::sittir_core::render::Render for BreakStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(145)), w.text(&self.text))
     }
 }
 
@@ -25708,7 +25695,7 @@ impl ::sittir_core::options::Edged for ContinueStatementTransport {
 
 impl ::sittir_core::render::Render for ContinueStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(146)), w.text(&self.text))
     }
 }
 
@@ -25823,7 +25810,7 @@ impl ::sittir_core::options::Edged for IfStatementTransport {
 
 impl ::sittir_core::render::Render for IfStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_if_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(147)), render_if_statement(self, w))
     }
 }
 
@@ -25893,7 +25880,7 @@ impl ::sittir_core::options::Edged for ElifClauseTransport {
 
 impl ::sittir_core::render::Render for ElifClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_elif_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(148)), render_elif_clause(self, w))
     }
 }
 
@@ -25952,7 +25939,7 @@ impl ::sittir_core::options::Edged for ElseClauseTransport {
 
 impl ::sittir_core::render::Render for ElseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_else_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(149)), render_else_clause(self, w))
     }
 }
 
@@ -26012,7 +25999,7 @@ impl ::sittir_core::options::Edged for MatchStatementTransport {
 
 impl ::sittir_core::render::Render for MatchStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_match_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(150)), render_match_statement(self, w))
     }
 }
 
@@ -26071,7 +26058,7 @@ impl ::sittir_core::options::Edged for MatchBlockTransport {
 
 impl ::sittir_core::render::Render for MatchBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_match_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(151)), render_match_block(self, w))
     }
 }
 
@@ -26132,7 +26119,7 @@ impl ::sittir_core::options::Edged for CaseClauseTransport {
 
 impl ::sittir_core::render::Render for CaseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(152)), render_case_clause(self, w))
     }
 }
 
@@ -26200,7 +26187,7 @@ impl ::sittir_core::options::Edged for ForStatementTransport {
 
 impl ::sittir_core::render::Render for ForStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_for_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(153)), render_for_statement(self, w))
     }
 }
 
@@ -26266,7 +26253,7 @@ impl ::sittir_core::options::Edged for WhileStatementTransport {
 
 impl ::sittir_core::render::Render for WhileStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_while_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(154)), render_while_statement(self, w))
     }
 }
 
@@ -26334,7 +26321,7 @@ impl ::sittir_core::options::Edged for TryStatementTransport {
 
 impl ::sittir_core::render::Render for TryStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_try_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(155)), render_try_statement(self, w))
     }
 }
 
@@ -26407,7 +26394,7 @@ impl ::sittir_core::options::Edged for ExceptClauseTransport {
 
 impl ::sittir_core::render::Render for ExceptClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_except_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(156)), render_except_clause(self, w))
     }
 }
 
@@ -26467,7 +26454,7 @@ impl ::sittir_core::options::Edged for FinallyClauseTransport {
 
 impl ::sittir_core::render::Render for FinallyClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_finally_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(157)), render_finally_clause(self, w))
     }
 }
 
@@ -26529,7 +26516,7 @@ impl ::sittir_core::options::Edged for WithStatementTransport {
 
 impl ::sittir_core::render::Render for WithStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(158)), render_with_statement(self, w))
     }
 }
 
@@ -26589,7 +26576,7 @@ impl ::sittir_core::options::Edged for WithItemTransport {
 
 impl ::sittir_core::render::Render for WithItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_item(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(160)), render_with_item(self, w))
     }
 }
 
@@ -26656,7 +26643,7 @@ impl ::sittir_core::options::Edged for FunctionDefinitionTransport {
 
 impl ::sittir_core::render::Render for FunctionDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_function_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(161)), render_function_definition(self, w))
     }
 }
 
@@ -26719,7 +26706,7 @@ impl ::sittir_core::options::Edged for ParametersTransport {
 
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_parameters(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(162)), render_parameters(self, w))
     }
 }
 
@@ -26777,7 +26764,7 @@ impl ::sittir_core::options::Edged for LambdaParametersTransport {
 
 impl ::sittir_core::render::Render for LambdaParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_lambda_parameters(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(163)), render_lambda_parameters(self, w))
     }
 }
 
@@ -26834,7 +26821,7 @@ impl ::sittir_core::options::Edged for ListSplatTransport {
 
 impl ::sittir_core::render::Render for ListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(164)), render_list_splat(self, w))
     }
 }
 
@@ -26892,7 +26879,7 @@ impl ::sittir_core::options::Edged for DictionarySplatTransport {
 
 impl ::sittir_core::render::Render for DictionarySplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dictionary_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(165)), render_dictionary_splat(self, w))
     }
 }
 
@@ -26954,7 +26941,7 @@ impl ::sittir_core::options::Edged for GlobalStatementTransport {
 
 impl ::sittir_core::render::Render for GlobalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_global_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(166)), render_global_statement(self, w))
     }
 }
 
@@ -27024,7 +27011,7 @@ impl ::sittir_core::options::Edged for NonlocalStatementTransport {
 
 impl ::sittir_core::render::Render for NonlocalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_nonlocal_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(167)), render_nonlocal_statement(self, w))
     }
 }
 
@@ -27096,7 +27083,7 @@ impl ::sittir_core::options::Edged for ExecStatementTransport {
 
 impl ::sittir_core::render::Render for ExecStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_exec_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(168)), render_exec_statement(self, w))
     }
 }
 
@@ -27166,7 +27153,7 @@ impl ::sittir_core::options::Edged for TypeAliasStatementTransport {
 
 impl ::sittir_core::render::Render for TypeAliasStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_type_alias_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(169)), render_type_alias_statement(self, w))
     }
 }
 
@@ -27231,7 +27218,7 @@ impl ::sittir_core::options::Edged for ClassDefinitionTransport {
 
 impl ::sittir_core::render::Render for ClassDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_class_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(170)), render_class_definition(self, w))
     }
 }
 
@@ -27292,7 +27279,7 @@ impl ::sittir_core::options::Edged for TypeParameterTransport {
 
 impl ::sittir_core::render::Render for TypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_type_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(171)), render_type_parameter(self, w))
     }
 }
 
@@ -27350,7 +27337,7 @@ impl ::sittir_core::options::Edged for ParenthesizedListSplatTransport {
 
 impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_parenthesized_list_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(172)), render_parenthesized_list_splat(self, w))
     }
 }
 
@@ -27408,7 +27395,7 @@ impl ::sittir_core::options::Edged for ArgumentListTransport {
 
 impl ::sittir_core::render::Render for ArgumentListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_argument_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(173)), render_argument_list(self, w))
     }
 }
 
@@ -27470,7 +27457,7 @@ impl ::sittir_core::options::Edged for DecoratedDefinitionTransport {
 
 impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_decorated_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(174)), render_decorated_definition(self, w))
     }
 }
 
@@ -27537,7 +27524,7 @@ impl ::sittir_core::options::Edged for DecoratorTransport {
 
 impl ::sittir_core::render::Render for DecoratorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_decorator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(175)), render_decorator(self, w))
     }
 }
 
@@ -27597,7 +27584,7 @@ impl ::sittir_core::options::Edged for BlockTransport {
 
 impl ::sittir_core::render::Render for BlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(176)), render_block(self, w))
     }
 }
 
@@ -27665,7 +27652,7 @@ impl ::sittir_core::options::Edged for ExpressionListTransport {
 
 impl ::sittir_core::render::Render for ExpressionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_expression_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(177)), render_expression_list(self, w))
     }
 }
 
@@ -27728,7 +27715,7 @@ impl ::sittir_core::options::Edged for DottedNameTransport {
 
 impl ::sittir_core::render::Render for DottedNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dotted_name(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(178)), render_dotted_name(self, w))
     }
 }
 
@@ -27793,7 +27780,7 @@ impl ::sittir_core::options::Edged for CasePatternTransport {
 
 impl ::sittir_core::render::Render for CasePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(179)), render_case_pattern(self, w))
     }
 }
 
@@ -27850,7 +27837,7 @@ impl ::sittir_core::options::Edged for SimplePatternTransport {
 
 impl ::sittir_core::render::Render for SimplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_simple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(180)), render_simple_pattern(self, w))
     }
 }
 
@@ -27909,7 +27896,7 @@ impl ::sittir_core::options::Edged for CaseAsPatternTransport {
 
 impl ::sittir_core::render::Render for CaseAsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_as_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(181)), render_case_as_pattern(self, w))
     }
 }
 
@@ -27972,7 +27959,7 @@ impl ::sittir_core::options::Edged for UnionPatternTransport {
 
 impl ::sittir_core::render::Render for UnionPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_union_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(182)), render_union_pattern(self, w))
     }
 }
 
@@ -28038,7 +28025,7 @@ impl ::sittir_core::options::Edged for DictPatternTransport {
 
 impl ::sittir_core::render::Render for DictPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dict_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(183)), render_dict_pattern(self, w))
     }
 }
 
@@ -28098,7 +28085,7 @@ impl ::sittir_core::options::Edged for KeyValuePatternTransport {
 
 impl ::sittir_core::render::Render for KeyValuePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_key_value_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(184)), render_key_value_pattern(self, w))
     }
 }
 
@@ -28159,7 +28146,7 @@ impl ::sittir_core::options::Edged for KeywordPatternTransport {
 
 impl ::sittir_core::render::Render for KeywordPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_keyword_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(185)), render_keyword_pattern(self, w))
     }
 }
 
@@ -28220,7 +28207,7 @@ impl ::sittir_core::options::Edged for SplatPatternTransport {
 
 impl ::sittir_core::render::Render for SplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(186)), render_splat_pattern(self, w))
     }
 }
 
@@ -28281,7 +28268,7 @@ impl ::sittir_core::options::Edged for ClassPatternTransport {
 
 impl ::sittir_core::render::Render for ClassPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_class_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(187)), render_class_pattern(self, w))
     }
 }
 
@@ -28346,7 +28333,7 @@ impl ::sittir_core::options::Edged for ComplexPatternTransport {
 
 impl ::sittir_core::render::Render for ComplexPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_complex_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(188)), render_complex_pattern(self, w))
     }
 }
 
@@ -28413,7 +28400,7 @@ impl ::sittir_core::options::Edged for ParametersElementsTransport {
 
 impl ::sittir_core::render::Render for ParametersElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_parameters_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(189)), render_parameters_elements(self, w))
     }
 }
 
@@ -28486,7 +28473,7 @@ impl ::sittir_core::options::Edged for PatternsTransport {
 
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(190)), render_patterns(self, w))
     }
 }
 
@@ -28553,7 +28540,7 @@ impl ::sittir_core::options::Edged for TuplePatternTransport {
 
 impl ::sittir_core::render::Render for TuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_tuple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(193)), render_tuple_pattern(self, w))
     }
 }
 
@@ -28611,7 +28598,7 @@ impl ::sittir_core::options::Edged for ListPatternTransport {
 
 impl ::sittir_core::render::Render for ListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(194)), render_list_pattern(self, w))
     }
 }
 
@@ -28671,7 +28658,7 @@ impl ::sittir_core::options::Edged for DefaultParameterTransport {
 
 impl ::sittir_core::render::Render for DefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_default_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(195)), render_default_parameter(self, w))
     }
 }
 
@@ -28734,7 +28721,7 @@ impl ::sittir_core::options::Edged for TypedDefaultParameterTransport {
 
 impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_typed_default_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(196)), render_typed_default_parameter(self, w))
     }
 }
 
@@ -28794,7 +28781,7 @@ impl ::sittir_core::options::Edged for ListSplatPatternTransport {
 
 impl ::sittir_core::render::Render for ListSplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(197)), render_list_splat_pattern(self, w))
     }
 }
 
@@ -28852,7 +28839,7 @@ impl ::sittir_core::options::Edged for DictionarySplatPatternTransport {
 
 impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dictionary_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(198)), render_dictionary_splat_pattern(self, w))
     }
 }
 
@@ -28912,7 +28899,7 @@ impl ::sittir_core::options::Edged for AsPatternTransport {
 
 impl ::sittir_core::render::Render for AsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_as_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(199)), render_as_pattern(self, w))
     }
 }
 
@@ -28971,7 +28958,7 @@ impl ::sittir_core::options::Edged for NotOperatorTransport {
 
 impl ::sittir_core::render::Render for NotOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_not_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(203)), render_not_operator(self, w))
     }
 }
 
@@ -29033,7 +29020,7 @@ impl ::sittir_core::options::Edged for BooleanOperatorTransport {
 
 impl ::sittir_core::render::Render for BooleanOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_boolean_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(204)), render_boolean_operator(self, w))
     }
 }
 
@@ -29097,7 +29084,7 @@ impl ::sittir_core::options::Edged for BinaryOperatorTransport {
 
 impl ::sittir_core::render::Render for BinaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_binary_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(205)), render_binary_operator(self, w))
     }
 }
 
@@ -29159,7 +29146,7 @@ impl ::sittir_core::options::Edged for UnaryOperatorTransport {
 
 impl ::sittir_core::render::Render for UnaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_unary_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(206)), render_unary_operator(self, w))
     }
 }
 
@@ -29222,7 +29209,7 @@ impl ::sittir_core::options::Edged for ComparisonOperatorTransport {
 
 impl ::sittir_core::render::Render for ComparisonOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_comparison_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(209)), render_comparison_operator(self, w))
     }
 }
 
@@ -29291,7 +29278,7 @@ impl ::sittir_core::options::Edged for LambdaTransport {
 
 impl ::sittir_core::render::Render for LambdaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_lambda(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(210)), render_lambda(self, w))
     }
 }
 
@@ -29352,7 +29339,7 @@ impl ::sittir_core::options::Edged for LambdaWithinForInClauseTransport {
 
 impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_lambda_within_for_in_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(211)), render_lambda_within_for_in_clause(self, w))
     }
 }
 
@@ -29415,7 +29402,7 @@ impl ::sittir_core::options::Edged for AugmentedAssignmentTransport {
 
 impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_augmented_assignment(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(213)), render_augmented_assignment(self, w))
     }
 }
 
@@ -29477,7 +29464,7 @@ impl ::sittir_core::options::Edged for PatternListTransport {
 
 impl ::sittir_core::render::Render for PatternListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_pattern_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(214)), render_pattern_list(self, w))
     }
 }
 
@@ -29536,7 +29523,7 @@ impl ::sittir_core::options::Edged for YieldTransport {
 
 impl ::sittir_core::render::Render for YieldTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_yield(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(216)), render_yield(self, w))
     }
 }
 
@@ -29596,7 +29583,7 @@ impl ::sittir_core::options::Edged for AttributeTransport {
 
 impl ::sittir_core::render::Render for AttributeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_attribute(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(217)), render_attribute(self, w))
     }
 }
 
@@ -29657,7 +29644,7 @@ impl ::sittir_core::options::Edged for SubscriptTransport {
 
 impl ::sittir_core::render::Render for SubscriptTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_subscript(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(218)), render_subscript(self, w))
     }
 }
 
@@ -29720,7 +29707,7 @@ impl ::sittir_core::options::Edged for SliceTransport {
 
 impl ::sittir_core::render::Render for SliceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_slice(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(219)), render_slice(self, w))
     }
 }
 
@@ -29776,7 +29763,7 @@ impl ::sittir_core::options::Edged for EllipsisTransport {
 
 impl ::sittir_core::render::Render for EllipsisTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(64)), w.text(&self.text))
     }
 }
 
@@ -29887,7 +29874,7 @@ impl ::sittir_core::options::Edged for CallTransport {
 
 impl ::sittir_core::render::Render for CallTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_call(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(220)), render_call(self, w))
     }
 }
 
@@ -29948,7 +29935,7 @@ impl ::sittir_core::options::Edged for TypedParameterTransport {
 
 impl ::sittir_core::render::Render for TypedParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_typed_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(221)), render_typed_parameter(self, w))
     }
 }
 
@@ -30007,7 +29994,7 @@ impl ::sittir_core::options::Edged for TypeTransport {
 
 impl ::sittir_core::render::Render for TypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(222)), render_type(self, w))
     }
 }
 
@@ -30066,7 +30053,7 @@ impl ::sittir_core::options::Edged for SplatTypeTransport {
 
 impl ::sittir_core::render::Render for SplatTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_splat_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(223)), render_splat_type(self, w))
     }
 }
 
@@ -30127,7 +30114,7 @@ impl ::sittir_core::options::Edged for GenericTypeTransport {
 
 impl ::sittir_core::render::Render for GenericTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_generic_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(224)), render_generic_type(self, w))
     }
 }
 
@@ -30188,7 +30175,7 @@ impl ::sittir_core::options::Edged for UnionTypeTransport {
 
 impl ::sittir_core::render::Render for UnionTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_union_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(225)), render_union_type(self, w))
     }
 }
 
@@ -30249,7 +30236,7 @@ impl ::sittir_core::options::Edged for ConstrainedTypeTransport {
 
 impl ::sittir_core::render::Render for ConstrainedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_constrained_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(226)), render_constrained_type(self, w))
     }
 }
 
@@ -30310,7 +30297,7 @@ impl ::sittir_core::options::Edged for MemberTypeTransport {
 
 impl ::sittir_core::render::Render for MemberTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_member_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(227)), render_member_type(self, w))
     }
 }
 
@@ -30371,7 +30358,7 @@ impl ::sittir_core::options::Edged for KeywordArgumentTransport {
 
 impl ::sittir_core::render::Render for KeywordArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_keyword_argument(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(228)), render_keyword_argument(self, w))
     }
 }
 
@@ -30430,7 +30417,7 @@ impl ::sittir_core::options::Edged for ListTransport {
 
 impl ::sittir_core::render::Render for ListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(229)), render_list(self, w))
     }
 }
 
@@ -30488,7 +30475,7 @@ impl ::sittir_core::options::Edged for SetTransport {
 
 impl ::sittir_core::render::Render for SetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_set(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(230)), render_set(self, w))
     }
 }
 
@@ -30546,7 +30533,7 @@ impl ::sittir_core::options::Edged for TupleTransport {
 
 impl ::sittir_core::render::Render for TupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_tuple(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(231)), render_tuple(self, w))
     }
 }
 
@@ -30604,7 +30591,7 @@ impl ::sittir_core::options::Edged for DictionaryTransport {
 
 impl ::sittir_core::render::Render for DictionaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dictionary(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(232)), render_dictionary(self, w))
     }
 }
 
@@ -30664,7 +30651,7 @@ impl ::sittir_core::options::Edged for PairTransport {
 
 impl ::sittir_core::render::Render for PairTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_pair(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(233)), render_pair(self, w))
     }
 }
 
@@ -30725,7 +30712,7 @@ impl ::sittir_core::options::Edged for ListComprehensionTransport {
 
 impl ::sittir_core::render::Render for ListComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(234)), render_list_comprehension(self, w))
     }
 }
 
@@ -30786,7 +30773,7 @@ impl ::sittir_core::options::Edged for DictionaryComprehensionTransport {
 
 impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dictionary_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(235)), render_dictionary_comprehension(self, w))
     }
 }
 
@@ -30847,7 +30834,7 @@ impl ::sittir_core::options::Edged for SetComprehensionTransport {
 
 impl ::sittir_core::render::Render for SetComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_set_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(236)), render_set_comprehension(self, w))
     }
 }
 
@@ -30908,7 +30895,7 @@ impl ::sittir_core::options::Edged for GeneratorExpressionTransport {
 
 impl ::sittir_core::render::Render for GeneratorExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_generator_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(237)), render_generator_expression(self, w))
     }
 }
 
@@ -30967,7 +30954,7 @@ impl ::sittir_core::options::Edged for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_parenthesized_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(238)), render_parenthesized_expression(self, w))
     }
 }
 
@@ -31031,7 +31018,7 @@ impl ::sittir_core::options::Edged for CollectionElementsTransport {
 
 impl ::sittir_core::render::Render for CollectionElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_collection_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(239)), render_collection_elements(self, w))
     }
 }
 
@@ -31108,7 +31095,7 @@ impl ::sittir_core::options::Edged for ForInClauseTransport {
 
 impl ::sittir_core::render::Render for ForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_for_in_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(240)), render_for_in_clause(self, w))
     }
 }
 
@@ -31178,7 +31165,7 @@ impl ::sittir_core::options::Edged for IfClauseTransport {
 
 impl ::sittir_core::render::Render for IfClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_if_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(241)), render_if_clause(self, w))
     }
 }
 
@@ -31240,7 +31227,7 @@ impl ::sittir_core::options::Edged for ConditionalExpressionTransport {
 
 impl ::sittir_core::render::Render for ConditionalExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_conditional_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(242)), render_conditional_expression(self, w))
     }
 }
 
@@ -31302,7 +31289,7 @@ impl ::sittir_core::options::Edged for ConcatenatedStringTransport {
 
 impl ::sittir_core::render::Render for ConcatenatedStringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_concatenated_string(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(243)), render_concatenated_string(self, w))
     }
 }
 
@@ -31372,7 +31359,7 @@ impl ::sittir_core::options::Edged for StringTransport {
 
 impl ::sittir_core::render::Render for StringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_string(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(244)), render_string(self, w))
     }
 }
 
@@ -31432,7 +31419,7 @@ impl ::sittir_core::options::Edged for StringContentTransport {
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_string_content(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(245)), render_string_content(self, w))
     }
 }
 
@@ -31495,7 +31482,7 @@ impl ::sittir_core::options::Edged for InterpolationTransport {
 
 impl ::sittir_core::render::Render for InterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_interpolation(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(246)), render_interpolation(self, w))
     }
 }
 
@@ -31552,7 +31539,7 @@ impl ::sittir_core::options::Edged for NotEscapeSequenceTransport {
 
 impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(249)), { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -31661,7 +31648,7 @@ impl ::sittir_core::options::Edged for FormatSpecifierTransport {
 
 impl ::sittir_core::render::Render for FormatSpecifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_format_specifier(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(250)), render_format_specifier(self, w))
     }
 }
 
@@ -31715,7 +31702,7 @@ impl ::sittir_core::options::Edged for TypeConversionTransport {
 
 impl ::sittir_core::render::Render for TypeConversionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(67)), w.text(&self.text))
     }
 }
 
@@ -31818,7 +31805,7 @@ impl ::sittir_core::options::Edged for IdentifierTransport {
 
 impl ::sittir_core::render::Render for IdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(1)), w.text(&self.text))
     }
 }
 
@@ -31921,7 +31908,7 @@ impl ::sittir_core::options::Edged for TrueTransport {
 
 impl ::sittir_core::render::Render for TrueTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(71)), w.text(&self.text))
     }
 }
 
@@ -32026,7 +32013,7 @@ impl ::sittir_core::options::Edged for FalseTransport {
 
 impl ::sittir_core::render::Render for FalseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(72)), w.text(&self.text))
     }
 }
 
@@ -32131,7 +32118,7 @@ impl ::sittir_core::options::Edged for NoneTransport {
 
 impl ::sittir_core::render::Render for NoneTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(73)), w.text(&self.text))
     }
 }
 
@@ -32240,7 +32227,7 @@ impl ::sittir_core::options::Edged for AwaitTransport {
 
 impl ::sittir_core::render::Render for AwaitTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_await(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(253)), render_await(self, w))
     }
 }
 
@@ -32298,7 +32285,7 @@ impl ::sittir_core::options::Edged for CommentTransport {
 
 impl ::sittir_core::render::Render for CommentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_comment(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(74)), render_comment(self, w))
     }
 }
 
@@ -32351,7 +32338,7 @@ impl ::sittir_core::options::Edged for PositionalSeparatorTransport {
 
 impl ::sittir_core::render::Render for PositionalSeparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(254)), w.text(&self.text))
     }
 }
 
@@ -32456,7 +32443,7 @@ impl ::sittir_core::options::Edged for KeywordSeparatorTransport {
 
 impl ::sittir_core::render::Render for KeywordSeparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(255)), w.text(&self.text))
     }
 }
 
@@ -32561,7 +32548,7 @@ impl ::sittir_core::options::Edged for KwAsyncMarkerTransport {
 
 impl ::sittir_core::render::Render for KwAsyncMarkerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(256)), w.text(&self.text))
     }
 }
 
@@ -32703,7 +32690,7 @@ impl ::sittir_core::options::Edged for SimpleStatementsElementsTransport {
 
 impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_simple_statements_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(257)), render_simple_statements_elements(self, w))
     }
 }
 
@@ -32776,7 +32763,7 @@ impl ::sittir_core::options::Edged for SubjectsTransport {
 
 impl ::sittir_core::render::Render for SubjectsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_subjects(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(258)), render_subjects(self, w))
     }
 }
 
@@ -32849,7 +32836,7 @@ impl ::sittir_core::options::Edged for CasePatternsTransport {
 
 impl ::sittir_core::render::Render for CasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(259)), render_case_patterns(self, w))
     }
 }
 
@@ -32922,7 +32909,7 @@ impl ::sittir_core::options::Edged for WithClauseWithItemsTransport {
 
 impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_clause_with_items(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(260)), render_with_clause_with_items(self, w))
     }
 }
 
@@ -32994,7 +32981,7 @@ impl ::sittir_core::options::Edged for TypesTransport {
 
 impl ::sittir_core::render::Render for TypesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_types(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(261)), render_types(self, w))
     }
 }
 
@@ -33067,7 +33054,7 @@ impl ::sittir_core::options::Edged for ArgumentListElementsTransport {
 
 impl ::sittir_core::render::Render for ArgumentListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_argument_list_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(262)), render_argument_list_elements(self, w))
     }
 }
 
@@ -33140,7 +33127,7 @@ impl ::sittir_core::options::Edged for ExpressionListExpressionsTransport {
 
 impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_expression_list_expressions(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(263)), render_expression_list_expressions(self, w))
     }
 }
 
@@ -33213,7 +33200,7 @@ impl ::sittir_core::options::Edged for ListPatternCasePatternsTransport {
 
 impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_list_pattern_case_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(264)), render_list_pattern_case_patterns(self, w))
     }
 }
 
@@ -33286,7 +33273,7 @@ impl ::sittir_core::options::Edged for DictPatternElementsTransport {
 
 impl ::sittir_core::render::Render for DictPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dict_pattern_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(265)), render_dict_pattern_elements(self, w))
     }
 }
 
@@ -33359,7 +33346,7 @@ impl ::sittir_core::options::Edged for PatternListPatternsTransport {
 
 impl ::sittir_core::render::Render for PatternListPatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_pattern_list_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(266)), render_pattern_list_patterns(self, w))
     }
 }
 
@@ -33432,7 +33419,7 @@ impl ::sittir_core::options::Edged for SubscriptsTransport {
 
 impl ::sittir_core::render::Render for SubscriptsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_subscripts(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(267)), render_subscripts(self, w))
     }
 }
 
@@ -33505,7 +33492,7 @@ impl ::sittir_core::options::Edged for DictionaryElementsTransport {
 
 impl ::sittir_core::render::Render for DictionaryElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_dictionary_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(268)), render_dictionary_elements(self, w))
     }
 }
 
@@ -33572,7 +33559,7 @@ impl ::sittir_core::options::Edged for SliceGroupTransport {
 
 impl ::sittir_core::render::Render for SliceGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_slice_group(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(269)), render_slice_group(self, w))
     }
 }
 
@@ -33808,7 +33795,7 @@ impl ::sittir_core::options::Edged for ExceptClauseExceptionAsTransport {
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_except_clause_exception_as(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(271)), render_except_clause_exception_as(self, w))
     }
 }
 
@@ -33867,7 +33854,7 @@ impl ::sittir_core::options::Edged for CaseTuplePatternTransport {
 
 impl ::sittir_core::render::Render for CaseTuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_tuple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(272)), render_case_tuple_pattern(self, w))
     }
 }
 
@@ -33925,7 +33912,7 @@ impl ::sittir_core::options::Edged for CaseListPatternTransport {
 
 impl ::sittir_core::render::Render for CaseListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_case_list_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(273)), render_case_list_pattern(self, w))
     }
 }
 
@@ -33989,7 +33976,7 @@ impl ::sittir_core::options::Edged for PrintArgumentsTransport {
 
 impl ::sittir_core::render::Render for PrintArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_print_arguments(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(274)), render_print_arguments(self, w))
     }
 }
 
@@ -34062,7 +34049,7 @@ impl ::sittir_core::options::Edged for PrintChevronArgumentsTransport {
 
 impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_print_chevron_arguments(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(275)), render_print_chevron_arguments(self, w))
     }
 }
 
@@ -34131,7 +34118,7 @@ impl ::sittir_core::options::Edged for PrintStatementChevronTransport {
 
 impl ::sittir_core::render::Render for PrintStatementChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_print_statement_chevron(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(276)), render_print_statement_chevron(self, w))
     }
 }
 
@@ -34190,7 +34177,7 @@ impl ::sittir_core::options::Edged for PrintStatementPlainTransport {
 
 impl ::sittir_core::render::Render for PrintStatementPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_print_statement_plain(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(277)), render_print_statement_plain(self, w))
     }
 }
 
@@ -34244,7 +34231,7 @@ impl ::sittir_core::options::Edged for WildcardPatternTransport {
 
 impl ::sittir_core::render::Render for WildcardPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(278)), w.text(&self.text))
     }
 }
 
@@ -34353,7 +34340,7 @@ impl ::sittir_core::options::Edged for ParenthesizedImportListTransport {
 
 impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_parenthesized_import_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(279)), render_parenthesized_import_list(self, w))
     }
 }
 
@@ -34413,7 +34400,7 @@ impl ::sittir_core::options::Edged for ComprehensionClausesTransport {
 
 impl ::sittir_core::render::Render for ComprehensionClausesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_comprehension_clauses(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(280)), render_comprehension_clauses(self, w))
     }
 }
 
@@ -34480,7 +34467,7 @@ impl ::sittir_core::options::Edged for IntegerHexTransport {
 
 impl ::sittir_core::render::Render for IntegerHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_integer_hex(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(90)), render_integer_hex(self, w))
     }
 }
 
@@ -34540,7 +34527,7 @@ impl ::sittir_core::options::Edged for IntegerOctalTransport {
 
 impl ::sittir_core::render::Render for IntegerOctalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_integer_octal(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(91)), render_integer_octal(self, w))
     }
 }
 
@@ -34600,7 +34587,7 @@ impl ::sittir_core::options::Edged for IntegerBinaryTransport {
 
 impl ::sittir_core::render::Render for IntegerBinaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_integer_binary(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(92)), render_integer_binary(self, w))
     }
 }
 
@@ -34654,7 +34641,7 @@ impl ::sittir_core::options::Edged for IntegerDecimalTransport {
 
 impl ::sittir_core::render::Render for IntegerDecimalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(93)), w.text(&self.text))
     }
 }
 
@@ -34769,7 +34756,7 @@ impl ::sittir_core::options::Edged for FloatPointTransport {
 
 impl ::sittir_core::render::Render for FloatPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_float_point(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(94)), render_float_point(self, w))
     }
 }
 
@@ -34838,7 +34825,7 @@ impl ::sittir_core::options::Edged for FloatLeadingPointTransport {
 
 impl ::sittir_core::render::Render for FloatLeadingPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_float_leading_point(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(95)), render_float_leading_point(self, w))
     }
 }
 
@@ -34905,7 +34892,7 @@ impl ::sittir_core::options::Edged for FloatScientificTransport {
 
 impl ::sittir_core::render::Render for FloatScientificTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_float_scientific(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(96)), render_float_scientific(self, w))
     }
 }
 
@@ -34965,7 +34952,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeFixedTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_unicode_fixed(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(97)), render_escape_sequence_unicode_fixed(self, w))
     }
 }
 
@@ -35022,7 +35009,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceUnicodeWideTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceUnicodeWideTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_unicode_wide(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(98)), render_escape_sequence_unicode_wide(self, w))
     }
 }
 
@@ -35079,7 +35066,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceHexTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceHexTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_hex(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(99)), render_escape_sequence_hex(self, w))
     }
 }
 
@@ -35136,7 +35123,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceOctalTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceOctalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_octal(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(100)), render_escape_sequence_octal(self, w))
     }
 }
 
@@ -35193,7 +35180,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceLineBreakTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceLineBreakTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_line_break(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(101)), render_escape_sequence_line_break(self, w))
     }
 }
 
@@ -35250,7 +35237,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceSimpleTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceSimpleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_simple(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(102)), render_escape_sequence_simple(self, w))
     }
 }
 
@@ -35307,7 +35294,7 @@ impl ::sittir_core::options::Edged for EscapeSequenceNamedTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceNamedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_escape_sequence_named(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(103)), render_escape_sequence_named(self, w))
     }
 }
 
@@ -35360,7 +35347,7 @@ impl ::sittir_core::options::Edged for LineContinuationNewlineTransport {
 
 impl ::sittir_core::render::Render for LineContinuationNewlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(104)), w.text(&self.text))
     }
 }
 
@@ -35463,7 +35450,7 @@ impl ::sittir_core::options::Edged for LineContinuationNulTransport {
 
 impl ::sittir_core::render::Render for LineContinuationNulTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(105)), w.text(&self.text))
     }
 }
 
@@ -35574,7 +35561,7 @@ impl ::sittir_core::options::Edged for SimplePatternNegativeTransport {
 
 impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_simple_pattern_negative(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(281)), render_simple_pattern_negative(self, w))
     }
 }
 
@@ -35637,7 +35624,7 @@ impl ::sittir_core::options::Edged for ExceptClauseExceptionListTransport {
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_except_clause_exception_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(282)), render_except_clause_exception_list(self, w))
     }
 }
 
@@ -35703,7 +35690,7 @@ impl ::sittir_core::options::Edged for ExceptClauseExceptionTransport {
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_except_clause_exception(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(283)), render_except_clause_exception(self, w))
     }
 }
 
@@ -35762,7 +35749,7 @@ impl ::sittir_core::options::Edged for AssignmentEqTransport {
 
 impl ::sittir_core::render::Render for AssignmentEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_assignment_eq(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(284)), render_assignment_eq(self, w))
     }
 }
 
@@ -35823,7 +35810,7 @@ impl ::sittir_core::options::Edged for AssignmentTypeTransport {
 
 impl ::sittir_core::render::Render for AssignmentTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_assignment_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(285)), render_assignment_type(self, w))
     }
 }
 
@@ -35886,7 +35873,7 @@ impl ::sittir_core::options::Edged for AssignmentTypedTransport {
 
 impl ::sittir_core::render::Render for AssignmentTypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_assignment_typed(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(286)), render_assignment_typed(self, w))
     }
 }
 
@@ -35952,7 +35939,7 @@ impl ::sittir_core::options::Edged for ExpressionStatementTupleTransport {
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_expression_statement_tuple(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(287)), render_expression_statement_tuple(self, w))
     }
 }
 
@@ -36025,7 +36012,7 @@ impl ::sittir_core::options::Edged for WithClauseBareTransport {
 
 impl ::sittir_core::render::Render for WithClauseBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_clause_bare(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(288)), render_with_clause_bare(self, w))
     }
 }
 
@@ -36091,7 +36078,7 @@ impl ::sittir_core::options::Edged for WithClauseParenTransport {
 
 impl ::sittir_core::render::Render for WithClauseParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_clause_paren(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(289)), render_with_clause_paren(self, w))
     }
 }
 
@@ -36151,7 +36138,7 @@ impl ::sittir_core::options::Edged for MatchBlockBlockTransport {
 
 impl ::sittir_core::render::Render for MatchBlockBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_match_block_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(290)), render_match_block_block(self, w))
     }
 }
 
@@ -36217,7 +36204,7 @@ impl ::sittir_core::options::Edged for SuiteInlineTransport {
 
 impl ::sittir_core::render::Render for SuiteInlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_suite_inline(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(291)), render_suite_inline(self, w))
     }
 }
 
@@ -36275,7 +36262,7 @@ impl ::sittir_core::options::Edged for SuiteBlockTransport {
 
 impl ::sittir_core::render::Render for SuiteBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_suite_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(292)), render_suite_block(self, w))
     }
 }
 
@@ -36333,7 +36320,7 @@ impl ::sittir_core::options::Edged for SuiteEmptyTransport {
 
 impl ::sittir_core::render::Render for SuiteEmptyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_suite_empty(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(293)), render_suite_empty(self, w))
     }
 }
 
@@ -36392,7 +36379,7 @@ impl ::sittir_core::options::Edged for ComparisonOperatorComparatorTransport {
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_comparison_operator_comparator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(294)), render_comparison_operator_comparator(self, w))
     }
 }
 
@@ -36451,7 +36438,7 @@ impl ::sittir_core::options::Edged for YieldFromClauseTransport {
 
 impl ::sittir_core::render::Render for YieldFromClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_yield_from_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(295)), render_yield_from_clause(self, w))
     }
 }
 
@@ -36505,7 +36492,7 @@ impl ::sittir_core::options::Edged for StringStartTransport {
 
 impl ::sittir_core::render::Render for StringStartTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(116)), w.text(&self.text))
     }
 }
 
@@ -36608,7 +36595,7 @@ impl ::sittir_core::options::Edged for StringFragmentTransport {
 
 impl ::sittir_core::render::Render for StringFragmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(117)), { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -36711,7 +36698,7 @@ impl ::sittir_core::options::Edged for EscapeInterpolationTransport {
 
 impl ::sittir_core::render::Render for EscapeInterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(118)), { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -36814,7 +36801,7 @@ impl ::sittir_core::options::Edged for StringEndTransport {
 
 impl ::sittir_core::render::Render for StringEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(119)), { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -36917,7 +36904,7 @@ impl ::sittir_core::options::Edged for TightTransport {
 
 impl ::sittir_core::render::Render for TightTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(120)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37020,7 +37007,7 @@ impl ::sittir_core::options::Edged for SpaceTransport {
 
 impl ::sittir_core::render::Render for SpaceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(121)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37125,7 +37112,7 @@ impl ::sittir_core::options::Edged for NewlineTransport {
 
 impl ::sittir_core::render::Render for NewlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(113)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37230,7 +37217,7 @@ impl ::sittir_core::options::Edged for BlanklineTransport {
 
 impl ::sittir_core::render::Render for BlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(122)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37335,7 +37322,7 @@ impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
 
 impl ::sittir_core::render::Render for DoubleBlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(123)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37440,7 +37427,7 @@ impl ::sittir_core::options::Edged for IndentTransport {
 
 impl ::sittir_core::render::Render for IndentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(114)), w.text(&self.text))
     }
 }
 
@@ -37543,7 +37530,7 @@ impl ::sittir_core::options::Edged for DedentTransport {
 
 impl ::sittir_core::render::Render for DedentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(115)), w.text(&self.text))
     }
 }
 
@@ -37650,7 +37637,7 @@ impl ::sittir_core::options::Edged for NamesTransport {
 
 impl ::sittir_core::render::Render for NamesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_names(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(333)), render_names(self, w))
     }
 }
 
@@ -37707,7 +37694,7 @@ impl ::sittir_core::options::Edged for AsPatternTargetTransport {
 
 impl ::sittir_core::render::Render for AsPatternTargetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_as_pattern_target(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(331)), render_as_pattern_target(self, w))
     }
 }
 
@@ -37764,7 +37751,7 @@ impl ::sittir_core::options::Edged for FormatExpressionTransport {
 
 impl ::sittir_core::render::Render for FormatExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_format_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(332)), render_format_expression(self, w))
     }
 }
 
@@ -37817,7 +37804,7 @@ impl ::sittir_core::options::Edged for ImportKeywordTransport {
 
 impl ::sittir_core::render::Render for ImportKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(2)), w.text(&self.text))
     }
 }
 
@@ -37922,7 +37909,7 @@ impl ::sittir_core::options::Edged for DotTransport {
 
 impl ::sittir_core::render::Render for DotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(3)), w.text(&self.text))
     }
 }
 
@@ -38027,7 +38014,7 @@ impl ::sittir_core::options::Edged for FromKeywordTransport {
 
 impl ::sittir_core::render::Render for FromKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(4)), w.text(&self.text))
     }
 }
 
@@ -38126,7 +38113,7 @@ impl ::sittir_core::view::KindOf for FutureUKeywordTransport {
 
 impl ::sittir_core::render::Render for FutureUKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(5)), w.text(&self.text))
     }
 }
 
@@ -38231,7 +38218,7 @@ impl ::sittir_core::options::Edged for AsKeywordTransport {
 
 impl ::sittir_core::render::Render for AsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(7)), w.text(&self.text))
     }
 }
 
@@ -38336,7 +38323,7 @@ impl ::sittir_core::options::Edged for StarTransport {
 
 impl ::sittir_core::render::Render for StarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(8)), w.text(&self.text))
     }
 }
 
@@ -38441,7 +38428,7 @@ impl ::sittir_core::options::Edged for GtGtTransport {
 
 impl ::sittir_core::render::Render for GtGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(9)), w.text(&self.text))
     }
 }
 
@@ -38546,7 +38533,7 @@ impl ::sittir_core::options::Edged for AssertKeywordTransport {
 
 impl ::sittir_core::render::Render for AssertKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(10)), w.text(&self.text))
     }
 }
 
@@ -38651,7 +38638,7 @@ impl ::sittir_core::options::Edged for PrintKeywordTransport {
 
 impl ::sittir_core::render::Render for PrintKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(68)), w.text(&self.text))
     }
 }
 
@@ -38756,7 +38743,7 @@ impl ::sittir_core::options::Edged for ExecKeywordTransport {
 
 impl ::sittir_core::render::Render for ExecKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(38)), w.text(&self.text))
     }
 }
 
@@ -38861,7 +38848,7 @@ impl ::sittir_core::options::Edged for AsyncKeywordTransport {
 
 impl ::sittir_core::render::Render for AsyncKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(69)), w.text(&self.text))
     }
 }
 
@@ -38966,7 +38953,7 @@ impl ::sittir_core::options::Edged for AwaitKeywordTransport {
 
 impl ::sittir_core::render::Render for AwaitKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(70)), w.text(&self.text))
     }
 }
 
@@ -39071,7 +39058,7 @@ impl ::sittir_core::options::Edged for TypeKeywordTransport {
 
 impl ::sittir_core::render::Render for TypeKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(39)), w.text(&self.text))
     }
 }
 
@@ -39176,7 +39163,7 @@ impl ::sittir_core::options::Edged for MatchKeywordTransport {
 
 impl ::sittir_core::render::Render for MatchKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(22)), w.text(&self.text))
     }
 }
 
@@ -39281,7 +39268,7 @@ impl ::sittir_core::options::Edged for ColonEqTransport {
 
 impl ::sittir_core::render::Render for ColonEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(11)), w.text(&self.text))
     }
 }
 
@@ -39386,7 +39373,7 @@ impl ::sittir_core::options::Edged for ReturnKeywordTransport {
 
 impl ::sittir_core::render::Render for ReturnKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(12)), w.text(&self.text))
     }
 }
 
@@ -39491,7 +39478,7 @@ impl ::sittir_core::options::Edged for DelKeywordTransport {
 
 impl ::sittir_core::render::Render for DelKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(13)), w.text(&self.text))
     }
 }
 
@@ -39596,7 +39583,7 @@ impl ::sittir_core::options::Edged for RaiseKeywordTransport {
 
 impl ::sittir_core::render::Render for RaiseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(14)), w.text(&self.text))
     }
 }
 
@@ -39701,7 +39688,7 @@ impl ::sittir_core::options::Edged for PassKeywordTransport {
 
 impl ::sittir_core::render::Render for PassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(15)), w.text(&self.text))
     }
 }
 
@@ -39806,7 +39793,7 @@ impl ::sittir_core::options::Edged for BreakKeywordTransport {
 
 impl ::sittir_core::render::Render for BreakKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(16)), w.text(&self.text))
     }
 }
 
@@ -39911,7 +39898,7 @@ impl ::sittir_core::options::Edged for ContinueKeywordTransport {
 
 impl ::sittir_core::render::Render for ContinueKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(17)), w.text(&self.text))
     }
 }
 
@@ -40016,7 +40003,7 @@ impl ::sittir_core::options::Edged for IfKeywordTransport {
 
 impl ::sittir_core::render::Render for IfKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(18)), w.text(&self.text))
     }
 }
 
@@ -40121,7 +40108,7 @@ impl ::sittir_core::options::Edged for ColonTransport {
 
 impl ::sittir_core::render::Render for ColonTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(19)), w.text(&self.text))
     }
 }
 
@@ -40226,7 +40213,7 @@ impl ::sittir_core::options::Edged for ElifKeywordTransport {
 
 impl ::sittir_core::render::Render for ElifKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(20)), w.text(&self.text))
     }
 }
 
@@ -40331,7 +40318,7 @@ impl ::sittir_core::options::Edged for ElseKeywordTransport {
 
 impl ::sittir_core::render::Render for ElseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(21)), w.text(&self.text))
     }
 }
 
@@ -40436,7 +40423,7 @@ impl ::sittir_core::options::Edged for CaseKeywordTransport {
 
 impl ::sittir_core::render::Render for CaseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(23)), w.text(&self.text))
     }
 }
 
@@ -40541,7 +40528,7 @@ impl ::sittir_core::options::Edged for ForKeywordTransport {
 
 impl ::sittir_core::render::Render for ForKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(24)), w.text(&self.text))
     }
 }
 
@@ -40646,7 +40633,7 @@ impl ::sittir_core::options::Edged for InKeywordTransport {
 
 impl ::sittir_core::render::Render for InKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(25)), w.text(&self.text))
     }
 }
 
@@ -40751,7 +40738,7 @@ impl ::sittir_core::options::Edged for WhileKeywordTransport {
 
 impl ::sittir_core::render::Render for WhileKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(26)), w.text(&self.text))
     }
 }
 
@@ -40856,7 +40843,7 @@ impl ::sittir_core::options::Edged for TryKeywordTransport {
 
 impl ::sittir_core::render::Render for TryKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(27)), w.text(&self.text))
     }
 }
 
@@ -40961,7 +40948,7 @@ impl ::sittir_core::options::Edged for ExceptKeywordTransport {
 
 impl ::sittir_core::render::Render for ExceptKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(28)), w.text(&self.text))
     }
 }
 
@@ -41066,7 +41053,7 @@ impl ::sittir_core::options::Edged for FinallyKeywordTransport {
 
 impl ::sittir_core::render::Render for FinallyKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(30)), w.text(&self.text))
     }
 }
 
@@ -41171,7 +41158,7 @@ impl ::sittir_core::options::Edged for WithKeywordTransport {
 
 impl ::sittir_core::render::Render for WithKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(31)), w.text(&self.text))
     }
 }
 
@@ -41276,7 +41263,7 @@ impl ::sittir_core::options::Edged for DefKeywordTransport {
 
 impl ::sittir_core::render::Render for DefKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(32)), w.text(&self.text))
     }
 }
 
@@ -41381,7 +41368,7 @@ impl ::sittir_core::options::Edged for DashGtTransport {
 
 impl ::sittir_core::render::Render for DashGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(76)), w.text(&self.text))
     }
 }
 
@@ -41486,7 +41473,7 @@ impl ::sittir_core::options::Edged for LparenTransport {
 
 impl ::sittir_core::render::Render for LparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(33)), w.text(&self.text))
     }
 }
 
@@ -41591,7 +41578,7 @@ impl ::sittir_core::options::Edged for RparenTransport {
 
 impl ::sittir_core::render::Render for RparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(34)), w.text(&self.text))
     }
 }
 
@@ -41696,7 +41683,7 @@ impl ::sittir_core::options::Edged for StarStarTransport {
 
 impl ::sittir_core::render::Render for StarStarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(35)), w.text(&self.text))
     }
 }
 
@@ -41801,7 +41788,7 @@ impl ::sittir_core::options::Edged for GlobalKeywordTransport {
 
 impl ::sittir_core::render::Render for GlobalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(36)), w.text(&self.text))
     }
 }
 
@@ -41906,7 +41893,7 @@ impl ::sittir_core::options::Edged for NonlocalKeywordTransport {
 
 impl ::sittir_core::render::Render for NonlocalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(37)), w.text(&self.text))
     }
 }
 
@@ -42011,7 +41998,7 @@ impl ::sittir_core::options::Edged for EqTransport {
 
 impl ::sittir_core::render::Render for EqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(40)), w.text(&self.text))
     }
 }
 
@@ -42116,7 +42103,7 @@ impl ::sittir_core::options::Edged for ClassKeywordTransport {
 
 impl ::sittir_core::render::Render for ClassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(41)), w.text(&self.text))
     }
 }
 
@@ -42221,7 +42208,7 @@ impl ::sittir_core::options::Edged for LbrackTransport {
 
 impl ::sittir_core::render::Render for LbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(42)), w.text(&self.text))
     }
 }
 
@@ -42326,7 +42313,7 @@ impl ::sittir_core::options::Edged for RbrackTransport {
 
 impl ::sittir_core::render::Render for RbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(43)), w.text(&self.text))
     }
 }
 
@@ -42431,7 +42418,7 @@ impl ::sittir_core::options::Edged for AtTransport {
 
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(44)), w.text(&self.text))
     }
 }
 
@@ -42536,7 +42523,7 @@ impl ::sittir_core::options::Edged for CommaTransport {
 
 impl ::sittir_core::render::Render for CommaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(6)), w.text(&self.text))
     }
 }
 
@@ -42641,7 +42628,7 @@ impl ::sittir_core::options::Edged for LbraceTransport {
 
 impl ::sittir_core::render::Render for LbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(46)), w.text(&self.text))
     }
 }
 
@@ -42746,7 +42733,7 @@ impl ::sittir_core::options::Edged for RbraceTransport {
 
 impl ::sittir_core::render::Render for RbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(47)), w.text(&self.text))
     }
 }
 
@@ -42851,7 +42838,7 @@ impl ::sittir_core::options::Edged for UnderscoreTransport {
 
 impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(48)), w.text(&self.text))
     }
 }
 
@@ -42956,7 +42943,7 @@ impl ::sittir_core::options::Edged for DashTransport {
 
 impl ::sittir_core::render::Render for DashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(50)), w.text(&self.text))
     }
 }
 
@@ -43061,7 +43048,7 @@ impl ::sittir_core::options::Edged for PlusTransport {
 
 impl ::sittir_core::render::Render for PlusTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(49)), w.text(&self.text))
     }
 }
 
@@ -43166,7 +43153,7 @@ impl ::sittir_core::options::Edged for NotKeywordTransport {
 
 impl ::sittir_core::render::Render for NotKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(51)), w.text(&self.text))
     }
 }
 
@@ -43271,7 +43258,7 @@ impl ::sittir_core::options::Edged for AndKeywordTransport {
 
 impl ::sittir_core::render::Render for AndKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(52)), w.text(&self.text))
     }
 }
 
@@ -43376,7 +43363,7 @@ impl ::sittir_core::options::Edged for OrKeywordTransport {
 
 impl ::sittir_core::render::Render for OrKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(53)), w.text(&self.text))
     }
 }
 
@@ -43481,7 +43468,7 @@ impl ::sittir_core::options::Edged for SlashTransport {
 
 impl ::sittir_core::render::Render for SlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(54)), w.text(&self.text))
     }
 }
 
@@ -43586,7 +43573,7 @@ impl ::sittir_core::options::Edged for PercentTransport {
 
 impl ::sittir_core::render::Render for PercentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(55)), w.text(&self.text))
     }
 }
 
@@ -43691,7 +43678,7 @@ impl ::sittir_core::options::Edged for SlashSlashTransport {
 
 impl ::sittir_core::render::Render for SlashSlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(56)), w.text(&self.text))
     }
 }
 
@@ -43796,7 +43783,7 @@ impl ::sittir_core::options::Edged for PipeTransport {
 
 impl ::sittir_core::render::Render for PipeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(45)), w.text(&self.text))
     }
 }
 
@@ -43901,7 +43888,7 @@ impl ::sittir_core::options::Edged for AmpTransport {
 
 impl ::sittir_core::render::Render for AmpTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(57)), w.text(&self.text))
     }
 }
 
@@ -44006,7 +43993,7 @@ impl ::sittir_core::options::Edged for CaretTransport {
 
 impl ::sittir_core::render::Render for CaretTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(58)), w.text(&self.text))
     }
 }
 
@@ -44111,7 +44098,7 @@ impl ::sittir_core::options::Edged for LtLtTransport {
 
 impl ::sittir_core::render::Render for LtLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(59)), w.text(&self.text))
     }
 }
 
@@ -44216,7 +44203,7 @@ impl ::sittir_core::options::Edged for TildeTransport {
 
 impl ::sittir_core::render::Render for TildeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(60)), w.text(&self.text))
     }
 }
 
@@ -44321,7 +44308,7 @@ impl ::sittir_core::options::Edged for LambdaKeywordTransport {
 
 impl ::sittir_core::render::Render for LambdaKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(62)), w.text(&self.text))
     }
 }
 
@@ -44426,7 +44413,7 @@ impl ::sittir_core::options::Edged for YieldKeywordTransport {
 
 impl ::sittir_core::render::Render for YieldKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(63)), w.text(&self.text))
     }
 }
 
@@ -44531,7 +44518,7 @@ impl ::sittir_core::options::Edged for BslashTransport {
 
 impl ::sittir_core::render::Render for BslashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(65)), w.text(&self.text))
     }
 }
 
@@ -44636,7 +44623,7 @@ impl ::sittir_core::options::Edged for PlusEqTransport {
 
 impl ::sittir_core::render::Render for PlusEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(77)), w.text(&self.text))
     }
 }
 
@@ -44741,7 +44728,7 @@ impl ::sittir_core::options::Edged for DashEqTransport {
 
 impl ::sittir_core::render::Render for DashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(78)), w.text(&self.text))
     }
 }
 
@@ -44846,7 +44833,7 @@ impl ::sittir_core::options::Edged for StarEqTransport {
 
 impl ::sittir_core::render::Render for StarEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(79)), w.text(&self.text))
     }
 }
 
@@ -44951,7 +44938,7 @@ impl ::sittir_core::options::Edged for SlashEqTransport {
 
 impl ::sittir_core::render::Render for SlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(80)), w.text(&self.text))
     }
 }
 
@@ -45056,7 +45043,7 @@ impl ::sittir_core::options::Edged for AtEqTransport {
 
 impl ::sittir_core::render::Render for AtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(81)), w.text(&self.text))
     }
 }
 
@@ -45161,7 +45148,7 @@ impl ::sittir_core::options::Edged for SlashSlashEqTransport {
 
 impl ::sittir_core::render::Render for SlashSlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(82)), w.text(&self.text))
     }
 }
 
@@ -45266,7 +45253,7 @@ impl ::sittir_core::options::Edged for PercentEqTransport {
 
 impl ::sittir_core::render::Render for PercentEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(83)), w.text(&self.text))
     }
 }
 
@@ -45371,7 +45358,7 @@ impl ::sittir_core::options::Edged for StarStarEqTransport {
 
 impl ::sittir_core::render::Render for StarStarEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(84)), w.text(&self.text))
     }
 }
 
@@ -45476,7 +45463,7 @@ impl ::sittir_core::options::Edged for GtGtEqTransport {
 
 impl ::sittir_core::render::Render for GtGtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(85)), w.text(&self.text))
     }
 }
 
@@ -45581,7 +45568,7 @@ impl ::sittir_core::options::Edged for LtLtEqTransport {
 
 impl ::sittir_core::render::Render for LtLtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(86)), w.text(&self.text))
     }
 }
 
@@ -45686,7 +45673,7 @@ impl ::sittir_core::options::Edged for AmpEqTransport {
 
 impl ::sittir_core::render::Render for AmpEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(87)), w.text(&self.text))
     }
 }
 
@@ -45791,7 +45778,7 @@ impl ::sittir_core::options::Edged for CaretEqTransport {
 
 impl ::sittir_core::render::Render for CaretEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(88)), w.text(&self.text))
     }
 }
 
@@ -45896,7 +45883,7 @@ impl ::sittir_core::options::Edged for PipeEqTransport {
 
 impl ::sittir_core::render::Render for PipeEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(89)), w.text(&self.text))
     }
 }
 
@@ -46001,7 +45988,7 @@ impl ::sittir_core::options::Edged for LtTransport {
 
 impl ::sittir_core::render::Render for LtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(106)), w.text(&self.text))
     }
 }
 
@@ -46106,7 +46093,7 @@ impl ::sittir_core::options::Edged for LtEqTransport {
 
 impl ::sittir_core::render::Render for LtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(107)), w.text(&self.text))
     }
 }
 
@@ -46211,7 +46198,7 @@ impl ::sittir_core::options::Edged for EqEqTransport {
 
 impl ::sittir_core::render::Render for EqEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(108)), w.text(&self.text))
     }
 }
 
@@ -46316,7 +46303,7 @@ impl ::sittir_core::options::Edged for BangEqTransport {
 
 impl ::sittir_core::render::Render for BangEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(109)), w.text(&self.text))
     }
 }
 
@@ -46421,7 +46408,7 @@ impl ::sittir_core::options::Edged for GtEqTransport {
 
 impl ::sittir_core::render::Render for GtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(110)), w.text(&self.text))
     }
 }
 
@@ -46526,7 +46513,7 @@ impl ::sittir_core::options::Edged for GtTransport {
 
 impl ::sittir_core::render::Render for GtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(111)), w.text(&self.text))
     }
 }
 
@@ -46631,7 +46618,7 @@ impl ::sittir_core::options::Edged for LtGtTransport {
 
 impl ::sittir_core::render::Render for LtGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(112)), w.text(&self.text))
     }
 }
 
@@ -46736,7 +46723,7 @@ impl ::sittir_core::options::Edged for NotInTransport {
 
 impl ::sittir_core::render::Render for NotInTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(207)), w.text(&self.text))
     }
 }
 
@@ -46841,7 +46828,7 @@ impl ::sittir_core::options::Edged for IsKeywordTransport {
 
 impl ::sittir_core::render::Render for IsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(61)), w.text(&self.text))
     }
 }
 
@@ -46946,7 +46933,7 @@ impl ::sittir_core::options::Edged for IsNotTransport {
 
 impl ::sittir_core::render::Render for IsNotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(208)), w.text(&self.text))
     }
 }
 

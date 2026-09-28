@@ -153,7 +153,7 @@ pub trait RenderSink {
     fn at_body_start(&self) -> bool {
         false
     }
-    /// The trivia entry just written is line-terminated, so a line break
+    /// The node just written is of a line-terminated kind, so a line break
     /// follows it: at least the one its lexical fact requires, or the wider
     /// one its after edge left pending. No later seam takes it away (a rank
     /// above it still widens it), and it is written even at the end of the
@@ -181,6 +181,15 @@ pub trait RenderSink {
     fn kind_has(&self, kind: KindId, flag: u8) -> bool {
         let _ = (kind, flag);
         false
+    }
+    /// A node of `kind` has just been written: hold the line end when the
+    /// kind is line-terminated (`options::KIND_LINE_TERMINATED`). Every node
+    /// render reaches this once, whether a transport, a coordinate or
+    /// detached trivia text.
+    fn end_line_after(&mut self, kind: KindId) {
+        if self.kind_has(kind, crate::options::KIND_LINE_TERMINATED) {
+            self.hold_line_end();
+        }
     }
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before

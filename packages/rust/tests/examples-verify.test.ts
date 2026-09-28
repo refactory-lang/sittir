@@ -177,8 +177,8 @@ describe('structuralShape trivia handling', () => {
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
 	it('builds both doc-comment forms through line_comment', () => {
-		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi');
-		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi');
+		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi\n');
+		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi\n');
 	});
 	// `///` and `//!` are alternatives, so each is its own arm kind carrying
 	// only the doc text. Were they one kind with the markers as two optional
@@ -195,7 +195,7 @@ describe('namespaced constructors reach the arm kinds', () => {
 		}
 	});
 	it('builds a plain line comment through the same parent', () => {
-		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi');
+		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi\n');
 	});
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');

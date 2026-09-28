@@ -3605,7 +3605,7 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
-The after edge of a line-terminated trivia kind (`lineTerminatedTrivia`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
+The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
@@ -3620,11 +3620,13 @@ A lexed kind owns no edges: a token that reads as one text spaces against its ne
 seams, exactly as a text leaf does.
 ```
 
-### `packages/codegen/src/compiler/model/trivia.ts::lineTerminatedTrivia`
+### `packages/codegen/src/compiler/model/trivia.ts::lineTerminatedKinds`
 
-True for a trivia kind (`triviaKinds`) that is line-terminated (`lineTerminated`): a comment that ends only at a line break. Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after the comment on its row would be read as comment text.
+The kinds whose text ends only at a line break (`lineTerminated`) and that are not the end of another such kind: the outermost of each chain of line-ending kinds. A kind reached through the end edge (`lineEnds`) of a line-terminated kind is its tail, so the break belongs after the enclosing kind, not twice. rust `line_comment` is in the set and its `line_comment_regular`, `line_comment_doc_*`, `line_comment_extra_slashes` and `doc_comment` tails are not; typescript has `comment_line` and `hash_bang_line`; python and scm have `comment`. Trivia and non-trivia kinds are one set: a `hash_bang_line` ends its line exactly as a comment does. Memoised per node map.
 
-At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` is a pattern leaf and owns none. After a line-terminated entry, the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end`). The edge may widen it to a blank line; no later seam narrows it, and it survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
+Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after it on its row would be read as its text.
+
+At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` and typescript's `hash_bang_line` are lexed leaves and own none. After any node of a line-terminated kind, whether a transport, a source coordinate or detached trivia text (`RenderSink::end_line_after`), the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end`). The edge may widen it to a blank line; no later seam narrows it, and it survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
 
 An owner's after edge belongs after its trailing entries, so the sink sets it aside while an own-line trailing run renders (`RenderSink::take_seam`) and merges it back after the run (`restore_seam`). Two line breaks merge by width whatever their strengths: the wider wins, and a break is never narrowed or added to. A blank-line separator after `fn g() {}` therefore still follows a trailing `// t`, as `fn g() {}\n// t\n\nfn h() {}`.
 

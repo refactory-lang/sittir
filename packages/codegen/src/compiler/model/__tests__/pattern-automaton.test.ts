@@ -6,7 +6,7 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
 import { dfaAccepts, opensLineEnd, patternDfa, type PatternDfa } from '../pattern-automaton.ts';
-import { lineTerminated, triviaKinds } from '../trivia.ts';
+import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
 
@@ -123,6 +123,19 @@ describe('pattern automaton', () => {
 			const triviaSet = triviaKinds(nodeMap);
 			expect(terminated.filter((kind) => triviaSet.has(kind)), grammar).toEqual(trivia);
 			expect(terminated.filter((kind) => !triviaSet.has(kind)), grammar).toEqual(other);
+		}
+	}, 120_000);
+
+	it('flags only the outermost kind of each line-ending chain, trivia or not', async () => {
+		const expected: Record<string, string[]> = {
+			rust: ['line_comment'],
+			typescript: ['comment_line', 'hash_bang_line'],
+			python: ['comment'],
+			regex: [],
+			scm: ['comment']
+		};
+		for (const [grammar, kinds] of Object.entries(expected)) {
+			expect([...lineTerminatedKinds(await nodeMapOf(grammar))].sort(), grammar).toEqual(kinds);
 		}
 	}, 120_000);
 });

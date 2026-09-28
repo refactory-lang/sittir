@@ -35,7 +35,8 @@ pub struct ResolvedOptions {
 
 /// The parser's anonymous kind: a token, never an owner of trivia.
 pub const KIND_ANON: u8 = 1;
-/// A trivia kind that ends only at a line break.
+/// A kind whose text ends only at a line break, and is not the end of an
+/// enclosing kind that does: the node written after it starts a new line.
 pub const KIND_LINE_TERMINATED: u8 = 2;
 
 /// One spacing site's default arm and the strength a default carries into the writer.

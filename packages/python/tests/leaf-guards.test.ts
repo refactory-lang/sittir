@@ -4,7 +4,7 @@ import { ir } from '../src/index.ts';
 describe('python text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => ir.identifier('abc')).not.toThrow();
-		expect(ir.comment(' hello').$render!()).toBe('# hello');
+		expect(ir.comment(' hello').$render!()).toBe('# hello\n');
 		expect(() => ir.integer.hex({ content: '1F' }, { prefix: '0x' })).not.toThrow();
 	});
 
@@ -22,7 +22,7 @@ describe('python text-leaf factories always run their guard', () => {
 	});
 
 	it('takes the content of a structured token and the marker is written for it', () => {
-		expect(ir.comment('').$render!()).toBe('#');
+		expect(ir.comment('').$render!()).toBe('#\n');
 		expect(() => ir.escapeSequence('q')).toThrow(/escape_sequence_simple.content: text does not match/);
 	});
 });

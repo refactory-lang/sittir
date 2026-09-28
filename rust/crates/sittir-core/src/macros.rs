@@ -13,13 +13,17 @@
 ///
 /// # Usage
 ///
-/// In every struct-based `Render` impl:
+/// In every struct-based `Render` impl, with the transport's own kind:
 ///
 /// ```rust,ignore
 /// fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-///     render_with_trivia!(self, w, render_xxx(self, w))
+///     render_with_trivia!(self, w, Some(::sittir_core::types::KindId(7)), render_xxx(self, w))
 /// }
 /// ```
+///
+/// After the render the sink is told the kind was written
+/// (`RenderSink::end_line_after`), so a line-terminated kind holds its line
+/// end before any trailing trivia renders.
 ///
 /// `$self` has a `transport_trivia_data: Option<TransportTrivia<T>>` field;
 /// bool/enum transport variants have none and write directly to `$w`.
@@ -30,25 +34,31 @@
 /// so it does not seat the held trailing entries: they stay held past it.
 #[macro_export]
 macro_rules! render_with_trivia {
-    (token $self:expr, $w:expr, $render:expr) => {
+    (token $self:expr, $w:expr, $kind:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_leading($w)?;
             }
             $render?;
+            if let Some(__kind) = $kind {
+                $w.end_line_after(__kind);
+            }
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_trailing($w)?;
             }
             Ok(())
         })()
     };
-    ($self:expr, $w:expr, $render:expr) => {
+    ($self:expr, $w:expr, $kind:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
             $w.seat_trailing()?;
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_leading($w)?;
             }
             $render?;
+            if let Some(__kind) = $kind {
+                $w.end_line_after(__kind);
+            }
             $w.seat_trailing()?;
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 __trivia.render_trailing($w)?;
@@ -70,16 +80,17 @@ mod trivia_macro_tests {
     /// not any grammar's comment template.
     struct MockTrivia(String);
 
-    impl crate::trivia::TriviaSeam for MockTrivia {
-        fn line_terminated(&self, _: &dyn RenderSink) -> bool {
-            !self.0.starts_with("/*")
-        }
-    }
+    impl crate::trivia::TriviaSeam for MockTrivia {}
 
     impl Render for MockTrivia {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
             w.text(&self.0)?;
-            w.seam(if self.0.starts_with("/*") { " " } else { "\n" });
+            if self.0.starts_with("/*") {
+                w.seam(" ");
+            } else {
+                w.seam("\n");
+                w.hold_line_end();
+            }
             Ok(())
         }
     }
@@ -91,7 +102,7 @@ mod trivia_macro_tests {
 
     impl Render for MockTransport {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-            render_with_trivia!(self, w, w.text(self.text))
+            render_with_trivia!(self, w, None, w.text(self.text))
         }
     }
 
@@ -226,7 +237,7 @@ mod trivia_macro_tests {
                     text: "",
                     transport_trivia_data: None,
                 };
-                render_with_trivia!(parent, w, {
+                render_with_trivia!(parent, w, None, {
                     w.text("{")?;
                     self.0.render(w)?;
                     w.text("}")
@@ -280,7 +291,7 @@ mod trivia_macro_tests {
         impl Render for Token {
             fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
                 let token = &self.0;
-                render_with_trivia!(token token, w, w.text(token.text))
+                render_with_trivia!(token token, w, None, w.text(token.text))
             }
         }
         let left = owner("a", &[], &["/* x */"], true);

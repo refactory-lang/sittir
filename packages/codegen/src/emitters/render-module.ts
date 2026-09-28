@@ -2612,16 +2612,6 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
-	lines.push('    fn kind(&self) -> Option<::sittir_core::types::KindId> {');
-	lines.push('        match self {');
-	for (const node of extrasNodes) {
-		const id = kindIdByKind?.get(node.kind);
-		if (id !== undefined) lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(_) => Some(::sittir_core::types::KindId(${id})),`);
-	}
-	lines.push('            TriviaTransport::Text(t) => Some(t.kind),');
-	lines.push('            _ => None,');
-	lines.push('        }');
-	lines.push('    }');
 	lines.push('}');
 	lines.push('');
 
@@ -3226,6 +3216,7 @@ function renderTransportDataStruct(
 	lines.push('');
 	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	const ownKind = ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${ownId}))`;
 	const edgedId = kindEntries === undefined ? undefined : edgeKindId(kindEntries, node.display.name);
 	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
@@ -3234,10 +3225,10 @@ function renderTransportDataStruct(
 	);
 	if (isLeafNode) {
 		const token = kindEntries !== undefined && findKindEntry(kindEntries, node.kind)?.anon === true ? 'token ' : '';
-		lines.push(`        render_with_trivia!(${token}self, w, ${leafRenderExpr(node, 'self')})`);
+		lines.push(`        render_with_trivia!(${token}self, w, ${ownKind}, ${leafRenderExpr(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
-		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);
+		lines.push(`        render_with_trivia!(self, w, ${ownKind}, ${renderFn}(self, w))`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
