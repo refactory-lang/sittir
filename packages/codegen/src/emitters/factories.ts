@@ -1,7 +1,7 @@
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isPatternValue, separatorRequired } from '../compiler/model/node-map.ts';
 import {
 	interiorEnumArms,
 	interiorOf,
@@ -1570,8 +1570,8 @@ export function separatedListSurface(
 			? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ')
 			: 'never';
 	const optionsTypeParts: string[] = [];
-	const separatorRequired = hasSeparatorKindOption && node.resolvedSeparatorArm === undefined;
-	if (hasSeparatorKindOption) optionsTypeParts.push(`separator${separatorRequired ? '' : '?'}: ${separatorKindUnion}`);
+	const required = separatorRequired(node);
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separator${required ? '' : '?'}: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
 	const optionsType = optionsTypeParts.length > 0 ? `{ ${optionsTypeParts.join('; ')} }` : undefined;
 	return {
@@ -1581,7 +1581,7 @@ export function separatedListSurface(
 		separatorKindUnion,
 		candidateKindNames,
 		hasSeparatorKindOption,
-		separatorRequired,
+		separatorRequired: required,
 		hasDelimiterOption,
 		optionsType,
 		wrapper,

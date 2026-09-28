@@ -2970,6 +2970,15 @@ The slots of an authored compound (never a list) that carry an optional
 leading or trailing delimiter. A field factory has no control for such a
 flank, so each one is a blocking `field-optional-delimiter` record.
 
+### `packages/codegen/src/compiler/model/node-map.ts::separatorRequired`
+
+Whether a list's separator must be passed at construction: it has a
+separator site (`separatorRule`) and site preferences stamped no default arm
+(`resolvedSeparatorArm`), which is the case for an undeclared separator
+floored as `separator-default-undeclared`. The factory's options type, its
+runtime throw, the loose coercer's rest parameter and the polymorph seat
+all read it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.leadingDelimiter`
 
 ```text

@@ -645,7 +645,17 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
-export function listRestParamType(nonEmpty: boolean, element: string, options: string | undefined): string {
+export function listRestParamType(
+	nonEmpty: boolean,
+	element: string,
+	options: string | undefined,
+	optionsRequired = false
+): string {
+	if (options !== undefined && optionsRequired) {
+		return nonEmpty
+			? `[options: ${options}, first: ${element}, ...rest: ${element}[]]`
+			: `[options: ${options}, ...rest: ${element}[]]`;
+	}
 	if (nonEmpty) {
 		const elements = `[first: ${element}, ...rest: ${element}[]]`;
 		return options === undefined

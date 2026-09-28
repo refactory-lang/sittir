@@ -1675,6 +1675,10 @@ export function optionalFlankSlots(node: AssembledNode): readonly AssembledNonte
 	return node.slots.filter((slot) => slot.leadingDelimiter === 'optional' || slot.trailingDelimiter === 'optional');
 }
 
+export function separatorRequired(list: AssembledList): boolean {
+	return list.separatorRule !== undefined && list.resolvedSeparatorArm === undefined;
+}
+
 export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
 export type CompoundClass =

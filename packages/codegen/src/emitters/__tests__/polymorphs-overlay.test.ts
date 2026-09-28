@@ -1,4 +1,9 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -418,6 +423,39 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	it('lets an empty-capable list take nothing, or only its options', () => {
 		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
 		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
+	});
+
+	it('puts required options first with no elements-only form', () => {
+		expect(listRestParamType(true, 'E', 'O', true)).toBe('[options: O, first: E, ...rest: E[]]');
+		expect(listRestParamType(false, 'E', 'O', true)).toBe('[options: O, ...rest: E[]]');
+	});
+
+	it('rejects an elements-only call at the type level when the options are required', () => {
+		const tscPackage = createRequire(import.meta.url).resolve('typescript/package.json');
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-rest-param-'));
+		try {
+			const file = join(dir, 'required-options.ts');
+			const lines = [
+				'type E = { readonly element: true };',
+				'type O = { readonly separator: 1 | 2 };',
+				'const element: E = { element: true };'
+			];
+			for (const nonEmpty of [true, false]) {
+				const fn = nonEmpty ? 'nonEmpty' : 'emptyCapable';
+				lines.push(`declare function ${fn}(...input: ${listRestParamType(nonEmpty, 'E', 'O', true)}): void;`);
+				lines.push('// @ts-expect-error a required-separator list has no elements-only call');
+				lines.push(`${fn}(element);`);
+				lines.push(`${fn}({ separator: 1 }, element);`);
+			}
+			writeFileSync(file, `${lines.join('\n')}\n`);
+			expect(() =>
+				execFileSync(process.execPath, [join(dirname(tscPackage), 'bin', 'tsc'), '--ignoreConfig', '--noEmit', '--strict', file], {
+					stdio: 'pipe'
+				})
+			).not.toThrow();
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });
 

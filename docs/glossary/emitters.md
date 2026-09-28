@@ -14862,7 +14862,7 @@ type admits the parent's own input or the group's config per element.
 
 #### list options
 
-A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality and options as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
+A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality, options and `separatorRequired` as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
@@ -16283,7 +16283,7 @@ disagree on what counts as an options object.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
-The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call.
+The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call. When the options are required (`separatorRequired`: a separator site with no declared default), the options object always comes first and there is no elements-only form: `[options: O, first: E, ...rest: E[]]`, or `[options: O, ...rest: E[]]` for an empty-capable list, so an elements-only call is a type error, matching the raw builder's throw.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorOf`
 
