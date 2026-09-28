@@ -1,4 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
+import { opensLineEnd } from './pattern-automaton.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
@@ -39,12 +40,10 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import { anchoredLeafRegex } from './leaf-pattern.ts';
 import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
-const LINE_PROBE = 'a b\t*/ -->#;';
 
 export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
 
@@ -90,8 +89,13 @@ function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
 	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
 		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
 		if ('literal' in terminal) return 'closed';
-		const anchored = anchoredLeafRegex(ctx.kind, terminal.pattern);
-		return anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed';
+		const opens = opensLineEnd(terminal.pattern);
+		if (opens === undefined) {
+			throw new Error(
+				`model: kind '${ctx.kind}' pattern ${JSON.stringify(terminal.pattern)} uses regex syntax the pattern automaton does not read.`
+			);
+		}
+		return opens ? 'open' : 'closed';
 	});
 }
 

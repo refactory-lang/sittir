@@ -4450,7 +4450,7 @@ One inner-comment position of a kind: the empty slot that keys it (or `interior`
 
 How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
 
-The probe proves `open`, so it can under-report but never over-report. A pattern that is open but narrow, such as `[a-z]*`, rejects the probe line and reads `closed`. That gives the kind no newline default, never a wrong one. No trivia arm in the three grammars has such a pattern today.
+A pattern's reading is exact: `opensLineEnd` decides it from the pattern's automaton, so a narrow pattern such as `[a-z]*` reads `closed` because it does not accept every character of a line, not because a sample line missed it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
 
@@ -4458,7 +4458,7 @@ One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
 
-`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is probed with the leaf guards' own anchored regex (`anchoredLeafRegex`). It is `open` when it accepts the probe line and rejects two probe lines joined by a line break.
+`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
 
@@ -4470,7 +4470,7 @@ Which end of a rule `ruleEdgeTerminals` reads: `start` or `end`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEndCtx`
 
-The kind whose rule `ruleLineEnds` classifies, which names its patterns in the anchored-regex error.
+The kind whose rule `ruleLineEnds` classifies, which the unreadable-pattern error names.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleEdgeTerminals`
 
@@ -4759,6 +4759,210 @@ The one derivation of a text leaf's whole-text guard: the kind's `textPattern` w
 ```
 
 An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CodeRange`
+
+An inclusive range of Unicode code points, `[lo, hi]`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::MAX_CODE_POINT`
+
+The last Unicode code point, `0x10FFFF`: the top of every `CharSet`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet`
+
+An exact set of code points held as sorted, disjoint, non-adjacent `CodeRange`s. The constructor is private, so every set is built normalised through `of`; `EMPTY` and `ALL` are the two bounds. Sets are exact rather than sampled, which is what lets the automaton answer questions such as "does this state accept every character of a line" with a proof instead of a probe.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.of`
+
+A set from any ranges: drops empty ones, sorts, and merges overlapping or touching ranges.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.chars`
+
+The set of the code points in a text.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.union`
+
+The code points in either set.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.complement`
+
+The code points from 0 to `MAX_CODE_POINT` not in the set.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.minus`
+
+The code points in this set and not the other, as the complement of (complement ∪ other).
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.has`
+
+Whether a code point is in the set.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.covers`
+
+Whether every code point of the other set is in this one.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.isEmpty`
+
+Whether the set has no code points.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.size`
+
+The number of code points in the set.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::LINE_TERMINATORS`
+
+The characters that end a line under the JavaScript `u`-flag reading of `.`: `\n`, `\r`, U+2028 and U+2029. `.` is their complement (`DOT`), and the line facts (`crossesLine`, `absorbsRestOfLine`) read "a line" through it.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::DIGIT`
+
+`\d`: ASCII `0`–`9`, as JavaScript reads it under the `u` flag.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::WORD`
+
+`\w`: ASCII letters, digits and `_`, as JavaScript reads it under the `u` flag.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::SPACE`
+
+`\s`: the JavaScript whitespace and line-terminator set, including U+2000–U+200A, U+3000 and U+FEFF.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::DOT`
+
+`.`: every code point except `LINE_TERMINATORS`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::propertySets`
+
+The cache of `unicodeProperty` sets by property body, so each `\p{…}` is enumerated once per process.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::unicodeProperty`
+
+The exact set of a `\p{…}` property body, enumerated by testing every non-surrogate code point against the JavaScript engine's own `\p{…}`. The engine is the source of the property tables, so the automaton reads a property exactly as the leaf guards do.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::Node`
+
+The parsed pattern: a character `set`, a `seq` of items, an `alt` of arms, or a `repeat` of an item between `min` and `max` times (`max` undefined for unbounded).
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::UnsupportedPattern`
+
+The parser's signal for syntax the automaton does not read (lookaround, backreferences, word boundaries, anchors, a dangling quantifier, or an unclosed group or class). `patternDfa` catches only this error and returns `undefined`; any other error propagates.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser`
+
+A recursive-descent parser of tree-sitter's pattern dialect into a `Node`: alternation, sequence, groups (`(?:…)` and named `(?<n>…)`, which match as plain groups), character classes with ranges and negation, escapes (`\d \D \w \W \s \S \n \r \t \v \f \0`, `\xHH`, `\uHHHH`, `\u{…}`, `\p{…}`, `\P{…}`, and identity escapes), and the quantifiers `*`, `+`, `?`, `{m}`, `{m,}`, `{m,n}`, each optionally lazy. Laziness does not change which texts match, so it is read and dropped.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.parse`
+
+The whole pattern as one `Node`; text left over after the top alternation is unsupported.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.peek`
+
+The next pattern character without consuming it.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.take`
+
+Consumes and returns the next pattern character; the end of the pattern is unsupported here.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.alternation`
+
+Arms separated by `|`, each a `sequence`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.sequence`
+
+Quantified atoms up to the next `|` or `)`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.quantified`
+
+Wraps an atom in each quantifier that follows it.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.quantifier`
+
+The `[min, max]` bounds of the quantifier at the cursor, consuming a lazy `?` after it, or `undefined` when none is there. A `{` that does not open a bound is not a quantifier, so `atom` reads it as a literal `{`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.atom`
+
+One group, class, escape, `.` or literal character. Anchors, lookaround groups and a quantifier with nothing to repeat are unsupported.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.charClass`
+
+A bracketed class as a `CharSet`, complemented when it opens with `^`. A range whose ends are not single characters is unsupported.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.classAtom`
+
+One class member: its set, and its code point when it is a single character that can end a range.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.escape`
+
+The set an escape denotes, inside or outside a class. Inside a class `\b` is a backspace; outside it, `\b`, `\B` and backreferences are unsupported.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.hexEscape`
+
+The code point a hex escape spells, from the digits the given regex matches.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaState`
+
+One Thompson-NFA state: its character edges and its empty (epsilon) edges.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder`
+
+Builds a Thompson NFA from a `Node`: each node is wired between a start and an end state. A bounded repeat is unrolled `max` times with an exit after each copy past `min`; an unbounded one loops on one state.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.state`
+
+Adds an empty state and returns its index.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.fragment`
+
+A fresh start and end state with the node wired between them.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.wire`
+
+Wires a node between two states: a set as one edge, a sequence through fresh states, an alternation as each arm between the same two states, and a repeat as described on `NfaBuilder`.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::DfaEdge`
+
+A DFA transition: the set of code points it reads and the state it leads to.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::DfaState`
+
+A DFA state: whether it accepts, and its outgoing edges, whose sets are disjoint.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternDfa`
+
+A deterministic automaton for a pattern, state 0 the start. It accepts exactly the texts that the pattern's anchored JavaScript regex (`anchoredLeafRegex`) accepts; a test checks this on every pattern of every grammar, both in `grammar.json` and in the node map's rules (render-only rules included). `[]` is empty and `[^]` is every code point, as in JavaScript.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::dfaByPattern`
+
+The cache of `patternDfa` results by pattern text, including the `undefined` of an unsupported pattern.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::patternDfa`
+
+The automaton for a pattern, or `undefined` when it uses syntax the parser does not read. Cached per pattern text. Callers that need an answer turn `undefined` into an error naming the kind (`ruleLineEnds`).
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::determinize`
+
+Subset construction from the Thompson NFA. The alphabet is first cut into the atoms that no NFA edge set splits (every range boundary of every edge), so each DFA state tries one representative per atom and groups the atoms by target into one edge set. A DFA state accepts when its NFA subset contains the NFA end state.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::dfaAccepts`
+
+Whether the automaton accepts a whole text.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::reachableFrom`
+
+The states reachable from the seeds along edges whose set the `keep` predicate admits.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::coaccessible`
+
+The states from which some accepting state can be reached: the only states on a path to an accepted text.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::crossesLine`
+
+Whether the pattern accepts some text with a line terminator followed later by a character that is not one. A trailing terminator, as in `.*\n?`, does not cross a line; a text continuing past a line break does.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::absorbsRestOfLine`
+
+Whether some reachable accepting state loops on itself over every character that is not a line terminator, so a match can take in the rest of any line.
+
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::opensLineEnd`
+
+Whether a pattern ends its line: it absorbs the rest of a line (`absorbsRestOfLine`) and never crosses one (`crossesLine`). `.*`, `[^\r\n\u2028\u2029]*`, `#!(?<content>.*)` and `.*\n?` open a line end; `[^"\\\r\n]+`, `a.*b` and `[\s\S]*` do not. `undefined` when the pattern is unsupported. `ruleLineEnds` reads it for every pattern end terminal.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::seamNeedsSpace`
 
