@@ -378,6 +378,22 @@ and a literal member is a terminal by its own stamp
 A member that is neither a rule, an external nor a literal is reported
 rather than defaulted, since defaulting would make the guard guess.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
+
+One blocking `field-optional-delimiter` record per authored-compound slot
+with an optional leading or trailing delimiter (`optionalFlankSlots`),
+owned by the kind and naming the slot and its optional flanks. The
+resolving form makes the delimited list its own kind; floored, the flank
+is off the factory surface and render keeps it as authored.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::undeclaredSeparatorDiagnostics`
+
+One blocking `separator-default-undeclared` record per list separator site
+no `options:` entry gives a default (`undeclaredSeparatorSites`, the
+resolution the emitter reads), owned by the list kind and naming its arms.
+The resolving form is an `options:` entry at the site's address; floored,
+the separator is a required construction input.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::reservedMemberDiagnostics`
 
 One `reserved-member-not-literal` warning per reserved-wordset member that `reservedWordset` cannot read as literal text. The word builder's reserved guard cannot reject a word it cannot spell, so the member is named for the author to rewrite as a string or a single-literal symbol.

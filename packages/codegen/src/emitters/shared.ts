@@ -1,4 +1,4 @@
-import type { AuthoredCompound, SlotBearingCompound } from '../compiler/model/node-map.ts';
+import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -19,6 +19,7 @@ import type {
 	TextValueStorage
 } from '../compiler/model/node-map.ts';
 import {
+	isAuthoredCompound,
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
@@ -55,9 +56,7 @@ export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingC
 	return node instanceof AbstractAssembledCompound;
 }
 
-export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
-	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
-}
+export { isAuthoredCompound };
 
 export function isTextLeaf(
 	node: AssembledNode
@@ -647,7 +646,17 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
-export function listRestParamType(nonEmpty: boolean, element: string, options: string | undefined): string {
+export function listRestParamType(
+	nonEmpty: boolean,
+	element: string,
+	options: string | undefined,
+	optionsRequired = false
+): string {
+	if (options !== undefined && optionsRequired) {
+		return nonEmpty
+			? `[options: ${options}, first: ${element}, ...rest: ${element}[]]`
+			: `[options: ${options}, ...rest: ${element}[]]`;
+	}
 	if (nonEmpty) {
 		const elements = `[first: ${element}, ...rest: ${element}[]]`;
 		return options === undefined

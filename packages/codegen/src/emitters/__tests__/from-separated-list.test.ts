@@ -159,6 +159,28 @@ describe('from emitter — separatedList', () => {
 		);
 	});
 
+	it('takes the options object first, with no elements-only form, when the separator has no declared default', () => {
+		const sepChoice: RenderRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+
+		expect(emitted).toContain(
+			'export function coerceToMemberList(...input: [options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, first: '
+		);
+		expect(emitted).not.toMatch(/export function coerceToMemberList\(\.\.\.input: \[first: /);
+	});
+
 	it('types a non-empty list with no options as at least one element, and an empty-capable one as any number', () => {
 		const rule = (multiplicity: 'array' | 'nonEmptyArray'): SeparatedListElementRule => ({
 			type: SYMBOL,

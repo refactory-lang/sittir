@@ -637,11 +637,11 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 #### body
 
 ```text
-// A field with an optional delimiter flank cannot reach this emitter: a
-// delimiter-bearing list is a separatedList KIND (classifyNode routes it
-// there, peeling group wrappers), and the delimiter is stored kind-level
-// on that kind — field-prefixed delimiter storage is retired. Fail fast
-// if classification ever regresses.
+// A field with an optional delimiter flank has no control on this
+// factory's surface: only a list kind stores a delimiter. Such a field
+// is a blocking `field-optional-delimiter` record, so it reaches this
+// emitter only when floored, and then the render keeps the flank as the
+// grammar authors it.
 ```
 
 #### body
@@ -3311,8 +3311,8 @@ carry no per-slot separator stamp.
  * KindId back to its compile-time-known literal text (design doc's "Render"
  * section: the render side never stores separator text, only resynthesizes it).
  *
- * Candidates come from `collectSeparatorCandidateKindNames` — the SAME walk
- * wrap.ts's `_separator_kind` wire capture uses (kind-discriminant.ts), so the
+ * Candidates are the list's `separatorCandidateKindNames` — the SAME stamped
+ * arms wrap.ts's `_separator_kind` wire capture reads, so the
  * match arms enumerate exactly the kinds a real `_separator_kind` value can
  * hold. For a `STRING` arm, `rule.value` doubles as both the catalog lookup
  * key (an anon token's literal text IS its `symbolName`, per
@@ -6610,33 +6610,14 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // annotation stays as a string literal instead of a TSKindId reference.
 ```
 
-### `packages/codegen/src/emitters/types.ts::buildGrammarKeySet`
+### `packages/codegen/src/emitters/types.ts::grammarKeySetOf`
 
-```text
-/**
- * Build the set of kind keys known to grammar.ts (the PythonGrammar / RustGrammar
- * type literal). Tree type interfaces can only use `NodeKind<Grammar>` as their
- * discriminator, so kinds absent from grammar.ts — hidden rules, promoted
- * terminals, synthesised forms — must fall back to a generic `AnyTreeNode`.
- *
- * @param grammar - Grammar name (e.g. `"rust"`, `"python"`).
- * @returns Set of kind strings present in the node-types.json for this grammar.
- *   Anonymous tokens are stored under the `_anonymous_<token>` key convention.
- *   Returns an empty set when node-types.json is unavailable.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Grammar key helpers
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// No node-types.json available — emit all Tree interfaces as AnyTreeNode.
-```
+The kind keys grammar.ts declares (the PythonGrammar / RustGrammar type
+literal), from the node types `generate` loaded once: a named entry by its
+type, an anonymous token under `_anonymous_<token>`. Tree type interfaces
+can only use `NodeKind<Grammar>` as their discriminator, so a kind absent
+from this set — a hidden rule, a promoted terminal, a synthesised form —
+falls back to a generic `AnyTreeNode`.
 
 ### `packages/codegen/src/emitters/types.ts::collectNodesByCategory`
 
@@ -7447,37 +7428,6 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  * `{ ...data, $other: v }` argument literal (no local read, so no inference
  * chain to keep narrow — see the `childSurface` branch in
  * `emitInlineWithProperty`).
- */
-```
-
-### `packages/codegen/src/emitters/wrap.ts::collectSeparatorCandidateKindNames`
-
-```text
-/**
- * Recursively collect candidate separator token kind names from a
- * nonterminal separator rule (`AssembledList.separatorRule`) —
- * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves, gathering the
- * set of literal texts / referenced rule names the runtime `$other` scan
- * must match against. A plain leaf-collecting walk, not related to
- * `link.ts`'s flank-absorption (which does structural `rulesEqual`
- * comparison between two rule trees — a different mechanism entirely).
- *
- * Throws on any rule shape this walk doesn't know how to resolve to a
- * kind-discriminant leaf (e.g. a `SEQ`-shaped separator — a genuinely
- * different scenario needing multi-token matching, not a single kind-id
- * probe) — no real grammar currently sets a nonterminal `separatorRule`
- * at all (see `emitSeparatedListWrap`'s doc comment), so a silent `[]`
- * here would make `_separator_kind` silently always resolve to
- * `undefined` for whatever future kind first reaches this gap, rather
- * than failing loudly at codegen time the way `kindDiscriminantExpr`
- * (this file) already does for its own unresolvable-kind case.
- *
- * Exported for reuse by render-module.ts, which needs the SAME candidate
- * set to resynthesize `_separator_kind`'s literal text on the render side
- * (see `buildSeparatorKindMatchLines` there) — the render-side match arms
- * must enumerate exactly the kinds this wire-capture walk can produce, or
- * a real runtime `_separator_kind` value could hit the render match's
- * fallback arm instead of its correct literal.
  */
 ```
 
@@ -9204,15 +9154,6 @@ pipeline — which falls back to string equality.
 // One derivation shared by the runtime string routes and the
 // config-literal widening — see glossary.
 ```
-
-### `packages/codegen/src/emitters/shared.ts::isAuthoredCompound`
-
-A compound that is not a list: `AssembledBranch`, `AssembledEnvelope` or
-`AssembledPolymorph`, hoisted or not. Hoisting seats a kind on its parent; it
-does not make the kind unnameable to the from() coercer, whose keyword and
-string routes build through the raw factory — `ir.visibilityModifier('pub')`
-routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
-would otherwise fall through to the in-path arm and render `pub(in pub)`.
 
 ### `packages/codegen/src/emitters/shared.ts::wordConstructibleText`
 
@@ -11759,9 +11700,19 @@ The kind-id expression a separated-list factory stamps as `_separator`
 when the caller gives none, and the wrap stamps when a parsed list carries
 no separator token: the grammar's declared `preference('separator',
 <kind>)` for that list's `<slot>_separator` site, resolved through the kind
-catalog. A list whose separator is a choice of literals and declares no
-default is a build error; the site-preference model reports the same
-omission with the list's arms.
+catalog, or `undefined` when the list declares none. With no default the
+separator is a required construction input: the list factory's
+`separator` option loses its `?`, the overload without options is not
+emitted, the factory throws when a caller omits it, and the wrap stores
+the separator kind it reads with no fallback (`separatorDefaultSuffix`).
+The grammar reports the omission as a blocking
+`separator-default-undeclared` record, so this path is reached only when
+the record is floored.
+
+### `packages/codegen/src/emitters/wrap.ts::separatorDefaultSuffix`
+
+The ` ?? <default>` tail of the wrap's `_separator` capture, or nothing
+when the list declares no default separator.
 
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 
@@ -14934,7 +14885,7 @@ type admits the parent's own input or the group's config per element.
 
 #### list options
 
-A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality and options as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
+A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality, options and `separatorRequired` as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
@@ -16369,7 +16320,7 @@ disagree on what counts as an options object.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
-The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call.
+The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call. When the options are required (`separatorRequired`: a separator site with no declared default), the options object always comes first and there is no elements-only form: `[options: O, first: E, ...rest: E[]]`, or `[options: O, ...rest: E[]]` for an empty-capable list, so an elements-only call is a type error, matching the raw builder's throw.
 
 ### `packages/codegen/src/emitters/shared.ts::withEmptyOverload`
 

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
+import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
 import type { NodeMap } from '../../types.ts';
 
 async function nodeMapOf(grammar: string): Promise<NodeMap> {
-	return (await compileGrammar({ grammar, generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap;
+	return (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap;
 }
 
 function fullFormOf(nodeMap: NodeMap, kind: string): unknown {

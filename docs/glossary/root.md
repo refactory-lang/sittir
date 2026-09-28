@@ -94,11 +94,11 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 
 ```text
 /**
- * Run 'tree-sitter generate' in a grammar's .sittir/ directory — produces
- * grammar.json + node-types.json from the transpiled grammar.js. Uses
- * execSync (shell-level) rather than spawnSync; tree-sitter is a native
- * binary so either would launch a separate OS process (no Node module
- * sharing concern) — exec is just simpler for a bare command.
+ * Run 'tree-sitter generate' in a grammar package's .sittir/ directory
+ * (`sittirDirOf`) — produces grammar.json + node-types.json from the
+ * transpiled grammar.js. The directory comes from the package, never from
+ * the working directory, and the CLI is codegen's own tree-sitter-cli
+ * (`runTreeSitterCli`), so a package outside the repo needs no CLI of its own.
  */
 ```
 
@@ -138,7 +138,8 @@ test seam).
 ### `packages/codegen/src/run-codegen.ts::gatedCompilation`
 
 One gated compile for the preflight: the compilation when it passes, or the blocked records and every record the
-gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` either way.
+gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` into the package's `.sittir/`
+either way.
 ```
 
 ```text
@@ -726,7 +727,7 @@ The grammar registry. The set of grammars is discovered from disk — every `pac
 
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 
-Every grammar package, sorted by name, with its `stable` flag and `displayName` read from `package.json`'s `sittir` block. Cached for the process: packages are not created mid-run.
+Every grammar package under `packages/`, sorted by name, each resolved by `grammarPackage`. Cached for the process: packages are not created mid-run.
 
 ### `packages/codegen/src/grammars.ts::allGrammars`
 
@@ -746,7 +747,24 @@ The dependency name a grammar package declares for its upstream tree-sitter gram
 
 ### `packages/codegen/src/grammars.ts::grammarRequire`
 
-A `require` rooted at the grammar package, so the upstream grammar resolves through the grammar package's own dependencies rather than through whatever happens to be hoisted next to codegen.
+`packageRequire` for the grammar's own package directory.
+
+### `packages/codegen/src/grammars.ts::packageRequire`
+
+A `require` rooted at a grammar package, so the upstream grammar resolves through the grammar package's own dependencies rather than through whatever happens to be hoisted next to codegen.
+
+### `packages/codegen/src/grammars.ts::grammarPackage`
+
+The one resolver of a grammar package: its name, its directory (`packages/<name>` unless given), its `stable`
+flag from `package.json`'s `sittir.stable` (false when the package has no manifest), and its declared
+`sittir.displayName`, which `grammarDisplayName` prefers over the name's casing. Every path into a package —
+the entry, `.sittir/`, the parser tables, node types, grammar.json, the upstream `require` — derives from the
+package's `dir`, so a package outside the repo (a bootstrap in a temp directory) runs the same pipeline.
+
+### `packages/codegen/src/grammars.ts::sittirDirOf`
+
+A grammar package's `.sittir/` directory: the transpiled grammar, tree-sitter's output and the persisted
+diagnostics.
 
 ### `packages/codegen/src/grammars.ts::sourceAliases`
 

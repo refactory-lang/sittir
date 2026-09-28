@@ -8,6 +8,7 @@ import {
 	unaliasOverloadedDisplays
 } from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
+import { isLexedBoundary, SyntacticRuleWalker } from './rule-walker.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -28,6 +29,7 @@ function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
 }
 import {
+	isArmChoice,
 	separatorOf,
 	matchesEmpty,
 	isInlineSafe,
@@ -510,7 +512,8 @@ function applyChoiceArmFieldWrap(ruleName: string, rule: Rule, ctx: EnrichCtx): 
 		const seqMembers = (armCursor as unknown as { members: Rule[] }).members;
 		const existing = collectFieldNamesRuntime(armCursor);
 		let armChanged = false;
-		const newSeqMembers = seqMembers.map((m) => {
+		const newSeqMembers = seqMembers.map((m, i) => {
+			if (separatedListTail(seqMembers, i, ctx.sourceSymbols)) return m;
 			const t = detectSymbolTarget(m);
 			if (!t) return m;
 			if (!isBareShapeTarget(m, t)) return m;
@@ -545,16 +548,14 @@ function applyChoiceArmFieldWrap(ruleName: string, rule: Rule, ctx: EnrichCtx): 
 	return result;
 }
 
+const syntacticWalker = new SyntacticRuleWalker<Rule>();
+
 function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
-	if (isFieldType((rule as { type: string }).type) && typeof (rule as { name?: unknown }).name === 'string') {
-		into.add((rule as { name: string }).name);
-	}
-	const bag = rule as unknown as { members?: readonly Rule[]; content?: Rule };
-	if (Array.isArray(bag.members)) {
-		for (const m of bag.members) collectAllFieldNamesDeep(m, into);
-	} else if (bag.content && typeof bag.content === 'object') {
-		collectAllFieldNamesDeep(bag.content, into);
-	}
+	syntacticWalker.fold(rule, into, (names, r) => {
+		const name = (r as { name?: unknown }).name;
+		if (isFieldType(r.type) && typeof name === 'string') names.add(name);
+		return names;
+	});
 }
 
 function isAllArmsNodeShaped(choiceRule: Rule): boolean {
@@ -652,7 +653,7 @@ function sameElementShape(a: Rule, b: Rule): boolean {
 function hasFieldedArm(rule: Rule): boolean {
 	const cursor = peelTransparentElementWrappers(rule);
 	const members = (cursor as unknown as { members?: Rule[] }).members;
-	return isChoiceType((cursor as { type: string }).type) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
+	return isArmChoice(cursor) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
 }
 
 function peelTransparentElementWrappers(rule: Rule): Rule {
@@ -679,31 +680,48 @@ function deriveElementFieldName(elementRule: Rule): string {
 	return 'element';
 }
 
+interface SeparatedListTail {
+	readonly repeatCursor: Rule;
+	readonly inner: RuntimeRule;
+	readonly innerElement: Rule;
+	readonly outerPrecStack: readonly Rule[];
+	readonly innerPrecStack: readonly Rule[];
+}
+
+function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolSource): SeparatedListTail | null {
+	const leading = members[i];
+	let repeatCursor = members[i + 1];
+	if (leading === undefined || repeatCursor === undefined) return null;
+	const outerPrecStack: Rule[] = [];
+	while (isPrecWrapper(repeatCursor as { type: string })) {
+		outerPrecStack.push(repeatCursor);
+		repeatCursor = (repeatCursor as unknown as { content: Rule }).content;
+	}
+	if (!isRepeatType((repeatCursor as { type: string }).type)) return null;
+	let inner = (repeatCursor as unknown as { content: RuntimeRule }).content;
+	const innerPrecStack: Rule[] = [];
+	while (isPrecWrapper(inner as unknown as { type: string })) {
+		innerPrecStack.push(inner as unknown as Rule);
+		inner = (inner as unknown as { content: RuntimeRule }).content;
+	}
+	const detected = separatorOf(inner, symbols);
+	if (!detected || detected.trailing) return null;
+	const innerElement = detected.content as unknown as Rule;
+	if (!sameElementShape(leading, innerElement)) return null;
+	if (hasFieldedArm(leading)) return null;
+	if (matchesEmpty(leading as unknown as RuntimeRule)) return null;
+	return { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack };
+}
+
 function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string, symbols: SymbolSource): Rule | null {
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	for (let i = 0; i < members.length - 1; i++) {
 		const leading = members[i]!;
 		if (isFieldType((leading as { type: string }).type)) continue;
-		let repeatCursor: Rule = members[i + 1]!;
-		const outerPrecStack: Rule[] = [];
-		while (isPrecWrapper(repeatCursor as { type: string })) {
-			outerPrecStack.push(repeatCursor);
-			repeatCursor = (repeatCursor as unknown as { content: Rule }).content;
-		}
-		if (!isRepeatType((repeatCursor as { type: string }).type)) continue;
-		let inner = (repeatCursor as unknown as { content: RuntimeRule }).content;
-		const innerPrecStack: Rule[] = [];
-		while (isPrecWrapper(inner as unknown as { type: string })) {
-			innerPrecStack.push(inner as unknown as Rule);
-			inner = (inner as unknown as { content: RuntimeRule }).content;
-		}
-		const detected = separatorOf(inner, symbols);
-		if (!detected || detected.trailing) continue;
-		const innerElement = detected.content as unknown as Rule;
-		if (!sameElementShape(leading, innerElement)) continue;
-		if (hasFieldedArm(leading)) continue;
-		if (matchesEmpty(leading as unknown as RuntimeRule)) continue;
+		const tail = separatedListTail(members, i, symbols);
+		if (!tail) continue;
+		const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
 		const fieldName = reserve(deriveElementFieldName(leading));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;
@@ -751,7 +769,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 
 	const refCounts = new Map<string, number>();
 	const countEligibleRefs = (r: Rule): void => {
-		if (isFieldType((r as { type: string }).type)) return;
+		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return;
 		if (isSymbolType((r as { type: string }).type)) {
 			const name = (r as unknown as { name: string }).name;
 			if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
@@ -769,7 +787,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 	countEligibleRefs(rule);
 
 	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
-		if (isFieldType((r as { type: string }).type)) return r;
+		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return r;
 
 		if (!suppressed && isRepeatType((r as { type: string }).type)) {
 			const content = (r as unknown as { content: Rule }).content;
@@ -915,7 +933,7 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 		alts.length === 1 ? alts[0]! : (choiceFn(...alts) as Rule);
 
 	const expand = (node: Rule): readonly Rule[] => {
-		if (!node || typeof node !== 'object') return [node];
+		if (!node || typeof node !== 'object' || isLexedBoundary(node)) return [node];
 		let out: Rule = node;
 		const members = (node as unknown as { members?: Rule[] }).members;
 		const content = (node as unknown as { content?: Rule }).content;
@@ -950,28 +968,17 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 
 function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
 	const { rulesBag } = ctx;
-	const preExistingFieldNames = new Set<string>();
-	const collectNames = (node: Rule): void => {
-		const n = node as unknown as {
-			type: string;
-			name?: unknown;
-			content?: Rule;
-			members?: Rule[];
-			metadata?: { fieldSource?: string };
-		};
-		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') {
-			preExistingFieldNames.add(n.name);
-		}
-		if (n.members) for (const m of n.members) collectNames(m);
-		else if (n.content) collectNames(n.content);
-	};
-	collectNames(rule);
+	const preExistingFieldNames = syntacticWalker.fold(rule, new Set<string>(), (names, node) => {
+		const n = node as unknown as { type: string; name?: unknown; metadata?: { fieldSource?: string } };
+		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') names.add(n.name);
+		return names;
+	});
 	const mintedBySymbol = new Map<string, string>();
 	const mintedNames = new Set<string>();
 
 	const rebuild = (node: Rule): Rule => {
 		const n = node as unknown as { type: string; content?: Rule; members?: Rule[] };
-		if (isFieldType(n.type)) return node;
+		if (isFieldType(n.type) || isLexedBoundary(n)) return node;
 		if (isRepeatType(n.type) && n.content) {
 			let inner: Rule = n.content;
 			while (isPrecWrapper(inner as { type: string })) inner = (inner as unknown as { content: Rule }).content;
@@ -1156,7 +1163,7 @@ function countSymbolsInRepeat(
 }
 
 function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
-	const { supertypeNames } = ctx;
+	const { supertypeNames, sourceSymbols: symbols } = ctx;
 	if (ruleName.startsWith('_')) return rule;
 	const precStack: Rule[] = [];
 	let cursor: Rule = rule;
@@ -1165,7 +1172,7 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 		cursor = (cursor as unknown as { content: Rule }).content;
 	}
 	if (!isSeqType(cursor.type)) {
-		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
+		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols);
 	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
 	const directKindCounts = new Map<string, number>();
@@ -1188,6 +1195,7 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 	const newMembers = members.map((m, i) => {
 		const t = targetByIdx[i];
 		if (!t) return m;
+		if (separatedListTail(members, i, symbols)) return m;
 		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return m;
@@ -1214,7 +1222,7 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 	for (const [k, v] of nestedRepeatCounts) {
 		combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
 	}
-	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
+	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, symbols, existing, combinedKindCounts);
 	if (finalMembers === newMembers && !changed) return rule;
 	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
@@ -1227,12 +1235,13 @@ function promoteInsideRepeatMembers(
 	ruleName: string,
 	members: Rule[],
 	supertypeNames: ReadonlySet<string>,
+	symbols: SymbolSource,
 	existing: Set<string>,
 	outerKindCounts: Map<string, number>
 ): Rule[] {
 	let anyRepeatChanged = false;
 	const result = members.map((m) => {
-		const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
+		const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, symbols, existing, outerKindCounts);
 		if (rebuilt === null) return m;
 		anyRepeatChanged = true;
 		return rebuilt;
@@ -1245,6 +1254,7 @@ function tryPromoteInRepeatMember(
 	ruleName: string,
 	member: Rule,
 	supertypeNames: ReadonlySet<string>,
+	symbols: SymbolSource,
 	existing: Set<string>,
 	outerKindCounts: Map<string, number>
 ): Rule | null {
@@ -1288,6 +1298,7 @@ function tryPromoteInRepeatMember(
 	const newInnerMembers = innerMembers.map((im, i) => {
 		const t = innerTargets[i];
 		if (!t) return im;
+		if (separatedListTail(innerMembers, i, symbols)) return im;
 		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return im;
@@ -1331,7 +1342,8 @@ function tryPromoteInRepeatSeq(
 	rule: Rule,
 	cursor: Rule,
 	outerPrecStack: Rule[],
-	supertypeNames: ReadonlySet<string>
+	supertypeNames: ReadonlySet<string>,
+	symbols: SymbolSource
 ): Rule {
 	if (!isRepeatType(cursor.type)) return rule;
 	let inner = (cursor as unknown as { content: Rule }).content;
@@ -1362,6 +1374,7 @@ function tryPromoteInRepeatSeq(
 	const newMembers = members.map((m, i) => {
 		const t = targetByIdx[i];
 		if (!t) return m;
+		if (separatedListTail(members, i, symbols)) return m;
 		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return m;
@@ -2150,7 +2163,6 @@ function walkFieldEnums(rule: Rule, rules: Record<string, Rule>, parentKind: str
 		case 'OPTIONAL':
 		case 'REPEAT':
 		case 'REPEAT1':
-		case 'TOKEN':
 			walkFieldEnums((rule as unknown as { content: Rule }).content, rules, parentKind, out);
 			return;
 		default:
@@ -2348,8 +2360,7 @@ function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweep
 		}
 		case 'OPTIONAL':
 		case 'REPEAT':
-		case 'REPEAT1':
-		case 'TOKEN': {
+		case 'REPEAT1': {
 			const content = (rule as unknown as { content: Rule }).content;
 			const newContent = recurse(content);
 			if (newContent === content) return rule;

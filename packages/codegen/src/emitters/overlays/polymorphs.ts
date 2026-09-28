@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledList, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -688,7 +688,7 @@ function elementsShape(
 	groupKeys: readonly string[],
 	m: string,
 	spread: boolean,
-	list: { readonly nonEmpty: boolean; readonly options: boolean } | undefined
+	list: { readonly nonEmpty: boolean; readonly options: boolean; readonly optionsRequired: boolean } | undefined
 ): SeatShape {
 	if (spread) {
 		return {
@@ -703,7 +703,7 @@ function elementsShape(
 				const child = `ArgsOf<typeof ${c}>[0]`;
 				if (list === undefined) return `(...args: ReadonlyArray<${p} | ${child}>)`;
 				const element = list.options ? `(ListElement<${p}> | ${child})` : `(${p} | ${child})`;
-				return `(...args: ${listRestParamType(list.nonEmpty, element, list.options ? `ListOptionsOf<${p}>` : undefined)})`;
+				return `(...args: ${listRestParamType(list.nonEmpty, element, list.options ? `ListOptionsOf<${p}>` : undefined, list.optionsRequired)})`;
 			},
 			spread: true
 		};
@@ -782,7 +782,9 @@ function seatEmission(
 					configKeysOf(seat.group),
 					m,
 					parent instanceof AssembledList || classifyFactoryShape(parent, nodeMap) === 'spread',
-					parent instanceof AssembledList ? { nonEmpty: parent.nonEmpty, options: listHasOptions(parent) } : undefined
+					parent instanceof AssembledList
+						? { nonEmpty: parent.nonEmpty, options: listHasOptions(parent), optionsRequired: separatorRequired(parent) }
+						: undefined
 				);
 	return {
 		method: s.method,

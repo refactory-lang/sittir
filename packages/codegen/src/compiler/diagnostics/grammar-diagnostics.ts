@@ -6,7 +6,8 @@ import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
-import type { AssembleWarning, NamingEvent } from '../model/node-map.ts';
+import { optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
+import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
@@ -114,7 +115,8 @@ const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'kind-shape-mismatch',
 	'single-literal-choice',
 	'union-slot-mixed-row',
-	'union-slot-unaddressable'
+	'union-slot-unaddressable',
+	'separator-pattern'
 ]);
 
 export function isExpectedDiagnostic(
@@ -154,6 +156,47 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
 		canProceed: true
 	};
+}
+
+export function optionalFlankFieldDiagnostics(grammar: string, nodeMap: AssembledNodeMap): GrammarDiagnostic[] {
+	return [...nodeMap.nodes].flatMap(([kind, node]) =>
+		optionalFlankSlots(node).map((slot) => {
+			const flanks = [
+				...(slot.leadingDelimiter === 'optional' ? ['leading'] : []),
+				...(slot.trailingDelimiter === 'optional' ? ['trailing'] : [])
+			];
+			return {
+				scope: 'grammar' as const,
+				code: 'field-optional-delimiter',
+				severity: 'error' as const,
+				grammar,
+				ownerKind: kind,
+				slotName: slot.name,
+				message: `kind '${kind}': field '${slot.name}' carries an optional ${flanks.join(' and ')} delimiter, which a field factory cannot control; only a list kind models an optional delimiter.`,
+				proposal: `Make the delimited list its own kind with a groups: entry or a rule() patch.`,
+				canProceed: false,
+				details: { field: slot.name, flanks }
+			};
+		})
+	);
+}
+
+export function undeclaredSeparatorDiagnostics(grammar: string, config: SitePreferencesConfig): GrammarDiagnostic[] {
+	return undeclaredSeparatorSites(config).map((site) => {
+		const arms = site.arms.map((arm) => arm.value);
+		return {
+			scope: 'grammar' as const,
+			code: 'separator-default-undeclared',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: site.kind,
+			slotName: site.slot,
+			message: `kind '${site.kind}': ${site.slot} chooses its separator per instance (${arms.join(', ')}) and declares no default.`,
+			proposal: `Declare the default separator kind under options: (${site.address}).`,
+			canProceed: false,
+			details: { arms }
+		};
+	});
 }
 
 export function reservedMemberDiagnostics(
@@ -312,6 +355,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
+			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
+			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...surfacedCompilerDiagnostics
 		])
 	};

@@ -71,8 +71,8 @@ describe('wrap emitter — separatedList', () => {
 		expect(emitted).toContain('"trailing"');
 		expect(emitted).toContain('_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]) ?? TSKindId.Semi,');
 		const undeclared = makeMemberNodeMap(rule, { separatorRule: sepChoice });
-		expect(() => emitWrap({ grammar: 'test', nodeMap: undeclared, kindEntries: KIND_ENTRIES })).toThrow(
-			/member_list chooses its separator per instance and declares no default/
+		expect(emitWrap({ grammar: 'test', nodeMap: undeclared, kindEntries: KIND_ENTRIES })).toContain(
+			'_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]),'
 		);
 	});
 

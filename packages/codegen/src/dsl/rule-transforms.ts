@@ -12,7 +12,7 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
-import { RuleWalker } from './rule-walker.ts';
+import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
 import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
@@ -38,7 +38,7 @@ export interface DistributeAliasCtx {
 }
 
 export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: DistributeAliasCtx): R {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const distributed = new WeakSet<object>();
 	const inlineChoiceOf = (content: R): R | undefined => {
 		if (content.type !== SYMBOL) return undefined;
@@ -70,7 +70,7 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 }
 
 export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
 		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value)) return undefined;
@@ -123,7 +123,7 @@ export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<str
 		const name = r.type === SYMBOL ? (r as unknown as { name: string }).name : undefined;
 		return name !== undefined && displayByRule.has(name) ? name : undefined;
 	};
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const visit = (r: R): R => {
 		const name = lifted(r);
 		if (name !== undefined) return { ...displayByRule.get(name)!, content: r } as unknown as R;
@@ -150,7 +150,7 @@ type AliasSite<R> = NamedAliasShape<R> & { readonly value: string };
 type StorageOf = { readonly key: string; readonly symbol?: string; readonly terminal: boolean };
 
 export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<string, R>, ctx: OverloadedDisplayCtx): Record<string, R> {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const siteOf = (r: R): AliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
 		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;

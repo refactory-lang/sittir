@@ -58,7 +58,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
+import { isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -530,6 +530,8 @@ function deField(rule: RuntimeRule): RuntimeRule {
 	const inner = isFieldLike(rule) ? contentOf(rule) : rule;
 	const stripPropagated = (r: RuntimeRule): RuntimeRule => {
 		const { fieldName: _drop, ...rest } = r as Record<string, unknown>;
+		const optional = optionalContentOf(rest as unknown as RuntimeRule);
+		if (optional !== undefined) return withOptionalContent(rest as unknown as RuntimeRule, stripPropagated(optional));
 		const content = (rest as { content?: RuntimeRule }).content;
 		if (
 			content &&
@@ -702,7 +704,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 
 function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
 	const r = content as Record<string, unknown>;
-	if (!r || typeof r !== 'object' || !isChoiceType(r.type as string)) return content;
+	if (!r || typeof r !== 'object' || !isArmChoice(r as { type: string })) return content;
 	const members = r.members as unknown[] | undefined;
 	if (!Array.isArray(members)) return content;
 	let anyChanged = false;

@@ -21,18 +21,7 @@ let discovered: readonly GrammarPackage[] | undefined;
 export function grammarPackages(): readonly GrammarPackage[] {
 	discovered ??= readdirSync(PACKAGES_DIR, { withFileTypes: true })
 		.filter((entry) => entry.isDirectory() && existsSync(join(PACKAGES_DIR, entry.name, GRAMMAR_ENTRY)))
-		.map((entry) => {
-			const dir = join(PACKAGES_DIR, entry.name);
-			const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
-				sittir?: { stable?: boolean; displayName?: string };
-			};
-			return {
-				name: entry.name,
-				dir,
-				stable: manifest.sittir?.stable === true,
-				displayName: manifest.sittir?.displayName
-			};
-		})
+		.map((entry) => grammarPackage(entry.name))
 		.sort((a, b) => a.name.localeCompare(b.name));
 	return discovered;
 }
@@ -66,6 +55,18 @@ export function grammarPackageDir(name: GrammarName): string {
 	return join(PACKAGES_DIR, name);
 }
 
+export function grammarPackage(name: GrammarName, dir: string = grammarPackageDir(name)): GrammarPackage {
+	const manifestPath = join(dir, 'package.json');
+	const manifest = existsSync(manifestPath)
+		? (JSON.parse(readFileSync(manifestPath, 'utf8')) as { sittir?: { stable?: boolean; displayName?: string } })
+		: {};
+	return { name, dir, stable: manifest.sittir?.stable === true, displayName: manifest.sittir?.displayName };
+}
+
+export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
+	return join(pkg.dir, '.sittir');
+}
+
 export function grammarDisplayName(name: GrammarName): string {
 	const declared = grammarPackages().find((g) => g.name === name)?.displayName;
 	if (declared !== undefined) return declared;
@@ -79,8 +80,12 @@ export function upstreamPackage(name: GrammarName): string {
 	return `tree-sitter-${name}`;
 }
 
+export function packageRequire(pkg: Pick<GrammarPackage, 'dir'>): NodeJS.Require {
+	return createRequire(join(pkg.dir, 'package.json'));
+}
+
 export function grammarRequire(name: GrammarName): NodeJS.Require {
-	return createRequire(join(grammarPackageDir(name), 'package.json'));
+	return packageRequire({ dir: grammarPackageDir(name) });
 }
 
 export function nativeCrateRelDir(name: GrammarName): string {

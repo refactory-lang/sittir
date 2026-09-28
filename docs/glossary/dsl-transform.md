@@ -852,7 +852,7 @@ on the way in; an authored body of that name is left as authored.
  * Strip field association from a rule so its position reads as an unnamed
  * body slot. Removes a leading `field(name, X)` wrapper AND the
  * `fieldName` annotation sittir propagates down through single-content
- * wrappers (prec/optional/repeat) to the leaf — both must go or the slot
+ * wrappers (prec/optional in either spelling/repeat) to the leaf — both must go or the slot
  * collector re-creates the named slot from the surviving `fieldName`.
  */
 ```

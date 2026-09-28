@@ -205,18 +205,27 @@ Non-standard `node-types.json` locations inside the upstream package. Most gramm
  * validate/node-types-loader.ts — thin loader for tree-sitter
  * node-types.json.
  *
- * Consumed by both validators and emitters (grammar.ts, types.ts),
- * so it lives at validate/ rather than under any one consumer's
- * directory. Takes a grammar name and returns the parsed raw entry
- * array from that grammar's `node-types.json` file (or a
- * `.sittir/src/node-types.json` override if present). No caches,
- * no mutable state (FR-022).
+ * Consumed by validators and by generate, which loads a package's
+ * node types once and hands them to the emitters (grammar.ts,
+ * types.ts); it lives at validate/ rather than under any one
+ * consumer's directory. No caches, no mutable state.
  *
  * If a consumer needs to point at a non-standard file (e.g. test
  * fixtures), they pass the resolved path directly via the
  * `explicitPath` argument — there is no module-level path registry.
  */
 ```
+
+### `packages/codegen/src/validate/node-types-loader.ts::loadPackageNodeTypes`
+
+A grammar package's node types: its `.sittir/src/node-types.json` when
+tree-sitter has generated one, otherwise the upstream package's own
+`node-types.json`, resolved from the grammar package (`packageRequire`).
+
+### `packages/codegen/src/validate/node-types-loader.ts::loadRawEntries`
+
+The node types at `explicitPath`, or `loadPackageNodeTypes` for the
+grammar's own package.
 
 ### `packages/tools/src/validate/common.ts::soleWrappedNode`
 

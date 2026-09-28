@@ -560,7 +560,8 @@ function emitRestParamFromResolver(
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
 	childrenTypeAnnotation = '',
 	optionsType?: string,
-	nonEmpty = false
+	nonEmpty = false,
+	optionsRequired = false
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
@@ -578,7 +579,7 @@ function emitRestParamFromResolver(
 				];
 	const paramType = `${tName}.Loose | LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 	const returnType = factoryReturnTypeExpr(factory);
-	const inputType = listRestParamType(nonEmpty, `(${paramType})`, optionsType);
+	const inputType = listRestParamType(nonEmpty, `(${paramType})`, optionsType, optionsRequired);
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
 	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
@@ -815,7 +816,8 @@ function emitSeparatedListFrom(
 				: `${factory}(${spreadElements(`_listElements(${varExpr}, ${optionKeys}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')})`)})`,
 		': readonly unknown[]',
 		surface.optionsType,
-		node.nonEmpty
+		node.nonEmpty,
+		surface.separatorRequired
 	);
 }
 
