@@ -105,9 +105,10 @@ interface Engine<API extends LanguageAPI> {
   generic code (`typeof rs.types.functionItem`, `Types<typeof rs>`). It is derived
   from the same kind map as the static type exports, and has no runtime value.
 - **`render`** takes a node or a callback that receives `build`, and returns a
-  `Rendered` handle: `Disposable` (disposing frees the native render buffer),
-  `toString()` and `text` give the text, and a handle that is never disposed is freed
-  when it is garbage-collected. `using out = rs.render(node)` frees it at scope exit.
+  `Rendered` handle: today's lazy `RenderHandle` (`toString()`, `save`, `print`; the
+  text is rendered on first use and cached), made `Disposable`. Disposing drops the
+  cached text, and using the handle after that throws. `using out = rs.render(node)`
+  releases it at scope exit; an undisposed handle is simply garbage-collected.
 - **File verbs**, following the create/transform split of code-generation APIs
   (Angular schematics, ts-morph, jscodeshift):
   - `create(path, build => root)`: a new file only. It throws, naming the path, if
@@ -263,8 +264,7 @@ engine surface.
   - a callback that throws leaves no `Pending` and writes nothing;
   - a project disposed without `commit()` writes nothing, including when its block
     throws;
-  - a disposed `Rendered` frees its native buffer, and `toString()` after disposal
-    throws.
+  - `toString()` on a disposed `Rendered` throws.
 - Type level: `typeof rs.types.functionItem` equals `FunctionItem`; a node from
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
