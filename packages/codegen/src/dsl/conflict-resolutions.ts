@@ -27,7 +27,9 @@ export interface ConflictResolutionsInput {
 
 export const CONFLICT_RESOLUTIONS_FILE = 'resolutions.json';
 
-export const EMPTY_CONFLICT_RESOLUTIONS: ConflictResolutionsFile = { grammarHash: '', resolutions: [] };
+export const UNVERIFIED_GRAMMAR_HASH = '';
+
+export const EMPTY_CONFLICT_RESOLUTIONS: ConflictResolutionsFile = { grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions: [] };
 
 export function sameConflictSet(left: readonly string[], right: readonly string[]): boolean {
 	const members = new Set(left);

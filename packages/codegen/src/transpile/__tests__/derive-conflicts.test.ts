@@ -186,7 +186,19 @@ describe('reuseOrDeriveConflictResolutions', () => {
 	it('reports the saved resolutions stale when they fail to generate under an unchanged hash', async () => {
 		const { calls, generate } = recordingGenerate([reportFor('a', 'b'), reportFor('c', 'd')]);
 		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate });
-		expect(result).toEqual({ kind: 'stale', report: reportFor('c', 'd'), resolutions: saved.resolutions });
+		expect(result).toEqual({ kind: 'stale', outcome: { kind: 'conflict', report: reportFor('c', 'd') }, resolutions: saved.resolutions });
 		expect(calls).toEqual([[['stale', 'x']]]);
+	});
+
+	it('reports the saved resolutions stale, not a throw, when they fail to build under an unchanged hash', async () => {
+		const summary = { UndefinedSymbol: 'bogus' };
+		const result = await reuseOrDeriveConflictResolutions({
+			saved,
+			grammarHash: 'h1',
+			ruleCount: 10,
+			upstream: identity,
+			generate: async () => ({ kind: 'error', summary })
+		});
+		expect(result).toEqual({ kind: 'stale', outcome: { kind: 'error', summary }, resolutions: saved.resolutions });
 	});
 });

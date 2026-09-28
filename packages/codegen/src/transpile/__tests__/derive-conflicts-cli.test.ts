@@ -2,8 +2,9 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { parseGenerateOutcome } from '../conflict-summary.ts';
-import { deriveConflictResolutions } from '../derive-conflicts.ts';
+import type { DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import { parseGenerateOutcome, type GenerateOutcome } from '../conflict-summary.ts';
+import { deriveConflictResolutions, reuseOrDeriveConflictResolutions } from '../derive-conflicts.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
 
 const GRAMMAR = `module.exports = grammar({
@@ -52,5 +53,26 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			}
 		});
 		expect(result.resolutions.map((entry) => entry.step)).toEqual(['upstream-declared']);
+	});
+
+	it('reports a saved set naming an undefined rule as stale, with the CLI error', async () => {
+		const bogus: DerivedResolution = {
+			resolution: { kind: 'AddConflict', symbols: ['bogus'] },
+			step: 'default',
+			sourceChains: [['bogus']],
+			conflict: { symbolSequence: [], lookahead: '', interpretations: ['bogus'] }
+		};
+		const result = await reuseOrDeriveConflictResolutions({
+			saved: { grammarHash: 'h', resolutions: [bogus] },
+			grammarHash: 'h',
+			ruleCount: 4,
+			upstream: { upstreamConflicts: [], sourceEdges: {} },
+			generate: async (resolutions): Promise<GenerateOutcome> => {
+				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
+				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
+				return parseGenerateOutcome(run.status, run.stderr);
+			}
+		});
+		expect(result).toMatchObject({ kind: 'stale', outcome: { kind: 'error' } });
 	});
 });

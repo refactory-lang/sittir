@@ -656,7 +656,7 @@ The blocking `conflict-unresolvable` for a derivation that stopped: its reason a
 
 ### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictStaleRecord`
 
-The blocking `conflict-resolutions-stale` for saved resolutions that carry the current grammar hash but reported a conflict: the file was edited by hand or the hash misses an input of the derivation. The conflict driver writes it as the package's grammar diagnostics and stops the regen.
+The blocking `conflict-resolutions-stale` for saved resolutions that carry the current grammar hash but failed to generate, with the conflict report or the build error: the file was edited by hand or the hash misses an input of the derivation. The conflict driver writes it as the package's grammar diagnostics and stops the regen.
 
 ### `packages/codegen/src/compiler/diagnostics/dynamic-precedence.ts::sortedValues`
 

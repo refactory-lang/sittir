@@ -410,12 +410,26 @@ The policy's answer for one report: a resolution to record, or `unusable` when
 no resolution the policy can apply was offered.
 ```
 
+### `packages/codegen/src/transpile/derive-conflicts.ts::FailedGenerate`
+
+```text
+A `generate` run that did not come out clean: a conflict report or a build
+error.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::conflictReportOf`
+
+```text
+The conflict a failed run reports. During a derivation a build error is not a
+conflict to resolve, so it throws: the grammar is broken.
+```
+
 ### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationResult`
 
 ```text
 How a derivation ended: `reused` when the saved resolutions generated cleanly
-in one run, `stale` when saved resolutions carrying the current hash reported
-a conflict, `converged` with the resolutions and the number of `generate`
+in one run, `stale` with the failed outcome when saved resolutions carrying the
+current hash did not generate cleanly, `converged` with the resolutions and the number of `generate`
 runs, or `unresolvable` with the reason, the report that stopped it,
 and the resolutions gathered so far.
 ```
@@ -463,8 +477,9 @@ resolution list.
 ```text
 Skips the derivation when nothing it depends on changed. When the saved
 resolutions carry the evaluated grammar's hash, they are tried in a single
-`generate`; a clean run is `reused`. A conflict in that run is `stale`, not a
-cue to derive again: the hash covers every input of the derivation, so the
+`generate`; a clean run is `reused`. Any failure of that run, a conflict or a
+build error such as a rule the set names that does not exist, is `stale`
+with the failed outcome, not a cue to derive again: the hash covers every input of the derivation, so the
 saved file was edited by hand or the hash misses an input, and either has to
 be seen. A changed hash derives again from an empty list, so no stale entry
 survives.
@@ -577,15 +592,32 @@ Ends a regen on a blocking conflict record: writes it as the package's
 read, and throws `GrammarDiagnosticError`.
 ```
 
+### `packages/codegen/src/transpile/conflict-driver.ts::ConflictResolutionsStore`
+
+```text
+Where a package's resolutions are read from and written to. The package's
+store writes `resolutions.json` and re-bundles, since the bundle inlines it.
+```
+
+### `packages/codegen/src/transpile/conflict-driver.ts::settleConflictResolutions`
+
+```text
+Reuses the saved resolutions or derives new ones against a store. Every probe
+writes its candidate set with `UNVERIFIED_GRAMMAR_HASH`; only a `reused` or
+`converged` result is stamped with the grammar hash, once, after its clean
+run. A derivation that fails or throws therefore leaves an unverified file,
+and the next run derives again instead of reporting the partial set stale.
+```
+
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
 ```text
 The conflict loop for one grammar package: read the saved resolutions
 (seeding them if missing), evaluate the grammar once in a fresh process for
-the hash, rule count and upstream context, then reuse the saved resolutions
-or derive new ones. Each run writes the candidate resolutions (with the
-hash), re-bundles, and runs `tree-sitter generate --json-summary`; the last,
-clean run leaves the generate outputs in place. Saved resolutions that turn
+the hash, rule count and upstream context, then settle the resolutions
+(`settleConflictResolutions`). Each probe writes its candidate set,
+re-bundles, and runs `tree-sitter generate --json-summary`; the last, clean
+run leaves the generate outputs in place. Saved resolutions that turn
 out stale, or a derivation that cannot converge, become the blocking
 `conflict-resolutions-stale` or `conflict-unresolvable` record
 (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's

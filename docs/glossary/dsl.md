@@ -6778,11 +6778,15 @@ The distinct upstream sources of a resolution: the last name of each source chai
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::DerivedResolution`
 
-One entry of `resolutions.json` as the derivation writes it: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`transpile/derive-conflicts.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
+One entry of `resolutions.json` as the derivation writes it: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`dsl/conflict-resolutions.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
-The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evaluated grammar the resolutions were derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`).
+The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evaluated grammar the resolutions were derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`). It is the verified stamp: written only once the set has generated cleanly, so a file with a matching hash always held a set that built.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
+
+The hash of a resolution set no clean `generate` has confirmed: the seed, and every candidate the derivation probes. No grammar hashes to it, so such a set is always derived again rather than reused.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
@@ -6794,7 +6798,7 @@ The file name under a package's `.sittir/` that holds the derived resolutions, a
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
 
-The resolutions of a grammar nothing has been derived for: the seed a new package's first bundle imports, and the starting point of every derivation.
+The resolutions of a grammar nothing has been derived for, carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
 

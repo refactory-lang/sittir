@@ -86,9 +86,15 @@ describe('derivation failures', () => {
 	});
 
 	it('stale saved resolutions are a blocking conflict-resolutions-stale with the report', () => {
-		const record = conflictStaleRecord('g', report);
+		const record = conflictStaleRecord('g', { kind: 'conflict', report });
 		expect(record).toMatchObject({ code: 'conflict-resolutions-stale', severity: 'fail', details: { report } });
 		expect(blockedRecords([record], undefined)).toEqual([record]);
+	});
+
+	it('stale saved resolutions that fail to build carry the error summary', () => {
+		const summary = { UndefinedSymbol: 'bogus' };
+		const record = conflictStaleRecord('g', { kind: 'error', summary });
+		expect(record).toMatchObject({ code: 'conflict-resolutions-stale', canProceed: false, details: { summary } });
 	});
 
 	it.each(['conflict-authored', 'conflict-unresolvable', 'conflict-resolutions-stale'])('%s cannot be expected away', (code) => {

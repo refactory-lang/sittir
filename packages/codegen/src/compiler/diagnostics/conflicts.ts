@@ -1,6 +1,6 @@
 import { sameConflictSet, upstreamSourcesOf } from '../../dsl/conflict-resolutions.ts';
 import type { ConflictReport } from '../../transpile/conflict-summary.ts';
-import type { DerivationResult } from '../../transpile/derive-conflicts.ts';
+import type { DerivationResult, FailedGenerate } from '../../transpile/derive-conflicts.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
 
@@ -59,15 +59,19 @@ export function conflictUnresolvableRecord(grammar: string, reason: Unresolvable
 	};
 }
 
-export function conflictStaleRecord(grammar: string, report: ConflictReport): GrammarDiagnostic {
+export function conflictStaleRecord(grammar: string, outcome: FailedGenerate): GrammarDiagnostic {
+	const failure =
+		outcome.kind === 'conflict'
+			? `tree-sitter reports a conflict on ${outcome.report.conflicting_lookahead} after ${outcome.report.symbol_sequence.join(' ')}`
+			: `tree-sitter fails to build the grammar: ${JSON.stringify(outcome.summary)}`;
 	return {
 		scope: 'grammar',
 		code: 'conflict-resolutions-stale',
 		severity: 'fail',
 		grammar,
-		message: `${grammar}: the saved resolutions carry the current grammar hash but no longer generate cleanly; tree-sitter reports a conflict on ${report.conflicting_lookahead} after ${report.symbol_sequence.join(' ')}`,
+		message: `${grammar}: the saved resolutions carry the current grammar hash but no longer generate cleanly; ${failure}`,
 		proposal: 'Restore resolutions.json from version control, or find the grammar input the hash does not cover.',
 		canProceed: false,
-		details: { report }
+		details: outcome.kind === 'conflict' ? { report: outcome.report } : { summary: outcome.summary }
 	};
 }

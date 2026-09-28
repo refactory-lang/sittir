@@ -1,6 +1,6 @@
 # Conflict predetermination
 
-**Status:** Design, approved in conversation. No plan yet.
+**Status:** Implemented (plan: `docs/superpowers/plans/2026-09-28-conflict-predetermination.md`).
 
 ## Problem
 
