@@ -152,9 +152,13 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 
 export type ApiSurface = 'default' | 'strict' | 'portable';
 
+type StrictMembers<T> = { [K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]> };
+
 export type StrictSurface<T> =
-  (T extends { strict: infer S } ? S : T)
-  & { [K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]> };
+  T extends { strict: infer S } ? S & StrictMembers<T>
+  : T extends (...args: never) => unknown ? T
+  : T extends object ? StrictMembers<T>
+  : T;
 
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   api?: M;

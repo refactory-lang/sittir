@@ -97,10 +97,21 @@ export async function createEngine<API extends LanguageAPI, const M extends ApiS
   the default surface:
 
   ```ts
+  type StrictMembers<T> =
+    { [K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]> };
   type StrictSurface<T> =
-    (T extends { strict: infer S } ? S : T)
-    & { [K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]> };
+    T extends { strict: infer S } ? S & StrictMembers<T>
+    : T extends (...args: never) => unknown ? T
+    : T extends object ? StrictMembers<T>
+    : T;
   ```
+
+  A builder becomes its strict flavour plus its mapped variants. A namespace object is
+  only its mapped members; intersecting the raw object as well would put each raw
+  builder's signature ahead of its strict one in overload resolution. A callable with
+  no strict flavour stays whole, which keeps its generic and overloaded signatures.
+  That last rule assumes no strict-less callable has members that carry `.strict`. A
+  test over each grammar's `build` table pins it.
 
 - **Interceptors** wrap the engine's operations like middleware, for logging,
   instrumentation and tooling:
