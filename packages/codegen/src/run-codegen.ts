@@ -20,6 +20,7 @@ import {
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
+import { runTreeSitterCli } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
@@ -69,10 +70,7 @@ export async function writeFile(path: string, content: string): Promise<void> {
 export function runTreeSitterGenerate(pkg: GrammarPackage): void {
 	const sittirDir = sittirDirOf(pkg);
 	console.log(`Running 'tree-sitter generate' in ${sittirDir}...`);
-	execSync('npx tree-sitter generate', {
-		cwd: sittirDir,
-		stdio: 'inherit'
-	});
+	runTreeSitterCli(['generate'], sittirDir, 'inherit');
 	pruneOrphanedPlaceholderRules(sittirDir);
 }
 

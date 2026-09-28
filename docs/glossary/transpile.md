@@ -10,6 +10,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliPath`
+
+```text
+The `tree-sitter` bin of codegen's own tree-sitter-cli dependency, read from
+that package's manifest. Resolution is relative to codegen, never the working
+directory, so a grammar package anywhere on disk runs the same CLI version.
+```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
+
+```text
+Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary.
+Every tree-sitter invocation (generate, wasm build) goes through here.
+```
+
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
 ```text

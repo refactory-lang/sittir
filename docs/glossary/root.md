@@ -97,10 +97,8 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
  * Run 'tree-sitter generate' in a grammar package's .sittir/ directory
  * (`sittirDirOf`) — produces grammar.json + node-types.json from the
  * transpiled grammar.js. The directory comes from the package, never from
- * the working directory. Uses
- * execSync (shell-level) rather than spawnSync; tree-sitter is a native
- * binary so either would launch a separate OS process (no Node module
- * sharing concern) — exec is just simpler for a bare command.
+ * the working directory, and the CLI is codegen's own tree-sitter-cli
+ * (`runTreeSitterCli`), so a package outside the repo needs no CLI of its own.
  */
 ```
 
