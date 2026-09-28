@@ -37,7 +37,7 @@ Each PR is a branch stacked on the previous one (`feat/engine-api-1-surface` on 
 
 | PR | Tasks (parts) | Behaviour change | Gate |
 |---|---|---|---|
-| **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 6b (dead surface); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
+| **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 6b (dead surface); 6c (runtime into common); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
 | **2. Bound nodes** | 2; 3 (**cross-engine rendering, disposable `Rendered`**); 6 (**retire `boundary.ts`, `defaultEngine`, and `methodsEngine`'s `render`/`toEdit`**) | Engine render options reach `$render()` | Rows and fixtures identical under default options; the Task 2 and Task 6 stamp tests |
 | **3. Surfaces + interceptors** | 3 (**`api` option with the derived strict surface; interceptors; `timing()` replacing `SITTIR_METRICS`**), plus the `StrictSurface` tsc-cost check from Task 10 | Opt-in only | Rows and fixtures identical; the interceptor and surface tests; tsc cost within 10% |
 | **4. File verbs** | 4 | New API | The files and engine file-verb tests |
@@ -791,6 +791,49 @@ What goes:
 
 ```bash
 git commit -m "refactor: remove the dead generated consts and unused common exports" -- packages/codegen/src packages/common packages/rust packages/typescript packages/python packages/scm packages/regex docs/glossary
+```
+
+---
+
+### Task 6c: Runtime helpers move into `@sittir/common` (PR 1)
+
+The generated `utils.ts` (266–406 lines per grammar) is almost entirely typed wrappers: overload lists (for example `isEmpty(node: T.Block): node is T.EmptyBlock`, one per list kind), `isNodeData`/`isTreeNode` typed over `NamespaceMap`, and thin helpers (`rejectBareText`, `rejectKeywordText`, `admitAliasContent`, `coerceMixedEnumStorage`, `coerceKindEnumStorage`, `hoist`, `hoistRoutes`, `attachProps`, `bundle`, `isNodeOfKind`, `hasKindOf`) whose bodies are already generic. The one piece of grammar data is `methodsEngine.trivia`.
+
+**Files:**
+- Create: `packages/common/src/runtime.ts`, which holds every helper above, generic over a grammar type map.
+- Modify: `packages/types/src/engine-api.ts` (`GrammarTypeMap`), `packages/codegen/src/emitters/types.ts` (emit the grammar's type map), `packages/codegen/src/emitters/client-utils.ts` (it now emits only the facts object and one `bindRuntime` call, or is deleted, with the facts moving into `api.ts`), and the generated factories/wrap imports (they import from the bound runtime).
+- Test: `packages/common/tests/runtime.test.ts`.
+
+**Interfaces:**
+- Produces:
+
+```ts
+// @sittir/types
+export interface GrammarTypeMap {
+  readonly namespaces: object;          // today's NamespaceMap
+  readonly empty: object;               // list kind → its Empty<Kind> type (drives isEmpty)
+}
+// @sittir/common
+export function bindRuntime<M extends GrammarTypeMap>(facts: GrammarFacts): GrammarRuntime<M>;
+export interface GrammarRuntime<M extends GrammarTypeMap> {
+  isNodeData<K extends keyof M['namespaces']>(v: unknown): v is Extract<M['namespaces'][K], AnyNodeData>;
+  isTreeNode(v: unknown): v is AnyTreeNodeOf<AnyNodeData>;
+  isEmpty<K extends keyof M['empty']>(node: unknown): node is M['empty'][K];
+  // …one generic signature per helper listed above, replacing the per-grammar overload lists
+}
+```
+
+- The generated `api.ts` does `export const runtime = bindRuntime<RustTypeMap>(RUST_FACTS)`, and the engine exposes the guards through `engine.is`. `GrammarFacts` is today's `TriviaFacts` plus `KIND_NAMES`, `INNER_GAPS` and `TOKEN_INTERIORS`, as data.
+
+- [ ] **Step 1: Write `runtime.test.ts`** against a fake type map and facts, covering `isEmpty` narrowing (a type test with `@ts-expect-error` on a non-list kind) and the runtime behaviour of each helper, copied from today's generated-utils tests.
+- [ ] **Step 2: Run it and see it fail.**
+- [ ] **Step 3: Implement `runtime.ts`** by moving each helper's body from the emitter's template into a real function, and replacing each overload list with one generic signature over the map.
+- [ ] **Step 4: Change the emitters** so each grammar emits its type map into `types.ts`, and its facts plus the `bindRuntime` call into `api.ts`. Delete the generated `utils.ts`.
+- [ ] **Step 5: Gates:** regenerate all 5 grammars; validation rows identical; the full suite; type-check; both examples checks. Measure `tsc` against Task 0: the generic signatures replace overload lists, so check time should not grow. If it does by more than 10% on any grammar, stop and report.
+- [ ] **Step 6: Glossary entries and commit**
+
+```bash
+git commit -m "refactor: runtime helpers live in @sittir/common, typed by each grammar's type map" -- packages/common packages/types packages/codegen/src packages/rust packages/typescript packages/python packages/scm packages/regex docs/glossary
 ```
 
 ---
