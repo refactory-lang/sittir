@@ -11,7 +11,7 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
-import { spanSlicer, stripStructuralProvenance } from '@sittir/common';
+import { mapTriviaEntries, spanSlicer, stripStructuralProvenance, type TriviaSides } from '@sittir/common';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -348,7 +348,9 @@ export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: Any
  * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
  * bytes as `$text` (sliced from `source` when the reader captured none);
  * a storage-less compound keeps only its identity and rebuilds from its
- * empty slots, and a storage-less trivia entry becomes its text.
+ * empty slots, and a storage-less trivia entry becomes its text with the
+ * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
+ * `$tokensBetween` when it shares its owner's row.
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -363,13 +365,17 @@ export function selfContainedRenderInput(
 	};
 	const hasStorage = (record: Record<string, unknown>): boolean =>
 		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');
-	const walkTrivia = (entries: unknown): unknown => {
-		if (!Array.isArray(entries)) return entries;
-		return entries.map((entry) => {
-			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
-			return textOf(entry as Record<string, unknown>) ?? walk(entry);
+	const walkTrivia = (entries: readonly unknown[]): unknown[] =>
+		entries.map((entry) => {
+			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>))
+				return walk(entry);
+			const record = entry as Record<string, unknown>;
+			const text = textOf(record);
+			if (text === undefined) return walk(entry);
+			const kind = typeof record.$type === 'number' ? { $type: record.$type } : {};
+			if (record.$sameLine !== true) return { ...kind, $text: text };
+			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
-	};
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);
 		if (value === null || typeof value !== 'object') return value;
@@ -377,9 +383,8 @@ export function selfContainedRenderInput(
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$nodeHandle' || key === '$childIndex') continue;
-			if (key === '$_trivia' && raw !== null && typeof raw === 'object') {
-				const sides = raw as Record<string, unknown>;
-				out[key] = { ...sides, leading: walkTrivia(sides.leading), trailing: walkTrivia(sides.trailing) };
+			if (key === '$_trivia' && raw != null) {
+				out[key] = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
 			} else {
 				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 			}

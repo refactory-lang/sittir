@@ -17,7 +17,6 @@ export const list = bundle(F.buildList, C.coerceToList);
 export const grouping = bundle(F.buildGrouping, C.coerceToGrouping);
 export const missingNode = bundle(F.buildMissingNode, C.coerceToMissingNode);
 export const anonymousNode = bundle(F.buildAnonymousNode, C.coerceToAnonymousNode);
-export const namedNode = bundle(F.buildNamedNode, C.coerceToNamedNode);
 export const fieldDefinition = bundle(F.buildFieldDefinition, C.coerceToFieldDefinition);
 export const negatedField = bundle(F.buildNegatedField, C.coerceToNegatedField);
 export const predicate = bundle(F.buildPredicate, C.coerceToPredicate);

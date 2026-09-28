@@ -528,6 +528,8 @@ mod tests {
             child_index: None,
             trivia_data: None,
             slot_order: None,
+            same_line: false,
+            tokens_between: 0,
         }
     }
 

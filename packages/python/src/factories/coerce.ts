@@ -2,10 +2,10 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText } from '@sittir/common';
+import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
-import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -193,7 +193,11 @@ export const _fromMap = {
 	string_fragment: coerceToStringFragment,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
 	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
 	format_expression: coerceToFormatExpression
@@ -286,7 +290,11 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_fragment: { pattern: /^(?:(?:[^"'\\{}\n]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:["']+))$/u, factory: F.buildStringEnd },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() }
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'comment',
@@ -316,6 +324,10 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'string_fragment',
 	'escape_interpolation',
 	'string_end',
+	'_tight',
+	'_space',
+	'_blankline',
+	'_double_blankline',
 	'wildcard_import',
 	'ellipsis',
 	'not_escape_sequence',
@@ -2018,6 +2030,13 @@ const _K46: readonly string[] = ['pair', 'dictionary_splat'];
 const _K47: readonly string[] = ['for_in_clause', 'if_clause'];
 const _K48: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
 
+export function coerceToModule(): T.EmptyModule;
+export function coerceToModule(
+	...input: readonly (
+		| T.Module.Loose
+		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildModule>;
 export function coerceToModule(
 	...input: readonly (
 		| T.Module.Loose
@@ -2928,6 +2947,8 @@ export function resolveParameters_elements(value: T.Parameters.LooseConfig['elem
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
+export function coerceToParameters(): T.EmptyParameters;
+export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Parameters)
 		return input as unknown as ReturnType<typeof F.buildParameters>;
@@ -3215,6 +3236,8 @@ export function resolveArgumentList_arguments(
 	return _resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true);
 }
 
+export function coerceToArgumentList(): T.EmptyArgumentList;
+export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList>;
 export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ArgumentList)
 		return input as unknown as ReturnType<typeof F.buildArgumentList>;
@@ -3646,6 +3669,8 @@ export function resolveDictPattern_dictPatternElements(
 	return _resolveOneBranch<T.DictPatternElements>(value, 'dict_pattern_elements', undefined, true);
 }
 
+export function coerceToDictPattern(): T.EmptyDictPattern;
+export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern>;
 export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.DictPattern)
 		return input as unknown as ReturnType<typeof F.buildDictPattern>;
@@ -3927,6 +3952,8 @@ export function resolveTuplePattern_patterns(
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
+export function coerceToTuplePattern(): T.EmptyTuplePattern;
+export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TuplePattern)
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
@@ -3944,6 +3971,8 @@ export function resolveListPattern_patterns(value: T.ListPattern.LooseConfig['pa
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
+export function coerceToListPattern(): T.EmptyListPattern;
+export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern>;
 export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ListPattern)
 		return input as unknown as ReturnType<typeof F.buildListPattern>;
@@ -4818,6 +4847,8 @@ export function resolveList_collectionElements(
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
 }
 
+export function coerceToList(): T.EmptyList;
+export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList>;
 export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.List)
 		return input as unknown as ReturnType<typeof F.buildList>;
@@ -4862,6 +4893,8 @@ export function resolveTuple_collectionElements(
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements', undefined, true);
 }
 
+export function coerceToTuple(): T.EmptyTuple;
+export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple>;
 export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Tuple)
 		return input as unknown as ReturnType<typeof F.buildTuple>;
@@ -4881,6 +4914,8 @@ export function resolveDictionary_entries(value: T.Dictionary.LooseConfig['entri
 	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
 }
 
+export function coerceToDictionary(): T.EmptyDictionary;
+export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary>;
 export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Dictionary)
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
@@ -5480,7 +5515,11 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 			'comment',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '#', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6090,6 +6129,8 @@ export function resolveCaseTuplePattern_listPatternCasePatterns(
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
+export function coerceToCaseTuplePattern(): T.EmptyCaseTuplePattern;
+export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern>;
 export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.CaseTuplePattern)
 		return input as unknown as ReturnType<typeof F.buildCaseTuplePattern>;
@@ -6111,6 +6152,8 @@ export function resolveCaseListPattern_listPatternCasePatterns(
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
+export function coerceToCaseListPattern(): T.EmptyCaseListPattern;
+export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern>;
 export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.CaseListPattern)
 		return input as unknown as ReturnType<typeof F.buildCaseListPattern>;
@@ -6324,44 +6367,78 @@ export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['conte
 	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerHex(
-	input: T.IntegerHex.Loose,
-	options?: T.IntegerHex.Options
-): ReturnType<typeof F.buildIntegerHex> {
+export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerHex>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
-		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerHex>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+		>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerHex(
 		_requireField(
 			'integer_hex',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
-	);
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerHex>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
+	>;
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
 	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerOctal(
-	input: T.IntegerOctal.Loose,
-	options?: T.IntegerOctal.Options
-): ReturnType<typeof F.buildIntegerOctal> {
+export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerOctal>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
-		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerOctal>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+		>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerOctal(
 		_requireField(
 			'integer_octal',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
-	);
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerOctal>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
+	>;
 }
 
 export function resolveIntegerBinary_content(
@@ -6370,22 +6447,42 @@ export function resolveIntegerBinary_content(
 	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerBinary(
-	input: T.IntegerBinary.Loose,
-	options?: T.IntegerBinary.Options
-): ReturnType<typeof F.buildIntegerBinary> {
+export function coerceToIntegerBinary<
+	const I extends T.IntegerBinary.Loose,
+	const O extends T.IntegerBinary.Options = {}
+>(
+	input: I,
+	options?: O
+): WithSpelling<
+	ReturnType<typeof F.buildIntegerBinary>,
+	'prefix',
+	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
-		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
+		return input as unknown as WithSpelling<
+			ReturnType<typeof F.buildIntegerBinary>,
+			'prefix',
+			O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+		>;
+	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: _spelled === undefined
+				? input
+				: _spelled.interior;
 	return F.buildIntegerBinary(
 		_requireField(
 			'integer_binary',
 			'content',
 			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
-		options
-	);
+		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
+	) as WithSpelling<
+		ReturnType<typeof F.buildIntegerBinary>,
+		'prefix',
+		O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
+	>;
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {
@@ -6536,7 +6633,11 @@ export function coerceToEscapeSequenceUnicodeFixed(
 			'escape_sequence_unicode_fixed',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6560,7 +6661,11 @@ export function coerceToEscapeSequenceUnicodeWide(
 			'escape_sequence_unicode_wide',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6584,7 +6689,11 @@ export function coerceToEscapeSequenceHex(
 			'escape_sequence_hex',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6604,7 +6713,11 @@ export function coerceToEscapeSequenceOctal(
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.EscapeSequenceOctal)
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
 	const _value =
-		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+			? input.content
+			: typeof input === 'string'
+				? spelledInterior(input, '\\', '')
+				: input;
 	return F.buildEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
@@ -6630,7 +6743,11 @@ export function coerceToEscapeSequenceLineBreak(
 			'escape_sequence_line_break',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6654,7 +6771,11 @@ export function coerceToEscapeSequenceSimple(
 			'escape_sequence_simple',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6678,7 +6799,11 @@ export function coerceToEscapeSequenceNamed(
 			'escape_sequence_named',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K0,
 				_K0
 			)
@@ -6956,6 +7081,13 @@ export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnT
 	);
 }
 
+export function coerceToMatchBlockBlock(): T.EmptyMatchBlockBlock;
+export function coerceToMatchBlockBlock(
+	...input: readonly (
+		| T.MatchBlockBlock.Loose
+		| LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildMatchBlockBlock>;
 export function coerceToMatchBlockBlock(
 	...input: readonly (
 		| T.MatchBlockBlock.Loose
@@ -7166,8 +7298,24 @@ export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 }
 
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
 	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
+	return F.buildDoubleBlankline();
 }
 
 export function resolveNames_content(value: T.Names.LooseConfig['content']): T.Names['_content'] {

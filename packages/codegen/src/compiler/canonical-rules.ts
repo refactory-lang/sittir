@@ -3,7 +3,7 @@ import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { pruneOrphanedRules } from '../util/reachable-rules.ts';
+import { grammarRootNames, pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import type { EvaluatedGrammar, EvaluationStages, RawGrammar, StageEvaluation } from './types.ts';
 import { predictedKindsOf, type PredictedKinds } from '../dsl/symbol-table.ts';
@@ -118,9 +118,9 @@ function canonicalStages(stages: EvaluationStages<EvaluatedGrammar> | undefined)
 export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
 	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
-	const { rules, inline, conflicts } =
-		protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(protectedRuleNames));
-	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: evaluated.supertypes });
+	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
+	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots });
 	return {
 		...rest,
 		inline,

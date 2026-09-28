@@ -108,6 +108,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 	});
 
 	emitTokenInteriors(lines, nodeMap);
+	emitInnerGaps(lines, nodeMap);
 
 	emitBitflagConstEnums(lines, nodeMap);
 
@@ -130,6 +131,21 @@ export function emitConsts(config: EmitConstsConfig): string {
 	}
 
 	return lines.join('\n');
+}
+
+function emitInnerGaps(lines: string[], nodeMap: NodeMap): void {
+	const rows = [...nodeMap.nodes]
+		.flatMap(([kind, node]) =>
+			node instanceof AbstractAssembledCompound && node.innerGaps.length > 0
+				? [[kind, node.innerGaps.map((gap) => gap.key)] as const]
+				: []
+		)
+		.sort(([a], [b]) => compareOrdinal(a, b));
+	lines.push('/** The gaps an empty node of each kind holds inner trivia in, in render order. */');
+	lines.push('export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {');
+	for (const [kind, keys] of rows) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(keys)},`);
+	lines.push('};');
+	lines.push('');
 }
 
 function emitTokenInteriors(lines: string[], nodeMap: NodeMap): void {

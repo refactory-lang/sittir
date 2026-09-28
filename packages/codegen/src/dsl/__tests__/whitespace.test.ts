@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { enrichWhitespace } from '../whitespace.ts';
-import { extrasRun } from '../rule-patterns.ts';
+import { nodelessExtrasRun } from '../rule-patterns.ts';
 import { enrich, getEnrichWhitespace } from '../enrich.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../primitives/spacing.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
@@ -10,25 +10,32 @@ const P = (value: string) => ({ type: 'PATTERN' as const, value });
 const sym = (name: string) => ({ type: 'SYMBOL' as const, name });
 const ALL = ['_tight', '_space', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'];
 
-describe('extrasRun', () => {
+describe('nodelessExtrasRun', () => {
 	it('matches a whole run of pattern and literal extras, with literals taken as text', () => {
-		const run = extrasRun([P('\\n'), S('.')], {})!;
+		const run = nodelessExtrasRun([P('\\n'), S('.')], {})!;
 		expect(run.test('\n\n.')).toBe(true);
 		expect(run.test('a')).toBe(false);
 		expect(run.test('\n ')).toBe(false);
 	});
 
 	it('resolves a symbol extra through its lexical rule', () => {
-		const run = extrasRun([sym('_ws')], { _ws: P('\\s') })!;
+		const run = nodelessExtrasRun([sym('_ws')], { _ws: P('\\s') })!;
 		expect(run.test(' \n')).toBe(true);
 	});
 
+	it('leaves out a visible symbol extra, which lexes as a node, even when its rule is lexical', () => {
+		expect(nodelessExtrasRun([sym('comment')], { comment: P('//.*') })).toBeUndefined();
+		const run = nodelessExtrasRun([P('\\s'), sym('comment')], { comment: P('//.*') })!;
+		expect(run.test(' ')).toBe(true);
+		expect(run.test('// tail')).toBe(false);
+	});
+
 	it('is undefined when the grammar has no lexical extras', () => {
-		expect(extrasRun([sym('comment')], { comment: { type: 'SEQ', members: [S('#'), sym('text')] } as never })).toBeUndefined();
+		expect(nodelessExtrasRun([sym('comment')], { comment: { type: 'SEQ', members: [S('#'), sym('text')] } as never })).toBeUndefined();
 	});
 
 	it('rejects an extra that is not a JavaScript RegExp', () => {
-		expect(() => extrasRun([P('(')], {})).toThrow(/do not compile/);
+		expect(() => nodelessExtrasRun([P('(')], {})).toThrow(/do not compile/);
 	});
 });
 

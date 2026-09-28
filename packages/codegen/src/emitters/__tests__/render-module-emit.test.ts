@@ -10,7 +10,7 @@
  * emitRenderModule) so they exercise the full codegen path including the emitter.
  */
 
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
@@ -176,6 +176,8 @@ async function getTypescriptTransportRs(): Promise<string> {
 	_typescriptTransportRs = await getTransportRsForGrammar('typescript');
 	return _typescriptTransportRs;
 }
+
+beforeAll(() => Promise.all([getRustTemplatesRs(), getTypescriptTransportRs()]), 120_000);
 
 /**
  * Extract the body of a `pub struct <name>` from a Rust source file.

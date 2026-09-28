@@ -226,6 +226,19 @@ const fn = ir
 
 `$trivia.leading(...)` and `$trivia.trailing(...)` each take a spread and set one side, keeping the other, so they chain. `$trivia(...)` still takes rest arguments (leading) or one `{ leading, trailing }` object.
 
+A node with nothing in it takes inner trivia, rendered where its children would go:
+
+```ts
+const todo = ir.functionItem({
+	name: 'todo',
+	parameters: ir.parameters(),
+	body: ir.block().$trivia.inner(ir.lineComment(' TODO'))
+});
+todo.$render(); // fn todo() {\n    // TODO\n}
+```
+
+Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `isEmpty(node)` narrows a read node to it.
+
 ## 4. Construction templates — pre-compiled
 
 ### Template file

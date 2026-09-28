@@ -2,10 +2,10 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText } from '@sittir/common';
+import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
-import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData, LooseValue, NonEmptyArray, SiblingLeadRefusal } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -260,6 +260,13 @@ export const _fromMap = {
 	raw_string_literal_end: coerceToRawStringLiteralEnd,
 	doc_comment: coerceToDocComment,
 	_block_comment_content: coerceToBlockCommentContent,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	type_identifier: coerceToTypeIdentifier,
 	field_identifier: coerceToFieldIdentifier,
 	shorthand_field_identifier: coerceToShorthandFieldIdentifier
@@ -342,8 +349,15 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker() },
 	raw_string_literal_start: { pattern: /^(?:(?:[bc]?r#*"))$/u, factory: F.buildRawStringLiteralStart },
 	raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
-	doc_comment: { pattern: /^(?:(?:.*))$/u, factory: F.buildDocComment },
+	doc_comment: { pattern: /^(?:(?:.*\n?))$/u, factory: F.buildDocComment },
 	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
 	type_identifier: {
 		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
@@ -389,6 +403,13 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'inner_doc_comment_marker',
 	'_block_comment_content',
 	'doc_comment',
+	'_tight',
+	'_space',
+	'_newline',
+	'_blankline',
+	'_double_blankline',
+	'_indent',
+	'_dedent',
 	'inner_line_doc_comment_marker',
 	'outer_line_doc_comment_marker',
 	'line_comment_regular',
@@ -2593,6 +2614,8 @@ export function resolveSourceFile_statements(
 	);
 }
 
+export function coerceToSourceFile(): T.EmptySourceFile;
+export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile>;
 export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
 	if (!_isLooseConfig<T.SourceFile.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildSourceFile>;
@@ -3480,6 +3503,13 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	});
 }
 
+export function coerceToDeclarationList(): T.EmptyDeclarationList;
+export function coerceToDeclarationList(
+	...input: readonly (
+		| T.DeclarationList.Loose
+		| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildDeclarationList>;
 export function coerceToDeclarationList(
 	...input: readonly (
 		| T.DeclarationList.Loose
@@ -3590,6 +3620,8 @@ export function resolveEnumVariantList_enumVariantListElements(
 	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements', undefined, true);
 }
 
+export function coerceToEnumVariantList(): T.EmptyEnumVariantList;
+export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList>;
 export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.EnumVariantList)
 		return input as unknown as ReturnType<typeof F.buildEnumVariantList>;
@@ -3648,6 +3680,10 @@ export function resolveFieldDeclarationList_fieldDeclarationListElements(
 	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements', undefined, true);
 }
 
+export function coerceToFieldDeclarationList(): T.EmptyFieldDeclarationList;
+export function coerceToFieldDeclarationList(
+	input?: T.FieldDeclarationList.Loose
+): ReturnType<typeof F.buildFieldDeclarationList>;
 export function coerceToFieldDeclarationList(
 	input?: T.FieldDeclarationList.Loose
 ): ReturnType<typeof F.buildFieldDeclarationList> {
@@ -3707,6 +3743,10 @@ export function resolveOrderedFieldDeclarationList_attributes(
 	);
 }
 
+export function coerceToOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
+export function coerceToOrderedFieldDeclarationList(
+	input?: T.OrderedFieldDeclarationList.Loose
+): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 export function coerceToOrderedFieldDeclarationList(
 	input?: T.OrderedFieldDeclarationList.Loose
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
@@ -4734,6 +4774,8 @@ export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClaus
 	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses', undefined, true);
 }
 
+export function coerceToUseList(): T.EmptyUseList;
+export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList>;
 export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseList)
 		return input as unknown as ReturnType<typeof F.buildUseList>;
@@ -4876,6 +4918,8 @@ export function resolveParameters_parametersElements(
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
+export function coerceToParameters(): T.EmptyParameters;
+export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Parameters)
 		return input as unknown as ReturnType<typeof F.buildParameters>;
@@ -5104,7 +5148,11 @@ export function coerceToLifetime(input: T.Lifetime.Loose): ReturnType<typeof F.b
 			'lifetime',
 			'name',
 			_resolveOneLeaf<T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, "'", '')
+						: input,
 				'identifier'
 			)
 		)
@@ -5333,6 +5381,8 @@ export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']
 	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements', undefined, true);
 }
 
+export function coerceToUseBounds(): T.EmptyUseBounds;
+export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds>;
 export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseBounds)
 		return input as unknown as ReturnType<typeof F.buildUseBounds>;
@@ -6356,6 +6406,8 @@ export function resolveArguments_argumentsElements(
 	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
 }
 
+export function coerceToArguments(): T.EmptyArguments;
+export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.Arguments)
 		return input as unknown as ReturnType<typeof F.buildArguments>;
@@ -6469,6 +6521,10 @@ export function resolveFieldInitializerList_initializers(
 	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements', undefined, true);
 }
 
+export function coerceToFieldInitializerList(): T.EmptyFieldInitializerList;
+export function coerceToFieldInitializerList(
+	input?: T.FieldInitializerList.Loose
+): ReturnType<typeof F.buildFieldInitializerList>;
 export function coerceToFieldInitializerList(
 	input?: T.FieldInitializerList.Loose
 ): ReturnType<typeof F.buildFieldInitializerList> {
@@ -6644,12 +6700,11 @@ export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): 
 	);
 }
 
-export function coerceToLetChain(input?: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
-	if (!_isLooseConfig<T.LetChain.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildLetChain>;
+export function coerceToLetChain(input: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
+	if (!_isLooseConfig<T.LetChain.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildLetChain>;
 	return F.buildLetChain({
-		left: resolveLetChain_left(input?.left),
-		right: resolveLetChain_rights(input?.right)
+		left: _requireField('_let_chain', 'left', resolveLetChain_left(input.left)),
+		right: resolveLetChain_rights(input.right)
 	});
 }
 
@@ -6701,6 +6756,8 @@ export function resolveMatchBlock_matchBlockArms(
 	return _resolveOneBranch<T.MatchBlockArms>(value, 'match_block_arms', undefined, true);
 }
 
+export function coerceToMatchBlock(): T.EmptyMatchBlock;
+export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock>;
 export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.MatchBlock)
 		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
@@ -6871,6 +6928,13 @@ export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeo
 	);
 }
 
+export function coerceToClosureParameters(): T.EmptyClosureParameters;
+export function coerceToClosureParameters(
+	...input: readonly (
+		| T.ClosureParameters.Loose
+		| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildClosureParameters>;
 export function coerceToClosureParameters(
 	...input: readonly (
 		| T.ClosureParameters.Loose
@@ -6915,7 +6979,11 @@ export function coerceToLabel(input: T.Label.Loose): ReturnType<typeof F.buildLa
 			'label',
 			'name',
 			_resolveOneLeaf<T.Identifier>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, "'", '')
+						: input,
 				'identifier'
 			)
 		)
@@ -7140,6 +7208,8 @@ export function resolveBlock_trailingExpression(
 	);
 }
 
+export function coerceToBlock(): T.EmptyBlock;
+export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildBlock>;
 export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildBlock> {
 	if (!_isLooseConfig<T.Block.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildBlock>;
@@ -7179,6 +7249,8 @@ export function resolveTuplePattern_elements(
 	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
 }
 
+export function coerceToTuplePattern(): T.EmptyTuplePattern;
+export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TuplePattern)
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
@@ -7198,6 +7270,8 @@ export function resolveSlicePattern_patterns(
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
+export function coerceToSlicePattern(): T.EmptySlicePattern;
+export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern>;
 export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.SlicePattern)
 		return input as unknown as ReturnType<typeof F.buildSlicePattern>;
@@ -7471,7 +7545,15 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 			'line_comment',
 			'content',
 			_resolveOne<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? refuseSiblingLead(spelledInterior(input, '//', ''), [
+								[/^(?:(?:\/\/))/u, 'ir.lineCommentExtraSlashes'],
+								[/^(?:\/)/u, 'ir.lineCommentDocOuter'],
+								[/^(?:!)/u, 'ir.lineCommentDocInner']
+							])
+						: input,
 				_K58,
 				_K59,
 				'line_comment_regular'
@@ -7501,12 +7583,21 @@ export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['c
 	);
 }
 
-export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
+export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
+	input?: I & SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockCommentDocOuter'], ['!', 'ir.blockCommentDocInner']]>
+): ReturnType<typeof F.buildBlockComment> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.BlockComment)
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(
 		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+				? input.content
+				: typeof input === 'string'
+					? refuseSiblingLead(spelledInterior(input, '/*', '*/'), [
+							[/^(?:\*)/u, 'ir.blockCommentDocOuter'],
+							[/^(?:!)/u, 'ir.blockCommentDocInner']
+						])
+					: input,
 			_K60,
 			_K61,
 			'_block_comment_content'
@@ -7531,7 +7622,11 @@ export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.bui
 			'shebang',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '#!', '\n')
+						: input,
 				_K2,
 				_K2
 			)
@@ -7563,7 +7658,11 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 			'metavariable',
 			'name',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
+					? input.name
+					: typeof input === 'string'
+						? spelledInterior(input, '$', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9117,7 +9216,11 @@ export function coerceToEscapeSequenceSimple(
 			'escape_sequence_simple',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9141,7 +9244,11 @@ export function coerceToEscapeSequenceUnicodeFixed(
 			'escape_sequence_unicode_fixed',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9165,7 +9272,11 @@ export function coerceToEscapeSequenceUnicodeBraced(
 			'escape_sequence_unicode_braced',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9189,7 +9300,11 @@ export function coerceToEscapeSequenceHex(
 			'escape_sequence_hex',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+					? input.content
+					: typeof input === 'string'
+						? spelledInterior(input, '\\', '')
+						: input,
 				_K2,
 				_K2
 			)
@@ -9245,6 +9360,10 @@ export function resolveArrayExpressionList_argumentsElements(
 	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
 }
 
+export function coerceToArrayExpressionList(): T.EmptyArrayExpressionList;
+export function coerceToArrayExpressionList(
+	input?: T.ArrayExpressionList.Loose
+): ReturnType<typeof F.buildArrayExpressionList>;
 export function coerceToArrayExpressionList(
 	input?: T.ArrayExpressionList.Loose
 ): ReturnType<typeof F.buildArrayExpressionList> {
@@ -10464,7 +10583,11 @@ export function coerceToLineCommentDocOuter(
 			'line_comment_doc_outer',
 			'doc',
 			_resolveOneLeaf<T.DocComment>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+					? input.doc
+					: typeof input === 'string'
+						? spelledInterior(input, '/', '')
+						: input,
 				'doc_comment'
 			)
 		)
@@ -10487,7 +10610,11 @@ export function coerceToLineCommentDocInner(
 			'line_comment_doc_inner',
 			'doc',
 			_resolveOneLeaf<T.DocComment>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+					? input.doc
+					: typeof input === 'string'
+						? spelledInterior(input, '!', '')
+						: input,
 				'doc_comment'
 			)
 		)
@@ -10514,7 +10641,11 @@ export function coerceToBlockCommentDocOuter(
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocOuter>;
 	return F.buildBlockCommentDocOuter(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+				? input.doc
+				: typeof input === 'string'
+					? spelledInterior(input, '*', '')
+					: input,
 			'_block_comment_content'
 		)
 	);
@@ -10533,12 +10664,28 @@ export function coerceToBlockCommentDocInner(
 		return input as unknown as ReturnType<typeof F.buildBlockCommentDocInner>;
 	return F.buildBlockCommentDocInner(
 		_resolveOneLeaf<T.BlockCommentContent>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input
+				? input.doc
+				: typeof input === 'string'
+					? spelledInterior(input, '!', '')
+					: input,
 			'_block_comment_content'
 		)
 	);
 }
 
+export function coerceToTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
+export function coerceToTokenTreePatternParen(
+	...input: readonly (
+		| T.TokenTreePatternParen.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreePatternParen>;
 export function coerceToTokenTreePatternParen(
 	...input: readonly (
 		| T.TokenTreePatternParen.Loose
@@ -10574,6 +10721,18 @@ export function coerceToTokenTreePatternParen(
 	);
 }
 
+export function coerceToTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
+export function coerceToTokenTreePatternBracket(
+	...input: readonly (
+		| T.TokenTreePatternBracket.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreePatternBracket>;
 export function coerceToTokenTreePatternBracket(
 	...input: readonly (
 		| T.TokenTreePatternBracket.Loose
@@ -10609,6 +10768,18 @@ export function coerceToTokenTreePatternBracket(
 	);
 }
 
+export function coerceToTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
+export function coerceToTokenTreePatternBrace(
+	...input: readonly (
+		| T.TokenTreePatternBrace.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreePatternBrace>;
 export function coerceToTokenTreePatternBrace(
 	...input: readonly (
 		| T.TokenTreePatternBrace.Loose
@@ -10644,6 +10815,18 @@ export function coerceToTokenTreePatternBrace(
 	);
 }
 
+export function coerceToTokenTreeParen(): T.EmptyTokenTreeParen;
+export function coerceToTokenTreeParen(
+	...input: readonly (
+		| T.TokenTreeParen.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeParen>;
 export function coerceToTokenTreeParen(
 	...input: readonly (
 		| T.TokenTreeParen.Loose
@@ -10683,6 +10866,18 @@ export function coerceToTokenTreeParen(
 	);
 }
 
+export function coerceToTokenTreeBracket(): T.EmptyTokenTreeBracket;
+export function coerceToTokenTreeBracket(
+	...input: readonly (
+		| T.TokenTreeBracket.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeBracket>;
 export function coerceToTokenTreeBracket(
 	...input: readonly (
 		| T.TokenTreeBracket.Loose
@@ -10722,6 +10917,18 @@ export function coerceToTokenTreeBracket(
 	);
 }
 
+export function coerceToTokenTreeBrace(): T.EmptyTokenTreeBrace;
+export function coerceToTokenTreeBrace(
+	...input: readonly (
+		| T.TokenTreeBrace.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeBrace>;
 export function coerceToTokenTreeBrace(
 	...input: readonly (
 		| T.TokenTreeBrace.Loose
@@ -10761,6 +10968,13 @@ export function coerceToTokenTreeBrace(
 	);
 }
 
+export function coerceToDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
+export function coerceToDelimTokenTreeParen(
+	...input: readonly (
+		| T.DelimTokenTreeParen.Loose
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildDelimTokenTreeParen>;
 export function coerceToDelimTokenTreeParen(
 	...input: readonly (
 		| T.DelimTokenTreeParen.Loose
@@ -10793,6 +11007,13 @@ export function coerceToDelimTokenTreeParen(
 	);
 }
 
+export function coerceToDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
+export function coerceToDelimTokenTreeBracket(
+	...input: readonly (
+		| T.DelimTokenTreeBracket.Loose
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildDelimTokenTreeBracket>;
 export function coerceToDelimTokenTreeBracket(
 	...input: readonly (
 		| T.DelimTokenTreeBracket.Loose
@@ -10825,6 +11046,13 @@ export function coerceToDelimTokenTreeBracket(
 	);
 }
 
+export function coerceToDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
+export function coerceToDelimTokenTreeBrace(
+	...input: readonly (
+		| T.DelimTokenTreeBrace.Loose
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
+): ReturnType<typeof F.buildDelimTokenTreeBrace>;
 export function coerceToDelimTokenTreeBrace(
 	...input: readonly (
 		| T.DelimTokenTreeBrace.Loose
@@ -11762,6 +11990,34 @@ export function coerceToBlockCommentContent(
 ): ReturnType<typeof F.buildBlockCommentContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
+	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
+	return F.buildDoubleBlankline();
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
+	return F.buildIndent();
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
+	return F.buildDedent();
 }
 
 export function resolveTypeIdentifier_content(

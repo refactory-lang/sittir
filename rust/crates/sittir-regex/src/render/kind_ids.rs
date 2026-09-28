@@ -262,6 +262,16 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
     }
 }
 
+/// The gap an extra occupies inside a node with no named child to own it,
+/// by (kind id, anonymous tokens before the extra): the model slot whose
+/// position the gap holds. `None` when the model has no slot there.
+pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+    match (kind.0, preceding_tokens) {
+        (58, 3) => Some("class_atoms"),
+        _ => None,
+    }
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same
@@ -275,4 +285,22 @@ pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
     SLOT_SEPARATORS
         .iter()
         .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
+}
+
+/// Whether the model stores a `child` of a `parent` node, reached under the
+/// parser field `field` (`None` for an untagged child), as a scalar: a
+/// presence flag or a kind id rather than a node. Such a child keeps no
+/// trivia, so the reader never makes it an owner.
+pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {
+    match (parent.0, field) {
+        (56, None) => matches!(child.0, 8 | 9),
+        (57, None) => matches!(child.0, 8 | 9),
+        (58, Some("class_atoms")) => matches!(child.0, 19),
+        (61, Some("end")) => matches!(child.0, 14),
+        (61, Some("start")) => matches!(child.0, 14),
+        (63, None) => matches!(child.0, 11 | 22),
+        (77, None) => matches!(child.0, 2 | 4 | 5 | 6 | 54),
+        (88, Some("content")) => matches!(child.0, 26),
+        _ => false,
+    }
 }

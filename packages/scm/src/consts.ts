@@ -12,7 +12,6 @@ const NODE_KINDS = [
 	'immediate_string',
 	'list',
 	'missing_node',
-	'named_node',
 	'named_node_expression_arm',
 	'negated_field',
 	'parameters',
@@ -126,16 +125,17 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	group_expression_arm: 51,
 	named_node_expression_arm: 52,
 	grouping_group: 53,
-	named_node_arm: 54,
-	named_node_group: 55,
-	named_node_group_children: 56,
-	named_node_group_anchored_last: 57,
-	program_repeat1: 58,
-	string_content_repeat1: 59,
-	parameters_repeat1: 60,
-	list_repeat1: 61,
-	grouping_repeat1: 62,
-	named_node_group_children_repeat1: 63
+	named_node_group: 54,
+	named_node_plain: 55,
+	named_node_supertyped: 56,
+	named_node_group_children: 57,
+	named_node_group_anchored_last: 58,
+	program_repeat1: 59,
+	string_content_repeat1: 60,
+	parameters_repeat1: 61,
+	list_repeat1: 62,
+	grouping_repeat1: 63,
+	named_node_group_children_repeat1: 64
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -192,16 +192,17 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[51]: 'group_expression_arm',
 	[52]: 'named_node_expression_arm',
 	[53]: 'grouping_group',
-	[54]: 'named_node_arm',
-	[55]: 'named_node_group',
-	[56]: 'named_node_group_children',
-	[57]: 'named_node_group_anchored_last',
-	[58]: 'program_repeat1',
-	[59]: 'string_content_repeat1',
-	[60]: 'parameters_repeat1',
-	[61]: 'list_repeat1',
-	[62]: 'grouping_repeat1',
-	[63]: 'named_node_group_children_repeat1'
+	[54]: 'named_node_group',
+	[55]: 'named_node_plain',
+	[56]: 'named_node_supertyped',
+	[57]: 'named_node_group_children',
+	[58]: 'named_node_group_anchored_last',
+	[59]: 'program_repeat1',
+	[60]: 'string_content_repeat1',
+	[61]: 'parameters_repeat1',
+	[62]: 'list_repeat1',
+	[63]: 'grouping_repeat1',
+	[64]: 'named_node_group_children_repeat1'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -263,33 +264,34 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym_named_node_expression_arm'
 	},
 	{ name: 'grouping_group', id: 53, enumName: 'GroupingGroup', cName: 'sym_grouping_group' },
-	{ name: 'named_node_arm', id: 54, enumName: 'NamedNodeArm', cName: 'sym_named_node_arm' },
-	{ name: 'named_node_group', id: 55, enumName: 'NamedNodeGroup', cName: 'sym_named_node_group' },
+	{ name: 'named_node_group', id: 54, enumName: 'NamedNodeGroup', cName: 'sym_named_node_group' },
+	{ name: 'named_node_plain', id: 55, enumName: 'NamedNodePlain', cName: 'sym_named_node_plain' },
+	{ name: 'named_node_supertyped', id: 56, enumName: 'NamedNodeSupertyped', cName: 'sym_named_node_supertyped' },
 	{
 		name: 'named_node_group_children',
-		id: 56,
+		id: 57,
 		enumName: 'NamedNodeGroupChildren',
 		cName: 'sym_named_node_group_children'
 	},
 	{
 		name: 'named_node_group_anchored_last',
-		id: 57,
+		id: 58,
 		enumName: 'NamedNodeGroupAnchoredLast',
 		cName: 'sym_named_node_group_anchored_last'
 	},
-	{ name: 'program_repeat1', id: 58, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
+	{ name: 'program_repeat1', id: 59, enumName: 'AuxProgramRepeat1', cName: 'aux_sym_program_repeat1' },
 	{
 		name: 'string_content_repeat1',
-		id: 59,
+		id: 60,
 		enumName: 'AuxStringContentRepeat1',
 		cName: 'aux_sym_string_content_repeat1'
 	},
-	{ name: 'parameters_repeat1', id: 60, enumName: 'AuxParametersRepeat1', cName: 'aux_sym_parameters_repeat1' },
-	{ name: 'list_repeat1', id: 61, enumName: 'AuxListRepeat1', cName: 'aux_sym_list_repeat1' },
-	{ name: 'grouping_repeat1', id: 62, enumName: 'AuxGroupingRepeat1', cName: 'aux_sym_grouping_repeat1' },
+	{ name: 'parameters_repeat1', id: 61, enumName: 'AuxParametersRepeat1', cName: 'aux_sym_parameters_repeat1' },
+	{ name: 'list_repeat1', id: 62, enumName: 'AuxListRepeat1', cName: 'aux_sym_list_repeat1' },
+	{ name: 'grouping_repeat1', id: 63, enumName: 'AuxGroupingRepeat1', cName: 'aux_sym_grouping_repeat1' },
 	{
 		name: 'named_node_group_children_repeat1',
-		id: 63,
+		id: 64,
 		enumName: 'AuxNamedNodeGroupChildrenRepeat1',
 		cName: 'aux_sym_named_node_group_children_repeat1'
 	}
@@ -305,7 +307,6 @@ export enum TSFieldId {
 	FieldName = 7,
 	FieldNamedNodeExpressions = 8,
 	FieldParameters = 9,
-	FieldQuantifier = 10,
 	FieldRight = 11,
 	FieldStringContent = 12,
 	FieldSupertype = 13,
@@ -322,7 +323,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	name: TSFieldId.FieldName,
 	named_node_expressions: TSFieldId.FieldNamedNodeExpressions,
 	parameters: TSFieldId.FieldParameters,
-	quantifier: TSFieldId.FieldQuantifier,
 	right: TSFieldId.FieldRight,
 	string_content: TSFieldId.FieldStringContent,
 	supertype: TSFieldId.FieldSupertype,
@@ -339,7 +339,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldName]: 'name',
 	[TSFieldId.FieldNamedNodeExpressions]: 'named_node_expressions',
 	[TSFieldId.FieldParameters]: 'parameters',
-	[TSFieldId.FieldQuantifier]: 'quantifier',
 	[TSFieldId.FieldRight]: 'right',
 	[TSFieldId.FieldStringContent]: 'string_content',
 	[TSFieldId.FieldSupertype]: 'supertype',
@@ -361,7 +360,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 		cName: 'field_named_node_expressions'
 	},
 	{ name: 'parameters', id: 9, enumName: 'FieldParameters', cName: 'field_parameters' },
-	{ name: 'quantifier', id: 10, enumName: 'FieldQuantifier', cName: 'field_quantifier' },
 	{ name: 'right', id: 11, enumName: 'FieldRight', cName: 'field_right' },
 	{ name: 'string_content', id: 12, enumName: 'FieldStringContent', cName: 'field_string_content' },
 	{ name: 'supertype', id: 13, enumName: 'FieldSupertype', cName: 'field_supertype' },
@@ -375,6 +373,12 @@ export const TOKEN_INTERIORS = {
 	comment: { regex: '^;(?<content>(?:.*))$', slots: [{ name: 'content', configKey: 'content' }] },
 	escape_sequence: { regex: '^\\\\(?<content>(?:.))$', slots: [{ name: 'content', configKey: 'content' }] }
 } as const satisfies { readonly [kind: string]: TokenInterior };
+
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	missing_node: ['name'],
+	program: ['definitions']
+};
 
 /** Valid values for `predicate_type` nodes. */
 export const PREDICATE_TYPES = ['?', '!'] as const;

@@ -381,6 +381,8 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$childIndex"
             | "$_trivia"
             | "$slotOrder"
+            | "$sameLine"
+            | "$tokensBetween"
     ) || key.starts_with('_')
 }
 
@@ -429,4 +431,152 @@ fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other(
         .collect();
     assert_eq!(kinds, vec![u64::from(pipe), u64::from(pipe)]);
     assert!(json.get("$text").is_none());
+}
+
+/// No text kinds; a `block` keys the gap after its `{` to `statements`.
+struct BlockGap(u16);
+impl ReadModel for BlockGap {
+    fn is_text_kind(&self, _kind: KindId) -> bool {
+        false
+    }
+    fn inner_gap_key(&self, kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+        (kind.0 == self.0 && preceding_tokens == 1).then_some("statements")
+    }
+}
+
+/// Every node of `kind` in `source`, each read on its own by its tree node.
+fn read_rust_kind(source: &str, kind: &str) -> Vec<NodeData> {
+    let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
+    let block = tree.language().id_for_node_kind("block", true);
+    let mut found = Vec::new();
+    let mut stack = vec![tree.root_node()];
+    while let Some(node) = stack.pop() {
+        if node.kind() == kind {
+            found.push(node);
+        }
+        let mut cursor = node.walk();
+        stack.extend(node.children(&mut cursor));
+    }
+    found.sort_by_key(|node| node.start_byte());
+    found
+        .into_iter()
+        .map(|node| {
+            read_node(
+                &tree,
+                source,
+                Some(node),
+                Some(0),
+                ReadDepth::Shallow,
+                &BlockGap(block),
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn a_same_line_comment_trails_the_previous_sibling() {
+    let statements = read_rust_kind("fn g() { a; // note\n b; }", "expression_statement");
+    let trailing = statements[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.trailing.as_ref())
+        .expect("the comment trails a;");
+    assert_eq!(trailing.len(), 1);
+    assert!(trailing[0].same_line);
+    assert!(statements[1].trivia_data.is_none());
+    assert_shape(
+        &serde_json::to_value(&statements[0]).expect("serialize"),
+        "a;",
+    );
+}
+
+#[test]
+fn an_own_line_comment_leads_the_next_sibling_and_the_last_one_trails() {
+    let statements = read_rust_kind(
+        "fn g() {\n a;\n // lead\n b;\n // tail\n}",
+        "expression_statement",
+    );
+    let first = statements[0].trivia_data.as_ref();
+    assert!(
+        first.is_none(),
+        "an own-line comment with a next sibling is not trailing"
+    );
+    let second = statements[1]
+        .trivia_data
+        .as_ref()
+        .expect("b; owns both comments");
+    let leading = second.leading.as_ref().expect("leading");
+    let trailing = second.trailing.as_ref().expect("trailing");
+    assert_eq!((leading.len(), trailing.len()), (1, 1));
+    assert!(!leading[0].same_line && !trailing[0].same_line);
+}
+
+#[test]
+fn a_comment_in_an_empty_block_is_inner_trivia_of_the_block() {
+    let blocks = read_rust_kind("fn f() { // TODO\n}", "block");
+    let inner = blocks[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.inner.as_ref())
+        .expect("the block owns the comment");
+    assert_eq!(inner.get("statements").map(Vec::len), Some(1));
+    let json = serde_json::to_value(&blocks[0]).expect("serialize");
+    assert_eq!(
+        json["$_trivia"]["inner"]["statements"]
+            .as_array()
+            .map(Vec::len),
+        Some(1)
+    );
+}
+
+#[test]
+fn a_block_comment_before_its_owner_on_the_same_row_is_same_line_leading() {
+    let statements = read_rust_kind("fn f() { /* c */ a; }", "expression_statement");
+    let leading = statements[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.leading.as_ref())
+        .expect("the comment leads a;");
+    assert!(leading[0].same_line);
+    let json = serde_json::to_value(&leading[0]).expect("serialize");
+    assert_eq!(json["$sameLine"], Value::Bool(true));
+}
+
+#[test]
+fn a_comment_that_ends_with_its_line_break_ends_on_the_row_it_closes() {
+    let items = read_rust_kind("///\nfn f(){}", "function_item");
+    let leading = items[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.leading.as_ref())
+        .expect("the doc comment leads fn f");
+    assert!(!leading[0].same_line);
+    let json = serde_json::to_value(&leading[0]).expect("serialize");
+    assert!(json.get("$sameLine").is_none());
+
+    let items = read_rust_kind("fn f(){} // x\n", "function_item");
+    let trailing = items[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.trailing.as_ref())
+        .expect("the comment trails fn f");
+    assert!(trailing[0].same_line);
+}
+
+#[test]
+fn a_same_line_trailing_entry_counts_the_tokens_before_it() {
+    let arguments = read_rust_kind("fn f() { g(a, // c\n b); }", "identifier");
+    let a = arguments
+        .iter()
+        .find(|node| node.trivia_data.is_some())
+        .expect("a owns the comment");
+    let trailing = a
+        .trivia_data
+        .as_ref()
+        .and_then(|t| t.trailing.as_ref())
+        .expect("trailing");
+    assert!(trailing[0].same_line);
+    assert_eq!(trailing[0].tokens_between, 1);
+    let json = serde_json::to_value(&trailing[0]).expect("serialize");
+    assert_eq!(json["$tokensBetween"], 1);
 }

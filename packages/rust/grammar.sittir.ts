@@ -39,6 +39,7 @@ export default sittirGrammar(base, {
 		[$._attributed_type_parameter, $._type],
 		[$._attributed_argument]
 	],
+	supertypes: ($, previous) => [...(previous ?? []), $.comment],
 
 	groups: {
 		visibility_modifier_in_path: ($) => seq('in', $._path),
@@ -197,6 +198,7 @@ export default sittirGrammar(base, {
 	},
 
 	patches: {
+		comment: { 0: arm.default },
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },
 		generic_pattern: { 0: field('name') },
@@ -718,7 +720,7 @@ export default sittirGrammar(base, {
 		_inner_block_doc_comment_marker: token.immediate('!'),
 		_raw_string_literal_start: /[bc]?r#*"/,
 		_raw_string_literal_end: token.immediate(/"#*/),
-		_line_doc_content: token.immediate(/.*/),
+		_line_doc_content: token.immediate(/.*\n?/),
 		_block_comment_content: token.immediate(/[^]*/)
 	})
 });

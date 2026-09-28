@@ -2734,6 +2734,22 @@ The grammar's `rules:` entries with a bare body, sorted.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::MetadataRuleListCtx`
+
+What `appendMetadataRules` needs for one list: its name for the error, the rule types the list accepts (extras: SYMBOL, STRING and PATTERN), and the sink it appends to.
+
+### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
+
+Appends the rules an `extras` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryOf`
+
+The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
+
+### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
+
+The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
+
 ### `packages/codegen/src/compiler/evaluate.ts::appendDedup`
 
 ```text
@@ -2765,6 +2781,8 @@ Appends the rules an `extras` or `externals` callback returns to the list's sink
 The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
+
+An `extras` callback receives the base grammar's extras as the rule list evaluate stored for them, and its result is appended through `appendMetadataRules`. `extras` stays that rule list (`RuleListEntry`) to the node map; readers derive names, literals and patterns with `ruleListParts`.
 
 Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
 
@@ -5421,6 +5439,8 @@ parts with the space its parser needs.
  */
 ```
 
+The rebuilt choice has no rule id: ids are source back-pointers, and the choice stands for one position across every arm, which is no single source position. Each varying member keeps its own id, and those resolve to the slot.
+
 ### `packages/codegen/src/compiler/flatten.ts::permutationKey`
 
 ```text
@@ -6787,6 +6807,8 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 `classifyNode`'s list peel — and the model exposes it as
 `AssembledNodeBase.annotations`.
 
+`nodelessExtrasRun` is the grammar's run of node-less extras (`rule-patterns.ts::nodelessExtrasRun`), compiled once at link from the evaluated rules, where a SYMBOL extra's rule still has its authored shape, and carried on `NormalizedGrammar`, `SimplifiedGrammar` and `NodeMap` as `wordMatcher` is.
+
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
 ```text
@@ -7880,10 +7902,12 @@ never deposited, and any other rule nothing reaches (`util/reachable-rules.ts::p
 Wire has to register every name a placeholder might mint before tree-sitter
 walks the rule map, so an unfired `field('x')`, `alias()` or `variant()` —
 including an absent-case `bare` whose hoist did not fire — leaves an empty
-rule behind. The roots besides visible rules with a body are the grammar's
-`protectedRuleNames`: wire's deposit names, the declared supertypes
-(`_whitespace` is referenced by nothing but `supertypes:`) and the
-`renderAs` / `visibleExternals` names. `transpile/prune-grammar-json.ts` calls
+rule behind. The roots besides visible rules with a body are one set, shared by
+the orphan prune and the rule catalog: the grammar's own roots
+(`grammarRootNames`: the start rule and the rules the extras name, as
+tree-sitter keeps them), the declared supertypes (`_whitespace` is referenced
+by nothing but `supertypes:`), and the grammar's `protectedRuleNames`: wire's
+deposit names and the `renderAs` / `visibleExternals` names. `transpile/prune-grammar-json.ts` calls
 the same prune: rules nothing reaches must vanish from the sittir-evaluated
 grammar exactly as they vanish from grammar.json, rules and inline list alike,
 or the model carries kinds the parser never emits.
@@ -9722,6 +9746,14 @@ walks `slot.values[*]` handles `isUnresolvedRef`. A kind assemble left out with 
 (`HydrateValuesCtx.reportedAbsentNames`, the node map's `droppedKinds`) is skipped. Any other absent target is an
 invariant violation and throws: an undefined name is a failed prediction, recorded and gated before link.
 
+### `packages/codegen/src/compiler/assemble.ts::stampWhitespaceBuilders`
+
+Gives every member of the grammar's `_whitespace` supertype (`whitespaceSymbolsOf`) its builder name, so each is built by `ir.whitespace.<member>()` and returns its kind id. The members are hidden literal kinds, which would otherwise have no builder; a member that assembles as anything but a literal kind stops codegen. A grammar that declares no `_whitespace` (`declaresWhitespace`) has none to stamp. Which of them a trivia position accepts is a separate fact (`whitespaceTriviaKinds`).
+
+### `packages/codegen/src/compiler/assemble.ts::assertWhitespaceAdmitted`
+
+Every literal member of the assembled node map's `_whitespace` must be admitted (`admitsWhitespaceMember`) by its stamped `nodelessExtrasRun`; assemble checks it once the map is built. Enrich chose the members from the extras it saw; the stamp is the final grammar's extras. A member the stamp does not admit means the two extras have diverged — for instance a rule the extras name that did not survive to the final grammar — and codegen stops naming the member.
+
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
 
 #### body
@@ -10247,6 +10279,19 @@ The kind catalog predicted from the faithful evaluated grammar, before canonical
 Link runs only on a grammar whose catalog prediction built: a failed prediction is recorded before link
 (`grammar-diagnostics.ts::predictionRecords`) and gated, or, for an evaluation stage, stops at its records
 (`diagnoseStage`). Reaching link with a failed prediction throws.
+
+
+### `packages/codegen/src/compiler/assemble.ts::stampGrammarRoot`
+
+Stamps `grammarRoot` on the node of the root rule link recorded (`NodeMap.root`).
+
+### `packages/codegen/src/compiler/link.ts::LinkCtx.root`
+
+The grammar's root rule (`rootRuleName`, the first rule), read once when the link context is built. Link prunes and reports reachability from it and records it on the linked grammar, from where normalize and assemble carry it to `NodeMap.root`; no later phase re-derives it.
+
+### `packages/codegen/src/compiler/collect-slots.ts::withFieldNamedChild`
+
+A field over a sequence names that sequence's one named child: tree-sitter puts the field on every child of the sequence, and the one child that is a slot, is not literal text, and carries no field of its own is what the field holds (scm `predicate.name` is its identifier, beside the `#`/`.` sigil). With no such child, or several, the sequence is left as it is and its members derive their own slots.
 
 ### `packages/codegen/src/compiler/assemble.ts::perInstanceSeparator`
 

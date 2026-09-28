@@ -23,7 +23,7 @@ import {
 	aliasRestampRequired,
 	transitiveParseKinds
 } from '../../types/rule.ts';
-import { isStringType } from '../../types/runtime-shapes.ts';
+import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
@@ -38,6 +38,62 @@ import {
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
+import { RuleWalker } from '../../dsl/rule-walker.ts';
+import { anchoredLeafRegex } from './leaf-pattern.ts';
+import { wordCharAsciiTable } from '../../util/word-matcher.ts';
+
+const renderRuleWalker = new RuleWalker<RenderRule>();
+const anyRuleWalker = new RuleWalker<AnyRule>();
+const LINE_PROBE = 'a b\t*/ -->#;';
+
+export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
+
+export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
+
+interface EdgeCtx {
+	readonly edge: 'start' | 'end';
+}
+
+interface LineEndCtx {
+	readonly kind: string;
+}
+
+function ruleEdgeTerminals(rule: AnyRule, ctx: EdgeCtx): EdgeTerminal[] {
+	switch (rule.type) {
+		case STRING:
+			return [rule.value === '' ? 'empty' : { literal: rule.value }];
+		case PATTERN:
+			return [{ pattern: rule.value }];
+		case SYMBOL:
+			return [{ symbol: rule.name }];
+		default:
+			break;
+	}
+	const children = anyRuleWalker.childrenOf(rule);
+	const terminals =
+		rule.type === SEQ
+			? seqEdgeTerminals(ctx.edge === 'end' ? [...children].reverse() : children, ctx)
+			: children.flatMap((child) => ruleEdgeTerminals(child, ctx));
+	const optional = 'multiplicity' in rule && (rule.multiplicity === 'optional' || rule.multiplicity === 'array');
+	return optional || children.length === 0 ? [...terminals, 'empty'] : terminals;
+}
+
+function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTerminal[] {
+	const outer = fromEdge[0];
+	if (outer === undefined) return ['empty'];
+	const terminals = ruleEdgeTerminals(outer, ctx);
+	if (!terminals.includes('empty')) return terminals;
+	return [...terminals.filter((terminal) => terminal !== 'empty'), ...seqEdgeTerminals(fromEdge.slice(1), ctx)];
+}
+
+function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
+	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
+		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
+		if ('literal' in terminal) return 'closed';
+		const anchored = anchoredLeafRegex(ctx.kind, terminal.pattern);
+		return anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed';
+	});
+}
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
@@ -919,11 +975,20 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
+	readonly hidden: boolean;
 	irKey?: string;
 	abstract readonly modelType: ModelType;
 
 	get kindId(): number | undefined {
 		return this.kindEntry?.id;
+	}
+
+	get lineEnds(): readonly LineEnd[] {
+		return ruleLineEnds(this.rule, { kind: this.kind });
+	}
+
+	get leadingTerminals(): readonly EdgeTerminal[] {
+		return ruleEdgeTerminals(this.rule, { edge: 'start' });
 	}
 
 	get parameterless(): boolean {
@@ -963,6 +1028,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
+	triviaInterior: boolean = false;
+
+	grammarRoot: boolean = false;
+
 	get annotations(): RuleAnnotations | undefined {
 		return this.rule.annotations;
 	}
@@ -984,15 +1053,13 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.wordMatcher = opts?.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
-		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
+		this.hidden = opts?.hidden === true;
+		this.factoryName = this.hidden ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
-	get hidden(): boolean {
-		return this.factoryName === undefined;
-	}
 
 	get surfaceHidden(): boolean {
 		return surfaceHiddenOf(this.kindEntry, this.kind);
@@ -1429,8 +1496,16 @@ export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword |
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
-export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return isFixedTextLeaf(node) && !node.hidden;
+export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return isFixedTextLeaf(node) && node.factoryName !== undefined;
+}
+
+export function isBuilderlessPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.factoryName === undefined;
+}
+
+export function isWordOrBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return node instanceof AssembledKeyword || isBuilderTextLeaf(node);
 }
 
 export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
@@ -1442,7 +1517,11 @@ export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledP
 }
 
 export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
-	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
+	return node instanceof AssembledKeyword || (isFixedTextLeaf(node) && !node.hidden);
+}
+
+export function isHiddenPresenceMarker(node: AssembledNode): node is AssembledKeyword {
+	return node instanceof AssembledKeyword && node.surfaceHidden;
 }
 
 export interface CompoundOpts {
@@ -1459,10 +1538,47 @@ export interface CompoundOpts {
 	aliasTypeId?: number;
 }
 
+interface GapWalkCtx {
+	readonly conditional: boolean;
+}
+
+interface SlotEmptinessCtx {
+	readonly slotById: ReadonlyMap<RuleId, AssembledNonterminal>;
+}
+
+function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): EmptinessCtx<RenderRule> {
+	return {
+		settled(rule) {
+			if (rule.multiplicity === 'optional' || rule.multiplicity === 'array' || rule.optionalElement === true) return true;
+			const slot = rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined && (rule !== root || isRequired(slot))) return false;
+			return renderRuleWalker.childrenOf(rule).length === 0 ? true : undefined;
+		},
+		children: (rule) => renderRuleWalker.childrenOf(rule),
+		isChoice: (rule) => rule.type === CHOICE
+	};
+}
+
+export interface InnerGap {
+	readonly key: string;
+	readonly precedingTokens: number;
+}
+
+export interface FullFormAffix {
+	readonly texts: readonly string[];
+	readonly slot?: string;
+}
+
+export interface FullForm {
+	readonly open: FullFormAffix;
+	readonly close: FullFormAffix;
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
+	fullForm?: FullForm;
 
 	protected readonly _slots: readonly AssembledNonterminal[];
 
@@ -1571,6 +1687,57 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 	get lexedInterior(): boolean {
 		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
+	}
+
+	get innerGaps(): readonly InnerGap[] {
+		if (this.triviaInterior) return [];
+		const root = this.renderRule;
+		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+		if (!realizesEmpty(root, slotEmptiness(root, { slotById }))) return [];
+		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
+		const immediateTokens: boolean[] = [];
+		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
+			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined) {
+				occurrences.push({ slot, precedingTokens: immediateTokens.length });
+				return;
+			}
+			if (rule.type === STRING) {
+				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
+				return;
+			}
+			const inner =
+				ctx.conditional ||
+				rule.type === CHOICE ||
+				rule.multiplicity === 'optional' ||
+				rule.multiplicity === 'array' ||
+				rule.optionalElement === true;
+			for (const child of renderRuleWalker.childrenOf(rule)) walk(child, { conditional: inner });
+		};
+		walk(root, { conditional: false });
+		const tokens = immediateTokens.length;
+		if (this._slots.length === 0) {
+			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
+		}
+		if (tokens === 0) {
+			if (!this.grammarRoot) return [];
+			const rootSlot = root.id === undefined ? undefined : slotById.get(root.id);
+			const repeat =
+				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
+				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
+			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0 }];
+		}
+		return occurrences
+			.filter(
+				(occurrence, i) => occurrences.findIndex((other) => other.precedingTokens === occurrence.precedingTokens) === i
+			)
+			.filter(
+				(occurrence) =>
+					occurrence.precedingTokens > 0 &&
+					occurrence.precedingTokens < tokens &&
+					!immediateTokens[occurrence.precedingTokens]
+			)
+			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
 	}
 
 	get separator(): string | undefined {
@@ -2164,17 +2331,8 @@ export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: Lef
 	return coreLeftmostImmediate(rule, ctx);
 }
 
-export function isBoundaryLeftImmediate(
-	members: readonly RenderRule[],
-	fromIndex: number,
-	ctx: LeftmostWalkCtx
-): boolean {
-	for (let i = fromIndex; i < members.length; i++) {
-		const member = members[i]!;
-		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
-		if (!isNullableMultiplicity(member)) return true;
-	}
-	return false;
+export function startsImmediateWhenPresent(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	return coreLeftmostImmediate(rule, ctx);
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
@@ -2184,19 +2342,28 @@ export interface KindEdgeClasses {
 	readonly ends: SeamEdgeClass;
 }
 
+export function seamNeedsSpace(seam: { readonly left: SeamEdgeClass; readonly right: SeamEdgeClass }): boolean {
+	return seam.left === 'word' && seam.right === 'word';
+}
+
+export function wordCharPredicate(wordMatcher: RegExp | undefined): (c: string) => boolean {
+	const table = wordCharAsciiTable(wordMatcher ?? /\w/);
+	return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
+}
+
 export interface EdgeClassCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly isWordChar: (c: string) => boolean;
 }
 
-const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
+export const uniformEdgeClass = (classes: readonly SeamEdgeClass[]): SeamEdgeClass => {
 	if (classes.length === 0) return 'varies';
 	const first = classes[0]!;
 	return classes.every((c) => c === first) ? first : 'varies';
 };
 
-const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
+export const charEdgeClass = (c: string | undefined, ctx: { isWordChar: (c: string) => boolean }): SeamEdgeClass =>
 	c === undefined || c === '' ? 'varies' : ctx.isWordChar(c) ? 'word' : 'not-word';
 
 const REGEX_CONTROL_ESCAPES: Record<string, string> = {

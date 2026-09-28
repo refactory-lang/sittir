@@ -123,8 +123,8 @@ var isSymbolType = (t) => typeEq(t, "SYMBOL");
 var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
-function compileAnchoredPattern(source) {
-  const anchored = `^(?:${source})$`;
+function compileAnchoredPattern(source, anchor = "whole") {
+  const anchored = anchor === "whole" ? `^(?:${source})$` : `^(?:${source})`;
   try {
     return { regex: new RegExp(anchored, "u") };
   } catch {
@@ -138,6 +138,12 @@ function compileAnchoredPattern(source) {
 function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
+}
+function realizesEmpty(rule, ctx) {
+  const settled = ctx.settled(rule);
+  if (settled !== void 0) return settled;
+  const children = ctx.children(rule);
+  return ctx.isChoice(rule) ? children.some((child) => realizesEmpty(child, ctx)) : children.every((child) => realizesEmpty(child, ctx));
 }
 
 // packages/codegen/src/dsl/rule-walker.ts
@@ -895,18 +901,26 @@ function separatorOf(resolved, symbols) {
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
+var ruleEmptiness = {
+  settled(rule) {
+    if (!rule || typeof rule !== "object") return false;
+    const r = rule;
+    const t = r.type;
+    if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+    if (t === STRING) return r.value === "";
+    if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+    if (t === SEQ || t === CHOICE || t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return void 0;
+    return false;
+  },
+  children(rule) {
+    const r = rule;
+    if (r.type === SEQ || r.type === CHOICE) return Array.isArray(r.members) ? r.members : [];
+    return [r.content];
+  },
+  isChoice: (rule) => rule.type === CHOICE
+};
 function matchesEmpty(rule) {
-  if (!rule || typeof rule !== "object") return false;
-  const r = rule;
-  const t = r.type;
-  if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
-  if (t === STRING) return r.value === "";
-  if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
-  const members = Array.isArray(r.members) ? r.members : [];
-  if (t === SEQ) return members.every(matchesEmpty);
-  if (t === CHOICE) return members.some(matchesEmpty);
-  if (t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return matchesEmpty(r.content);
-  return false;
+  return realizesEmpty(rule, ruleEmptiness);
 }
 function collectSlots(members, rulesBag) {
   const slots = [];
@@ -1212,9 +1226,9 @@ function ruleListParts(rules) {
   }
   return parts;
 }
-function extrasRun(extras, rules) {
+function nodelessExtrasRun(extras, rules) {
   const { names, literals, patterns } = ruleListParts(extras);
-  const symbolSources = names.flatMap((name) => {
+  const symbolSources = names.filter(isParserHiddenName).flatMap((name) => {
     const rule = rules[name];
     const source = rule === void 0 ? null : ruleToRegexSource(rule);
     return source === null ? [] : [source];
@@ -1751,6 +1765,15 @@ function supertypeMemberName(memberKind, supertypeKind) {
 }
 function armNameOf(owner, display, ownerIsSupertype) {
   return ownerIsSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
+}
+
+// packages/codegen/src/util/reachable-rules.ts
+function rootRuleName(rules) {
+  return Object.keys(rules)[0];
+}
+function grammarRootNames(grammar2) {
+  const start = rootRuleName(grammar2.rules);
+  return [...start === void 0 ? [] : [start], ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)];
 }
 
 // packages/codegen/src/dsl/symbol-table.ts
@@ -2400,10 +2423,7 @@ function referencedNames(rule, into) {
 }
 function liveRuleNames(grammar2) {
   const live = /* @__PURE__ */ new Set();
-  const pending = [
-    ...Object.keys(grammar2.rules).slice(0, 1),
-    ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)
-  ];
+  const pending = grammarRootNames(grammar2);
   while (pending.length > 0) {
     const name = pending.pop();
     if (live.has(name) || !(name in grammar2.rules)) continue;
@@ -2972,24 +2992,29 @@ function parseFlankAddress(key) {
 // packages/codegen/src/dsl/whitespace.ts
 var TIGHT_MEMBER = "_tight";
 var SPACE_MEMBER = "_space";
+var NEWLINE_MEMBER = "_newline";
 var HORIZONTAL_SPACE = " ";
 var WHITESPACE_MEMBERS = [
   { name: TIGHT_MEMBER, body: { type: STRING, value: "" }, alwaysAdmitted: true },
   { name: SPACE_MEMBER, body: { type: STRING, value: " " } },
-  { name: "_newline", body: { type: STRING, value: "\n" } },
+  { name: NEWLINE_MEMBER, body: { type: STRING, value: "\n" } },
   { name: "_blankline", body: { type: STRING, value: "\n\n" } },
   { name: "_double_blankline", body: { type: STRING, value: "\n\n\n" } },
   { name: "_indent", body: { type: STRING, value: INDENT_TEXT } },
   { name: "_dedent", body: { type: STRING, value: DEDENT_TEXT } }
 ];
-function admittedTextOf(body) {
-  return isDepthText(body.value) ? HORIZONTAL_SPACE : body.value;
+function admittedTextOf(text) {
+  return isDepthText(text) ? HORIZONTAL_SPACE : text;
+}
+function admitsWhitespaceMember(run, name, text) {
+  const alwaysAdmitted = WHITESPACE_MEMBERS.find((member) => member.name === name)?.alwaysAdmitted === true;
+  return alwaysAdmitted || (run?.test(admittedTextOf(text)) ?? false);
 }
 function enrichWhitespace(externals, extras, rules) {
-  const run = extrasRun(extras, rules);
+  const run = nodelessExtrasRun(extras, rules);
   const upstream = new Set(ruleListParts(externals).names);
   const members = WHITESPACE_MEMBERS.filter(
-    (member) => (member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)) && !(isDepthText(member.body.value) && upstream.has(member.name))
+    (member) => admitsWhitespaceMember(run, member.name, member.body.value) && !(isDepthText(member.body.value) && upstream.has(member.name))
   );
   const rule = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
   const minted = [
@@ -5938,6 +5963,29 @@ function renameNameList(value, renames) {
   return renameRule(value, renames);
 }
 
+// packages/codegen/src/dsl/extras.ts
+function extrasClosure(extras, supertypes, subtypesOf) {
+  const names = /* @__PURE__ */ new Set();
+  const add = (name) => {
+    if (names.has(name)) return;
+    names.add(name);
+    for (const subtype of subtypesOf(name) ?? []) add(subtype);
+  };
+  for (const name of extras) add(name);
+  const pending = new Set([...supertypes].filter((name) => !names.has(name)));
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const name of pending) {
+      const members = [...subtypesOf(name) ?? []];
+      if (members.length === 0 || !members.every((member) => names.has(member))) continue;
+      pending.delete(name);
+      add(name);
+      grew = true;
+    }
+  }
+  return names;
+}
+
 // packages/codegen/src/dsl/primitives/rule-cause.ts
 var RULE_CAUSE = /* @__PURE__ */ Symbol.for("sittir.ruleCause");
 function tag(body, declaration) {
@@ -6293,41 +6341,46 @@ function symbolNamesOf(entries) {
   }
   return names;
 }
-function precedenceRankedNames(cfg, base2) {
-  const basePrecedences = base2?.grammar?.precedences ?? base2?.precedences;
+function overriddenList(baseValue, own) {
   const previous = withStringGlobalShim(
-    () => typeof basePrecedences === "function" ? basePrecedences(makeSimpleDollarProxy(), []) : basePrecedences
+    () => typeof baseValue === "function" ? baseValue(makeSimpleDollarProxy(), []) : baseValue
   );
-  const own = cfg.precedences;
-  const groups = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous ?? [])) : own ?? previous;
+  return typeof own === "function" ? withStringGlobalShim(
+    () => own(makeSimpleDollarProxy(), previous ?? [])
+  ) : own ?? previous;
+}
+function precedenceRankedNames(cfg, base2) {
+  const groups = overriddenList(
+    base2?.grammar?.precedences ?? base2?.precedences,
+    cfg.precedences
+  );
   const names = /* @__PURE__ */ new Set();
   for (const group2 of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group2)) names.add(name);
   return names;
 }
 function extraRuleNames(cfg, base2) {
-  const baseExtras = base2?.grammar?.extras ?? base2?.extras;
-  const previous = withStringGlobalShim(
-    () => typeof baseExtras === "function" ? baseExtras(makeSimpleDollarProxy()) : baseExtras
+  const extras = symbolNamesOf(
+    overriddenList(base2?.grammar?.extras ?? base2?.extras, cfg.extras)
   );
-  const own = cfg.extras;
-  const entries = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous)) : own ?? previous;
-  return symbolNamesOf(entries);
+  const supertypes = symbolNamesOf(
+    overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, cfg.supertypes)
+  );
+  return extrasClosure(extras, supertypes, (name) => {
+    if (!supertypes.has(name)) return void 0;
+    const baseRule = base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
+    const own = cfg.rules?.[name];
+    const body = own ?? baseRule;
+    const rule = typeof body === "function" ? withStringGlobalShim(
+      () => body(makeSimpleDollarProxy(), baseRule)
+    ) : body;
+    return rule?.type === "CHOICE" ? symbolNamesOf(rule.members) : void 0;
+  });
 }
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
-  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
-  const names = /* @__PURE__ */ new Set();
-  for (const external of Array.isArray(entries) ? entries : []) {
-    if (typeof external === "string") {
-      names.add(external);
-      continue;
-    }
-    const symbol = external;
-    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
-      names.add(symbol.name);
-    }
-  }
-  return names;
+  return symbolNamesOf(
+    typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals
+  );
 }
 function injectPlaceholderHiddenRules(rules, patches, context, externals, known) {
   const declared = /* @__PURE__ */ new Set();
@@ -6787,6 +6840,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     [$._attributed_type_parameter, $._type],
     [$._attributed_argument]
   ],
+  supertypes: ($, previous) => [...previous ?? [], $.comment],
   groups: {
     visibility_modifier_in_path: ($) => seq("in", $._path),
     attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
@@ -6925,6 +6979,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     }
   },
   patches: {
+    comment: { 0: arm.default },
     bracketed_type: { 1: field2("type") },
     else_clause: { 1: field2("body") },
     generic_pattern: { 0: field2("name") },
@@ -7393,7 +7448,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     _inner_block_doc_comment_marker: token.immediate("!"),
     _raw_string_literal_start: /[bc]?r#*"/,
     _raw_string_literal_end: token.immediate(/"#*/),
-    _line_doc_content: token.immediate(/.*/),
+    _line_doc_content: token.immediate(/.*\n?/),
     _block_comment_content: token.immediate(/[^]*/)
   })
 });

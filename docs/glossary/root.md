@@ -755,8 +755,9 @@ A `require` rooted at a grammar package, so the upstream grammar resolves throug
 
 ### `packages/codegen/src/grammars.ts::grammarPackage`
 
-The one resolver of a grammar package: its name, its directory (`packages/<name>` unless given) and its `stable`
-flag from `package.json`'s `sittir.stable` (false when the package has no manifest). Every path into a package —
+The one resolver of a grammar package: its name, its directory (`packages/<name>` unless given), its `stable`
+flag from `package.json`'s `sittir.stable` (false when the package has no manifest), and its declared
+`sittir.displayName`, which `grammarDisplayName` prefers over the name's casing. Every path into a package —
 the entry, `.sittir/`, the parser tables, node types, grammar.json, the upstream `require` — derives from the
 package's `dir`, so a package outside the repo (a bootstrap in a temp directory) runs the same pipeline.
 
@@ -771,5 +772,5 @@ Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir
 
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
-PascalCase display name derived from the grammar name (`scm` → `Scm`, `my_lang` → `MyLang`), used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`).
+The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
 

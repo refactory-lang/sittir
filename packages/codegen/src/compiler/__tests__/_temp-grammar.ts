@@ -10,7 +10,7 @@ export async function evaluateTempGrammar(upstream: { extras: string; rules: str
 		const base = join(dir, 'base.js');
 		writeFileSync(
 			base,
-			`module.exports = grammar({ name: 'demo', extras: () => [${upstream.extras}], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, ${upstream.rules} } });\n`
+			`module.exports = grammar({ name: 'demo', extras: ($) => [${upstream.extras}], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, ${upstream.rules} } });\n`
 		);
 		return await evaluateSittirGrammar(base, 'demo', config);
 	} finally {

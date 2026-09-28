@@ -26,7 +26,11 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
+import { declaresWhitespace, whitespaceSymbolsOf } from './model/whitespace-arms.ts';
+import { stampFullForms } from './model/full-form.ts';
+import { stampTriviaInterior } from './model/trivia.ts';
 import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
+import { admitsWhitespaceMember } from '../dsl/whitespace.ts';
 import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
@@ -68,7 +72,6 @@ import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
@@ -286,6 +289,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 
 	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, ctx.diagnostics);
+	stampWhitespaceBuilders(nodes);
+	stampFullForms(nodes, wordMatcherRegex);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);
 	stampFactoryInline(nodes, ctx, stampSupertypeClosures(nodes));
@@ -300,7 +305,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 	const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 	for (const rule of Object.values(normalized.normalizedRules)) {
-		if (rule.type !== SUPERTYPE || !rule.variantArms || rule.name === WHITESPACE_SUPERTYPE) continue;
+		if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
 		for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 	}
 	const userFacingCtx: _UserFacingCtx = {
@@ -330,6 +335,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 
 	const assembled: AssembledNodeMap = {
 		name: normalized.name,
+		root: normalized.root,
 		nodes,
 		nodeByRuleId,
 		nodeByKindId,
@@ -344,13 +350,17 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		reserved: normalized.reserved,
 		externals: normalized.externals,
 		extras: normalized.extras,
+		nodelessExtrasRun: normalized.nodelessExtrasRun,
 		refineForms: normalized.refineForms,
 		parseKindCollisions: assembleDiagnostics.parseKindCollisions.all,
 		assembleWarnings: assembleDiagnostics.assembleWarnings.all,
 		namingEvents: assembleDiagnostics.namingEvents.all,
 		droppedKinds
 	};
+	assertWhitespaceAdmitted(assembled);
 	computeFieldStorageInfo(assembled);
+	stampTriviaInterior(assembled);
+	stampGrammarRoot(assembled);
 	return assembled;
 }
 
@@ -427,7 +437,7 @@ function stampFactoryInline(
 		}
 	}
 
-	const rootKind = rootRuleName(ctx.grammar.rules);
+	const rootKind = ctx.grammar.root;
 	for (const kind of declared) {
 		const node = nodes.get(kind);
 		if (!node) {
@@ -752,6 +762,27 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 		return;
 	}
 	node.userFacing = ctx.aliasSourceKinds.has(kind) || ctx.variantChildKinds.has(kind);
+}
+
+function stampWhitespaceBuilders(nodes: Map<string, AssembledNode>): void {
+	if (!declaresWhitespace({ nodes })) return;
+	for (const kind of whitespaceSymbolsOf({ nodes }).values()) {
+		const node = nodes.get(kind);
+		if (!(node instanceof AssembledPunctuation)) throw new Error(`assemble: whitespace arm '${kind}' is not a literal kind`);
+		node.factoryName ??= nameNode(node.kind).factoryName;
+	}
+}
+
+export function assertWhitespaceAdmitted(nodeMap: Pick<NodeMap, 'nodes' | 'nodelessExtrasRun'>): void {
+	if (!declaresWhitespace(nodeMap)) return;
+	for (const kind of whitespaceSymbolsOf(nodeMap).values()) {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledPunctuation && !admitsWhitespaceMember(nodeMap.nodelessExtrasRun, kind, node.text)) {
+			throw new Error(
+				`assemble: '${WHITESPACE_SUPERTYPE}' lists '${kind}', but the grammar's extras do not admit its text; enrich's effective extras and the final grammar's extras disagree`
+			);
+		}
+	}
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>, ctx: AssembleCtx): void {
@@ -1113,6 +1144,11 @@ export { nameNode } from './model/node-map.ts';
 
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
+}
+
+function stampGrammarRoot(nodeMap: AssembledNodeMap): void {
+	const root = nodeMap.root === undefined ? undefined : nodeMap.nodes.get(nodeMap.root);
+	if (root !== undefined) root.grammarRoot = true;
 }
 
 function perInstanceSeparator(list: { readonly kind: string; readonly separator: RenderRule }, ctx: DroppedKindCtx): RenderRule | undefined {

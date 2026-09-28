@@ -6,6 +6,7 @@ import {
 	toTransportData,
 	toEditAt,
 	markEdited as $edited,
+	mapTriviaEntries,
 	projectInterior
 } from '@sittir/common';
 import type { TreeHandle, TokenInterior } from '@sittir/common';
@@ -211,6 +212,7 @@ function _treeEngine(tree: TreeHandle): typeof methodsEngine {
 		const render = (node: AnyNodeData) =>
 			tree.render === undefined ? methodsEngine.render(project(node)) : tree.render(project(node));
 		engine = {
+			...methodsEngine,
 			render,
 			toEdit: (node, startOrRange, endPos) => toEditAt(render(node), startOrRange, endPos)
 		};
@@ -954,6 +956,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'escape_sequence_unicode_braced',
 		'escape_sequence_hex'
 	]),
+	comment: new Set(['line_comment', 'block_comment']),
 	_path: new Set([
 		'self',
 		'u8_keyword',
@@ -7879,7 +7882,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.LetChain as const,
 			_left: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._left, 'left', false, data.$type, {
+				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'left',
@@ -7902,7 +7905,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 			),
 
 			left() {
-				return drillIn<T.LetChain | T.LetCondition | T.Expression | undefined>(this._left, tree);
+				return drillIn<T.LetChain | T.LetCondition | T.Expression>(this._left, tree);
 			},
 			rights() {
 				return drillInAll<T.LetCondition | T.Expression>(
@@ -14897,6 +14900,13 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	[TSKindId.DocComment]: (d) => ({ ...d, $type: TSKindId.DocComment as const }),
 	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
+	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(_aliasEnvelope(d, t) as unknown as T.FieldIdentifier, t),
@@ -14907,7 +14917,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	type Wire = _NodeData & {
 		readonly $storageType?: number;
-		readonly $_trivia?: unknown;
 		readonly $nodeHandle?: number;
 		readonly $childIndex?: number;
 		readonly $span?: unknown;
@@ -14932,7 +14941,7 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		$span: shown.$span,
 		$nodeHandle: shown.$nodeHandle,
 		$childIndex: shown.$childIndex,
-		$_trivia,
+		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: { ...storage, $type: $storageType }
 	} as unknown as _NodeData;
 }
@@ -15232,6 +15241,13 @@ interface _WrapReturnByKindId {
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
 	[TSKindId.DocComment]: _NodeData & { readonly $type: TSKindId.DocComment };
 	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
+	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
+	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
+	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
+	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
+	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
 	[TSKindId.TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
 	[TSKindId.FieldIdentifier]: ReturnType<typeof wrapFieldIdentifier>;
@@ -15255,6 +15271,10 @@ function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData
 	return out as unknown as _NodeData;
 }
 
+function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
+	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree));
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
@@ -15267,8 +15287,9 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree);
-	return fn(data, tree);
+	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	if (!fn) return _drillUnknownKindChildren(shown, tree);
+	return fn(shown, tree);
 }
 
 /**

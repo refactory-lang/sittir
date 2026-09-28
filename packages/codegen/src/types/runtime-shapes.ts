@@ -85,8 +85,8 @@ export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
 export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
 
-export function compileAnchoredPattern(source: string): CompiledPattern {
-	const anchored = `^(?:${source})$`;
+export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start' = 'whole'): CompiledPattern {
+	const anchored = anchor === 'whole' ? `^(?:${source})$` : `^(?:${source})`;
 	try {
 		return { regex: new RegExp(anchored, 'u') };
 	} catch {
@@ -200,5 +200,20 @@ export function samplePattern(source: string): string | null {
 	} catch {
 		return null;
 	}
+}
+
+export interface EmptinessCtx<R> {
+	settled(rule: R): boolean | undefined;
+	children(rule: R): readonly R[];
+	isChoice(rule: R): boolean;
+}
+
+export function realizesEmpty<R>(rule: R, ctx: EmptinessCtx<R>): boolean {
+	const settled = ctx.settled(rule);
+	if (settled !== undefined) return settled;
+	const children = ctx.children(rule);
+	return ctx.isChoice(rule)
+		? children.some((child) => realizesEmpty(child, ctx))
+		: children.every((child) => realizesEmpty(child, ctx));
 }
 

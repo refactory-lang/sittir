@@ -2647,6 +2647,35 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	arguments: ['arguments_elements'],
+	array_expression_list: ['attributes'],
+	block: ['statements'],
+	closure_parameters: ['parameters'],
+	declaration_list: ['declarations'],
+	delim_token_tree_brace: ['delim_tokens'],
+	delim_token_tree_bracket: ['delim_tokens'],
+	delim_token_tree_paren: ['delim_tokens'],
+	enum_variant_list: ['enum_variant_list_elements'],
+	field_declaration_list: ['field_declaration_list_elements'],
+	field_initializer_list: ['initializers'],
+	match_block: ['match_block_arms'],
+	ordered_field_declaration_list: ['attributes'],
+	parameters: ['parameters_elements'],
+	slice_pattern: ['patterns'],
+	source_file: ['statements'],
+	token_tree_brace: ['tokens'],
+	token_tree_bracket: ['tokens'],
+	token_tree_paren: ['tokens'],
+	token_tree_pattern_brace: ['token_patterns'],
+	token_tree_pattern_bracket: ['token_patterns'],
+	token_tree_pattern_paren: ['token_patterns'],
+	tuple_pattern: ['elements'],
+	use_bounds: ['bounds'],
+	use_list: ['use_clauses']
+};
+
 /** Valid values for `_token_keywords` nodes. */
 export const _TOKEN_KEYWORDSS = [
 	"'",

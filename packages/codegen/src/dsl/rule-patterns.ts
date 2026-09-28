@@ -3,12 +3,14 @@ import {
 	isFieldType,
 	isPrecWrapper,
 	patternAcceptsEmpty,
+	realizesEmpty,
 	isRepeatType,
 	isSeqType,
 	isStringType,
 	isSymbolType,
 	isTokenWrapperType,
 	typeEq,
+	type EmptinessCtx,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
@@ -237,18 +239,27 @@ export function separatorOf<R extends RuntimeRule>(
 	return null;
 }
 
+const ruleEmptiness: EmptinessCtx<unknown> = {
+	settled(rule) {
+		if (!rule || typeof rule !== 'object') return false;
+		const r = rule as Record<string, unknown>;
+		const t = r.type;
+		if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+		if (t === STRING) return r.value === '';
+		if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+		if (t === SEQ || t === CHOICE || t === REPEAT1 || t === FIELD || isPrecWrapper(r as RuleLike)) return undefined;
+		return false;
+	},
+	children(rule) {
+		const r = rule as Record<string, unknown>;
+		if (r.type === SEQ || r.type === CHOICE) return Array.isArray(r.members) ? (r.members as readonly unknown[]) : [];
+		return [r.content];
+	},
+	isChoice: (rule) => (rule as { type?: unknown }).type === CHOICE
+};
+
 export function matchesEmpty(rule: unknown): boolean {
-	if (!rule || typeof rule !== 'object') return false;
-	const r = rule as Record<string, unknown>;
-	const t = r.type;
-	if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
-	if (t === STRING) return r.value === '';
-	if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
-	const members = Array.isArray(r.members) ? (r.members as readonly unknown[]) : [];
-	if (t === SEQ) return members.every(matchesEmpty);
-	if (t === CHOICE) return members.some(matchesEmpty);
-	if (t === REPEAT1 || t === FIELD || isPrecWrapper(r as RuleLike)) return matchesEmpty(r.content);
-	return false;
+	return realizesEmpty(rule, ruleEmptiness);
 }
 
 function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
@@ -664,9 +675,9 @@ export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
 	return parts;
 }
 
-export function extrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, Rule>>): RegExp | undefined {
+export function nodelessExtrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, AnyRule>>): RegExp | undefined {
 	const { names, literals, patterns } = ruleListParts(extras);
-	const symbolSources = names.flatMap((name) => {
+	const symbolSources = names.filter(isParserHiddenName).flatMap((name) => {
 		const rule = rules[name];
 		const source = rule === undefined ? null : ruleToRegexSource(rule);
 		return source === null ? [] : [source];
@@ -1312,3 +1323,4 @@ export function composeTokenText(
 			return undefined;
 	}
 }
+

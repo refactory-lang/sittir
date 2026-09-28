@@ -58,14 +58,24 @@ function isUntouchedBelow(value: unknown): boolean {
 
 /**
  * Whether this node can cross as a coordinate: it still names its tree and
- * its span, carries no separately attached trivia, and nothing below it was
+ * its span, carries no trivia outside that span, and nothing below it was
  * rebuilt. The handle is required here and nowhere below, because it is the
  * only thing that says which tree the span indexes into.
  */
 function foldsToCoordinate(record: Record<string, unknown>): boolean {
 	if (typeof record.$nodeHandle !== 'number' || !isRecord(record.$span)) return false;
-	if (record.$_trivia != null) return false;
+	if (hasOutsideTrivia(record.$_trivia)) return false;
 	return isUntouchedBelow(record);
+}
+
+/**
+ * Whether trivia lies outside the node's span: leading or trailing entries. A
+ * read's inner entries sit inside the span, so the coordinate already covers
+ * them.
+ */
+function hasOutsideTrivia(trivia: unknown): boolean {
+	if (!isRecord(trivia)) return false;
+	return trivia.leading != null || trivia.trailing != null;
 }
 
 /** The coordinate projection of a folded node: identity and provenance, no storage. */
@@ -92,6 +102,16 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 		...rest
 	} = data as T & Record<(typeof COORDINATE_KEYS)[number], unknown>;
 	return rest;
+}
+
+/**
+ * `markEdited` for a node edited in place: the node keeps its identity and
+ * methods, and loses the coordinate that would fold it back to its pre-edit
+ * bytes. A write of inner trivia is such an edit, since the coordinate's span
+ * already covers the gap the new entries sit in.
+ */
+export function detachCoordinate(data: object): void {
+	for (const key of COORDINATE_KEYS) delete (data as Record<string, unknown>)[key];
 }
 
 /**

@@ -363,6 +363,10 @@ reach.
  *  actually-emitted aliases drift. */
 ```
 
+### `packages/codegen/src/emitters/shared.ts::classifyFactoryEmission`
+
+Whether a kind gets a top-level factory, and the skip reason when it does not. A presence marker (`isHiddenPresenceMarker`) is skipped as a hidden keyword literal; `buildFactoryMapEntries` skips the same kinds, and both read that one model predicate.
+
 ### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
@@ -811,6 +815,8 @@ parameterless form declared last would make the wrapper's parameter type
 `[]` for every consumer that reads it (python `buildSuiteEmpty` in the
 coerce layer).
 
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` (`withEmptyOverload`). On a forwarding factory it goes on the exported wrapper, ahead of the forwarded overloads, and never on the private `_build…`.
+
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
 ```text
@@ -1116,76 +1122,6 @@ The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X
 ### `packages/codegen/src/emitters/types.ts::VOCABULARY_IMPORTS`
 
 The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
-
-### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
-
-```text
-/**
- * Strip ESLint-flagged useless escapes that occur inside tree-sitter
- * grammar regex patterns. These cases appear in real grammars and
- * are safe to strip:
- *
- *   - `\[` inside a character class — `[` has no special meaning inside
- *     `[...]`, so the backslash is decorative.
- *   - `\-` at the end of a character class — a literal `-` after a prior
- *     character set needs no escape when it's the last char in the class.
- *   - `\^` anywhere in a class except its first character — `^` negates
- *     only directly after `[`, so `[\^a]` keeps its escape while
- *     `[^\^$]` becomes `[^^$]`.
- *
- * The stripped pattern must still compile as a RegExp. If it doesn't
- * (some grammar regex we didn't anticipate), fall back to the original
- * pattern so semantics stay identical. Full set-equivalence cannot be
- * checked at codegen time without running both regexes against a corpus
- * — the two specific transformations above are provably safe by the
- * JavaScript regex grammar, so compile-success is the strongest static
- * check we can offer.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Inside character class.
-```
-
-#### body
-
-```text
-// `\[` inside a class → `[`
-```
-
-#### body
-
-```text
-// `\-` at end of class (next-next is `]`) → `-`
-```
-
-#### body
-
-```text
-// Otherwise keep the escape verbatim.
-```
-
-#### body
-
-```text
-// If the stripped pattern fails to compile, the transformation broke
-// something — fall back to the original (which we know compiled;
-// otherwise this function wouldn't have been called).
-```
-
-An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
-
-### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegexLiteral`
-
-The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -1583,6 +1519,36 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 (`_cfg`) after the NodeData passthrough, and every slot resolver reads that binding.
 ```
 
+#### loose trivia
+
+The coercer of every kind with a full form (`fullForm`), `ir.comment`'s default arm among them, passes a bare string through `spelledInterior`: text spelled with the kind's literal delimiters sheds them, and any other text is the content as it stands, checked by the content's leaf guard. The full form is tried first, so `'// TODO'` and `' TODO'` both build rust `// TODO`, and python `comment('# x')` is `# x`, never `## x`. When the kind is a polymorph, `refuseSiblingLead` then refuses an interior that starts the way another arm can, naming that arm's builder (`refuseSiblingLeadExpr`).
+
+A delimiter that is a spelling choice goes through `spelledForm` instead, and the alternative typed becomes that slot's option: python `integer.hex('0XFF')` renders `0XFF`, `integer.hex('FF')` the default `0xFF`, and an explicit option wins over the typed text (`spelledOptionKeys`).
+
+The coercer's signature carries the same facts as types. With a spelled delimiter it is generic over the input and options (`<const I, const O>`) and returns `spelledReturnType`, so `integer.hex('0XFF').prefix()` is `'0X'`. With sibling leads its input is `I & SiblingLeadRefusal<…>` (`siblingLeadRefusalType`), so `blockComment('/*! x */')` fails to compile, naming `ir.blockCommentDocInner`. A plain `string` input keeps today's types and is checked at runtime. Delimiters with no slot and no siblings leave the signature as it was.
+
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
+
+### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
+
+An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
+
+### `packages/codegen/src/emitters/from.ts::spelledOptionSlots`
+
+The registered option slot of each full-form side that is a spelling choice, found through the field the affix names. A spelling slot that is not a registered option throws: the typed alternative has no option to go to.
+
+### `packages/codegen/src/emitters/from.ts::literalUnion`
+
+A list of texts as a TypeScript union of string literal types.
+
+### `packages/codegen/src/emitters/from.ts::spelledReturnType`
+
+The return type of a coercer with a spelled delimiter: the built node wrapped in `WithSpelling` per spelling slot. The slot's type is the explicit option when `O` carries it, and otherwise `SpelledAffix` over the stamped alternatives with the slot's registered default (`optionDefaultArm`). A spelled closing delimiter throws; no grammar has one.
+
+### `packages/codegen/src/emitters/from.ts::siblingLeadRefusalType`
+
+The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the full form's delimiters and each sibling's literal lead texts, in the runtime's order, paired with the sibling's builder. The list stops at the first sibling without texts: from there the runtime refuses by pattern, and a later literal lead must never name input that pattern would catch first. Undefined when no sibling ahead of that point has texts, and the signature stays untyped (rust `line_comment`, whose first sibling `extra_slashes` leads with a pattern).
+
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
 ```text
@@ -1690,6 +1656,8 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 #### options-first list coercer
 
 A separated list types its rest parameter with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
+
+A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
@@ -2975,6 +2943,53 @@ the slot name are dropped, since the reader's default is that key.
 One `wire_slot` arm: the parent kind id, either the field or the child kind
 name, and the slot name the reader stores the child under.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
+
+The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
+own kind id, which is the grammar symbol the reader stamps and passes in. The
+reader asks for a key only when a node has no owner child (named, not an
+extra, at least one byte wide, and not stored as a scalar per
+`stores_scalar`), so the rows cover the gaps an extra can reach inside an
+otherwise ownerless node: an empty block (rust `block`, after `{`, keys to
+`statements`) or an empty root (token-less, keyed to its first repeat slot).
+An extra in a gap with no row is the node's own entry: leading when no named
+child precedes it, trailing otherwise.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::InnerGapRow`
+
+One `inner_gap_key` arm: the kind id, the count of anonymous tokens before the
+extra, and the slot name the gap is keyed by.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::stores_scalar`
+
+The generated table behind the reader's owner test: whether the model stores
+a child as a scalar (a presence flag or a kind id) rather than a node. A
+scalar keeps no trivia, so the reader never makes that child an owner, and an
+extra beside it goes to the next owner outward (typescript `(/* c */ this)`
+reads the comment as the parenthesized expression's leading entry, since
+`this` is stored as a kind id). Keyed by `(parent kind id, tree-sitter field
+name or None, child kind id)`, the three facts `read_node::stored_as_scalar`
+has in hand. Rows come from `scalarChildRows`.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::scalarChildRows`
+
+The `stores_scalar` rows: for every slot of every catalogued parent whose
+`storageInfo` is a scalar kind (`SCALAR_STORAGE`), the kind ids in its
+`enumKindsById` under `(parent id, slot.fieldName)`. A `mixedEnum` slot lists
+only its kind-id arms; its node arms stay owners. Slots sharing a parent and
+field merge into one row.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::ScalarChildRow`
+
+One `stores_scalar` arm: the parent kind id, the field (absent for an
+untagged child), and the child kind ids stored as scalars there.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::SCALAR_STORAGE`
+
+The `FieldStorageKind`s whose value is not a node: `boolean` and `bitflag`
+presence, and the `kindEnum` / `mixedEnum` kind ids. `verbatim` stores the
+node.
+
 ### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
 
 The parser keys that land in an unnamed slot: its field labels
@@ -3607,6 +3622,8 @@ catch-all `other =>` arm so the match is exhaustive over u16.
 i.e. a member of the slot is pattern-modeled — so a bare string in any
 other slot is refused rather than guessed at.
 
+`textArms` are matched first in the object branch, after `$text` is read into `text`. `renderTriviaTransportSupport` passes the kinded-text arms there.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitAliasUnwrapRecurseArm`
 
 ```text
@@ -4122,25 +4139,21 @@ that arm from the option's resolved kind id.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTriviaTransportSupport`
 
-```text
-/**
- * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
- * continuations, …), sourced from `nodeMap.extras` (stamped from
- * `RawGrammar.extras`, DRY: never a hand-maintained kind list here). It admits
- * no verbatim text: a read-side extras node arrives as a coordinate the slot
- * carrier slices, never as a bare string.
- *
- * Typed variants are needed because a factory-constructed trivia node (e.g.
- * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
- * node (`_content`, `$type`, …) and must render through its own template —
- * a text-only trivia carrier would silently drop that structure.
- *
- * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
- * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
- * only carry pre-rendered text and silently dropped factory-constructed
- * trivia at render time.
- */
-```
+`TriviaTransport`: one variant per concrete trivia kind (`triviaKinds`, the
+grammar's extras through their supertypes), plus `Verbatim` for an entry
+that arrives as bare text (a detached fixture's comment, or text a user
+attached). Typed variants are needed because a factory-constructed comment
+carries the same wrapped wire shape as any other node and renders through
+its own template.
+
+`TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own.
+
+`TransportTrivia` is an alias for `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
+The carrier's shape (leading, trailing and inner entries, each with its
+same-line facts) and where each entry renders are the core module's, the
+same for every grammar.
+
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. `TriviaSeam::kind` names each extras variant's kind id and a `Text`'s stamped kind. Whether an entry is line-terminated is then one lookup in the grammar's `KIND_FLAGS` table (`renderOptionsRs`), the same lookup a source-coordinate entry takes by its coordinate's kind, so no per-grammar match restates the fact.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
 
@@ -5540,6 +5553,20 @@ A `dedent`'s own `w.seam(...)` call is conditioned on `w.dedent()`'s return:
 had text written — false cancels an empty body's payload along with its
 own, so `{}` stays bare rather than gaining a stray blank line.
 
+Inner trivia prints at its gap: before a `slot` the printer's `innerGap`
+names, `trivia::render_inner(&node.transport_trivia_data, "<slot>", w)`. A
+slot under a presence gate gets it before the `if` instead, since a node
+holding inner trivia has no named child, so the gated slot is empty and its
+arm never runs. `seatedGaps` carries the gaps already printed into nested
+arms, so a gap prints once.
+
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
+
+Whether a slot name is one of the node's inner-trivia gaps
+(`AbstractAssembledCompound.innerGaps`), the keys the reader's
+`inner_gap_key` files ownerless extras under. `render-module.ts` supplies it
+from the node the body renders.
+
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
 Doubles `{` and `}` so literal text can sit in a view template
@@ -5598,25 +5625,6 @@ slot is `spread` like any other (rust's token trees, typescript's string
 forms, python's `_except_clause_list` and `_match_block_block`). The seat the
 overlay derives from that shape is the kind's own builder passed through
 the parent's.
-
-### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
-
-```text
-/**
- * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
- * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
- * already carried on LinkedGrammar — no new configuration").
- *
- * Per-char classification uses the PAIR test rather than a single-char
- * match: a char is word-class iff it would EXTEND a word match ('a'+c
- * matches longer than 'a') or START one that the next word char joins
- * (c+'a' matches longer than c). This is grammar-faithful where a naive
- * single-char test fails — digits are word-INTERIOR for identifier-shaped
- * word patterns without being valid word STARTS.
- */
-```
-
-Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex probe of its own, so the table and the fixed-literal join can never disagree about a character.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -8366,12 +8374,7 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 
 ### `packages/codegen/src/emitters/templates.ts::isWordChar`
 
-```text
-/** Grammar-faithful word-class test for a single char (ASCII table from
-	 *  wordCharAsciiTable + Unicode-alphanumeric fallback). Used for
-	 *  compile-time STATIC-STATIC seam spaces; dynamic seams belong to the
-	 *  runtime SpacingWriter with the same class. */
-```
+The grammar's word-class test for a single char (`wordCharPredicate`), used for compile-time static seam spaces; dynamic seams belong to the runtime SpacingWriter with the same class.
 
 ### `packages/codegen/src/emitters/templates.ts::rules`
 
@@ -9956,6 +9959,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // generated interface name can ever contain `$`.
 ```
 
+After the namespaces, one `Empty<TypeName>` interface per empty form. It extends the kind's `Built`, and its `$trivia` adds `InnerTrivia<this>`, keyed by the form's gap keys only under `innerGapsKeyed`. It uses `this` because the base declares `TriviaSetterOf<this>`.
+
 ### `packages/codegen/src/emitters/types.ts::NodeCategories`
 
 ```text
@@ -10315,21 +10320,6 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 // Slot-preservation gate (PR2 Task 3.B4): assert every declared slot
 // appears at least once in the emitted body. Replaces the deleted
 // byte-equivalence diff gate. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
-```
-
-### `packages/codegen/src/emitters/templates.ts::seamNeedsSpace`
-
-```text
-/**
- * The SpacingWriter's word-seam law over edge CLASSES: a space is owed
- * exactly where word-class text meets word-class text. The one seam
- * decision shared by every static bake — fixed×fixed (classes of the
- * concrete chars) and tag boundaries (classes derived per kind) — so a
- * baked outcome can never disagree with the runtime writer's.
- * Punctuation merge-hazard pairs are decided from concrete characters
- * (`isLiteralMergePair`), never from classes, and are layered on by the
- * caller where characters are known.
- */
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::renderRuleEdge`
@@ -11076,16 +11066,11 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
 
-```text
-/** The parameter type of a grammar's `$trivia`: one of the grammar's trivia
- *  kinds (its `trivia` role, e.g. `Comment`), or a bare string, or the
- *  `{ leading, trailing }` object of the same. A string is verbatim text —
- *  trivia lives outside the node model, so its literal form needs no kind —
- *  and the render engine already takes it as such: every trivia entry
- *  crosses as a `SlotValue<TriviaTransport>`, whose decoder turns a JS
- *  string into `SlotValue::Verbatim`. The type only had to stop forbidding
- *  what the transport accepted. */
-```
+The parameter type of a grammar's `$trivia`: one of the grammar's trivia kinds (`triviaKinds`, e.g. `Comment`), or a string, or the `{ leading, trailing }` object of the same. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
+
+### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
+
+The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. `buildTriviaEntryType` adds `string` for input.
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
@@ -11101,6 +11086,17 @@ that kind was left alone.
 Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 `hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
+
+### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
+
+Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia`:
+- `kindName`, from `KIND_NAMES`;
+- `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
+- `innerGaps` (`INNER_GAPS`);
+- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
+- `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
+
+`trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
 
@@ -11122,6 +11118,10 @@ Emits `attachProps` (property definition on a function — used by the coerce mo
 // The predicate intersects with AnyNodeData for the same reason as
 // `isNodeData`'s kinded overload: a keyword kind's `Node` is its id.
 ```
+
+### `packages/codegen/src/emitters/client-utils.ts::emitEmptyGuards`
+
+The grammar's `InnerTrivia<N>` interface and its `isEmpty` guard; nothing when no kind has an empty form. `inner()` reads a node's inner entries and `inner(...items)` rebuilds the node with them, typed by the same trivia unions as `TriviaSetterOf`. When some kind has more than one gap (`innerGapsKeyed`), the interface also takes a `Gap` parameter and gets `innerAt(gap, ...)`. `isEmpty` has one overload per empty form, narrowing that kind to `Empty<TypeName>`. At runtime a node is empty when its kind has inner gaps (`INNER_GAPS`) and it holds no children (`isEmptyNode`).
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -11278,6 +11278,8 @@ the routes the overlay emits from the same id tables. `emitNodeModel`
 passes the generator's `generatedIdTables` through for that reason.
 
 `textLeavesThrough` publishes `transparentEnvelopeTextLeaves` per envelope, so the loose source emitter predicts which bare strings the coercer routes through an envelope.
+
+`innerGapsKeyed` publishes the predicate that decided whether the emitted `InnerTrivia` takes a gap key, so the source emitter prints the inner-trivia surface that was emitted: `innerAt(gap, …)` when keyed, `.inner(…)` otherwise.
 
 `externals` and `extras` are the grammar's rule lists, serialized as grammar.json holds them (SYMBOL, STRING and PATTERN entries, in declaration order).
 
@@ -12569,10 +12571,13 @@ A supertype group whose name is also a kind's flat key (typescript's
 `identifier` supertype over `identifier | undefined`) is emitted as that
 kind's callable with the group members attached — `attachProps(F.buildIdentifier,
 { … })` typed `typeof F.buildIdentifier & { … }` — so `ir.identifier('x')` and
-`ir.identifier.identifier('x')` both work. Before, the flat entry simply
-yielded to the group and the kind became uncallable from `ir`. `attachProps`
+`ir.identifier.identifier('x')` both work. `attachProps`
 mutating the factory export is the same pattern the coercing bundles use
 for `.strict`.
+
+A group lists a surface-hidden member only when it is a punctuation leaf
+with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its
+members; any other surface-hidden member stays out of the group.
 
 The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
 
@@ -13709,6 +13714,20 @@ normalization; a node that already carries slot storage (built or edited) is lef
 #### body
 
 ```text
+// `_wrapTrivia` — a read node's trivia entries (leading, trailing, and
+// each inner gap's, walked by `mapTriviaEntries`) are children like any
+// slot child, so each drills in through `drillInAll` and dispatches
+// through `wrapNode` by its own `$type`: a comment entry exposes its
+// kind's accessors. `wrapNode`
+// wraps the trivia before dispatch, once per node; `_aliasEnvelope`
+// keeps the display node's wrapped trivia and wraps only trivia that
+// arrived with the storage re-read. Text entries have no `$type` and
+// pass through as they are.
+```
+
+#### body
+
+```text
 // Public entry points
 ```
 
@@ -14532,6 +14551,8 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 // never actually boxed get DCE'd by the compiler.
 ```
 
+A leaf whose kind entry is anonymous (`anon`, the parser's fact) renders with `render_with_trivia!(token …)`. The reader counts such a token among the tokens between an owner and its same-line trailing entries (`$tokensBetween`), never as an owner. So its transport leaves those entries held and doesn't seat them ahead of itself: `a + /* x */ b` keeps the comment after `+`.
+
 ### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
 
 The text a value-less leaf takes when it arrives over napi as a bare kind
@@ -14660,6 +14681,8 @@ Import path each chain layer loads its predecessor from: index 0 (refines) impor
 Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
+
+A grammar with a default trivia form ends the module by binding `methodsEngine.trivia.comment` to the form's coercer (`TriviaForm.coercer`), the function `ir.comment`'s coerce flavor calls. That field is the only channel, written once, at load. Until then a loose trivia string is refused with a request to import the factories.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
@@ -15120,6 +15143,10 @@ factory's trailing parameter comes from. `OptionsArg<typeof parent>` cannot
 serve: a raw factory with a bare-text overload lists that overload last, and
 `ArgsOf` reads the last overload, which has no options parameter.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedParent`
+
+The strict and coerce entry points of a parent whose arms are seated into it: the parent's builder composed with each seat, typed to accept the parent's own input or a seated child's. When the parent has an empty form, each entry point is emitted as an overloaded function through `withEmptyOverload`, so `ir.<kind>()` keeps its `Empty<TypeName>` type through the overlay. Otherwise it stays a typed `const`. Called with no argument, the composed builder calls the parent with none, so the runtime realizes the same empty node.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::nestingArmOf`
 
 Where a nested arm sits: under the direct arm reaching the same child, at
@@ -15392,6 +15419,8 @@ reaches. A value arm never does.
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method; each is the child's variant route (below), so a child with its own overlay entry keeps its sub-factories under the alias. In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
 
+A default route (`route.default`) binds the parent's own `strict`/`coerce` to that arm's builders, so the hoisted parent is callable and a bare call builds the default arm. A supertype whose arms carry `variantOf` gets the callable bundle through its default arm the same way (rust `ir.comment` over `line_comment`/`block_comment`).
+
 A hoisted parent's wiring const is module-private — `const <factoryName>: {
 … } = { … }` with no `export` and no `...B.<key>` spread, since the bundle
 has no entry for it — and is emitted before the parents that flatten
@@ -15401,6 +15430,8 @@ through it (post-order).
 ride in the erased-helper block for the flatten methods.
 
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
+
+It imports the grammar types as `T` when any emitted block names `T.`.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -15728,7 +15759,7 @@ kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
 (`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
 trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
 `sittir_core::options::OptionSites` over those tables, and
-`pub type Options = sittir_core::options::Options<Sites>`. No per-grammar
+`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. No per-grammar
 struct, deserializer or resolver is emitted: reading a JS object through the
 trie and resolving it over a base table live once in core, and this file only
 supplies the tables. `defaults()` builds `spacing` through
@@ -15861,6 +15892,14 @@ present, `NO_SITE` in every gap, sixteen cells to a line. `EDGE_ROWS` and the
 `SEATS_*` tables are written through it so a runtime lookup by kind id is one
 array read instead of a search.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::denseFlags`
+
+`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `NO_SITE`.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
+
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is a line-terminated trivia kind (`lineTerminatedTrivia`). The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A line-terminated entry, whether a transport or a coordinate, holds its line end.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
 One kind's edge row before emission: its id and the site index of its
@@ -15971,6 +16010,8 @@ error, not the render's.
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
 the transport's own value still wins.
+
+Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
@@ -16262,10 +16303,6 @@ Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it 
 
 `rejectKeywordText(value, where, word, keywords)` throws `<where>: '<text>' is this slot's keyword` when the value is a word-kind node (`$type === word`) whose `$text` is one of `keywords`. Arrays are checked element-wise and every other value, including another leaf kind with the same text, passes through unchanged. The loose surface never reaches it with a keyword spelling, because its keyword extraction stores the arm's kind id first.
 
-### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegex`
-
-The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
-
 ### `packages/codegen/src/emitters/shared.ts::transparentContentKindNames`
 
 The kinds a list admits at its content slot: the slot's own kinds and, when there is exactly one and it is a transparent wrapper, the kinds of the wrapper's required slot. The bare-accept closure reads it so a list takes an element the wrapper would have built.
@@ -16284,6 +16321,10 @@ disagree on what counts as an options object.
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
 The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call. When the options are required (`separatorRequired`: a separator site with no declared default), the options object always comes first and there is no elements-only form: `[options: O, first: E, ...rest: E[]]`, or `[options: O, ...rest: E[]]` for an empty-capable list, so an elements-only call is a type error, matching the raw builder's throw.
+
+### `packages/codegen/src/emitters/shared.ts::withEmptyOverload`
+
+Puts the zero-argument overload `head(): T.Empty<TypeName>` in front of a function's lines when the kind has an empty form, and leaves the lines unchanged otherwise. `general` is the declaration of the implementation's own signature. Pass it when the lines hold only the implementation, because once one overload exists the implementation signature is no longer callable. Omit it when the lines already begin with overload declarations. Factories, coercers and seated polymorph parents all get the empty overload here. It comes first because `ReturnType<typeof f>` reads the last overload, so the general signature has to stay last.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorOf`
 
@@ -16323,6 +16364,10 @@ The leaf entries of an interior tree in order, the flat list consumers read.
 Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kind, typed by `TokenInterior`.
 ```
 
+### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
+
+Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
+
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 
 ```text
@@ -16354,6 +16399,8 @@ The key under which a lexed kind's per-slot guard regex is registered.
 
 ```text
 A lexed kind serializes its `interior` beside its slots, from the same derivation the runtime table uses.
+
+A kind with a full form serializes it (`fullForm`, its literal `open` and `close` texts), the same stamp the coercer's full-form acceptance reads. The source emitter spells a text-only read entry with it.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::factoryRef`
@@ -16440,7 +16487,11 @@ Whether a slot takes an anonymous child from `$other`: it is unnamed and stores 
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+
+### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
+
+One crate file: its path under the crate and its contents.
 
 ### `packages/codegen/src/emitters/grammar-runtime.ts::EmitGrammarRuntimeConfig`
 

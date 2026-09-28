@@ -19,9 +19,25 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		expect(source).not.toContain('Delimiter');
 	});
 
-	it('prints a leading comment as verbatim trivia', async () => {
+	it('prints a regular block comment from its text, leading, trailing and inner, on the strict surface', async () => {
+		const source = await emitFactorySourceText('rust', '/* a */\nfn f() {} /* t */\n\nfn g() {\n    h(/* i */);\n}\n', 'rebuild');
+		for (const text of [' a ', ' t ', ' i ']) {
+			expect(source).toContain(`ir.blockComment.strict(ir.blockCommentContent(${JSON.stringify(text)}))`);
+		}
+		expect(source).toContain('ir.arguments.strict().$trivia.inner(');
+		expect(source).not.toContain('innerAt(');
+		expect(source).not.toContain('.coerce(');
+	});
+
+	it('prints an empty owner of inner trivia through its no-argument form', async () => {
+		const source = await emitFactorySourceText('rust', 'fn f() { // TODO\n}\n', 'rebuild');
+		expect(source).toContain('ir.block.strict().$trivia.inner(ir.lineComment.strict(ir.lineCommentRegular(" TODO")))');
+	});
+
+	it('prints a leading comment through its kind builder', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia.leading("// hello")');
+		expect(source).toContain('$trivia.leading(ir.lineComment.strict(ir.lineCommentRegular(" hello")))');
+		expect(source).not.toMatch(/\$trivia\.leading\("/);
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');

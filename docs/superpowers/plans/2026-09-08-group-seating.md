@@ -632,7 +632,7 @@ git commit --no-verify -q -m "feat(overlays): a single group splices onto its pa
 **Interfaces:**
 - Produces: `elementsSeatOf(parent, nodeMap): { slot; group }[]` — every multiple slot whose element kinds are exactly one hoisted config-shaped kind. Generated `strict` takes `<Group>.Config[]` (`NonEmptyArray` when the slot is non-empty) in that slot.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Derivation:
 ```ts
@@ -656,12 +656,12 @@ it('builds each element of a repeated group from its config', () => {
 });
 ```
 
-- [ ] **Step 2: Run them to see them fail**
+- [x] **Step 2: Run them to see them fail**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/sub-factories.test.ts packages/codegen/src/emitters/__tests__/polymorphs-overlay.test.ts`
 Expected: FAIL (`elementsSeatOf` not exported; overlay text absent).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `elementsSeatOf`: same as `spliceSeatOf` with `isMultiple(slot)` required instead of excluded, returning every such slot (a parent may have two element seats; each gets its own wire, composed in slot order).
 
@@ -673,7 +673,7 @@ Expected: FAIL (`elementsSeatOf` not exported; overlay text absent).
 ```
 Wire it into the parent block exactly as the splice wire, composing over an already-wrapped `strict` when the parent also has a splice seat (`m2(m1(B.p.strict, F.g1), F.g2)`). For a `nonEmpty` slot the parameter type uses `NonEmptyArray<ArgsOf<CF>[0]>` (import from `../../utils.js` as the raw factories do).
 
-- [ ] **Step 4: Run the tests, regenerate, gate**
+- [x] **Step 4: Run the tests, regenerate, gate**
 
 Run the two test files: PASS. Regenerate; `pnpm run type-check`; `validate counts` at baseline. Probe python:
 
@@ -686,7 +686,7 @@ console.log(render(n));
 ```
 (Spell `operators` as the generated Config demands, `TSKindId.EqEq` from `packages/python/src/types.ts`.) Expected: `x == y`.
 
-- [ ] **Step 5: Glossary and commit**
+- [x] **Step 5: Glossary and commit**
 
 `docs/glossary/emitters.md`: `elementsSeatOf`, `elementsShape`, wire composition order.
 
@@ -707,7 +707,7 @@ git commit --no-verify -q -m "feat(overlays): a repeated group seats as an array
 **Interfaces:**
 - Produces: `SerializedValue.seat?: { kind: string; shape: 'arm' | 'splice' | 'elements'; mount?: string }`; `seatOf` returns that from `subFactoriesOf` (arm + mount name), `spliceSeatOf` (splice) and `elementsSeatOf` (elements), or `undefined` for a value that is not a hoisted kind. This is the only derivation of the seat; Tasks 7 and 8 consume it.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In `node-model-emit.test.ts`, using `makeNodeMapWith` or the `buildNodeMap` helper from `polymorphs-overlay.test.ts` (import it, or lift it into `packages/codegen/src/__tests__/helpers/node-map-fixtures.ts` if it is not already there), build the three grammars from Tasks 3, 4 and 5 and assert:
 
@@ -727,12 +727,12 @@ it('serializes the seat of every hoisted slot value', () => {
 });
 ```
 
-- [ ] **Step 2: Run it to see it fail**
+- [x] **Step 2: Run it to see it fail**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/node-model-emit.test.ts`
 Expected: FAIL, `seat` undefined.
 
-- [ ] **Step 3: Implement `seatOf` and serialize it**
+- [x] **Step 3: Implement `seatOf` and serialize it**
 
 ```ts
 export type Seat = { readonly kind: string; readonly shape: 'arm' | 'splice' | 'elements'; readonly mount?: string };
@@ -752,7 +752,7 @@ export function seatOf(parent: AssembledNode, slot: AssembledNonterminal, value:
 
 `node-model.ts`: `serializeSlot(slot, nodeMap)` needs the parent; change its signature to `serializeSlot(parent, slot, nodeMap)` (both callers are in `serializeCompoundNode`), and `serializeValue(v)` to `serializeValue(v, seat)` adding `...(seat === undefined ? {} : { seat })`. Add `seat?: Seat` to `SerializedValue`.
 
-- [ ] **Step 4: Run the test, regenerate, ratchet**
+- [x] **Step 4: Run the test, regenerate, ratchet**
 
 Run the node-model test: PASS. Regenerate. Run the census:
 
@@ -761,7 +761,7 @@ Expected: unseated 0 / 0 / 0. Any kind still unseated is a finding to review (a 
 
 `validate counts` at baseline (the node model is a projection; nothing in the pipeline reads `seat` yet).
 
-- [ ] **Step 5: Glossary and commit**
+- [x] **Step 5: Glossary and commit**
 
 `docs/glossary/emitters.md`: `seatOf`, `Seat`, `SerializedValue.seat`, `serializeSlot` signature.
 
@@ -806,7 +806,7 @@ exercised by a second run of the same runner through the `ir` bindings.
 - Consumes: `LoadedNodeModel.seats`.
 - Produces: `PrintContext.seats` replaces `hoistedKinds` and `formOfKind`; `printingFactoryMap` prints an arm seat as `ir.<parent>.<mount>.strict({ …parentRest, …armKeys })`, a splice seat by merging the group's printed keys into the parent's object, an elements seat as an array of printed objects without a factory call.
 
-- [ ] **Step 1: Write the failing printer tests**
+- [x] **Step 1: Write the failing printer tests**
 
 In `factory-source-printer.test.ts`, one case per shape. Extend the file's `ctx` stubs with ids 11 `header`, 12 `_header_kind`, 13 `clause`, 14 `_clause_group`, 15 `comparison`, 16 `_comparison_comparator`, 20 `const` (`Const`), 21 `of` (`Of`), 22 `==` (`EqEq`), and `irPathOfKind` entries `header: 'ir.header'`, `clause: 'ir.clause'`, `comparison: 'ir.comparison'`. The config printer prints one key per line at depth, so the expectations use the same `\n\t` layout the existing `function_item` case pins:
 
@@ -843,18 +843,18 @@ it('prints an elements seat as inline objects', () => {
 
 If the printer's array layout differs from the elements expectation, pin the layout the printer already produces for an array of objects (the `delimTokens` arrays in the rust rebuild show it) rather than changing the printer.
 
-- [ ] **Step 2: Run them to see them fail**
+- [x] **Step 2: Run them to see them fail**
 
 Run: `pnpm exec vitest run packages/tools/tests/emit/factory-source-printer.test.ts`
 Expected: FAIL (`seats` unknown; sources differ).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 - `PrintContext`: add `seats`, remove `hoistedKinds` and `formOfKind`; `run()` fills `seats` from the loaded model and no longer calls `formsOf(model.polymorphVariants)`.
 - `printingFactoryMap`, `config` case: after `wrapTextLeaves`, walk the config's entries; for a `Printed` value whose `kind` is a seat of this parent: `arm` → return `new Printed(id, \`${path}.${seat.mount}.strict(${printValue({ ...rest, ...value.argsObject }, …)})\`)` (keep the arm's unprinted config object on `Printed` as `argsObject` next to `argsSource`, set in the `config` case); `splice` → merge `value.argsObject` into the parent's object; `elements` → the array's `Printed` entries print as their `argsObject`. The `forwarded` case's `absorbed` branch and `printValue`'s hoisted branch are deleted; `materialize`/`seatFormChild` read the seat's `slot` instead of `formOfKind`.
 - `irPathResolver` no longer needs `formOfKind`.
 
-- [ ] **Step 4: Run the emit tests, regenerate the examples, measure**
+- [x] **Step 4: Run the emit tests, regenerate the examples, measure**
 
 Run: `pnpm exec vitest run packages/tools/tests/emit`
 Expected: PASS (the `it.fails` case in `factory-source-emit.test.ts` that pinned the old inline spelling is rewritten to the new one and passes).
@@ -865,7 +865,7 @@ Expected: rust ≤ 19, typescript < 31, python < 10 errors. Write the measured c
 Run: `pnpm exec vitest run packages/rust/tests/examples-verify.test.ts packages/typescript/tests/examples-verify.test.ts packages/python/tests/examples-verify.test.ts`
 Expected: the flipped rows PASS; every other expected-fail row still fails for its own named reason (a row that unexpectedly passes is flipped too, with its reason recorded in the commit message).
 
-- [ ] **Step 5: Docs and commit**
+- [x] **Step 5: Docs and commit**
 
 `docs/factory-surface-issues.md`: mark the parent-factory row and the no-argument form row RESOLVED with the new spellings; `docs/superpowers/handoffs/2026-09-08-strict-rebuild-handoff.md`: the work list and the gate numbers.
 

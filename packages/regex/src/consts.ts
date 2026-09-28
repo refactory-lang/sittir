@@ -525,3 +525,8 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', configKey: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
+
+/** The gaps an empty node of each kind holds inner trivia in, in render order. */
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
+	character_class: ['class_atoms']
+};

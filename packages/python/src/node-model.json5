@@ -2429,6 +2429,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "__future___keyword",
@@ -2469,11 +2470,13 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_compound_statement",
@@ -2506,11 +2509,13 @@
       "kind": "_double_blankline",
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
       "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
-      "text": "\n\n\n"
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -2963,11 +2968,13 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_statement",
@@ -3007,11 +3014,13 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_whitespace",
@@ -5271,6 +5280,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6972,6 +6993,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7024,6 +7057,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -7078,6 +7123,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7130,6 +7187,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -7184,6 +7253,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7237,6 +7318,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -7289,6 +7382,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -9750,6 +9855,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0b",
+            "0B"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9848,6 +9967,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0x",
+            "0X"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9931,6 +10064,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0o",
+            "0O"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [

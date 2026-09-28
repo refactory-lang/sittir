@@ -18,7 +18,7 @@ import type {
 	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf } from './utils.js';
+import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { RegexGrammar };
 
@@ -36,6 +36,9 @@ export type LeafStringMap = {
 	[TSKindId.EndAssertion]: '$';
 	[TSKindId.BoundaryAssertion]: '\\b';
 	[TSKindId.NonBoundaryAssertion]: '\\B';
+	[TSKindId.Newline]: '\n';
+	[TSKindId.Blankline]: '\n\n';
+	[TSKindId.DoubleBlankline]: '\n\n\n';
 };
 
 export enum TSKindId {
@@ -958,6 +961,10 @@ export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
 export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>;
 export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
+export type Tight = TSKindId.Tight;
+export type Newline = TSKindId.Newline;
+export type Blankline = TSKindId.Blankline;
+export type DoubleBlankline = TSKindId.DoubleBlankline;
 
 // Tree types
 export interface PatternTree extends TreeNode<'pattern'> {}
@@ -1017,6 +1024,18 @@ export interface ControlEscapeTree extends TreeNode<'control_escape'> {}
 export interface ControlLetterEscapeTree extends TreeNode<'control_letter_escape'> {}
 export interface GroupNameTree extends TreeNode<'group_name'> {}
 export interface DecimalDigitsTree extends TreeNode<'decimal_digits'> {}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
+}
 
 // Supertype unions
 export type ClassAtom =
@@ -1051,6 +1070,8 @@ export type CharacterEscapeTree = ControlEscapeTree | ControlLetterEscapeTree | 
 
 export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
 
+export type WhitespaceTree = TightTree | NewlineTree | BlanklineTree | DoubleBlanklineTree;
+
 export namespace ClassAtom {
 	export type Kind = '_class_atom';
 	export type Tree = ClassAtomTree;
@@ -1068,25 +1089,10 @@ export namespace CharacterEscape {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Tree = WhitespaceTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Tight = TSKindId.Tight;
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export type Newline = TSKindId.Newline;
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export type Blankline = TSKindId.Blankline;
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export type DoubleBlankline = TSKindId.DoubleBlankline;
-export interface DoubleBlanklineTree extends AnyTreeNode {
-	readonly type: '_double_blankline';
-}
 export type BslashDash = TSKindId.BslashDash;
 export interface BslashDashTree extends AnyTreeNode {
 	readonly type: 'bslash_dash';
@@ -1738,6 +1744,15 @@ export interface NonBoundaryAssertionNs extends KeywordNs<
 	NonBoundaryAssertionTree,
 	'non_boundary_assertion'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
+export interface DoubleBlanklineNs extends KeywordNs<
+	TSKindId.DoubleBlankline,
+	'\n\n\n',
+	DoubleBlanklineTree,
+	'_double_blankline'
+> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
@@ -1841,6 +1856,10 @@ export interface NamespaceMap {
 	[TSKindId.EndAssertion]: EndAssertionNs;
 	[TSKindId.BoundaryAssertion]: BoundaryAssertionNs;
 	[TSKindId.NonBoundaryAssertion]: NonBoundaryAssertionNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Newline]: NewlineNs;
+	[TSKindId.Blankline]: BlanklineNs;
+	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.PatternCharacter]: PatternCharacterNs;
 	[TSKindId.PosixClassName]: PosixClassNameNs;
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
@@ -2480,6 +2499,46 @@ export namespace NonBoundaryAssertion {
 	export type Tree = NonBoundaryAssertionNs['Tree'];
 	export type Kind = 'non_boundary_assertion';
 }
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Newline {
+	export type Config = NewlineNs['Config'];
+	export type Built = NewlineNs['Built'];
+	export type Loose = NewlineNs['Loose'];
+	export type LooseConfig = NewlineNs['LooseConfig'];
+	export type BuildArgs = NewlineNs['BuildArgs'];
+	export type LooseArgs = NewlineNs['LooseArgs'];
+	export type Tree = NewlineNs['Tree'];
+	export type Kind = '_newline';
+}
+export namespace Blankline {
+	export type Config = BlanklineNs['Config'];
+	export type Built = BlanklineNs['Built'];
+	export type Loose = BlanklineNs['Loose'];
+	export type LooseConfig = BlanklineNs['LooseConfig'];
+	export type BuildArgs = BlanklineNs['BuildArgs'];
+	export type LooseArgs = BlanklineNs['LooseArgs'];
+	export type Tree = BlanklineNs['Tree'];
+	export type Kind = '_blankline';
+}
+export namespace DoubleBlankline {
+	export type Config = DoubleBlanklineNs['Config'];
+	export type Built = DoubleBlanklineNs['Built'];
+	export type Loose = DoubleBlanklineNs['Loose'];
+	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
+	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
+	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
+	export type Tree = DoubleBlanklineNs['Tree'];
+	export type Kind = '_double_blankline';
+}
 export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -2689,4 +2748,8 @@ export namespace DecimalDigits {
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
 	export type Tree = DecimalDigitsNs['Tree'];
 	export type Kind = 'decimal_digits';
+}
+
+export interface EmptyCharacterClass extends CharacterClass.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

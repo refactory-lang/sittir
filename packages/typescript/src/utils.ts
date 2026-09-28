@@ -13,10 +13,24 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, NamespaceMap } from './types.js';
+import type {
+	Blankline,
+	Comment,
+	CommentBlock,
+	CommentLine,
+	DoubleBlankline,
+	HtmlComment,
+	Newline,
+	Space,
+	NamespaceMap
+} from './types.js';
 import { render, toEdit } from './boundary.ts';
+import { KIND_NAMES } from './types.js';
+import { INNER_GAPS } from './consts.js';
+import type * as T from './types.js';
 import {
 	withMethods as withCommonMethods,
+	isEmptyNode as _isEmptyNode,
 	isNodeData as _isNodeData,
 	isTreeNode as _isTreeNode,
 	hasKind,
@@ -51,6 +65,25 @@ export const methodsEngine = {
 	},
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) {
 		return toEdit(node, startOrRange, endPos);
+	},
+	trivia: {
+		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
+		kinds: new Set<string>([
+			'_blankline',
+			'_double_blankline',
+			'_newline',
+			'_space',
+			'comment',
+			'comment_block',
+			'comment_line',
+			'html_comment'
+		]),
+		innerGaps: INNER_GAPS,
+		whitespace: {
+			run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
+			kindIdByText: { ' ': 178, '\n': 179, '\n\n': 180, '\n\n\n': 181 }
+		},
+		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
 
@@ -60,9 +93,81 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(...args: ((Comment | string) | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): Self;
-	leading(...items: (Comment | string)[]): Self;
-	trailing(...items: (Comment | string)[]): Self;
+	(
+		...args: (
+			| (Blankline | Comment | CommentBlock | CommentLine | DoubleBlankline | HtmlComment | Newline | Space | string)
+			| {
+					leading?: (
+						| Blankline
+						| Comment
+						| CommentBlock
+						| CommentLine
+						| DoubleBlankline
+						| HtmlComment
+						| Newline
+						| Space
+						| string
+					)[];
+					trailing?: (
+						| Blankline
+						| Comment
+						| CommentBlock
+						| CommentLine
+						| DoubleBlankline
+						| HtmlComment
+						| Newline
+						| Space
+						| string
+					)[];
+			  }
+		)[]
+	): Self;
+	leading(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
+	leading(
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
+	): Self;
+	trailing(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
+	trailing(
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
+	): Self;
 }
 
 export interface NodeMethodsOf {
@@ -76,6 +181,51 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 	// Grammar-local facade: T extends object to accept wrap.ts union-spread literals.
 	// Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.
 	return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & NodeMethodsOf;
+}
+
+export interface InnerTrivia<N> {
+	inner(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
+	inner(
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
+	): N;
+}
+
+export function isEmpty(node: T.Program): node is T.EmptyProgram;
+export function isEmpty(node: T.ExportClause): node is T.EmptyExportClause;
+export function isEmpty(node: T.NamedImports): node is T.EmptyNamedImports;
+export function isEmpty(node: T.StatementBlock): node is T.EmptyStatementBlock;
+export function isEmpty(node: T.SwitchBody): node is T.EmptySwitchBody;
+export function isEmpty(node: T.Object): node is T.EmptyObject;
+export function isEmpty(node: T.ObjectPattern): node is T.EmptyObjectPattern;
+export function isEmpty(node: T.Array): node is T.EmptyArray;
+export function isEmpty(node: T.ArrayPattern): node is T.EmptyArrayPattern;
+export function isEmpty(node: T.Arguments): node is T.EmptyArguments;
+export function isEmpty(node: T.ClassBody): node is T.EmptyClassBody;
+export function isEmpty(node: T.FormalParameters): node is T.EmptyFormalParameters;
+export function isEmpty(node: T.EnumBody): node is T.EmptyEnumBody;
+export function isEmpty(node: T.TupleType): node is T.EmptyTupleType;
+export function isEmpty(node: AnyNodeData): boolean {
+	const kind = methodsEngine.trivia.kindName(node.$type);
+	return kind !== undefined && INNER_GAPS[kind] !== undefined && _isEmptyNode(node);
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(

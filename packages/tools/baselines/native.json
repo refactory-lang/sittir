@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "59883ea",
+    "commit": "670b926",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -60,14 +60,13 @@
                 "formatDeferredByKind": {},
                 "leftOutByKind": {
                     "if_expression": 1,
-                    "let_declaration": 1,
-                    "source_file": 5,
+                    "source_file": 4,
                     "struct_expression": 1,
                     "struct_item_tuple": 1,
                     "use_declaration": 2
                 },
-                "pass": 2024,
-                "total": 2024
+                "pass": 2033,
+                "total": 2033
             },
             "supertypeKindCount": 25,
             "validators": {
@@ -87,15 +86,15 @@
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 240,
-                    "total": 240
+                    "pass": 241,
+                    "total": 241
                 },
                 "roundtrip": {
-                    "astMatchPass": 141,
+                    "astMatchPass": 148,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 141,
-                    "total": 141
+                    "pass": 148,
+                    "total": 148
                 }
             }
         },
@@ -140,7 +139,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11386,
-        "total": 11389
+        "pass": 11403,
+        "total": 11406
     }
 }

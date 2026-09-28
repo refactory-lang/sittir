@@ -23,6 +23,10 @@ The rules enrich adds: the names in the origin map whose origin is an `EnrichMin
 
 The names in an enriched grammar's origin map whose origin passes `keep`; the one filter behind the enrich-rule getters.
 
+### `packages/codegen/src/dsl/extras.ts::extrasClosure`
+
+The extras of a grammar closed over supertypes, in both directions: each listed name; every member of a supertype in the set, transitively; and every supertype whose members are all in the set, to a fixpoint. The upward direction is what makes a supertype over extras an extra itself (rust's `comment` over `line_comment`/`block_comment`), since tree-sitter refuses a non-terminal supertype in the `extras` list. `subtypesOf` answers a name's members, or `undefined` when the name is not a supertype. The one rule both readings of "is this an extra" use: wire's `extraRuleNames` over the DSL rules and the compiler's `triviaKinds` over the node map.
+
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroups`
 
 The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `clause-group`. Wire adds them to the grammar's `inline:` list.
@@ -1015,6 +1019,18 @@ not immediate.
 // survives only as the collision fallback.
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListEntry`
+
+One entry of a grammar's `extras` list, in grammar.json's own shape: a SYMBOL (a rule or scanner token by name), a STRING (a literal text), or a PATTERN (a regex source). The list stays a rule list from evaluate to the node map, in declaration order, so every reader sees each entry's rule type rather than a name-or-text string.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::RuleListParts`
+
+The three views of a rule list that `ruleListParts` returns: `names` (SYMBOL entries), `literals` (STRING values) and `patterns` (PATTERN sources), each in list order.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleListParts`
+
+The one derivation of names, literals and patterns from an `extras` rule list. A consumer that asks by name (prune roots, renames, trivia) reads `names`; nothing stores a split copy of the list.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::armLeadingSymbolName`
 
 ```text
@@ -1212,6 +1228,8 @@ not immediate.
  * classifiers all ask it.
  */
 ```
+
+It reads rules through `realizesEmpty` (`types/runtime-shapes.ts`), the same emptiness law the model's empty forms use; `ruleEmptiness` settles the leaves above and leaves `seq`, `choice`, `repeat1`, `field` and prec wrappers to their children.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2137,10 +2155,15 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 
 ```text
 /**
- * Structural identity of two slot-bearing rules ignoring leaf attributes
- * (multiplicity / separator / fieldName / aliasedTo). Used to decide that a
- * head element and a repeat element are "the same list element".
+ * Structural identity of two slot-bearing rules ignoring multiplicity and
+ * separator. Used to decide that a head element and a repeat element are
+ * "the same list element".
  */
+```
+
+The field name is part of the identity at every level: a head in one field and a repeat in another are two slots (`_let_chain`'s `left` beside its `right` list), never one list.
+
+```text
 ```
 
 #### body
@@ -2157,6 +2180,8 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
  * element; otherwise `null`.
  */
 ```
+
+The fused element absorbs the head's id (and, for the separator-choice idiom, the choice's), so the render view's head occurrence still resolves to the list slot through `sourceRuleIds`.
 
 ```text
 // head is already multi — not a head+repeat pair
@@ -2188,18 +2213,6 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 			   check on the added `separator` key. */
 ```
 
-#### body
-
-```text
-/* Fall back to the choice's separator-string arm, marking it a
-			   genuinely OPTIONAL trailing separator — this codebase's
-			   convention (see `findRepeatFlag`'s doc comment) is that a bare
-			   `trailing` flag always meant "optional" (there's no
-			   mandatory-trailing shape anywhere in this compiler); confirmed
-			   via a full regen of all 3 grammars (with a temporary diagnostic)
-			   that this fallback never fires today — `repArm` already carries
-			   its own separator for every current grammar rule. */
-```
 
 ### `packages/codegen/src/dsl/rule-walker.ts::childEdgesOf`
 
@@ -3577,9 +3590,11 @@ The three views of a rule list that `ruleListParts` returns: `names` (SYMBOL ent
 
 The one derivation of names, literals and patterns from an `extras` or `externals` rule list. A consumer that asks by name (prune roots, synthetic external rules, renames, inline-at-reference, trivia) reads `names`; nothing stores a split copy of the list.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::extrasRun`
+### `packages/codegen/src/dsl/rule-patterns.ts::nodelessExtrasRun`
 
-The anchored RegExp matching a whole run of a grammar's lexical extras: one or more of its PATTERN sources, escaped STRING literals and SYMBOL extras resolved through their rules (`ruleToRegexSource`), in any order. A symbol whose rule no single RegExp expresses (one that references another symbol) contributes nothing; `ruleToRegexSource` never follows a symbol, so resolution cannot cycle. It answers whether the grammar lexes a given text as nothing but extras, which is how enrich decides the whitespace members a grammar admits. A grammar with no lexical extras has no run; an extra that does not compile as a JavaScript RegExp is an error, not a silent miss.
+The anchored RegExp matching a whole run of a grammar's node-less extras — the extras that lex as nothing: one or more of its PATTERN sources, escaped STRING literals and SYMBOL extras naming a parser-hidden rule (`isParserHiddenName`), resolved through their rules (`ruleToRegexSource`), in any order. A visible SYMBOL extra (a comment) lexes as a node, so it is a trivia kind and never part of the run, whatever its rule. A symbol whose rule no single RegExp expresses (one that references another symbol) contributes nothing; `ruleToRegexSource` never follows a symbol, so resolution cannot cycle. Whitespace is exactly text this run matches: enrich admits the whitespace members by it (`admitsWhitespaceMember`), and a loose trivia string is read as whitespace by it (`whitespaceTrivia`). A grammar with no lexical extras has no run; an extra that does not compile as a JavaScript RegExp is an error, not a silent miss.
+
+Its rule map is any phase's (`AnyRule`): enrich calls it on the DSL rules, and link calls it once on the evaluated grammar's rules and stamps the result as `nodelessExtrasRun` on the linked grammar, which normalize and assemble carry to the `NodeMap`. Rules past link are simplified (repeats folded into multiplicity), which `ruleToRegexSource` does not read, so no later phase re-derives the run.
 
 ### `packages/codegen/src/dsl/enrich.ts::effectiveExtras`
 
@@ -3605,6 +3620,10 @@ The render body of a whitespace member: a STRING, whose value is the member's te
 
 `_space`, the whitespace member that renders one space, and the default arm of every grammar that admits it.
 
+### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_MEMBER`
+
+`_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingArms`).
+
 ### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
 
 Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
@@ -3612,6 +3631,10 @@ Every whitespace member sittir can mint, in the order `_whitespace` lists them: 
 ### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
 
 The text a member must lex as extras for the grammar to admit it: its own text, except that `_indent` and `_dedent` ride on the horizontal space an indented line starts with, so they are admitted exactly when a space is.
+
+### `packages/codegen/src/dsl/whitespace.ts::admitsWhitespaceMember`
+
+The one admission law for a whitespace member: `_tight` always, any other member when the extras run matches its admitted text (`admittedTextOf`). Enrich filters the members with it, and assemble checks the final `_whitespace` against the link-stamped run with it (`assertWhitespaceAdmitted`), so the two can only disagree when the extras themselves do.
 
 ### `packages/codegen/src/dsl/whitespace.ts::EnrichedWhitespace`
 
@@ -3623,7 +3646,7 @@ A name enrich mints for the whitespace vocabulary that the grammar also defines,
 
 ### `packages/codegen/src/dsl/whitespace.ts::enrichWhitespace`
 
-Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`extrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_whitespace`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_whitespace` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
+Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`nodelessExtrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_whitespace`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_whitespace` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::symbolFactsOf`
 
@@ -6717,7 +6740,7 @@ Every name a rule references through a `SYMBOL`.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::liveRuleNames`
 
-The rules reachable from the start rule and from the extras' SYMBOL entries — the rules tree-sitter keeps. The rest never become symbols.
+The rules reachable from the grammar's roots (`grammarRootNames`: the start rule and the extras' SYMBOL entries) — the rules tree-sitter keeps. The rest never become symbols.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::expandRepeats`
 

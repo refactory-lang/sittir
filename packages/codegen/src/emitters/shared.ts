@@ -1,12 +1,12 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 import {
 	AssembledAlias,
-	isWordOrVisibleTextLeaf,
-	isVisibleTextLeaf,
-	isHiddenPunctuationLeaf
+	isWordOrBuilderTextLeaf,
+	isBuilderTextLeaf,
+	isBuilderlessPunctuationLeaf,
+	isHiddenPresenceMarker
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
@@ -47,7 +47,7 @@ import {
 	valueParseKindsOf,
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
-import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
 import type { RenderRule } from '../types/rule.ts';
@@ -61,7 +61,7 @@ export { isAuthoredCompound };
 export function isTextLeaf(
 	node: AssembledNode
 ): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
-	return isVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
+	return isBuilderTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
@@ -69,6 +69,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
+import { emptyForms } from '../compiler/model/trivia.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -865,8 +866,8 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node)) return 'text';
-	if (isHiddenPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
+	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
@@ -1002,7 +1003,7 @@ export function classifyFactoryEmission(
 	context: FactoryDispatchContext
 ): FactoryEmission {
 	if (!node.userFacing && !isHiddenStructuralFactoryKind(kind, node)) return 'skip-non-surface-kind';
-	if (resolveHiddenKeywordLiteral(kind, context.nodeMap) !== undefined) return 'skip-hidden-keyword-literal';
+	if (isHiddenPresenceMarker(node)) return 'skip-hidden-keyword-literal';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
 	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
@@ -1015,7 +1016,7 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	if (isHiddenPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
+	if (isBuilderlessPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
 	return true;
 }
 
@@ -1093,11 +1094,6 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 	return 'emit';
 }
 
-export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
-	const isWord = wordCharClass(wordMatcher);
-	return Array.from({ length: 128 }, (_, i) => isWord(String.fromCharCode(i)));
-}
-
 export function literalMergePairs(
 	literals: readonly { readonly text: string }[],
 	kindEntries: readonly KindEntryLike[],
@@ -1161,91 +1157,6 @@ export function pruneUnusedImports(lines: readonly string[], names: readonly str
 	});
 }
 
-const LITERAL_IN_CLASS = '+.*?(){}|$/';
-
-export function stripUselessEscapes(pattern: string): string {
-	let out = '';
-	let i = 0;
-	let inClass = false;
-	let classStart = 0;
-	while (i < pattern.length) {
-		const c = pattern[i];
-		if (!inClass) {
-			if (c === '\\' && i + 1 < pattern.length) {
-				out += c + pattern[i + 1];
-				i += 2;
-				continue;
-			}
-			out += c;
-			i++;
-			if (c === '[') {
-				inClass = true;
-				classStart = out.length;
-			}
-			continue;
-		}
-		if (c === ']') {
-			inClass = false;
-			out += c;
-			i++;
-			continue;
-		}
-		if (c === '\\' && i + 1 < pattern.length) {
-			const next = pattern[i + 1];
-			if (next === '[') {
-				out += '[';
-				i += 2;
-				continue;
-			}
-			if (next === '^' && out.length > classStart) {
-				out += '^';
-				i += 2;
-				continue;
-			}
-			if (next !== undefined && LITERAL_IN_CLASS.includes(next)) {
-				out += next;
-				i += 2;
-				continue;
-			}
-			if (next === '-' && pattern[i + 2] === ']') {
-				out += '-';
-				i += 2;
-				continue;
-			}
-			out += c + next;
-			i += 2;
-			continue;
-		}
-		out += c;
-		i++;
-	}
-	try {
-		new RegExp(out, 'u');
-	} catch {
-		return pattern;
-	}
-	return out;
-}
-
-export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
-	if (!textPattern) return undefined;
-	const compiled = compileAnchoredPattern(stripUselessEscapes(textPattern));
-	if ('error' in compiled) {
-		throw new Error(
-			`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
-				`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(`^(?:${stripUselessEscapes(textPattern)})$`)}. ` +
-				`Cause: ${compiled.error.message}. ` +
-				`Either fix the grammar or add the kind to an emitter exception list.`
-		);
-	}
-	return compiled.regex;
-}
-
-export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
-	const regex = anchoredLeafRegex(kind, textPattern);
-	return regex === undefined ? undefined : `/${regex.source}/${regex.flags}`;
-}
-
 export function expandAndDedupeContentTypes(
 	contentTypes: readonly string[],
 	nodeMap: NodeMap,
@@ -1267,4 +1178,16 @@ export function expandAndDedupeContentTypes(
 	};
 	for (const t of contentTypes) visit(t);
 	return expanded;
+}
+
+export function withEmptyOverload(
+	nodeMap: NodeMap,
+	kind: string,
+	head: string,
+	lines: readonly string[],
+	general?: string
+): string[] {
+	const empty = emptyForms(nodeMap).get(kind);
+	if (empty === undefined) return [...lines];
+	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
 }
