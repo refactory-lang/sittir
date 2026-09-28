@@ -2795,15 +2795,16 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
             _ => None,
         }
     }
-    fn line_terminated(&self) -> bool {
+    fn kind(&self) -> Option<::sittir_core::types::KindId> {
         match self {
-            TriviaTransport::LineComment(_) => true,
-            TriviaTransport::Text(t) => Self::kind_line_terminated(t.kind),
-            _ => false,
+            TriviaTransport::LineComment(_) => Some(::sittir_core::types::KindId(332)),
+            TriviaTransport::BlockComment(_) => Some(::sittir_core::types::KindId(335)),
+            TriviaTransport::Space(_) => Some(::sittir_core::types::KindId(166)),
+            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(167)),
+            TriviaTransport::Blankline(_) => Some(::sittir_core::types::KindId(168)),
+            TriviaTransport::Text(t) => Some(t.kind),
+            _ => None,
         }
-    }
-    fn kind_line_terminated(kind: ::sittir_core::types::KindId) -> bool {
-        matches!(kind.0, 332)
     }
 }
 

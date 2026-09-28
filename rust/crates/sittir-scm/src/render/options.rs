@@ -303,6 +303,12 @@ pub static EDGE_ROWS: &[u16] = &[
     11, 12, NO_SITE, 13, 14, 15, 16,
 ];
 
+/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED.
+pub static KIND_FLAGS: &[u8] = &[
+    0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+];
+
 /// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
 pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
 ];
@@ -560,6 +566,7 @@ pub fn defaults() -> ResolvedOptions {
         delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),
         edges: EDGE_SITES,
         edge_rows: EDGE_ROWS,
+        kind_flags: KIND_FLAGS,
         sites: SITE_SPECS,
         ..ResolvedOptions::default()
     }

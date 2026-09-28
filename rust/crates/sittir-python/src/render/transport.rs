@@ -1964,15 +1964,18 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
             _ => None,
         }
     }
-    fn line_terminated(&self) -> bool {
+    fn kind(&self) -> Option<::sittir_core::types::KindId> {
         match self {
-            TriviaTransport::Comment(_) => true,
-            TriviaTransport::Text(t) => Self::kind_line_terminated(t.kind),
-            _ => false,
+            TriviaTransport::Comment(_) => Some(::sittir_core::types::KindId(74)),
+            TriviaTransport::LineContinuationNewline(_) => Some(::sittir_core::types::KindId(104)),
+            TriviaTransport::LineContinuationNul(_) => Some(::sittir_core::types::KindId(105)),
+            TriviaTransport::Space(_) => Some(::sittir_core::types::KindId(121)),
+            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(113)),
+            TriviaTransport::Blankline(_) => Some(::sittir_core::types::KindId(122)),
+            TriviaTransport::DoubleBlankline(_) => Some(::sittir_core::types::KindId(123)),
+            TriviaTransport::Text(t) => Some(t.kind),
+            _ => None,
         }
-    }
-    fn kind_line_terminated(kind: ::sittir_core::types::KindId) -> bool {
-        matches!(kind.0, 74)
     }
 }
 

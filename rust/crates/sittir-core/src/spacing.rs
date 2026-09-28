@@ -539,7 +539,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 tree_id: coord.tree_id(),
             })?;
         let text = coord.resolve(sources)?;
-        self.write_deferred(text)?;
+        let token = crate::render::RenderSink::kind_of(self, coord)
+            .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));
+        if !token {
+            self.write_deferred(text)?;
+        }
         self.write_chunk(text)?;
         Ok(())
     }
@@ -573,6 +577,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn at_body_start(&self) -> bool {
         self.indent_armed
+    }
+
+    fn kind_has(&self, kind: crate::types::KindId, flag: u8) -> bool {
+        self.options.is_some_and(|options| options.kind_has(kind, flag))
     }
 
     fn hold_line_end(&mut self) {

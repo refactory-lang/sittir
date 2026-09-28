@@ -7,7 +7,7 @@ import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
-import { lineTerminated, triviaKinds } from './trivia.ts';
+import { lineTerminatedTrivia, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -756,10 +756,6 @@ function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
 	const display = displayNameOf(kind, nodeMap);
 	return kind === display || !nodeMap.nodes.has(display);
-}
-
-function lineTerminatedTrivia(kind: string, nodeMap: NodeMap): boolean {
-	return triviaKinds(nodeMap).has(kind) && lineTerminated(nodeMap, kind) === true;
 }
 
 function withKindEdges(

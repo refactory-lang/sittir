@@ -632,6 +632,7 @@ it('renders a built trailing line comment followed by the next statement on a ne
 
 **Follow-ups after Task 7 (not in its scope):**
 - **Done:** a trailing entry held past a field-held token seated before that token. Anonymous-kind transports now render with `render_with_trivia!(token …)` and don't seat. The token renders through its own transport, and `render_with_trivia` seats held trailing on entry. Repro: `fn f() { x = a + /* x */ b; }` renders `x = a /* x */ + b`, although the reader stamps `$tokensBetween: 1` on the comment. The entry must seat after the token.
+- **Done:** the same seating when the token is kept as a source coordinate (an edited tree). The sink reads the grammar's `KIND_FLAGS` table: a coordinate onto a `KIND_ANON` kind seats no held trailing entries, and `KIND_LINE_TERMINATED` replaces the per-grammar line-terminated match.
 - A line continuation that ends its own line is still followed by the parent's held statement separator. Repro: python `def foo():\n    pass \\\n\\\n\\\n` renders `pass \\\n\n\\\n\\\n`, one break too many. This predates Task 7.
 
 ### Task 7b: The source emitter prints trivia as kinds

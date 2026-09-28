@@ -3710,7 +3710,7 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
-The after edge of a line-terminated trivia kind (`lineTerminatedTrivia`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself.
+The after edge of a line-terminated trivia kind (`lineTerminatedTrivia`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
@@ -3725,7 +3725,7 @@ A lexed kind owns no edges: a token that reads as one text spaces against its ne
 seams, exactly as a text leaf does.
 ```
 
-### `packages/codegen/src/compiler/model/render-rules.ts::lineTerminatedTrivia`
+### `packages/codegen/src/compiler/model/trivia.ts::lineTerminatedTrivia`
 
 True for a trivia kind (`triviaKinds`) that is line-terminated (`lineTerminated`): a comment that ends only at a line break. Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after the comment on its row would be read as comment text.
 

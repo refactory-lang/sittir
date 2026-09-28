@@ -36,18 +36,14 @@ pub trait TriviaSeam {
     fn seam_text(&self) -> Option<&str> {
         None
     }
-    /// Whether this entry's kind ends only at a line break (a line comment).
-    fn line_terminated(&self) -> bool {
-        false
+    /// The kind of this entry, when it has one.
+    fn kind(&self) -> Option<KindId> {
+        None
     }
-    /// Whether the trivia kind `kind` is line-terminated, for an entry that
-    /// is a source coordinate rather than a transport.
-    fn kind_line_terminated(kind: KindId) -> bool
-    where
-        Self: Sized,
-    {
-        let _ = kind;
-        false
+    /// Whether this entry's kind ends only at a line break (a line comment),
+    /// from the kind flag table the sink holds.
+    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
+        self.kind().is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED))
     }
 }
 
@@ -61,8 +57,10 @@ impl<T: Render + TriviaSeam> TriviaEntry<T> {
 
     fn line_terminated(&self, w: &dyn RenderSink) -> bool {
         match &self.value {
-            SlotValue::Transport(value) => value.line_terminated(),
-            SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(T::kind_line_terminated),
+            SlotValue::Transport(value) => value.line_terminated(w),
+            SlotValue::Coord(coord) => w
+                .kind_of(coord)
+                .is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED)),
         }
     }
 

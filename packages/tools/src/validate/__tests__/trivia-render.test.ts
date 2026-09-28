@@ -43,6 +43,19 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
+	it('seats a same-line trailing entry after an anonymous token kept as a source coordinate', async () => {
+		const engine = await loadNativeEngine('rust');
+		const read = (await loadReadTreeNode('rust'))!;
+		const source = 'fn f() { x = a + /* x */ b; }';
+		const data = stripStructuralProvenance(materializeWrappedNodeData(read(engine.diagnostics.parseAndRead(source).tree))) as never as {
+			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
+		};
+		const binary = data._statements[0]._body._statements[0]._content._expression._right;
+		const at = source.indexOf('+');
+		binary._operator = { $type: binary._operator, $nodeHandle: binary._left.$_trivia.trailing[0].$nodeHandle, $span: { start: at, end: at + 1 } };
+		expect(engine.render(data as never as AnyNodeData).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+	});
+
 	it('lays root entries one per line, since the root gap starts a line', async () => {
 		const render = await detachedRenderer('rust');
 		expect(render('/* a */\n/* Comment */\n')).toBe('/* a */\n/* Comment */');

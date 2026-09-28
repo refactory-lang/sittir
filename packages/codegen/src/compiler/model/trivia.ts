@@ -224,3 +224,7 @@ export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
 export function innerGapsKeyed(nodeMap: NodeMap): boolean {
 	return [...emptyForms(nodeMap).values()].some((form) => form.gaps.length > 1);
 }
+
+export function lineTerminatedTrivia(kind: string, nodeMap: NodeMap): boolean {
+	return triviaKinds(nodeMap).has(kind) && lineTerminated(nodeMap, kind) === true;
+}

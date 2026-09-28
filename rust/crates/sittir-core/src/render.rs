@@ -161,6 +161,12 @@ pub trait RenderSink {
     /// ends its line (a grammar may include the terminator in the span)
     /// already wrote that break, so one break comes off what its edge left.
     fn hold_line_end(&mut self) {}
+    /// Whether `kind` carries `flag` (`options::KIND_ANON`, ...) in the kind
+    /// flag table of the options this sink holds; a sink with none answers no.
+    fn kind_has(&self, kind: KindId, flag: u8) -> bool {
+        let _ = (kind, flag);
+        false
+    }
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.

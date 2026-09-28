@@ -71,7 +71,7 @@ mod trivia_macro_tests {
     struct MockTrivia(String);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
-        fn line_terminated(&self) -> bool {
+        fn line_terminated(&self, _: &dyn RenderSink) -> bool {
             !self.0.starts_with("/*")
         }
     }
@@ -79,7 +79,7 @@ mod trivia_macro_tests {
     impl Render for MockTrivia {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
             w.text(&self.0)?;
-            w.seam(if crate::trivia::TriviaSeam::line_terminated(self) { "\n" } else { " " });
+            w.seam(if self.0.starts_with("/*") { " " } else { "\n" });
             Ok(())
         }
     }

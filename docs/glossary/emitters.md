@@ -4185,7 +4185,7 @@ The carrier's shape (leading, trailing and inner entries, each with its
 same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
-It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. `TriviaSeam::line_terminated` answers true for each line-terminated trivia kind's variant (the `lineTerminated` stamp), and for a `Text` of such a kind. `kind_line_terminated` answers the same by kind id, for an entry that is a source coordinate.
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. `TriviaSeam::kind` names each extras variant's kind id and a `Text`'s stamped kind. Whether an entry is line-terminated is then one lookup in the grammar's `KIND_FLAGS` table (`renderOptionsRs`), the same lookup a source-coordinate entry takes by its coordinate's kind, so no per-grammar match restates the fact.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
 
@@ -15795,7 +15795,7 @@ kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
 (`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
 trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
 `sittir_core::options::OptionSites` over those tables, and
-`pub type Options = sittir_core::options::Options<Sites>`. No per-grammar
+`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. No per-grammar
 struct, deserializer or resolver is emitted: reading a JS object through the
 trie and resolving it over a base table live once in core, and this file only
 supplies the tables. `defaults()` builds `spacing` through
@@ -15927,6 +15927,14 @@ empty.
 present, `NO_SITE` in every gap, sixteen cells to a line. `EDGE_ROWS` and the
 `SEATS_*` tables are written through it so a runtime lookup by kind id is one
 array read instead of a search.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::denseFlags`
+
+`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `NO_SITE`.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
+
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is a line-terminated trivia kind (`lineTerminatedTrivia`). The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A line-terminated entry, whether a transport or a coordinate, holds its line end.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 

@@ -607,15 +607,12 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
             _ => None,
         }
     }
-    fn line_terminated(&self) -> bool {
+    fn kind(&self) -> Option<::sittir_core::types::KindId> {
         match self {
-            TriviaTransport::Text(t) => Self::kind_line_terminated(t.kind),
-            _ => false,
+            TriviaTransport::Newline(_) => Some(::sittir_core::types::KindId(49)),
+            TriviaTransport::Text(t) => Some(t.kind),
+            _ => None,
         }
-    }
-    fn kind_line_terminated(kind: ::sittir_core::types::KindId) -> bool {
-        let _ = kind;
-        false
     }
 }
 

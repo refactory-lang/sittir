@@ -113,7 +113,7 @@ import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import type { GrammarName } from '../grammars.ts';
-import { lineTerminated, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
+import { triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -1053,7 +1053,8 @@ const EMPTY_PLAN: RenderPlan = {
 	depthSites: [],
 	indentId: 0,
 	dedentId: 0,
-	whitespaceText: []
+	whitespaceText: [],
+	kindFlags: []
 };
 const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 
@@ -2602,11 +2603,6 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	const kindIdByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
-	const lineTerminatedNodes = extrasNodes.filter((node) => lineTerminated(nodeMap, node.kind) === true);
-	const lineTerminatedIds = lineTerminatedNodes.flatMap((node) => {
-		const id = kindIdByKind?.get(node.kind);
-		return id === undefined ? [] : [id];
-	});
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_text(&self) -> Option<&str> {');
 	lines.push('        match self {');
@@ -2617,17 +2613,15 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
-	lines.push('    fn line_terminated(&self) -> bool {');
+	lines.push('    fn kind(&self) -> Option<::sittir_core::types::KindId> {');
 	lines.push('        match self {');
-	for (const node of lineTerminatedNodes) lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(_) => true,`);
-	lines.push('            TriviaTransport::Text(t) => Self::kind_line_terminated(t.kind),');
-	lines.push('            _ => false,');
+	for (const node of extrasNodes) {
+		const id = kindIdByKind?.get(node.kind);
+		if (id !== undefined) lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(_) => Some(::sittir_core::types::KindId(${id})),`);
+	}
+	lines.push('            TriviaTransport::Text(t) => Some(t.kind),');
+	lines.push('            _ => None,');
 	lines.push('        }');
-	lines.push('    }');
-	lines.push('    fn kind_line_terminated(kind: ::sittir_core::types::KindId) -> bool {');
-	lines.push(
-		lineTerminatedIds.length === 0 ? '        let _ = kind;\n        false' : `        matches!(kind.0, ${lineTerminatedIds.join(' | ')})`
-	);
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
