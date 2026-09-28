@@ -163,20 +163,15 @@ polymorph helpers need to appear explicitly.
 				// once a NESTED cascade level's config replaces that raw mint's
 				// alias content with the properly-split polymorph body (transform.ts's
 				// ALIAS-rename deposit + repoint), the ORIGINAL raw mint becomes a
-				// provably-unreachable orphan that still reaches codegen (nothing
-				// prunes `rules` map entries by reachability — see
-				// docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan
-				// every `rules` map entry..." entry) and can trip real bugs
-				// downstream (confirmed: a duplicate `AnyTransport` impl, a hard
-				// `cargo build` failure, from `_export_statement_default_from_arm`'s
-				// nested raw mint). Folding the ENTIRE `_export_statement_default`
+				// provably-unreachable orphan. `sittirGrammar`'s dead-mint pass
+				// (`blankDeadEnrichMints`) blanks every enrich mint the final
+				// grammar does not reach, so the orphan is pruned before codegen.
+				// Folding the ENTIRE `_export_statement_default`
 				// cascade into ONE patches entry with deep, multi-level string
 				// paths — same idiom `class_body`'s
 				// `'1/0/0'`/`'1/0/1'`/`'1/0/3'` entry above already uses — means
 				// `_export_statement_default` is fully materialized in ONE
-				// resolvePatch call, so wire()'s existing orphan-detection
-				// (`getEnrichSubsequenceOwners`/`context.authoredRuleNames`) marks
-				// its raw enrich mint as orphaned in that ONE pass, instead of
+				// resolvePatch call, instead of
 				// leaving a nested raw mint behind for a LATER, separate
 				// resolvePatch call to orphan. Produces the exact same final kind
 				// names as the 3 cascaded entries did (verified against

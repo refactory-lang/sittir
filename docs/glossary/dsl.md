@@ -2505,11 +2505,12 @@ The non-enumerable key under which `enrich()` attaches its rule-origin map to th
 ```text
 /**
  * Well-known non-enumerable key attached by `enrich()` to the grammar result:
- * synthesized clause-hoist name → the parent kind whose (pre-override) body
+ * synthesized subsequence name → the parent kind whose (pre-override) body
  * it was hoisted from. Covers both the `hidden-subsequence` origins (inline-safe)
- * AND the `visible-subsequence` ones (`_<parent>_group<N>`) — wire() needs both, since an override
- * redeclaring the recorded owner orphans the synthesized rule regardless of
- * which category it's in.
+ * AND the `visible-subsequence` ones (`_<parent>_group<N>`). wire() reads it to
+ * add each visible subsequence's conflict groups (with its owner, and alone).
+ * Orphaned mints are not found here: `blankDeadEnrichMints` finds them from
+ * the final grammar's reachability.
  */
 ```
 
