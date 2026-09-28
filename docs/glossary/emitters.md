@@ -3654,6 +3654,8 @@ catch-all `other =>` arm so the match is exhaustive over u16.
 i.e. a member of the slot is pattern-modeled — so a bare string in any
 other slot is refused rather than guessed at.
 
+`textArms` are matched first in the object branch, after `$text` is read into `text`. `renderTriviaTransportSupport` passes the kinded-text arms there.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitAliasUnwrapRecurseArm`
 
 ```text
@@ -4182,6 +4184,8 @@ its own template.
 The carrier's shape (leading, trailing and inner entries, each with its
 same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
+
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. `TriviaSeam::line_terminated` answers true for each line-terminated trivia kind's variant (the `lineTerminated` stamp), and for a `Text` of such a kind. `kind_line_terminated` answers the same by kind id, for an entry that is a source coordinate.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
 
@@ -16032,6 +16036,8 @@ error, not the render's.
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
 the transport's own value still wins.
+
+Every struct transport prepares its `transport_trivia_data` first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 

@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { AssembledSupertype } from './node-map.ts';
+import { AssembledSupertype, isFixedTextLeaf } from './node-map.ts';
 import { displayNameOf } from './display-name.ts';
 import { DEPTH_ARMS, WHITESPACE_SUPERTYPE } from '../../dsl/primitives/spacing.ts';
 
@@ -22,4 +22,15 @@ export function whitespaceArmsOf(nodeMap: NodeMap): readonly string[] {
 
 export function spacingArmsOf(nodeMap: NodeMap): readonly string[] {
 	return whitespaceArmsOf(nodeMap).filter((arm) => !(DEPTH_ARMS as readonly string[]).includes(arm));
+}
+
+export function lineBreakingArms(nodeMap: NodeMap): readonly string[] {
+	const symbols = whitespaceSymbolsOf(nodeMap);
+	const textOf = (arm: string): string | undefined => {
+		const node = nodeMap.nodes.get(symbols.get(arm)!);
+		return node !== undefined && isFixedTextLeaf(node) ? node.text : undefined;
+	};
+	return spacingArmsOf(nodeMap)
+		.filter((arm) => textOf(arm)?.includes('\n') === true)
+		.sort((a, b) => textOf(a)!.length - textOf(b)!.length);
 }

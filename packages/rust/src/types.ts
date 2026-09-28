@@ -13408,7 +13408,10 @@ export namespace RawStringLiteral {
 
 export namespace LineComment {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: TSKindId.Newline | TSKindId.Blankline;
+			readonly before?: WhitespaceArm;
+		};
 	}
 }
 

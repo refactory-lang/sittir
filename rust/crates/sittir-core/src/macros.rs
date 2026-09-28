@@ -47,15 +47,23 @@ mod trivia_macro_tests {
     use crate::slot::SlotValue;
     use crate::trivia::{TransportTrivia, TriviaEntry};
 
-    /// A trivia entry that writes its text: the macro's control flow is under
-    /// test, not any grammar's comment template.
+    /// A trivia entry that writes its text and then its after edge, as a
+    /// comment kind's template does: a line comment's edge breaks the line,
+    /// a block comment's is a space. The macro's control flow is under test,
+    /// not any grammar's comment template.
     struct MockTrivia(String);
 
-    impl crate::trivia::TriviaSeam for MockTrivia {}
+    impl crate::trivia::TriviaSeam for MockTrivia {
+        fn line_terminated(&self) -> bool {
+            !self.0.starts_with("/*")
+        }
+    }
 
     impl Render for MockTrivia {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-            w.text(&self.0)
+            w.text(&self.0)?;
+            w.seam(if crate::trivia::TriviaSeam::line_terminated(self) { "\n" } else { " " });
+            Ok(())
         }
     }
 
@@ -238,7 +246,7 @@ mod trivia_macro_tests {
     }
 
     #[test]
-    fn a_same_line_trailing_entry_ends_its_line_before_what_follows() {
+    fn a_held_trailing_entry_meets_what_follows_through_its_after_edge() {
         let left = owner("a", &[], &["/* x */"], true);
         let right = owner("b", &[], &[], false);
         let text = render_with(|w| {
@@ -246,6 +254,20 @@ mod trivia_macro_tests {
             w.text("+")?;
             right.render(w)
         });
-        assert_eq!(text, "a+ /* x */\nb");
+        assert_eq!(text, "a+ /* x */ b");
+    }
+
+    #[test]
+    fn a_line_comment_whose_span_ends_its_line_breaks_once() {
+        assert_eq!(
+            render(&owner("CONTENT", &["//! a\n", "//! b\n"], &[], false)),
+            "//! a\n//! b\nCONTENT"
+        );
+    }
+
+    #[test]
+    fn a_standalone_render_keeps_a_line_comment_break_and_drops_a_block_comment_space() {
+        assert_eq!(render(&owner("a;", &[], &["// end"], true)), "a; // end\n");
+        assert_eq!(render(&owner("a;", &[], &["/* end */"], true)), "a; /* end */");
     }
 }

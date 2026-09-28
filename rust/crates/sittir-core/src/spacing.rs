@@ -158,7 +158,17 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
-    deferred: Vec<String>,
+    deferred: Vec<DeferredRun>,
+    line_end_held: bool,
+}
+
+/// A trailing run rendered ahead of where it is written: its text, and the
+/// seam its last entry left (its after edge) with the strength that seam
+/// holds and whether it is a line-terminated entry's break.
+struct DeferredRun {
+    text: String,
+    end: Option<(u8, String)>,
+    line_end: bool,
 }
 
 /// The writer's spacing state, set aside while a deferred run renders on its
@@ -172,6 +182,7 @@ struct HeldContext {
     seam_strength: u8,
     seam_text: String,
     seam_is_token: bool,
+    line_end_held: bool,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -194,6 +205,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             options: None,
             deferring: None,
             deferred: Vec::new(),
+            line_end_held: false,
         }
     }
 
@@ -276,6 +288,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
             seam_text: std::mem::take(&mut self.seam_text),
             seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
+            line_end_held: std::mem::replace(&mut self.line_end_held, false),
         }
     }
 
@@ -288,28 +301,36 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_strength = held.seam_strength;
         self.seam_text = held.seam_text;
         self.seam_is_token = held.seam_is_token;
+        self.line_end_held = held.line_end_held;
     }
 
     /// Writes the held trailing runs where the output stands, ahead of any
-    /// held seam, each after a space. A run that leaves the line open makes
-    /// the held seam a line break, since what follows a line comment on its
-    /// row would be swallowed by it, unless `next` breaks the line itself.
+    /// held seam, each after a space. The seam the last run ended on (its
+    /// entry's after edge) then meets the held seam under the seam law, as it
+    /// would have had the run been written in place, unless `next` opens with
+    /// a line break of its own; a run whose text ended its line already wrote
+    /// one break of that seam. A line-terminated entry's break is held as
+    /// such.
     fn write_deferred(&mut self, next: &str) -> std::fmt::Result {
         if self.deferring.is_some() || self.deferred.is_empty() {
             return Ok(());
         }
+        let mut last = None;
         for run in std::mem::take(&mut self.deferred) {
             if !self.at_line_start() {
                 self.write_text(" ")?;
             }
-            self.write_text(&run)?;
+            self.write_text(&run.text)?;
+            last = Some(run);
         }
-        if !self.at_line_start() && !self.breaks_line(next) {
-            self.seam = Some(seam_rank("\n"));
-            self.seam_strength = SEAM_DECLARED;
-            self.seam_text.clear();
-            self.seam_text.push('\n');
-            self.seam_is_token = false;
+        if let Some(DeferredRun { end: Some((strength, text)), line_end, .. }) = last {
+            let text = if self.at_line_start() { text.strip_prefix('\n').unwrap_or(&text) } else { &text };
+            if !next.starts_with('\n') && !text.is_empty() {
+                self.merge_seam_with(text, strength);
+                if line_end {
+                    crate::render::RenderSink::hold_line_end(self);
+                }
+            }
         }
         Ok(())
     }
@@ -354,6 +375,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// held rank. The payload's own buffer is kept (not dropped) so a
     /// following seam has a ready allocation to merge into.
     fn flush_seam(&mut self) -> std::fmt::Result {
+        self.line_end_held = false;
         let Some(rank) = self.seam.take() else {
             return Ok(());
         };
@@ -416,11 +438,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// it is dropped, as a payload held before the first text is. A seam
     /// lies between two things; a node rendered on its own carries no edge
     /// whitespace. A payload a whitespace token contributed is written out
-    /// instead: the token is part of the node. The root render calls this
+    /// instead: the token is part of the node. So is the break a
+    /// line-terminated trivia entry left: without it, what follows the render
+    /// would read as that entry's text. The root render calls this
     /// once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
         self.write_deferred("")?;
-        if self.seam_is_token {
+        if self.seam_is_token || (self.line_end_held && self.seam.is_some() && self.seam_text.contains('\n')) {
             self.flush_seam()?;
         }
         self.seam = None;
@@ -504,7 +528,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
-        self.sources.and_then(|sources| sources.kind_of(coord))
+        coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
@@ -543,6 +567,34 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.at_line_start()
     }
 
+    fn pending_break(&self) -> bool {
+        self.seam.is_some() && self.seam_text.contains('\n')
+    }
+
+    fn at_body_start(&self) -> bool {
+        self.indent_armed
+    }
+
+    fn hold_line_end(&mut self) {
+        if self.at_line_start() {
+            if self.seam.is_some() && self.seam_text.starts_with('\n') {
+                self.seam_text.remove(0);
+                if self.seam_text.is_empty() {
+                    self.seam = None;
+                } else {
+                    self.seam = Some(seam_rank(&self.seam_text));
+                }
+            }
+            return;
+        }
+        if self.seam.is_some() && self.seam_text.contains('\n') {
+            self.seam_strength = self.seam_strength.max(SEAM_TRIVIA);
+        } else {
+            self.merge_seam_with("\n", SEAM_TRIVIA);
+        }
+        self.line_end_held = true;
+    }
+
     fn defer_trailing(
         &mut self,
         render: &mut dyn FnMut(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult,
@@ -554,10 +606,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.deferring = Some(String::new());
         let result = render(self);
         let run = self.deferring.take().unwrap_or_default();
+        let end = self.seam.map(|_| (self.seam_strength, self.seam_text.clone()));
+        let line_end = self.line_end_held && end.is_some();
         self.restore_context(held);
         result?;
         if !run.is_empty() {
-            self.deferred.push(run);
+            self.deferred.push(DeferredRun { text: run, end, line_end });
         }
         Ok(())
     }

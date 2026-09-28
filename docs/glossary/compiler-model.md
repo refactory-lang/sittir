@@ -3710,6 +3710,8 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
+The after edge of a line-terminated trivia kind (`lineTerminatedTrivia`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
 Whether a kind gets edge seams: it is a compound node, and it is either
@@ -3722,6 +3724,12 @@ since the two would claim the same `<kind>_before` key.
 A lexed kind owns no edges: a token that reads as one text spaces against its neighbours through the parent's
 seams, exactly as a text leaf does.
 ```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::lineTerminatedTrivia`
+
+True for a trivia kind (`triviaKinds`) that is line-terminated (`lineTerminated`): a comment that ends only at a line break. Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after the comment on its row would be read as comment text.
+
+At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` is a pattern leaf and owns none. After a line-terminated entry, the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end`). The edge may widen it to a blank line; no later seam narrows it, and it survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, or a deferred run's end seam.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
 
@@ -4325,6 +4333,10 @@ The arms of `whitespaceSymbolsOf`, in declaration order.
 
 `whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
 separator gap admits, where moving depth has no meaning.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::lineBreakingArms`
+
+The spacing arms whose whitespace kind's literal text contains a line break, narrowest first: `newline` before `blankline` in every grammar today. Read from the `_whitespace` members' own text, never from the arm names. It is the arm set for the after edge of a line-terminated trivia kind, and its first arm is that edge's default.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 

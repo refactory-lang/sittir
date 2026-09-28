@@ -113,7 +113,7 @@ import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import type { GrammarName } from '../grammars.ts';
-import { triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
+import { lineTerminated, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -1422,7 +1422,8 @@ function boxedInEnum(
 function emitTransportEnumFromNapiValueBody(
 	enumName: string,
 	kindIdArms: readonly string[],
-	admitsVerbatim: boolean
+	admitsVerbatim: boolean,
+	textArms: readonly string[] = []
 ): string[] {
 	const lines: string[] = [];
 	lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
@@ -1438,7 +1439,9 @@ function emitTransportEnumFromNapiValueBody(
 		`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`
 	);
 	lines.push(`                )?;`);
+	if (textArms.length > 0) lines.push(`                let text: Option<String> = obj.get("$text")?;`);
 	lines.push(`                match kind_id {`);
+	for (const arm of textArms) lines.push(`    ${arm}`);
 	for (const arm of kindIdArms) lines.push(`    ${arm}`);
 	lines.push(`                }`);
 	lines.push(`            }`);
@@ -2570,12 +2573,14 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		lines.push(`    ${rustTransportVariantName(node)}(${rustTransportStructName(node)}),`);
 	}
 	lines.push('    Verbatim(VerbatimTransport),');
+	lines.push('    Text(::sittir_core::trivia::TriviaText),');
 	lines.push('}');
 	lines.push('');
 	lines.push(
 		...prepareEnumImpl('TriviaTransport', [
 			...extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
-			{ variant: 'Verbatim', payload: true }
+			{ variant: 'Verbatim', payload: true },
+			{ variant: 'Text', payload: true }
 		])
 	);
 
@@ -2589,12 +2594,19 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		lines.push(`            TriviaTransport::${variant}(t) => t.render(w),`);
 	}
 	lines.push('            TriviaTransport::Verbatim(t) => t.render(w),');
+	lines.push('            TriviaTransport::Text(t) => t.render(w),');
 	lines.push('        }');
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
+	const kindIdByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
+	const lineTerminatedNodes = extrasNodes.filter((node) => lineTerminated(nodeMap, node.kind) === true);
+	const lineTerminatedIds = lineTerminatedNodes.flatMap((node) => {
+		const id = kindIdByKind?.get(node.kind);
+		return id === undefined ? [] : [id];
+	});
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_text(&self) -> Option<&str> {');
 	lines.push('        match self {');
@@ -2605,10 +2617,21 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
+	lines.push('    fn line_terminated(&self) -> bool {');
+	lines.push('        match self {');
+	for (const node of lineTerminatedNodes) lines.push(`            TriviaTransport::${rustTransportVariantName(node)}(_) => true,`);
+	lines.push('            TriviaTransport::Text(t) => Self::kind_line_terminated(t.kind),');
+	lines.push('            _ => false,');
+	lines.push('        }');
+	lines.push('    }');
+	lines.push('    fn kind_line_terminated(kind: ::sittir_core::types::KindId) -> bool {');
+	lines.push(
+		lineTerminatedIds.length === 0 ? '        let _ = kind;\n        false' : `        matches!(kind.0, ${lineTerminatedIds.join(' | ')})`
+	);
+	lines.push('    }');
 	lines.push('}');
 	lines.push('');
 
-	const kindIdByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
 	const kindIdArms: string[] = [];
 	for (const node of extrasNodes) {
 		const id = kindIdByKind?.get(node.kind);
@@ -2625,7 +2648,15 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('        env: ::napi::sys::napi_env,');
 	lines.push('        napi_val: ::napi::sys::napi_value,');
 	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true));
+	const textArms = extrasNodes.flatMap((node) => {
+		const id = kindIdByKind?.get(node.kind);
+		return id === undefined || !(node instanceof AbstractAssembledCompound)
+			? []
+			: [
+					`                ${id} if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(${id}), text: text.unwrap_or_default() })),`
+				];
+	});
+	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true, textArms));
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
@@ -3026,7 +3057,7 @@ function prepareStructImpl(
 	isCompound: boolean,
 	nodeMap: NodeMap
 ): string[] {
-	const body: string[] = [];
+	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		body.push(...listGapClassification(plan, node));

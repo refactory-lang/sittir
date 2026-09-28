@@ -39,7 +39,7 @@ describe('selfContainedRenderInput', () => {
 		).toEqual({ $type: COMPOUND, $span: { start: 2, end: 4 } });
 	});
 
-	it('turns a storage-less trivia entry into its text on both sides', () => {
+	it('turns a storage-less trivia entry into its text and stamped kind on both sides', () => {
 		const out = selfContainedRenderInput(
 			{
 				$type: COMPOUND,
@@ -52,7 +52,7 @@ describe('selfContainedRenderInput', () => {
 			source,
 			isLeafKind
 		) as { $_trivia: unknown };
-		expect(out.$_trivia).toEqual({ leading: ['// c'], trailing: ['// d'] });
+		expect(out.$_trivia).toEqual({ leading: [{ $type: 3, $text: '// c' }], trailing: [{ $type: 3, $text: '// d' }] });
 	});
 
 	it('keeps the same-line flag on a text entry and detaches inner entries', () => {
@@ -69,8 +69,8 @@ describe('selfContainedRenderInput', () => {
 			isLeafKind
 		) as { $_trivia: unknown };
 		expect(out.$_trivia).toEqual({
-			trailing: [{ $text: '// c', $sameLine: true, $tokensBetween: 1 }],
-			inner: { x: ['// c'] }
+			trailing: [{ $type: 3, $text: '// c', $sameLine: true, $tokensBetween: 1 }],
+			inner: { x: [{ $type: 3, $text: '// c' }] }
 		});
 	});
 });

@@ -7,11 +7,11 @@ import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
-import { triviaKinds } from './trivia.ts';
+import { lineTerminated, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { lineBreakingArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -758,6 +758,10 @@ function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	return kind === display || !nodeMap.nodes.has(display);
 }
 
+function lineTerminatedTrivia(kind: string, nodeMap: NodeMap): boolean {
+	return triviaKinds(nodeMap).has(kind) && lineTerminated(nodeMap, kind) === true;
+}
+
 function withKindEdges(
 	rule: RenderRule,
 	kind: string,
@@ -767,8 +771,19 @@ function withKindEdges(
 ): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
-	const part = (side: SeparatorSide): RenderRule =>
-		seamChoice(kind, seamLabel(displayNameOf(kind, config.nodeMap), side), 'space', resolver, seams, edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config));
+	const breaking = lineTerminatedTrivia(kind, config.nodeMap) ? lineBreakingArms(config.nodeMap) : [];
+	const breakingSeams: SeamArms = { ...seams, arms: seams.arms.filter((arm) => breaking.includes(arm)) };
+	const part = (side: SeparatorSide): RenderRule => {
+		const after = side === 'after' && breaking.length > 0;
+		return seamChoice(
+			kind,
+			seamLabel(displayNameOf(kind, config.nodeMap), side),
+			after ? breaking[0]! : 'space',
+			resolver,
+			after ? breakingSeams : seams,
+			edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
+		);
+	};
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {

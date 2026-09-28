@@ -24065,7 +24065,7 @@
         }
       ]
     },
-    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -24073,9 +24073,9 @@
     "sourceIn": "\nextern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
-    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
   {
@@ -24989,7 +24989,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -24997,9 +24997,9 @@
     "sourceIn": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
-    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
   {
@@ -25816,7 +25816,7 @@
       ],
       "_statements": []
     },
-    "expectedOutput": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -25824,9 +25824,9 @@
     "sourceIn": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))",
-    "wrappedText": "fn _f() { let _ = {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}; }",
+    "wrappedText": "fn _f() { let _ = {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -190842,7 +190842,10 @@
                       "end": 15
                     }
                   },
-                  "/* two */"
+                  {
+                    "$type": 335,
+                    "$text": "/* two */"
+                  }
                 ]
               }
             },
@@ -190867,7 +190870,7 @@
         }
       ]
     },
-    "expectedOutput": "ok!{// one\n/* two */\n}"
+    "expectedOutput": "ok!{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -190875,9 +190878,9 @@
     "sourceIn": "\nok! {\n  // one\n  /* two */\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "ok!{// one\n/* two */\n}",
+    "expectedSourceOut": "ok!{// one\n/* two */}",
     "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) arguments: (delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment))))",
-    "wrappedText": "ok!{// one\n/* two */\n}",
+    "wrappedText": "ok!{// one\n/* two */}",
     "wrappedOffset": 0
   },
   {
@@ -190936,7 +190939,10 @@
                   "end": 15
                 }
               },
-              "/* two */"
+              {
+                "$type": 335,
+                "$text": "/* two */"
+              }
             ]
           }
         },
@@ -190959,7 +190965,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "ok!{// one\n/* two */\n}"
+    "expectedOutput": "ok!{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -190967,9 +190973,9 @@
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "ok!{// one\n/* two */\n}",
+    "expectedSourceOut": "ok!{// one\n/* two */}",
     "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment)))",
-    "wrappedText": "ok!{// one\n/* two */\n}",
+    "wrappedText": "ok!{// one\n/* two */}",
     "wrappedOffset": 0
   },
   {
@@ -191014,13 +191020,16 @@
                 "end": 15
               }
             },
-            "/* two */"
+            {
+              "$type": 335,
+              "$text": "/* two */"
+            }
           ]
         }
       },
       "_delim_tokens": []
     },
-    "expectedOutput": "{// one\n/* two */\n}"
+    "expectedOutput": "{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -191028,9 +191037,9 @@
     "sourceIn": "{\n  // one\n  /* two */\n}",
     "pattern": "delim_token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{// one\n/* two */\n}",
+    "expectedSourceOut": "{// one\n/* two */}",
     "expectedReparseTree": "(delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment))",
-    "wrappedText": "fn _f() { mac! {// one\n/* two */\n} }",
+    "wrappedText": "fn _f() { mac! {// one\n/* two */} }",
     "wrappedOffset": 15
   },
   {
@@ -225338,8 +225347,14 @@
       "$_trivia": {
         "inner": {
           "statements": [
-            "/*\n * Block comments\n */",
-            "/* Comment with asterisks **/",
+            {
+              "$type": 335,
+              "$text": "/*\n * Block comments\n */"
+            },
+            {
+              "$type": 335,
+              "$text": "/* Comment with asterisks **/"
+            },
             {
               "$type": 335,
               "$source": 0,
@@ -225448,13 +225463,16 @@
                 "end": 113
               }
             },
-            "/**/"
+            {
+              "$type": 335,
+              "$text": "/**/"
+            }
           ]
         }
       },
       "_statements": []
     },
-    "expectedOutput": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/\n"
+    "expectedOutput": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/"
   },
   {
     "kind": "roundtrip",
@@ -225462,9 +225480,9 @@
     "sourceIn": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/\n",
+    "expectedSourceOut": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/",
     "expectedReparseTree": "(source_file (block_comment) (block_comment) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment))",
-    "wrappedText": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/\n",
+    "wrappedText": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/",
     "wrappedOffset": 0
   },
   {
@@ -225478,7 +225496,10 @@
       "$_trivia": {
         "inner": {
           "statements": [
-            "/* /* double nested */ */",
+            {
+              "$type": 335,
+              "$text": "/* /* double nested */ */"
+            },
             {
               "$type": 332,
               "$source": 0,
@@ -225510,7 +225531,10 @@
                 "end": 34
               }
             },
-            "/*/*/* triple nested */*/*/",
+            {
+              "$type": 335,
+              "$text": "/*/*/* triple nested */*/*/"
+            },
             {
               "$type": 332,
               "$source": 0,
@@ -225542,7 +225566,10 @@
                 "end": 71
               }
             },
-            "/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/",
+            {
+              "$type": 335,
+              "$text": "/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/"
+            },
             {
               "$type": 332,
               "$source": 0,
@@ -226126,7 +226153,10 @@
                 "end": 96
               }
             },
-            "/*   - Only a comment */",
+            {
+              "$type": 335,
+              "$text": "/*   - Only a comment */"
+            },
             {
               "$type": 335,
               "$source": 0,
@@ -226181,13 +226211,16 @@
                 "end": 170
               }
             },
-            "/*** - Only a comment */"
+            {
+              "$type": 335,
+              "$text": "/*** - Only a comment */"
+            }
           ]
         }
       },
       "_statements": []
     },
-    "expectedOutput": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n"
+    "expectedOutput": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */"
   },
   {
     "kind": "roundtrip",
@@ -226195,9 +226228,9 @@
     "sourceIn": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
+    "expectedSourceOut": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */",
     "expectedReparseTree": "(source_file (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))) (block_comment))",
-    "wrappedText": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
+    "wrappedText": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */",
     "wrappedOffset": 0
   },
   {
@@ -226211,7 +226244,10 @@
       "$_trivia": {
         "inner": {
           "statements": [
-            "/*   /* */  /** */  /*! */  */",
+            {
+              "$type": 335,
+              "$text": "/*   /* */  /** */  /*! */  */"
+            },
             {
               "$type": 335,
               "$source": 0,
@@ -226325,7 +226361,7 @@
       },
       "_statements": []
     },
-    "expectedOutput": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n"
+    "expectedOutput": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */"
   },
   {
     "kind": "roundtrip",
@@ -226333,9 +226369,9 @@
     "sourceIn": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
+    "expectedSourceOut": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */",
     "expectedReparseTree": "(source_file (block_comment) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))))",
-    "wrappedText": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
+    "wrappedText": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */",
     "wrappedOffset": 0
   },
   {
@@ -226578,14 +226614,20 @@
                 },
                 "$sameLine": true
               },
-              "/**/",
-              "/***/"
+              {
+                "$type": 335,
+                "$text": "/**/"
+              },
+              {
+                "$type": 335,
+                "$text": "/***/"
+              }
             ]
           }
         }
       ]
     },
-    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n"
+    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/"
   },
   {
     "kind": "roundtrip",
@@ -226593,9 +226635,9 @@
     "sourceIn": "\n//!\n\n/*!*/\n\n//\n\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n\n/***/\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n",
+    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "expectedReparseTree": "(source_file (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker))) (line_comment (line_comment_regular)) (line_comment (line_comment_doc_outer outer: (outer_line_doc_comment_marker) doc: (doc_comment))) statements: (let_declaration pattern: (identifier)) (line_comment (line_comment_regular)) (block_comment) (block_comment))",
-    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n",
+    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "wrappedOffset": 0
   },
   {
@@ -226833,12 +226875,18 @@
             },
             "$sameLine": true
           },
-          "/**/",
-          "/***/"
+          {
+            "$type": 335,
+            "$text": "/**/"
+          },
+          {
+            "$type": 335,
+            "$text": "/***/"
+          }
         ]
       }
     },
-    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n"
+    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/"
   },
   {
     "kind": "roundtrip",
@@ -226846,9 +226894,9 @@
     "sourceIn": "let x;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n",
+    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "expectedReparseTree": "(let_declaration pattern: (identifier))",
-    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n/***/\n",
+    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "wrappedOffset": 0
   },
   {
@@ -249458,7 +249506,10 @@
           ],
           "$_trivia": {
             "leading": [
-              "/* plain block comment */"
+              {
+                "$type": 335,
+                "$text": "/* plain block comment */"
+              }
             ]
           },
           "$slotOrder": [
@@ -249529,7 +249580,10 @@
       ],
       "$_trivia": {
         "leading": [
-          "/* plain block comment */"
+          {
+            "$type": 335,
+            "$text": "/* plain block comment */"
+          }
         ]
       },
       "$slotOrder": [

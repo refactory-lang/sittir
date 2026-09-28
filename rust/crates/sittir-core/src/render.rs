@@ -144,6 +144,23 @@ pub trait RenderSink {
     /// caller never asks it.
     fn dedent(&mut self, seam: &str);
     fn ends_line(&self) -> bool;
+    /// Whether the seam held for the next write breaks the line.
+    fn pending_break(&self) -> bool {
+        false
+    }
+    /// Whether the output stands right after an indent that nothing has been
+    /// written under yet: the start of a block body.
+    fn at_body_start(&self) -> bool {
+        false
+    }
+    /// The trivia entry just written is line-terminated, so a line break
+    /// follows it: at least the one its lexical fact requires, or the wider
+    /// one its after edge left pending. No later seam takes it away (a rank
+    /// above it still widens it), and it is written even at the end of the
+    /// render, where any other held seam is dropped. An entry whose own text
+    /// ends its line (a grammar may include the terminator in the span)
+    /// already wrote that break, so one break comes off what its edge left.
+    fn hold_line_end(&mut self) {}
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.

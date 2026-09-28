@@ -348,8 +348,9 @@ export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: Any
  * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
  * bytes as `$text` (sliced from `source` when the reader captured none);
  * a storage-less compound keeps only its identity and rebuilds from its
- * empty slots, and a storage-less trivia entry becomes its text, as
- * `{ $text, $sameLine, $tokensBetween }` when it shares its owner's row.
+ * empty slots, and a storage-less trivia entry becomes its text with the
+ * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
+ * `$tokensBetween` when it shares its owner's row.
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -371,8 +372,9 @@ export function selfContainedRenderInput(
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
-			if (record.$sameLine !== true) return text;
-			return { $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
+			const kind = typeof record.$type === 'number' ? { $type: record.$type } : {};
+			if (record.$sameLine !== true) return { ...kind, $text: text };
+			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);

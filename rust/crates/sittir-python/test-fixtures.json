@@ -87337,7 +87337,7 @@
         }
       ]
     },
-    "expectedOutput": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n\n    # The rest of your commands go here\n"
+    "expectedOutput": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n"
   },
   {
     "kind": "roundtrip",
@@ -87345,9 +87345,9 @@
     "sourceIn": "\nmatch command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n\n    # The rest of your commands go here\n",
+    "expectedSourceOut": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) body: (match_block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) case_pattern: (case_pattern (simple_pattern (dotted_name names: (identifier))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier) element: (identifier)))))) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (case_list_pattern (list_pattern_case_patterns case_pattern: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))) case_pattern: (case_pattern (simple_pattern (dotted_name names: (identifier))))))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment_eq left: (identifier) right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_elements element: (identifier))))))) (newline))))) (comment)))))",
-    "wrappedText": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n\n    # The rest of your commands go here\n",
+    "wrappedText": "match command.split():\n    case [\"quit\"]:\n        print (\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here\n",
     "wrappedOffset": 0
   },
   {
@@ -147151,9 +147151,9 @@
     "sourceIn": "\ndef e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\n\\\n\n\\\n",
+    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\\\n\\\n",
     "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (typed_parameter name: (list_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (typed_parameter name: (dictionary_splat_pattern target: (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer_decimal)) parameter: (dictionary_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements parameter: (list_splat_pattern target: (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat content: (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat content: (parenthesized_list_splat content: (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
-    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\n\\\n\n\\\n",
+    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass \\\n\n\\\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -148207,11 +148207,18 @@
       "$_trivia": {
         "trailing": [
           {
+            "$type": 104,
             "$text": "\\\n",
             "$sameLine": true
           },
-          "\\\n",
-          "\\\n"
+          {
+            "$type": 104,
+            "$text": "\\\n"
+          },
+          {
+            "$type": 104,
+            "$text": "\\\n"
+          }
         ]
       },
       "$slotOrder": [
@@ -148220,7 +148227,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def foo():\n    pass \\\n\n\n\\\n\n\\\n"
+    "expectedOutput": "def foo():\n    pass \\\n\n\\\n\\\n"
   },
   {
     "kind": "roundtrip",
@@ -148228,9 +148235,9 @@
     "sourceIn": "def foo():\n    pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo():\n    pass \\\n\n\n\\\n\n\\\n",
+    "expectedSourceOut": "def foo():\n    pass \\\n\n\\\n\\\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))",
-    "wrappedText": "def foo():\n    pass \\\n\n\n\\\n\n\\\n",
+    "wrappedText": "def foo():\n    pass \\\n\n\\\n\\\n",
     "wrappedOffset": 0
   },
   {
@@ -157949,7 +157956,7 @@
         }
       ]
     },
-    "expectedOutput": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
+    "expectedOutput": "if a:\n    b\n    # one\n    # two\nif c:\n    d\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n# five\n"
   },
   {
     "kind": "roundtrip",
@@ -157957,9 +157964,9 @@
     "sourceIn": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+    "expectedSourceOut": "if a:\n    b\n    # one\n    # two\nif c:\n    d\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n# five\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (comment) (newline))))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (comment) (newline))))) (comment))",
-    "wrappedText": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+    "wrappedText": "if a:\n    b\n    # one\n    # two\nif c:\n    d\n    # three\n    # four\ndef a():\n    if b:\n        b # comment\n    b # comment\n# five\n",
     "wrappedOffset": 0
   },
   {
@@ -158322,7 +158329,7 @@
         "body"
       ]
     },
-    "expectedOutput": "def a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
+    "expectedOutput": "def a():\n    if b:\n        b # comment\n    b # comment\n# five\n"
   },
   {
     "kind": "roundtrip",
@@ -158330,9 +158337,9 @@
     "sourceIn": "def a():\n    if b:\n        b # comment\n    b # comment",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+    "expectedSourceOut": "def a():\n    if b:\n        b # comment\n    b # comment\n# five\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (comment) (newline))))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (comment) (newline)))))",
-    "wrappedText": "def a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
+    "wrappedText": "def a():\n    if b:\n        b # comment\n    b # comment\n# five\n",
     "wrappedOffset": 0
   },
   {
@@ -158483,7 +158490,7 @@
         }
       ]
     },
-    "expectedOutput": "print \"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n"
+    "expectedOutput": "print \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n"
   },
   {
     "kind": "roundtrip",
@@ -158491,9 +158498,9 @@
     "sourceIn": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "print \"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n",
+    "expectedSourceOut": "print \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (print_statement (print_statement_plain (print_arguments argument: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))) (newline)) (comment))",
-    "wrappedText": "print \"a\"\n\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n",
+    "wrappedText": "print \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it\n",
     "wrappedOffset": 0
   },
   {
@@ -160804,6 +160811,7 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 104,
                           "$text": "\\\n",
                           "$sameLine": true
                         }
@@ -161061,6 +161069,7 @@
           "$_trivia": {
             "trailing": [
               {
+                "$type": 104,
                 "$text": "\\\n",
                 "$sameLine": true
               }
@@ -161304,6 +161313,7 @@
         "$_trivia": {
           "trailing": [
             {
+              "$type": 104,
               "$text": "\\\n",
               "$sameLine": true
             }
@@ -161542,6 +161552,7 @@
       "$_trivia": {
         "trailing": [
           {
+            "$type": 104,
             "$text": "\\\n",
             "$sameLine": true
           }

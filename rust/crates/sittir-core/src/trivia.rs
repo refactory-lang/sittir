@@ -7,7 +7,9 @@
 //! that follow the owner on that row, so the sink holds it until the next
 //! owner, coordinate or line break (`RenderSink::defer_trailing`).
 
+use crate::options::Side;
 use crate::render::{Render, RenderResult, RenderSink};
+use crate::types::KindId;
 use crate::slot::SlotValue;
 use std::collections::BTreeMap;
 
@@ -34,14 +36,80 @@ pub trait TriviaSeam {
     fn seam_text(&self) -> Option<&str> {
         None
     }
+    /// Whether this entry's kind ends only at a line break (a line comment).
+    fn line_terminated(&self) -> bool {
+        false
+    }
+    /// Whether the trivia kind `kind` is line-terminated, for an entry that
+    /// is a source coordinate rather than a transport.
+    fn kind_line_terminated(kind: KindId) -> bool
+    where
+        Self: Sized,
+    {
+        let _ = kind;
+        false
+    }
 }
 
-impl<T: TriviaSeam> TriviaEntry<T> {
+impl<T: Render + TriviaSeam> TriviaEntry<T> {
     fn seam_text(&self) -> Option<&str> {
         match &self.value {
             SlotValue::Transport(value) => value.seam_text(),
             SlotValue::Coord(_) => None,
         }
+    }
+
+    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
+        match &self.value {
+            SlotValue::Transport(value) => value.line_terminated(),
+            SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(T::kind_line_terminated),
+        }
+    }
+
+    /// Render the entry, and hold the break a line-terminated entry leaves.
+    fn render_entry(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.value.render(w)?;
+        if self.line_terminated(w) {
+            w.hold_line_end();
+        }
+        Ok(())
+    }
+}
+
+impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> {
+    /// Every entry is prepared like a slot value: a coordinate entry takes its
+    /// kind's edges, as a coordinate in a slot does.
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
+        let inner = self.inner.iter_mut().flat_map(|gaps| gaps.values_mut());
+        for entry in sides.chain(inner).flatten() {
+            entry.value.prepare(ctx)?;
+        }
+        Ok(())
+    }
+}
+
+/// Trivia read from source and detached from its tree: the text the reader
+/// captured, with the kind the reader stamped on it. It writes that kind's
+/// edges around the text, as a rendered node of the kind does.
+#[derive(Debug, Clone)]
+pub struct TriviaText {
+    pub kind: KindId,
+    pub text: String,
+}
+
+impl Render for TriviaText {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        w.edge(self.kind, Side::Before, None);
+        w.text(&self.text)?;
+        w.edge(self.kind, Side::After, None);
+        Ok(())
+    }
+}
+
+impl crate::prepare::Prepare for TriviaText {
+    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        Ok(())
     }
 }
 
@@ -63,54 +131,72 @@ impl<T> Default for TransportTrivia<T> {
     }
 }
 
-/// Render `entries` one per line: each ends the line it is on, since a line
-/// comment swallows whatever follows it on its line. An entry whose own text
-/// already ends the line (a grammar may include the terminator in the
-/// comment's span) needs no extra break.
-fn render_lines<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
-    let mut line_open = false;
+/// A join written between trivia entries, or between an entry and its owner.
+/// It is a fact of the source layout, so it holds its gap at trivia strength,
+/// but it never takes away a line break the entry before it left pending: a
+/// line-terminated entry's after edge breaks the line, and whatever follows
+/// a line comment on its row would be swallowed by it. Where the output
+/// already stands at a line start (an entry whose span includes its
+/// terminator), the join is already made.
+fn join(text: &str, w: &mut dyn RenderSink) {
+    if !w.ends_line() {
+        whitespace(text, true, w);
+    }
+}
+
+/// A whitespace entry's text, which replaces the seam at its gap. Right
+/// after an entry (`after_entry`) it is kept to at least the line break that
+/// entry left pending; anywhere else it replaces the gap's seam outright.
+fn whitespace(text: &str, after_entry: bool, w: &mut dyn RenderSink) {
+    let keeps_break = after_entry && w.pending_break() && !text.contains('\n');
+    w.trivia_seam(if keeps_break { "\n" } else { text });
+}
+
+/// Render `entries` separated by `between`, a whitespace entry taking the
+/// place of the join at its gap. Each entry's own edges write what follows
+/// it; only the joins are written here.
+fn render_joined<T: Render + TriviaSeam>(
+    entries: &[TriviaEntry<T>],
+    between: &dyn Fn(&TriviaEntry<T>) -> &'static str,
+    w: &mut dyn RenderSink,
+) -> RenderResult {
+    let mut previous: Option<&TriviaEntry<T>> = None;
     for entry in entries {
         if let Some(text) = entry.seam_text() {
-            w.trivia_seam(breaking(text, std::mem::replace(&mut line_open, false)));
+            whitespace(text, previous.is_some(), w);
+            previous = None;
             continue;
         }
-        if std::mem::replace(&mut line_open, false) {
-            w.text("\n")?;
+        if let Some(previous) = previous {
+            join(between(previous), w);
         }
-        entry.render(w)?;
-        line_open = !w.ends_line();
-    }
-    if line_open {
-        w.text("\n")?;
+        entry.render_entry(w)?;
+        previous = Some(entry);
     }
     Ok(())
 }
 
-/// A whitespace entry's text, kept to at least a line break when it follows
-/// an entry that left its line open: a line comment swallows whatever
-/// follows it on its line.
-fn breaking(text: &str, line_open: bool) -> &str {
-    if line_open && !text.contains('\n') {
-        "\n"
-    } else {
-        text
-    }
-}
-
 /// Hold a run of same-line trailing entries in the sink.
-fn defer_run<T: Render>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
+fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
     w.defer_trailing(&mut |w| {
         for entry in run {
-            entry.render(w)?;
+            entry.render_entry(w)?;
         }
         Ok(())
     })
 }
 
 impl<T: Render + TriviaSeam> TransportTrivia<T> {
-    /// Leading entries, before the owner renders.
+    /// Leading entries, before the owner renders: an entry that shares the
+    /// owner's row joins it with a space, any other ends its line.
     pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
-        render_lines(self.leading.as_deref().unwrap_or(&[]), w)
+        let leading = self.leading.as_deref().unwrap_or(&[]);
+        let owner_join = |entry: &TriviaEntry<T>| if entry.same_line { " " } else { "\n" };
+        render_joined(leading, &owner_join, w)?;
+        if let Some(last) = leading.last().filter(|entry| entry.seam_text().is_none()) {
+            join(owner_join(last), w);
+        }
+        Ok(())
     }
 
     /// Trailing entries, after the owner renders, in source order. A
@@ -139,34 +225,35 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
         }
         if !own_line.is_empty() {
             w.seat_trailing()?;
-            let mut line_open = false;
             let mut gap_set = false;
+            let mut after_entry = false;
             for entry in own_line {
                 if let Some(text) = entry.seam_text() {
-                    w.trivia_seam(breaking(text, std::mem::replace(&mut line_open, false)));
+                    whitespace(text, std::mem::replace(&mut after_entry, false), w);
                     gap_set = true;
                     continue;
                 }
                 if !std::mem::replace(&mut gap_set, false) {
-                    w.text("\n")?;
+                    join("\n", w);
                 }
-                entry.render(w)?;
-                line_open = !w.ends_line();
-            }
-            if line_open {
-                w.text("\n")?;
+                entry.render_entry(w)?;
+                after_entry = true;
             }
         }
         Ok(())
     }
 
     /// The inner entries at the gap `key`, where the owner renders that gap's
-    /// slot.
+    /// slot: one per line when the gap starts a line (the start of a block
+    /// body, which the body's own indent and dedent frame, or output standing
+    /// at a line start, as at the grammar root), and joined by spaces
+    /// anywhere else.
     pub fn render_inner(&self, key: &str, w: &mut dyn RenderSink) -> RenderResult {
-        match self.inner.as_ref().and_then(|inner| inner.get(key)) {
-            Some(entries) => render_lines(entries, w),
-            None => Ok(()),
-        }
+        let Some(entries) = self.inner.as_ref().and_then(|inner| inner.get(key)) else {
+            return Ok(());
+        };
+        let between: &'static str = if w.at_body_start() || w.ends_line() { "\n" } else { " " };
+        render_joined(entries, &|_| between, w)
     }
 }
 
@@ -187,9 +274,10 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
     for TriviaEntry<T>
 {
     /// A trivia entry is a slot value that may carry `$sameLine`: a node, a
-    /// coordinate, or bare text. Text that shares its owner's row arrives as
-    /// `{ $text, $sameLine }`, since a bare string has nowhere to carry the
-    /// flag; it renders as the same bare text.
+    /// coordinate, bare text, or text with its stamped kind (`{ $type,
+    /// $text }`, which the entry type decodes). Kindless text that shares its
+    /// owner's row arrives as `{ $text, $sameLine }`, since a bare string has
+    /// nowhere to carry the flag; it renders as the same bare text.
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
