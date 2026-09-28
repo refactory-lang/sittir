@@ -11,15 +11,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+### `packages/codegen/src/dsl/enrich.ts::getEnrichRuleOrigins`
+
+The rule-origin map `enrich()` attaches to its result under `ENRICH_RULE_ORIGINS_KEY`: every rule name enrich adds, keyed to its `EnrichMintKind`, plus each upstream hidden rule it exposes through an alias (`promoted-group`, carrying the visible name it is exposed as). Empty when the grammar was not enriched. Every other enrich-rule getter is a filtered view of this one map.
+
+### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
+
+The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
+
+### `packages/codegen/src/dsl/enrich.ts::enrichRuleNamesOf`
+
+The names in an enriched grammar's origin map whose origin passes `keep`; the one filter behind the enrich-rule getters.
+
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroups`
 
-```text
-/**
- * Extract the set of enrich-hoisted clause-group names from an enriched grammar
- * result. Returns an empty set when the grammar was not enriched or no clause
- * groups were synthesized.
- */
-```
+The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `clause-group`. Wire adds them to the grammar's `inline:` list.
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroupOwners`
 
@@ -33,10 +39,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleGroupSources`
 
+The names whose origin is `visible-group` or `promoted-group`: the source rules behind visible-group mints, both the synthesized bodies and the promoted upstream hidden rules.
+
 ```text
 /**
- * Extract the hidden source names behind visible-group mints from an
- * enriched grammar result. Wire filters these OUT of the grammar's final
+ * Wire filters these OUT of the grammar's final
  * `inline:` list before it reaches tree-sitter: an inlined source rule is
  * erased during tree-sitter's inline processing, which vaporizes the alias
  * (and the minted kind's parser identity) while sittir's IR still models
@@ -119,6 +126,8 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::registerKwRule`
+
+A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 ```text
 /**
@@ -2474,17 +2483,9 @@ through the alias.
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUPS_KEY`
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_RULE_ORIGINS_KEY`
 
-```text
-/**
- * Well-known non-enumerable key attached by `enrich()` to the grammar result
- * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
- * register the hoisted names in `WireContext.syntheticInline` so they end up
- * in the grammar's `inline:` list (required to prevent tree-sitter LR
- * conflicts from the newly-injected hidden rules).
- */
-```
+The non-enumerable key under which `enrich()` attaches its rule-origin map to the grammar result (see `getEnrichRuleOrigins`).
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUP_OWNERS_KEY`
 
@@ -2492,21 +2493,10 @@ through the alias.
 /**
  * Well-known non-enumerable key attached by `enrich()` to the grammar result:
  * synthesized clause-hoist name → the parent kind whose (pre-override) body
- * it was hoisted from. Covers BOTH categories `ENRICH_CLAUSE_GROUPS_KEY`
- * covers (inline-safe) AND the visible-aliased hidden names it deliberately
- * excludes (`_<parent>_group<N>`) — wire() needs both, since an override
+ * it was hoisted from. Covers both the `clause-group` origins (inline-safe)
+ * AND the `visible-group` ones (`_<parent>_group<N>`) — wire() needs both, since an override
  * redeclaring the recorded owner orphans the synthesized rule regardless of
  * which category it's in.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_VISIBLE_GROUP_SOURCES_KEY`
-
-```text
-/**
- * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
- * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
- * both the promote-existing-hidden-rule and synthesize-new-body categories.
  */
 ```
 
@@ -2917,7 +2907,7 @@ Runs once over the merged rule bag right after the clause-group mints merge,
 before the later passes and wire's override callbacks read names. Renames
 the hidden rule key (in the merged bag AND the minted-rule bag, whose keys
 later derive the `inline:` list), the visible alias value, every symbol
-reference, and the wire-facing tracking structures (`visibleGroupHiddenNames`,
+reference, and the wire-facing tracking structures (`ruleOrigins`,
 `clauseGroupOwners`). A name collision with any existing rule keeps the
 ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
 registered but later unused still counts as a sibling.
@@ -5785,6 +5775,8 @@ promotion is a mint, and the seat it declares is what link collects.
 
 ### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 
+Each enum rule it adds is recorded in `ruleOrigins` as a `field-enum` mint.
+
 ```text
 // ---------------------------------------------------------------------------
 // Field-enum synthesis — promote inline field-enums to named hidden rules
@@ -6085,6 +6077,10 @@ tree-sitter's grammar and sittir's evaluate see the same arms. It is the only pl
 distributing earlier on one side only would hand the two enrich runs different shapes.
 ```
 
+### `packages/codegen/src/dsl/rule-transforms.ts::LiteralAliasStorage`
+
+The result of `mintInlineLiteralAliasStorage`: the rewritten rules and the storage rule names it minted.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::mintInlineLiteralAliasStorage`
 
 ```text
@@ -6093,7 +6089,9 @@ An inline named alias over a choice of literals whose display is not a rule
 tree-sitter reports every literal under one shared id the catalog cannot
 name. Mint the storage: one hidden rule `_<display>` holding the literal
 choice, shared by every site of that display, and each site becomes
-`alias($._<display>, $.<display>)`. A display whose sites disagree on the
+`alias($._<display>, $.<display>)`. Returns the rewritten rules together
+with the minted storage names, which enrich records as
+`literal-alias-storage` origins. A display whose sites disagree on the
 literal set is left to distribution rather than guessed. Runs in enrich
 before distribution, so both executions mint the same rule; a precedence
 the new reduction point needs is authored as an override on the minted
@@ -6144,9 +6142,25 @@ model see the same kinds.
 The content under a chain of named aliases.
 ```
 
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichMintKind`
+
+What kind of rule enrich added:
+- `keyword`: a `_kw_<name>` rule from `registerKwRule`;
+- `clause-group`: an inline-safe clause hoist;
+- `visible-group`: a visible group, list, structured-arm or token-form lift;
+- `literal-alias-storage`: `mintInlineLiteralAliasStorage`;
+- `field-enum`: `synthesizeFieldEnumRules`;
+- `whitespace`: the `_whitespace` supertype.
+
+A mint is a rule enrich adds, so a name the base grammar already has is never one.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichRuleOrigin`
+
+Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint.
+
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`, `clauseGroupOwners`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 

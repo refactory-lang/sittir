@@ -1700,8 +1700,8 @@ built it, the same object the upstream diagnostic stage reads.
 // appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
 // rules directly into base.grammar.rules before wire runs; without
 // inlining, tree-sitter creates LR conflicts for those hidden rules.
-// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
-// property that enrich() attaches to the grammar result.
+// getEnrichClauseGroups reads the clause-group origins from the rule-origin
+// map that enrich() attaches to the grammar result.
 //
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 // auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every

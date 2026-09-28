@@ -29,6 +29,10 @@ export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<s
 	});
 }
 
+export type EnrichMintKind = 'keyword' | 'clause-group' | 'visible-group' | 'literal-alias-storage' | 'field-enum' | 'whitespace';
+
+export type EnrichRuleOrigin = { readonly kind: EnrichMintKind } | { readonly kind: 'promoted-group'; readonly visibleName: string };
+
 export interface ClauseHoistState {
 	readonly separatedListNameCounts: ReadonlyMap<string, number>;
 	readonly hiddenListPromotionNames: Map<string, string>;
@@ -40,7 +44,7 @@ interface EnrichCtxFields extends EnrichCtxInit {
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
-	readonly visibleGroupSources: Set<string>;
+	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
 	readonly clauseGroupOwners: Map<string, string>;
 	readonly hoist: ClauseHoistState | undefined;
 }
@@ -59,7 +63,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
-	readonly visibleGroupSources: Set<string>;
+	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
 	readonly clauseGroupOwners: Map<string, string>;
 	readonly hoist: ClauseHoistState | undefined;
 
@@ -77,7 +81,7 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.clauseGroupRules = fields.clauseGroupRules;
 		this.clauseDedupeMap = fields.clauseDedupeMap;
 		this.groupDedupeMap = fields.groupDedupeMap;
-		this.visibleGroupSources = fields.visibleGroupSources;
+		this.ruleOrigins = fields.ruleOrigins;
 		this.clauseGroupOwners = fields.clauseGroupOwners;
 		this.hoist = fields.hoist;
 	}
@@ -90,7 +94,7 @@ export class EnrichCtx implements EnrichCtxFields {
 			clauseGroupRules: {},
 			clauseDedupeMap: {},
 			groupDedupeMap: {},
-			visibleGroupSources: new Set(),
+			ruleOrigins: new Map(),
 			clauseGroupOwners: new Map(),
 			hoist: undefined
 		});
