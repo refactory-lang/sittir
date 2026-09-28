@@ -16,6 +16,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { pascalCase } from '../compiler/model/casing.ts';
+import { grammarTypePrefix } from '../grammars.ts';
 export {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -118,7 +119,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const grammarKeys = grammarKeySetOf(config.nodeTypes);
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
-	const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1);
+	const grammarPrefix = grammarTypePrefix(grammar);
 	const grammarAlias = `${grammarPrefix}Grammar`;
 
 	const nodeKinds = structNodes.map((n) => n.kind);
@@ -306,14 +307,24 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	lines.push('export interface NamespaceMap {');
-	for (const kind of [
+	const namespaceMapKinds = [
 		...namespaceKinds,
 		...keywordNamespaceKinds,
 		...leafNamespaceKinds.filter((kind) => hasKindId(kind, kindEntries))
-	]) {
+	];
+	lines.push('export interface NamespaceMap {');
+	for (const kind of namespaceMapKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
+	}
+	lines.push('}');
+	lines.push('');
+
+	lines.push('export interface IrKeyOf {');
+	for (const kind of namespaceMapKinds) {
+		const node = nodeMap.nodes.get(kind)!;
+		if (node.irKey === undefined || !hasKindId(kind, kindEntries)) continue;
+		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${JSON.stringify(node.irKey)};`);
 	}
 	lines.push('}');
 	lines.push('');

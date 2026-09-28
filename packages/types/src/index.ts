@@ -1512,6 +1512,7 @@ export type {
 	EngineOptions,
 	FileChange,
 	Interceptor,
+	KindTypes,
 	Language,
 	LanguageAPI,
 	LanguageHooks,

@@ -137,6 +137,14 @@ The grammar's `render-engine.ts`: `createRenderEngine`, generic in the indent un
 
 The grammar's `engine.ts`: `createEngine`, generic in the indent unit like `createRenderEngine`, to which it passes `I` explicitly (inferring it again from an already-checked type does not resolve).
 
+### `packages/codegen/src/emitters/engine.ts::languageApiName`
+
+The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`).
+
+### `packages/codegen/src/emitters/engine.ts::emitApi`
+
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union and the render options with the indent unit) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+
 
 ```text
 /**
@@ -9751,6 +9759,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
 
+`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `irKey`, so the engine's kind-to-type map keys each kind as the builder table does, never by re-casing a kind-id name.
+
 #### body
 
 ```text
@@ -11348,14 +11358,9 @@ omits the key.
  */
 ```
 
-### `packages/codegen/src/emitters/index-file.ts::module`
+### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-```text
-/**
- * Emits index.ts — barrel re-exports.
- * Consumes NodeMap directly. Static output — doesn't depend on node list.
- */
-```
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the package's re-exports. It depends on the grammar's name only, not on its node list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 

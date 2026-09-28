@@ -8,7 +8,7 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
-import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
+import { emitApi, emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
@@ -32,6 +32,7 @@ export interface GeneratedFiles {
 	types: string;
 	engine: string;
 	renderEngine: string;
+	api: string;
 	backend: string;
 	boundary: string;
 	templates: EmittedTemplates;
@@ -151,6 +152,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			grammar: emitGrammar({ grammar: cfg.grammar, nodeTypes }),
 			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			api: emitApi({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			backend: emitBackend({ grammar: cfg.grammar }),
 			boundary: emitBoundary({ grammar: cfg.grammar }),
 			types: emitted.types,

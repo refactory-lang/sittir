@@ -108,6 +108,10 @@ Middleware around an engine's operations. Each hook receives the call and a `nex
 
 A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `commit`. Disposal discards what was not committed and disposes the engines.
 
+### `packages/types/src/engine-api.ts::KindTypes`
+
+A language's kind-to-node-type map, derived from two emitted type maps: `Keys` names each kind id's ir key, and `NsMap` holds each kind id's namespace, whose `Node` is the kind's node type. The key is the stamped ir key, the same fact the builder table is keyed by.
+
 ### `packages/types/src/engine-api.ts::Types`
 
 The kind-to-node-type map of an engine, for generic code over any engine.

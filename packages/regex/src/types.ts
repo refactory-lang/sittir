@@ -1876,6 +1876,60 @@ export interface NamespaceMap {
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
 }
 
+export interface IrKeyOf {
+	[TSKindId.Pattern]: 'pattern';
+	[TSKindId.Alternation]: 'alternation';
+	[TSKindId.Term]: 'term';
+	[TSKindId.LookaroundAssertion]: 'lookaroundAssertion';
+	[TSKindId.LookaheadAssertion]: 'lookaheadAssertion';
+	[TSKindId.LookbehindAssertion]: 'lookbehindAssertion';
+	[TSKindId.CharacterClass]: 'characterClass';
+	[TSKindId.PosixCharacterClass]: 'posixCharacterClass';
+	[TSKindId.ClassRange]: 'classRange';
+	[TSKindId.AnonymousCapturingGroup]: 'anonymousCapturingGroup';
+	[TSKindId.NamedCapturingGroup]: 'namedCapturingGroup';
+	[TSKindId.NonCapturingGroup]: 'nonCapturingGroup';
+	[TSKindId.CountQuantifier]: 'countQuantifier';
+	[TSKindId.BackreferenceEscape]: 'backreferenceEscape';
+	[TSKindId.NamedGroupBackreference]: 'namedGroupBackreference';
+	[TSKindId.CharacterClassEscape]: 'characterClassEscape';
+	[TSKindId.UnicodePropertyValueExpression]: 'unicodePropertyValueExpression';
+	[TSKindId.IdentityEscape]: 'identityEscape';
+	[TSKindId.TermGroup]: 'termGroup';
+	[TSKindId.CountQuantifierGroup]: 'countQuantifierGroup';
+	[TSKindId.CountQuantifierArm]: 'countQuantifierArm';
+	[TSKindId.CharacterClassEscapeArm]: 'characterClassEscapeArm';
+	[TSKindId.UnicodePropertyValueExpressionGroup]: 'unicodePropertyValueExpressionGroup';
+	[TSKindId.InlineFlagsGroupEnable]: 'inlineFlagsGroupEnable';
+	[TSKindId.InlineFlagsGroupToggle]: 'inlineFlagsGroupToggle';
+	[TSKindId.InlineFlagsGroupDisable]: 'inlineFlagsGroupDisable';
+	[TSKindId.Lazy]: 'lazy';
+	[TSKindId.UnicodePropertyName]: 'unicodePropertyName';
+	[TSKindId.AnyCharacter]: 'anyCharacter';
+	[TSKindId.StartAssertion]: 'startAssertion';
+	[TSKindId.EndAssertion]: 'endAssertion';
+	[TSKindId.BoundaryAssertion]: 'boundaryAssertion';
+	[TSKindId.NonBoundaryAssertion]: 'nonBoundaryAssertion';
+	[TSKindId.Tight]: 'tight';
+	[TSKindId.Newline]: 'newline';
+	[TSKindId.Blankline]: 'blankline';
+	[TSKindId.DoubleBlankline]: 'doubleBlankline';
+	[TSKindId.PatternCharacter]: 'patternCharacter';
+	[TSKindId.PosixClassName]: 'posixClassName';
+	[TSKindId.ClassCharacter]: 'classCharacter';
+	[TSKindId.Flags]: 'flags';
+	[TSKindId.ZeroOrMore]: 'zeroOrMore';
+	[TSKindId.OneOrMore]: 'oneOrMore';
+	[TSKindId.Optional]: 'optional';
+	[TSKindId.DecimalEscape]: 'decimalEscape';
+	[TSKindId.UnicodeCharacterEscape]: 'unicodeCharacterEscape';
+	[TSKindId.UnicodePropertyValue]: 'unicodePropertyValue';
+	[TSKindId.ControlEscape]: 'controlEscape';
+	[TSKindId.ControlLetterEscape]: 'controlLetterEscape';
+	[TSKindId.GroupName]: 'groupName';
+	[TSKindId.DecimalDigits]: 'decimalDigits';
+}
+
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
 export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];

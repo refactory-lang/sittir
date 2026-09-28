@@ -11,10 +11,10 @@
  *
  * Native-only — there is no JS-engine fallback.
  */
-import { createNativeEngine, type SittirEngine, type EngineOptions } from '@sittir/common/engine';
+import { createNativeEngine, type SittirEngine } from '@sittir/common/engine';
 import { KIND_NAMES, type SourceFile } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import type { IndentOption, NodeDataOf } from '@sittir/types';
+import type { IndentOption, NativeEngineOptions, NodeDataOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,7 +32,7 @@ export type SourceFileRoot = NodeDataOf<SourceFile>;
  * back to a JS engine.
  */
 export function createRenderEngine<const I extends string = string>(
-	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+	options?: NativeEngineOptions<Options & IndentOption<I, IndentChar>>
 ): SittirEngine<SourceFileRoot, Options, IndentChar> {
 	const result = createNativeEngine<SourceFileRoot, Options, IndentChar>(
 		{

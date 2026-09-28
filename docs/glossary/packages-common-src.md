@@ -27,3 +27,8 @@ The entry point: refuses unimplemented options, loads the language (once per des
 ### `packages/common/src/engine.ts::createRenderHandle`
 
 A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
+
+### `packages/common/src/engine.ts::nativeLanguageEngine`
+
+Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` splits the call's flat options into the native `ignoreFormat` and the render options it resolves over its own, passing none when the call has none. `parseAndRead` records each tree it returns, so `holdsTree` answers whether a tree handle came from this engine and no other.
+

@@ -247,6 +247,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "coerceToYieldFromClause": "function",
   "compoundStatement": "object",
   "createEngine": "function",
+  "default": "object",
   "expression": "object",
   "expressionWithinForInClause": "object",
   "expressions": "object",

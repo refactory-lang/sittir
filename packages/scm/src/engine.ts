@@ -7,14 +7,14 @@
  * `./render-engine.js` directly; importing this module pulls the wrapper
  * and, through it, the factories.
  */
-import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/engine';
+import type { SittirEngine, ParseEngine, ParseOptions, RenderOptions } from '@sittir/common/engine';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 import type { IndentChar, Options } from './options.js';
-import type { IndentOption } from '@sittir/types';
+import type { IndentOption, NativeEngineOptions } from '@sittir/types';
 
 export type { ProgramRoot };
-export type { EngineOptions, ParseOptions, RenderOptions, ProgramTree };
+export type { ParseOptions, RenderOptions, ProgramTree };
 
 /**
  * A grammar engine: the public `parse()` surface plus the shared render /
@@ -34,7 +34,7 @@ export interface ProgramEngine extends SittirEngine<ProgramRoot, Options, Indent
  * @returns An engine implementing ProgramEngine.
  */
 export function createEngine<const I extends string = string>(
-	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+	options?: NativeEngineOptions<Options & IndentOption<I, IndentChar>>
 ): ProgramEngine {
 	const engine = createRenderEngine<I>(options);
 	return {

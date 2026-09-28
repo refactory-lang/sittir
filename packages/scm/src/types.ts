@@ -1486,6 +1486,41 @@ export interface NamespaceMap {
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
 }
 
+export interface IrKeyOf {
+	[TSKindId.Program]: 'program';
+	[TSKindId.EscapeSequence]: 'escapeSequence';
+	[TSKindId.Capture]: 'capture';
+	[TSKindId.String]: 'string';
+	[TSKindId.ImmediateString]: 'immediateString';
+	[TSKindId.StringContent]: 'stringContent';
+	[TSKindId.Parameters]: 'parameters';
+	[TSKindId.Comment]: 'comment';
+	[TSKindId.List]: 'list';
+	[TSKindId.Grouping]: 'grouping';
+	[TSKindId.MissingNode]: 'missingNode';
+	[TSKindId.AnonymousNode]: 'anonymousNode';
+	[TSKindId.FieldDefinition]: 'fieldDefinition';
+	[TSKindId.NegatedField]: 'negatedField';
+	[TSKindId.Predicate]: 'predicate';
+	[TSKindId.GroupExpressionArm]: 'groupExpressionArm';
+	[TSKindId.NamedNodeExpressionArm]: 'namedNodeExpressionArm';
+	[TSKindId.GroupingGroup]: 'groupingGroup';
+	[TSKindId.NamedNodePlain]: 'namedNodePlain';
+	[TSKindId.NamedNodeSupertyped]: 'namedNodeSupertyped';
+	[TSKindId.NamedNodeGroupChildren]: 'namedNodeGroupChildren';
+	[TSKindId.NamedNodeGroupAnchoredLast]: 'namedNodeGroupAnchoredLast';
+	[TSKindId.Tight]: 'tight';
+	[TSKindId.Space]: 'space';
+	[TSKindId.Tab]: 'tab';
+	[TSKindId.Newline]: 'newline';
+	[TSKindId.Blankline]: 'blankline';
+	[TSKindId.DoubleBlankline]: 'doubleBlankline';
+	[TSKindId.Indent]: 'indent';
+	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.Identifier]: 'identifier';
+	[TSKindId.ImmediateIdentifier]: 'immediateIdentifier';
+}
+
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
 export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];

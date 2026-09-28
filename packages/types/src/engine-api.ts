@@ -134,5 +134,13 @@ export interface Project extends AsyncDisposable {
 	discard(): void;
 }
 
+export type KindTypes<Keys extends object, NsMap extends object> = {
+	readonly [Id in keyof Keys as Keys[Id] extends string ? Keys[Id] : never]: Id extends keyof NsMap
+		? NsMap[Id] extends { readonly Node: infer N }
+			? N
+			: never
+		: never;
+};
+
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
 export type ApiOf<L> = L extends Language<infer API> ? API : never;

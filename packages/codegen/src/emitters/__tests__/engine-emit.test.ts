@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { emitEngine, emitRenderEngine } from '../engine.ts';
+import { emitApi, emitEngine, emitRenderEngine, languageApiName } from '../engine.ts';
+import { emitIndex } from '../index-file.ts';
 
 describe('emitEngine', () => {
 	it('imports from @sittir/common/engine', () => {
@@ -50,7 +51,7 @@ describe('emitEngine root type', () => {
 			rootTreeTypeName: 'SourceFileTree'
 		});
 		expect(output).toContain('export type SourceFileRoot = NodeDataOf<SourceFile>;');
-		expect(output).toContain("import type { IndentOption, NodeDataOf } from '@sittir/types';");
+		expect(output).toContain("import type { IndentOption, NativeEngineOptions, NodeDataOf } from '@sittir/types';");
 		expect(output).not.toContain('AnyNodeData &');
 	});
 
@@ -87,3 +88,44 @@ describe('emitRenderEngine / emitEngine split', () => {
 		expect(output).not.toContain('createNativeEngine<');
 	});
 });
+
+describe('emitApi', () => {
+	const output = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree' });
+
+	it('names the language API after the grammar', () => {
+		expect(languageApiName('python')).toBe('PythonAPI');
+		expect(output).toContain('export interface PythonAPI extends LanguageAPI {');
+		expect(output).toContain("readonly name: 'python';");
+		expect(output).toContain('readonly node: PythonNode;');
+		expect(output).toContain('readonly root: ModuleTree;');
+	});
+
+	it('keys the kind-to-type map on the stamped ir keys', () => {
+		expect(output).toContain('readonly types: KindTypes<IrKeyOf, NamespaceMap>;');
+	});
+
+	it('wires the hooks through the shared native adapter and the wrapper', () => {
+		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = {');
+		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
+		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
+		expect(output).toContain('trivia: methodsEngine.trivia,');
+	});
+});
+
+describe('emitIndex', () => {
+	const output = emitIndex({ grammar: 'rust', nodeMap: undefined as never });
+
+	it('exports the language descriptor as the default, loading the api on demand', () => {
+		expect(output).toContain(
+			"const rust: Language<RustAPI> = { name: 'rust', load: () => import('./api.js').then((m) => m.hooks) };"
+		);
+		expect(output).toContain('export default rust;');
+		expect(output).toContain("export type { RustAPI } from './api.js';");
+	});
+
+	it('imports the api for its type only', () => {
+		expect(output).toContain("import type { RustAPI } from './api.js';");
+		expect(output).not.toMatch(/^import \{[^}]*\} from '\.\/api\.js'/m);
+	});
+});
+

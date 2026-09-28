@@ -1,6 +1,6 @@
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, posix } from 'node:path';
-import { GRAMMAR_ENTRY, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
+import { GRAMMAR_ENTRY, grammarTypePrefix, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
@@ -64,7 +64,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 				grammars: [
 					{
 						name: grammar,
-						camelcase: grammar.charAt(0).toUpperCase() + grammar.slice(1),
+						camelcase: grammarTypePrefix(grammar),
 						scope: `source.${grammar}`,
 						path: '.',
 						'file-types': []

@@ -1,23 +1,19 @@
-import type { Engine, LanguageAPI } from '@sittir/types';
-import type { RustNode, SourceFile } from '@sittir/rust';
-import type { Module, PythonNode } from '@sittir/python';
-import type { Program, TypescriptNode } from '@sittir/typescript';
+import type { Engine } from '@sittir/types';
+import type { RustAPI, RustNode } from '@sittir/rust';
+import type { PythonAPI, PythonNode } from '@sittir/python';
+import type { TypescriptAPI, TypescriptNode } from '@sittir/typescript';
+import type { IrKeyOf as RustIrKeyOf, NamespaceMap as RustNamespaceMap } from '../../packages/rust/src/types.ts';
+import type { IrKeyOf as PythonIrKeyOf, NamespaceMap as PythonNamespaceMap } from '../../packages/python/src/types.ts';
+import type {
+	IrKeyOf as TypescriptIrKeyOf,
+	NamespaceMap as TypescriptNamespaceMap
+} from '../../packages/typescript/src/types.ts';
+import type { IrKeyOf as ScmIrKeyOf, NamespaceMap as ScmNamespaceMap } from '../../packages/scm/src/types.ts';
+import type { IrKeyOf as RegexIrKeyOf, NamespaceMap as RegexNamespaceMap } from '../../packages/regex/src/types.ts';
 
-interface NodesOf<Name extends string, Node extends RustNode | PythonNode | TypescriptNode, Root extends Node>
-	extends LanguageAPI {
-	readonly name: Name;
-	readonly build: object;
-	readonly is: object;
-	readonly kinds: object;
-	readonly types: object;
-	readonly root: Root;
-	readonly node: Node;
-	readonly options: object;
-}
-
-declare const rust: Engine<NodesOf<'rust', RustNode, SourceFile>>;
-declare const python: Engine<NodesOf<'python', PythonNode, Module>>;
-declare const typescript: Engine<NodesOf<'typescript', TypescriptNode, Program>>;
+declare const rust: Engine<RustAPI>;
+declare const python: Engine<PythonAPI>;
+declare const typescript: Engine<TypescriptAPI>;
 declare const rustNode: RustNode;
 declare const pythonNode: PythonNode;
 declare const typescriptNode: TypescriptNode;
@@ -55,4 +51,24 @@ export const noMemberCrosses: {
 	readonly pythonInTypescript: NoMemberOf<PythonNode, TypescriptNode>;
 	readonly typescriptInRust: NoMemberOf<TypescriptNode, RustNode>;
 	readonly typescriptInPython: NoMemberOf<TypescriptNode, PythonNode>;
+};
+
+type KeysEvery<Keys, NsMap> = [
+	Exclude<keyof Keys, keyof NsMap> | Exclude<Extract<keyof NsMap, number>, keyof Keys>
+] extends [never]
+	? true
+	: false;
+
+export const irKeysCoverTheKindsWithIds: {
+	readonly rust: true;
+	readonly python: true;
+	readonly typescript: true;
+	readonly scm: true;
+	readonly regex: true;
+} = null as unknown as {
+	readonly rust: KeysEvery<RustIrKeyOf, RustNamespaceMap>;
+	readonly python: KeysEvery<PythonIrKeyOf, PythonNamespaceMap>;
+	readonly typescript: KeysEvery<TypescriptIrKeyOf, TypescriptNamespaceMap>;
+	readonly scm: KeysEvery<ScmIrKeyOf, ScmNamespaceMap>;
+	readonly regex: KeysEvery<RegexIrKeyOf, RegexNamespaceMap>;
 };

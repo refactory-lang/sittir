@@ -4,7 +4,9 @@ import type {
 	Edit,
 	FormatRecord,
 	IndentOption,
+	LanguageAPI,
 	NativeEngineOptions,
+	NativeLanguageEngine,
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
@@ -14,15 +16,11 @@ import { toTransportData } from './transport-data.ts';
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
-export type { NativeEngineOptions as EngineOptions };
-
 export interface RenderOptions<O extends object = RenderOptionValues> {
 	readonly ignoreFormat?: boolean;
 	/** Per-call options, resolved over the engine's own. */
 	readonly options?: O;
 }
-
-export type { Rendered as RenderHandle };
 
 export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): Rendered {
 	let cached: string | undefined;
@@ -334,4 +332,34 @@ export function createNativeEngine<
 	} catch (e) {
 		return { engine: null, reason: e instanceof Error ? e.message : String(e) };
 	}
+}
+
+export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends string = never>(
+	engine: SittirEngine<AnyNodeData, API['options'], IndentChar>
+): NativeLanguageEngine<API> {
+	const trees = new WeakSet<object>();
+	return {
+		render(node, options) {
+			if (options === undefined) return engine.render(node);
+			const { ignoreFormat, ...perCall } = options;
+			return engine.render(node, {
+				...(ignoreFormat !== undefined ? { ignoreFormat } : {}),
+				...(Object.keys(perCall).length > 0 ? { options: perCall } : {})
+			});
+		},
+		applyEdits(source, edits) {
+			return engine.applyEdits(source, edits);
+		},
+		parseAndRead(source, options) {
+			const read = engine.diagnostics.parseAndRead(source, options);
+			trees.add(read.tree);
+			return read;
+		},
+		holdsTree(tree) {
+			return typeof tree === 'object' && tree !== null && trees.has(tree);
+		},
+		dispose() {
+			engine.dispose();
+		}
+	};
 }

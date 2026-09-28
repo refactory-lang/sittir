@@ -320,6 +320,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "coerceToYieldExpression": "function",
   "createEngine": "function",
   "declaration": "object",
+  "default": "object",
   "destructuringPattern": "object",
   "expression": "object",
   "expressions": "object",

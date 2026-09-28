@@ -338,6 +338,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "condition": "object",
   "createEngine": "function",
   "declarationStatement": "object",
+  "default": "object",
   "delimTokens": "object",
   "expression": "object",
   "expressionEndingWithBlock": "object",
