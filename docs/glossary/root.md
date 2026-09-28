@@ -102,7 +102,7 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
  */
 ```
 
-It generates through the conflict loop (`transpile/conflict-driver.ts::generateWithDerivedConflicts`): the grammar's conflicts are derived by generating until tree-sitter reports none, and the last, clean run is the generate whose outputs are kept.
+It generates through the conflict loop (`transpile/conflict-driver.ts::generateWithDerivedConflicts`): the grammar's conflicts are derived by generating until tree-sitter reports none, and the last, clean run is the generate whose outputs are kept. An unchanged grammar reuses its saved resolutions in a single run.
 
 ### `packages/codegen/src/run-codegen.ts::runStandaloneSteps`
 

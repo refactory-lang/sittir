@@ -1,16 +1,18 @@
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import { parseGenerateOutcome } from './conflict-summary.ts';
-import { ensureConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
-import { deriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
+import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
+import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
 import { transpileOverrides } from './transpile-overrides.ts';
 
 export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise<DerivationResult> {
-	ensureConflictResolutions(pkg);
+	const saved = readConflictResolutions(pkg);
 	const inputs = evaluateForDerivation(pkg);
 	const sittirDir = sittirDirOf(pkg);
-	const result = await deriveConflictResolutions({
+	const result = await reuseOrDeriveConflictResolutions({
+		saved,
+		grammarHash: inputs.grammarHash,
 		ruleCount: inputs.ruleCount,
 		upstream: inputs,
 		generate: async (resolutions) => {
@@ -26,6 +28,10 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			`${pkg.name}: conflicts could not be derived (${result.reason}) after ${result.resolutions.length} resolution(s):\n${JSON.stringify(result.report, null, 2)}`
 		);
 	}
-	console.log(`  conflicts: ${result.resolutions.length} derived in ${result.iterations} generate run(s)`);
+	console.log(
+		result.kind === 'reused'
+			? `  conflicts: ${result.resolutions.length} resolutions reused`
+			: `  conflicts: ${result.resolutions.length} resolutions re-derived (${result.iterations} iterations)`
+	);
 	return result;
 }

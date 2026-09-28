@@ -392,8 +392,9 @@ no resolution the policy can apply was offered.
 ### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationResult`
 
 ```text
-How a derivation ended: `converged` with the resolutions and the number of
-`generate` runs, or `unresolvable` with the reason, the report that stopped it,
+How a derivation ended: `reused` when the saved resolutions generated cleanly
+in one run, `converged` with the resolutions and the number of `generate`
+runs, or `unresolvable` with the reason, the report that stopped it,
 and the resolutions gathered so far.
 ```
 
@@ -439,6 +440,24 @@ when the resolutions already number the grammar's rules (the cap: each
 resolution names at least one rule). A `generate` error throws — a grammar
 that fails to build for any other reason is broken, not conflicted.
 `generate` is awaited: the driver re-bundles the grammar between runs.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationInput`
+
+```text
+What the derivation loop is driven by: the rule-count cap, the upstream
+context, and the `generate` callback that runs tree-sitter with a candidate
+resolution list.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::reuseOrDeriveConflictResolutions`
+
+```text
+Skips the derivation when nothing it depends on changed. When the saved
+resolutions carry the evaluated grammar's hash, they are tried in a single
+`generate`; a clean run is `reused`. A changed hash, or saved resolutions
+that no longer generate cleanly (the hash does not cover the tree-sitter
+version), derives again from an empty list, so no stale entry survives.
 ```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
@@ -532,12 +551,20 @@ Seeds a package that has no resolutions yet with the empty set, so its
 `grammar.sittir.ts` import resolves before anything has been derived.
 ```
 
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::readConflictResolutions`
+
+```text
+The package's saved resolutions, seeding the empty set first when there are
+none.
+```
+
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
 ```text
-The conflict loop for one grammar package: seed the resolutions if missing,
-evaluate the grammar once in a fresh process for the hash, rule count and
-upstream context, then derive. Each run writes the candidate resolutions
+The conflict loop for one grammar package: read the saved resolutions
+(seeding them if missing), evaluate the grammar once in a fresh process for
+the hash, rule count and upstream context, then reuse the saved resolutions
+or derive new ones. Each run writes the candidate resolutions
 (with the hash), re-bundles, and runs `tree-sitter generate --json-summary`;
 the last, clean run leaves the generate outputs in place. An unresolvable
 derivation throws with its reason and the stopping report.

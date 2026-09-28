@@ -18,3 +18,8 @@ export function writeConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>, file:
 export function ensureConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): void {
 	if (!existsSync(conflictResolutionsPath(pkg))) writeConflictResolutions(pkg, EMPTY_CONFLICT_RESOLUTIONS);
 }
+
+export function readConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): ConflictResolutionsFile {
+	ensureConflictResolutions(pkg);
+	return JSON.parse(readFileSync(conflictResolutionsPath(pkg), 'utf8')) as ConflictResolutionsFile;
+}

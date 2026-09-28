@@ -1,4 +1,4 @@
-import type { DerivedResolution } from '../dsl/conflict-resolutions.ts';
+import type { ConflictResolutionsFile, DerivedResolution } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
 
 export interface UpstreamContext {
@@ -9,6 +9,7 @@ export interface UpstreamContext {
 export type PolicyChoice = { readonly kind: 'chosen'; readonly resolution: DerivedResolution } | { readonly kind: 'unusable' };
 
 export type DerivationResult =
+	| { readonly kind: 'reused'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: 1 }
 	| { readonly kind: 'converged'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: number }
 	| {
 			readonly kind: 'unresolvable';
@@ -55,11 +56,13 @@ export function chooseResolution(report: ConflictReport, upstream: UpstreamConte
 	};
 }
 
-export async function deriveConflictResolutions(input: {
+export interface DerivationInput {
 	readonly ruleCount: number;
 	readonly upstream: UpstreamContext;
 	readonly generate: (resolutions: readonly DerivedResolution[]) => Promise<GenerateOutcome>;
-}): Promise<DerivationResult> {
+}
+
+export async function deriveConflictResolutions(input: DerivationInput): Promise<DerivationResult> {
 	const resolutions: DerivedResolution[] = [];
 	const reported = new Set<string>();
 	for (let iterations = 1; ; iterations++) {
@@ -77,4 +80,14 @@ export async function deriveConflictResolutions(input: {
 		reported.add(key);
 		resolutions.push(choice.resolution);
 	}
+}
+
+export async function reuseOrDeriveConflictResolutions(
+	input: DerivationInput & { readonly saved: ConflictResolutionsFile; readonly grammarHash: string }
+): Promise<DerivationResult> {
+	if (input.saved.grammarHash === input.grammarHash) {
+		const outcome = await input.generate(input.saved.resolutions);
+		if (outcome.kind === 'clean') return { kind: 'reused', resolutions: input.saved.resolutions, iterations: 1 };
+	}
+	return deriveConflictResolutions(input);
 }

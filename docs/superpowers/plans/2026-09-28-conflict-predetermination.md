@@ -393,7 +393,7 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 ### Task 5: Reuse when the grammar is unchanged
 
 **Files:**
-- Modify: `packages/codegen/src/run-codegen.ts`
+- Modify: `packages/codegen/src/transpile/derive-conflicts.ts` (`reuseOrDeriveConflictResolutions`), `transpile/conflict-driver.ts`, `transpile/conflict-resolutions-file.ts` (`readConflictResolutions`)
 - Test: `packages/codegen/src/transpile/__tests__/derive-conflicts.test.ts`
 
 **Interfaces:**
@@ -401,13 +401,14 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 - The driver reads the existing `resolutions.json`:
   - if `grammarHash` matches, it runs a single `generate`;
   - otherwise it re-derives from `[]`.
+  - Saved resolutions that no longer generate cleanly under a matching hash also re-derive from `[]`: the hash does not cover the tree-sitter version.
 
-- [ ] **Step 1:** Write failing tests with an injected `DerivationInputs` and a `generate` counter:
+- [x] **Step 1:** Write failing tests with an injected `DerivationInputs` and a `generate` counter:
   - unchanged hash → exactly 1 `generate` call, with the resolutions unchanged;
   - changed hash → derivation starts from an empty list, so a stale entry is dropped. Seed the file with `[['stale','x']]` and assert it is absent afterwards.
-- [ ] **Step 2:** Run, implement, run.
-- [ ] **Step 3:** Regenerate python twice. Instrument the second run and assert one `generate` call: the driver logs `resolutions reused` / `resolutions re-derived (N iterations)`.
-- [ ] **Step 4:** Commit by pathspec.
+- [x] **Step 2:** Run, implement, run.
+- [x] **Step 3:** Regenerate python twice. Instrument the second run and assert one `generate` call: the driver logs `resolutions reused` / `resolutions re-derived (N iterations)`.
+- [x] **Step 4:** Commit by pathspec.
 
 ### Task 6: Diagnostics
 

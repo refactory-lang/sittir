@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import type { DerivedResolution } from '../../dsl/conflict-resolutions.ts';
-import { chooseResolution, deriveConflictResolutions, sourceChain, type UpstreamContext } from '../derive-conflicts.ts';
+import type { ConflictResolutionsFile, DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import {
+	chooseResolution,
+	deriveConflictResolutions,
+	reuseOrDeriveConflictResolutions,
+	sourceChain,
+	type UpstreamContext
+} from '../derive-conflicts.ts';
 import type { ConflictReport, GenerateOutcome } from '../conflict-summary.ts';
 
 function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
@@ -145,5 +151,52 @@ describe('deriveConflictResolutions', () => {
 		await expect(
 			deriveConflictResolutions({ ruleCount: 2, upstream: identity, generate: async () => ({ kind: 'error', summary: { LoadGrammarFile: {} } }) })
 		).rejects.toThrow(/LoadGrammarFile/);
+	});
+});
+
+describe('reuseOrDeriveConflictResolutions', () => {
+	const staleEntry = chooseResolution(reportFor('stale', 'x'), identity);
+	if (staleEntry.kind !== 'chosen') throw new Error('fixture offers AddConflict');
+	const saved: ConflictResolutionsFile = { grammarHash: 'h1', resolutions: [staleEntry.resolution] };
+
+	function recordingGenerate(conflicts: readonly ConflictReport[]) {
+		const calls: (readonly (readonly string[])[])[] = [];
+		const generate = async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
+			calls.push(resolutions.map((entry) => entry.resolution.symbols));
+			const next = conflicts[resolutions.length];
+			return next ? { kind: 'conflict', report: next } : { kind: 'clean' };
+		};
+		return { calls, generate };
+	}
+
+	it('runs a single generate with the saved resolutions when the grammar hash is unchanged', async () => {
+		const { calls, generate } = recordingGenerate([]);
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate });
+		expect(result).toEqual({ kind: 'reused', resolutions: saved.resolutions, iterations: 1 });
+		expect(calls).toEqual([[['stale', 'x']]]);
+	});
+
+	it('re-derives from an empty list when the grammar hash changed, dropping stale entries', async () => {
+		const { calls, generate } = recordingGenerate([reportFor('a', 'b')]);
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h2', ruleCount: 10, upstream: identity, generate });
+		expect(result).toMatchObject({ kind: 'converged', iterations: 2 });
+		expect(result.resolutions.map((entry) => entry.resolution.symbols)).toEqual([['a', 'b']]);
+		expect(calls[0]).toEqual([]);
+	});
+
+	it('re-derives from an empty list when the saved resolutions no longer generate cleanly under an unchanged hash', async () => {
+		const calls: (readonly (readonly string[])[])[] = [];
+		const result = await reuseOrDeriveConflictResolutions({
+			saved,
+			grammarHash: 'h1',
+			ruleCount: 10,
+			upstream: identity,
+			generate: async (resolutions): Promise<GenerateOutcome> => {
+				calls.push(resolutions.map((entry) => entry.resolution.symbols));
+				return calls.length === 1 ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean' };
+			}
+		});
+		expect(result).toMatchObject({ kind: 'converged', resolutions: [], iterations: 1 });
+		expect(calls).toEqual([[['stale', 'x']], []]);
 	});
 });

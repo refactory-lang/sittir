@@ -5,7 +5,12 @@ import { join, relative } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
 import { REPO_ROOT, grammarPackage } from '../../grammars.ts';
-import { conflictResolutionsPath, ensureConflictResolutions, writeConflictResolutions } from '../conflict-resolutions-file.ts';
+import {
+	conflictResolutionsPath,
+	ensureConflictResolutions,
+	readConflictResolutions,
+	writeConflictResolutions
+} from '../conflict-resolutions-file.ts';
 
 const derived: ConflictResolutionsFile = {
 	grammarHash: 'abc',
@@ -32,6 +37,12 @@ describe('the resolutions file of a package', () => {
 		writeConflictResolutions({ dir }, derived);
 		ensureConflictResolutions({ dir });
 		expect(JSON.parse(readFileSync(conflictResolutionsPath({ dir }), 'utf8'))).toEqual(derived);
+	});
+
+	it('reads back what was written, and the empty set when missing', () => {
+		expect(readConflictResolutions({ dir })).toEqual(EMPTY_CONFLICT_RESOLUTIONS);
+		writeConflictResolutions({ dir }, derived);
+		expect(readConflictResolutions({ dir })).toEqual(derived);
 	});
 
 	it('is not rewritten when the content is unchanged', () => {
