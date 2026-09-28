@@ -21,6 +21,7 @@ import type {
 	LineComment,
 	Newline,
 	Space,
+	Tab,
 	NamespaceMap
 } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -72,12 +73,16 @@ export const methodsEngine = {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'block_comment',
 			'comment',
 			'line_comment'
 		]),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\s))+)$/u, kindIdByText: { ' ': 166, '\n': 167, '\n\n': 168, '\n\n\n': 169 } },
+		whitespace: {
+			run: /^(?:(?:(?:\s))+)$/u,
+			kindIdByText: { ' ': 166, '\t': 167, '\n': 168, '\n\n': 169, '\n\n\n': 170 }
+		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -90,20 +95,40 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)
+			| (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)
 			| {
-					leading?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
-					trailing?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
+					leading?: (
+						| Blankline
+						| BlockComment
+						| Comment
+						| DoubleBlankline
+						| LineComment
+						| Newline
+						| Space
+						| Tab
+						| string
+					)[];
+					trailing?: (
+						| Blankline
+						| BlockComment
+						| Comment
+						| DoubleBlankline
+						| LineComment
+						| Newline
+						| Space
+						| Tab
+						| string
+					)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	leading(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
 	leading(
-		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
 	): Self;
-	trailing(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	trailing(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
 	trailing(
-		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
 	): Self;
 }
 
@@ -121,8 +146,10 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
-	inner(...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]): N;
+	inner(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
+	inner(
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
+	): N;
 }
 
 export function isEmpty(node: T.SourceFile): node is T.EmptySourceFile;

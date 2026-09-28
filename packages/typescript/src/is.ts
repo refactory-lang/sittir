@@ -862,47 +862,47 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([396, 397, 395]);
+const _supertype_exportStatement_ids = new Set<number>([397, 398, 396]);
 const _supertype_moduleExportName_ids = new Set<number>([1]);
 const _supertype_declaration_ids = new Set<number>([
-	242, 244, 239, 202, 201, 291, 302, 303, 304, 313, 310, 308, 306, 301
+	243, 245, 240, 203, 202, 292, 303, 304, 305, 314, 311, 309, 307, 302
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([407, 408]);
+const _supertype_importSpecifier_ids = new Set<number>([408, 409]);
 const _supertype_statement_ids = new Set<number>([
-	192, 217, 200, 204, 206, 207, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 221
+	193, 218, 201, 205, 207, 208, 209, 210, 212, 213, 214, 215, 216, 217, 219, 220, 221, 222
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([428, 429]);
-const _supertype_forHeader_ids = new Set<number>([432, 433, 434]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([409, 410]);
-const _supertype_expressions_ids = new Set<number>([265]);
-const _supertype_expression_ids = new Set<number>([294, 295, 296, 304, 293, 255, 257, 251, 263, 262, 261, 250, 230]);
+const _supertype_variableDeclarator_ids = new Set<number>([429, 430]);
+const _supertype_forHeader_ids = new Set<number>([433, 434, 435]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([410, 411]);
+const _supertype_expressions_ids = new Set<number>([266]);
+const _supertype_expression_ids = new Set<number>([295, 296, 297, 305, 294, 256, 258, 252, 264, 263, 262, 251, 231]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	253, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120,
-	267, 269, 121, 122, 123, 231, 235, 241, 245, 243, 238, 288
+	254, 253, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120,
+	268, 270, 121, 122, 123, 232, 236, 242, 246, 244, 239, 289
 ]);
-const _supertype_formalParameter_ids = new Set<number>([316, 317]);
-const _supertype_callExpression_ids = new Set<number>([411, 412, 413]);
+const _supertype_formalParameter_ids = new Set<number>([317, 318]);
+const _supertype_callExpression_ids = new Set<number>([412, 413, 414]);
 const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
-	252, 253, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 288
+	253, 254, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 289
 ]);
-const _supertype_destructuringPattern_ids = new Set<number>([232, 236]);
-const _supertype_updateExpression_ids = new Set<number>([416, 417]);
-const _supertype_string_ids = new Set<number>([414, 415]);
+const _supertype_destructuringPattern_ids = new Set<number>([233, 237]);
+const _supertype_updateExpression_ids = new Set<number>([417, 418]);
+const _supertype_string_ids = new Set<number>([415, 416]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
 const _supertype_identifier_ids = new Set<number>([124, 1]);
-const _supertype_metaProperty_ids = new Set<number>([430, 431]);
-const _supertype_pattern_ids = new Set<number>([254, 280]);
-const _supertype_propertyName_ids = new Set<number>([118, 285]);
+const _supertype_metaProperty_ids = new Set<number>([431, 432]);
+const _supertype_pattern_ids = new Set<number>([255, 281]);
+const _supertype_propertyName_ids = new Set<number>([118, 286]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
-const _supertype_type_ids = new Set<number>([371, 368, 333, 337]);
-const _supertype_tupleTypeMember_ids = new Set<number>([328, 329, 330, 331]);
+const _supertype_type_ids = new Set<number>([372, 369, 334, 338]);
+const _supertype_tupleTypeMember_ids = new Set<number>([329, 330, 331, 332]);
 const _supertype_primaryType_ids = new Set<number>([
-	354, 355, 307, 339, 357, 366, 367, 353, 346, 347, 119, 352, 350, 348, 338, 336, 370, 369
+	355, 356, 308, 340, 358, 367, 368, 354, 347, 348, 119, 353, 351, 349, 339, 337, 371, 370
 ]);
-const _supertype_indexSignature_ids = new Set<number>([404, 405]);
-const _supertype_whitespace_ids = new Set<number>([177, 178, 179, 180, 181, 182, 183]);
-const _supertype_exportStatementDefault_ids = new Set<number>([421, 422]);
+const _supertype_indexSignature_ids = new Set<number>([405, 406]);
+const _supertype_whitespace_ids = new Set<number>([177, 178, 179, 180, 181, 182, 183, 184]);
+const _supertype_exportStatementDefault_ids = new Set<number>([422, 423]);
 
 export const is = {
 	program: _g(TSKindId.Program),

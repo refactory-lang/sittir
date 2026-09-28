@@ -37,6 +37,7 @@ export const _fromMap = {
 	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
+	_tab: coerceToTab,
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
@@ -58,6 +59,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	_tight: { values: [''], factory: () => F.buildTight() },
 	_space: { values: [' '], factory: () => F.buildSpace() },
+	_tab: { values: ['\t'], factory: () => F.buildTab() },
 	_newline: { values: ['\n'], factory: () => F.buildNewline() },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
@@ -80,6 +82,7 @@ function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_tight',
 	'_space',
+	'_tab',
 	'_newline',
 	'_blankline',
 	'_double_blankline',
@@ -143,14 +146,14 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 35
+	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
-	string: new Set([40]),
-	immediate_string: new Set([40]),
+	string: new Set([41]),
+	immediate_string: new Set([41]),
 	negated_field: new Set([5]),
-	grouping_group: new Set([42, 43, 44, 45, 48, 50, 51, 55, 56])
+	grouping_group: new Set([43, 44, 45, 46, 49, 51, 52, 56, 57])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
@@ -1124,6 +1127,10 @@ export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.build
 
 export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
 	return F.buildSpace();
+}
+
+export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
+	return F.buildTab();
 }
 
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {

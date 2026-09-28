@@ -7952,6 +7952,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_tab"
+          },
+          "named": true,
+          "value": "tab"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_newline"
           },
           "named": true,
@@ -9989,6 +9998,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tab"
     },
     {
       "type": "SYMBOL",

@@ -1,6 +1,6 @@
 {
   "name": "scm",
-  "nodeCount": 56,
+  "nodeCount": 57,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -19,6 +19,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tab"
     },
     {
       "type": "SYMBOL",
@@ -545,6 +549,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_tab",
+      "modelType": "punctuation",
+      "typeName": "Tab",
+      "factoryName": "tab",
+      "irKey": "tab",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\t\" as const",
+      "text": "\t",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
@@ -570,6 +586,7 @@
         "_indent",
         "_newline",
         "_space",
+        "_tab",
         "_tight"
       ]
     },

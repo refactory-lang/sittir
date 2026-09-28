@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from './_temp-grammar.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 
-const ALL = ['_tight', '_space', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'];
+const ALL = ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'];
 
 async function membersOf(upstreamExtras: string, config: string): Promise<readonly string[]> {
 	const raw = await evaluateTempGrammar({ extras: upstreamExtras, rules: '' }, config);

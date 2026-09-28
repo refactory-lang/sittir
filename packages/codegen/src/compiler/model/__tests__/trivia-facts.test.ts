@@ -36,6 +36,7 @@ describe('trivia model facts', () => {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'block_comment',
 			'comment',
 			'line_comment'
@@ -45,6 +46,7 @@ describe('trivia model facts', () => {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'comment',
 			'line_continuation',
 			'line_continuation_newline',
@@ -55,6 +57,7 @@ describe('trivia model facts', () => {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'comment',
 			'comment_block',
 			'comment_line',
@@ -71,18 +74,20 @@ describe('trivia model facts', () => {
 	});
 
 	it('makes a whitespace kind trivia exactly when its literal is one or more lexical extras', async () => {
-		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_double_blankline', '_newline', '_space']);
+		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_double_blankline', '_newline', '_space', '_tab']);
 		expect(whitespaceTriviaKinds(await nodeMapOf('python')).sort()).toEqual([
 			'_blankline',
 			'_double_blankline',
 			'_newline',
-			'_space'
+			'_space',
+			'_tab'
 		]);
 		const typescript = await nodeMapOf('typescript');
 		expect(whitespaceTriviaKinds(typescript)).not.toContain('_tight');
 		expect(whitespaceTriviaKinds(typescript)).not.toContain('_indent');
 		expect(Object.fromEntries(whitespaceTrivia(typescript)?.kindIdByText ?? [])).toEqual({
 			' ': typescript.nodes.get('_space')?.kindId,
+			'\t': typescript.nodes.get('_tab')?.kindId,
 			'\n': typescript.nodes.get('_newline')?.kindId,
 			'\n\n': typescript.nodes.get('_blankline')?.kindId,
 			'\n\n\n': typescript.nodes.get('_double_blankline')?.kindId

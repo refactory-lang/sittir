@@ -214,12 +214,14 @@ export const fExpression: {
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
+	readonly tab: typeof F.buildTab;
 	readonly newline: typeof F.buildNewline;
 	readonly blankline: typeof F.buildBlankline;
 	readonly doubleBlankline: typeof F.buildDoubleBlankline;
 } = {
 	tight: F.buildTight,
 	space: F.buildSpace,
+	tab: F.buildTab,
 	newline: F.buildNewline,
 	blankline: F.buildBlankline,
 	doubleBlankline: F.buildDoubleBlankline

@@ -2468,11 +2468,13 @@ function baseRulesOf(base2) {
 // packages/codegen/src/dsl/whitespace.ts
 var TIGHT_MEMBER = "_tight";
 var SPACE_MEMBER = "_space";
+var TAB_MEMBER = "_tab";
 var NEWLINE_MEMBER = "_newline";
 var HORIZONTAL_SPACE = " ";
 var WHITESPACE_MEMBERS = [
   { name: TIGHT_MEMBER, body: { type: STRING, value: "" }, alwaysAdmitted: true },
   { name: SPACE_MEMBER, body: { type: STRING, value: " " } },
+  { name: TAB_MEMBER, body: { type: STRING, value: "	" } },
   { name: NEWLINE_MEMBER, body: { type: STRING, value: "\n" } },
   { name: "_blankline", body: { type: STRING, value: "\n\n" } },
   { name: "_double_blankline", body: { type: STRING, value: "\n\n\n" } },

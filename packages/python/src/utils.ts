@@ -22,6 +22,7 @@ import type {
 	LineContinuationNul,
 	Newline,
 	Space,
+	Tab,
 	NamespaceMap
 } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -73,6 +74,7 @@ export const methodsEngine = {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'comment',
 			'line_continuation',
 			'line_continuation_newline',
@@ -81,7 +83,7 @@ export const methodsEngine = {
 		innerGaps: INNER_GAPS,
 		whitespace: {
 			run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
-			kindIdByText: { ' ': 121, '\n': 113, '\n\n': 122, '\n\n\n': 123 }
+			kindIdByText: { ' ': 121, '\t': 122, '\n': 113, '\n\n': 123, '\n\n\n': 124 }
 		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
@@ -104,6 +106,7 @@ export interface TriviaSetterOf<Self> {
 					| LineContinuationNul
 					| Newline
 					| Space
+					| Tab
 					| string
 			  )
 			| {
@@ -116,6 +119,7 @@ export interface TriviaSetterOf<Self> {
 						| LineContinuationNul
 						| Newline
 						| Space
+						| Tab
 						| string
 					)[];
 					trailing?: (
@@ -127,6 +131,7 @@ export interface TriviaSetterOf<Self> {
 						| LineContinuationNul
 						| Newline
 						| Space
+						| Tab
 						| string
 					)[];
 			  }
@@ -141,6 +146,7 @@ export interface TriviaSetterOf<Self> {
 		| LineContinuationNul
 		| Newline
 		| Space
+		| Tab
 	)[];
 	leading(
 		...items: (
@@ -152,6 +158,7 @@ export interface TriviaSetterOf<Self> {
 			| LineContinuationNul
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): Self;
@@ -164,6 +171,7 @@ export interface TriviaSetterOf<Self> {
 		| LineContinuationNul
 		| Newline
 		| Space
+		| Tab
 	)[];
 	trailing(
 		...items: (
@@ -175,6 +183,7 @@ export interface TriviaSetterOf<Self> {
 			| LineContinuationNul
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): Self;
@@ -203,6 +212,7 @@ export interface InnerTrivia<N> {
 		| LineContinuationNul
 		| Newline
 		| Space
+		| Tab
 	)[];
 	inner(
 		...items: (
@@ -214,6 +224,7 @@ export interface InnerTrivia<N> {
 			| LineContinuationNul
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): N;

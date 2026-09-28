@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 439,
+  "nodeCount": 440,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -89,6 +89,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tab"
     },
     {
       "type": "SYMBOL",
@@ -4488,6 +4492,18 @@
       ]
     },
     {
+      "kind": "_tab",
+      "modelType": "punctuation",
+      "typeName": "Tab",
+      "factoryName": "tab",
+      "irKey": "tab",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\t\" as const",
+      "text": "\t",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
@@ -4649,6 +4665,7 @@
         "_indent",
         "_newline",
         "_space",
+        "_tab",
         "_tight"
       ]
     },

@@ -269,6 +269,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "coerceToSwitchCase": "function",
   "coerceToSwitchDefault": "function",
   "coerceToSwitchStatement": "function",
+  "coerceToTab": "function",
   "coerceToTemplateChars": "function",
   "coerceToTemplateLiteralType": "function",
   "coerceToTemplateString": "function",

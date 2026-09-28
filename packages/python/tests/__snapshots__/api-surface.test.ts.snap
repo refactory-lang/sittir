@@ -217,6 +217,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "coerceToSuiteBlock": "function",
   "coerceToSuiteEmpty": "function",
   "coerceToSuiteInline": "function",
+  "coerceToTab": "function",
   "coerceToTight": "function",
   "coerceToTrue": "function",
   "coerceToTryStatement": "function",

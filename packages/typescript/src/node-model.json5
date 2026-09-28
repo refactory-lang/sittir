@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 434,
+  "nodeCount": 435,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -82,6 +82,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tab"
     },
     {
       "type": "SYMBOL",
@@ -4878,6 +4882,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_tab",
+      "modelType": "punctuation",
+      "typeName": "Tab",
+      "factoryName": "tab",
+      "irKey": "tab",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\t\" as const",
+      "text": "\t",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_template_chars",
       "modelType": "pattern",
       "typeName": "TemplateChars",
@@ -4937,6 +4953,7 @@
         "_indent",
         "_newline",
         "_space",
+        "_tab",
         "_tight"
       ]
     },

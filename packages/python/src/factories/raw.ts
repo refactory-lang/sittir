@@ -185,7 +185,7 @@ export function buildImportStatement(...args: unknown[]) {
 function _buildImportStatement(value: T.Names | T.Names.Types): T.ImportStatement.Built {
 	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(
 		rejectBareText(value, 'ImportStatement.names', 'a built Names'),
-		[[[132], (v: unknown) => buildNames(v as never)]]
+		[[[133], (v: unknown) => buildNames(v as never)]]
 	);
 	return withMethods(
 		withAccessors(
@@ -2351,8 +2351,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 		[
 			[
 				[
-					209, 203, 204, 210, 253, 205, 1, 68, 38, 69, 70, 39, 22, 244, 243, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73,
-					206, 217, 218, 220, 229, 234, 232, 235, 230, 236, 231, 238, 237, 64, 197, 242, 139, 199
+					210, 204, 205, 211, 254, 206, 1, 68, 38, 69, 70, 39, 22, 245, 244, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73,
+					207, 218, 219, 221, 230, 235, 233, 236, 231, 237, 232, 239, 238, 64, 198, 243, 140, 200
 				],
 				(v: unknown) => buildAsPatternTarget(v as never)
 			]
@@ -3774,7 +3774,7 @@ export function buildFormatSpecifier(
 	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
 ): T.FormatSpecifier.Built {
 	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
-		[[246], (v: unknown) => buildFormatExpression(v as never)]
+		[[247], (v: unknown) => buildFormatExpression(v as never)]
 	]);
 	return withMethods(
 		withAccessors(
@@ -5890,6 +5890,10 @@ export function buildSpace(): TSKindId.Space {
 	return TSKindId.Space;
 }
 
+export function buildTab(): TSKindId.Tab {
+	return TSKindId.Tab;
+}
+
 export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
@@ -6179,6 +6183,7 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_tight: T.Tight;
 	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
@@ -6373,6 +6378,7 @@ export const _factoryMap = {
 	string_end: buildStringEnd,
 	_tight: buildTight,
 	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,

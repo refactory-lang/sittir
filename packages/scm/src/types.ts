@@ -32,6 +32,7 @@ export type LeafStringMap = {
 	[TSKindId.Quantifier]: '*' | '+' | '?';
 	[TSKindId.PredicateType]: '?' | '!';
 	[TSKindId.Space]: ' ';
+	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
@@ -67,45 +68,46 @@ export enum TSKindId {
 	Slash = 23,
 	Tight = 24,
 	Space = 25,
-	Newline = 26,
-	Blankline = 27,
-	DoubleBlankline = 28,
-	Indent = 29,
-	Dedent = 30,
-	Program = 31,
-	Definition = 32,
-	GroupExpression = 33,
-	NamedNodeExpression = 34,
-	Quantifier = 35,
-	NodeIdentifier = 36,
-	Capture = 37,
-	String = 38,
-	ImmediateString = 39,
-	StringContent = 40,
-	Parameters = 41,
-	List = 42,
-	Grouping = 43,
-	MissingNode = 44,
-	AnonymousNode = 45,
-	NamedNode = 46,
-	_FieldName = 47,
-	FieldDefinition = 48,
-	NegatedField = 49,
-	Predicate = 50,
-	GroupExpressionArm = 51,
-	NamedNodeExpressionArm = 52,
-	GroupingGroup = 53,
-	NamedNodeGroup = 54,
-	NamedNodePlain = 55,
-	NamedNodeSupertyped = 56,
-	NamedNodeGroupChildren = 57,
-	NamedNodeGroupAnchoredLast = 58,
-	ProgramRepeat1 = 59,
-	StringContentRepeat1 = 60,
-	ParametersRepeat1 = 61,
-	ListRepeat1 = 62,
-	GroupingRepeat1 = 63,
-	NamedNodeGroupChildrenRepeat1 = 64
+	Tab = 26,
+	Newline = 27,
+	Blankline = 28,
+	DoubleBlankline = 29,
+	Indent = 30,
+	Dedent = 31,
+	Program = 32,
+	Definition = 33,
+	GroupExpression = 34,
+	NamedNodeExpression = 35,
+	Quantifier = 36,
+	NodeIdentifier = 37,
+	Capture = 38,
+	String = 39,
+	ImmediateString = 40,
+	StringContent = 41,
+	Parameters = 42,
+	List = 43,
+	Grouping = 44,
+	MissingNode = 45,
+	AnonymousNode = 46,
+	NamedNode = 47,
+	_FieldName = 48,
+	FieldDefinition = 49,
+	NegatedField = 50,
+	Predicate = 51,
+	GroupExpressionArm = 52,
+	NamedNodeExpressionArm = 53,
+	GroupingGroup = 54,
+	NamedNodeGroup = 55,
+	NamedNodePlain = 56,
+	NamedNodeSupertyped = 57,
+	NamedNodeGroupChildren = 58,
+	NamedNodeGroupAnchoredLast = 59,
+	ProgramRepeat1 = 60,
+	StringContentRepeat1 = 61,
+	ParametersRepeat1 = 62,
+	ListRepeat1 = 63,
+	GroupingRepeat1 = 64,
+	NamedNodeGroupChildrenRepeat1 = 65
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -134,45 +136,46 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[23, 'slash'],
 	[24, '_tight'],
 	[25, '_space'],
-	[26, '_newline'],
-	[27, '_blankline'],
-	[28, '_double_blankline'],
-	[29, '_indent'],
-	[30, '_dedent'],
-	[31, 'program'],
-	[32, 'definition'],
-	[33, '_group_expression'],
-	[34, '_named_node_expression'],
-	[35, 'quantifier'],
-	[36, '_node_identifier'],
-	[37, 'capture'],
-	[38, 'string'],
-	[39, 'immediate_string'],
-	[40, 'string_content'],
-	[41, 'parameters'],
-	[42, 'list'],
-	[43, 'grouping'],
-	[44, 'missing_node'],
-	[45, 'anonymous_node'],
-	[46, 'named_node'],
-	[47, '_field_name'],
-	[48, 'field_definition'],
-	[49, 'negated_field'],
-	[50, 'predicate'],
-	[51, 'group_expression_arm'],
-	[52, 'named_node_expression_arm'],
-	[53, 'grouping_group'],
-	[54, 'named_node_group'],
-	[55, 'named_node_plain'],
-	[56, 'named_node_supertyped'],
-	[57, 'named_node_group_children'],
-	[58, 'named_node_group_anchored_last'],
-	[59, 'program_repeat1'],
-	[60, 'string_content_repeat1'],
-	[61, 'parameters_repeat1'],
-	[62, 'list_repeat1'],
-	[63, 'grouping_repeat1'],
-	[64, 'named_node_group_children_repeat1']
+	[26, '_tab'],
+	[27, '_newline'],
+	[28, '_blankline'],
+	[29, '_double_blankline'],
+	[30, '_indent'],
+	[31, '_dedent'],
+	[32, 'program'],
+	[33, 'definition'],
+	[34, '_group_expression'],
+	[35, '_named_node_expression'],
+	[36, 'quantifier'],
+	[37, '_node_identifier'],
+	[38, 'capture'],
+	[39, 'string'],
+	[40, 'immediate_string'],
+	[41, 'string_content'],
+	[42, 'parameters'],
+	[43, 'list'],
+	[44, 'grouping'],
+	[45, 'missing_node'],
+	[46, 'anonymous_node'],
+	[47, 'named_node'],
+	[48, '_field_name'],
+	[49, 'field_definition'],
+	[50, 'negated_field'],
+	[51, 'predicate'],
+	[52, 'group_expression_arm'],
+	[53, 'named_node_expression_arm'],
+	[54, 'grouping_group'],
+	[55, 'named_node_group'],
+	[56, 'named_node_plain'],
+	[57, 'named_node_supertyped'],
+	[58, 'named_node_group_children'],
+	[59, 'named_node_group_anchored_last'],
+	[60, 'program_repeat1'],
+	[61, 'string_content_repeat1'],
+	[62, 'parameters_repeat1'],
+	[63, 'list_repeat1'],
+	[64, 'grouping_repeat1'],
+	[65, 'named_node_group_children_repeat1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -202,45 +205,46 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[23, '/'],
 	[24, '_tight'],
 	[25, '_space'],
-	[26, '_newline'],
-	[27, '_blankline'],
-	[28, '_double_blankline'],
-	[29, '_indent'],
-	[30, '_dedent'],
-	[31, 'program'],
-	[32, 'definition'],
-	[33, '_group_expression'],
-	[34, '_named_node_expression'],
-	[35, 'quantifier'],
-	[36, '_node_identifier'],
-	[37, 'capture'],
-	[38, 'string'],
-	[39, 'immediate_string'],
-	[40, 'string_content'],
-	[41, 'parameters'],
-	[42, 'list'],
-	[43, 'grouping'],
-	[44, 'missing_node'],
-	[45, 'anonymous_node'],
-	[46, 'named_node'],
-	[47, '_field_name'],
-	[48, 'field_definition'],
-	[49, 'negated_field'],
-	[50, 'predicate'],
-	[51, 'group_expression_arm'],
-	[52, 'named_node_expression_arm'],
-	[53, 'grouping_group'],
-	[54, 'named_node_group'],
-	[55, 'named_node_plain'],
-	[56, 'named_node_supertyped'],
-	[57, 'named_node_group_children'],
-	[58, 'named_node_group_anchored_last'],
-	[59, 'program_repeat1'],
-	[60, 'string_content_repeat1'],
-	[61, 'parameters_repeat1'],
-	[62, 'list_repeat1'],
-	[63, 'grouping_repeat1'],
-	[64, 'named_node_group_children_repeat1']
+	[26, '_tab'],
+	[27, '_newline'],
+	[28, '_blankline'],
+	[29, '_double_blankline'],
+	[30, '_indent'],
+	[31, '_dedent'],
+	[32, 'program'],
+	[33, 'definition'],
+	[34, '_group_expression'],
+	[35, '_named_node_expression'],
+	[36, 'quantifier'],
+	[37, '_node_identifier'],
+	[38, 'capture'],
+	[39, 'string'],
+	[40, 'immediate_string'],
+	[41, 'string_content'],
+	[42, 'parameters'],
+	[43, 'list'],
+	[44, 'grouping'],
+	[45, 'missing_node'],
+	[46, 'anonymous_node'],
+	[47, 'named_node'],
+	[48, '_field_name'],
+	[49, 'field_definition'],
+	[50, 'negated_field'],
+	[51, 'predicate'],
+	[52, 'group_expression_arm'],
+	[53, 'named_node_expression_arm'],
+	[54, 'grouping_group'],
+	[55, 'named_node_group'],
+	[56, 'named_node_plain'],
+	[57, 'named_node_supertyped'],
+	[58, 'named_node_group_children'],
+	[59, 'named_node_group_anchored_last'],
+	[60, 'program_repeat1'],
+	[61, 'string_content_repeat1'],
+	[62, 'parameters_repeat1'],
+	[63, 'list_repeat1'],
+	[64, 'grouping_repeat1'],
+	[65, 'named_node_group_children_repeat1']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -298,6 +302,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Tight;
 		case '_space':
 			return TSKindId.Space;
+		case '_tab':
+			return TSKindId.Tab;
 		case '_newline':
 			return TSKindId.Newline;
 		case '_blankline':
@@ -416,12 +422,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 export type SpacingArm =
 	| TSKindId.Tight
 	| TSKindId.Space
+	| TSKindId.Tab
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline;
 export type WhitespaceArm =
 	| TSKindId.Tight
 	| TSKindId.Space
+	| TSKindId.Tab
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
@@ -476,6 +484,7 @@ export enum NamedNodeGroupKind {
 export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
+	Tab = '_tab',
 	Newline = '_newline',
 	Blankline = '_blankline',
 	DoubleBlankline = '_double_blankline',
@@ -691,6 +700,7 @@ export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>
 export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
+export type Tab = TSKindId.Tab;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
@@ -731,6 +741,9 @@ export interface TightTree extends AnyTreeNode {
 }
 export interface SpaceTree extends AnyTreeNode {
 	readonly type: '_space';
+}
+export interface TabTree extends AnyTreeNode {
+	readonly type: '_tab';
 }
 export interface NewlineTree extends AnyTreeNode {
 	readonly type: '_newline';
@@ -785,11 +798,12 @@ export type NamedNodeGroup = NamedNodeGroupChildren | NamedNodeGroupAnchoredLast
 
 export type NamedNodeGroupTree = NamedNodeGroupChildrenTree | NamedNodeGroupAnchoredLastTree;
 
-export type Whitespace = Tight | Space | Newline | Blankline | DoubleBlankline | Indent | Dedent;
+export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
 export type WhitespaceTree =
 	| TightTree
 	| SpaceTree
+	| TabTree
 	| NewlineTree
 	| BlanklineTree
 	| DoubleBlanklineTree
@@ -1417,6 +1431,7 @@ export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 > {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TabTree, '_tab'> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
 export interface DoubleBlanklineNs extends KeywordNs<
@@ -1461,6 +1476,7 @@ export interface NamespaceMap {
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLastNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Tab]: TabNs;
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
@@ -1914,6 +1930,16 @@ export namespace Space {
 	export type LooseArgs = SpaceNs['LooseArgs'];
 	export type Tree = SpaceNs['Tree'];
 	export type Kind = '_space';
+}
+export namespace Tab {
+	export type Config = TabNs['Config'];
+	export type Built = TabNs['Built'];
+	export type Loose = TabNs['Loose'];
+	export type LooseConfig = TabNs['LooseConfig'];
+	export type BuildArgs = TabNs['BuildArgs'];
+	export type LooseArgs = TabNs['LooseArgs'];
+	export type Tree = TabNs['Tree'];
+	export type Kind = '_tab';
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];

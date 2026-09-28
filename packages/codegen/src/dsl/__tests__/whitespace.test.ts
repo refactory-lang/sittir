@@ -8,7 +8,7 @@ import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 const S = (value: string) => ({ type: 'STRING' as const, value });
 const P = (value: string) => ({ type: 'PATTERN' as const, value });
 const sym = (name: string) => ({ type: 'SYMBOL' as const, name });
-const ALL = ['_tight', '_space', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'];
+const ALL = ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'];
 
 describe('nodelessExtrasRun', () => {
 	it('matches a whole run of pattern and literal extras, with literals taken as text', () => {
@@ -61,8 +61,8 @@ describe('enrichWhitespace', () => {
 
 	it('reuses a same-named upstream external, keeping a body only for its text members', () => {
 		const out = enrichWhitespace([sym('_newline'), sym('_indent'), sym('_dedent')], [P('\\s')], {});
-		expect(out.addedExternals).toEqual(['_tight', '_space', '_blankline', '_double_blankline']);
-		expect(Object.keys(out.bodies)).toEqual(['_tight', '_space', '_newline', '_blankline', '_double_blankline']);
+		expect(out.addedExternals).toEqual(['_tight', '_space', '_tab', '_blankline', '_double_blankline']);
+		expect(Object.keys(out.bodies)).toEqual(['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline']);
 	});
 
 	it('reports an upstream rule that defines a minted name differently, and not one that defines it the same', () => {

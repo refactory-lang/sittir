@@ -275,6 +275,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "coerceToStructPattern": "function",
   "coerceToStructPatternElements": "function",
   "coerceToSuper": "function",
+  "coerceToTab": "function",
   "coerceToTight": "function",
   "coerceToTokenBindingPattern": "function",
   "coerceToTokenRepetition": "function",

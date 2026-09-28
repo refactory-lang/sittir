@@ -207,6 +207,7 @@ pub enum AnyTransport {
     StringEnd(StringEndTransport),
     Tight(TightTransport),
     Space(SpaceTransport),
+    Tab(TabTransport),
     Newline(NewlineTransport),
     Blankline(BlanklineTransport),
     DoubleBlankline(DoubleBlanklineTransport),
@@ -558,6 +559,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StringEnd(t) => t.prepare(ctx),
             AnyTransport::Tight(t) => t.prepare(ctx),
             AnyTransport::Space(t) => t.prepare(ctx),
+            AnyTransport::Tab(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
             AnyTransport::Blankline(t) => t.prepare(ctx),
             AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
@@ -739,339 +741,339 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 // kind: module (MODULE)
-                124 => Ok(AnyTransport::Module(
+                125 => Ok(AnyTransport::Module(
                     ModuleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_statements (_SIMPLE_STATEMENTS)
-                126 => Ok(AnyTransport::SimpleStatements(
+                127 => Ok(AnyTransport::SimpleStatements(
                     SimpleStatementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_statement (IMPORT_STATEMENT)
-                127 => Ok(AnyTransport::ImportStatement(
+                128 => Ok(AnyTransport::ImportStatement(
                     ImportStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_prefix (IMPORT_PREFIX)
-                128 => Ok(AnyTransport::ImportPrefix(
+                129 => Ok(AnyTransport::ImportPrefix(
                     ImportPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: relative_import (RELATIVE_IMPORT)
-                129 => Ok(AnyTransport::RelativeImport(
+                130 => Ok(AnyTransport::RelativeImport(
                     RelativeImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: future_import_statement (FUTURE_IMPORT_STATEMENT)
-                130 => Ok(AnyTransport::FutureImportStatement(
+                131 => Ok(AnyTransport::FutureImportStatement(
                     FutureImportStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_from_statement (IMPORT_FROM_STATEMENT)
-                131 => Ok(AnyTransport::ImportFromStatement(
+                132 => Ok(AnyTransport::ImportFromStatement(
                     ImportFromStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_list (IMPORT_LIST)
-                132 => Ok(AnyTransport::ImportList(
+                133 => Ok(AnyTransport::ImportList(
                     ImportListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: aliased_import (ALIASED_IMPORT)
-                133 => Ok(AnyTransport::AliasedImport(
+                134 => Ok(AnyTransport::AliasedImport(
                     AliasedImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: wildcard_import (WILDCARD_IMPORT)
-                134 => Ok(AnyTransport::WildcardImport(
+                135 => Ok(AnyTransport::WildcardImport(
                     WildcardImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_statement (PRINT_STATEMENT)
-                135 => Ok(AnyTransport::PrintStatement(
+                136 => Ok(AnyTransport::PrintStatement(
                     PrintStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: chevron (CHEVRON)
-                136 => Ok(AnyTransport::Chevron(
+                137 => Ok(AnyTransport::Chevron(
                     ChevronTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assert_statement (ASSERT_STATEMENT)
-                137 => Ok(AnyTransport::AssertStatement(
+                138 => Ok(AnyTransport::AssertStatement(
                     AssertStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: expression_statement (EXPRESSION_STATEMENT)
-                138 => Ok(AnyTransport::ExpressionStatement(
+                139 => Ok(AnyTransport::ExpressionStatement(
                     ExpressionStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: named_expression (NAMED_EXPRESSION)
-                139 => Ok(AnyTransport::NamedExpression(
+                140 => Ok(AnyTransport::NamedExpression(
                     NamedExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: return_statement (RETURN_STATEMENT)
-                141 => Ok(AnyTransport::ReturnStatement(
+                142 => Ok(AnyTransport::ReturnStatement(
                     ReturnStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: delete_statement (DELETE_STATEMENT)
-                142 => Ok(AnyTransport::DeleteStatement(
+                143 => Ok(AnyTransport::DeleteStatement(
                     DeleteStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: raise_statement (RAISE_STATEMENT)
-                143 => Ok(AnyTransport::RaiseStatement(
+                144 => Ok(AnyTransport::RaiseStatement(
                     RaiseStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pass_statement (PASS_STATEMENT)
-                144 => Ok(AnyTransport::PassStatement(
+                145 => Ok(AnyTransport::PassStatement(
                     PassStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: break_statement (BREAK_STATEMENT)
-                145 => Ok(AnyTransport::BreakStatement(
+                146 => Ok(AnyTransport::BreakStatement(
                     BreakStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: continue_statement (CONTINUE_STATEMENT)
-                146 => Ok(AnyTransport::ContinueStatement(
+                147 => Ok(AnyTransport::ContinueStatement(
                     ContinueStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: if_statement (IF_STATEMENT)
-                147 => Ok(AnyTransport::IfStatement(
+                148 => Ok(AnyTransport::IfStatement(
                     IfStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: elif_clause (ELIF_CLAUSE)
-                148 => Ok(AnyTransport::ElifClause(
+                149 => Ok(AnyTransport::ElifClause(
                     ElifClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: else_clause (ELSE_CLAUSE)
-                149 => Ok(AnyTransport::ElseClause(
+                150 => Ok(AnyTransport::ElseClause(
                     ElseClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: match_statement (MATCH_STATEMENT)
-                150 => Ok(AnyTransport::MatchStatement(
+                151 => Ok(AnyTransport::MatchStatement(
                     MatchStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: match_block (MATCH_BLOCK)
-                151 => Ok(AnyTransport::MatchBlock(
+                152 => Ok(AnyTransport::MatchBlock(
                     MatchBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_clause (CASE_CLAUSE)
-                152 => Ok(AnyTransport::CaseClause(
+                153 => Ok(AnyTransport::CaseClause(
                     CaseClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: for_statement (FOR_STATEMENT)
-                153 => Ok(AnyTransport::ForStatement(
+                154 => Ok(AnyTransport::ForStatement(
                     ForStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: while_statement (WHILE_STATEMENT)
-                154 => Ok(AnyTransport::WhileStatement(
+                155 => Ok(AnyTransport::WhileStatement(
                     WhileStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: try_statement (TRY_STATEMENT)
-                155 => Ok(AnyTransport::TryStatement(
+                156 => Ok(AnyTransport::TryStatement(
                     TryStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: except_clause (EXCEPT_CLAUSE)
-                156 => Ok(AnyTransport::ExceptClause(
+                157 => Ok(AnyTransport::ExceptClause(
                     ExceptClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: finally_clause (FINALLY_CLAUSE)
-                157 => Ok(AnyTransport::FinallyClause(
+                158 => Ok(AnyTransport::FinallyClause(
                     FinallyClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_statement (WITH_STATEMENT)
-                158 => Ok(AnyTransport::WithStatement(
+                159 => Ok(AnyTransport::WithStatement(
                     WithStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_item (WITH_ITEM)
-                160 => Ok(AnyTransport::WithItem(
+                161 => Ok(AnyTransport::WithItem(
                     WithItemTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: function_definition (FUNCTION_DEFINITION)
-                161 => Ok(AnyTransport::FunctionDefinition(
+                162 => Ok(AnyTransport::FunctionDefinition(
                     FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parameters (PARAMETERS)
-                162 => Ok(AnyTransport::Parameters(
+                163 => Ok(AnyTransport::Parameters(
                     ParametersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lambda_parameters (LAMBDA_PARAMETERS)
-                163 => Ok(AnyTransport::LambdaParameters(
+                164 => Ok(AnyTransport::LambdaParameters(
                     LambdaParametersTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list_splat (LIST_SPLAT)
-                164 => Ok(AnyTransport::ListSplat(
+                165 => Ok(AnyTransport::ListSplat(
                     ListSplatTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dictionary_splat (DICTIONARY_SPLAT)
-                165 => Ok(AnyTransport::DictionarySplat(
+                166 => Ok(AnyTransport::DictionarySplat(
                     DictionarySplatTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: global_statement (GLOBAL_STATEMENT)
-                166 => Ok(AnyTransport::GlobalStatement(
+                167 => Ok(AnyTransport::GlobalStatement(
                     GlobalStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: nonlocal_statement (NONLOCAL_STATEMENT)
-                167 => Ok(AnyTransport::NonlocalStatement(
+                168 => Ok(AnyTransport::NonlocalStatement(
                     NonlocalStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: exec_statement (EXEC_STATEMENT)
-                168 => Ok(AnyTransport::ExecStatement(
+                169 => Ok(AnyTransport::ExecStatement(
                     ExecStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_alias_statement (TYPE_ALIAS_STATEMENT)
-                169 => Ok(AnyTransport::TypeAliasStatement(
+                170 => Ok(AnyTransport::TypeAliasStatement(
                     TypeAliasStatementTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_definition (CLASS_DEFINITION)
-                170 => Ok(AnyTransport::ClassDefinition(
+                171 => Ok(AnyTransport::ClassDefinition(
                     ClassDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_parameter (TYPE_PARAMETER)
-                171 => Ok(AnyTransport::TypeParameter(
+                172 => Ok(AnyTransport::TypeParameter(
                     TypeParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parenthesized_list_splat (PARENTHESIZED_LIST_SPLAT)
-                172 => Ok(AnyTransport::ParenthesizedListSplat(
+                173 => Ok(AnyTransport::ParenthesizedListSplat(
                     ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: argument_list (ARGUMENT_LIST)
-                173 => Ok(AnyTransport::ArgumentList(
+                174 => Ok(AnyTransport::ArgumentList(
                     ArgumentListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorated_definition (DECORATED_DEFINITION)
-                174 => Ok(AnyTransport::DecoratedDefinition(
+                175 => Ok(AnyTransport::DecoratedDefinition(
                     DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: decorator (DECORATOR)
-                175 => Ok(AnyTransport::Decorator(
+                176 => Ok(AnyTransport::Decorator(
                     DecoratorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: block (BLOCK)
-                176 => Ok(AnyTransport::Block(
+                177 => Ok(AnyTransport::Block(
                     BlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: expression_list (EXPRESSION_LIST)
-                177 => Ok(AnyTransport::ExpressionList(
+                178 => Ok(AnyTransport::ExpressionList(
                     ExpressionListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dotted_name (DOTTED_NAME)
-                178 => Ok(AnyTransport::DottedName(
+                179 => Ok(AnyTransport::DottedName(
                     DottedNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_pattern (CASE_PATTERN)
-                179 => Ok(AnyTransport::CasePattern(
+                180 => Ok(AnyTransport::CasePattern(
                     CasePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_pattern (_SIMPLE_PATTERN)
-                180 => Ok(AnyTransport::SimplePattern(
+                181 => Ok(AnyTransport::SimplePattern(
                     SimplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_as_pattern (CASE_AS_PATTERN)
-                181 => Ok(AnyTransport::CaseAsPattern(
+                182 => Ok(AnyTransport::CaseAsPattern(
                     CaseAsPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: union_pattern (UNION_PATTERN)
-                182 => Ok(AnyTransport::UnionPattern(
+                183 => Ok(AnyTransport::UnionPattern(
                     UnionPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dict_pattern (DICT_PATTERN)
-                183 => Ok(AnyTransport::DictPattern(
+                184 => Ok(AnyTransport::DictPattern(
                     DictPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: key_value_pattern (KEY_VALUE_PATTERN)
-                184 => Ok(AnyTransport::KeyValuePattern(
+                185 => Ok(AnyTransport::KeyValuePattern(
                     KeyValuePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: keyword_pattern (KEYWORD_PATTERN)
-                185 => Ok(AnyTransport::KeywordPattern(
+                186 => Ok(AnyTransport::KeywordPattern(
                     KeywordPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: splat_pattern (SPLAT_PATTERN)
-                186 => Ok(AnyTransport::SplatPattern(
+                187 => Ok(AnyTransport::SplatPattern(
                     SplatPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_pattern (CLASS_PATTERN)
-                187 => Ok(AnyTransport::ClassPattern(
+                188 => Ok(AnyTransport::ClassPattern(
                     ClassPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: complex_pattern (COMPLEX_PATTERN)
-                188 => Ok(AnyTransport::ComplexPattern(
+                189 => Ok(AnyTransport::ComplexPattern(
                     ComplexPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parameters_elements (PARAMETERS_ELEMENTS)
-                189 => Ok(AnyTransport::ParametersElements(
+                190 => Ok(AnyTransport::ParametersElements(
                     ParametersElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: patterns (PATTERNS)
-                190 => Ok(AnyTransport::Patterns(
+                191 => Ok(AnyTransport::Patterns(
                     PatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tuple_pattern (TUPLE_PATTERN)
-                193 => Ok(AnyTransport::TuplePattern(
+                194 => Ok(AnyTransport::TuplePattern(
                     TuplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list_pattern (LIST_PATTERN)
-                194 => Ok(AnyTransport::ListPattern(
+                195 => Ok(AnyTransport::ListPattern(
                     ListPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: default_parameter (DEFAULT_PARAMETER)
-                195 => Ok(AnyTransport::DefaultParameter(
+                196 => Ok(AnyTransport::DefaultParameter(
                     DefaultParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: typed_default_parameter (TYPED_DEFAULT_PARAMETER)
-                196 => Ok(AnyTransport::TypedDefaultParameter(
+                197 => Ok(AnyTransport::TypedDefaultParameter(
                     TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list_splat_pattern (LIST_SPLAT_PATTERN)
-                197 => Ok(AnyTransport::ListSplatPattern(
+                198 => Ok(AnyTransport::ListSplatPattern(
                     ListSplatPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dictionary_splat_pattern (DICTIONARY_SPLAT_PATTERN)
-                198 => Ok(AnyTransport::DictionarySplatPattern(
+                199 => Ok(AnyTransport::DictionarySplatPattern(
                     DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: as_pattern (AS_PATTERN)
-                199 => Ok(AnyTransport::AsPattern(
+                200 => Ok(AnyTransport::AsPattern(
                     AsPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: not_operator (NOT_OPERATOR)
-                203 => Ok(AnyTransport::NotOperator(
+                204 => Ok(AnyTransport::NotOperator(
                     NotOperatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: boolean_operator (BOOLEAN_OPERATOR)
-                204 => Ok(AnyTransport::BooleanOperator(
+                205 => Ok(AnyTransport::BooleanOperator(
                     BooleanOperatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: binary_operator (BINARY_OPERATOR)
-                205 => Ok(AnyTransport::BinaryOperator(
+                206 => Ok(AnyTransport::BinaryOperator(
                     BinaryOperatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: unary_operator (UNARY_OPERATOR)
-                206 => Ok(AnyTransport::UnaryOperator(
+                207 => Ok(AnyTransport::UnaryOperator(
                     UnaryOperatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comparison_operator (COMPARISON_OPERATOR)
-                209 => Ok(AnyTransport::ComparisonOperator(
+                210 => Ok(AnyTransport::ComparisonOperator(
                     ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lambda (LAMBDA)
-                210 => Ok(AnyTransport::Lambda(
+                211 => Ok(AnyTransport::Lambda(
                     LambdaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lambda_within_for_in_clause (LAMBDA_WITHIN_FOR_IN_CLAUSE)
-                211 => Ok(AnyTransport::LambdaWithinForInClause(
+                212 => Ok(AnyTransport::LambdaWithinForInClause(
                     LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: augmented_assignment (AUGMENTED_ASSIGNMENT)
-                213 => Ok(AnyTransport::AugmentedAssignment(
+                214 => Ok(AnyTransport::AugmentedAssignment(
                     AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pattern_list (PATTERN_LIST)
-                214 => Ok(AnyTransport::PatternList(
+                215 => Ok(AnyTransport::PatternList(
                     PatternListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: yield (YIELD)
-                216 => Ok(AnyTransport::Yield(
+                217 => Ok(AnyTransport::Yield(
                     YieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: attribute (ATTRIBUTE)
-                217 => Ok(AnyTransport::Attribute(
+                218 => Ok(AnyTransport::Attribute(
                     AttributeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: subscript (SUBSCRIPT)
-                218 => Ok(AnyTransport::Subscript(
+                219 => Ok(AnyTransport::Subscript(
                     SubscriptTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: slice (SLICE)
-                219 => Ok(AnyTransport::Slice(
+                220 => Ok(AnyTransport::Slice(
                     SliceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ellipsis (ELLIPSIS)
@@ -1079,119 +1081,119 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     EllipsisTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: call (CALL)
-                220 => Ok(AnyTransport::Call(
+                221 => Ok(AnyTransport::Call(
                     CallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: typed_parameter (TYPED_PARAMETER)
-                221 => Ok(AnyTransport::TypedParameter(
+                222 => Ok(AnyTransport::TypedParameter(
                     TypedParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type (TYPE)
-                222 => Ok(AnyTransport::Type(
+                223 => Ok(AnyTransport::Type(
                     TypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: splat_type (SPLAT_TYPE)
-                223 => Ok(AnyTransport::SplatType(
+                224 => Ok(AnyTransport::SplatType(
                     SplatTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: generic_type (GENERIC_TYPE)
-                224 => Ok(AnyTransport::GenericType(
+                225 => Ok(AnyTransport::GenericType(
                     GenericTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: union_type (UNION_TYPE)
-                225 => Ok(AnyTransport::UnionType(
+                226 => Ok(AnyTransport::UnionType(
                     UnionTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: constrained_type (CONSTRAINED_TYPE)
-                226 => Ok(AnyTransport::ConstrainedType(
+                227 => Ok(AnyTransport::ConstrainedType(
                     ConstrainedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: member_type (MEMBER_TYPE)
-                227 => Ok(AnyTransport::MemberType(
+                228 => Ok(AnyTransport::MemberType(
                     MemberTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: keyword_argument (KEYWORD_ARGUMENT)
-                228 => Ok(AnyTransport::KeywordArgument(
+                229 => Ok(AnyTransport::KeywordArgument(
                     KeywordArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list (LIST)
-                229 => Ok(AnyTransport::List(
+                230 => Ok(AnyTransport::List(
                     ListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: set (SET)
-                230 => Ok(AnyTransport::Set(
+                231 => Ok(AnyTransport::Set(
                     SetTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tuple (TUPLE)
-                231 => Ok(AnyTransport::Tuple(
+                232 => Ok(AnyTransport::Tuple(
                     TupleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dictionary (DICTIONARY)
-                232 => Ok(AnyTransport::Dictionary(
+                233 => Ok(AnyTransport::Dictionary(
                     DictionaryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pair (PAIR)
-                233 => Ok(AnyTransport::Pair(
+                234 => Ok(AnyTransport::Pair(
                     PairTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list_comprehension (LIST_COMPREHENSION)
-                234 => Ok(AnyTransport::ListComprehension(
+                235 => Ok(AnyTransport::ListComprehension(
                     ListComprehensionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dictionary_comprehension (DICTIONARY_COMPREHENSION)
-                235 => Ok(AnyTransport::DictionaryComprehension(
+                236 => Ok(AnyTransport::DictionaryComprehension(
                     DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: set_comprehension (SET_COMPREHENSION)
-                236 => Ok(AnyTransport::SetComprehension(
+                237 => Ok(AnyTransport::SetComprehension(
                     SetComprehensionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: generator_expression (GENERATOR_EXPRESSION)
-                237 => Ok(AnyTransport::GeneratorExpression(
+                238 => Ok(AnyTransport::GeneratorExpression(
                     GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parenthesized_expression (PARENTHESIZED_EXPRESSION)
-                238 => Ok(AnyTransport::ParenthesizedExpression(
+                239 => Ok(AnyTransport::ParenthesizedExpression(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: collection_elements (COLLECTION_ELEMENTS)
-                239 => Ok(AnyTransport::CollectionElements(
+                240 => Ok(AnyTransport::CollectionElements(
                     CollectionElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: for_in_clause (FOR_IN_CLAUSE)
-                240 => Ok(AnyTransport::ForInClause(
+                241 => Ok(AnyTransport::ForInClause(
                     ForInClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: if_clause (IF_CLAUSE)
-                241 => Ok(AnyTransport::IfClause(
+                242 => Ok(AnyTransport::IfClause(
                     IfClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: conditional_expression (CONDITIONAL_EXPRESSION)
-                242 => Ok(AnyTransport::ConditionalExpression(
+                243 => Ok(AnyTransport::ConditionalExpression(
                     ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: concatenated_string (CONCATENATED_STRING)
-                243 => Ok(AnyTransport::ConcatenatedString(
+                244 => Ok(AnyTransport::ConcatenatedString(
                     ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string (STRING)
-                244 => Ok(AnyTransport::String(
+                245 => Ok(AnyTransport::String(
                     StringTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string_content (STRING_CONTENT)
-                245 => Ok(AnyTransport::StringContent(
+                246 => Ok(AnyTransport::StringContent(
                     StringContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: interpolation (INTERPOLATION)
-                246 => Ok(AnyTransport::Interpolation(
+                247 => Ok(AnyTransport::Interpolation(
                     InterpolationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: not_escape_sequence (NOT_ESCAPE_SEQUENCE)
-                249 => Ok(AnyTransport::NotEscapeSequence(
+                250 => Ok(AnyTransport::NotEscapeSequence(
                     NotEscapeSequenceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: format_specifier (FORMAT_SPECIFIER)
-                250 => Ok(AnyTransport::FormatSpecifier(
+                251 => Ok(AnyTransport::FormatSpecifier(
                     FormatSpecifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_conversion (TYPE_CONVERSION)
@@ -1215,7 +1217,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: await (AWAIT)
-                253 => Ok(AnyTransport::Await(
+                254 => Ok(AnyTransport::Await(
                     AwaitTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comment (COMMENT)
@@ -1223,111 +1225,111 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     CommentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: positional_separator (POSITIONAL_SEPARATOR)
-                254 => Ok(AnyTransport::PositionalSeparator(
+                255 => Ok(AnyTransport::PositionalSeparator(
                     PositionalSeparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: keyword_separator (KEYWORD_SEPARATOR)
-                255 => Ok(AnyTransport::KeywordSeparator(
+                256 => Ok(AnyTransport::KeywordSeparator(
                     KeywordSeparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_async_marker (_KW_ASYNC_MARKER)
-                256 => Ok(AnyTransport::KwAsyncMarker(
+                257 => Ok(AnyTransport::KwAsyncMarker(
                     KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: simple_statements_elements (SIMPLE_STATEMENTS_ELEMENTS)
-                257 => Ok(AnyTransport::SimpleStatementsElements(
+                258 => Ok(AnyTransport::SimpleStatementsElements(
                     SimpleStatementsElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: subjects (SUBJECTS)
-                258 => Ok(AnyTransport::Subjects(
+                259 => Ok(AnyTransport::Subjects(
                     SubjectsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_patterns (CASE_PATTERNS)
-                259 => Ok(AnyTransport::CasePatterns(
+                260 => Ok(AnyTransport::CasePatterns(
                     CasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_clause_with_items (WITH_CLAUSE_WITH_ITEMS)
-                260 => Ok(AnyTransport::WithClauseWithItems(
+                261 => Ok(AnyTransport::WithClauseWithItems(
                     WithClauseWithItemsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: types (TYPES)
-                261 => Ok(AnyTransport::Types(
+                262 => Ok(AnyTransport::Types(
                     TypesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: argument_list_elements (ARGUMENT_LIST_ELEMENTS)
-                262 => Ok(AnyTransport::ArgumentListElements(
+                263 => Ok(AnyTransport::ArgumentListElements(
                     ArgumentListElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: expression_list_expressions (EXPRESSION_LIST_EXPRESSIONS)
-                263 => Ok(AnyTransport::ExpressionListExpressions(
+                264 => Ok(AnyTransport::ExpressionListExpressions(
                     ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: list_pattern_case_patterns (LIST_PATTERN_CASE_PATTERNS)
-                264 => Ok(AnyTransport::ListPatternCasePatterns(
+                265 => Ok(AnyTransport::ListPatternCasePatterns(
                     ListPatternCasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dict_pattern_elements (DICT_PATTERN_ELEMENTS)
-                265 => Ok(AnyTransport::DictPatternElements(
+                266 => Ok(AnyTransport::DictPatternElements(
                     DictPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: pattern_list_patterns (PATTERN_LIST_PATTERNS)
-                266 => Ok(AnyTransport::PatternListPatterns(
+                267 => Ok(AnyTransport::PatternListPatterns(
                     PatternListPatternsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: subscripts (SUBSCRIPTS)
-                267 => Ok(AnyTransport::Subscripts(
+                268 => Ok(AnyTransport::Subscripts(
                     SubscriptsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dictionary_elements (DICTIONARY_ELEMENTS)
-                268 => Ok(AnyTransport::DictionaryElements(
+                269 => Ok(AnyTransport::DictionaryElements(
                     DictionaryElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: slice_group (SLICE_GROUP)
-                269 => Ok(AnyTransport::SliceGroup(
+                270 => Ok(AnyTransport::SliceGroup(
                     SliceGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _augmented_assignment_operator (_AUGMENTED_ASSIGNMENT_OPERATOR)
-                270 => Ok(AnyTransport::AugmentedAssignmentOperator(
+                271 => Ok(AnyTransport::AugmentedAssignmentOperator(
                     AugmentedAssignmentOperatorEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: except_clause_exception_as (EXCEPT_CLAUSE_EXCEPTION_AS)
-                271 => Ok(AnyTransport::ExceptClauseExceptionAs(
+                272 => Ok(AnyTransport::ExceptClauseExceptionAs(
                     ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_tuple_pattern (CASE_TUPLE_PATTERN)
-                272 => Ok(AnyTransport::CaseTuplePattern(
+                273 => Ok(AnyTransport::CaseTuplePattern(
                     CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_list_pattern (CASE_LIST_PATTERN)
-                273 => Ok(AnyTransport::CaseListPattern(
+                274 => Ok(AnyTransport::CaseListPattern(
                     CaseListPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_arguments (PRINT_ARGUMENTS)
-                274 => Ok(AnyTransport::PrintArguments(
+                275 => Ok(AnyTransport::PrintArguments(
                     PrintArgumentsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_chevron_arguments (PRINT_CHEVRON_ARGUMENTS)
-                275 => Ok(AnyTransport::PrintChevronArguments(
+                276 => Ok(AnyTransport::PrintChevronArguments(
                     PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_statement_chevron (PRINT_STATEMENT_CHEVRON)
-                276 => Ok(AnyTransport::PrintStatementChevron(
+                277 => Ok(AnyTransport::PrintStatementChevron(
                     PrintStatementChevronTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_statement_plain (PRINT_STATEMENT_PLAIN)
-                277 => Ok(AnyTransport::PrintStatementPlain(
+                278 => Ok(AnyTransport::PrintStatementPlain(
                     PrintStatementPlainTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: wildcard_pattern (WILDCARD_PATTERN)
-                278 => Ok(AnyTransport::WildcardPattern(
+                279 => Ok(AnyTransport::WildcardPattern(
                     WildcardPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: parenthesized_import_list (PARENTHESIZED_IMPORT_LIST)
-                279 => Ok(AnyTransport::ParenthesizedImportList(
+                280 => Ok(AnyTransport::ParenthesizedImportList(
                     ParenthesizedImportListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comprehension_clauses (COMPREHENSION_CLAUSES)
-                280 => Ok(AnyTransport::ComprehensionClauses(
+                281 => Ok(AnyTransport::ComprehensionClauses(
                     ComprehensionClausesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: integer_hex (INTEGER_HEX)
@@ -1395,63 +1397,63 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     LineContinuationNulTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: simple_pattern_negative (SIMPLE_PATTERN_NEGATIVE)
-                281 => Ok(AnyTransport::SimplePatternNegative(
+                282 => Ok(AnyTransport::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: except_clause_exception_list (EXCEPT_CLAUSE_EXCEPTION_LIST)
-                282 => Ok(AnyTransport::ExceptClauseExceptionList(
+                283 => Ok(AnyTransport::ExceptClauseExceptionList(
                     ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: except_clause_exception (EXCEPT_CLAUSE_EXCEPTION)
-                283 => Ok(AnyTransport::ExceptClauseException(
+                284 => Ok(AnyTransport::ExceptClauseException(
                     ExceptClauseExceptionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_eq (ASSIGNMENT_EQ)
-                284 => Ok(AnyTransport::AssignmentEq(
+                285 => Ok(AnyTransport::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_type (ASSIGNMENT_TYPE)
-                285 => Ok(AnyTransport::AssignmentType(
+                286 => Ok(AnyTransport::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_typed (ASSIGNMENT_TYPED)
-                286 => Ok(AnyTransport::AssignmentTyped(
+                287 => Ok(AnyTransport::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: expression_statement_tuple (EXPRESSION_STATEMENT_TUPLE)
-                287 => Ok(AnyTransport::ExpressionStatementTuple(
+                288 => Ok(AnyTransport::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_clause_bare (WITH_CLAUSE_BARE)
-                288 => Ok(AnyTransport::WithClauseBare(
+                289 => Ok(AnyTransport::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with_clause_paren (WITH_CLAUSE_PAREN)
-                289 => Ok(AnyTransport::WithClauseParen(
+                290 => Ok(AnyTransport::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: match_block_block (MATCH_BLOCK_BLOCK)
-                290 => Ok(AnyTransport::MatchBlockBlock(
+                291 => Ok(AnyTransport::MatchBlockBlock(
                     MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: suite_inline (SUITE_INLINE)
-                291 => Ok(AnyTransport::SuiteInline(
+                292 => Ok(AnyTransport::SuiteInline(
                     SuiteInlineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: suite_block (SUITE_BLOCK)
-                292 => Ok(AnyTransport::SuiteBlock(
+                293 => Ok(AnyTransport::SuiteBlock(
                     SuiteBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: suite_empty (SUITE_EMPTY)
-                293 => Ok(AnyTransport::SuiteEmpty(
+                294 => Ok(AnyTransport::SuiteEmpty(
                     SuiteEmptyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comparison_operator_comparator (COMPARISON_OPERATOR_COMPARATOR)
-                294 => Ok(AnyTransport::ComparisonOperatorComparator(
+                295 => Ok(AnyTransport::ComparisonOperatorComparator(
                     ComparisonOperatorComparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: yield_from_clause (YIELD_FROM_CLAUSE)
-                295 => Ok(AnyTransport::YieldFromClause(
+                296 => Ok(AnyTransport::YieldFromClause(
                     YieldFromClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string_start (STRING_START)
@@ -1478,16 +1480,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 121 => Ok(AnyTransport::Space(
                     SpaceTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _tab (_TAB)
+                122 => Ok(AnyTransport::Tab(
+                    TabTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _newline (_NEWLINE)
                 113 => Ok(AnyTransport::Newline(
                     NewlineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _blankline (_BLANKLINE)
-                122 => Ok(AnyTransport::Blankline(
+                123 => Ok(AnyTransport::Blankline(
                     BlanklineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _double_blankline (_DOUBLE_BLANKLINE)
-                123 => Ok(AnyTransport::DoubleBlankline(
+                124 => Ok(AnyTransport::DoubleBlankline(
                     DoubleBlanklineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _indent (_INDENT)
@@ -1499,15 +1505,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     DedentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: names (NAMES)
-                333 => Ok(AnyTransport::Names(
+                334 => Ok(AnyTransport::Names(
                     NamesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: as_pattern_target (AS_PATTERN_TARGET)
-                331 => Ok(AnyTransport::AsPatternTarget(
+                332 => Ok(AnyTransport::AsPatternTarget(
                     AsPatternTargetTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: format_expression (FORMAT_EXPRESSION)
-                332 => Ok(AnyTransport::FormatExpression(
+                333 => Ok(AnyTransport::FormatExpression(
                     FormatExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_keyword (IMPORT_KEYWORD)
@@ -1851,7 +1857,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     LtGtTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _not_in (_NOT_IN)
-                207 => Ok(AnyTransport::NotIn(
+                208 => Ok(AnyTransport::NotIn(
                     NotInTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: is_keyword (IS_KEYWORD)
@@ -1859,7 +1865,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     IsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _is_not (_IS_NOT)
-                208 => Ok(AnyTransport::IsNot(
+                209 => Ok(AnyTransport::IsNot(
                     IsNotTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -1909,6 +1915,7 @@ pub enum TriviaTransport {
     LineContinuationNewline(LineContinuationNewlineTransport),
     LineContinuationNul(LineContinuationNulTransport),
     Space(SpaceTransport),
+    Tab(TabTransport),
     Newline(NewlineTransport),
     Blankline(BlanklineTransport),
     DoubleBlankline(DoubleBlanklineTransport),
@@ -1923,6 +1930,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::LineContinuationNewline(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNul(t) => t.prepare(ctx),
             TriviaTransport::Space(t) => t.prepare(ctx),
+            TriviaTransport::Tab(t) => t.prepare(ctx),
             TriviaTransport::Newline(t) => t.prepare(ctx),
             TriviaTransport::Blankline(t) => t.prepare(ctx),
             TriviaTransport::DoubleBlankline(t) => t.prepare(ctx),
@@ -1939,6 +1947,7 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::LineContinuationNewline(t) => t.render(w),
             TriviaTransport::LineContinuationNul(t) => t.render(w),
             TriviaTransport::Space(t) => t.render(w),
+            TriviaTransport::Tab(t) => t.render(w),
             TriviaTransport::Newline(t) => t.render(w),
             TriviaTransport::Blankline(t) => t.render(w),
             TriviaTransport::DoubleBlankline(t) => t.render(w),
@@ -1952,6 +1961,7 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_text(&self) -> Option<&str> {
         match self {
             TriviaTransport::Space(t) => Some(&t.text),
+            TriviaTransport::Tab(t) => Some(&t.text),
             TriviaTransport::Newline(t) => Some(&t.text),
             TriviaTransport::Blankline(t) => Some(&t.text),
             TriviaTransport::DoubleBlankline(t) => Some(&t.text),
@@ -1973,9 +1983,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     104 => Ok(Self::LineContinuationNewline(LineContinuationNewlineTransport::from_napi_value(env, napi_val)?)),
                     105 => Ok(Self::LineContinuationNul(LineContinuationNulTransport::from_napi_value(env, napi_val)?)),
                     121 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    122 => Ok(Self::Tab(TabTransport::from_napi_value(env, napi_val)?)),
                     113 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
-                    122 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
-                    123 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
+                    123 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    124 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -1993,9 +2004,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     104 => Ok(Self::LineContinuationNewline(LineContinuationNewlineTransport::from_napi_value(env, napi_val)?)),
                     105 => Ok(Self::LineContinuationNul(LineContinuationNulTransport::from_napi_value(env, napi_val)?)),
                     121 => Ok(Self::Space(SpaceTransport::from_napi_value(env, napi_val)?)),
+                    122 => Ok(Self::Tab(TabTransport::from_napi_value(env, napi_val)?)),
                     113 => Ok(Self::Newline(NewlineTransport::from_napi_value(env, napi_val)?)),
-                    122 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
-                    123 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
+                    123 => Ok(Self::Blankline(BlanklineTransport::from_napi_value(env, napi_val)?)),
+                    124 => Ok(Self::DoubleBlankline(DoubleBlanklineTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -2092,52 +2104,52 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    144 => Ok(Self::PassStatement(
+                    145 => Ok(Self::PassStatement(
                         PassStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    145 => Ok(Self::BreakStatement(
+                    146 => Ok(Self::BreakStatement(
                         BreakStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    146 => Ok(Self::ContinueStatement(
+                    147 => Ok(Self::ContinueStatement(
                         ContinueStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    130 => Ok(Self::FutureImportStatement(
+                    131 => Ok(Self::FutureImportStatement(
                         FutureImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    127 => Ok(Self::ImportStatement(
+                    128 => Ok(Self::ImportStatement(
                         ImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    131 => Ok(Self::ImportFromStatement(
+                    132 => Ok(Self::ImportFromStatement(
                         ImportFromStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::PrintStatement(
+                    136 => Ok(Self::PrintStatement(
                         PrintStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    137 => Ok(Self::AssertStatement(
+                    138 => Ok(Self::AssertStatement(
                         AssertStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    138 => Ok(Self::ExpressionStatement(
+                    139 => Ok(Self::ExpressionStatement(
                         ExpressionStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    141 => Ok(Self::ReturnStatement(
+                    142 => Ok(Self::ReturnStatement(
                         ReturnStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    142 => Ok(Self::DeleteStatement(
+                    143 => Ok(Self::DeleteStatement(
                         DeleteStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    143 => Ok(Self::RaiseStatement(
+                    144 => Ok(Self::RaiseStatement(
                         RaiseStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    166 => Ok(Self::GlobalStatement(
+                    167 => Ok(Self::GlobalStatement(
                         GlobalStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    167 => Ok(Self::NonlocalStatement(
+                    168 => Ok(Self::NonlocalStatement(
                         NonlocalStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    168 => Ok(Self::ExecStatement(
+                    169 => Ok(Self::ExecStatement(
                         ExecStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    169 => Ok(Self::TypeAliasStatement(
+                    170 => Ok(Self::TypeAliasStatement(
                         TypeAliasStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2151,52 +2163,52 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
                     ::napi::Error::from_reason("$type property missing in SimpleStatementTransport")
                 )?;
                 match kind_id {
-                    144 => Ok(Self::PassStatement(
+                    145 => Ok(Self::PassStatement(
                         PassStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    145 => Ok(Self::BreakStatement(
+                    146 => Ok(Self::BreakStatement(
                         BreakStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    146 => Ok(Self::ContinueStatement(
+                    147 => Ok(Self::ContinueStatement(
                         ContinueStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    130 => Ok(Self::FutureImportStatement(
+                    131 => Ok(Self::FutureImportStatement(
                         FutureImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    127 => Ok(Self::ImportStatement(
+                    128 => Ok(Self::ImportStatement(
                         ImportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    131 => Ok(Self::ImportFromStatement(
+                    132 => Ok(Self::ImportFromStatement(
                         ImportFromStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    135 => Ok(Self::PrintStatement(
+                    136 => Ok(Self::PrintStatement(
                         PrintStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    137 => Ok(Self::AssertStatement(
+                    138 => Ok(Self::AssertStatement(
                         AssertStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    138 => Ok(Self::ExpressionStatement(
+                    139 => Ok(Self::ExpressionStatement(
                         ExpressionStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    141 => Ok(Self::ReturnStatement(
+                    142 => Ok(Self::ReturnStatement(
                         ReturnStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    142 => Ok(Self::DeleteStatement(
+                    143 => Ok(Self::DeleteStatement(
                         DeleteStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    143 => Ok(Self::RaiseStatement(
+                    144 => Ok(Self::RaiseStatement(
                         RaiseStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    166 => Ok(Self::GlobalStatement(
+                    167 => Ok(Self::GlobalStatement(
                         GlobalStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    167 => Ok(Self::NonlocalStatement(
+                    168 => Ok(Self::NonlocalStatement(
                         NonlocalStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    168 => Ok(Self::ExecStatement(
+                    169 => Ok(Self::ExecStatement(
                         ExecStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    169 => Ok(Self::TypeAliasStatement(
+                    170 => Ok(Self::TypeAliasStatement(
                         TypeAliasStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2292,19 +2304,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    159 => {
+                    160 => {
                         if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithClauseBare(value));
                         }
                         if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithClauseParen(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 159 in WithClauseTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 160 in WithClauseTransport decodes as none of its members"))
                     },
-                    288 => Ok(Self::WithClauseBare(
+                    289 => Ok(Self::WithClauseBare(
                         WithClauseBareTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::WithClauseParen(
+                    290 => Ok(Self::WithClauseParen(
                         WithClauseParenTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2318,19 +2330,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
                     ::napi::Error::from_reason("$type property missing in WithClauseTransport")
                 )?;
                 match kind_id {
-                    159 => {
+                    160 => {
                         if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithClauseBare(value));
                         }
                         if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithClauseParen(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 159 in WithClauseTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 160 in WithClauseTransport decodes as none of its members"))
                     },
-                    288 => Ok(Self::WithClauseBare(
+                    289 => Ok(Self::WithClauseBare(
                         WithClauseBareTransport::from_napi_value(env, napi_val)?
                     )),
-                    289 => Ok(Self::WithClauseParen(
+                    290 => Ok(Self::WithClauseParen(
                         WithClauseParenTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2414,13 +2426,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    291 => Ok(Self::SuiteInline(
+                    292 => Ok(Self::SuiteInline(
                         SuiteInlineTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::SuiteBlock(
+                    293 => Ok(Self::SuiteBlock(
                         SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    293 => Ok(Self::SuiteEmpty(
+                    294 => Ok(Self::SuiteEmpty(
                         SuiteEmptyTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2434,13 +2446,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteTransport {
                     ::napi::Error::from_reason("$type property missing in SuiteTransport")
                 )?;
                 match kind_id {
-                    291 => Ok(Self::SuiteInline(
+                    292 => Ok(Self::SuiteInline(
                         SuiteInlineTransport::from_napi_value(env, napi_val)?
                     )),
-                    292 => Ok(Self::SuiteBlock(
+                    293 => Ok(Self::SuiteBlock(
                         SuiteBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    293 => Ok(Self::SuiteEmpty(
+                    294 => Ok(Self::SuiteEmpty(
                         SuiteEmptyTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2539,7 +2551,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    191 => {
+                    192 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -2567,12 +2579,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 191 in ParameterTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 192 in ParameterTransport decodes as none of its members"))
                     },
-                    255 => Ok(Self::KeywordSeparator(
+                    256 => Ok(Self::KeywordSeparator(
                         KeywordSeparatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    254 => Ok(Self::PositionalSeparator(
+                    255 => Ok(Self::PositionalSeparator(
                         PositionalSeparatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -2596,22 +2608,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::TypedParameter(
+                    222 => Ok(Self::TypedParameter(
                         TypedParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    195 => Ok(Self::DefaultParameter(
+                    196 => Ok(Self::DefaultParameter(
                         DefaultParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    196 => Ok(Self::TypedDefaultParameter(
+                    197 => Ok(Self::TypedDefaultParameter(
                         TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::DictionarySplatPattern(
+                    199 => Ok(Self::DictionarySplatPattern(
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2625,7 +2637,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                     ::napi::Error::from_reason("$type property missing in ParameterTransport")
                 )?;
                 match kind_id {
-                    191 => {
+                    192 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -2653,12 +2665,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 191 in ParameterTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 192 in ParameterTransport decodes as none of its members"))
                     },
-                    255 => Ok(Self::KeywordSeparator(
+                    256 => Ok(Self::KeywordSeparator(
                         KeywordSeparatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    254 => Ok(Self::PositionalSeparator(
+                    255 => Ok(Self::PositionalSeparator(
                         PositionalSeparatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -2682,22 +2694,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    221 => Ok(Self::TypedParameter(
+                    222 => Ok(Self::TypedParameter(
                         TypedParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    195 => Ok(Self::DefaultParameter(
+                    196 => Ok(Self::DefaultParameter(
                         DefaultParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    196 => Ok(Self::TypedDefaultParameter(
+                    197 => Ok(Self::TypedDefaultParameter(
                         TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::DictionarySplatPattern(
+                    199 => Ok(Self::DictionarySplatPattern(
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2810,7 +2822,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    192 => {
+                    193 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -2847,7 +2859,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = ListPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListPattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 192 in PatternTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 193 in PatternTransport decodes as none of its members"))
                     },
                     68 => Ok(Self::PrintKeyword(
                         PrintKeywordTransport::from_napi_value(env, napi_val)?
@@ -2870,19 +2882,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2896,7 +2908,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     ::napi::Error::from_reason("$type property missing in PatternTransport")
                 )?;
                 match kind_id {
-                    192 => {
+                    193 => {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
@@ -2933,7 +2945,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = ListPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListPattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 192 in PatternTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 193 in PatternTransport decodes as none of its members"))
                     },
                     68 => Ok(Self::PrintKeyword(
                         PrintKeywordTransport::from_napi_value(env, napi_val)?
@@ -2956,19 +2968,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3076,7 +3088,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    201 => {
+                    202 => {
                         if let Ok(value) = ComparisonOperatorTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ComparisonOperator(value));
                         }
@@ -3101,24 +3113,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PrimaryExpression(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 201 in ExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 202 in ExpressionTransport decodes as none of its members"))
                     },
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::PrimaryExpression(
+                    254 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::PrimaryExpression(
+                    206 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::PrimaryExpression(
@@ -3142,10 +3154,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     22 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::PrimaryExpression(
+                    245 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::PrimaryExpression(
+                    244 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::PrimaryExpression(
@@ -3178,31 +3190,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     73 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    217 => Ok(Self::PrimaryExpression(
+                    207 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     218 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::PrimaryExpression(
+                    219 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::PrimaryExpression(
+                    221 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::PrimaryExpression(
+                    230 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::PrimaryExpression(
+                    233 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     236 => Ok(Self::PrimaryExpression(
@@ -3211,34 +3217,40 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     231 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::PrimaryExpression(
+                    237 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::PrimaryExpression(
+                    232 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     64 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::PrimaryExpression(
+                    198 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    202 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::PrimaryExpression(
+                    203 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     252 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    253 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3252,7 +3264,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in ExpressionTransport")
                 )?;
                 match kind_id {
-                    201 => {
+                    202 => {
                         if let Ok(value) = ComparisonOperatorTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ComparisonOperator(value));
                         }
@@ -3277,24 +3289,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PrimaryExpression(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 201 in ExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 202 in ExpressionTransport decodes as none of its members"))
                     },
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::PrimaryExpression(
+                    254 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::PrimaryExpression(
+                    206 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::PrimaryExpression(
@@ -3318,10 +3330,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     22 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::PrimaryExpression(
+                    245 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::PrimaryExpression(
+                    244 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::PrimaryExpression(
@@ -3354,31 +3366,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     73 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    217 => Ok(Self::PrimaryExpression(
+                    207 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     218 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::PrimaryExpression(
+                    219 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::PrimaryExpression(
+                    221 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    232 => Ok(Self::PrimaryExpression(
+                    230 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::PrimaryExpression(
+                    233 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     236 => Ok(Self::PrimaryExpression(
@@ -3387,34 +3393,40 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     231 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::PrimaryExpression(
+                    237 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::PrimaryExpression(
+                    232 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     64 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::PrimaryExpression(
+                    198 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    202 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::PrimaryExpression(
+                    203 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     252 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    253 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3564,7 +3576,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    202 => {
+                    203 => {
                         if let Ok(value) = AwaitTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Await(value));
                         }
@@ -3658,7 +3670,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Tuple(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 202 in PrimaryExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 203 in PrimaryExpressionTransport decodes as none of its members"))
                     },
                     68 => Ok(Self::PrintKeyword(
                         PrintKeywordTransport::from_napi_value(env, napi_val)?
@@ -3690,19 +3702,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::Integer(
@@ -3717,7 +3729,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     93 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::Integer(
+                    252 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
                     94 => Ok(Self::Float(
@@ -3729,49 +3741,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     96 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Float(
+                    253 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3785,7 +3797,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in PrimaryExpressionTransport")
                 )?;
                 match kind_id {
-                    202 => {
+                    203 => {
                         if let Ok(value) = AwaitTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Await(value));
                         }
@@ -3879,7 +3891,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Tuple(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 202 in PrimaryExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 203 in PrimaryExpressionTransport decodes as none of its members"))
                     },
                     68 => Ok(Self::PrintKeyword(
                         PrintKeywordTransport::from_napi_value(env, napi_val)?
@@ -3911,19 +3923,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::Integer(
@@ -3938,7 +3950,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     93 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::Integer(
+                    252 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
                     94 => Ok(Self::Float(
@@ -3950,49 +3962,49 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     96 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::Float(
+                    253 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4148,7 +4160,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    251 => {
+                    252 => {
                         if let Ok(value) = IntegerHexTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::IntegerHex(value));
                         }
@@ -4161,7 +4173,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
                         if let Ok(value) = IntegerDecimalTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::IntegerDecimal(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 251 in IntegerTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 252 in IntegerTransport decodes as none of its members"))
                     },
                     90 => Ok(Self::IntegerHex(
                         IntegerHexTransport::from_napi_value(env, napi_val)?
@@ -4186,7 +4198,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
                     ::napi::Error::from_reason("$type property missing in IntegerTransport")
                 )?;
                 match kind_id {
-                    251 => {
+                    252 => {
                         if let Ok(value) = IntegerHexTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::IntegerHex(value));
                         }
@@ -4199,7 +4211,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
                         if let Ok(value) = IntegerDecimalTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::IntegerDecimal(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 251 in IntegerTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 252 in IntegerTransport decodes as none of its members"))
                     },
                     90 => Ok(Self::IntegerHex(
                         IntegerHexTransport::from_napi_value(env, napi_val)?
@@ -4308,7 +4320,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    252 => {
+                    253 => {
                         if let Ok(value) = FloatPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatPoint(value));
                         }
@@ -4318,7 +4330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                         if let Ok(value) = FloatScientificTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatScientific(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 252 in FloatTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 253 in FloatTransport decodes as none of its members"))
                     },
                     94 => Ok(Self::FloatPoint(
                         FloatPointTransport::from_napi_value(env, napi_val)?
@@ -4340,7 +4352,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                     ::napi::Error::from_reason("$type property missing in FloatTransport")
                 )?;
                 match kind_id {
-                    252 => {
+                    253 => {
                         if let Ok(value) = FloatPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatPoint(value));
                         }
@@ -4350,7 +4362,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                         if let Ok(value) = FloatScientificTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatScientific(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 252 in FloatTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 253 in FloatTransport decodes as none of its members"))
                     },
                     94 => Ok(Self::FloatPoint(
                         FloatPointTransport::from_napi_value(env, napi_val)?
@@ -4483,37 +4495,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    126 => Ok(Self::SimpleStatements(
+                    127 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::SimpleStatements(
+                    336 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    147 => Ok(Self::IfStatement(
+                    148 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    153 => Ok(Self::ForStatement(
+                    154 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    154 => Ok(Self::WhileStatement(
+                    155 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    155 => Ok(Self::TryStatement(
+                    156 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    158 => Ok(Self::WithStatement(
+                    159 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    174 => Ok(Self::DecoratedDefinition(
+                    175 => Ok(Self::DecoratedDefinition(
                         DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    150 => Ok(Self::MatchStatement(
+                    151 => Ok(Self::MatchStatement(
                         MatchStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4527,37 +4539,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ModuleStatementsTransportSlot")
                 )?;
                 match kind_id {
-                    126 => Ok(Self::SimpleStatements(
+                    127 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::SimpleStatements(
+                    336 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    147 => Ok(Self::IfStatement(
+                    148 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    153 => Ok(Self::ForStatement(
+                    154 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    154 => Ok(Self::WhileStatement(
+                    155 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    155 => Ok(Self::TryStatement(
+                    156 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    158 => Ok(Self::WithStatement(
+                    159 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    174 => Ok(Self::DecoratedDefinition(
+                    175 => Ok(Self::DecoratedDefinition(
                         DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    150 => Ok(Self::MatchStatement(
+                    151 => Ok(Self::MatchStatement(
                         MatchStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4665,10 +4677,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTran
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    132 => Ok(Self::ImportList(
+                    133 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ParenthesizedImportList(
+                    280 => Ok(Self::ParenthesizedImportList(
                         ParenthesizedImportListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4682,10 +4694,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTran
                     ::napi::Error::from_reason("$type property missing in FutureImportStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    132 => Ok(Self::ImportList(
+                    133 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ParenthesizedImportList(
+                    280 => Ok(Self::ParenthesizedImportList(
                         ParenthesizedImportListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4777,10 +4789,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementModuleNameTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::RelativeImport(
+                    130 => Ok(Self::RelativeImport(
                         RelativeImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4794,10 +4806,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementModuleNameTra
                     ::napi::Error::from_reason("$type property missing in ImportFromStatementModuleNameTransportSlot")
                 )?;
                 match kind_id {
-                    129 => Ok(Self::RelativeImport(
+                    130 => Ok(Self::RelativeImport(
                         RelativeImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4878,7 +4890,7 @@ impl ::sittir_core::view::KindOf for ImportFromStatementContentTransportSlot {
         match self {
             Self::ImportList(inner) => inner.kind_in(kinds),
             Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
-            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k)),
+            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => [::sittir_core::types::KindId(135)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4892,11 +4904,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
-                    132 => Ok(Self::ImportList(
+                    135 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
+                    133 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ParenthesizedImportList(
+                    280 => Ok(Self::ParenthesizedImportList(
                         ParenthesizedImportListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -4910,11 +4922,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
                     ::napi::Error::from_reason("$type property missing in ImportFromStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
-                    132 => Ok(Self::ImportList(
+                    135 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
+                    133 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
-                    279 => Ok(Self::ParenthesizedImportList(
+                    280 => Ok(Self::ParenthesizedImportList(
                         ParenthesizedImportListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5013,10 +5025,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportListNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::AliasedImport(
+                    134 => Ok(Self::AliasedImport(
                         AliasedImportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5030,10 +5042,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportListNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ImportListNameTransportSlot")
                 )?;
                 match kind_id {
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    133 => Ok(Self::AliasedImport(
+                    134 => Ok(Self::AliasedImport(
                         AliasedImportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5125,10 +5137,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    276 => Ok(Self::PrintStatementChevron(
+                    277 => Ok(Self::PrintStatementChevron(
                         PrintStatementChevronTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::PrintStatementPlain(
+                    278 => Ok(Self::PrintStatementPlain(
                         PrintStatementPlainTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5142,10 +5154,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
                     ::napi::Error::from_reason("$type property missing in PrintStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    276 => Ok(Self::PrintStatementChevron(
+                    277 => Ok(Self::PrintStatementChevron(
                         PrintStatementChevronTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::PrintStatementPlain(
+                    278 => Ok(Self::PrintStatementPlain(
                         PrintStatementPlainTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5411,31 +5423,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -5459,73 +5471,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    287 => Ok(Self::ExpressionStatementTuple(
+                    288 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5569,31 +5581,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -5617,73 +5629,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    287 => Ok(Self::ExpressionStatementTuple(
+                    288 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6180,31 +6192,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -6228,58 +6240,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6323,31 +6335,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -6371,58 +6383,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6760,31 +6772,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -6808,58 +6820,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -6903,31 +6915,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -6951,58 +6963,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7340,31 +7352,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -7388,58 +7400,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7483,31 +7495,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -7531,58 +7543,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7761,10 +7773,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementAlternativeTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    148 => Ok(Self::ElifClause(
+                    149 => Ok(Self::ElifClause(
                         ElifClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    149 => Ok(Self::ElseClause(
+                    150 => Ok(Self::ElseClause(
                         ElseClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7778,10 +7790,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementAlternativeTransportS
                     ::napi::Error::from_reason("$type property missing in IfStatementAlternativeTransportSlot")
                 )?;
                 match kind_id {
-                    148 => Ok(Self::ElifClause(
+                    149 => Ok(Self::ElifClause(
                         ElifClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    149 => Ok(Self::ElseClause(
+                    150 => Ok(Self::ElseClause(
                         ElseClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7874,7 +7886,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     113 => Ok(Self::Literal7_5f_6e_65_77_6c_69_6e_65),
-                    290 => Ok(Self::MatchBlockBlock(
+                    291 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7889,7 +7901,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
                 )?;
                 match kind_id {
                     113 => Ok(Self::Literal7_5f_6e_65_77_6c_69_6e_65),
-                    290 => Ok(Self::MatchBlockBlock(
+                    291 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8135,22 +8147,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8185,22 +8197,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8476,31 +8488,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -8524,58 +8536,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8619,31 +8631,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -8667,58 +8679,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9191,7 +9203,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -9226,7 +9238,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ExecStatementCodeTransportSlot")
                 )?;
                 match kind_id {
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -9342,10 +9354,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9359,10 +9371,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTra
                     ::napi::Error::from_reason("$type property missing in ParenthesizedListSplatContentTransportSlot")
                 )?;
                 match kind_id {
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9454,10 +9466,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratedDefinitionDefinitionTra
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9471,10 +9483,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratedDefinitionDefinitionTra
                     ::napi::Error::from_reason("$type property missing in DecoratedDefinitionDefinitionTransportSlot")
                 )?;
                 match kind_id {
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9590,37 +9602,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    126 => Ok(Self::SimpleStatements(
+                    127 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::SimpleStatements(
+                    336 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    147 => Ok(Self::IfStatement(
+                    148 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    153 => Ok(Self::ForStatement(
+                    154 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    154 => Ok(Self::WhileStatement(
+                    155 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    155 => Ok(Self::TryStatement(
+                    156 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    158 => Ok(Self::WithStatement(
+                    159 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    174 => Ok(Self::DecoratedDefinition(
+                    175 => Ok(Self::DecoratedDefinition(
                         DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    150 => Ok(Self::MatchStatement(
+                    151 => Ok(Self::MatchStatement(
                         MatchStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9634,37 +9646,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
                     ::napi::Error::from_reason("$type property missing in BlockStatementsTransportSlot")
                 )?;
                 match kind_id {
-                    126 => Ok(Self::SimpleStatements(
+                    127 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    335 => Ok(Self::SimpleStatements(
+                    336 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    147 => Ok(Self::IfStatement(
+                    148 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    153 => Ok(Self::ForStatement(
+                    154 => Ok(Self::ForStatement(
                         ForStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    154 => Ok(Self::WhileStatement(
+                    155 => Ok(Self::WhileStatement(
                         WhileStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    155 => Ok(Self::TryStatement(
+                    156 => Ok(Self::TryStatement(
                         TryStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    158 => Ok(Self::WithStatement(
+                    159 => Ok(Self::WithStatement(
                         WithStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    161 => Ok(Self::FunctionDefinition(
+                    162 => Ok(Self::FunctionDefinition(
                         FunctionDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::ClassDefinition(
+                    171 => Ok(Self::ClassDefinition(
                         ClassDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    174 => Ok(Self::DecoratedDefinition(
+                    175 => Ok(Self::DecoratedDefinition(
                         DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
-                    150 => Ok(Self::MatchStatement(
+                    151 => Ok(Self::MatchStatement(
                         MatchStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9773,7 +9785,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    263 => Ok(Self::ExpressionListExpressions(
+                    264 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9788,7 +9800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                 )?;
                 match kind_id {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    263 => Ok(Self::ExpressionListExpressions(
+                    264 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9888,16 +9900,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    181 => Ok(Self::CaseAsPattern(
+                    182 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::KeywordPattern(
+                    186 => Ok(Self::KeywordPattern(
                         KeywordPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    180 => Ok(Self::SimplePattern(
+                    181 => Ok(Self::SimplePattern(
                         SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::SimplePattern(
+                    335 => Ok(Self::SimplePattern(
                         SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9911,16 +9923,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in CasePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    181 => Ok(Self::CaseAsPattern(
+                    182 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::KeywordPattern(
+                    186 => Ok(Self::KeywordPattern(
                         KeywordPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    180 => Ok(Self::SimplePattern(
+                    181 => Ok(Self::SimplePattern(
                         SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::SimplePattern(
+                    335 => Ok(Self::SimplePattern(
                         SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10039,7 +10051,7 @@ impl ::sittir_core::view::KindOf for SimplePatternContentTransportSlot {
             Self::Literal11_74_72_75_65 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::Literal12_66_61_6c_73_65 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::Literal13_6e_6f_6e_65 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10056,38 +10068,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternContentTransportSlo
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10104,38 +10116,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternContentTransportSlo
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10278,7 +10290,7 @@ impl ::sittir_core::view::KindOf for UnionPatternPatternsTransportSlot {
             Self::Literal11_74_72_75_65 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::Literal12_66_61_6c_73_65 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::Literal13_6e_6f_6e_65 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10295,38 +10307,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternPatternsTransportSlo
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10343,38 +10355,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternPatternsTransportSlo
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10517,7 +10529,7 @@ impl ::sittir_core::view::KindOf for KeyValuePatternKeyTransportSlot {
             Self::Literal11_74_72_75_65 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::Literal12_66_61_6c_73_65 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::Literal13_6e_6f_6e_65 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10534,38 +10546,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10582,38 +10594,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyValuePatternKeyTransportSlot 
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10756,7 +10768,7 @@ impl ::sittir_core::view::KindOf for KeywordPatternValueTransportSlot {
             Self::Literal11_74_72_75_65 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::Literal12_66_61_6c_73_65 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::Literal13_6e_6f_6e_65 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10773,38 +10785,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternValueTransportSlot
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10821,38 +10833,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternValueTransportSlot
                     71 => Ok(Self::Literal11_74_72_75_65),
                     72 => Ok(Self::Literal12_66_61_6c_73_65),
                     73 => Ok(Self::Literal13_6e_6f_6e_65),
-                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
-                    187 => Ok(Self::ClassPattern(
+                    279 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    188 => Ok(Self::ClassPattern(
                         ClassPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
+                    183 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    273 => Ok(Self::CaseListPattern(
+                    274 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    272 => Ok(Self::CaseTuplePattern(
+                    273 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    183 => Ok(Self::DictPattern(
+                    184 => Ok(Self::DictPattern(
                         DictPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    281 => Ok(Self::SimplePatternNegative(
+                    282 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
-                    188 => Ok(Self::ComplexPattern(
+                    189 => Ok(Self::ComplexPattern(
                         ComplexPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    178 => Ok(Self::DottedName(
+                    179 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11800,7 +11812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11835,7 +11847,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11963,10 +11975,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternTargetTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11989,10 +12001,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternTargetTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12134,10 +12146,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternTargetTran
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12160,10 +12172,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternTargetTran
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12827,31 +12839,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -12875,58 +12887,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    211 => Ok(Self::LambdaWithinForInClause(
+                    212 => Ok(Self::LambdaWithinForInClause(
                         LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12970,31 +12982,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -13018,58 +13030,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    211 => Ok(Self::LambdaWithinForInClause(
+                    212 => Ok(Self::LambdaWithinForInClause(
                         LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13305,22 +13317,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentLeftTransport
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13355,22 +13367,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentLeftTransport
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13923,31 +13935,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -13971,76 +13983,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14084,31 +14096,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -14132,76 +14144,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14393,7 +14405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    266 => Ok(Self::PatternListPatterns(
+                    267 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14408,7 +14420,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                 )?;
                 match kind_id {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    266 => Ok(Self::PatternListPatterns(
+                    267 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14667,34 +14679,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::YieldFromClause(
+                    296 => Ok(Self::YieldFromClause(
                         YieldFromClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -14718,58 +14730,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14813,34 +14825,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    295 => Ok(Self::YieldFromClause(
+                    296 => Ok(Self::YieldFromClause(
                         YieldFromClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -14864,58 +14876,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15096,10 +15108,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallArgumentsTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    173 => Ok(Self::ArgumentList(
+                    174 => Ok(Self::ArgumentList(
                         ArgumentListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15113,10 +15125,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallArgumentsTransportSlot {
                     ::napi::Error::from_reason("$type property missing in CallArgumentsTransportSlot")
                 )?;
                 match kind_id {
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    173 => Ok(Self::ArgumentList(
+                    174 => Ok(Self::ArgumentList(
                         ArgumentListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15235,10 +15247,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterNameTransportSlot 
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::DictionarySplatPattern(
+                    199 => Ok(Self::DictionarySplatPattern(
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15273,10 +15285,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterNameTransportSlot 
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    198 => Ok(Self::DictionarySplatPattern(
+                    199 => Ok(Self::DictionarySplatPattern(
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15544,31 +15556,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -15592,70 +15604,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    223 => Ok(Self::SplatType(
+                    224 => Ok(Self::SplatType(
                         SplatTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::GenericType(
+                    225 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::UnionType(
+                    226 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::ConstrainedType(
+                    227 => Ok(Self::ConstrainedType(
                         ConstrainedTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::MemberType(
+                    228 => Ok(Self::MemberType(
                         MemberTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15699,31 +15711,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -15747,70 +15759,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    223 => Ok(Self::SplatType(
+                    224 => Ok(Self::SplatType(
                         SplatTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    224 => Ok(Self::GenericType(
+                    225 => Ok(Self::GenericType(
                         GenericTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    225 => Ok(Self::UnionType(
+                    226 => Ok(Self::UnionType(
                         UnionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    226 => Ok(Self::ConstrainedType(
+                    227 => Ok(Self::ConstrainedType(
                         ConstrainedTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    227 => Ok(Self::MemberType(
+                    228 => Ok(Self::MemberType(
                         MemberTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16553,31 +16565,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionExpressio
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -16601,58 +16613,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionExpressio
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16696,31 +16708,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionExpressio
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -16744,58 +16756,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionExpressio
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17139,31 +17151,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -17187,64 +17199,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17288,31 +17300,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -17336,64 +17348,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17730,22 +17742,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17780,22 +17792,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18071,31 +18083,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -18119,58 +18131,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    211 => Ok(Self::LambdaWithinForInClause(
+                    212 => Ok(Self::LambdaWithinForInClause(
                         LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18214,31 +18226,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -18262,58 +18274,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    211 => Ok(Self::LambdaWithinForInClause(
+                    212 => Ok(Self::LambdaWithinForInClause(
                         LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18594,10 +18606,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    246 => Ok(Self::Interpolation(
+                    247 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::StringContent(
+                    246 => Ok(Self::StringContent(
                         StringContentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18611,10 +18623,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in StringContentTransportSlot")
                 )?;
                 match kind_id {
-                    246 => Ok(Self::Interpolation(
+                    247 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::StringContent(
+                    246 => Ok(Self::StringContent(
                         StringContentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18718,7 +18730,7 @@ impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
             Self::EscapeSequenceSimple(inner) => inner.kind_in(kinds),
             Self::EscapeSequenceNamed(inner) => inner.kind_in(kinds),
             Self::StringFragment(inner) => inner.kind_in(kinds),
-            Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => [::sittir_core::types::KindId(249)].iter().any(|k| kinds.contains(k)),
+            Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => [::sittir_core::types::KindId(250)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(117), ::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -18733,7 +18745,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    249 => Ok(Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
+                    250 => Ok(Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     118 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -18772,7 +18784,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     ::napi::Error::from_reason("$type property missing in StringContentContentTransportSlot")
                 )?;
                 match kind_id {
-                    249 => Ok(Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
+                    250 => Ok(Self::Literal44_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65),
                     118 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19073,31 +19085,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -19121,64 +19133,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19222,31 +19234,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -19270,64 +19282,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19607,7 +19619,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierElementsTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    332 => Ok(Self::FormatExpression(
+                    333 => Ok(Self::FormatExpression(
                         FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19621,7 +19633,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierElementsTransport
                     ::napi::Error::from_reason("$type property missing in FormatSpecifierElementsTransportSlot")
                 )?;
                 match kind_id {
-                    332 => Ok(Self::FormatExpression(
+                    333 => Ok(Self::FormatExpression(
                         FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19881,31 +19893,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -19929,67 +19941,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    165 => Ok(Self::DictionarySplat(
+                    166 => Ok(Self::DictionarySplat(
                         DictionarySplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::KeywordArgument(
+                    229 => Ok(Self::KeywordArgument(
                         KeywordArgumentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20033,31 +20045,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -20081,67 +20093,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::ListSplat(
+                    165 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    165 => Ok(Self::DictionarySplat(
+                    166 => Ok(Self::DictionarySplat(
                         DictionarySplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    172 => Ok(Self::ParenthesizedListSplat(
+                    173 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
-                    228 => Ok(Self::KeywordArgument(
+                    229 => Ok(Self::KeywordArgument(
                         KeywordArgumentTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20326,10 +20338,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictPatternElementsElementTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    184 => Ok(Self::KeyValuePattern(
+                    185 => Ok(Self::KeyValuePattern(
                         KeyValuePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20343,10 +20355,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictPatternElementsElementTransp
                     ::napi::Error::from_reason("$type property missing in DictPatternElementsElementTransportSlot")
                 )?;
                 match kind_id {
-                    184 => Ok(Self::KeyValuePattern(
+                    185 => Ok(Self::KeyValuePattern(
                         KeyValuePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
+                    187 => Ok(Self::SplatPattern(
                         SplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20597,31 +20609,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -20645,58 +20657,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::Slice(
+                    220 => Ok(Self::Slice(
                         SliceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20740,31 +20752,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -20788,58 +20800,58 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    219 => Ok(Self::Slice(
+                    220 => Ok(Self::Slice(
                         SliceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21018,10 +21030,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionaryElementsElementTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    233 => Ok(Self::Pair(
+                    234 => Ok(Self::Pair(
                         PairTransport::from_napi_value(env, napi_val)?
                     )),
-                    165 => Ok(Self::DictionarySplat(
+                    166 => Ok(Self::DictionarySplat(
                         DictionarySplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21035,10 +21047,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionaryElementsElementTranspo
                     ::napi::Error::from_reason("$type property missing in DictionaryElementsElementTransportSlot")
                 )?;
                 match kind_id {
-                    233 => Ok(Self::Pair(
+                    234 => Ok(Self::Pair(
                         PairTransport::from_napi_value(env, napi_val)?
                     )),
-                    165 => Ok(Self::DictionarySplat(
+                    166 => Ok(Self::DictionarySplat(
                         DictionarySplatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21131,7 +21143,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevro
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    275 => Ok(Self::PrintChevronArguments(
+                    276 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21146,7 +21158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevro
                 )?;
                 match kind_id {
                     6 => Ok(Self::Literal10_63_6f_6d_6d_61),
-                    275 => Ok(Self::PrintChevronArguments(
+                    276 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21243,10 +21255,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComprehensionClausesContentTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    240 => Ok(Self::ForInClause(
+                    241 => Ok(Self::ForInClause(
                         ForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    241 => Ok(Self::IfClause(
+                    242 => Ok(Self::IfClause(
                         IfClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21260,10 +21272,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComprehensionClausesContentTrans
                     ::napi::Error::from_reason("$type property missing in ComprehensionClausesContentTransportSlot")
                 )?;
                 match kind_id {
-                    240 => Ok(Self::ForInClause(
+                    241 => Ok(Self::ForInClause(
                         ForInClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    241 => Ok(Self::IfClause(
+                    242 => Ok(Self::IfClause(
                         IfClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21925,10 +21937,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseExceptionContentTran
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    271 => Ok(Self::ExceptClauseExceptionAs(
+                    272 => Ok(Self::ExceptClauseExceptionAs(
                         ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    282 => Ok(Self::ExceptClauseExceptionList(
+                    283 => Ok(Self::ExceptClauseExceptionList(
                         ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21942,10 +21954,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseExceptionContentTran
                     ::napi::Error::from_reason("$type property missing in ExceptClauseExceptionContentTransportSlot")
                 )?;
                 match kind_id {
-                    271 => Ok(Self::ExceptClauseExceptionAs(
+                    272 => Ok(Self::ExceptClauseExceptionAs(
                         ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    282 => Ok(Self::ExceptClauseExceptionList(
+                    283 => Ok(Self::ExceptClauseExceptionList(
                         ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22094,22 +22106,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22144,22 +22156,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqLeftTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22453,31 +22465,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -22501,76 +22513,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22614,31 +22626,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -22662,76 +22674,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22979,22 +22991,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypeLeftTransportSlot 
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23029,22 +23041,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypeLeftTransportSlot 
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23218,22 +23230,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedLeftTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23268,22 +23280,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedLeftTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    193 => Ok(Self::TuplePattern(
+                    194 => Ok(Self::TuplePattern(
                         TuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    194 => Ok(Self::ListPattern(
+                    195 => Ok(Self::ListPattern(
                         ListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23577,31 +23589,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -23625,76 +23637,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23738,31 +23750,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    209 => Ok(Self::ComparisonOperator(
+                    210 => Ok(Self::ComparisonOperator(
                         ComparisonOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    203 => Ok(Self::NotOperator(
+                    204 => Ok(Self::NotOperator(
                         NotOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    204 => Ok(Self::BooleanOperator(
+                    205 => Ok(Self::BooleanOperator(
                         BooleanOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    210 => Ok(Self::Lambda(
+                    211 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::Await(
+                    254 => Ok(Self::Await(
                         AwaitTransport::from_napi_value(env, napi_val)?
                     )),
-                    205 => Ok(Self::BinaryOperator(
+                    206 => Ok(Self::BinaryOperator(
                         BinaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    244 => Ok(Self::String(
+                    245 => Ok(Self::String(
                         StringTransport::from_napi_value(env, napi_val)?
                     )),
-                    243 => Ok(Self::ConcatenatedString(
+                    244 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
                     90 => Ok(Self::IntegerHex(
@@ -23786,76 +23798,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     96 => Ok(Self::FloatScientific(
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
-                    206 => Ok(Self::UnaryOperator(
+                    207 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
                     )),
-                    217 => Ok(Self::Attribute(
+                    218 => Ok(Self::Attribute(
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
-                    218 => Ok(Self::Subscript(
+                    219 => Ok(Self::Subscript(
                         SubscriptTransport::from_napi_value(env, napi_val)?
                     )),
-                    220 => Ok(Self::Call(
+                    221 => Ok(Self::Call(
                         CallTransport::from_napi_value(env, napi_val)?
                     )),
-                    229 => Ok(Self::List(
+                    230 => Ok(Self::List(
                         ListTransport::from_napi_value(env, napi_val)?
                     )),
-                    234 => Ok(Self::ListComprehension(
+                    235 => Ok(Self::ListComprehension(
                         ListComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    232 => Ok(Self::Dictionary(
+                    233 => Ok(Self::Dictionary(
                         DictionaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::DictionaryComprehension(
+                    236 => Ok(Self::DictionaryComprehension(
                         DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    230 => Ok(Self::Set(
+                    231 => Ok(Self::Set(
                         SetTransport::from_napi_value(env, napi_val)?
                     )),
-                    236 => Ok(Self::SetComprehension(
+                    237 => Ok(Self::SetComprehension(
                         SetComprehensionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::Tuple(
+                    232 => Ok(Self::Tuple(
                         TupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    238 => Ok(Self::ParenthesizedExpression(
+                    239 => Ok(Self::ParenthesizedExpression(
                         ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    237 => Ok(Self::GeneratorExpression(
+                    238 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    197 => Ok(Self::ListSplatPattern(
+                    198 => Ok(Self::ListSplatPattern(
                         ListSplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    242 => Ok(Self::ConditionalExpression(
+                    243 => Ok(Self::ConditionalExpression(
                         ConditionalExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    139 => Ok(Self::NamedExpression(
+                    140 => Ok(Self::NamedExpression(
                         NamedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::AsPattern(
+                    200 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    177 => Ok(Self::ExpressionList(
+                    178 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    284 => Ok(Self::AssignmentEq(
+                    285 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    285 => Ok(Self::AssignmentType(
+                    286 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    286 => Ok(Self::AssignmentTyped(
+                    287 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
-                    213 => Ok(Self::AugmentedAssignment(
+                    214 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
                     )),
-                    214 => Ok(Self::PatternList(
+                    215 => Ok(Self::PatternList(
                         PatternListTransport::from_napi_value(env, napi_val)?
                     )),
-                    216 => Ok(Self::Yield(
+                    217 => Ok(Self::Yield(
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -24154,9 +24166,9 @@ impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsTransp
             Self::Literal58_67_74 => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
             Self::Literal59_6c_74_5f_67_74 => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
             Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
-            Self::Literal61_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k)),
             Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::Literal63_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k)),
+            Self::Literal63_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -24178,9 +24190,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     111 => Ok(Self::Literal58_67_74),
                     112 => Ok(Self::Literal59_6c_74_5f_67_74),
                     25 => Ok(Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64),
-                    207 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
+                    208 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
                     61 => Ok(Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64),
-                    208 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
+                    209 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -24200,9 +24212,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     111 => Ok(Self::Literal58_67_74),
                     112 => Ok(Self::Literal59_6c_74_5f_67_74),
                     25 => Ok(Self::Literal60_69_6e_5f_6b_65_79_77_6f_72_64),
-                    207 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
+                    208 => Ok(Self::Literal61_5f_6e_6f_74_5f_69_6e),
                     61 => Ok(Self::Literal62_69_73_5f_6b_65_79_77_6f_72_64),
-                    208 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
+                    209 => Ok(Self::Literal63_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -24293,19 +24305,19 @@ pub struct ModuleTransport {
 
 impl ::sittir_core::view::KindOf for ModuleTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ModuleTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(124) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(125) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ModuleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(124)), render_module(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(125)), render_module(self, w))
     }
 }
 
@@ -24358,19 +24370,19 @@ pub struct SimpleStatementsTransport {
 
 impl ::sittir_core::view::KindOf for SimpleStatementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SimpleStatementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(126) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(127) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SimpleStatementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(126)), render_simple_statements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(127)), render_simple_statements(self, w))
     }
 }
 
@@ -24416,19 +24428,19 @@ pub struct ImportStatementTransport {
 
 impl ::sittir_core::view::KindOf for ImportStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImportStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(127) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(128) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(127)), render_import_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(128)), render_import_statement(self, w))
     }
 }
 
@@ -24470,19 +24482,19 @@ pub struct ImportPrefixTransport {
 
 impl ::sittir_core::view::KindOf for ImportPrefixTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImportPrefixTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(128) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(129) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ImportPrefixTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(128)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(129)), w.text(&self.text))
     }
 }
 
@@ -24579,19 +24591,19 @@ pub struct RelativeImportTransport {
 
 impl ::sittir_core::view::KindOf for RelativeImportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for RelativeImportTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(129) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(130) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for RelativeImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(129)), render_relative_import(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(130)), render_relative_import(self, w))
     }
 }
 
@@ -24638,19 +24650,19 @@ pub struct FutureImportStatementTransport {
 
 impl ::sittir_core::view::KindOf for FutureImportStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FutureImportStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(130) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(131) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FutureImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(130)), render_future_import_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(131)), render_future_import_statement(self, w))
     }
 }
 
@@ -24698,19 +24710,19 @@ pub struct ImportFromStatementTransport {
 
 impl ::sittir_core::view::KindOf for ImportFromStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImportFromStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(131) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(132) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ImportFromStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(131)), render_import_from_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(132)), render_import_from_statement(self, w))
     }
 }
 
@@ -24763,19 +24775,19 @@ pub struct ImportListTransport {
 
 impl ::sittir_core::view::KindOf for ImportListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ImportListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(132) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(133) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(132)), render_import_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(133)), render_import_list(self, w))
     }
 }
 
@@ -24832,19 +24844,19 @@ pub struct AliasedImportTransport {
 
 impl ::sittir_core::view::KindOf for AliasedImportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AliasedImportTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(133) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(134) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AliasedImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(133)), render_aliased_import(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(134)), render_aliased_import(self, w))
     }
 }
 
@@ -24887,19 +24899,19 @@ pub struct WildcardImportTransport {
 
 impl ::sittir_core::view::KindOf for WildcardImportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(135)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WildcardImportTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(134) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(135) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WildcardImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(134)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(135)), w.text(&self.text))
     }
 }
 
@@ -24996,19 +25008,19 @@ pub struct PrintStatementTransport {
 
 impl ::sittir_core::view::KindOf for PrintStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(135)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(135) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(136) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PrintStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(135)), render_print_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(136)), render_print_statement(self, w))
     }
 }
 
@@ -25053,19 +25065,19 @@ pub struct ChevronTransport {
 
 impl ::sittir_core::view::KindOf for ChevronTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ChevronTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(136) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(137) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(136)), render_chevron(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(137)), render_chevron(self, w))
     }
 }
 
@@ -25115,19 +25127,19 @@ pub struct AssertStatementTransport {
 
 impl ::sittir_core::view::KindOf for AssertStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssertStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(137) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(138) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AssertStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(137)), render_assert_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(138)), render_assert_statement(self, w))
     }
 }
 
@@ -25182,19 +25194,19 @@ pub struct ExpressionStatementTransport {
 
 impl ::sittir_core::view::KindOf for ExpressionStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExpressionStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(138) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(139) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(138)), render_expression_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(139)), render_expression_statement(self, w))
     }
 }
 
@@ -25241,19 +25253,19 @@ pub struct NamedExpressionTransport {
 
 impl ::sittir_core::view::KindOf for NamedExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamedExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(139) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(140) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NamedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(139)), render_named_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(140)), render_named_expression(self, w))
     }
 }
 
@@ -25300,19 +25312,19 @@ pub struct ReturnStatementTransport {
 
 impl ::sittir_core::view::KindOf for ReturnStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(141)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(142)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ReturnStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(141) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(142) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ReturnStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(141)), render_return_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(142)), render_return_statement(self, w))
     }
 }
 
@@ -25358,19 +25370,19 @@ pub struct DeleteStatementTransport {
 
 impl ::sittir_core::view::KindOf for DeleteStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(142)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DeleteStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(142) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(143) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DeleteStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(142)), render_delete_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(143)), render_delete_statement(self, w))
     }
 }
 
@@ -25418,19 +25430,19 @@ pub struct RaiseStatementTransport {
 
 impl ::sittir_core::view::KindOf for RaiseStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for RaiseStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(143) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(144) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for RaiseStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(143)), render_raise_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(144)), render_raise_statement(self, w))
     }
 }
 
@@ -25473,19 +25485,19 @@ pub struct PassStatementTransport {
 
 impl ::sittir_core::view::KindOf for PassStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PassStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(144) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(145) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PassStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(144)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(145)), w.text(&self.text))
     }
 }
 
@@ -25578,19 +25590,19 @@ pub struct BreakStatementTransport {
 
 impl ::sittir_core::view::KindOf for BreakStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BreakStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(145) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(146) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for BreakStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(145)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(146)), w.text(&self.text))
     }
 }
 
@@ -25683,19 +25695,19 @@ pub struct ContinueStatementTransport {
 
 impl ::sittir_core::view::KindOf for ContinueStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ContinueStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(146) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(147) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ContinueStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(146)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(147)), w.text(&self.text))
     }
 }
 
@@ -25798,19 +25810,19 @@ pub struct IfStatementTransport {
 
 impl ::sittir_core::view::KindOf for IfStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for IfStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(147) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(148) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for IfStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(147)), render_if_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(148)), render_if_statement(self, w))
     }
 }
 
@@ -25868,19 +25880,19 @@ pub struct ElifClauseTransport {
 
 impl ::sittir_core::view::KindOf for ElifClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ElifClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(148) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(149) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ElifClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(148)), render_elif_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(149)), render_elif_clause(self, w))
     }
 }
 
@@ -25927,19 +25939,19 @@ pub struct ElseClauseTransport {
 
 impl ::sittir_core::view::KindOf for ElseClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(150)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ElseClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(149) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(150) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ElseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(149)), render_else_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(150)), render_else_clause(self, w))
     }
 }
 
@@ -25987,19 +25999,19 @@ pub struct MatchStatementTransport {
 
 impl ::sittir_core::view::KindOf for MatchStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(150)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MatchStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(150) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(151) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for MatchStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(150)), render_match_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(151)), render_match_statement(self, w))
     }
 }
 
@@ -26046,19 +26058,19 @@ pub struct MatchBlockTransport {
 
 impl ::sittir_core::view::KindOf for MatchBlockTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(152)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MatchBlockTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(151) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(152) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for MatchBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(151)), render_match_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(152)), render_match_block(self, w))
     }
 }
 
@@ -26107,19 +26119,19 @@ pub struct CaseClauseTransport {
 
 impl ::sittir_core::view::KindOf for CaseClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(152)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(153)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(152) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(153) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CaseClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(152)), render_case_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(153)), render_case_clause(self, w))
     }
 }
 
@@ -26175,19 +26187,19 @@ pub struct ForStatementTransport {
 
 impl ::sittir_core::view::KindOf for ForStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(153)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(154)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ForStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(153) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(154) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ForStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(153)), render_for_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(154)), render_for_statement(self, w))
     }
 }
 
@@ -26241,19 +26253,19 @@ pub struct WhileStatementTransport {
 
 impl ::sittir_core::view::KindOf for WhileStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(154)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WhileStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(154) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(155) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WhileStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(154)), render_while_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(155)), render_while_statement(self, w))
     }
 }
 
@@ -26309,19 +26321,19 @@ pub struct TryStatementTransport {
 
 impl ::sittir_core::view::KindOf for TryStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TryStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(155) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(156) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TryStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(155)), render_try_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(156)), render_try_statement(self, w))
     }
 }
 
@@ -26382,19 +26394,19 @@ pub struct ExceptClauseTransport {
 
 impl ::sittir_core::view::KindOf for ExceptClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(156) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(157) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(156)), render_except_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(157)), render_except_clause(self, w))
     }
 }
 
@@ -26442,19 +26454,19 @@ pub struct FinallyClauseTransport {
 
 impl ::sittir_core::view::KindOf for FinallyClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FinallyClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(157) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FinallyClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(157)), render_finally_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(158)), render_finally_clause(self, w))
     }
 }
 
@@ -26504,19 +26516,19 @@ pub struct WithStatementTransport {
 
 impl ::sittir_core::view::KindOf for WithStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(159) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WithStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(158)), render_with_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(159)), render_with_statement(self, w))
     }
 }
 
@@ -26564,19 +26576,19 @@ pub struct WithItemTransport {
 
 impl ::sittir_core::view::KindOf for WithItemTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(160)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(161)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithItemTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(160) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(161) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WithItemTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(160)), render_with_item(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(161)), render_with_item(self, w))
     }
 }
 
@@ -26631,19 +26643,19 @@ pub struct FunctionDefinitionTransport {
 
 impl ::sittir_core::view::KindOf for FunctionDefinitionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(161)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FunctionDefinitionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(161) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(162) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FunctionDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(161)), render_function_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(162)), render_function_definition(self, w))
     }
 }
 
@@ -26694,19 +26706,19 @@ pub struct ParametersTransport {
 
 impl ::sittir_core::view::KindOf for ParametersTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(163)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParametersTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(162) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(163) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(162)), render_parameters(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(163)), render_parameters(self, w))
     }
 }
 
@@ -26752,19 +26764,19 @@ pub struct LambdaParametersTransport {
 
 impl ::sittir_core::view::KindOf for LambdaParametersTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(163)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(164)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LambdaParametersTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(163) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(164) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for LambdaParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(163)), render_lambda_parameters(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(164)), render_lambda_parameters(self, w))
     }
 }
 
@@ -26809,19 +26821,19 @@ pub struct ListSplatTransport {
 
 impl ::sittir_core::view::KindOf for ListSplatTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(164)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(165)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListSplatTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(164) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(165) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(164)), render_list_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(165)), render_list_splat(self, w))
     }
 }
 
@@ -26867,19 +26879,19 @@ pub struct DictionarySplatTransport {
 
 impl ::sittir_core::view::KindOf for DictionarySplatTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(165)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionarySplatTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(165) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(166) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(165)), render_dictionary_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(166)), render_dictionary_splat(self, w))
     }
 }
 
@@ -26929,19 +26941,19 @@ pub struct GlobalStatementTransport {
 
 impl ::sittir_core::view::KindOf for GlobalStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GlobalStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(166) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(167) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for GlobalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(166)), render_global_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(167)), render_global_statement(self, w))
     }
 }
 
@@ -26999,19 +27011,19 @@ pub struct NonlocalStatementTransport {
 
 impl ::sittir_core::view::KindOf for NonlocalStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(168)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NonlocalStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(167) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(168) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NonlocalStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(167)), render_nonlocal_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(168)), render_nonlocal_statement(self, w))
     }
 }
 
@@ -27071,19 +27083,19 @@ pub struct ExecStatementTransport {
 
 impl ::sittir_core::view::KindOf for ExecStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(168)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(169)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExecStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(168) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(169) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExecStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(168)), render_exec_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(169)), render_exec_statement(self, w))
     }
 }
 
@@ -27141,19 +27153,19 @@ pub struct TypeAliasStatementTransport {
 
 impl ::sittir_core::view::KindOf for TypeAliasStatementTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(169)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeAliasStatementTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(169) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(170) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypeAliasStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(169)), render_type_alias_statement(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(170)), render_type_alias_statement(self, w))
     }
 }
 
@@ -27206,19 +27218,19 @@ pub struct ClassDefinitionTransport {
 
 impl ::sittir_core::view::KindOf for ClassDefinitionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ClassDefinitionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(170) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(171) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ClassDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(170)), render_class_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(171)), render_class_definition(self, w))
     }
 }
 
@@ -27267,19 +27279,19 @@ pub struct TypeParameterTransport {
 
 impl ::sittir_core::view::KindOf for TypeParameterTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(172)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeParameterTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(171) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(172) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(171)), render_type_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(172)), render_type_parameter(self, w))
     }
 }
 
@@ -27325,19 +27337,19 @@ pub struct ParenthesizedListSplatTransport {
 
 impl ::sittir_core::view::KindOf for ParenthesizedListSplatTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(172)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParenthesizedListSplatTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(172) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(173) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(172)), render_parenthesized_list_splat(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(173)), render_parenthesized_list_splat(self, w))
     }
 }
 
@@ -27383,19 +27395,19 @@ pub struct ArgumentListTransport {
 
 impl ::sittir_core::view::KindOf for ArgumentListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ArgumentListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(173) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(174) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ArgumentListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(173)), render_argument_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(174)), render_argument_list(self, w))
     }
 }
 
@@ -27445,19 +27457,19 @@ pub struct DecoratedDefinitionTransport {
 
 impl ::sittir_core::view::KindOf for DecoratedDefinitionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DecoratedDefinitionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(174) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(175) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(174)), render_decorated_definition(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(175)), render_decorated_definition(self, w))
     }
 }
 
@@ -27512,19 +27524,19 @@ pub struct DecoratorTransport {
 
 impl ::sittir_core::view::KindOf for DecoratorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(176)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DecoratorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(175) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(176) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DecoratorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(175)), render_decorator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(176)), render_decorator(self, w))
     }
 }
 
@@ -27572,19 +27584,19 @@ pub struct BlockTransport {
 
 impl ::sittir_core::view::KindOf for BlockTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(176)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(177)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BlockTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(176) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(177) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for BlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(176)), render_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(177)), render_block(self, w))
     }
 }
 
@@ -27640,19 +27652,19 @@ pub struct ExpressionListTransport {
 
 impl ::sittir_core::view::KindOf for ExpressionListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(177)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExpressionListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(177) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(178) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExpressionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(177)), render_expression_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(178)), render_expression_list(self, w))
     }
 }
 
@@ -27703,19 +27715,19 @@ pub struct DottedNameTransport {
 
 impl ::sittir_core::view::KindOf for DottedNameTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(179)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DottedNameTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(178) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(179) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DottedNameTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(178)), render_dotted_name(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(179)), render_dotted_name(self, w))
     }
 }
 
@@ -27768,19 +27780,19 @@ pub struct CasePatternTransport {
 
 impl ::sittir_core::view::KindOf for CasePatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(179)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CasePatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(179) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(180) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CasePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(179)), render_case_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(180)), render_case_pattern(self, w))
     }
 }
 
@@ -27825,19 +27837,19 @@ pub struct SimplePatternTransport {
 
 impl ::sittir_core::view::KindOf for SimplePatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(181)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SimplePatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(180) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(181) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SimplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(180)), render_simple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(181)), render_simple_pattern(self, w))
     }
 }
 
@@ -27884,19 +27896,19 @@ pub struct CaseAsPatternTransport {
 
 impl ::sittir_core::view::KindOf for CaseAsPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(181)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(182)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseAsPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(181) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(182) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CaseAsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(181)), render_case_as_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(182)), render_case_as_pattern(self, w))
     }
 }
 
@@ -27947,19 +27959,19 @@ pub struct UnionPatternTransport {
 
 impl ::sittir_core::view::KindOf for UnionPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(182)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(183)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnionPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(182) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(183) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for UnionPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(182)), render_union_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(183)), render_union_pattern(self, w))
     }
 }
 
@@ -28013,19 +28025,19 @@ pub struct DictPatternTransport {
 
 impl ::sittir_core::view::KindOf for DictPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(183)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(184)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(183) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(184) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(183)), render_dict_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(184)), render_dict_pattern(self, w))
     }
 }
 
@@ -28073,19 +28085,19 @@ pub struct KeyValuePatternTransport {
 
 impl ::sittir_core::view::KindOf for KeyValuePatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(184)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(185)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for KeyValuePatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(184) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(185) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for KeyValuePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(184)), render_key_value_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(185)), render_key_value_pattern(self, w))
     }
 }
 
@@ -28134,19 +28146,19 @@ pub struct KeywordPatternTransport {
 
 impl ::sittir_core::view::KindOf for KeywordPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(185)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(186)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for KeywordPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(185) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(186) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for KeywordPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(185)), render_keyword_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(186)), render_keyword_pattern(self, w))
     }
 }
 
@@ -28195,19 +28207,19 @@ pub struct SplatPatternTransport {
 
 impl ::sittir_core::view::KindOf for SplatPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(186)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(187)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SplatPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(186) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(187) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(186)), render_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(187)), render_splat_pattern(self, w))
     }
 }
 
@@ -28256,19 +28268,19 @@ pub struct ClassPatternTransport {
 
 impl ::sittir_core::view::KindOf for ClassPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(187)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(188)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ClassPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(187) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(188) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ClassPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(187)), render_class_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(188)), render_class_pattern(self, w))
     }
 }
 
@@ -28321,19 +28333,19 @@ pub struct ComplexPatternTransport {
 
 impl ::sittir_core::view::KindOf for ComplexPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(188)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(189)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComplexPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(188) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(189) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ComplexPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(188)), render_complex_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(189)), render_complex_pattern(self, w))
     }
 }
 
@@ -28388,19 +28400,19 @@ pub struct ParametersElementsTransport {
 
 impl ::sittir_core::view::KindOf for ParametersElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(189)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(190)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParametersElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(189) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(190) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ParametersElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(189)), render_parameters_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(190)), render_parameters_elements(self, w))
     }
 }
 
@@ -28461,19 +28473,19 @@ pub struct PatternsTransport {
 
 impl ::sittir_core::view::KindOf for PatternsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(190)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(191)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PatternsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(190) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(191) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(190)), render_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(191)), render_patterns(self, w))
     }
 }
 
@@ -28528,19 +28540,19 @@ pub struct TuplePatternTransport {
 
 impl ::sittir_core::view::KindOf for TuplePatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(193)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(194)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TuplePatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(193) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(194) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(193)), render_tuple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(194)), render_tuple_pattern(self, w))
     }
 }
 
@@ -28586,19 +28598,19 @@ pub struct ListPatternTransport {
 
 impl ::sittir_core::view::KindOf for ListPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(194)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(194) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(195) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(194)), render_list_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(195)), render_list_pattern(self, w))
     }
 }
 
@@ -28646,19 +28658,19 @@ pub struct DefaultParameterTransport {
 
 impl ::sittir_core::view::KindOf for DefaultParameterTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(196)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DefaultParameterTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(195) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(196) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(195)), render_default_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(196)), render_default_parameter(self, w))
     }
 }
 
@@ -28709,19 +28721,19 @@ pub struct TypedDefaultParameterTransport {
 
 impl ::sittir_core::view::KindOf for TypedDefaultParameterTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(196)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(197)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypedDefaultParameterTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(196) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(197) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(196)), render_typed_default_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(197)), render_typed_default_parameter(self, w))
     }
 }
 
@@ -28769,19 +28781,19 @@ pub struct ListSplatPatternTransport {
 
 impl ::sittir_core::view::KindOf for ListSplatPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(197)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(198)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListSplatPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(197) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(198) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListSplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(197)), render_list_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(198)), render_list_splat_pattern(self, w))
     }
 }
 
@@ -28827,19 +28839,19 @@ pub struct DictionarySplatPatternTransport {
 
 impl ::sittir_core::view::KindOf for DictionarySplatPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(198)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(199)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionarySplatPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(198) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(199) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(198)), render_dictionary_splat_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(199)), render_dictionary_splat_pattern(self, w))
     }
 }
 
@@ -28887,19 +28899,19 @@ pub struct AsPatternTransport {
 
 impl ::sittir_core::view::KindOf for AsPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(199)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(200)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(199) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(200) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(199)), render_as_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(200)), render_as_pattern(self, w))
     }
 }
 
@@ -28946,19 +28958,19 @@ pub struct NotOperatorTransport {
 
 impl ::sittir_core::view::KindOf for NotOperatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(203)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(204)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NotOperatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(203) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(204) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NotOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(203)), render_not_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(204)), render_not_operator(self, w))
     }
 }
 
@@ -29008,19 +29020,19 @@ pub struct BooleanOperatorTransport {
 
 impl ::sittir_core::view::KindOf for BooleanOperatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(204)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(205)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BooleanOperatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(204) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(205) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for BooleanOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(204)), render_boolean_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(205)), render_boolean_operator(self, w))
     }
 }
 
@@ -29072,19 +29084,19 @@ pub struct BinaryOperatorTransport {
 
 impl ::sittir_core::view::KindOf for BinaryOperatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(205)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(206)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BinaryOperatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(205) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(206) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for BinaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(205)), render_binary_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(206)), render_binary_operator(self, w))
     }
 }
 
@@ -29134,19 +29146,19 @@ pub struct UnaryOperatorTransport {
 
 impl ::sittir_core::view::KindOf for UnaryOperatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(206)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnaryOperatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(206) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(207) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for UnaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(206)), render_unary_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(207)), render_unary_operator(self, w))
     }
 }
 
@@ -29197,19 +29209,19 @@ pub struct ComparisonOperatorTransport {
 
 impl ::sittir_core::view::KindOf for ComparisonOperatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComparisonOperatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(209) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(210) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(209)), render_comparison_operator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(210)), render_comparison_operator(self, w))
     }
 }
 
@@ -29266,19 +29278,19 @@ pub struct LambdaTransport {
 
 impl ::sittir_core::view::KindOf for LambdaTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LambdaTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(210) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(211) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for LambdaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(210)), render_lambda(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(211)), render_lambda(self, w))
     }
 }
 
@@ -29327,19 +29339,19 @@ pub struct LambdaWithinForInClauseTransport {
 
 impl ::sittir_core::view::KindOf for LambdaWithinForInClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LambdaWithinForInClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(211) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(212) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(211)), render_lambda_within_for_in_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(212)), render_lambda_within_for_in_clause(self, w))
     }
 }
 
@@ -29390,19 +29402,19 @@ pub struct AugmentedAssignmentTransport {
 
 impl ::sittir_core::view::KindOf for AugmentedAssignmentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(213)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(214)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AugmentedAssignmentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(213) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(214) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(213)), render_augmented_assignment(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(214)), render_augmented_assignment(self, w))
     }
 }
 
@@ -29452,19 +29464,19 @@ pub struct PatternListTransport {
 
 impl ::sittir_core::view::KindOf for PatternListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(214)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(215)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PatternListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(214) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(215) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PatternListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(214)), render_pattern_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(215)), render_pattern_list(self, w))
     }
 }
 
@@ -29511,19 +29523,19 @@ pub struct YieldTransport {
 
 impl ::sittir_core::view::KindOf for YieldTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(216)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(217)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for YieldTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(216) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(217) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for YieldTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(216)), render_yield(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(217)), render_yield(self, w))
     }
 }
 
@@ -29571,19 +29583,19 @@ pub struct AttributeTransport {
 
 impl ::sittir_core::view::KindOf for AttributeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(217)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(218)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AttributeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(217) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(218) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AttributeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(217)), render_attribute(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(218)), render_attribute(self, w))
     }
 }
 
@@ -29632,19 +29644,19 @@ pub struct SubscriptTransport {
 
 impl ::sittir_core::view::KindOf for SubscriptTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(218)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(219)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SubscriptTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(218) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(219) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SubscriptTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(218)), render_subscript(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(219)), render_subscript(self, w))
     }
 }
 
@@ -29695,19 +29707,19 @@ pub struct SliceTransport {
 
 impl ::sittir_core::view::KindOf for SliceTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(219)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(220)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SliceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(219) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(220) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SliceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(219)), render_slice(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(220)), render_slice(self, w))
     }
 }
 
@@ -29862,19 +29874,19 @@ pub struct CallTransport {
 
 impl ::sittir_core::view::KindOf for CallTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(220)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(221)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CallTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(220) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(221) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CallTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(220)), render_call(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(221)), render_call(self, w))
     }
 }
 
@@ -29923,19 +29935,19 @@ pub struct TypedParameterTransport {
 
 impl ::sittir_core::view::KindOf for TypedParameterTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(221)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(222)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypedParameterTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(221) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(222) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypedParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(221)), render_typed_parameter(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(222)), render_typed_parameter(self, w))
     }
 }
 
@@ -29982,19 +29994,19 @@ pub struct TypeTransport {
 
 impl ::sittir_core::view::KindOf for TypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(222)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(223)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(222) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(223) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(222)), render_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(223)), render_type(self, w))
     }
 }
 
@@ -30041,19 +30053,19 @@ pub struct SplatTypeTransport {
 
 impl ::sittir_core::view::KindOf for SplatTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(223)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SplatTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(223) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(224) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SplatTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(223)), render_splat_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(224)), render_splat_type(self, w))
     }
 }
 
@@ -30102,19 +30114,19 @@ pub struct GenericTypeTransport {
 
 impl ::sittir_core::view::KindOf for GenericTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(225)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GenericTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(224) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(225) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for GenericTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(224)), render_generic_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(225)), render_generic_type(self, w))
     }
 }
 
@@ -30163,19 +30175,19 @@ pub struct UnionTypeTransport {
 
 impl ::sittir_core::view::KindOf for UnionTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(225)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(226)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for UnionTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(225) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(226) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for UnionTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(225)), render_union_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(226)), render_union_type(self, w))
     }
 }
 
@@ -30224,19 +30236,19 @@ pub struct ConstrainedTypeTransport {
 
 impl ::sittir_core::view::KindOf for ConstrainedTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(226)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(227)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ConstrainedTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(226) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(227) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ConstrainedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(226)), render_constrained_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(227)), render_constrained_type(self, w))
     }
 }
 
@@ -30285,19 +30297,19 @@ pub struct MemberTypeTransport {
 
 impl ::sittir_core::view::KindOf for MemberTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(227)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(228)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MemberTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(227) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(228) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for MemberTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(227)), render_member_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(228)), render_member_type(self, w))
     }
 }
 
@@ -30346,19 +30358,19 @@ pub struct KeywordArgumentTransport {
 
 impl ::sittir_core::view::KindOf for KeywordArgumentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(228)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(229)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for KeywordArgumentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(228) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(229) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for KeywordArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(228)), render_keyword_argument(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(229)), render_keyword_argument(self, w))
     }
 }
 
@@ -30405,19 +30417,19 @@ pub struct ListTransport {
 
 impl ::sittir_core::view::KindOf for ListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(229)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(230)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(229) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(230) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(229)), render_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(230)), render_list(self, w))
     }
 }
 
@@ -30463,19 +30475,19 @@ pub struct SetTransport {
 
 impl ::sittir_core::view::KindOf for SetTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(230)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(231)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SetTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(230) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(231) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(230)), render_set(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(231)), render_set(self, w))
     }
 }
 
@@ -30521,19 +30533,19 @@ pub struct TupleTransport {
 
 impl ::sittir_core::view::KindOf for TupleTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(231)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(232)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TupleTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(231) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(232) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(231)), render_tuple(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(232)), render_tuple(self, w))
     }
 }
 
@@ -30579,19 +30591,19 @@ pub struct DictionaryTransport {
 
 impl ::sittir_core::view::KindOf for DictionaryTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(232)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(233)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionaryTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(232) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(233) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictionaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(232)), render_dictionary(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(233)), render_dictionary(self, w))
     }
 }
 
@@ -30639,19 +30651,19 @@ pub struct PairTransport {
 
 impl ::sittir_core::view::KindOf for PairTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(233)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(234)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PairTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(233) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(234) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PairTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(233)), render_pair(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(234)), render_pair(self, w))
     }
 }
 
@@ -30700,19 +30712,19 @@ pub struct ListComprehensionTransport {
 
 impl ::sittir_core::view::KindOf for ListComprehensionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(234)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(235)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListComprehensionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(234) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(235) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(234)), render_list_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(235)), render_list_comprehension(self, w))
     }
 }
 
@@ -30761,19 +30773,19 @@ pub struct DictionaryComprehensionTransport {
 
 impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(235)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(236)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionaryComprehensionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(235) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(236) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(235)), render_dictionary_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(236)), render_dictionary_comprehension(self, w))
     }
 }
 
@@ -30822,19 +30834,19 @@ pub struct SetComprehensionTransport {
 
 impl ::sittir_core::view::KindOf for SetComprehensionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(236)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(237)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SetComprehensionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(236) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(237) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SetComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(236)), render_set_comprehension(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(237)), render_set_comprehension(self, w))
     }
 }
 
@@ -30883,19 +30895,19 @@ pub struct GeneratorExpressionTransport {
 
 impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(237)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(238)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for GeneratorExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(237) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(238) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for GeneratorExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(237)), render_generator_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(238)), render_generator_expression(self, w))
     }
 }
 
@@ -30942,19 +30954,19 @@ pub struct ParenthesizedExpressionTransport {
 
 impl ::sittir_core::view::KindOf for ParenthesizedExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(238)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(239)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParenthesizedExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(238) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(239) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(238)), render_parenthesized_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(239)), render_parenthesized_expression(self, w))
     }
 }
 
@@ -31006,19 +31018,19 @@ pub struct CollectionElementsTransport {
 
 impl ::sittir_core::view::KindOf for CollectionElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(239)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CollectionElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(239) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(240) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CollectionElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(239)), render_collection_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(240)), render_collection_elements(self, w))
     }
 }
 
@@ -31083,19 +31095,19 @@ pub struct ForInClauseTransport {
 
 impl ::sittir_core::view::KindOf for ForInClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(241)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ForInClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(240) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(241) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(240)), render_for_in_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(241)), render_for_in_clause(self, w))
     }
 }
 
@@ -31153,19 +31165,19 @@ pub struct IfClauseTransport {
 
 impl ::sittir_core::view::KindOf for IfClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(241)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(242)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for IfClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(241) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(242) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for IfClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(241)), render_if_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(242)), render_if_clause(self, w))
     }
 }
 
@@ -31215,19 +31227,19 @@ pub struct ConditionalExpressionTransport {
 
 impl ::sittir_core::view::KindOf for ConditionalExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(242)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(243)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ConditionalExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(242) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(243) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ConditionalExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(242)), render_conditional_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(243)), render_conditional_expression(self, w))
     }
 }
 
@@ -31277,19 +31289,19 @@ pub struct ConcatenatedStringTransport {
 
 impl ::sittir_core::view::KindOf for ConcatenatedStringTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(243)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ConcatenatedStringTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(243) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(244) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ConcatenatedStringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(243)), render_concatenated_string(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(244)), render_concatenated_string(self, w))
     }
 }
 
@@ -31347,19 +31359,19 @@ pub struct StringTransport {
 
 impl ::sittir_core::view::KindOf for StringTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(245)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StringTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(244) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(245) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for StringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(244)), render_string(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(245)), render_string(self, w))
     }
 }
 
@@ -31407,19 +31419,19 @@ pub struct StringContentTransport {
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(245)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(246)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StringContentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(245) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(246) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(245)), render_string_content(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(246)), render_string_content(self, w))
     }
 }
 
@@ -31470,19 +31482,19 @@ pub struct InterpolationTransport {
 
 impl ::sittir_core::view::KindOf for InterpolationTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(246)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(247)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for InterpolationTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(246) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(247) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for InterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(246)), render_interpolation(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(247)), render_interpolation(self, w))
     }
 }
 
@@ -31527,19 +31539,19 @@ pub struct NotEscapeSequenceTransport {
 
 impl ::sittir_core::view::KindOf for NotEscapeSequenceTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(249)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(250)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NotEscapeSequenceTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(249) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(250) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(249)), { w.adjacent(); w.text(&self.text) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(250)), { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -31636,19 +31648,19 @@ pub struct FormatSpecifierTransport {
 
 impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(250)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(251)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FormatSpecifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(250) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(251) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FormatSpecifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(250)), render_format_specifier(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(251)), render_format_specifier(self, w))
     }
 }
 
@@ -32215,19 +32227,19 @@ pub struct AwaitTransport {
 
 impl ::sittir_core::view::KindOf for AwaitTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(253)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AwaitTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(253) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(254) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AwaitTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(253)), render_await(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(254)), render_await(self, w))
     }
 }
 
@@ -32326,19 +32338,19 @@ pub struct PositionalSeparatorTransport {
 
 impl ::sittir_core::view::KindOf for PositionalSeparatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(255)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PositionalSeparatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(254) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(255) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PositionalSeparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(254)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(255)), w.text(&self.text))
     }
 }
 
@@ -32431,19 +32443,19 @@ pub struct KeywordSeparatorTransport {
 
 impl ::sittir_core::view::KindOf for KeywordSeparatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(255)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(256)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for KeywordSeparatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(255) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(256) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for KeywordSeparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(255)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(256)), w.text(&self.text))
     }
 }
 
@@ -32536,19 +32548,19 @@ pub struct KwAsyncMarkerTransport {
 
 impl ::sittir_core::view::KindOf for KwAsyncMarkerTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(256)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(257)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for KwAsyncMarkerTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(256) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(257) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for KwAsyncMarkerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(256)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(257)), w.text(&self.text))
     }
 }
 
@@ -32678,19 +32690,19 @@ pub struct SimpleStatementsElementsTransport {
 
 impl ::sittir_core::view::KindOf for SimpleStatementsElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(257)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SimpleStatementsElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(257) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(258) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(257)), render_simple_statements_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(258)), render_simple_statements_elements(self, w))
     }
 }
 
@@ -32751,19 +32763,19 @@ pub struct SubjectsTransport {
 
 impl ::sittir_core::view::KindOf for SubjectsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SubjectsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(258) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(259) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SubjectsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(258)), render_subjects(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(259)), render_subjects(self, w))
     }
 }
 
@@ -32824,19 +32836,19 @@ pub struct CasePatternsTransport {
 
 impl ::sittir_core::view::KindOf for CasePatternsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(260)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CasePatternsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(259) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(260) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(259)), render_case_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(260)), render_case_patterns(self, w))
     }
 }
 
@@ -32897,19 +32909,19 @@ pub struct WithClauseWithItemsTransport {
 
 impl ::sittir_core::view::KindOf for WithClauseWithItemsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(260)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(261)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseWithItemsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(260) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(261) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(260)), render_with_clause_with_items(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(261)), render_with_clause_with_items(self, w))
     }
 }
 
@@ -32969,19 +32981,19 @@ pub struct TypesTransport {
 
 impl ::sittir_core::view::KindOf for TypesTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(261)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(262)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypesTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(261) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(262) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for TypesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(261)), render_types(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(262)), render_types(self, w))
     }
 }
 
@@ -33042,19 +33054,19 @@ pub struct ArgumentListElementsTransport {
 
 impl ::sittir_core::view::KindOf for ArgumentListElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(262)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ArgumentListElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(262) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(263) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ArgumentListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(262)), render_argument_list_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(263)), render_argument_list_elements(self, w))
     }
 }
 
@@ -33115,19 +33127,19 @@ pub struct ExpressionListExpressionsTransport {
 
 impl ::sittir_core::view::KindOf for ExpressionListExpressionsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExpressionListExpressionsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(263) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(264) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(263)), render_expression_list_expressions(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(264)), render_expression_list_expressions(self, w))
     }
 }
 
@@ -33188,19 +33200,19 @@ pub struct ListPatternCasePatternsTransport {
 
 impl ::sittir_core::view::KindOf for ListPatternCasePatternsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListPatternCasePatternsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(264) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(265) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(264)), render_list_pattern_case_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(265)), render_list_pattern_case_patterns(self, w))
     }
 }
 
@@ -33261,19 +33273,19 @@ pub struct DictPatternElementsTransport {
 
 impl ::sittir_core::view::KindOf for DictPatternElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(266)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictPatternElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(265) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(266) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(265)), render_dict_pattern_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(266)), render_dict_pattern_elements(self, w))
     }
 }
 
@@ -33334,19 +33346,19 @@ pub struct PatternListPatternsTransport {
 
 impl ::sittir_core::view::KindOf for PatternListPatternsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(266)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PatternListPatternsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(266) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PatternListPatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(266)), render_pattern_list_patterns(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(267)), render_pattern_list_patterns(self, w))
     }
 }
 
@@ -33407,19 +33419,19 @@ pub struct SubscriptsTransport {
 
 impl ::sittir_core::view::KindOf for SubscriptsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SubscriptsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(268) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SubscriptsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(267)), render_subscripts(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(268)), render_subscripts(self, w))
     }
 }
 
@@ -33480,19 +33492,19 @@ pub struct DictionaryElementsTransport {
 
 impl ::sittir_core::view::KindOf for DictionaryElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(269)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionaryElementsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(268) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DictionaryElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(268)), render_dictionary_elements(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(269)), render_dictionary_elements(self, w))
     }
 }
 
@@ -33547,19 +33559,19 @@ pub struct SliceGroupTransport {
 
 impl ::sittir_core::view::KindOf for SliceGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(269)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SliceGroupTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(270) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SliceGroupTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(269)), render_slice_group(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(270)), render_slice_group(self, w))
     }
 }
 
@@ -33783,19 +33795,19 @@ pub struct ExceptClauseExceptionAsTransport {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionAsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(271) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(272) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(271)), render_except_clause_exception_as(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(272)), render_except_clause_exception_as(self, w))
     }
 }
 
@@ -33842,19 +33854,19 @@ pub struct CaseTuplePatternTransport {
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseTuplePatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(272) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(273) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CaseTuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(272)), render_case_tuple_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(273)), render_case_tuple_pattern(self, w))
     }
 }
 
@@ -33900,19 +33912,19 @@ pub struct CaseListPatternTransport {
 
 impl ::sittir_core::view::KindOf for CaseListPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CaseListPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(273) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(274) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for CaseListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(273)), render_case_list_pattern(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(274)), render_case_list_pattern(self, w))
     }
 }
 
@@ -33964,19 +33976,19 @@ pub struct PrintArgumentsTransport {
 
 impl ::sittir_core::view::KindOf for PrintArgumentsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintArgumentsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(274) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(275) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PrintArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(274)), render_print_arguments(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(275)), render_print_arguments(self, w))
     }
 }
 
@@ -34037,19 +34049,19 @@ pub struct PrintChevronArgumentsTransport {
 
 impl ::sittir_core::view::KindOf for PrintChevronArgumentsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintChevronArgumentsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(275) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(276) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(275)), render_print_chevron_arguments(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(276)), render_print_chevron_arguments(self, w))
     }
 }
 
@@ -34106,19 +34118,19 @@ pub struct PrintStatementChevronTransport {
 
 impl ::sittir_core::view::KindOf for PrintStatementChevronTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintStatementChevronTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(276) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(277) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PrintStatementChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(276)), render_print_statement_chevron(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(277)), render_print_statement_chevron(self, w))
     }
 }
 
@@ -34165,19 +34177,19 @@ pub struct PrintStatementPlainTransport {
 
 impl ::sittir_core::view::KindOf for PrintStatementPlainTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PrintStatementPlainTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(277) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(278) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for PrintStatementPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(277)), render_print_statement_plain(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(278)), render_print_statement_plain(self, w))
     }
 }
 
@@ -34219,19 +34231,19 @@ pub struct WildcardPatternTransport {
 
 impl ::sittir_core::view::KindOf for WildcardPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WildcardPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(278) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(279) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WildcardPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(278)), w.text(&self.text))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(279)), w.text(&self.text))
     }
 }
 
@@ -34328,19 +34340,19 @@ pub struct ParenthesizedImportListTransport {
 
 impl ::sittir_core::view::KindOf for ParenthesizedImportListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParenthesizedImportListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(279) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(280) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(279)), render_parenthesized_import_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(280)), render_parenthesized_import_list(self, w))
     }
 }
 
@@ -34388,19 +34400,19 @@ pub struct ComprehensionClausesTransport {
 
 impl ::sittir_core::view::KindOf for ComprehensionClausesTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComprehensionClausesTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(280) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(281) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ComprehensionClausesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(280)), render_comprehension_clauses(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(281)), render_comprehension_clauses(self, w))
     }
 }
 
@@ -35549,19 +35561,19 @@ pub struct SimplePatternNegativeTransport {
 
 impl ::sittir_core::view::KindOf for SimplePatternNegativeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SimplePatternNegativeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(281) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(282) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(281)), render_simple_pattern_negative(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(282)), render_simple_pattern_negative(self, w))
     }
 }
 
@@ -35612,19 +35624,19 @@ pub struct ExceptClauseExceptionListTransport {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionListTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(283)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionListTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(282) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(283) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(282)), render_except_clause_exception_list(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(283)), render_except_clause_exception_list(self, w))
     }
 }
 
@@ -35678,19 +35690,19 @@ pub struct ExceptClauseExceptionTransport {
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(283)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExceptClauseExceptionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(283) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(284) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(283)), render_except_clause_exception(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(284)), render_except_clause_exception(self, w))
     }
 }
 
@@ -35737,19 +35749,19 @@ pub struct AssignmentEqTransport {
 
 impl ::sittir_core::view::KindOf for AssignmentEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentEqTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(284) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(285) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AssignmentEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(284)), render_assignment_eq(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(285)), render_assignment_eq(self, w))
     }
 }
 
@@ -35798,19 +35810,19 @@ pub struct AssignmentTypeTransport {
 
 impl ::sittir_core::view::KindOf for AssignmentTypeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentTypeTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(285) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(286) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(285)), render_assignment_type(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(286)), render_assignment_type(self, w))
     }
 }
 
@@ -35861,19 +35873,19 @@ pub struct AssignmentTypedTransport {
 
 impl ::sittir_core::view::KindOf for AssignmentTypedTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(287)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AssignmentTypedTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(286) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(287) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(286)), render_assignment_typed(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(287)), render_assignment_typed(self, w))
     }
 }
 
@@ -35927,19 +35939,19 @@ pub struct ExpressionStatementTupleTransport {
 
 impl ::sittir_core::view::KindOf for ExpressionStatementTupleTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(287)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ExpressionStatementTupleTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(287) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(288) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(287)), render_expression_statement_tuple(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(288)), render_expression_statement_tuple(self, w))
     }
 }
 
@@ -36000,19 +36012,19 @@ pub struct WithClauseBareTransport {
 
 impl ::sittir_core::view::KindOf for WithClauseBareTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseBareTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(288) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(289) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WithClauseBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(288)), render_with_clause_bare(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(289)), render_with_clause_bare(self, w))
     }
 }
 
@@ -36066,19 +36078,19 @@ pub struct WithClauseParenTransport {
 
 impl ::sittir_core::view::KindOf for WithClauseParenTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseParenTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(289) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(290) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for WithClauseParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(289)), render_with_clause_paren(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(290)), render_with_clause_paren(self, w))
     }
 }
 
@@ -36126,19 +36138,19 @@ pub struct MatchBlockBlockTransport {
 
 impl ::sittir_core::view::KindOf for MatchBlockBlockTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(290)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MatchBlockBlockTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(290) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(291) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for MatchBlockBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(290)), render_match_block_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(291)), render_match_block_block(self, w))
     }
 }
 
@@ -36192,19 +36204,19 @@ pub struct SuiteInlineTransport {
 
 impl ::sittir_core::view::KindOf for SuiteInlineTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteInlineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(291) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(292) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SuiteInlineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(291)), render_suite_inline(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(292)), render_suite_inline(self, w))
     }
 }
 
@@ -36250,19 +36262,19 @@ pub struct SuiteBlockTransport {
 
 impl ::sittir_core::view::KindOf for SuiteBlockTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteBlockTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(292) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(293) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SuiteBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(292)), render_suite_block(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(293)), render_suite_block(self, w))
     }
 }
 
@@ -36308,19 +36320,19 @@ pub struct SuiteEmptyTransport {
 
 impl ::sittir_core::view::KindOf for SuiteEmptyTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SuiteEmptyTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(293) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(294) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for SuiteEmptyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(293)), render_suite_empty(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(294)), render_suite_empty(self, w))
     }
 }
 
@@ -36367,19 +36379,19 @@ pub struct ComparisonOperatorComparatorTransport {
 
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(294)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ComparisonOperatorComparatorTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(294) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(295) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(294)), render_comparison_operator_comparator(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(295)), render_comparison_operator_comparator(self, w))
     }
 }
 
@@ -36426,19 +36438,19 @@ pub struct YieldFromClauseTransport {
 
 impl ::sittir_core::view::KindOf for YieldFromClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for YieldFromClauseTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(295) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(296) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for YieldFromClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(295)), render_yield_from_clause(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(296)), render_yield_from_clause(self, w))
     }
 }
 
@@ -37092,6 +37104,111 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SpaceTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct TabTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub edges: Option<::sittir_core::options::Edges>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TabTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TabTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(122) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for TabTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(122)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TabTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.transport_trivia_data.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\t".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "\t".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            edges: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\t".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        let edges = obj.get("$_edges")?;
+        Ok(Self {
+            transport_trivia_data,
+            edges,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TabTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TabTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TabTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TabTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TabTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
@@ -37205,19 +37322,19 @@ pub struct BlanklineTransport {
 
 impl ::sittir_core::view::KindOf for BlanklineTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for BlanklineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(122) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(123) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for BlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(122)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(123)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37310,19 +37427,19 @@ pub struct DoubleBlanklineTransport {
 
 impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(123) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(124) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for DoubleBlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(123)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(124)), { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -37625,19 +37742,19 @@ pub struct NamesTransport {
 
 impl ::sittir_core::view::KindOf for NamesTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(333)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(334)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamesTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(333) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(334) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NamesTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(333)), render_names(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(334)), render_names(self, w))
     }
 }
 
@@ -37682,19 +37799,19 @@ pub struct AsPatternTargetTransport {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(331)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(332)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(331) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(332) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(331)), render_as_pattern_target(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(332)), render_as_pattern_target(self, w))
     }
 }
 
@@ -37739,19 +37856,19 @@ pub struct FormatExpressionTransport {
 
 impl ::sittir_core::view::KindOf for FormatExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(332)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(333)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FormatExpressionTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(332) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(333) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for FormatExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(332)), render_format_expression(self, w))
+        render_with_trivia!(self, w, Some(::sittir_core::types::KindId(333)), render_format_expression(self, w))
     }
 }
 
@@ -46711,19 +46828,19 @@ pub struct NotInTransport {
 
 impl ::sittir_core::view::KindOf for NotInTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NotInTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(207) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(208) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for NotInTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(207)), w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(208)), w.text(&self.text))
     }
 }
 
@@ -46921,19 +47038,19 @@ pub struct IsNotTransport {
 
 impl ::sittir_core::view::KindOf for IsNotTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for IsNotTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(208) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(209) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
 impl ::sittir_core::render::Render for IsNotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(208)), w.text(&self.text))
+        render_with_trivia!(token self, w, Some(::sittir_core::types::KindId(209)), w.text(&self.text))
     }
 }
 
@@ -47019,7 +47136,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IsNotTransport> {
 
 impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47028,7 +47145,7 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(128)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47037,7 +47154,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(130)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(131)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47046,7 +47163,7 @@ impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(131)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(132)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47055,7 +47172,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AliasedImportTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(133)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(134)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47073,7 +47190,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AssertStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(137)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(138)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47091,7 +47208,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(139)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(140)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47100,7 +47217,7 @@ impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ReturnStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(141)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(142)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.expressions {
@@ -47112,7 +47229,7 @@ impl ::sittir_core::prepare::SeatTarget for ReturnStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DeleteStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(142)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(143)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let ::sittir_core::SlotValue::Transport(inner) = &mut self.expressions {
@@ -47124,7 +47241,7 @@ impl ::sittir_core::prepare::SeatTarget for DeleteStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(143)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(144)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47133,7 +47250,7 @@ impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(147)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(148)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47142,7 +47259,7 @@ impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(148)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(149)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47151,7 +47268,7 @@ impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(149)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(150)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47160,7 +47277,7 @@ impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(150)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(151)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47169,7 +47286,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(152)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(153)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47178,7 +47295,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(153)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(154)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47187,7 +47304,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(154)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(155)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47196,7 +47313,7 @@ impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(155)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(156)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47205,7 +47322,7 @@ impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(156)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(157)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47214,7 +47331,7 @@ impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(158)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(159)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47223,7 +47340,7 @@ impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(161)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(162)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47232,7 +47349,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(164)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(165)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47241,7 +47358,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(165)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(166)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47250,7 +47367,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
 
 impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(166)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(167)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47259,7 +47376,7 @@ impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(167)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(168)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47268,7 +47385,7 @@ impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(168)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(169)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47277,7 +47394,7 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(169)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(170)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47286,7 +47403,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(170)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(171)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47295,7 +47412,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(172)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(173)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
@@ -47307,7 +47424,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(174)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(175)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47316,7 +47433,7 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DecoratorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(175)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(176)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47334,7 +47451,7 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(181)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(182)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47343,7 +47460,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(183)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(184)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47352,7 +47469,7 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(184)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(185)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47361,7 +47478,7 @@ impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(185)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(186)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47370,7 +47487,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(186)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(187)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47379,7 +47496,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(187)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47388,7 +47505,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(189)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47397,7 +47514,7 @@ impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(193)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(194)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47406,7 +47523,7 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(194)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(195)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47415,7 +47532,7 @@ impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(195)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(196)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47424,7 +47541,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(196)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47432,18 +47549,6 @@ impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
-        }
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.target {
-            return inner.seat_target(table);
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(198)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
@@ -47455,9 +47560,21 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
+impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(199)) {
+            return Some((self.edges.get_or_insert_with(Default::default), site));
+        }
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.target {
+            return inner.seat_target(table);
+        }
+        None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(200)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47466,7 +47583,7 @@ impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(203)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(204)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47475,7 +47592,7 @@ impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
 
 impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(204)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(205)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47484,7 +47601,7 @@ impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
 
 impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(205)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(206)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47493,7 +47610,7 @@ impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
 
 impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(206)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(207)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47502,7 +47619,7 @@ impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(209)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(210)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47511,7 +47628,7 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
 
 impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(210)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(211)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47520,7 +47637,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
 
 impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(211)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(212)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47529,7 +47646,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(213)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(214)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47538,7 +47655,7 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
 
 impl ::sittir_core::prepare::SeatTarget for YieldTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(216)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(217)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.content {
@@ -47550,7 +47667,7 @@ impl ::sittir_core::prepare::SeatTarget for YieldTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(217)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(218)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47559,7 +47676,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(218)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(219)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47568,7 +47685,7 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SliceTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(219)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(220)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47577,7 +47694,7 @@ impl ::sittir_core::prepare::SeatTarget for SliceTransport {
 
 impl ::sittir_core::prepare::SeatTarget for CallTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(220)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(221)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47586,7 +47703,7 @@ impl ::sittir_core::prepare::SeatTarget for CallTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TypedParameterTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(221)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(222)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47604,7 +47721,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(223)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47613,7 +47730,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(225)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47622,7 +47739,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(225)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(226)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47631,7 +47748,7 @@ impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(226)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(227)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47640,7 +47757,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(227)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(228)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47649,7 +47766,7 @@ impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(228)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(229)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47658,7 +47775,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ListTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(229)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(230)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47667,7 +47784,7 @@ impl ::sittir_core::prepare::SeatTarget for ListTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SetTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(230)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(231)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47676,7 +47793,7 @@ impl ::sittir_core::prepare::SeatTarget for SetTransport {
 
 impl ::sittir_core::prepare::SeatTarget for TupleTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(231)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(232)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47685,7 +47802,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(232)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(233)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47694,7 +47811,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
 
 impl ::sittir_core::prepare::SeatTarget for PairTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(233)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47703,7 +47820,7 @@ impl ::sittir_core::prepare::SeatTarget for PairTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(235)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47712,7 +47829,7 @@ impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(235)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(236)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47721,7 +47838,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(236)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(237)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47730,7 +47847,7 @@ impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(237)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(238)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47739,7 +47856,7 @@ impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(238)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(239)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         if let ::sittir_core::SlotValue::Transport(inner) = &mut self.expression {
@@ -47751,7 +47868,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(240)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(241)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47760,7 +47877,7 @@ impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(241)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(242)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47769,7 +47886,7 @@ impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(242)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(243)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47778,7 +47895,7 @@ impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(243)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47787,7 +47904,7 @@ impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
 
 impl ::sittir_core::prepare::SeatTarget for StringTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(245)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47796,7 +47913,7 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(253)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47805,7 +47922,7 @@ impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
 
 impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(272)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(273)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47814,7 +47931,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(273)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(274)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47823,7 +47940,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(276)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47832,7 +47949,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47841,7 +47958,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
 
 impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(282)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47850,7 +47967,7 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(284)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(285)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47859,7 +47976,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(285)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(286)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47868,7 +47985,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(286)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(287)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -47877,7 +47994,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(294)) {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(295)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -49073,21 +49190,21 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
 
 fn render_simple_statements(node: &SimpleStatementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let simple_statements_elements = &node.simple_statements_elements;
-    w.edge(::sittir_core::types::KindId(126), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     simple_statements_elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(126), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let names = &node.names;
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(128), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(128), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49098,16 +49215,16 @@ fn render_import_prefix(t: &ImportPrefixTransport, w: &mut dyn ::sittir_core::re
 fn render_relative_import(node: &RelativeImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = View::new(&node.name, "{}");
     let prefix = &node.prefix;
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     prefix.render(w)?;
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER);
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE);
@@ -49117,14 +49234,14 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut
     w.text("import")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let module_name = &node.module_name;
-    w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER);
     module_name.render(w)?;
@@ -49132,7 +49249,7 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49155,13 +49272,13 @@ fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::ren
 fn render_aliased_import(node: &AliasedImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER);
     alias.render(w)?;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49177,11 +49294,11 @@ fn render_print_statement(node: &PrintStatementTransport, w: &mut dyn ::sittir_c
 
 fn render_chevron(node: &ChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(">>")?;
     w.site_at(options::SITE_CHEVRON_GT_GT_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49197,11 +49314,11 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(138), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("assert")?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(138), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49214,40 +49331,40 @@ fn render_expression_statement(node: &ExpressionStatementTransport, w: &mut dyn 
 fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE);
     w.text(":=")?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(141), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("return")?;
     w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
     expressions.render(w)?;
-    w.edge(::sittir_core::types::KindId(141), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_delete_statement(node: &DeleteStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = &node.expressions;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("del")?;
     w.site_at(options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER);
     expressions.render(w)?;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let cause = View::new(&node.cause, "{}");
     let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("raise")?;
     w.site_at(options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER);
     expressions.render(w)?;
@@ -49257,7 +49374,7 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
         w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER);
         cause.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49287,7 +49404,7 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
     };
     let condition = &node.condition;
     let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(147), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("if")?;
     w.site_at(options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER);
     condition.render(w)?;
@@ -49296,14 +49413,14 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
     w.site_at(options::SITE_IF_STATEMENT_COLON_AFTER);
     consequence.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(147), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
     let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("elif")?;
     w.site_at(options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER);
     condition.render(w)?;
@@ -49311,27 +49428,27 @@ fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::ren
     w.text(":")?;
     w.site_at(options::SITE_ELIF_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
-    w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("else")?;
     w.site_at(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER);
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let subjects = &node.subjects;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("match")?;
     w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
     subjects.render(w)?;
@@ -49340,7 +49457,7 @@ fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_c
     w.adjacent();
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49354,7 +49471,7 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     let case_patterns = &node.case_patterns;
     let consequence = &node.consequence;
     let guard = View::new(&node.guard, "{}");
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("case")?;
     w.site_at(options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER);
     case_patterns.render(w)?;
@@ -49363,7 +49480,7 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     w.text(":")?;
     w.site_at(options::SITE_CASE_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49373,7 +49490,7 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     let body = &node.body;
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
         w.site_at(options::SITE_FOR_STATEMENT_ASYNC_MARKER_AFTER);
@@ -49391,7 +49508,7 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     w.site_at(options::SITE_FOR_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49399,7 +49516,7 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     let alternative = View::new(&node.alternative, "{}");
     let body = &node.body;
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("while")?;
     w.site_at(options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER);
     condition.render(w)?;
@@ -49408,7 +49525,7 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     w.site_at(options::SITE_WHILE_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49427,7 +49544,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
         tail: None,
     };
     let finally_clause = View::new(&node.finally_clause, "{}");
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("try")?;
     w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
     w.site_at(options::SITE_TRY_STATEMENT_COLON_BEFORE);
@@ -49437,7 +49554,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
     except_clauses.render(w)?;
     else_clause.render(w)?;
     finally_clause.render(w)?;
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49445,7 +49562,7 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     let exception = View::new(&node.exception, "{}");
     let star_marker = View::new(&node.star_marker, "*");
     let suite = &node.suite;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
     if star_marker.is_present() {
@@ -49458,20 +49575,20 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     w.text(":")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
     suite.render(w)?;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("finally")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER);
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_AFTER);
     block.render(w)?;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49479,7 +49596,7 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     let async_marker = View::new(&node.async_marker, "{}");
     let body = &node.body;
     let with_clause = &node.with_clause;
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
         w.site_at(options::SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER);
@@ -49492,7 +49609,7 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     w.text(":")?;
     w.site_at(options::SITE_WITH_STATEMENT_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49509,7 +49626,7 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
         w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_MARKER_AFTER);
@@ -49530,20 +49647,20 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     w.text(":")?;
     w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(163), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
     elements.render(w)?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(163), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49555,21 +49672,21 @@ fn render_lambda_parameters(node: &LambdaParametersTransport, w: &mut dyn ::sitt
 
 fn render_list_splat(node: &ListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_STAR_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_dictionary_splat(node: &DictionarySplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49585,11 +49702,11 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("global")?;
     w.site_at(options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49605,11 +49722,11 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("nonlocal")?;
     w.site_at(options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49626,7 +49743,7 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("exec")?;
     w.site_at(options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER);
     code.render(w)?;
@@ -49636,14 +49753,14 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER);
         in_clause.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("type")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER);
     left.render(w)?;
@@ -49651,7 +49768,7 @@ fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn :
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49660,7 +49777,7 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     let name = &node.name;
     let superclasses = View::new(&node.superclasses, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("class")?;
     w.site_at(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER);
     name.render(w)?;
@@ -49670,45 +49787,45 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     w.text(":")?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let types = &node.types;
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_TYPE_PARAMETER_LBRACK_AFTER);
     types.render(w)?;
     w.site_at(options::SITE_TYPE_PARAMETER_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.adjacent();
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER);
     content.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "arguments", w)?;
     arguments.render(w)?;
     w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49725,22 +49842,22 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn 
         tail: None,
     };
     let definition = &node.definition;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     decorator.render(w)?;
     definition.render(w)?;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("@")?;
     w.site_at(options::SITE_DECORATOR_AT_AFTER);
     expression.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49756,21 +49873,21 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     statements.render(w)?;
     w.adjacent();
     w.dedent("");
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_expression_list(node: &ExpressionListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
     let tail = &node.tail;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     expression.render(w)?;
     tail.render(w)?;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49805,13 +49922,13 @@ fn render_simple_pattern(node: &SimplePatternTransport, w: &mut dyn ::sittir_cor
 fn render_case_as_pattern(node: &CaseAsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let case_pattern = &node.case_pattern;
     let identifier = &node.identifier;
-    w.edge(::sittir_core::types::KindId(181), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     case_pattern.render(w)?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER);
     identifier.render(w)?;
-    w.edge(::sittir_core::types::KindId(181), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49833,58 +49950,58 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
 
 fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let dict_pattern_elements = View::new(&node.dict_pattern_elements, "{}");
-    w.edge(::sittir_core::types::KindId(183), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "dict_pattern_elements", w)?;
     dict_pattern_elements.render(w)?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(183), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_key_value_pattern(node: &KeyValuePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     key.render(w)?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_keyword_pattern(node: &KeywordPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_splat_pattern(node: &SplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
     w.site_at(options::SITE_SPLAT_PATTERN_OPERATOR_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_CLASS_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
@@ -49892,7 +50009,7 @@ fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core:
     arguments.render(w)?;
     w.site_at(options::SITE_CLASS_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49901,7 +50018,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_c
     let operator = &node.operator;
     let real = &node.real;
     let sign = View::new(&node.sign, "-");
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_COMPLEX_PATTERN_SIGN_AFTER);
@@ -49911,7 +50028,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_c
     operator.render(w)?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER);
     imaginary.render(w)?;
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49949,40 +50066,40 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
 
 fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let patterns = View::new(&node.patterns, "{}");
-    w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let patterns = View::new(&node.patterns, "{}");
-    w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "patterns", w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_default_parameter(node: &DefaultParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -49990,7 +50107,7 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
     let name = &node.name;
     let type_ = &node.type_;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE);
     w.text(":")?;
@@ -50000,50 +50117,50 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
     w.text("=")?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_list_splat_pattern(node: &ListSplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let target = &node.target;
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
     target.render(w)?;
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let target = &node.target;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
     target.render(w)?;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     expression.render(w)?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_AFTER);
     alias.render(w)?;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_not_operator(node: &NotOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
-    w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("not")?;
     w.site_at(options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER);
     argument.render(w)?;
-    w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50051,13 +50168,13 @@ fn render_boolean_operator(node: &BooleanOperatorTransport, w: &mut dyn ::sittir
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50065,24 +50182,24 @@ fn render_binary_operator(node: &BinaryOperatorTransport, w: &mut dyn ::sittir_c
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(205), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_unary_operator(node: &UnaryOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
     w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_AFTER);
     argument.render(w)?;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50099,17 +50216,17 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::
         tail: None,
     };
     let left = &node.left;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     comparators.render(w)?;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(211), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
@@ -50117,14 +50234,14 @@ fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::Rend
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(211), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(211), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
@@ -50132,7 +50249,7 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER);
     body.render(w)?;
-    w.edge(::sittir_core::types::KindId(211), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50140,51 +50257,51 @@ fn render_augmented_assignment(node: &AugmentedAssignmentTransport, w: &mut dyn 
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     operator.render(w)?;
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
     let tail = &node.tail;
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     pattern.render(w)?;
     tail.render(w)?;
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_yield(node: &YieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = View::new(&node.content, "{}");
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("yield")?;
     w.site_at(options::SITE_YIELD_YIELD_KEYWORD_AFTER);
     content.render(w)?;
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute = &node.attribute;
     let object = &node.object;
-    w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     object.render(w)?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_AFTER);
     attribute.render(w)?;
-    w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let subscripts = &node.subscripts;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     value.render(w)?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
@@ -50192,7 +50309,7 @@ fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render
     subscripts.render(w)?;
     w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50200,14 +50317,14 @@ fn render_slice(node: &SliceTransport, w: &mut dyn ::sittir_core::render::Render
     let start = View::new(&node.start, "{}");
     let step = View::new(&node.step, "{}");
     let stop = View::new(&node.stop, "{}");
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     start.render(w)?;
     w.site_at(options::SITE_SLICE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_COLON_AFTER);
     stop.render(w)?;
     step.render(w)?;
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50218,23 +50335,23 @@ fn render_ellipsis(t: &EllipsisTransport, w: &mut dyn ::sittir_core::render::Ren
 fn render_call(node: &CallTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = &node.arguments;
     let function = &node.function;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     function.render(w)?;
     arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_typed_parameter(node: &TypedParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_AFTER);
     type_.render(w)?;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50247,205 +50364,205 @@ fn render_type(node: &TypeTransport, w: &mut dyn ::sittir_core::render::RenderSi
 fn render_splat_type(node: &SplatTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
     w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_generic_type(node: &GenericTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_parameter = &node.type_parameter;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     type_parameter.render(w)?;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_union_type(node: &UnionTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_BEFORE);
     w.text("|")?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_constrained_type(node: &ConstrainedTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let constraint = &node.constraint;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     base_type.render(w)?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_AFTER);
     constraint.render(w)?;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_member_type(node: &MemberTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let name = &node.name;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     base_type.render(w)?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);
     name.render(w)?;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_keyword_argument(node: &KeywordArgumentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = View::new(&node.collection_elements, "{}");
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "collection_elements", w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_set(node: &SetTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = &node.collection_elements;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_SET_LBRACE_AFTER);
     collection_elements.render(w)?;
     w.site_at(options::SITE_SET_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = View::new(&node.collection_elements, "{}");
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "collection_elements", w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let entries = View::new(&node.entries, "{}");
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "entries", w)?;
     entries.render(w)?;
     w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     key.render(w)?;
     w.site_at(options::SITE_PAIR_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_PAIR_COLON_AFTER);
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER);
     expression.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50480,7 +50597,7 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
         w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER);
@@ -50497,17 +50614,17 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
         comma.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_if_clause(node: &IfClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("if")?;
     w.site_at(options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER);
     condition.render(w)?;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50515,7 +50632,7 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     let alternative = &node.alternative;
     let body = &node.body;
     let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     body.render(w)?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE);
     w.text("if")?;
@@ -50525,7 +50642,7 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     w.text("else")?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER);
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50541,9 +50658,9 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     string.render(w)?;
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50561,11 +50678,11 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
     };
     let string_end = &node.string_end;
     let string_start = &node.string_start;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     string_start.render(w)?;
     content.render(w)?;
     string_end.render(w)?;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50590,7 +50707,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     expression.render(w)?;
@@ -50603,7 +50720,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     format_specifier.render(w)?;
     w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50624,11 +50741,11 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(250), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(251), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(":")?;
     w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
     elements.render(w)?;
-    w.edge(::sittir_core::types::KindId(250), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(251), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50654,11 +50771,11 @@ fn render_none(t: &NoneTransport, w: &mut dyn ::sittir_core::render::RenderSink)
 
 fn render_await(node: &AwaitTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(254), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("await")?;
     w.site_at(options::SITE_AWAIT_AWAIT_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(254), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50876,11 +50993,11 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::
 
 fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = View::new(&node.expression, "{}");
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(":")?;
     w.site_at(options::SITE_SLICE_GROUP_COLON_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50891,7 +51008,7 @@ fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, w: 
 fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(&node.alias, "{}");
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     value.render(w)?;
     if alias.is_present() {
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE);
@@ -50899,33 +51016,33 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER);
         alias.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "list_pattern_case_patterns", w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50964,23 +51081,23 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut
 fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let chevron = &node.chevron;
     let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
-    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("print")?;
     w.adjacent();
     w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
     chevron.render(w)?;
     print_chevron_arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_print_statement_plain(node: &PrintStatementPlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let print_arguments = &node.print_arguments;
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
     print_arguments.render(w)?;
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -50990,13 +51107,13 @@ fn render_wildcard_pattern(t: &WildcardPatternTransport, w: &mut dyn ::sittir_co
 
 fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = &node.import_list;
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER);
     import_list.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(279), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51187,13 +51304,13 @@ fn render_line_continuation_nul(t: &LineContinuationNulTransport, w: &mut dyn ::
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let sign = View::new(&node.sign, "-");
     let value = &node.value;
-    w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
     }
     value.render(w)?;
-    w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(282), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51222,26 +51339,26 @@ fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, w: &mut
 fn render_assignment_eq(node: &AssignmentEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_assignment_type(node: &AssignmentTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
     type_.render(w)?;
-    w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51249,7 +51366,7 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir
     let left = &node.left;
     let right = &node.right;
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
@@ -51259,7 +51376,7 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
     right.render(w)?;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51297,13 +51414,13 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
 
 fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let with_clause_with_items = &node.with_clause_with_items;
-    w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
     with_clause_with_items.render(w)?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51319,7 +51436,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
         head: None,
         tail: None,
     };
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.indent();
     w.seam("\n");
     w.adjacent();
@@ -51327,28 +51444,28 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
     alternative.render(w)?;
     w.adjacent();
     w.dedent("");
-    w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_suite_inline(node: &SuiteInlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let simple_statements_elements = &node.simple_statements_elements;
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     simple_statements_elements.render(w)?;
     w.adjacent();
     w.token_seam("\n");
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_suite_block(node: &SuiteBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.indent();
     w.seam("\n");
     w.adjacent();
     block.render(w)?;
-    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51360,7 +51477,7 @@ fn render_suite_empty(node: &SuiteEmptyTransport, w: &mut dyn ::sittir_core::ren
 fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operators = &node.operators;
     let primary_expression = &node.primary_expression;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operators.render(w)?;
     if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(61)]) {
         w.seam(" ");
@@ -51368,17 +51485,17 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
         w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
     }
     primary_expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_yield_from_clause(node: &YieldFromClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
+    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
     w.site_at(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    w.edge(::sittir_core::types::KindId(296), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
@@ -51406,6 +51523,10 @@ fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSin
 }
 
 fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
+}
+
+fn render_tab(t: &TabTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
@@ -52144,6 +52265,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StringEnd(inner) => inner.kind_in(kinds),
             Self::Tight(inner) => inner.kind_in(kinds),
             Self::Space(inner) => inner.kind_in(kinds),
+            Self::Tab(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
             Self::Blankline(inner) => inner.kind_in(kinds),
             Self::DoubleBlankline(inner) => inner.kind_in(kinds),
@@ -52433,6 +52555,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StringEnd(t) => t.render(w),
             AnyTransport::Tight(t) => t.render(w),
             AnyTransport::Space(t) => t.render(w),
+            AnyTransport::Tab(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
             AnyTransport::Blankline(t) => t.render(w),
             AnyTransport::DoubleBlankline(t) => t.render(w),

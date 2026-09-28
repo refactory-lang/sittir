@@ -799,6 +799,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'tight',
 		'_space',
 		'space',
+		'_tab',
+		'tab',
 		'_newline',
 		'newline',
 		'_blankline',
@@ -1155,8 +1157,8 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '*': 134 },
-				{ 8: 134 }
+				{ '*': 135 },
+				{ 8: 135 }
 			),
 
 			moduleName() {
@@ -2876,8 +2878,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 71, False: 72, None: 73, _: 278 },
-				{ 48: 278 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			content() {
@@ -2960,8 +2962,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 278 },
-				{ 48: 278 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			patterns() {
@@ -3056,8 +3058,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 278 },
-				{ 48: 278 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -3120,8 +3122,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 278 },
-				{ 48: 278 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			name() {
@@ -5990,8 +5992,8 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '\\': 249 },
-				{ 65: 249 }
+				{ '\\': 250 },
+				{ 65: 250 }
 			),
 
 			contents() {
@@ -8091,9 +8093,9 @@ export function wrapComparisonOperatorComparator(data: T.ComparisonOperatorCompa
 					'>': 111,
 					'<>': 112,
 					in: 25,
-					'not in': 207,
+					'not in': 208,
 					is: 61,
-					'is not': 208
+					'is not': 209
 				}
 			),
 			_primary_expression: projectMixedEnumStorage(
@@ -8462,6 +8464,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
 	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
+	[TSKindId.Tab]: (d) => ({ ...d, $type: TSKindId.Tab as const }),
 	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
 	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
 	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
@@ -8704,6 +8707,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.StringEnd]: _NodeData & { readonly $type: TSKindId.StringEnd };
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
 	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
+	[TSKindId.Tab]: _NodeData & { readonly $type: TSKindId.Tab };
 	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
 	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
 	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };

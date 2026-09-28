@@ -10228,6 +10228,10 @@ export function buildSpace(): TSKindId.Space {
 	return TSKindId.Space;
 }
 
+export function buildTab(): TSKindId.Tab {
+	return TSKindId.Tab;
+}
+
 export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
@@ -10575,6 +10579,7 @@ export type FluentKindMap = {
 	_block_comment_content: T.BlockCommentContent;
 	_tight: T.Tight;
 	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
@@ -10837,6 +10842,7 @@ export const _factoryMap = {
 	_block_comment_content: buildBlockCommentContent,
 	_tight: buildTight,
 	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,

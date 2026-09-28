@@ -788,62 +788,62 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_statement_ids = new Set<number>([
-	175, 201, 255, 174, 186, 187, 193, 194, 203, 204, 205, 210, 211, 219, 220, 200, 202
+	176, 202, 256, 175, 187, 188, 194, 195, 204, 205, 206, 211, 212, 220, 221, 201, 203
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	201, 255, 174, 186, 187, 193, 194, 203, 204, 205, 210, 211, 219, 220, 200, 202
+	202, 256, 175, 187, 188, 194, 195, 204, 205, 206, 211, 212, 220, 221, 201, 203
 ]);
-const _supertype_macroDefinition_ids = new Set<number>([418, 419, 420]);
-const _supertype_tokenPattern_ids = new Set<number>([181, 180, 129]);
-const _supertype_tokenTreePattern_ids = new Set<number>([407, 408, 409]);
-const _supertype_tokens_ids = new Set<number>([184, 129]);
-const _supertype_tokenTree_ids = new Set<number>([410, 411, 412]);
-const _supertype_modItem_ids = new Set<number>([388, 389]);
-const _supertype_foreignModItem_ids = new Set<number>([398, 399]);
-const _supertype_structItem_ids = new Set<number>([425, 426, 427]);
-const _supertype_implItem_ids = new Set<number>([381, 382]);
+const _supertype_macroDefinition_ids = new Set<number>([419, 420, 421]);
+const _supertype_tokenPattern_ids = new Set<number>([182, 181, 129]);
+const _supertype_tokenTreePattern_ids = new Set<number>([408, 409, 410]);
+const _supertype_tokens_ids = new Set<number>([185, 129]);
+const _supertype_tokenTree_ids = new Set<number>([411, 412, 413]);
+const _supertype_modItem_ids = new Set<number>([389, 390]);
+const _supertype_foreignModItem_ids = new Set<number>([399, 400]);
+const _supertype_structItem_ids = new Set<number>([426, 427, 428]);
+const _supertype_implItem_ids = new Set<number>([382, 383]);
 const _supertype_useClause_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 259, 52, 33, 53, 224, 223,
-	222, 225
+	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 260, 52, 33, 53, 225, 224,
+	223, 226
 ]);
-const _supertype_type_ids = new Set<number>([251, 248, 129, 242, 261, 239, 240, 236, 238, 255, 250, 252, 244, 214]);
-const _supertype_pointerType_ids = new Set<number>([392, 393]);
+const _supertype_type_ids = new Set<number>([252, 249, 129, 243, 262, 240, 241, 237, 239, 256, 251, 253, 245, 215]);
+const _supertype_pointerType_ids = new Set<number>([393, 394]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	263, 264, 266, 267, 268, 269, 272, 270, 271, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	52, 33, 53, 126, 259, 241, 303, 304, 276, 255, 277, 300, 301, 302, 129, 275, 278, 305, 306, 307, 308, 309, 283, 288,
-	293, 294, 295, 296
+	264, 265, 267, 268, 269, 270, 273, 271, 272, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 260, 242, 304, 305, 277, 256, 278, 301, 302, 303, 129, 276, 279, 306, 307, 308, 309, 310, 284, 289,
+	294, 295, 296, 297
 ]);
 const _supertype_expression_ids = new Set<number>([
-	263, 264, 266, 267, 268, 269, 272, 270, 271, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	52, 33, 53, 126, 259, 241, 303, 304, 276, 255, 277, 300, 301, 302, 129, 275, 278, 305, 306, 307, 308, 309, 283, 288,
-	293, 294, 295, 296, 262
+	264, 265, 267, 268, 269, 270, 273, 271, 272, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+	52, 33, 53, 126, 260, 242, 304, 305, 277, 256, 278, 301, 302, 303, 129, 276, 279, 306, 307, 308, 309, 310, 284, 289,
+	294, 295, 296, 297, 263
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	305, 306, 307, 308, 309, 283, 288, 293, 294, 295, 296
+	306, 307, 308, 309, 310, 284, 289, 294, 295, 296, 297
 ]);
-const _supertype_delimTokenTree_ids = new Set<number>([413, 414, 415]);
-const _supertype_referenceExpression_ids = new Set<number>([375, 376, 377, 378]);
-const _supertype_arrayExpression_ids = new Set<number>([370, 371]);
-const _supertype_condition_ids = new Set<number>([284, 285]);
-const _supertype_matchArm_ids = new Set<number>([400, 401]);
-const _supertype_closureExpression_ids = new Set<number>([373, 374]);
+const _supertype_delimTokenTree_ids = new Set<number>([414, 415, 416]);
+const _supertype_referenceExpression_ids = new Set<number>([376, 377, 378, 379]);
+const _supertype_arrayExpression_ids = new Set<number>([371, 372]);
+const _supertype_condition_ids = new Set<number>([285, 286]);
+const _supertype_matchArm_ids = new Set<number>([401, 402]);
+const _supertype_closureExpression_ids = new Set<number>([374, 375]);
 const _supertype_pattern_ids = new Set<number>([
-	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 259, 311, 312, 314, 315, 52, 33, 53, 320, 313,
-	321, 322, 317, 318, 296, 255
+	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 1, 260, 312, 313, 315, 316, 52, 33, 53, 321, 314,
+	322, 323, 318, 319, 297, 256
 ]);
-const _supertype_fieldPattern_ids = new Set<number>([416, 417]);
-const _supertype_rangePattern_ids = new Set<number>([424, 421]);
-const _supertype_orPattern_ids = new Set<number>([390, 391]);
-const _supertype_literal_ids = new Set<number>([328, 329, 332, 159]);
-const _supertype_literalPattern_ids = new Set<number>([328, 329, 332, 159, 326]);
+const _supertype_fieldPattern_ids = new Set<number>([417, 418]);
+const _supertype_rangePattern_ids = new Set<number>([425, 422]);
+const _supertype_orPattern_ids = new Set<number>([391, 392]);
+const _supertype_literal_ids = new Set<number>([329, 330, 333, 159]);
+const _supertype_literalPattern_ids = new Set<number>([329, 330, 333, 159, 327]);
 const _supertype_integerLiteral_ids = new Set<number>([138, 139, 140, 141]);
 const _supertype_charLiteral_ids = new Set<number>([142, 143, 144]);
 const _supertype_escapeSequence_ids = new Set<number>([145, 146, 147, 148]);
-const _supertype_comment_ids = new Set<number>([333, 336]);
+const _supertype_comment_ids = new Set<number>([334, 337]);
 const _supertype_path_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 259, 52, 33, 53
+	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 260, 52, 33, 53
 ]);
-const _supertype_whitespace_ids = new Set<number>([165, 166, 167, 168, 169, 170, 171]);
+const _supertype_whitespace_ids = new Set<number>([165, 166, 167, 168, 169, 170, 171, 172]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),

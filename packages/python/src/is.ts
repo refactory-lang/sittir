@@ -646,33 +646,33 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([126, 147, 153, 154, 155, 158, 161, 170, 174, 150]);
+const _supertype_statement_ids = new Set<number>([127, 148, 154, 155, 156, 159, 162, 171, 175, 151]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	130, 127, 131, 135, 137, 138, 141, 142, 143, 144, 145, 146, 166, 167, 168, 169
+	131, 128, 132, 136, 138, 139, 142, 143, 144, 145, 146, 147, 167, 168, 169, 170
 ]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
-const _supertype_expressions_ids = new Set<number>([177]);
-const _supertype_compoundStatement_ids = new Set<number>([147, 153, 154, 155, 158, 161, 170, 174, 150]);
-const _supertype_withClause_ids = new Set<number>([288, 289]);
-const _supertype_suite_ids = new Set<number>([291, 292, 293]);
-const _supertype_parameter_ids = new Set<number>([1, 221, 195, 196, 197, 193, 255, 254, 198]);
-const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 218, 217, 197, 193, 194]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([211]);
-const _supertype_expression_ids = new Set<number>([209, 203, 204, 210, 242, 139, 199]);
+const _supertype_expressions_ids = new Set<number>([178]);
+const _supertype_compoundStatement_ids = new Set<number>([148, 154, 155, 156, 159, 162, 171, 175, 151]);
+const _supertype_withClause_ids = new Set<number>([289, 290]);
+const _supertype_suite_ids = new Set<number>([292, 293, 294]);
+const _supertype_parameter_ids = new Set<number>([1, 222, 196, 197, 198, 194, 256, 255, 199]);
+const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 219, 218, 198, 194, 195]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([212]);
+const _supertype_expression_ids = new Set<number>([210, 204, 205, 211, 243, 140, 200]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	253, 205, 1, 68, 38, 69, 70, 39, 22, 244, 243, 71, 72, 73, 206, 217, 218, 220, 229, 234, 232, 235, 230, 236, 231, 238,
-	237, 64, 197
+	254, 206, 1, 68, 38, 69, 70, 39, 22, 245, 244, 71, 72, 73, 207, 218, 219, 221, 230, 235, 233, 236, 231, 237, 232, 239,
+	238, 64, 198
 ]);
-const _supertype_assignment_ids = new Set<number>([284, 285, 286]);
-const _supertype_leftHandSide_ids = new Set<number>([214]);
-const _supertype_rightHandSide_ids = new Set<number>([177, 213, 214, 216]);
-const _supertype_fExpression_ids = new Set<number>([177, 214, 216]);
+const _supertype_assignment_ids = new Set<number>([285, 286, 287]);
+const _supertype_leftHandSide_ids = new Set<number>([215]);
+const _supertype_rightHandSide_ids = new Set<number>([178, 214, 215, 217]);
+const _supertype_fExpression_ids = new Set<number>([178, 215, 217]);
 const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
 const _supertype_float_ids = new Set<number>([94, 95, 96]);
 const _supertype_keywordIdentifier_ids = new Set<number>([68, 38, 69, 70, 39, 22]);
 const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
-const _supertype_whitespace_ids = new Set<number>([120, 121, 113, 122, 123]);
+const _supertype_whitespace_ids = new Set<number>([120, 121, 122, 113, 123, 124]);
 
 export const is = {
 	module: _g(TSKindId.Module),

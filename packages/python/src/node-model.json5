@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 303,
+  "nodeCount": 304,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -82,6 +82,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tab"
     },
     {
       "type": "SYMBOL",
@@ -3011,6 +3015,18 @@
       ]
     },
     {
+      "kind": "_tab",
+      "modelType": "punctuation",
+      "typeName": "Tab",
+      "factoryName": "tab",
+      "irKey": "tab",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\t\" as const",
+      "text": "\t",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
@@ -3034,6 +3050,7 @@
         "_double_blankline",
         "_newline",
         "_space",
+        "_tab",
         "_tight"
       ]
     },
