@@ -1779,6 +1779,26 @@
       "text": "(?"
     },
     {
+      "kind": "lparen_qmarkP_eq",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPEq",
+      "irKey": "lparenQmarkPEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P=\" as const",
+      "text": "(?P="
+    },
+    {
+      "kind": "lparen_qmarkP_lt",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPLt",
+      "irKey": "lparenQmarkPLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P<\" as const",
+      "text": "(?P<"
+    },
+    {
       "kind": "lparen_qmark_colon",
       "modelType": "punctuation",
       "typeName": "LparenQmarkColon",
@@ -1797,26 +1817,6 @@
       "isParameterless": true,
       "stampExpression": "\"(?<\" as const",
       "text": "(?<"
-    },
-    {
-      "kind": "lparen_qmarkp_eq",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpEq",
-      "irKey": "lparenQmarkpEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P=\" as const",
-      "text": "(?P="
-    },
-    {
-      "kind": "lparen_qmarkp_lt",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpLt",
-      "irKey": "lparenQmarkpLt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P<\" as const",
-      "text": "(?P<"
     },
     {
       "kind": "lt",
@@ -1856,7 +1856,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "(?P<",
-              "parseKind": "lparen_qmarkp_lt"
+              "parseKind": "lparen_qmarkP_lt"
             }
           ]
         },

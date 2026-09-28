@@ -815,7 +815,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkpLt]),
+						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkPLt]),
 					'content',
 					true,
 					data.$type,

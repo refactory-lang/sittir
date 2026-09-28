@@ -1084,8 +1084,8 @@ describe('named_capturing_group sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.LparenQmarkLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('lparenQmarkpLt builds the parent', () => {
-		const node = ir.namedCapturingGroup.lparenQmarkpLt({
+	it('lparenQmarkPLt builds the parent', () => {
+		const node = ir.namedCapturingGroup.lparenQmarkPLt({
 			groupName: { $type: TSKindId.GroupName, $text: 'test', $source: 2, $named: true } as any,
 			pattern: {
 				$type: TSKindId.Pattern,
@@ -1119,7 +1119,7 @@ describe('named_capturing_group sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.LparenQmarkpLt);
+		expect(seated?.$text ?? seated).toBe(TSKindId.LparenQmarkPLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2035,8 +2035,8 @@ describe('term_group sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('namedCapturingGroup.lparenQmarkpLt builds the parent', () => {
-		const node = ir.termGroup.namedCapturingGroup.lparenQmarkpLt({
+	it('namedCapturingGroup.lparenQmarkPLt builds the parent', () => {
+		const node = ir.termGroup.namedCapturingGroup.lparenQmarkPLt({
 			content: [
 				{
 					groupName: { $type: TSKindId.GroupName, $text: 'test', $source: 2, $named: true } as any,

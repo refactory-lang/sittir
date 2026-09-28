@@ -81,13 +81,13 @@ pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: usize = 72;
 pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: usize = 73;
 pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: usize = 74;
 pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: usize = 75;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARKP_LT_AFTER: usize = 76;
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: usize = 76;
 pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: usize = 77;
 pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: usize = 78;
 pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: usize = 79;
 pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: usize = 80;
 pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: usize = 81;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARKP_EQ_AFTER: usize = 82;
+pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: usize = 82;
 pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: usize = 83;
 pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: usize = 84;
 pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: usize = 85;
@@ -195,13 +195,13 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("lookbehind_assertion", "lookbehind_assertion_before", "lookbehind_assertion_before", &[47, 48, 49]),
     ("lookbehind_assertion", "lookbehind_assertion_after", "lookbehind_assertion_after", &[47, 48, 49]),
     ("named_capturing_group", "lparen_qmark_lt_after", "lparen_qmark_lt_after", &[47, 48, 49]),
-    ("named_capturing_group", "lparen_qmarkp_lt_after", "lparen_qmarkp_lt_after", &[47, 48, 49]),
+    ("named_capturing_group", "lparen_qmarkP_lt_after", "lparen_qmarkP_lt_after", &[47, 48, 49]),
     ("named_capturing_group", "rparen_before", "rparen_before", &[47, 48, 49]),
     ("named_capturing_group", "gt_before", "gt_before", &[47, 48, 49]),
     ("named_capturing_group", "gt_after", "gt_after", &[47, 48, 49]),
     ("named_capturing_group", "named_capturing_group_before", "named_capturing_group_before", &[47, 48, 49]),
     ("named_capturing_group", "named_capturing_group_after", "named_capturing_group_after", &[47, 48, 49]),
-    ("named_group_backreference", "lparen_qmarkp_eq_after", "lparen_qmarkp_eq_after", &[47, 48, 49]),
+    ("named_group_backreference", "lparen_qmarkP_eq_after", "lparen_qmarkP_eq_after", &[47, 48, 49]),
     ("named_group_backreference", "rparen_before", "rparen_before", &[47, 48, 49]),
     ("named_group_backreference", "named_group_backreference_before", "named_group_backreference_before", &[47, 48, 49]),
     ("named_group_backreference", "named_group_backreference_after", "named_group_backreference_after", &[47, 48, 49]),
@@ -614,11 +614,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_GT_AFTER, path: "(named_capturing_group)/\">\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_GT_BEFORE, path: "(named_capturing_group)/\">\"/before" }] },
         ] },
+        ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkPLt", path: "(named_capturing_group)/\"(?P<\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER, path: "(named_capturing_group)/\"(?P<\"/after" }] },
+        ] },
         ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkLt", path: "(named_capturing_group)/\"(?<\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER, path: "(named_capturing_group)/\"(?<\"/after" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkpLt", path: "(named_capturing_group)/\"(?P<\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARKP_LT_AFTER, path: "(named_capturing_group)/\"(?P<\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(named_capturing_group)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE, path: "(named_capturing_group)/\")\"/before" }] },
@@ -627,8 +627,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "namedGroupBackreference", path: "(named_group_backreference)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER, path: "(named_group_backreference)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE, path: "(named_group_backreference)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkpEq", path: "(named_group_backreference)/\"(?P=\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARKP_EQ_AFTER, path: "(named_group_backreference)/\"(?P=\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "lparenQmarkPEq", path: "(named_group_backreference)/\"(?P=\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER, path: "(named_group_backreference)/\"(?P=\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(named_group_backreference)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE, path: "(named_group_backreference)/\")\"/before" }] },

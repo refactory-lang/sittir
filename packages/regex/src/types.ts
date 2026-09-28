@@ -60,7 +60,7 @@ export enum TSKindId {
 	BslashDash = 19,
 	ClassCharacter = 20,
 	Lparen = 21,
-	LparenQmarkpLt = 22,
+	LparenQmarkPLt = 22,
 	Gt = 23,
 	LparenQmarkColon = 24,
 	Star = 25,
@@ -71,7 +71,7 @@ export enum TSKindId {
 	Rbrace = 30,
 	Bslashk = 31,
 	Lt = 32,
-	LparenQmarkpEq = 33,
+	LparenQmarkPEq = 33,
 	DecimalEscape = 34,
 	CharacterClassEscapeToken1 = 35,
 	UnicodeCharacterEscapeToken1 = 36,
@@ -151,7 +151,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[19, 'bslash_dash'],
 	[20, 'class_character'],
 	[21, 'lparen'],
-	[22, 'lparen_qmarkp_lt'],
+	[22, 'lparen_qmarkP_lt'],
 	[23, 'gt'],
 	[24, 'lparen_qmark_colon'],
 	[25, 'star'],
@@ -162,7 +162,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[30, 'rbrace'],
 	[31, 'bslashk'],
 	[32, 'lt'],
-	[33, 'lparen_qmarkp_eq'],
+	[33, 'lparen_qmarkP_eq'],
 	[34, 'decimal_escape'],
 	[35, 'character_class_escape_token1'],
 	[36, 'unicode_character_escape_token1'],
@@ -359,8 +359,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassCharacter;
 		case 'lparen':
 			return TSKindId.Lparen;
-		case 'lparen_qmarkp_lt':
-			return TSKindId.LparenQmarkpLt;
+		case 'lparen_qmarkP_lt':
+			return TSKindId.LparenQmarkPLt;
 		case 'gt':
 			return TSKindId.Gt;
 		case 'lparen_qmark_colon':
@@ -381,8 +381,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Bslashk;
 		case 'lt':
 			return TSKindId.Lt;
-		case 'lparen_qmarkp_eq':
-			return TSKindId.LparenQmarkpEq;
+		case 'lparen_qmarkP_eq':
+			return TSKindId.LparenQmarkPEq;
 		case 'decimal_escape':
 			return TSKindId.DecimalEscape;
 		case 'character_class_escape_token1':
@@ -520,7 +520,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '(':
 			return TSKindId.Lparen;
 		case '(?P<':
-			return TSKindId.LparenQmarkpLt;
+			return TSKindId.LparenQmarkPLt;
 		case '>':
 			return TSKindId.Gt;
 		case '(?:':
@@ -542,7 +542,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '<':
 			return TSKindId.Lt;
 		case '(?P=':
-			return TSKindId.LparenQmarkpEq;
+			return TSKindId.LparenQmarkPEq;
 		case ':':
 			return TSKindId.Colon;
 		default:
@@ -714,7 +714,7 @@ export interface NamedCapturingGroup {
 	readonly _group_name: GroupName;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkpLt>;
+		readonly content: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt>;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -1233,8 +1233,8 @@ export namespace NamedCapturingGroup {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly gt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lparenQmarkPLt?: { readonly after?: SpacingArm };
 			readonly lparenQmarkLt?: { readonly after?: SpacingArm };
-			readonly lparenQmarkpLt?: { readonly after?: SpacingArm };
 			readonly rparen?: { readonly before?: SpacingArm };
 		};
 	}
@@ -1280,7 +1280,7 @@ export namespace NamedGroupBackreference {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
-			readonly lparenQmarkpEq?: { readonly after?: SpacingArm };
+			readonly lparenQmarkPEq?: { readonly after?: SpacingArm };
 			readonly rparen?: { readonly before?: SpacingArm };
 		};
 	}

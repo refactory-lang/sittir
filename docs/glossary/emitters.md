@@ -11534,6 +11534,13 @@ under its tree name, not its grammar name. A key with no row maps to itself.
 The id-table entries for a list of keys, each keyed through `keyOf`
 (identity for fields; `modelKindKeyOf` for kinds).
 
+### `packages/codegen/src/emitters/consts.ts::treeSitterPascalCase`
+
+The `enumName` column of the kind-id table, Pascal-cased from the parser.c symbol name with each word's tail
+lower-cased. It mirrors tree-sitter's own C symbol naming, which upper-cases anonymous names, so it is a
+different namespace from the kind keys by design: it may disagree with the `TSKindId` member where a key keeps
+a literal letter's case (regex `lparen_qmarkP_lt` → `AnonLparenQmarkpLt` beside `LparenQmarkPLt`).
+
 ### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 
 #### body

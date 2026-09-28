@@ -930,7 +930,7 @@ export function resolveNamedCapturingGroup_content(
 ): T.NamedCapturingGroup['_content'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'(?<' | '(?P<'>(value, _K0, _K0)),
-		[['(?<', TSKindId.LparenQmarkLt] as const, ['(?P<', TSKindId.LparenQmarkpLt] as const]
+		[['(?<', TSKindId.LparenQmarkLt] as const, ['(?P<', TSKindId.LparenQmarkPLt] as const]
 	);
 }
 

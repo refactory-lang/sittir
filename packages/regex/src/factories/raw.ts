@@ -402,7 +402,7 @@ function _buildAnonymousCapturingGroup(value: T.Pattern): T.AnonymousCapturingGr
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content, [
 		['(?<', TSKindId.LparenQmarkLt] as const,
-		['(?P<', TSKindId.LparenQmarkpLt] as const
+		['(?P<', TSKindId.LparenQmarkPLt] as const
 	]);
 	const _group_name = rejectBareText(config.groupName, 'NamedCapturingGroup.groupName', 'buildGroupName(…)');
 	const _pattern = rejectBareText(config.pattern, 'NamedCapturingGroup.pattern', 'a built Pattern');

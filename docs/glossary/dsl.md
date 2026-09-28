@@ -6236,11 +6236,15 @@ Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed into `cr
 ### `packages/codegen/src/dsl/symbol-table.ts::deriveSymbolRuntimeName`
 
 Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
-arrive in parser.c with all-caps tail names made by per-character
-substitution; lowercase them so a symbolic token's key reads like every other
-snake-case key (`lparen`, `comma`). A keyword's key is the exception: it keeps
-the keyword's spelling (below), since two keywords may differ only by case
-(C's `_alignof` and `_Alignof`). The original C-side name is preserved in
+arrive in parser.c with tail names made by per-character substitution, the
+substituted characters as all-caps words. A punctuation token's key is its
+literal text through the same substitution (`sanitizeCIdentifier`) with the
+words lower-cased and the literal letters kept as written, so it reads like
+every other snake-case key (`lparen`, `comma`) and prefixes differing only by
+case stay apart (C's `u'` → `u_squote`, `U'` → `U_squote`; regex's `(?P<` →
+`lparen_qmarkP_lt`). A token whose C name is not its sanitized literal text
+lower-cases its C tail. A keyword's key keeps the keyword's spelling (below),
+since two keywords may differ only by case (C's `_alignof` and `_Alignof`). The original C-side name is preserved in
 `parser.cSymbol`; the parser's display name is preserved in
 `parser.symbolName`, and the token's own verbatim text — which for an
 aliased anonymous token differs from `symbolName` — is `parser.literalText`.
@@ -6577,7 +6581,7 @@ The words tree-sitter spells control characters (below U+0020) with in a C symbo
 
 ### `packages/codegen/src/dsl/symbol-table.ts::sanitizeCIdentifier`
 
-Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit.
+Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit. `spellReplacement` spells each substituted word: as written for the C name, lower-cased for a punctuation token's kind key (`deriveSymbolRuntimeName`), so both come from the one table.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::referencedNames`
 

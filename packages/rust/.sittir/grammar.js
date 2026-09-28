@@ -1929,10 +1929,10 @@ function deriveSymbolRuntimeName(symbolTextFacts) {
     if (cName.startsWith("anon_sym_")) {
       const spelled = cName.slice("anon_sym_".length);
       if (keywordTextOf(cName, symbolTextFacts) !== void 0) return `${spelled}${KEYWORD_KEY_SUFFIX}`;
-      const base2 = spelled.toLowerCase();
       const text = symbolTextFacts.get(cName)?.literalText;
-      if (text === void 0 || cName !== `anon_sym_${text}`) return base2;
-      return text.length <= 1 ? "underscore" : `underscore${text.length}`;
+      if (text !== void 0 && cName === `anon_sym_${text}`) return text.length <= 1 ? "underscore" : `underscore${text.length}`;
+      if (text !== void 0 && spelled === sanitizeCIdentifier(text)) return sanitizeCIdentifier(text, (word) => word.toLowerCase());
+      return spelled.toLowerCase();
     }
     if (cName.startsWith("aux_sym_")) return cName.slice("aux_sym_".length);
     if (cName.startsWith("alias_sym_")) return `_${cName.slice("alias_sym_".length)}`;
@@ -2342,7 +2342,7 @@ var C_CONTROL_CHARACTER_NAMES = [
   "RS",
   "US"
 ];
-function sanitizeCIdentifier(name) {
+function sanitizeCIdentifier(name, spellReplacement = (word) => word) {
   let identifier = "";
   for (const character of name) {
     if (/[A-Za-z0-9_]/.test(character)) {
@@ -2353,7 +2353,7 @@ function sanitizeCIdentifier(name) {
     const replacement = character === " " && name.length === 1 ? "SPACE" : C_SYMBOL_CHARACTER_NAMES[character] ?? C_CONTROL_CHARACTER_NAMES[codePoint];
     if (replacement !== void 0) {
       if (identifier.length > 0 && !identifier.endsWith("_")) identifier += "_";
-      identifier += replacement;
+      identifier += spellReplacement(replacement);
       continue;
     }
     for (let unit = 0; unit < character.length; unit++) {

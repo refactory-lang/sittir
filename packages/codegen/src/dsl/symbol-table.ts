@@ -319,10 +319,10 @@ function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolText
 		if (cName.startsWith('anon_sym_')) {
 			const spelled = cName.slice('anon_sym_'.length);
 			if (keywordTextOf(cName, symbolTextFacts) !== undefined) return `${spelled}${KEYWORD_KEY_SUFFIX}`;
-			const base = spelled.toLowerCase();
 			const text = symbolTextFacts.get(cName)?.literalText;
-			if (text === undefined || cName !== `anon_sym_${text}`) return base;
-			return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
+			if (text !== undefined && cName === `anon_sym_${text}`) return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
+			if (text !== undefined && spelled === sanitizeCIdentifier(text)) return sanitizeCIdentifier(text, (word) => word.toLowerCase());
+			return spelled.toLowerCase();
 		}
 		if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
 		if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
@@ -966,7 +966,7 @@ const C_CONTROL_CHARACTER_NAMES = [
 	'DLE', 'DC1', 'DC2', 'DC3', 'DC4', 'NAK', 'SYN', 'ETB', 'CAN', 'EM', 'SUB', 'ESC', 'FS', 'GS', 'RS', 'US'
 ] as const;
 
-function sanitizeCIdentifier(name: string): string {
+function sanitizeCIdentifier(name: string, spellReplacement: (word: string) => string = (word) => word): string {
 	let identifier = '';
 	for (const character of name) {
 		if (/[A-Za-z0-9_]/.test(character)) {
@@ -980,7 +980,7 @@ function sanitizeCIdentifier(name: string): string {
 				: (C_SYMBOL_CHARACTER_NAMES[character] ?? C_CONTROL_CHARACTER_NAMES[codePoint]);
 		if (replacement !== undefined) {
 			if (identifier.length > 0 && !identifier.endsWith('_')) identifier += '_';
-			identifier += replacement;
+			identifier += spellReplacement(replacement);
 			continue;
 		}
 		for (let unit = 0; unit < character.length; unit++) {

@@ -85,7 +85,7 @@ pub enum AnyTransport {
     LbrackColon(LbrackColonTransport),
     ColonRbrack(ColonRbrackTransport),
     Lparen(LparenTransport),
-    LparenQmarkpLt(LparenQmarkpLtTransport),
+    LparenQmarkPLt(LparenQmarkPLtTransport),
     Gt(GtTransport),
     LparenQmarkColon(LparenQmarkColonTransport),
     Star(StarTransport),
@@ -96,14 +96,14 @@ pub enum AnyTransport {
     Comma(CommaTransport),
     Bslashk(BslashkTransport),
     Lt(LtTransport),
-    LparenQmarkpEq(LparenQmarkpEqTransport),
+    LparenQmarkPEq(LparenQmarkPEqTransport),
     Colon(ColonTransport),
     Literal0_65_71,
     Literal1_62_61_6e_67,
     Literal2_62_73_6c_61_73_68_5f_64_61_73_68,
     Literal3_64_61_73_68,
     Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74,
-    Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74,
+    Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74,
     Literal6_5c_5c_5b_64_44_73_53_77_57_5d,
     Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e,
     Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e,
@@ -181,7 +181,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::LbrackColon(t) => t.prepare(ctx),
             AnyTransport::ColonRbrack(t) => t.prepare(ctx),
             AnyTransport::Lparen(t) => t.prepare(ctx),
-            AnyTransport::LparenQmarkpLt(t) => t.prepare(ctx),
+            AnyTransport::LparenQmarkPLt(t) => t.prepare(ctx),
             AnyTransport::Gt(t) => t.prepare(ctx),
             AnyTransport::LparenQmarkColon(t) => t.prepare(ctx),
             AnyTransport::Star(t) => t.prepare(ctx),
@@ -192,14 +192,14 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Comma(t) => t.prepare(ctx),
             AnyTransport::Bslashk(t) => t.prepare(ctx),
             AnyTransport::Lt(t) => t.prepare(ctx),
-            AnyTransport::LparenQmarkpEq(t) => t.prepare(ctx),
+            AnyTransport::LparenQmarkPEq(t) => t.prepare(ctx),
             AnyTransport::Colon(t) => t.prepare(ctx),
             AnyTransport::Literal0_65_71 => Ok(()),
             AnyTransport::Literal1_62_61_6e_67 => Ok(()),
             AnyTransport::Literal2_62_73_6c_61_73_68_5f_64_61_73_68 => Ok(()),
             AnyTransport::Literal3_64_61_73_68 => Ok(()),
             AnyTransport::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => Ok(()),
-            AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => Ok(()),
+            AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => Ok(()),
             AnyTransport::Literal6_5c_5c_5b_64_44_73_53_77_57_5d => Ok(()),
             AnyTransport::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => Ok(()),
             AnyTransport::Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => Ok(()),
@@ -480,9 +480,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 21 => Ok(AnyTransport::Lparen(
                     LparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: lparen_qmarkp_lt (LPAREN_QMARKP_LT)
-                22 => Ok(AnyTransport::LparenQmarkpLt(
-                    LparenQmarkpLtTransport::from_napi_value(env, napi_val)?
+                // kind: lparen_qmarkP_lt (LPAREN_QMARK_P_LT)
+                22 => Ok(AnyTransport::LparenQmarkPLt(
+                    LparenQmarkPLtTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: gt (GT)
                 23 => Ok(AnyTransport::Gt(
@@ -524,9 +524,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 32 => Ok(AnyTransport::Lt(
                     LtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: lparen_qmarkp_eq (LPAREN_QMARKP_EQ)
-                33 => Ok(AnyTransport::LparenQmarkpEq(
-                    LparenQmarkpEqTransport::from_napi_value(env, napi_val)?
+                // kind: lparen_qmarkP_eq (LPAREN_QMARK_P_EQ)
+                33 => Ok(AnyTransport::LparenQmarkPEq(
+                    LparenQmarkPEqTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: colon (COLON)
                 45 => Ok(AnyTransport::Colon(
@@ -1627,14 +1627,14 @@ impl ::sittir_core::render::Render for ClassRangeEndTransportSlot {
 #[derive(Debug, Clone)]
 pub enum NamedCapturingGroupContentTransportSlot {
     Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74,
-    Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74,
+    Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74,
 }
 
 impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             NamedCapturingGroupContentTransportSlot::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => Ok(()),
-            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => Ok(()),
+            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => Ok(()),
         }
     }
 }
@@ -1643,7 +1643,7 @@ impl ::sittir_core::view::KindOf for NamedCapturingGroupContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
-            Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
+            Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1658,7 +1658,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedCapturingGroupContentTransp
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     11 => Ok(Self::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74),
-                    22 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74),
+                    22 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
                     ))),
@@ -1671,7 +1671,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedCapturingGroupContentTransp
                 )?;
                 match kind_id {
                     11 => Ok(Self::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74),
-                    22 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74),
+                    22 => Ok(Self::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NamedCapturingGroupContentTransportSlot",
                     ))),
@@ -1715,7 +1715,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NamedCapturingGroupContentTran
 fn named_capturing_group_content_transport_slot_to_any(t: NamedCapturingGroupContentTransportSlot) -> AnyTransport {
     match t {
         NamedCapturingGroupContentTransportSlot::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => AnyTransport::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74,
-        NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74,
+        NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74,
     }
 }
 
@@ -1728,10 +1728,10 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
                 Ok(())
             }
-            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => {
+            NamedCapturingGroupContentTransportSlot::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => {
                 let written = w.text("(?P<");
                 written?;
-                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARKP_LT_AFTER);
+                w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER);
                 Ok(())
             }
         }
@@ -7921,38 +7921,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct LparenQmarkpLtTransport {
+pub struct LparenQmarkPLtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkpLtTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkPLtTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LparenQmarkpLtTransport {
+impl ::sittir_core::options::Edged for LparenQmarkPLtTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(22) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkpLtTransport {
+impl ::sittir_core::render::Render for LparenQmarkPLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkpLtTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpLtTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPLtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7977,7 +7977,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpLtTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpLtTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPLtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7995,7 +7995,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpLtTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkpLtTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkPLtTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -8005,22 +8005,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkpLtTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkpLtTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkPLtTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        LparenQmarkpLtTransport::from_napi_value(env, napi_val).map(Box::new)
+        LparenQmarkPLtTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkpLtTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPLtTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkpLtTransport::to_napi_value(env, *val)
+        LparenQmarkPLtTransport::to_napi_value(env, *val)
     }
 }
 
@@ -9065,38 +9065,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct LparenQmarkpEqTransport {
+pub struct LparenQmarkPEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkpEqTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkPEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LparenQmarkpEqTransport {
+impl ::sittir_core::options::Edged for LparenQmarkPEqTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(33) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkpEqTransport {
+impl ::sittir_core::render::Render for LparenQmarkPEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkpEqTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpEqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPEqTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9121,7 +9121,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpEqTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpEqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkPEqTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9139,7 +9139,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenQmarkpEqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkpEqTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkPEqTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -9149,22 +9149,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for LparenQmarkpEqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkpEqTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenQmarkPEqTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        LparenQmarkpEqTransport::from_napi_value(env, napi_val).map(Box::new)
+        LparenQmarkPEqTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkpEqTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenQmarkPEqTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        LparenQmarkpEqTransport::to_napi_value(env, *val)
+        LparenQmarkPEqTransport::to_napi_value(env, *val)
     }
 }
 
@@ -9534,7 +9534,7 @@ fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: 
     w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(?P=")?;
     w.adjacent();
-    w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARKP_EQ_AFTER);
+    w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER);
     group_name.render(w)?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE);
     w.text(")")?;
@@ -9794,7 +9794,7 @@ fn render_lparen(t: &LparenTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_lparen_qmarkp_lt(t: &LparenQmarkpLtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lparen_qmark_plt(t: &LparenQmarkPLtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -9838,7 +9838,7 @@ fn render_lt(t: &LtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> 
     w.text(&t.text)
 }
 
-fn render_lparen_qmarkp_eq(t: &LparenQmarkpEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lparen_qmark_peq(t: &LparenQmarkPEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -9931,7 +9931,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::LbrackColon(inner) => inner.kind_in(kinds),
             Self::ColonRbrack(inner) => inner.kind_in(kinds),
             Self::Lparen(inner) => inner.kind_in(kinds),
-            Self::LparenQmarkpLt(inner) => inner.kind_in(kinds),
+            Self::LparenQmarkPLt(inner) => inner.kind_in(kinds),
             Self::Gt(inner) => inner.kind_in(kinds),
             Self::LparenQmarkColon(inner) => inner.kind_in(kinds),
             Self::Star(inner) => inner.kind_in(kinds),
@@ -9942,7 +9942,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Comma(inner) => inner.kind_in(kinds),
             Self::Bslashk(inner) => inner.kind_in(kinds),
             Self::Lt(inner) => inner.kind_in(kinds),
-            Self::LparenQmarkpEq(inner) => inner.kind_in(kinds),
+            Self::LparenQmarkPEq(inner) => inner.kind_in(kinds),
             Self::Colon(inner) => inner.kind_in(kinds),
             _ => false,
         }
@@ -10015,7 +10015,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::LbrackColon(t) => t.render(w),
             AnyTransport::ColonRbrack(t) => t.render(w),
             AnyTransport::Lparen(t) => t.render(w),
-            AnyTransport::LparenQmarkpLt(t) => t.render(w),
+            AnyTransport::LparenQmarkPLt(t) => t.render(w),
             AnyTransport::Gt(t) => t.render(w),
             AnyTransport::LparenQmarkColon(t) => t.render(w),
             AnyTransport::Star(t) => t.render(w),
@@ -10026,14 +10026,14 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Comma(t) => t.render(w),
             AnyTransport::Bslashk(t) => t.render(w),
             AnyTransport::Lt(t) => t.render(w),
-            AnyTransport::LparenQmarkpEq(t) => t.render(w),
+            AnyTransport::LparenQmarkPEq(t) => t.render(w),
             AnyTransport::Colon(t) => t.render(w),
             AnyTransport::Literal0_65_71 => w.text("="),
             AnyTransport::Literal1_62_61_6e_67 => w.text("!"),
             AnyTransport::Literal2_62_73_6c_61_73_68_5f_64_61_73_68 => w.text("\\-"),
             AnyTransport::Literal3_64_61_73_68 => w.text("-"),
             AnyTransport::Literal4_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_5f_6c_74 => w.text("(?<"),
-            AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_70_5f_6c_74 => w.text("(?P<"),
+            AnyTransport::Literal5_6c_70_61_72_65_6e_5f_71_6d_61_72_6b_50_5f_6c_74 => w.text("(?P<"),
             AnyTransport::Literal6_5c_5c_5b_64_44_73_53_77_57_5d => w.text("\\\\[dDsSwW]"),
             AnyTransport::Literal7_73_74_61_72_74_5f_61_73_73_65_72_74_69_6f_6e => w.text("^"),
             AnyTransport::Literal8_65_6e_64_5f_61_73_73_65_72_74_69_6f_6e => w.text("$"),

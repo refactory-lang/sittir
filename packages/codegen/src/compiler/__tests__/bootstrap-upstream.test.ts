@@ -22,6 +22,14 @@ describe('bootstrapping an upstream grammar predicts a catalog with one key per 
 		expect(keys.has('_Alignof_keyword')).toBe(true);
 	}, 120_000);
 
+	it('tree-sitter-c keeps the literal letters of its punctuation keys, so quote prefixes differing only by case stay apart', async () => {
+		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c');
+		const keys = predictedKeys(raw);
+		for (const key of ['u_squote', 'U_squote', 'L_squote', 'u_dquote', 'U_dquote', 'L_dquote']) expect(keys.has(key)).toBe(true);
+		const kinds = raw.predictedKinds;
+		expect(kinds !== undefined && 'keyCollisions' in kinds ? kinds.keyCollisions : []).toEqual([]);
+	}, 120_000);
+
 	it('keywords that differ only by case keep distinct derived names, the collapsed type name renamed as a naming event', async () => {
 		const raw = await evaluateSittirGrammar(resolve(__dirname, '../../__tests__/fixtures/keyword-case-grammar.js'), 'keyword_case');
 		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });

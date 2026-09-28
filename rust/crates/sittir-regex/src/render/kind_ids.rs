@@ -29,7 +29,7 @@ pub const POSIX_CLASS_NAME_TOKEN1: KindId = KindId(18);
 pub const BSLASH_DASH: KindId = KindId(19);
 pub const CLASS_CHARACTER: KindId = KindId(20);
 pub const LPAREN: KindId = KindId(21);
-pub const LPAREN_QMARKP_LT: KindId = KindId(22);
+pub const LPAREN_QMARK_P_LT: KindId = KindId(22);
 pub const GT: KindId = KindId(23);
 pub const LPAREN_QMARK_COLON: KindId = KindId(24);
 pub const STAR: KindId = KindId(25);
@@ -40,7 +40,7 @@ pub const COMMA: KindId = KindId(29);
 pub const RBRACE: KindId = KindId(30);
 pub const BSLASHK: KindId = KindId(31);
 pub const LT: KindId = KindId(32);
-pub const LPAREN_QMARKP_EQ: KindId = KindId(33);
+pub const LPAREN_QMARK_P_EQ: KindId = KindId(33);
 pub const DECIMAL_ESCAPE: KindId = KindId(34);
 pub const CHARACTER_CLASS_ESCAPE_TOKEN1: KindId = KindId(35);
 pub const UNICODE_CHARACTER_ESCAPE_TOKEN1: KindId = KindId(36);
@@ -122,7 +122,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         19 => "identity_escape", // "bslash_dash"
         20 => "class_character", // "class_character"
         21 => "(", // "lparen"
-        22 => "(?P<", // "lparen_qmarkp_lt"
+        22 => "(?P<", // "lparen_qmarkP_lt"
         23 => ">", // "gt"
         24 => "(?:", // "lparen_qmark_colon"
         25 => "*", // "star"
@@ -133,7 +133,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         30 => "}", // "rbrace"
         31 => "\\k", // "bslashk"
         32 => "<", // "lt"
-        33 => "(?P=", // "lparen_qmarkp_eq"
+        33 => "(?P=", // "lparen_qmarkP_eq"
         34 => "decimal_escape", // "decimal_escape"
         35 => "character_class_escape_token1", // "character_class_escape_token1"
         36 => "unicode_character_escape_token1", // "unicode_character_escape_token1"
@@ -228,8 +228,8 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (55, None, "eq") => Some("content"),
         (56, None, "bang") => Some("content"),
         (56, None, "eq") => Some("content"),
+        (62, None, "lparen_qmarkP_lt") => Some("content"),
         (62, None, "lparen_qmark_lt") => Some("content"),
-        (62, None, "lparen_qmarkp_lt") => Some("content"),
         (69, None, "count_quantifier_arm") => Some("content"),
         (69, None, "decimal_digits") => Some("content"),
         (72, None, "character_class_escape_arm") => Some("content"),
