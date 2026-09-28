@@ -2250,8 +2250,11 @@ path.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
 
-Evaluates one base a second time with no wire config, and records every rule name it declares: the base's rules
-plus any enrich overrides merged into the stage options. The evaluated rules alone are not that list, because the
+Evaluates one base a second time through `wire` with no config (only the grammar's name), and records every rule
+name it declares: the base's rules plus any enrich overrides merged into the stage options. Going through `wire`
+means the stage sees what enrich hands wire, such as the whitespace bodies it mints (`withEnrichedWhitespace`),
+so the enriched stage and the final evaluation agree that `_tight` and the other members are literal kinds rather
+than empty patterns. The evaluated rules alone are not that list, because the
 rule catalog omits hidden rules it finds unreachable (typescript's `_reserved_identifier`). A throw fails the
 evaluation: a base tree-sitter accepts always evaluates, and one it rejects is reported by its prediction records.
 

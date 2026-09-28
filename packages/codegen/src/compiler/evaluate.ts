@@ -32,7 +32,8 @@ import { canonicalGrammar } from './canonical-rules.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
-import type { PatchSite, WireContext, RefineForm } from '../dsl/wire/wire.ts';
+import { wire, type PatchSite, type WireContext, type RefineForm } from '../dsl/wire/wire.ts';
+import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
@@ -372,7 +373,7 @@ function evaluateStages(enriched: GrammarOptions | { grammar: any }, ctx: Evalua
 }
 
 function evaluateStage(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
-	const stageOpts: GrammarOptions = { name: ctx.opts.name, rules: {} };
+	const stageOpts = wire({ name: ctx.opts.name }, base as unknown as GrammarJson) as GrammarOptions;
 	const grammar = grammarFn(base, stageOpts).grammar as EvaluatedGrammar;
 	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
 	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
