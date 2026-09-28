@@ -29,93 +29,6 @@ that enriched base; `grammar()` receives both. There is no separate enriched
 binding to hand to two places, so the base wire sees and the base tree-sitter
 compiles cannot drift apart.
 
-### `conflicts` (`packages/typescript/grammar.sittir.ts:25`)
-
-Conflict markers for `variant()` adoption on kinds where splitting exposes
-LR(1) ambiguities the unsplit grammar resolved via shared state. Each entry
-names two or more rules tree-sitter should treat as requiring a GLR state, so
-it can defer the decision until more input disambiguates. Hidden (`_foo`) and
-visible (`$.foo`) names are both valid.
-
-`previous` is the TS grammar's own conflicts list (which itself concats the JS
-base's conflicts). Concat so the base entries survive — this list only ADDS the
-entries `variant()` adoption requires.
-
-Per-entry rationale for the sittir-added groups:
-
-- `[sequence_expression, _parenthesized_expression_typed]` — the
-  parenthesized_expression split makes `( expression )` and
-  `( sequence_expression )` share the expression prefix, so the typed variant's
-  hidden rule competes with `sequence_expression` at `( expression •`. GLR
-  resolves on what follows.
-- `[sequence_expression, _parenthesized_expression_group1]` — same class, for
-  the widened mint's own group rule.
-- `[primary_expression, arrow_function]` — a latent `async` ambiguity the split
-  exposes. Previously tree-sitter resolved `async (` via state shared between
-  the typed parenthesized expression and arrow_function's call signature; with
-  the typed variant lifted to its own hidden rule the parser needs explicit GLR
-  to decide whether `async (` starts a call or an arrow function.
-- `[primary_expression, _property_name]` — `export` as `primary_expression` vs
-  as `_property_name`, which collide once the typed-parenthesized variant
-  brings more expression contexts into the same state.
-- `[string]` — the string refine rewrite is one fielded `seq` with a correlated
-  `contents` choice. Both content arms accept `escape_sequence`, so after the
-  opening quote tree-sitter needs GLR to defer which repeat arm owns the
-  fragment stream until more input arrives.
-- `[await_expression, _update_expression_postfix]` and its siblings — the
-  hoisted `_update_expression_postfix` / `_update_expression_prefix` hidden
-  rules inherit the outer `prec.left(0, …)`, but after extraction each has
-  `prec 0` individually and competes with `await_expression` (prec
-  `unary_void`) on `await expr • '++'` / `'++' • expr`. One unsplit rule
-  carried the whole choice under one prec declaration and the LR table handled
-  it internally; after splitting, GLR is the only resolver.
-- `[await_expression, _update_expression_group1]` — same ambiguity, inherited
-  by the widened mint's own group rule.
-- `[_variable_declarator_group1, _for_header_let_const_kind]` — a `for (let x`
-  shared-prefix ambiguity, surfaced when repointing
-  `_export_statement_default`'s nested `from_arm` alias onto its fully-split
-  polymorph home shifted rule registration order.
-- `[import, _meta_property_group2]` — the `import.meta` arm mint and the
-  `import` rule share the `import` keyword prefix.
-- `[primary_expression, _meta_property_group1]` — the `new.target` twin: the
-  mint shares the `new` keyword prefix with primary_expression's new_expression
-  arm.
-- `[_lhs_expression, _export_statement_equals_export]` — `export = <lhs>` and a
-  bare lhs expression statement share the expression prefix once the
-  export-statement mints are no longer inline-dissolved.
-- `[object_assignment_pattern, _lhs_expression]` (and its 3-way superset with
-  the `export =` arm) — cascade of the same un-dissolution: `{ x` may open an
-  object assignment pattern or a bare lhs.
-- `[function_type, _arrow_function__call_signature]` and
-  `[constructor_type, _arrow_function__call_signature]` — arrow-function family
-  cascade: the `_call_signature` polymorph helper and function_type share the
-  `( params )` prefix in type position.
-- `[_lhs_expression]` — the `_lhs_expression` cascade walks the whole type
-  family one pairwise suggestion at a time (primary_type → literal_type →
-  readonly_type → …), so GLR is declared on the union itself as well; same
-  singleton pattern as `[class]` and `[string]`.
-- `[primary_expression, _export_statement_default_from_arm]` /
-  `[…_decl_arm]` — the `_export_statement_default` outer split inherits the
-  outer `_export_statement_default` vs primary_expression conflict on the
-  `export` prefix, propagated to the two outer variants.
-- `[primary_expression, _parameter_name, readonly_type]` — inlining
-  `_kw_readonly_marker` into `_parameter_name` makes the bare `'readonly'`
-  token visible in `_parameter_name`'s state machine. At
-  `'<' '(' 'readonly' • '('` (a generic-typed function-type parameter) the
-  parser sees three readings: `_parameter_name 'readonly' • pattern`,
-  `primary_expression 'readonly'` (treating `readonly` as an identifier), and
-  `readonly_type 'readonly' • type`. Static precedence can't separate them.
-- `[_class_body_method]` — class_body repeat-choice split: the `method` arm
-  ends with `optional(_semicolon)`, so tree-sitter can't decide whether to
-  consume the `;` as part of `_class_body_method` or as the next iteration's
-  start. The self-conflict tells it to fork.
-- `[_class_body_method_sig, _class_body_member]` — `method_signature` appears
-  both in the `method_sig` arm (followed by `_function_signature_…` or `,`) and
-  in the `member` arm (wrapped in a choice-of-member-kinds).
-- `[primary_expression, _for_header_lhs]` and the other `_for_header` pairs —
-  each `_for_header` sub-variant inherits the for-header's identifier-prefix
-  ambiguity.
-
 ### `inline` (`packages/typescript/grammar.sittir.ts:232`)
 
 ```text
@@ -174,10 +87,7 @@ polymorph helpers need to appear explicitly.
 				// resolvePatch call, instead of
 				// leaving a nested raw mint behind for a LATER, separate
 				// resolvePatch call to orphan. Produces the exact same final kind
-				// names as the 3 cascaded entries did (verified against
-				// `conflicts:`'s existing `$._export_statement_default_from_arm` /
-				// `..._decl_arm` references above, which still resolve to these
-				// names).
+				// names as the 3 cascaded entries did.
 				//
 				// Body (unchanged from the 3-entry cascade this replaces):
 				//   `choice(
@@ -236,8 +146,8 @@ merged slots (`declare_marker`, `static_marker`, `readonly_marker`,
 `abstract_marker`, `accessor_marker`, plus the `accessibility_modifier` /
 `override_modifier` node slots) land directly on the kind; the template emits
 them once each, in canonical flat order. The former per-arm kinds and their
-`inline:`/conflict machinery are gone — the conflicts block declares the
-class-member ambiguities against `public_field_definition` itself.
+`inline:`/conflict machinery are gone — the class-member ambiguities against
+`public_field_definition` itself are derived conflicts.
 
 ### `2/0` (`packages/typescript/grammar.sittir.ts:417`)
 

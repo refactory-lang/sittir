@@ -420,12 +420,6 @@ runs, or `unresolvable` with the reason, the report that stopped it,
 and the resolutions gathered so far.
 ```
 
-### `packages/codegen/src/transpile/derive-conflicts.ts::sameSet`
-
-```text
-Set equality of two rule-name lists, order and duplicates ignored.
-```
-
 ### `packages/codegen/src/transpile/derive-conflicts.ts::sourceChain`
 
 ```text
@@ -583,18 +577,28 @@ The package's saved resolutions, seeding the empty set first when there are
 none.
 ```
 
+### `packages/codegen/src/transpile/conflict-driver.ts::stopRegen`
+
+```text
+Ends a regen on a blocking conflict record: writes it as the package's
+`grammar-diagnostics.json`, the one place a grammar's blocking records are
+read, and throws `GrammarDiagnosticError`.
+```
+
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
 ```text
 The conflict loop for one grammar package: read the saved resolutions
 (seeding them if missing), evaluate the grammar once in a fresh process for
 the hash, rule count and upstream context, then reuse the saved resolutions
-or derive new ones. Saved resolutions that turn out stale throw
-`conflict-resolutions-stale` with the grammar and the conflict tree-sitter
-reported. Each run writes the candidate resolutions
-(with the hash), re-bundles, and runs `tree-sitter generate --json-summary`;
-the last, clean run leaves the generate outputs in place. An unresolvable
-derivation throws with its reason and the stopping report.
+or derive new ones. Each run writes the candidate resolutions (with the
+hash), re-bundles, and runs `tree-sitter generate --json-summary`; the last,
+clean run leaves the generate outputs in place. Saved resolutions that turn
+out stale, or a derivation that cannot converge, become the blocking
+`conflict-resolutions-stale` or `conflict-unresolvable` record
+(`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's
+`grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops
+the regen.
 ```
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`

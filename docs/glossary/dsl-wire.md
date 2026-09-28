@@ -301,7 +301,11 @@ The non-enumerable key under which `attachDerivationRecords` puts the conflict-d
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationRecords`
 
-What the conflict loop needs from the reshaping: `upstreamConflicts`, the conflict sets the upstream grammar declared itself (its own `conflicts`, never sittir's), and `sourceEdges`, one step from a reshaped rule's name toward the upstream rule it came from. `derive-conflicts.ts::sourceChain` follows the edges to a fixpoint.
+What the conflict loop needs from the reshaping: `upstreamConflicts`, the conflict sets the upstream grammar declared itself (its own `conflicts`, never sittir's), and `sourceEdges`, one step from a reshaped rule's name toward the upstream rule it came from. `derive-conflicts.ts::sourceChain` follows the edges to a fixpoint. With them travel the facts the conflict diagnostics report (`ConflictConfig`).
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
+
+What the config says about conflicts: the resolutions the grammar imported, and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
 

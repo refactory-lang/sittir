@@ -134,6 +134,7 @@ export interface RawGrammar {
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
+	readonly derivationRecords?: DerivationRecords;
 }
 
 export interface StageEvaluation<G = RawGrammar> {
@@ -150,7 +151,6 @@ export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'refe
 	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
-	readonly derivationRecords?: DerivationRecords;
 }
 
 export interface DesugarDivergenceEvent {

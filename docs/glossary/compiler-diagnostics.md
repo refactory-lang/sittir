@@ -425,7 +425,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), and a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -632,3 +632,24 @@ What wire resolved a key with: the `rules:` entry named like the owner, and ever
 whose `PatchSite.lifts` holds it. The lift writers record that evidence; nothing here matches names across
 kinds.
 
+### `packages/codegen/src/compiler/diagnostics/conflicts.ts::UnresolvableReason`
+
+Why a conflict derivation stopped without converging, as `transpile/derive-conflicts.ts::DerivationResult` reports it.
+
+### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictRecords`
+
+The evaluate-time conflict records of a grammar built by `sittirGrammar`, from its derivation records:
+
+- one informational `conflict-resolution` per resolution the grammar imported, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
+- one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal: the reshaped grammar never reports it;
+- a blocking `conflict-authored` when the config has a `conflicts` block. Every conflict is derived, so an authored list is never applied; blocking it keeps a grammar from carrying a list that silently does nothing.
+
+A grammar without derivation records has none.
+
+### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictUnresolvableRecord`
+
+The blocking `conflict-unresolvable` for a derivation that stopped: its reason and the tree-sitter report that stopped it. The conflict driver writes it as the package's grammar diagnostics and stops the regen.
+
+### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictStaleRecord`
+
+The blocking `conflict-resolutions-stale` for saved resolutions that carry the current grammar hash but reported a conflict: the file was edited by hand or the hash misses an input of the derivation. The conflict driver writes it as the package's grammar diagnostics and stops the regen.

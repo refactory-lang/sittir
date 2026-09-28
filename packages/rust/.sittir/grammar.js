@@ -7067,7 +7067,7 @@ function variantEdgesOf(rules) {
   }
   return edges;
 }
-function attachDerivationRecords(grammar2, base2, opts) {
+function attachDerivationRecords(grammar2, base2, opts, conflicts) {
   const upstreamSymbols = upstreamSymbolNames(base2);
   const edges = /* @__PURE__ */ new Map();
   for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
@@ -7078,7 +7078,8 @@ function attachDerivationRecords(grammar2, base2, opts) {
   }
   const records = {
     upstreamConflicts: upstreamConflictSets(base2),
-    sourceEdges: Object.fromEntries(edges)
+    sourceEdges: Object.fromEntries(edges),
+    ...conflicts
   };
   Object.defineProperty(grammar2, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }
@@ -7096,7 +7097,10 @@ function sittirGrammar(base2, config) {
   const opts = wire(wireConfig, enriched, base2);
   const result = grammar2(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
-  attachDerivationRecords(result.grammar, base2, opts);
+  attachDerivationRecords(result.grammar, base2, opts, {
+    resolutions: resolutions.resolutions,
+    conflictsAuthored: wireConfig.conflicts !== void 0
+  });
   applyConflictResolutions(result.grammar, resolutions);
   return result;
 }
@@ -7112,19 +7116,6 @@ var grammar = globalThis.grammar;
 var grammar_sittir_default = sittirGrammar(base_default, {
   resolutions: resolutions_default,
   name: "rust",
-  conflicts: ($, previous) => [
-    ...previous ?? [],
-    [$._expression_except_range, $.match_arm_block_ending],
-    [$.generic_type_with_turbofish, $.generic_pattern, $._path],
-    [$.generic_type_with_turbofish, $._path],
-    [$.visibility_modifier, $._path],
-    [$._expression_except_range, $.closure_expression_arm],
-    [$.async_block, $._kw_async_marker],
-    [$.scoped_identifier, $.scoped_type_identifier, $.visibility_modifier_crate],
-    [$.visibility_modifier_pub],
-    [$._attributed_type_parameter, $._type],
-    [$._attributed_argument]
-  ],
   supertypes: ($, previous) => [...previous ?? [], $.comment],
   groups: {
     attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),

@@ -262,7 +262,10 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'rule-cause-mismatch',
 	'render-only-not-external',
 	'vocabulary-replaces-upstream',
-	'whitespace-mint-collision'
+	'whitespace-mint-collision',
+	'conflict-authored',
+	'conflict-unresolvable',
+	'conflict-resolutions-stale'
 ]);
 
 export function unexpectableExpectEntries(

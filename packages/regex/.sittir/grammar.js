@@ -6809,7 +6809,7 @@ function variantEdgesOf(rules) {
   }
   return edges;
 }
-function attachDerivationRecords(grammar, base2, opts) {
+function attachDerivationRecords(grammar, base2, opts, conflicts) {
   const upstreamSymbols = upstreamSymbolNames(base2);
   const edges = /* @__PURE__ */ new Map();
   for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
@@ -6820,7 +6820,8 @@ function attachDerivationRecords(grammar, base2, opts) {
   }
   const records = {
     upstreamConflicts: upstreamConflictSets(base2),
-    sourceEdges: Object.fromEntries(edges)
+    sourceEdges: Object.fromEntries(edges),
+    ...conflicts
   };
   Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }
@@ -6838,7 +6839,10 @@ function sittirGrammar(base2, config) {
   const opts = wire(wireConfig, enriched, base2);
   const result = grammar(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
-  attachDerivationRecords(result.grammar, base2, opts);
+  attachDerivationRecords(result.grammar, base2, opts, {
+    resolutions: resolutions.resolutions,
+    conflictsAuthored: wireConfig.conflicts !== void 0
+  });
   applyConflictResolutions(result.grammar, resolutions);
   return result;
 }

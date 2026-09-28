@@ -2,6 +2,7 @@ import { RuleWalker } from '../rule-walker.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarResult } from '../enrich.ts';
 import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
+import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
 
 type WiredGrammar = GrammarResult['grammar'];
 
@@ -10,6 +11,13 @@ export const DERIVATION_RECORDS_KEY = '__derivationRecords__' as const;
 export interface DerivationRecords {
 	readonly upstreamConflicts: readonly (readonly string[])[];
 	readonly sourceEdges: Readonly<Record<string, string>>;
+	readonly resolutions: readonly ConflictResolutionRecord[];
+	readonly conflictsAuthored: boolean;
+}
+
+export interface ConflictConfig {
+	readonly resolutions: readonly ConflictResolutionRecord[];
+	readonly conflictsAuthored: boolean;
 }
 
 function variantEdgesOf(rules: Readonly<Record<string, AnyRule>>): Map<string, string> {
@@ -24,7 +32,7 @@ function variantEdgesOf(rules: Readonly<Record<string, AnyRule>>): Map<string, s
 	return edges;
 }
 
-export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts): void {
+export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
 	const upstreamSymbols = upstreamSymbolNames(base);
 	const edges = new Map<string, string>();
 	for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
@@ -35,7 +43,8 @@ export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, op
 	}
 	const records: DerivationRecords = {
 		upstreamConflicts: upstreamConflictSets(base),
-		sourceEdges: Object.fromEntries(edges)
+		sourceEdges: Object.fromEntries(edges),
+		...conflicts
 	};
 	Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }

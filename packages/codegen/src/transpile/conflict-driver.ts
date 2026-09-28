@@ -1,10 +1,19 @@
+import { join } from 'node:path';
+import { conflictStaleRecord, conflictUnresolvableRecord } from '../compiler/diagnostics/conflicts.ts';
+import { GrammarDiagnosticError, writeGrammarDiagnosticsJson } from '../compiler/diagnostics/grammar-diagnostics.ts';
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { parseGenerateOutcome } from './conflict-summary.ts';
 import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
 import { transpileOverrides } from './transpile-overrides.ts';
+
+function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
+	writeGrammarDiagnosticsJson([blocking], join(sittirDir, 'grammar-diagnostics.json'));
+	throw new GrammarDiagnosticError([blocking]);
+}
 
 export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise<DerivationResult> {
 	const saved = readConflictResolutions(pkg);
@@ -23,16 +32,8 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			return parseGenerateOutcome(run.status, run.stderr);
 		}
 	});
-	if (result.kind === 'stale') {
-		throw new Error(
-			`conflict-resolutions-stale: ${pkg.name}: the saved resolutions carry the current grammar hash but no longer generate cleanly; tree-sitter reports:\n${JSON.stringify(result.report, null, 2)}`
-		);
-	}
-	if (result.kind === 'unresolvable') {
-		throw new Error(
-			`${pkg.name}: conflicts could not be derived (${result.reason}) after ${result.resolutions.length} resolution(s):\n${JSON.stringify(result.report, null, 2)}`
-		);
-	}
+	if (result.kind === 'stale') stopRegen(sittirDir, conflictStaleRecord(pkg.name, result.report));
+	if (result.kind === 'unresolvable') stopRegen(sittirDir, conflictUnresolvableRecord(pkg.name, result.reason, result.report));
 	console.log(
 		result.kind === 'reused'
 			? `  conflicts: ${result.resolutions.length} resolutions reused`

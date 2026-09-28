@@ -4,6 +4,7 @@ import { evaluate } from './evaluate.ts';
 import { packageEntryPath, packageGrammarJsPath } from './resolve-grammar.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
+import { conflictRecords } from './diagnostics/conflicts.ts';
 import { blockedRecords, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
@@ -105,7 +106,8 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
 		...evaluatedRecords,
-		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched })
+		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched }),
+		...conflictRecords(evaluated)
 	];
 	const evaluateBlocked = blockedRecords(evaluateDiagnostics, evaluated.expectDiagnostics, allowDiagnostics);
 	if (evaluateBlocked.length > 0) return { passed: false, generatedIdTables, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };

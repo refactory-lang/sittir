@@ -1701,7 +1701,8 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 The one gate over a grammar's final diagnostics, shared by `compileGrammar` and the `grammar-diagnostics` tool so
 the tool reports exactly what generation rejects. It stamps the id tables (`stampVisibleExternals`), then gates
 twice, each time with the floors its records are named against. Before link it checks the evaluate-time records
-(`evaluateRecords`, and when the grammar departs from its base, `diagnoseRuleCauses` over the enriched stage),
+(`evaluateRecords`, the conflict records `diagnostics/conflicts.ts::conflictRecords`, and when the grammar departs
+from its base, `diagnoseRuleCauses` over the enriched stage),
 with the evaluated grammar's `expectDiagnostics`; a grammar tree-sitter rejects therefore never reaches link, and
 the diagnosis stops there. Otherwise it collects the front half (`collectGrammarDiagnosticsForGrammar`), folds the
 stages into `diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so
@@ -2263,6 +2264,15 @@ not depart from its base (`departsFromBase`).
 `{ grammar, ruleNames }`: one evaluated stage. The grammar is an `EvaluatedGrammar` until the compile boundary
 canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
+### `packages/codegen/src/compiler/types.ts::derivationRecords`
+
+The conflict-derivation records `sittirGrammar` attached
+(`dsl/wire/derivation-records.ts::DerivationRecords`), carried from evaluation
+to the diagnostics: the conflict loop's fresh-process evaluate reads the
+upstream context from them, and `diagnoseGrammar` reports the resolutions,
+the upstream sets no resolution needs, and authored conflicts. Absent for a
+grammar not built by `sittirGrammar`.
+
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
 A grammar as sittir's `grammar()` returns it: rules exactly as the DSL built
@@ -2270,9 +2280,7 @@ them, without a rule catalog or reference list. It carries what the compile
 boundary needs to finish the grammar — `provenanceByKind` for the rule
 catalog and `protectedRuleNames` for the orphan pass — and nothing reads it as
 compiler input except `canonicalGrammar`. It is also what an extending grammar
-receives as its base. `derivationRecords` carries the conflict-derivation
-records `sittirGrammar` attached; only the conflict loop's evaluate reads
-them, and `canonicalGrammar` drops them.
+receives as its base.
 
 ### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStage`
 
@@ -7868,8 +7876,7 @@ own facts.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalGrammar`
 
-Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads (the
-conflict-derivation records stay behind; the compiler never reads them):
+Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads:
 canonicalizes every rule body, the `renderAs` and `visibleExternals` records,
 and the evaluated upstream; removes orphaned rules and their `inline` and `conflicts` entries; then builds the rule
 catalog and the reference list over the canonical rules. The predicted kind

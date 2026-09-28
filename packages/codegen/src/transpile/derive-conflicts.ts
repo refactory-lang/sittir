@@ -1,4 +1,4 @@
-import type { ConflictResolutionsFile, DerivedResolution } from '../dsl/conflict-resolutions.ts';
+import { sameConflictSet, upstreamSourcesOf, type ConflictResolutionsFile, type DerivedResolution } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
 
 export interface UpstreamContext {
@@ -19,11 +19,6 @@ export type DerivationResult =
 			readonly resolutions: readonly DerivedResolution[];
 	  };
 
-function sameSet(left: readonly string[], right: readonly string[]): boolean {
-	const members = new Set(left);
-	return members.size === new Set(right).size && right.every((name) => members.has(name));
-}
-
 export function sourceChain(name: string, edges: Readonly<Record<string, string>>): readonly string[] {
 	const chain = [name];
 	for (let next = edges[name]; next !== undefined; next = edges[next]) {
@@ -34,7 +29,7 @@ export function sourceChain(name: string, edges: Readonly<Record<string, string>
 }
 
 function declaredUpstream(sources: readonly string[], upstream: UpstreamContext): boolean {
-	return upstream.upstreamConflicts.some((declared) => sameSet(declared, sources));
+	return upstream.upstreamConflicts.some((declared) => sameConflictSet(declared, sources));
 }
 
 export function chooseResolution(report: ConflictReport, upstream: UpstreamContext): PolicyChoice {
@@ -46,7 +41,7 @@ export function chooseResolution(report: ConflictReport, upstream: UpstreamConte
 		kind: 'chosen',
 		resolution: {
 			resolution: { kind: 'AddConflict', symbols },
-			step: declaredUpstream(sourceChains.map((chain) => chain[chain.length - 1]!), upstream) ? 'upstream-declared' : 'default',
+			step: declaredUpstream(upstreamSourcesOf(sourceChains), upstream) ? 'upstream-declared' : 'default',
 			sourceChains,
 			conflict: {
 				symbolSequence: report.symbol_sequence,

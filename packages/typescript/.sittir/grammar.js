@@ -8764,7 +8764,7 @@ function variantEdgesOf(rules) {
   }
   return edges;
 }
-function attachDerivationRecords(grammar, base2, opts) {
+function attachDerivationRecords(grammar, base2, opts, conflicts) {
   const upstreamSymbols = upstreamSymbolNames(base2);
   const edges = /* @__PURE__ */ new Map();
   for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
@@ -8775,7 +8775,8 @@ function attachDerivationRecords(grammar, base2, opts) {
   }
   const records = {
     upstreamConflicts: upstreamConflictSets(base2),
-    sourceEdges: Object.fromEntries(edges)
+    sourceEdges: Object.fromEntries(edges),
+    ...conflicts
   };
   Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }
@@ -8793,7 +8794,10 @@ function sittirGrammar(base2, config) {
   const opts = wire(wireConfig, enriched, base2);
   const result = grammar(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
-  attachDerivationRecords(result.grammar, base2, opts);
+  attachDerivationRecords(result.grammar, base2, opts, {
+    resolutions: resolutions.resolutions,
+    conflictsAuthored: wireConfig.conflicts !== void 0
+  });
   applyConflictResolutions(result.grammar, resolutions);
   return result;
 }
@@ -8802,154 +8806,6 @@ function sittirGrammar(base2, config) {
 var grammar_sittir_default = sittirGrammar(import_grammar.default, {
   resolutions: resolutions_default,
   name: "typescript",
-  conflicts: ($, previous) => [
-    ...previous ?? [],
-    [$.sequence_expression, $.parenthesized_expression_typed],
-    [$.sequence_expression, $.parenthesized_expression_arm],
-    [$.primary_expression, $.arrow_function],
-    [$.readonly_type, $._kw_readonly_marker],
-    [$.abstract_method_signature, $._kw_abstract_marker],
-    [$.index_signature, $._kw_readonly_marker],
-    // The fielded `readonly` in index_signature's modifier group makes
-    // `'class' '{' 'readonly' • '['` ambiguous with the sibling
-    // class-member rules that also start with a readonly modifier.
-    [$.method_definition, $.method_signature, $.index_signature, $.public_field_definition],
-    [$.primary_expression, $._kw_async_marker],
-    [$.primary_expression, $._property_name, $._kw_async_marker],
-    [$.primary_expression, $._kw_static_marker],
-    [$.primary_expression, $._kw_readonly_marker],
-    [$.primary_expression, $._kw_abstract_marker],
-    [$.primary_expression, $._kw_const_marker],
-    [$.primary_expression, $._kw_using_marker],
-    [$.primary_expression, $._property_name],
-    [$.labeled_statement, $._property_name],
-    [$.object, $.object_pattern],
-    [$.primary_expression, $.method_definition],
-    [$.primary_expression, $.arrow_function, $._property_name],
-    [$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
-    [$.assignment_expression, $.pattern],
-    [$.primary_expression, $.pattern],
-    [$.primary_expression, $._parameter_name],
-    [$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
-    [$.array, $.array_pattern],
-    [$.primary_type, $.type_parameter],
-    [$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
-    [$.primary_expression, $.rest_pattern],
-    [$._for_header, $.primary_expression],
-    [$.class],
-    [$.class_static_block, $._property_name],
-    [$.primary_expression, $.literal_type],
-    [$.pattern, $.primary_type],
-    [$.primary_expression, $.primary_type],
-    [$.primary_expression, $.nested_identifier, $.nested_type_identifier],
-    [$.primary_expression, $.generic_type],
-    [$._parameter_name, $.primary_type],
-    [$.primary_expression, $.predefined_type],
-    [$._call_signature, $.function_type],
-    [$.optional_tuple_parameter, $.primary_type],
-    [$.call_expression, $.binary_expression, $.instantiation_expression],
-    [$.object_assignment_pattern, $.assignment_expression],
-    [$.array, $.computed_property_name],
-    [$.variable_declarator, $._for_header],
-    [$.object, $.object_pattern, $._property_name],
-    [$.object_pattern, $.object_type],
-    [$.object, $.object_type],
-    [$.primary_expression, $.pattern, $.primary_type],
-    [$.primary_expression, $._parameter_name, $.primary_type],
-    [$.array, $.array_pattern, $.tuple_type],
-    [$.array_pattern, $.tuple_type],
-    [$.array, $.tuple_type],
-    [$._call_signature, $.constructor_type],
-    [$.template_string, $.template_literal_type],
-    [$.object, $.object_pattern, $.object_type],
-    [$.primary_expression, $.rest_pattern, $.primary_type],
-    [$.primary_expression, $.rest_pattern, $.literal_type],
-    [$.primary_expression, $.rest_pattern, $.predefined_type],
-    [$.nested_identifier, $.nested_type_identifier],
-    [$._initializer, $.binary_expression],
-    [$.primary_expression, $.export_statement_namespace_export],
-    [$.binary_expression, $.unary_expression, $.instantiation_expression, $.call_expression_call],
-    [$.await_expression, $.binary_expression, $.instantiation_expression, $.call_expression_call],
-    [$.binary_expression, $.update_expression, $.instantiation_expression, $.call_expression_call],
-    [$.binary_expression, $.instantiation_expression, $.call_expression_call],
-    [$._type_query_call_expression_in_type_annotation, $.call_expression_call],
-    [$._type_query_call_expression, $.call_expression_call],
-    [$.primary_expression, $.export_statement_default],
-    [$.string],
-    [$.await_expression, $.update_expression_postfix],
-    [$.await_expression, $.update_expression_arm1],
-    [$.arrow_function, $.update_expression_arm1],
-    [$.await_expression, $.call_expression_call],
-    [$.instantiation_expression, $.call_expression_call],
-    [$.await_expression, $.binary_expression_arm],
-    [$.as_expression, $.binary_expression_arm],
-    [$.call_expression_call, $.binary_expression_arm],
-    // binary_expression_arm (the `in`-operator arm, freshly extracted —
-    // same PREC-descent mechanism as call_expression's arms above) mirrors
-    // binary_expression's own conflict set: every continuation that used to
-    // share LR state with the whole (unsplit) binary_expression choice needs
-    // the same explicit GLR declaration now that this one arm has its own
-    // symbol boundary.
-    [$.call_expression, $.binary_expression_arm, $.unary_expression, $.instantiation_expression],
-    [$.call_expression, $.await_expression, $.binary_expression_arm, $.instantiation_expression],
-    [$.call_expression, $.binary_expression_arm, $.update_expression, $.instantiation_expression],
-    [$.call_expression, $.binary_expression_arm, $.instantiation_expression],
-    [$._initializer, $.binary_expression_arm],
-    [$.binary_expression_arm, $.unary_expression, $.instantiation_expression, $.call_expression_call],
-    [$.await_expression, $.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
-    [$.binary_expression_arm, $.update_expression, $.instantiation_expression, $.call_expression_call],
-    [$.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
-    [$.subscript_expression, $.binary_expression_arm],
-    [$.member_expression, $.binary_expression_arm],
-    [$.member_expression, $.subscript_expression, $.binary_expression_arm],
-    [$.binary_expression, $.instantiation_expression, $.call_expression_call, $.binary_expression_arm],
-    [$.non_null_expression, $.binary_expression_arm],
-    [$.satisfies_expression, $.binary_expression_arm],
-    [$.binary_expression_arm, $.update_expression_postfix],
-    [$.binary_expression_arm, $.update_expression_prefix],
-    [$.binary_expression_arm, $.update_expression_arm1],
-    [$.ternary_expression, $.binary_expression_arm],
-    [$.arrow_function, $.call_expression_call],
-    [$.arrow_function, $.binary_expression_arm],
-    [$.expression, $.call_expression_template_call],
-    [$.variable_declarator_arm1, $.for_header_arm2],
-    [$.primary_expression, $.for_header_arm2],
-    [$.variable_declarator_arm1, $.for_header_let_const_kind],
-    [$.class_body_arm1, $.class_body_arm2],
-    [$.import, $.meta_property_arm2],
-    [$.primary_expression, $.meta_property_arm1],
-    [$._lhs_expression, $.export_statement_equals_export],
-    [$.object_assignment_pattern, $._lhs_expression],
-    [$.object_assignment_pattern, $._lhs_expression, $.export_statement_equals_export],
-    [$.primary_expression, $._lhs_expression],
-    [$._lhs_expression, $.primary_type],
-    [$._lhs_expression, $.literal_type],
-    [$._lhs_expression, $.readonly_type],
-    [$._lhs_expression, $.predefined_type],
-    [$.function_type, $._call_signature],
-    [$.primary_expression, $._lhs_expression, $.primary_type],
-    [$.primary_expression, $._lhs_expression, $.literal_type],
-    [$.primary_expression, $._lhs_expression, $.predefined_type],
-    [$.constructor_type, $._call_signature],
-    [$._lhs_expression],
-    [$.await_expression, $.update_expression_prefix],
-    [$.arrow_function, $.update_expression_postfix],
-    [$.arrow_function, $.update_expression_prefix],
-    [$.primary_expression, $.export_statement_default_from],
-    [$.primary_expression, $.export_statement_default_declaration],
-    [$.primary_expression, $._parameter_name, $.readonly_type],
-    [$.class_body_method],
-    [$.class_body_method_sig, $.class_body_member],
-    [$.public_field_definition],
-    [$.method_definition, $.public_field_definition],
-    [$.method_definition, $.method_signature, $.public_field_definition],
-    [$.abstract_method_signature, $.public_field_definition],
-    [$.primary_expression, $.for_header_lhs],
-    [$.primary_expression, $.for_header_var_kind],
-    [$.primary_expression, $.for_header_let_const_kind],
-    [$.variable_declarator, $.for_header_var_kind],
-    [$.variable_declarator, $.for_header_let_const_kind]
-  ],
   groups: {
     jsx_opening_element_content: ($) => seq(
       choice(field("name", choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),

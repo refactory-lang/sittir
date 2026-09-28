@@ -116,7 +116,7 @@ function canonicalStages(stages: EvaluationStages<EvaluatedGrammar> | undefined)
 }
 
 export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
-	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, derivationRecords: _derivationRecords, ...rest } = evaluated;
+	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
 	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));

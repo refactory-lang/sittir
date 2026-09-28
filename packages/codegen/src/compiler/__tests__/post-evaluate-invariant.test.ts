@@ -183,7 +183,8 @@ describe('post-evaluate invariant', () => {
 				'bodyPatternZeroMatches',
 				// Evaluate-only mints with no wire-side deposit — read by
 				// collectGrammarDiagnosticsForGrammar for `desugar-divergence-*`.
-				'desugarDivergences'
+				'desugarDivergences',
+				'derivationRecords'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

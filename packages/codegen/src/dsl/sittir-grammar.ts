@@ -22,7 +22,10 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	const opts = wire<EnrichedGrammar<B>, P, O>(wireConfig, enriched, base);
 	const result = grammar(enriched, opts);
 	blankDeadEnrichMints(result.grammar, enriched, opts);
-	attachDerivationRecords(result.grammar, base, opts);
+	attachDerivationRecords(result.grammar, base, opts, {
+		resolutions: resolutions.resolutions,
+		conflictsAuthored: wireConfig.conflicts !== undefined
+	});
 	applyConflictResolutions(result.grammar, resolutions);
 	return result;
 }

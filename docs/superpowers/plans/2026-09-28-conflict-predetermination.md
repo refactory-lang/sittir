@@ -420,6 +420,8 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 - Test: `packages/codegen/src/compiler/__tests__/conflict-diagnostics.test.ts`
 - Glossary: `docs/glossary/compiler-diagnostics.md`
 
+- As landed: the records live in `compiler/diagnostics/conflicts.ts` (`conflictRecords`, `conflictUnresolvableRecord`, `conflictStaleRecord`); `diagnoseGrammar` adds `conflictRecords` to the evaluate-time records. `RawGrammar.derivationRecords` carries the facts from evaluation (`canonicalGrammar` keeps them), extended with the imported resolutions and `conflictsAuthored` (`sittirGrammar` sees `config.conflicts`; wire is untouched). The three blocking codes (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`) are in `UNEXPECTABLE_CODES`. The conflict driver writes a stale or unresolvable record as `grammar-diagnostics.json` and throws `GrammarDiagnosticError`. `sameConflictSet`/`upstreamSourcesOf` moved to `dsl/conflict-resolutions.ts`, shared by the policy and the diagnostic.
+
 **Interfaces:**
 - Produces:
   - informational records, `severity: 'info'`, `code: 'conflict-resolution'`, `details: { resolution, step, conflict }`, one per `DerivedResolution`;
@@ -428,12 +430,12 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
   - `conflict-authored`, `severity: 'fail'`, `details: { grammar }`.
 - All of them land in `grammar-diagnostics.json` through the existing collector.
 
-- [ ] **Step 1:** Write the failing tests:
+- [x] **Step 1:** Write the failing tests:
   - python's resolutions yield 11 `conflict-resolution` records and one `conflict-unnecessary-upstream` record for `print_statement,primary_expression`;
   - a config with `conflicts:` yields a blocking `conflict-authored`;
   - a derivation result with `reason: 'no-usable-offer'` yields a blocking `conflict-unresolvable`.
-- [ ] **Step 2:** Run, implement, run. Mutation check: register `conflict-authored` as floorable and confirm the blocking test fails.
-- [ ] **Step 3:** Regenerate all five grammars. rust and typescript now block on `conflict-authored`, which is expected until Task 8; run Task 8 before the gates. Commit Tasks 6 and 8 together if the executor prefers a green commit.
+- [x] **Step 2:** Run, implement, run. Mutation check: register `conflict-authored` as floorable and confirm the blocking test fails.
+- [x] **Step 3:** Regenerate all five grammars. rust and typescript now block on `conflict-authored`, which is expected until Task 8; run Task 8 before the gates. Commit Tasks 6 and 8 together if the executor prefers a green commit.
 
 ### Task 7: Upstream dynamic precedence survives reshaping
 
@@ -458,17 +460,17 @@ Every conflict is resolved with `AddConflict`. A declared conflict is settled at
 - Modify: `docs/rust-grammar-sittir-glossary.md` and `docs/typescript-grammar-sittir-glossary.md`. Delete the conflict entries, and rewrite prose that cites a `conflicts:` entry so it states the constraint without it.
 - Generated: `packages/{rust,typescript,regex,scm}/.sittir/resolutions.json` and the regenerated outputs.
 
-- [ ] **Step 1:** Delete the two `conflicts:` blocks and regenerate all five grammars.
-- [ ] **Step 2:** Expected counts:
+- [x] **Step 1:** Delete the two `conflicts:` blocks and regenerate all five grammars.
+- [x] **Step 2:** Expected counts:
   - rust: 8 resolutions;
   - typescript: 61;
   - regex: 1 (`character_class,class_range`);
   - scm: 0.
 
   Every parser.c must equal its Task 0 baseline. Any other outcome is preserved and reported.
-- [ ] **Step 3:** No `grammar-diagnostics.json` contains `conflict-authored`.
-- [ ] **Step 4:** Full gates, as in Task 4 Step 7.
-- [ ] **Step 5:** Commit by pathspec.
+- [x] **Step 3:** No `grammar-diagnostics.json` contains `conflict-authored`.
+- [x] **Step 4:** Full gates, as in Task 4 Step 7.
+- [x] **Step 5:** Commit by pathspec.
 
 ### Task 9: Generated-output hygiene
 

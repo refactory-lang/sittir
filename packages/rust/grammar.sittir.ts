@@ -28,19 +28,6 @@ import {
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'rust',
-	conflicts: ($, previous) => [
-		...(previous ?? []),
-		[$._expression_except_range, $.match_arm_block_ending],
-		[$.generic_type_with_turbofish, $.generic_pattern, $._path],
-		[$.generic_type_with_turbofish, $._path],
-		[$.visibility_modifier, $._path],
-		[$._expression_except_range, $.closure_expression_arm],
-		[$.async_block, $._kw_async_marker],
-		[$.scoped_identifier, $.scoped_type_identifier, $.visibility_modifier_crate],
-		[$.visibility_modifier_pub],
-		[$._attributed_type_parameter, $._type],
-		[$._attributed_argument]
-	],
 	supertypes: ($, previous) => [...(previous ?? []), $.comment],
 
 	groups: {

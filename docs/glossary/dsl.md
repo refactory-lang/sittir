@@ -4457,7 +4457,8 @@ sittir's `grammarFn` under evaluate) over the enriched base and wired options,
 then `blankDeadEnrichMints` on that result, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
-for the conflict loop, and last `applyConflictResolutions`, which sets the
+for the conflict loop, and the imported resolutions and whether the config
+authors `conflicts` for the diagnostics, and last `applyConflictResolutions`, which sets the
 grammar's conflicts to the derived resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
 Every `grammar.sittir.ts` and the bootstrap template call it as
@@ -6757,9 +6758,21 @@ The one route to the kind catalog the front half reads: the parser's rows (with 
 
 Whether a derived conflict is one upstream declared: `upstream-declared` when the conflict's rules, each mapped to its upstream source and deduplicated, are exactly a set upstream listed in its own `conflicts`; otherwise `default`. Every conflict is resolved with AddConflict either way; the step is a record, not a choice between resolutions.
 
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionRecord`
+
+One entry of `resolutions.json` as the JSON reads: `DerivedResolution` with the resolution kind and the policy step widened to strings, the type a grammar's import infers. The diagnostics read these.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::sameConflictSet`
+
+Set equality of two rule-name lists, order and duplicates ignored: how a conflict's sources are compared with a set upstream declared.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::upstreamSourcesOf`
+
+The distinct upstream sources of a resolution: the last name of each source chain, deduplicated, so two variants of one upstream rule count as that rule once. Both the policy's declared test and the unnecessary-upstream diagnostic compare these with the upstream sets.
+
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::DerivedResolution`
 
-One entry of `resolutions.json`: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`transpile/derive-conflicts.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
+One entry of `resolutions.json` as the derivation writes it: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`transpile/derive-conflicts.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
@@ -6767,7 +6780,7 @@ The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evalua
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
-What `sittirGrammar` reads from the resolutions it is given: only each resolution's symbol set. A structural type, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+The resolutions a grammar passes to `sittirGrammar`: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
 
