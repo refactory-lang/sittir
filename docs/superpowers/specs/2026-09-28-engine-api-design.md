@@ -19,7 +19,9 @@ A consumer imports a light language descriptor and creates an engine from it. Th
 engine is the only value surface: it builds, guards, parses, reads, renders, and
 creates, edits and writes files. Every node it produces is bound to it, so its
 options apply everywhere. Several engines, for one language or several, coexist
-with no shared state.
+with no shared state. A project groups engines over one set of files: file changes
+are staged and written together, and the project is where cross-file facts such as
+references will live.
 
 ```ts
 import { createEngine } from '@sittir/common';
@@ -129,6 +131,59 @@ interface Engine<API extends LanguageAPI> {
   and `applyEdits` exports and every path that renders without an engine. A node with
   no engine cannot exist.
 
+### Projects: many engines, one staged file set
+
+```ts
+export async function createProject(directory: string | null): Promise<Project>
+
+interface Project {
+  readonly directory: string | null;
+  engine<API extends LanguageAPI>(
+    language: Language<API>,
+    options?: EngineOptions<API['options']>,
+  ): Promise<Engine<API>>;
+  staged(): readonly string[];
+  diff(): readonly { path: string; before: string | undefined; after: string }[];
+  files(): ReadonlyMap<string, string>;
+  commit(): Promise<void>;
+  discard(): void;
+  dispose(): void;
+}
+```
+
+- `createProject` lives in `@sittir/common` beside `createEngine`.
+- `project.engine(language, options)` creates an engine with the full engine surface.
+  A project holds engines for any number of languages, and several engines for one
+  language.
+- **Staging.** Inside a project, `create`, `edit` and `write` change only the
+  project's staged file set. `read` and `edit` see the staged state, so an `edit`
+  after a `create` in the same project sees the created file. The preconditions
+  (`create`: the file does not exist; `edit`: it does) are checked against the staged
+  state over the directory.
+- **Inspection.** `staged()` lists the paths with pending changes. `diff()` gives each
+  one's text before and after (`before` is undefined for a created file). `files()`
+  returns the staged texts by path.
+- **`commit()`** writes every staged file, or none.
+  - First it re-checks each precondition against disk. An `edit` also fails if the
+    file changed on disk after the project read it, compared by content hash. Any
+    failure aborts the commit before anything is written.
+  - Each file is written to a temporary sibling and then renamed into place. If a
+    rename fails, the files already replaced are restored from the texts the project
+    read, and the commit rejects with the cause.
+  - After a successful commit the staged set is empty.
+- `discard()` drops the staged set. `dispose()` disposes the project's engines.
+- **Paths** are relative to the directory. A path that resolves outside it is
+  rejected.
+- **A null directory** is an in-memory project: files exist only in the staged set,
+  `read` and `edit` see only what the project created, `files()` returns everything,
+  and `commit()` is unavailable (it throws). It serves tests, browsers and tools that
+  hand the texts elsewhere.
+- **A standalone engine** (`createEngine`) writes immediately: each file verb is one
+  staged change committed at once, through the same code path as a project's commit.
+- **Cross-file facts.** The project owns the file set and its engines, so later
+  cross-file work (reference tracking, renames across files, import graphs) attaches
+  to it. None of that is in this spec.
+
 ### Rendering a node through another engine
 
 `engineA.render(node)` where `node` belongs to engine B:
@@ -164,7 +219,10 @@ engine surface.
 - `create` on an existing path, and `edit` on a missing one, throw with the path.
 - A node from another language throws, naming both languages.
 - A `load()` failure (for example, a missing native binding) rejects `createEngine`
-  with the underlying error as its cause.
+  and `project.engine` with the underlying error as its cause.
+- `commit()` rejects, naming every path whose precondition or on-disk hash fails,
+  before writing anything. On a null-directory project it throws.
+- A path outside the project directory throws, naming the path.
 
 ## Testing
 
@@ -180,14 +238,24 @@ engine surface.
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
 - Two languages in one program share no state.
+- Projects:
+  - staged verbs touch no file until `commit()`;
+  - an `edit` after a `create` in the same project sees the created file;
+  - `diff()` and `files()` report the staged texts;
+  - a commit whose precondition fails on one file writes none of them;
+  - a file changed on disk after the project read it fails the commit;
+  - a rename failure mid-commit restores the files already replaced;
+  - a null-directory project works end to end in memory, and `commit()` throws;
+  - a Rust and a TypeScript engine in one project commit together.
 - Gates: validation rows identical; render fixtures and dogfood rendered fixtures
   byte-identical (only the source text of example files changes); the full suite;
   type-check, with `tsc` cost measured before and after.
 
 ## Out of scope
 
-- A staging tree that collects file changes and commits them all at once, with a dry
-  run (Nx devkit or Angular schematics style). Each file verb can already be tried by
-  calling `render` instead.
+- Cross-file facts on the project: reference tracking, renames across files, import
+  graphs.
+- Watching the directory for outside changes while a project is open (a commit
+  detects them by hash).
 - Publishing packages.
 - Emitters built on typed trees (the bootstrap spec's later users).
