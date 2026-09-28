@@ -1671,31 +1671,19 @@ and is read with `readFileSync` on the path.
 
 ### `packages/tools/src/validate/trivia-placement.ts::module`
 
-The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. For every extra child in a grammar's corpus (entries that parse with errors are skipped), it records the parent, the nearest named non-extra siblings on each side, whether the extra starts on the row where its previous sibling ends, the placement rule that applies, and where today's reader puts it. The summary counts extras per rule and those lost today. It also counts rule-1 extras that today's reader makes leading (they move to trailing), rule-4 extras by gap, and kinds whose gap cannot be keyed.
+The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the reader itself. For every extra in a source's tree-sitter parse, the census finds the `$_trivia` entry with the extra's span in the native deep read. It records the owner's kind and the position (`leading`, `trailing` or `inner:<gap key>`), or `lost` when no entry holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
 
-### `packages/tools/src/validate/trivia-placement.ts::placementRows`
+### `packages/tools/src/validate/trivia-placement.ts::readPlacements`
 
-Applies the placement rule to every extra under a root, first match wins:
+Every trivia entry in a deep read, keyed by its `$span`, with the owning node's kind id and the entry's position. Entries are found wherever a node carries `$_trivia`: fields, arrays and `$other` alike.
 
-1. The extra starts on the row where the previous named sibling ends: trailing of that sibling.
-2. A named sibling follows: leading of it.
-3. A named sibling precedes: trailing of it.
-4. Otherwise: inner of the parent.
+### `packages/tools/src/validate/trivia-placement.ts::parsedExtras`
 
-Anonymous tokens and other extras are never siblings for this purpose. `today` is the sibling-only placement, with no same-line or inner owner: leading of the next named sibling, trailing only when none follows, lost when the extra has no named sibling at all. `outsideBlock` marks an own-line extra indented at least as deep as the statements of a `block` that ends its previous sibling (python only). That is where tree-sitter can place a comment outside the block its author wrote it in.
+The outermost extras of a tree-sitter tree, in document order. An extra's own children are part of its entry, never separate extras.
 
-### `packages/tools/src/validate/trivia-placement.ts::gapModel`
+### `packages/tools/src/validate/trivia-placement.ts::placementReader`
 
-Keys a rule-4 extra's gap from the grammar's own `grammar.json`, the rules tree-sitter compiles:
-
-- A parent whose rule references a symbol has slots, and the extra sits in an empty slot's gap (`slot`).
-- A slotless parent has one gap between two tokens (`interior`); with more tokens around the extra, the gap cannot be keyed (`unkeyable`). For a corpus instance, the tokens counted are the parent's own anonymous children.
-
-`unkeyableKinds` lists the visible slotless kinds whose rule can hold more than two tokens: python `import_prefix`, typescript `meta_property_import_meta` and `meta_property_new_target` (with the minted `meta_property_arm1`/`arm2`). None of them holds an extra in any corpus today. An extra in one of them is a read diagnostic and a count in the trivia validation row, and the census names it in `unkeyableInCorpus`.
-
-### `packages/tools/src/validate/trivia-placement.ts::slotlessTokens`
-
-A `grammar.json` rule's token count when it references no symbol, else `undefined`. A string, pattern or token is one token; a sequence sums; a choice takes its widest arm; a repeat of anything that holds a token is unbounded.
+One grammar's parser and native engine, paired so that each source is parsed once for its extras and read once for its placements. Spans match across the two because both count from the start of the same source text, the convention the other validators use to find a native node by a tree-sitter span.
 
 ### `packages/tools/src/validate/trivia-placement.ts::runTriviaPlacement`
 
@@ -1703,7 +1691,7 @@ The placement rows for one source text, for probes and tests.
 
 ### `packages/tools/src/validate/trivia-placement.ts::computeTriviaPlacementCensus`
 
-The rows and summary for one grammar's whole corpus.
+The rows and summary for one grammar's whole corpus. Entries that parse with errors are skipped.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
 

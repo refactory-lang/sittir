@@ -672,7 +672,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool text-kind-overlap [options]
 
 ### `tool trivia-placement`
 
-Classify every corpus extra by the trivia placement rule and today’s reader
+Report the owner and position the reader gives every corpus extra; exits 1 if any is lost
 
 **Options**
 

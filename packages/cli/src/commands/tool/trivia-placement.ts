@@ -3,7 +3,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const triviaPlacement: CommandModule = {
 	name: 'trivia-placement',
-	describe: 'Classify every corpus extra by the trivia placement rule and today’s reader',
+	describe: 'Report the owner and position the reader gives every corpus extra; exits 1 if any is lost',
 	register: (program) => {
 		withGrammar(defineCommand(program, triviaPlacement))
 			.option('--all-grammars', 'Run every stable grammar')

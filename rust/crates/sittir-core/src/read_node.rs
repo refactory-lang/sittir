@@ -539,12 +539,21 @@ fn read_children(
             // it is a child like any stub — the parent's handle and its index,
             // which the wrap layer may re-read. Under a deep read nothing is
             // re-read, so it carries the tree's tag and no index, as a trivia
-            // entry does: enough to fold and slice, never a stub's shape.
-            let (handle, child_index) = match depth {
-                ReadDepth::Shallow => (node_handle, Some(i as u16)),
-                ReadDepth::Deep => (tree_handle, None),
+            // entry does: enough to fold and slice, never a stub's shape. The
+            // same holds for its trivia: a shallow leaf's is read when the
+            // wrap layer re-reads it, a deep leaf's is read here.
+            let (handle, child_index, trivia_data) = match depth {
+                ReadDepth::Shallow => (node_handle, Some(i as u16), None),
+                ReadDepth::Deep => (
+                    tree_handle,
+                    None,
+                    node_trivia(child, source, tree_handle, model),
+                ),
             };
-            read_materialized_leaf(child, source, model, handle, child_index)
+            NodeData {
+                trivia_data,
+                ..read_materialized_leaf(child, source, model, handle, child_index)
+            }
         } else {
             match depth {
                 ReadDepth::Shallow => {

@@ -2,23 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { runTriviaPlacement } from '@sittir/tools';
 
 describe('tool trivia-placement', () => {
-	it('classifies inner and same-line trailing', async () => {
+	it("reports each extra's owner and position as the reader places it", async () => {
 		const rows = await runTriviaPlacement({
 			grammar: 'rust',
-			source: 'fn f() { // TODO\n}\nfn g() { a; // note\n b; }\n'
+			source: 'fn f() { // TODO\n}\nfn g() {\n a; // note\n // lead\n b;\n}\n'
 		});
-		expect(rows.map((r) => [r.rule, r.today])).toEqual([
-			[4, 'lost'],
-			[1, 'leading']
-		]);
-		expect(rows[0]).toMatchObject({ parent: 'block', gap: 'slot' });
-	});
-
-	it('places an own-line comment before its next sibling and after the last one', async () => {
-		const rows = await runTriviaPlacement({ grammar: 'rust', source: 'fn g() {\n a;\n // lead\n b;\n // tail\n}\n' });
-		expect(rows.map((r) => [r.rule, r.today, r.prevNamed, r.nextNamed])).toEqual([
-			[2, 'leading', 'expression_statement', 'expression_statement'],
-			[3, 'trailing', 'expression_statement', undefined]
+		expect(rows.map((row) => [row.kind, row.owner, row.position])).toEqual([
+			['line_comment', 'block', 'inner:statements'],
+			['line_comment', 'expression_statement', 'trailing'],
+			['line_comment', 'expression_statement', 'leading']
 		]);
 	});
 });
