@@ -10083,7 +10083,8 @@ flag named by its text, a choice of strings is an enum slot (`prefix` before the
 and any other member run is one text slot named `content` whose pattern is the composed pattern of the run.
 A token with no literal member, or whose only non-literal members have no pattern, stays whole-text.
 A bare pattern that draws named groups becomes a lexed seq of literal runs and group slots; a pattern with no
-group stays whole-text, and a group beside non-literal top-level regex is an error.
+group stays whole-text, and a group beside non-literal top-level regex stays whole-text with a blocking
+`token-interior-unstructurable` record (`recordNotPure`).
 ```
 
 #### authored field
@@ -10107,7 +10108,7 @@ authored field is untouched: its nested sequences still compose into one slot, s
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
 
-The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so it is a compile-time error naming the kind (`unnamedInGroup`).
+The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so the pass records a blocking `token-interior-unstructurable` naming the kind on the link diagnostics and leaves the token whole-text (`recordUnnamedInGroup`). It never throws.
 
 ### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
 
@@ -10132,6 +10133,19 @@ Splits a pattern into literal runs and named groups. Escapes of punctuation and 
 `\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group
 at the top level means the pattern is not a template around slots.
 ```
+
+When the pattern draws a named group but is not such a template, it records a blocking
+`token-interior-unstructurable` (`recordNotPure`) and returns nothing, so the pattern stays whole.
+
+### `packages/codegen/src/compiler/token-interior.ts::recordNotPure`
+
+Records the blocking `token-interior-unstructurable` for a named-group pattern whose remaining top-level
+regex is not literal text, naming the kind and the pattern source; its message names the resolving patch.
+
+### `packages/codegen/src/compiler/token-interior.ts::recordUnnamedInGroup`
+
+Records the blocking `token-interior-unstructurable` for a named part inside an optional group beside an
+unnamed pattern; its message names the resolving patch.
 
 ### `packages/codegen/src/compiler/link.ts::collectDisplayUnions`
 

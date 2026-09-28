@@ -284,6 +284,17 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
+	it('an unstructurable token interior reaches the grammar diagnostics as a blocking record', () => {
+		const rawGrammar = buildRawGrammar({
+			host: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'tok' }] },
+			tok: { type: 'PATTERN', value: '(?<name>[a-z]+)\\d+' }
+		});
+		const { diagnostics } = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		expect(diagnostics).toEqual(
+			expect.arrayContaining([expect.objectContaining({ code: 'token-interior-unstructurable', ownerKind: 'tok', canProceed: false })])
+		);
+	});
+
 	it('an automatic type-name rename is a naming event, not a grammar diagnostic', () => {
 		const rawGrammar = buildRawGrammar({
 			host: {

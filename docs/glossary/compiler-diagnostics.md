@@ -399,7 +399,8 @@ diagnostics. The caller guarantees the prediction built (the gate, or `diagnoseS
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODES`
 
 The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid config records
-(`groups-config-invalid`, `refine-config-invalid`). The kind-id stamp reports (`kindid-*`) stay compiler warnings
+(`groups-config-invalid`, `refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
+(a token whose interior the grammar addresses but the pass cannot structure), so they reach the generation gate. The kind-id stamp reports (`kindid-*`) stay compiler warnings
 and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`

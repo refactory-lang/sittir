@@ -216,7 +216,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, stamped);
 	}
 
-	structureTokenInterior(rules);
+	structureTokenInterior(rules, linkCtx.diagnostics);
 
 	const groupsConfig = raw.groups ?? {};
 	if (Object.keys(groupsConfig).length > 0) {
