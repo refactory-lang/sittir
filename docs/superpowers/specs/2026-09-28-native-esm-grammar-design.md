@@ -70,7 +70,9 @@ deleted, and so are the `esbuild` dependency and `TranspileResult`'s byte counts
 `transpileOverrides` becomes synchronous scaffolding. Renaming it is left to the plan.
 
 Because the re-export names the source, `.sittir/grammar.js` can no longer go stale, and
-nothing needs to re-bundle before `generate`. The conflict derivation store keeps
+nothing needs to re-bundle before `generate`. The file's modification time therefore no longer changes when the grammar does, so it
+cannot key the wasm's staleness either. Regeneration builds `parser.wasm` right after
+its own `generate` every time, and test setup builds it only when it is missing. The conflict derivation store keeps
 writing `resolutions.json`, which the grammar imports with `{ type: 'json' }`, and its
 bundle step disappears.
 
