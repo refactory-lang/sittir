@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lexicalExtrasRun, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import { assertWhitespaceAdmitted } from '../../assemble.ts';
+import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
+import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 
 async function nodeMapOf(grammar: string): Promise<NodeMap> {
@@ -18,6 +21,7 @@ describe('trivia model facts', () => {
 	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
 		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual([
 			'_blankline',
+			'_double_blankline',
 			'_newline',
 			'_space',
 			'block_comment',
@@ -36,6 +40,7 @@ describe('trivia model facts', () => {
 		]);
 		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual([
 			'_blankline',
+			'_double_blankline',
 			'_newline',
 			'_space',
 			'comment',
@@ -54,7 +59,7 @@ describe('trivia model facts', () => {
 	});
 
 	it('makes a whitespace kind trivia exactly when its literal is one or more lexical extras', async () => {
-		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_newline', '_space']);
+		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_double_blankline', '_newline', '_space']);
 		expect(whitespaceTriviaKinds(await nodeMapOf('python')).sort()).toEqual([
 			'_blankline',
 			'_double_blankline',
@@ -67,7 +72,8 @@ describe('trivia model facts', () => {
 		expect(Object.fromEntries(whitespaceTrivia(typescript)?.kindIdByText ?? [])).toEqual({
 			' ': typescript.nodes.get('_space')?.kindId,
 			'\n': typescript.nodes.get('_newline')?.kindId,
-			'\n\n': typescript.nodes.get('_blankline')?.kindId
+			'\n\n': typescript.nodes.get('_blankline')?.kindId,
+			'\n\n\n': typescript.nodes.get('_double_blankline')?.kindId
 		});
 	});
 
@@ -135,7 +141,20 @@ describe('trivia model facts', () => {
 
 	it('reads how a kind starts through the same edge walk as how it ends', async () => {
 		const rust = await nodeMapOf('rust');
-		expect(rust.nodes.get('line_comment_doc_inner')?.leadingTerminals).toEqual([{ literal: '!' }]);
+		expect(rust.nodes.get('line_comment_doc_inner')?.leadingTerminals).toEqual([{ symbol: 'inner_line_doc_comment_marker' }]);
 		expect(rust.nodes.get('line_comment_extra_slashes')?.leadingTerminals).toEqual([{ pattern: '\\/\\/' }]);
+	});
+
+	it('reads a symbol whitespace extra through the rule it names', async () => {
+		const raw = await evaluateTempGrammar({ extras: '$._ws', rules: "_ws: () => token(repeat1(/[ \\t]/))" }, '');
+		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		expect(lexicalExtrasRun(nodeMap)?.test(' \t ')).toBe(true);
+		expect(whitespaceTriviaKinds(nodeMap)).toContain('_space');
+	}, 60_000);
+
+	it("fails when '_whitespace' lists a member the stamped extras run does not admit", async () => {
+		const rust = await nodeMapOf('rust');
+		expect(() => assertWhitespaceAdmitted(rust)).not.toThrow();
+		expect(() => assertWhitespaceAdmitted({ ...rust, nodelessExtrasRun: /^(?:\t)+$/ })).toThrow(/lists '_space'/);
 	});
 });

@@ -47,7 +47,9 @@ import {
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
-import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
+import type { RenderRule } from '../types/rule.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
 	return node instanceof AbstractAssembledCompound;
@@ -1085,10 +1087,14 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 
 export function literalMergePairs(
 	literals: readonly { readonly text: string }[],
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	rules: Readonly<Record<string, RenderRule>> | undefined
 ): [number, number][] {
 	const excluded = /[A-Za-z0-9_\s]/;
 	const pairs = new Set<number>();
+	for (const c of rules === undefined ? [] : sameCharMergePairs(rules)) {
+		if (c.charCodeAt(0) < 128 && !excluded.test(c)) pairs.add(c.charCodeAt(0) * 129);
+	}
 	for (const literal of literals) {
 		if (findEntryForLiteralText(kindEntries, literal.text) === undefined) continue;
 		if (literal.text.length < 2) continue;

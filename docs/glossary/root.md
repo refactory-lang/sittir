@@ -118,16 +118,27 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 ### `packages/codegen/src/run-codegen.ts::runGrammarDiagnosticsPreflight`
 
 ```text
-/**
- * Runs the grammar-diagnostics preflight check for the given grammar.
- *
- * - If `injectedDiagnostics` is provided, those are used directly (test seam).
- * - Otherwise, the grammar is loaded and evaluated to derive diagnostics.
- * - Blocked diagnostics (canProceed === false) that are NOT in the allow-list
- *   cause an error to be thrown in non-interactive mode, or a prompt in
- *   interactive mode.
- * - `confirm` overrides the default stdin-based TTY prompt (test seam).
- */
+Compiles the grammar through the gate (`compile.ts::compileGrammar`) and persists every record the gate saw to
+`.sittir/grammar-diagnostics.json`, whether or not it passed. Records the gate lets through are printed as
+non-fatal output. A blocked compile throws in a non-interactive run. In an interactive run a confirmation adds
+the blocked codes to the allow set and compiles again, until the compile passes or the user declines; the
+returned `PreflightOutcome` carries the allow set and the passing compilation for `generate()` to reuse.
+`injectedDiagnostics` replaces the compile with a fixed record list (test seam) and `confirm` replaces the stdin
+prompt.
+
+### `packages/codegen/src/run-codegen.ts::PreflightOutcome`
+
+The allow set a preflight ends with, and the compilation that passed the gate with it (absent on the injected
+test seam).
+
+### `packages/codegen/src/run-codegen.ts::GatedCompilation`
+
+`gatedCompilation`'s result: every record the gate saw, the blocked ones, and the compilation when it passed.
+
+### `packages/codegen/src/run-codegen.ts::gatedCompilation`
+
+One gated compile for the preflight: the compilation when it passes, or the blocked records and every record the
+gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` either way.
 ```
 
 ```text
@@ -412,14 +423,6 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
 // --no-emit-diff and silently when git is unavailable. Printed here (right
 // after the manifest write, before validation) so it reflects the same on-disk
 // state the manifest just captured.
-```
-
-#### body
-
-```text
-// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
-// No-op otherwise. Used to validate simplify's canonicalization before
-// shrinking `deriveFields` / `deriveChildren` to trivial walks.
 ```
 
 #### body

@@ -1,18 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-
-const NEVER_SCANNED: Record<string, readonly string[]> = {
-	rust: ['_tight', '_space', '_newline'],
-	typescript: ['_tight', '_space', '_newline'],
-	python: ['_tight', '_space']
-};
+import { evaluate } from '../compiler/evaluate.ts';
+import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
+import { enrichWhitespace } from '../dsl/whitespace.ts';
+import type { RuleListEntry } from '../dsl/rule-patterns.ts';
+import type { Rule } from '../types/rule.ts';
 
 const SCANNED_CONTROL: Record<string, string> = {
 	rust: 'identifier',
 	typescript: '_automatic_semicolon',
-	python: '_newline'
+	python: '_newline',
+	scm: 'identifier',
+	regex: 'pattern_character'
 };
+
+async function mintedExternals(grammar: string): Promise<readonly string[]> {
+	const raw = await evaluate(resolveOverridesPath(grammar));
+	const upstream = raw.stages!.raw.grammar as {
+		externals?: readonly RuleListEntry[];
+		extras?: readonly RuleListEntry[];
+		rules: Readonly<Record<string, Rule>>;
+	};
+	return enrichWhitespace(upstream.externals ?? [], upstream.extras ?? [], upstream.rules).addedExternals;
+}
 
 function parserSource(grammar: string): string {
 	return readFileSync(fileURLToPath(new URL(`../../../${grammar}/.sittir/src/parser.c`, import.meta.url)), 'utf8');
@@ -23,8 +34,10 @@ function count(haystack: string, needle: string): number {
 }
 
 describe('whitespace externals are catalogued but never parsed', () => {
-	for (const [grammar, names] of Object.entries(NEVER_SCANNED)) {
-		it(`${grammar}: each symbol has an id and no parse-table entry`, () => {
+	for (const grammar of Object.keys(SCANNED_CONTROL)) {
+		it(`${grammar}: each minted symbol has an id and no parse-table entry`, async () => {
+			const names = await mintedExternals(grammar);
+			expect(names.length).toBeGreaterThan(0);
 			const source = parserSource(grammar);
 			const tableStart = source.indexOf('static const uint16_t ts_parse_table');
 			const mapStart = source.indexOf('ts_external_scanner_symbol_map', tableStart);
@@ -38,6 +51,6 @@ describe('whitespace externals are catalogued but never parsed', () => {
 			}
 			const control = `sym_${SCANNED_CONTROL[grammar]!}`;
 			expect(count(parseTables, `[${control}]`), `${control} should be a real transition symbol`).toBeGreaterThan(1);
-		});
+		}, 60_000);
 	}
 });

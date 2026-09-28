@@ -1,37 +1,17 @@
-import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import {
-	findEntryForLiteralText,
-	modelKindOfEntry,
-	type GeneratedIdTables,
-	type KindEntryLike
-} from '../compiler/generated-metadata.ts';
+import { findEntryForLiteralText, modelKindOfEntry, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
 import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { reclaimsAnonymousChild, slotSeparatorTexts, wireRoutesOf } from './shared.ts';
+import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	generatedIdTables: GeneratedIdTables;
-}
-
-export function toScreamingSnakeCase(memberName: string, rawKind: string): string {
-	const prefix = rawKind.match(/^_+/)?.[0] ?? '';
-	const cleaned = memberName.replace(/^_+/, '');
-
-	if (!/[a-z]/.test(cleaned)) {
-		return `${prefix}${cleaned}`;
-	}
-
-	const snake = cleaned
-		.replace(/([A-Z])/g, '_$1')
-		.replace(/^_/, '')
-		.toUpperCase();
-
-	return `${prefix}${snake}`;
 }
 
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {

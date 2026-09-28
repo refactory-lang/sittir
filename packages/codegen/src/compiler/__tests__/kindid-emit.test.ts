@@ -8,7 +8,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { emitTypes } from '../../emitters/types.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GeneratedIdTables } from '../generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 function makeMinimalFixture(): {
 	raw: RawGrammar;

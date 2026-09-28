@@ -21,7 +21,7 @@ import {
 	resolveDirectFactorySlot,
 	valueStorageOf
 } from '../shared.ts';
-import { camelCase } from '../refine-emit.ts';
+import { lowerCamelCase } from '../../compiler/model/casing.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
@@ -154,7 +154,7 @@ function derive(
 		if (isMultiple(slot)) continue;
 		const residual = node.configSlots.filter((f) => f !== slot);
 		for (const value of armValuesOf(slot, nodeMap)) {
-			const name = camelCase(value.variant);
+			const name = lowerCamelCase(value.variant);
 			const storage = textStorageOf(value, nodeMap);
 			if (storage !== undefined) {
 				direct.push({ name, slot, residual, arm: { via: 'value', storage }, depth: DIRECT, merges: false });

@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, Newline, Space, NamespaceMap } from './types.js';
+import type { Blankline, Comment, DoubleBlankline, Newline, Space, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -58,9 +58,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['_newline', '_space', 'comment']),
+		kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', 'comment']),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\n': 26 } },
+		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\n': 26, '\n\n': 27, '\n\n\n': 28 } },
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -73,14 +73,17 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Comment | Newline | Space | string)
-			| { leading?: (Comment | Newline | Space | string)[]; trailing?: (Comment | Newline | Space | string)[] }
+			| (Blankline | Comment | DoubleBlankline | Newline | Space | string)
+			| {
+					leading?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
+					trailing?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
+			  }
 		)[]
 	): Self;
-	leading(): readonly (Comment | Newline | Space)[];
-	leading(...items: (Comment | Newline | Space | string)[]): Self;
-	trailing(): readonly (Comment | Newline | Space)[];
-	trailing(...items: (Comment | Newline | Space | string)[]): Self;
+	leading(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	leading(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
+	trailing(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	trailing(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
@@ -97,8 +100,8 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Comment | Newline | Space)[];
-	inner(...items: (Comment | Newline | Space | string)[]): N;
+	inner(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
+	inner(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): N;
 }
 
 export function isEmpty(node: T.Program): node is T.EmptyProgram;

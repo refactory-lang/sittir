@@ -51,7 +51,6 @@ export type LeafStringMap = {
 	[TSKindId.PositionalSeparator]: '/';
 	[TSKindId.KeywordSeparator]: '*';
 	[TSKindId.KwAsyncMarker]: 'async';
-	['_unary_operator_operator']: '+' | '-' | '~';
 	[TSKindId.AugmentedAssignmentOperator]:
 		| '+='
 		| '-='
@@ -68,10 +67,10 @@ export type LeafStringMap = {
 		| '|=';
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.LineContinuationNul]: '\\\u0000';
+	[TSKindId.Space]: ' ';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
-	[TSKindId.Space]: ' ';
 	[TSKindId.ImportKeyword]: 'import';
 	[TSKindId.FromKeyword]: 'from';
 	[TSKindId.FutureUKeyword]: '__future__';
@@ -2199,6 +2198,15 @@ export enum FloatKind {
 	FloatScientific = 'float_scientific'
 }
 
+export enum KeywordIdentifierKind {
+	PrintKeyword = 'print_keyword',
+	ExecKeyword = 'exec_keyword',
+	AsyncKeyword = 'async_keyword',
+	AwaitKeyword = 'await_keyword',
+	TypeKeyword = 'type_keyword',
+	MatchKeyword = 'match_keyword'
+}
+
 export enum LineContinuationKind {
 	LineContinuationNewline = 'line_continuation_newline',
 	LineContinuationNul = 'line_continuation_nul'
@@ -3852,15 +3860,6 @@ export interface FormatSpecifier {
 	elements(): readonly ('[^{}\\n]+' | FormatExpression)[];
 }
 
-export interface KeywordIdentifier {
-	readonly $type: 'keyword_identifier';
-	readonly _identifier: number;
-	readonly __inputHints__?: {
-		readonly identifier: KindEnum<'print', TSKindId.Identifier | TSKindId.PrintKeyword>;
-	};
-	identifier(): number;
-}
-
 export interface Await {
 	readonly $type: TSKindId.Await;
 	readonly _expression: PrimaryExpression;
@@ -4370,7 +4369,6 @@ export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type KwAsyncMarker = TSKindId.KwAsyncMarker;
-export type UnaryOperatorOperator = TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde;
 export type AugmentedAssignmentOperator =
 	| TSKindId.PlusEq
 	| TSKindId.DashEq
@@ -4393,11 +4391,11 @@ export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
+export type Tight = TSKindId.Tight;
+export type Space = TSKindId.Space;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
-export type Tight = TSKindId.Tight;
-export type Space = TSKindId.Space;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type PrintKeyword = TSKindId.PrintKeyword;
@@ -4519,9 +4517,6 @@ export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
-export interface KeywordIdentifierTree extends AnyTreeNode {
-	readonly type: 'keyword_identifier';
-}
 export interface AwaitTree extends TreeNode<'await'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface SimpleStatementsElementsTree extends TreeNode<'simple_statements_elements'> {}
@@ -4618,9 +4613,6 @@ export interface KeywordSeparatorTree extends AnyTreeNode {
 export interface KwAsyncMarkerTree extends AnyTreeNode {
 	readonly type: '_kw_async_marker';
 }
-export interface UnaryOperatorOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_operator_operator';
-}
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
 	readonly type: '_augmented_assignment_operator';
 }
@@ -4636,6 +4628,12 @@ export interface StringStartTree extends TreeNode<'string_start'> {}
 export interface StringFragmentTree extends TreeNode<'string_fragment'> {}
 export interface EscapeInterpolationTree extends TreeNode<'escape_interpolation'> {}
 export interface StringEndTree extends TreeNode<'string_end'> {}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
 export interface NewlineTree extends AnyTreeNode {
 	readonly type: '_newline';
 }
@@ -4644,12 +4642,6 @@ export interface BlanklineTree extends AnyTreeNode {
 }
 export interface DoubleBlanklineTree extends AnyTreeNode {
 	readonly type: '_double_blankline';
-}
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
 }
 export interface IndentTree extends AnyTreeNode {
 	readonly type: '_indent';
@@ -5068,6 +5060,16 @@ export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
 export type FloatTree = FloatPointTree | FloatLeadingPointTree | FloatScientificTree;
 
+export type KeywordIdentifier = PrintKeyword | ExecKeyword | AsyncKeyword | AwaitKeyword | TypeKeyword | MatchKeyword;
+
+export type KeywordIdentifierTree =
+	| PrintKeywordTree
+	| ExecKeywordTree
+	| AsyncKeywordTree
+	| AwaitKeywordTree
+	| TypeKeywordTree
+	| MatchKeywordTree;
+
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
 export type LineContinuationTree = LineContinuationNewlineTree | LineContinuationNulTree;
@@ -5169,6 +5171,11 @@ export namespace Integer {
 export namespace Float {
 	export type Kind = 'float';
 	export type Tree = FloatTree;
+}
+
+export namespace KeywordIdentifier {
+	export type Kind = 'keyword_identifier';
+	export type Tree = KeywordIdentifierTree;
 }
 
 export namespace LineContinuation {
@@ -5291,7 +5298,6 @@ export type PythonNode =
 	| StringContent
 	| Interpolation
 	| FormatSpecifier
-	| KeywordIdentifier
 	| Await
 	| Comment
 	| SimpleStatementsElements
@@ -5483,7 +5489,6 @@ export interface OptionsHintMap {
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
-	unaryOperatorOperator: UnaryOperatorOperator.Hints;
 	augmentedAssignmentOperator: AugmentedAssignmentOperator.Hints;
 }
 
@@ -6255,7 +6260,11 @@ export namespace BinaryOperator {
 
 export namespace UnaryOperator {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm };
+		};
 	}
 }
 
@@ -7335,16 +7344,6 @@ export namespace YieldFromClause {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly fromKeyword?: { readonly after?: SpacingArm };
-		};
-	}
-}
-
-export namespace UnaryOperatorOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly plus?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly tilde?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -9216,6 +9215,8 @@ export interface LineContinuationNulNs extends KeywordNs<
 	LineContinuationNulTree,
 	'line_continuation_nul'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
 export interface DoubleBlanklineNs extends KeywordNs<
@@ -9224,8 +9225,6 @@ export interface DoubleBlanklineNs extends KeywordNs<
 	DoubleBlanklineTree,
 	'_double_blankline'
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
-export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
 export interface PrintKeywordNs extends KeywordNs<TSKindId.PrintKeyword, 'print', PrintKeywordTree, 'print_keyword'> {}
 export interface ExecKeywordNs extends KeywordNs<TSKindId.ExecKeyword, 'exec', ExecKeywordTree, 'exec_keyword'> {}
 export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', AsyncKeywordTree, 'async_keyword'> {}
@@ -9463,11 +9462,11 @@ export interface NamespaceMap {
 	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.LineContinuationNul]: LineContinuationNulNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
-	[TSKindId.Tight]: TightNs;
-	[TSKindId.Space]: SpaceNs;
 	[TSKindId.PrintKeyword]: PrintKeywordNs;
 	[TSKindId.ExecKeyword]: ExecKeywordNs;
 	[TSKindId.AsyncKeyword]: AsyncKeywordNs;
@@ -12991,6 +12990,26 @@ export namespace LineContinuationNul {
 	export type Tree = LineContinuationNulNs['Tree'];
 	export type Kind = 'line_continuation_nul';
 }
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Space {
+	export type Config = SpaceNs['Config'];
+	export type Built = SpaceNs['Built'];
+	export type Loose = SpaceNs['Loose'];
+	export type LooseConfig = SpaceNs['LooseConfig'];
+	export type BuildArgs = SpaceNs['BuildArgs'];
+	export type LooseArgs = SpaceNs['LooseArgs'];
+	export type Tree = SpaceNs['Tree'];
+	export type Kind = '_space';
+}
 export namespace Newline {
 	export type Config = NewlineNs['Config'];
 	export type Built = NewlineNs['Built'];
@@ -13020,26 +13039,6 @@ export namespace DoubleBlankline {
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
 	export type Tree = DoubleBlanklineNs['Tree'];
 	export type Kind = '_double_blankline';
-}
-export namespace Tight {
-	export type Config = TightNs['Config'];
-	export type Built = TightNs['Built'];
-	export type Loose = TightNs['Loose'];
-	export type LooseConfig = TightNs['LooseConfig'];
-	export type BuildArgs = TightNs['BuildArgs'];
-	export type LooseArgs = TightNs['LooseArgs'];
-	export type Tree = TightNs['Tree'];
-	export type Kind = '_tight';
-}
-export namespace Space {
-	export type Config = SpaceNs['Config'];
-	export type Built = SpaceNs['Built'];
-	export type Loose = SpaceNs['Loose'];
-	export type LooseConfig = SpaceNs['LooseConfig'];
-	export type BuildArgs = SpaceNs['BuildArgs'];
-	export type LooseArgs = SpaceNs['LooseArgs'];
-	export type Tree = SpaceNs['Tree'];
-	export type Kind = '_space';
 }
 export namespace PrintKeyword {
 	export type Config = PrintKeywordNs['Config'];

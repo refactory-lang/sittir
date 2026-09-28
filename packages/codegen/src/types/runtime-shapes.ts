@@ -83,12 +83,6 @@ export const isSymbolType = <T>(t: T): t is T & { type: 'SYMBOL' } & SymbolRule 
 export const isStringType = <T>(t: T): t is T & { type: 'STRING' } & StringRule => typeEq(t, 'STRING');
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
-export const isBlankType = (t: unknown): boolean => typeEq(t, 'BLANK');
-export const isEmptyBody = (rule: unknown): boolean => {
-	const r = rule as { type?: unknown; members?: readonly unknown[] } | undefined;
-	return isBlankType(r?.type) || (typeEq(r?.type, 'CHOICE') && r?.members?.length === 0);
-};
-
 export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
 
 export function compileAnchoredPattern(source: string, anchor: 'whole' | 'start' = 'whole'): CompiledPattern {
@@ -223,22 +217,3 @@ export function realizesEmpty<R>(rule: R, ctx: EmptinessCtx<R>): boolean {
 		: children.every((child) => realizesEmpty(child, ctx));
 }
 
-const textEmptiness: EmptinessCtx<RuntimeRule> = {
-	settled(rule) {
-		const t = rule.type;
-		if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
-		if (t === 'STRING') return (rule as { value?: unknown }).value === '';
-		if (t === 'PATTERN') return patternAcceptsEmpty(String((rule as { value?: unknown }).value));
-		if (isChoiceType(t) || isSeqType(t) || isPrecWrapper(rule as { type: string })) return undefined;
-		return false;
-	},
-	children(rule) {
-		if (isPrecWrapper(rule as { type: string })) return [(rule as { content?: RuntimeRule }).content!];
-		return (rule as { members?: readonly RuntimeRule[] }).members ?? [];
-	},
-	isChoice: (rule) => isChoiceType(rule.type)
-};
-
-export function matchesEmpty(rule: RuntimeRule): boolean {
-	return realizesEmpty(rule, textEmptiness);
-}

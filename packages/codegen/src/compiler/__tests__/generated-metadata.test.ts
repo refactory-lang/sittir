@@ -1,41 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import {
-	collectGeneratedKindEntries,
-	deriveGeneratedIdTablesFromLanguage,
-	deriveGeneratedIdTablesFromParserCSource,
-	findEntryForLiteralText,
-	reservedWordset,
-	type TreeSitterLanguageMetadata
-} from '../generated-metadata.ts';
+import { deriveGeneratedIdTablesFromParserCSource } from '../generated-metadata.ts';
+import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
-	it('derives generated kind and field IDs from the tree-sitter language API', () => {
-		const language = {
-			nodeTypeCount: 5,
-			fieldCount: 2,
-			nodeTypeForId: (id: number) => ['end', 'identifier', ';', 'hidden', 'identifier'][id] ?? null,
-			nodeTypeIsVisible: (id: number) => id === 1 || id === 2 || id === 4,
-			nodeTypeIsNamed: (id: number) => id === 1 || id === 4,
-			fieldNameForId: (id: number) => [null, 'item', 'name'][id] ?? null
-		} satisfies TreeSitterLanguageMetadata;
-
-		const tables = deriveGeneratedIdTablesFromLanguage(language, 'parser.wasm');
-
-		expect(tables.sourceArtifact).toBe('parser.wasm');
-		expect(tables.kindIds).toEqual(
-			new Map([
-				['identifier', 1],
-				[';', 2]
-			])
-		);
-		expect(tables.fieldIds).toEqual(
-			new Map([
-				['item', 1],
-				['name', 2]
-			])
-		);
-	});
-
 	it.skip('derives generated IDs and C names from generated parser.c', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			`
@@ -465,7 +432,7 @@ static const char * const ts_field_names[] = {
 		expect(isNotEntry?.literalRule).toBe(true);
 	});
 
-	it('throws when two distinct anonymous symbols derive the same key', async () => {
+	it('keeps two keywords that differ only by case apart, each keyed by its own spelling', async () => {
 		const source = `
 enum ts_symbol_identifiers {
   anon_sym_False = 20,
@@ -484,12 +451,16 @@ static const char * const ts_field_names[] = {
   [0] = NULL,
 };
 `;
-		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
-			"generated-metadata: key 'false_keyword' names both 'anon_sym_False' and 'anon_sym_false'"
+		const { kindIds } = await deriveGeneratedIdTablesFromParserCSource(source, 'parser.c');
+		expect(kindIds).toEqual(
+			new Map([
+				['False_keyword', expect.objectContaining({ id: 20 })],
+				['false_keyword', expect.objectContaining({ id: 21 })]
+			])
 		);
 	});
 
-	it('throws when an anonymous token and a named rule derive the same key', async () => {
+	it('refuses a parser.c whose keys collide, since the evaluate-time gate blocks any kind-key-collision', async () => {
 		const source = `
 enum ts_symbol_identifiers {
   sym_true_keyword = 30,
@@ -520,7 +491,7 @@ static const char * const ts_field_names[] = {
 };
 `;
 		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
-			"generated-metadata: key 'true_keyword' names both anonymous token \"true\" (anon_sym_true) and kind 'true_keyword' (sym_true_keyword)"
+			"generated-metadata: parser.c derives key 'true_keyword' for both sym_true_keyword and anon_sym_true, a kind-key-collision the evaluate-time gate blocks"
 		);
 	});
 
@@ -581,7 +552,7 @@ static const char * const ts_field_names[] = {
 		)
 	});
 
-	it('recovers a non-identifier aliased literal from the grammar, not from the mangled C name', async () => {
+	it('recovers a non-identifier aliased literal from the grammar by its C spelling', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			aliasSource([['anon_sym_BSLASH_DASH', 19, 'identity_escape']]),
 			'parser.c',
@@ -605,17 +576,31 @@ static const char * const ts_field_names[] = {
 		expect(entries.find((e) => e.id === 21)?.literalText).toBe('\\-');
 	});
 
-	it('throws when several non-identifier literals alias to one name', async () => {
+	it('pairs several non-identifier literals aliased to one name by their C spellings', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([
+				['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
+				['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+			]),
+			'parser.c',
+			aliasedStrings('identity_escape', ['\\-', '\\.'])
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		expect(entries.find((e) => e.id === 19)?.literalText).toBe('\\-');
+		expect(entries.find((e) => e.id === 20)?.literalText).toBe('\\.');
+	});
+
+	it('throws when several aliased tokens match no literal by C spelling', async () => {
 		await expect(
 			deriveGeneratedIdTablesFromParserCSource(
 				aliasSource([
-					['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
-					['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+					['anon_sym_a2', 19, 'escape'],
+					['anon_sym_b2', 20, 'escape']
 				]),
 				'parser.c',
-				aliasedStrings('identity_escape', ['\\-', '\\.'])
+				aliasedStrings('escape', ['a', 'b'])
 			)
-		).rejects.toThrow('generated-metadata: aliased token anon_sym_BSLASH_DASH (display "identity_escape") has no verbatim literal');
+		).rejects.toThrow('generated-metadata: aliased token anon_sym_a2 (display "escape") has no verbatim literal');
 	});
 
 	it('reads a reserved wordset as literal text, naming the members that have none', () => {

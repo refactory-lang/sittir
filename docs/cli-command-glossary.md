@@ -383,6 +383,7 @@ Run pre-codegen grammar diagnostics
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--stage <stage>` — diagnose an evaluated stage: raw (the upstream base) or enriched (the base after enrich), both with no wire config — choices: `raw` | `enriched`
 
 **Example**
 
@@ -455,6 +456,21 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
+```
+
+### `tool override-census`
+
+List hand-written rules and patch sites, with the diagnostic records they resolve across the raw, enriched and final stages
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--json` — Print the census as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool override-census [options]
 ```
 
 ### `tool phantom-kinds`

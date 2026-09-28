@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	defaultTriviaForm,
 	emptyForms,

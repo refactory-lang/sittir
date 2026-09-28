@@ -1,6 +1,6 @@
 {
   "name": "scm",
-  "nodeCount": 52,
+  "nodeCount": 56,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -12,9 +12,44 @@
     "named_node_group"
   ],
   "externals": [
-    "_newline",
-    "_space",
-    "_tight"
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
+    }
+  ],
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    },
+    {
+      "type": "PATTERN",
+      "value": "\\s+"
+    }
   ],
   "polymorphVariants": {
     "string_content": {
@@ -54,7 +89,17 @@
     "named_node_plain": "namedNode.plain",
     "named_node_supertyped": "namedNode.supertyped"
   },
-  "fieldAliasMap": {},
+  "fieldAliasMap": {
+    "capture.name": {
+      "identifier": "_immediate_identifier"
+    },
+    "predicate.name": {
+      "identifier": "_immediate_identifier"
+    },
+    "named_node_supertyped.name": {
+      "identifier": "_immediate_identifier"
+    }
+  },
   "factorySlots": {
     "program": {
       "definitions": {
@@ -370,6 +415,53 @@
   "innerGapsKeyed": false,
   "nodes": [
     {
+      "kind": "MISSING_keyword",
+      "modelType": "keyword",
+      "typeName": "MISSINGKeyword",
+      "irKey": "missingKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"MISSING\" as const",
+      "text": "MISSING",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_blankline",
+      "modelType": "punctuation",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "text": "\n\n",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_dedent",
+      "modelType": "punctuation",
+      "typeName": "Dedent",
+      "factoryName": "dedent",
+      "irKey": "dedent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷑\\n\" as const",
+      "text": "﷑\n",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_group_expression",
       "modelType": "supertype",
       "typeName": "GroupExpression",
@@ -390,6 +482,18 @@
       "hidden": false,
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "_indent",
+      "modelType": "punctuation",
+      "typeName": "Indent",
+      "factoryName": "indent",
+      "irKey": "indent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷐\\n\" as const",
+      "text": "﷐\n",
       "factoryShape": "text"
     },
     {
@@ -460,6 +564,10 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_double_blankline",
+        "_indent",
         "_newline",
         "_space",
         "_tight"
@@ -577,7 +685,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             }
           ]
         }
@@ -1144,17 +1252,6 @@
       "text": "("
     },
     {
-      "kind": "missing_keyword",
-      "modelType": "keyword",
-      "typeName": "MissingKeyword",
-      "irKey": "missingKeyword",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"MISSING\" as const",
-      "text": "MISSING",
-      "factoryShape": "text"
-    },
-    {
       "kind": "missing_node",
       "modelType": "branch",
       "typeName": "MissingNode",
@@ -1610,7 +1707,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -1843,7 +1940,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_immediate_identifier",
-              "parseKind": "immediate_identifier"
+              "parseKind": "identifier"
             }
           ]
         },

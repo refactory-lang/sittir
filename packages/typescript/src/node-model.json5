@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 437,
+  "nodeCount": 434,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -35,22 +35,92 @@
     "variable_declarator"
   ],
   "externals": [
-    "__error_recovery",
-    "_automatic_semicolon",
-    "_blankline",
-    "_dedent",
-    "_function_signature_automatic_semicolon",
-    "_indent",
-    "_newline",
-    "_space",
-    "_template_chars",
-    "_ternary_qmark",
-    "_tight",
-    "escape_sequence",
-    "html_comment",
-    "jsx_text",
-    "regex_pattern",
-    "||"
+    {
+      "type": "SYMBOL",
+      "name": "_automatic_semicolon"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_template_chars"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_ternary_qmark"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "html_comment"
+    },
+    {
+      "type": "STRING",
+      "value": "||"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "escape_sequence"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "regex_pattern"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "jsx_text"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_function_signature_automatic_semicolon"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "__error_recovery"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
+    }
+  ],
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "comment_line"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment_block"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "html_comment"
+    },
+    {
+      "type": "PATTERN",
+      "value": "[\\s\\p{Zs}\\uFEFF\\u2028\\u2029\\u2060\\u200B]"
+    }
   ],
   "polymorphVariants": {
     "import_statement": {
@@ -4177,45 +4247,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "__number_operator",
-      "modelType": "enum",
-      "typeName": "NumberOperator",
-      "factoryName": "numberOperator",
-      "irKey": "numberOperator",
-      "hidden": false,
-      "values": [
-        "-",
-        "+"
-      ],
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_augmented_assignment_expression_operator",
-      "modelType": "enum",
-      "typeName": "AugmentedAssignmentExpressionOperator",
-      "factoryName": "augmentedAssignmentExpressionOperator",
-      "irKey": "augmentedAssignmentExpressionOperator",
-      "hidden": false,
-      "values": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "^=",
-        "&=",
-        "|=",
-        ">>=",
-        ">>>=",
-        "<<=",
-        "**=",
-        "&&=",
-        "||=",
-        "??="
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_lhs",
       "modelType": "supertype",
       "typeName": "AugmentedAssignmentLhs",
@@ -4299,6 +4330,18 @@
         "array_pattern",
         "object_pattern"
       ]
+    },
+    {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_expressions",
@@ -4808,19 +4851,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_operator",
-      "modelType": "enum",
-      "typeName": "Operator",
-      "factoryName": "operator",
-      "irKey": "operator",
-      "hidden": false,
-      "values": [
-        "++",
-        "--"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_property_name",
       "modelType": "supertype",
       "typeName": "PropertyName",
@@ -4894,24 +4924,6 @@
       ]
     },
     {
-      "kind": "_unary_expression_operator",
-      "modelType": "enum",
-      "typeName": "UnaryExpressionOperator",
-      "factoryName": "unaryExpressionOperator",
-      "irKey": "unaryExpressionOperator",
-      "hidden": false,
-      "values": [
-        "!",
-        "~",
-        "-",
-        "+",
-        "typeof",
-        "void",
-        "delete"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_whitespace",
       "modelType": "supertype",
       "typeName": "Whitespace",
@@ -4921,6 +4933,7 @@
       "subtypes": [
         "_blankline",
         "_dedent",
+        "_double_blankline",
         "_indent",
         "_newline",
         "_space",
@@ -6808,15 +6821,97 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_augmented_assignment_expression_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_augmented_assignment_expression_operator",
-              "parseKind": "_augmented_assignment_expression_operator"
+              "value": "+=",
+              "parseKind": "plus_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-=",
+              "parseKind": "dash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*=",
+              "parseKind": "star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/=",
+              "parseKind": "slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%=",
+              "parseKind": "percent_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^=",
+              "parseKind": "caret_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&=",
+              "parseKind": "amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|=",
+              "parseKind": "pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>>=",
+              "parseKind": "gt_gt_gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**=",
+              "parseKind": "star_star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&&=",
+              "parseKind": "amp_amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "||=",
+              "parseKind": "pipe_pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "??=",
+              "parseKind": "qmark_qmark_eq"
             }
           ]
         },
@@ -16547,15 +16642,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__number_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__number_operator",
-              "parseKind": "__number_operator"
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+",
+              "parseKind": "plus"
             }
           ]
         },
@@ -27102,15 +27201,49 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_unary_expression_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_unary_expression_operator",
-              "parseKind": "_unary_expression_operator"
+              "value": "!",
+              "parseKind": "bang"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "~",
+              "parseKind": "tilde"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "typeof",
+              "parseKind": "typeof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "void",
+              "parseKind": "void_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "delete",
+              "parseKind": "delete_keyword"
             }
           ]
         },
@@ -27302,15 +27435,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_operator",
-              "parseKind": "_operator"
+              "value": "++",
+              "parseKind": "plus_plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--",
+              "parseKind": "dash_dash"
             }
           ]
         }
@@ -27341,15 +27478,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_operator",
-              "parseKind": "_operator"
+              "value": "++",
+              "parseKind": "plus_plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--",
+              "parseKind": "dash_dash"
             }
           ]
         },

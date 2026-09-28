@@ -18,6 +18,7 @@ import type {
 	Comment,
 	CommentBlock,
 	CommentLine,
+	DoubleBlankline,
 	HtmlComment,
 	Newline,
 	Space,
@@ -69,6 +70,7 @@ export const methodsEngine = {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 		kinds: new Set<string>([
 			'_blankline',
+			'_double_blankline',
 			'_newline',
 			'_space',
 			'comment',
@@ -79,7 +81,7 @@ export const methodsEngine = {
 		innerGaps: INNER_GAPS,
 		whitespace: {
 			run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-			kindIdByText: { ' ': 178, '\n': 179, '\n\n': 180 }
+			kindIdByText: { ' ': 178, '\n': 179, '\n\n': 180, '\n\n\n': 181 }
 		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
@@ -93,20 +95,78 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)
+			| (Blankline | Comment | CommentBlock | CommentLine | DoubleBlankline | HtmlComment | Newline | Space | string)
 			| {
-					leading?: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[];
-					trailing?: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[];
+					leading?: (
+						| Blankline
+						| Comment
+						| CommentBlock
+						| CommentLine
+						| DoubleBlankline
+						| HtmlComment
+						| Newline
+						| Space
+						| string
+					)[];
+					trailing?: (
+						| Blankline
+						| Comment
+						| CommentBlock
+						| CommentLine
+						| DoubleBlankline
+						| HtmlComment
+						| Newline
+						| Space
+						| string
+					)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space)[];
+	leading(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
 	leading(
-		...items: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[]
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
 	): Self;
-	trailing(): readonly (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space)[];
+	trailing(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
 	trailing(
-		...items: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[]
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
 	): Self;
 }
 
@@ -124,8 +184,29 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space)[];
-	inner(...items: (Blankline | Comment | CommentBlock | CommentLine | HtmlComment | Newline | Space | string)[]): N;
+	inner(): readonly (
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+	)[];
+	inner(
+		...items: (
+			| Blankline
+			| Comment
+			| CommentBlock
+			| CommentLine
+			| DoubleBlankline
+			| HtmlComment
+			| Newline
+			| Space
+			| string
+		)[]
+	): N;
 }
 
 export function isEmpty(node: T.Program): node is T.EmptyProgram;

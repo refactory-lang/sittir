@@ -4367,17 +4367,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "jsx_identifier",
-            "annotations": {
-              "variant": "identifier",
-              "variantOf": "_jsx_identifier"
-            }
-          },
-          "named": true,
-          "value": "identifier"
+          "type": "SYMBOL",
+          "name": "jsx_identifier",
+          "annotations": {
+            "variant": "jsx_identifier",
+            "variantOf": "_jsx_identifier"
+          }
         },
         {
           "type": "SYMBOL",
@@ -4563,17 +4558,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "jsx_identifier",
-            "annotations": {
-              "variant": "property_identifier",
-              "variantOf": "_jsx_attribute_name"
-            }
-          },
-          "named": true,
-          "value": "property_identifier"
+          "type": "SYMBOL",
+          "name": "jsx_identifier",
+          "annotations": {
+            "variant": "jsx_identifier",
+            "variantOf": "_jsx_attribute_name"
+          }
         },
         {
           "type": "ALIAS",
@@ -4641,13 +4631,8 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "ALIAS",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "unescaped_double_jsx_string_fragment"
-                      },
-                      "named": true,
-                      "value": "string_fragment"
+                      "type": "SYMBOL",
+                      "name": "unescaped_double_jsx_string_fragment"
                     },
                     {
                       "type": "SYMBOL",
@@ -4685,13 +4670,8 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "ALIAS",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "unescaped_single_jsx_string_fragment"
-                      },
-                      "named": true,
-                      "value": "string_fragment"
+                      "type": "SYMBOL",
+                      "name": "unescaped_single_jsx_string_fragment"
                     },
                     {
                       "type": "SYMBOL",
@@ -16046,6 +16026,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_double_blankline"
+          },
+          "named": true,
+          "value": "double_blankline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_indent"
           },
           "named": true,
@@ -20962,6 +20951,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_indent"
     },
     {
@@ -21002,12 +20995,12 @@
     "comment",
     "number",
     "_whitespace",
-    "string",
     "index_signature",
     "import_specifier",
     "parenthesized_expression",
     "export_statement",
     "call_expression",
+    "string",
     "update_expression",
     "export_statement_default",
     "variable_declarator",

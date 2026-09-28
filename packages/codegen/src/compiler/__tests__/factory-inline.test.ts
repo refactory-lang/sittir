@@ -5,15 +5,15 @@ import { resolve } from 'node:path';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
+import { assemble, AssembleCtx, FactoryInlineUnnestableError } from '../assemble.ts';
 import { assertCompilation } from '../compile.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
+import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 // evaluate() reads a module from disk, so an inline grammar has to become a
-// real file. The chain below mirrors generate()'s own phase order, including
-// the assertCompilation gate that turns a blocking diagnostic into a throw.
+// real file. The chain below mirrors generate()'s own phase order.
 async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-factory-inline-'));
 	const entry = resolve(dir, 'grammar.js');
@@ -32,7 +32,8 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 			nodeMap,
 			diagnostics,
 			slotGroupingDiagnostics: [],
-			grammarDiagnostics: []
+			grammarDiagnostics: [],
+			diagnosticRecords: []
 		});
 		return nodeMap;
 	} finally {
@@ -54,7 +55,7 @@ const nestableGrammar = (factoryInline: string): string =>
 describe('factoryInline', () => {
 	it('threads the wire config section onto the wired opts', () => {
 		const factoryInline = ($: Record<string, unknown>): unknown[] => [$.in_path];
-		const wired = wire({ name: 'fi', rules: { root: () => 'x' }, factoryInline });
+		const wired = wire({ name: 'fi', rules: { root: () => 'x' }, factoryInline }, emptyBase);
 		expect(wired.factoryInline).toBe(factoryInline);
 	});
 
@@ -84,9 +85,7 @@ describe('factoryInline', () => {
 	});
 
 	it('rejects an inline kind that is the grammar root', async () => {
-		await expect(compileGrammarSource(nestableGrammar(',\n  factoryInline: ($) => [$.root]'))).rejects.toThrow(
-			/factory-inline-unnestable/
-		);
+		await expect(compileGrammarSource(nestableGrammar(',\n  factoryInline: ($) => [$.root]'))).rejects.toThrow(FactoryInlineUnnestableError);
 	});
 
 	it('rejects an inline kind referenced by no slot', async () => {
@@ -102,7 +101,7 @@ describe('factoryInline', () => {
   factoryInline: ($) => [$.orphan]
 });\n`
 			)
-		).rejects.toThrow(/factory-inline-unnestable/);
+		).rejects.toThrow(FactoryInlineUnnestableError);
 	});
 
 	it('rejects an inline kind reachable through a supertype OF a supertype outside its own parents', async () => {
@@ -123,7 +122,7 @@ describe('factoryInline', () => {
   factoryInline: ($) => [$.in_path]
 });\n`
 			)
-		).rejects.toThrow(/factory-inline-unnestable/);
+		).rejects.toThrow(FactoryInlineUnnestableError);
 	});
 
 	it('accepts an inline kind whose nested supertypes are referenced only by its own parents', async () => {
@@ -162,6 +161,6 @@ describe('factoryInline', () => {
   factoryInline: ($) => [$.in_path]
 });\n`
 			)
-		).rejects.toThrow(/factory-inline-unnestable/);
+		).rejects.toThrow(FactoryInlineUnnestableError);
 	});
 });

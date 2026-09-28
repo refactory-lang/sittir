@@ -1,7 +1,8 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../types/rule.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
-import { composeTokenText } from '../dsl/rule-patterns.ts';
+import { composeTokenText, isBlank, optionalContentOf, withOptionalContent } from '../dsl/rule-patterns.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 type LinkRule = Rule<'link'>;
 
@@ -10,10 +11,6 @@ const PREFIX_SLOT = 'prefix';
 const SUFFIX_SLOT = 'suffix';
 
 type Member = 'template' | 'flag' | 'enum' | 'slot' | 'group';
-
-function isBlank(rule: LinkRule): boolean {
-	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
-}
 
 function isEnumOfStrings(rule: LinkRule): boolean {
 	if (rule.type === CHOICE) {
@@ -61,47 +58,35 @@ function isField(rule: LinkRule): rule is LinkRule & { type: typeof FIELD } {
 }
 
 function groupArm(rule: LinkRule): (LinkRule & { type: typeof SEQ }) | undefined {
-	const arm =
-		rule.type === OPTIONAL
-			? rule.content
-			: rule.type === CHOICE && rule.members.some(isBlank)
-				? (() => {
-						const live = rule.members.filter((m) => !isBlank(m));
-						return live.length === 1 ? live[0] : undefined;
-					})()
-			: undefined;
+	const arm = optionalContentOf(rule);
 	return arm !== undefined && arm.type === SEQ && containsField(arm) ? (arm as LinkRule & { type: typeof SEQ }) : undefined;
 }
 
 function optionalArm(rule: LinkRule): LinkRule | undefined {
 	if (rule.type === REPEAT) return { ...rule, type: REPEAT1 } as LinkRule;
-	if (rule.type === OPTIONAL) return rule.content;
-	if (rule.type !== CHOICE || !rule.members.some(isBlank)) return undefined;
-	const live = rule.members.filter((m) => !isBlank(m));
-	return live.length === 1 ? live[0] : undefined;
+	return optionalContentOf(rule);
+}
+
+function isOptionalEnumOfStrings(rule: LinkRule): boolean {
+	const optional = optionalContentOf(rule);
+	return optional !== undefined && isEnumOfStrings(optional);
 }
 
 function memberClass(rule: LinkRule): Member {
 	if (rule.type === STRING) return 'template';
 	if (groupArm(rule) !== undefined) return 'group';
-	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || (rule.content.type === OPTIONAL && isEnumOfStrings(rule.content.content)) ? 'enum' : 'slot';
-	if (rule.type === OPTIONAL && rule.content.type === STRING) return 'flag';
-	if (rule.type === CHOICE && rule.members.length === 2 && rule.members.some(isBlank)) {
-		const arm = rule.members.find((m) => !isBlank(m));
-		if (arm?.type === STRING) return 'flag';
-	}
-	if (isEnumOfStrings(rule)) return 'enum';
-	if (rule.type === OPTIONAL && isEnumOfStrings(rule.content)) return 'enum';
+	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || isOptionalEnumOfStrings(rule.content) ? 'enum' : 'slot';
+	if (optionalContentOf<LinkRule>(rule)?.type === STRING) return 'flag';
+	if (isEnumOfStrings(rule) || isOptionalEnumOfStrings(rule)) return 'enum';
 	return 'slot';
 }
 
 function flagString(rule: LinkRule): LinkRule {
-	return (rule.type === OPTIONAL ? rule.content : rule.type === CHOICE ? rule.members.find((m) => !isBlank(m))! : rule) as LinkRule;
+	return optionalContentOf(rule) ?? rule;
 }
 
 function flagText(rule: LinkRule): string {
-	const inner = rule.type === OPTIONAL ? rule.content : rule.type === CHOICE ? rule.members.find((m) => !isBlank(m))! : rule;
-	return (inner as { value: string }).value;
+	return (flagString(rule) as { value: string }).value;
 }
 
 function fieldOf(name: string, content: LinkRule, id: LinkRule['id']): LinkRule {
@@ -125,8 +110,16 @@ interface InteriorState {
 	readonly slotCount: number;
 }
 
-function unnamedInGroup(kind: string): never {
-	throw new Error(`token interior: '${kind}' names a part inside an optional group next to an unnamed pattern; name every pattern in the group`);
+const TOKEN_INTERIOR_UNSTRUCTURABLE = 'token-interior-unstructurable';
+
+function recordUnnamedInGroup(kind: string, diagnostics: DiagnosticSink): undefined {
+	diagnostics.fail({
+		code: TOKEN_INTERIOR_UNSTRUCTURABLE,
+		ownerKind: kind,
+		message: `token interior: '${kind}' names a part inside an optional group next to an unnamed pattern, so the token stays opaque. Resolve with a patch naming the group's unnamed pattern (field(...))`,
+		details: { shape: 'unnamed-in-group' }
+	});
+	return undefined;
 }
 
 function structureMembers(
@@ -134,7 +127,8 @@ function structureMembers(
 	rawMembers: readonly LinkRule[],
 	lookup: (name: string) => LinkRule | undefined,
 	state: InteriorState,
-	inGroup: boolean
+	inGroup: boolean,
+	diagnostics: DiagnosticSink
 ): LinkRule[] | undefined {
 	const members = [...rawMembers];
 	const classes = members.map(memberClass);
@@ -144,14 +138,10 @@ function structureMembers(
 		const member = members[i]!;
 		if (cls === 'group') {
 			const arm = groupArm(member)!;
-			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true);
+			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true, diagnostics);
 			if (inner === undefined) return undefined;
 			const rebuilt = { ...arm, members: inner } as LinkRule;
-			out.push(
-				member.type === OPTIONAL
-					? ({ ...member, content: rebuilt } as LinkRule)
-					: ({ ...member, members: (member as LinkRule & { type: typeof CHOICE }).members.map((m) => (isBlank(m) ? m : rebuilt)) } as LinkRule)
-			);
+			out.push(withOptionalContent(member, rebuilt));
 			i += 1;
 			continue;
 		}
@@ -174,7 +164,7 @@ function structureMembers(
 		}
 		let end = i + 1;
 		if (!isField(member)) {
-			if (inGroup) unnamedInGroup(kind);
+			if (inGroup) return recordUnnamedInGroup(kind, diagnostics);
 			while (end < members.length && classes[end] === 'slot' && !isField(members[end]!)) end += 1;
 		}
 		const run = members.slice(i, end);
@@ -196,7 +186,8 @@ function structureMembers(
 function structureSeq(
 	kind: string,
 	seq: LinkRule & { type: typeof SEQ },
-	lookup: (name: string) => LinkRule | undefined
+	lookup: (name: string) => LinkRule | undefined,
+	diagnostics: DiagnosticSink
 ): LinkRule | undefined {
 	const members = containsField(seq) ? flattenMembers(seq.members) : seq.members;
 	const classes = members.map(memberClass);
@@ -205,16 +196,17 @@ function structureSeq(
 	const slotCount = classes.filter(
 		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
 	).length;
-	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount }, false);
+	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount }, false, diagnostics);
 	return out === undefined ? undefined : { ...seq, members: out };
 }
 
 function structureInterior(
 	kind: string,
 	content: LinkRule,
-	lookup: (name: string) => LinkRule | undefined
+	lookup: (name: string) => LinkRule | undefined,
+	diagnostics: DiagnosticSink
 ): LinkRule | undefined {
-	if (content.type === SEQ) return structureSeq(kind, content as LinkRule & { type: typeof SEQ }, lookup);
+	if (content.type === SEQ) return structureSeq(kind, content as LinkRule & { type: typeof SEQ }, lookup, diagnostics);
 	return undefined;
 }
 
@@ -237,13 +229,18 @@ function closingParen(source: string, from: number): number {
 	return -1;
 }
 
-function notPure(kind: string, source: string): never {
-	throw new Error(
-		`token interior: the pattern of '${kind}' draws a named group but its remaining top-level regex is not literal text: ${source}`
-	);
+function recordNotPure(kind: string, source: string, diagnostics: DiagnosticSink): undefined {
+	diagnostics.fail({
+		code: TOKEN_INTERIOR_UNSTRUCTURABLE,
+		ownerKind: kind,
+		message: `token interior: the pattern of '${kind}' draws a named group but its remaining top-level regex is not literal text, so the token stays opaque. Resolve with a patch naming a group around the non-literal regex: ${source}`,
+		details: { shape: 'named-group-beside-regex', source }
+	});
+	return undefined;
 }
 
-function namedGroupParts(kind: string, source: string): readonly PatternPart[] | undefined {
+function namedGroupParts(kind: string, source: string, diagnostics: DiagnosticSink): readonly PatternPart[] | undefined {
+	const notPure = (): undefined => recordNotPure(kind, source, diagnostics);
 	if (!/\(\?<[A-Za-z_]\w*>/.test(source)) return undefined;
 	const parts: PatternPart[] = [];
 	const pushLit = (text: string): void => {
@@ -255,8 +252,8 @@ function namedGroupParts(kind: string, source: string): readonly PatternPart[] |
 		const c = source[i]!;
 		if (c === '\\') {
 			const next = source[i + 1];
-			if (next === undefined) return notPure(kind, source);
-			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return notPure(kind, source);
+			if (next === undefined) return notPure();
+			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return notPure();
 			pushLit(CONTROL_ESCAPES[next] ?? next);
 			i += 1;
 			continue;
@@ -264,19 +261,19 @@ function namedGroupParts(kind: string, source: string): readonly PatternPart[] |
 		const named = c === '(' ? /^\(\?<([A-Za-z_]\w*)>/.exec(source.slice(i)) : null;
 		if (named !== null) {
 			const end = closingParen(source, i + named[0].length);
-			if (end < 0) return notPure(kind, source);
+			if (end < 0) return notPure();
 			parts.push({ group: named[1]!, pattern: source.slice(i + named[0].length, end) });
 			i = end;
 			continue;
 		}
-		if (REGEX_SPECIALS.includes(c)) return notPure(kind, source);
+		if (REGEX_SPECIALS.includes(c)) return notPure();
 		pushLit(c);
 	}
 	return parts;
 }
 
-function structurePattern(kind: string, rule: LinkRule & { type: typeof PATTERN }): LinkRule | undefined {
-	const parts = namedGroupParts(kind, rule.value);
+function structurePattern(kind: string, rule: LinkRule & { type: typeof PATTERN }, diagnostics: DiagnosticSink): LinkRule | undefined {
+	const parts = namedGroupParts(kind, rule.value, diagnostics);
 	if (parts === undefined) return undefined;
 	const members: LinkRule[] = parts.map((part) =>
 		'lit' in part
@@ -286,16 +283,16 @@ function structurePattern(kind: string, rule: LinkRule & { type: typeof PATTERN 
 	return { type: SEQ, members, lexed: true, ...(rule.id !== undefined ? { id: rule.id } : {}) } as unknown as LinkRule;
 }
 
-export function structureTokenInterior(rules: Record<string, LinkRule>): void {
+export function structureTokenInterior(rules: Record<string, LinkRule>, diagnostics: DiagnosticSink): void {
 	const lookup = (name: string): LinkRule | undefined => rules[name];
 	for (const [kind, rule] of Object.entries(rules)) {
 		if (rule.type === PATTERN) {
-			const structuredPattern = structurePattern(kind, rule);
+			const structuredPattern = structurePattern(kind, rule, diagnostics);
 			if (structuredPattern !== undefined) rules[kind] = structuredPattern;
 			continue;
 		}
 		if (rule.type !== TOKEN) continue;
-		const structured = structureInterior(kind, rule.content, lookup);
+		const structured = structureInterior(kind, rule.content, lookup, diagnostics);
 		if (structured !== undefined) rules[kind] = { ...rule, content: structured } as LinkRule;
 	}
 }

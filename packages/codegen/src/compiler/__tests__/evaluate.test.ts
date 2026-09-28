@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { structuralBuilder } from '../../dsl/builders.ts';
+import { canonicalRuleTree } from '../canonical-rules.ts';
 import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
@@ -20,221 +21,123 @@ afterAll(() => restoreFakeDsl());
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const fixture = (name: string) => resolve(__dirname, '../../__tests__/fixtures', name);
 
-describe('structuralBuilder — the grammar DSL construction phase', () => {
-	describe('seq', () => {
-		it('produces a SeqRule with all members', () => {
-			const rule = structuralBuilder.seq(
-				{ type: 'STRING', value: 'a' },
-				{ type: 'STRING', value: 'b' },
-				{ type: 'STRING', value: 'c' }
-			);
-			expect(rule).toEqual({
-				type: 'SEQ',
-				members: [
-					{ type: 'STRING', value: 'a' },
-					{ type: 'STRING', value: 'b' },
-					{ type: 'STRING', value: 'c' }
-				]
-			});
+const str = (value: string) => ({ type: 'STRING', value }) as const;
+
+describe('structuralBuilder — builds the rule shapes tree-sitter builds', () => {
+	it('seq keeps every member, including a single one', () => {
+		expect(structuralBuilder.seq(str('a'), str('b'))).toEqual({ type: 'SEQ', members: [str('a'), str('b')] });
+		expect(structuralBuilder.seq(str('a'))).toEqual({ type: 'SEQ', members: [str('a')] });
+	});
+
+	it('choice keeps every member, including same-name FIELD members', () => {
+		const a = structuralBuilder.field('operator', str('+'));
+		const b = structuralBuilder.field('operator', str('-'));
+		expect(structuralBuilder.choice(a, b)).toEqual({ type: 'CHOICE', members: [a, b] });
+		expect(structuralBuilder.choice(str('a'))).toEqual({ type: 'CHOICE', members: [str('a')] });
+	});
+
+	it('optional, repeat and repeat1 wrap their content without collapsing', () => {
+		const repeat1 = structuralBuilder.repeat1(str('x'));
+		expect(structuralBuilder.optional(repeat1)).toEqual({ type: 'OPTIONAL', content: repeat1 });
+		const optional = structuralBuilder.optional(str('x'));
+		expect(structuralBuilder.repeat(optional)).toEqual({ type: 'REPEAT', content: optional });
+		expect(structuralBuilder.repeat1(repeat1)).toEqual({ type: 'REPEAT1', content: repeat1 });
+	});
+
+	it('field keeps an OPTIONAL(REPEAT(x)) body', () => {
+		const body = structuralBuilder.optional(structuralBuilder.repeat({ type: SYMBOL, name: 'item' }));
+		expect(structuralBuilder.field('items', body)).toEqual({ type: 'FIELD', name: 'items', content: body });
+	});
+
+	it('token carries no immediate flag; token.immediate is its own node type', () => {
+		expect(structuralBuilder.token(str('x'))).toEqual({ type: 'TOKEN', content: str('x') });
+		expect(structuralBuilder.token.immediate(str('x'))).toEqual({ type: 'IMMEDIATE_TOKEN', content: str('x') });
+	});
+
+	it('prec wrappers keep their value', () => {
+		expect(structuralBuilder.prec(1, str('x'))).toEqual({ type: 'PREC', value: 1, content: str('x') });
+		expect(structuralBuilder.prec.left(0, str('x'))).toEqual({ type: 'PREC_LEFT', value: 0, content: str('x') });
+		expect(structuralBuilder.prec.right(1, str('x'))).toEqual({ type: 'PREC_RIGHT', value: 1, content: str('x') });
+		expect(structuralBuilder.prec.dynamic(1, str('x'))).toEqual({ type: 'PREC_DYNAMIC', value: 1, content: str('x') });
+	});
+});
+
+describe('canonicalRuleTree — the compile-boundary canonical shape', () => {
+	it('flattens a single-member seq or choice', () => {
+		expect(canonicalRuleTree(structuralBuilder.seq(str('a')))).toEqual(str('a'));
+		expect(canonicalRuleTree(structuralBuilder.choice(str('a')))).toEqual(str('a'));
+	});
+
+	it('collapses all-same-name FIELD members into one FIELD wrapping a CHOICE', () => {
+		const a = structuralBuilder.field('operator', str('+'));
+		const b = structuralBuilder.field('operator', str('-'));
+		expect(canonicalRuleTree(structuralBuilder.choice(a, b))).toEqual({
+			type: 'FIELD',
+			name: 'operator',
+			content: { type: 'CHOICE', members: [str('+'), str('-')] },
+			metadata: { fieldSource: 'grammar' }
 		});
 	});
 
-	describe('choice', () => {
-		it('produces a ChoiceRule with mixed members', () => {
-			const sym = { type: 'SYMBOL' as const, name: 'x' };
-			const rule = structuralBuilder.choice(sym, { type: 'STRING', value: 'b' });
-			expect(rule).toEqual({
-				type: 'CHOICE',
-				members: [
-					{ type: 'SYMBOL', name: 'x' },
-					{ type: 'STRING', value: 'b' }
-				]
-			});
-		});
+	it('keeps a CHOICE of FIELD members with different names or an ALIAS arm', () => {
+		const a = structuralBuilder.field('left', str('+'));
+		const b = structuralBuilder.field('right', str('-'));
+		expect(canonicalRuleTree(structuralBuilder.choice(a, b))).toEqual({ type: CHOICE, members: [a, b] });
+		const c = structuralBuilder.field('left', structuralBuilder.alias(str('-'), 'minus'));
+		expect(canonicalRuleTree(structuralBuilder.choice(a, c))).toEqual({ type: CHOICE, members: [a, c] });
+	});
 
-		it('does not collapse mixed non-FIELD members', () => {
-			const sym = { type: 'SYMBOL' as const, name: 'x' };
-			const rule = structuralBuilder.choice({ type: 'STRING', value: 'a' }, sym);
-			expect(rule.type).toBe(CHOICE);
-		});
+	it('collapses nested optional and repeat wrappers', () => {
+		const optional = structuralBuilder.optional(str('x'));
+		const repeat = structuralBuilder.repeat(str('x'));
+		expect(canonicalRuleTree(structuralBuilder.optional(optional))).toEqual(optional);
+		expect(canonicalRuleTree(structuralBuilder.optional(repeat))).toEqual(repeat);
+		expect(canonicalRuleTree(structuralBuilder.repeat(repeat))).toEqual(repeat);
+		expect(canonicalRuleTree(structuralBuilder.repeat(optional))).toEqual(repeat);
+		const repeat1 = structuralBuilder.repeat1(str('x'));
+		expect(canonicalRuleTree(structuralBuilder.repeat1(repeat1))).toEqual(repeat1);
+	});
 
-		it('collapses all-same-name FIELD members into one FIELD wrapping a CHOICE', () => {
-			const a = structuralBuilder.field('operator', { type: 'STRING', value: '+' });
-			const b = structuralBuilder.field('operator', { type: 'STRING', value: '-' });
-			const rule = structuralBuilder.choice(a, b);
-			expect(rule).toEqual({
-				type: 'FIELD',
-				name: 'operator',
-				content: {
-					type: 'CHOICE',
-					members: [
-						{ type: 'STRING', value: '+' },
-						{ type: 'STRING', value: '-' }
-					]
-				},
-				metadata: { fieldSource: 'grammar' }
-			});
-		});
+	it('keeps a separated inner REPEAT under repeat', () => {
+		const inner = { type: REPEAT, content: str('x'), separator: ',' } as const;
+		expect(canonicalRuleTree(structuralBuilder.repeat(inner))).toEqual({ type: 'REPEAT', content: inner });
+	});
 
-		it('does not collapse FIELD members with different names', () => {
-			const a = structuralBuilder.field('left', { type: 'STRING', value: '+' });
-			const b = structuralBuilder.field('right', { type: 'STRING', value: '-' });
-			expect(structuralBuilder.choice(a, b)).toEqual({ type: 'CHOICE', members: [a, b] });
-		});
-
-		it('bails to plain CHOICE when any same-name FIELD member wraps an ALIAS', () => {
-			const a = structuralBuilder.field('operator', { type: 'STRING', value: '+' });
-			const b = structuralBuilder.field('operator', structuralBuilder.alias({ type: 'STRING', value: '-' }, 'minus'));
-			expect(structuralBuilder.choice(a, b)).toEqual({ type: 'CHOICE', members: [a, b] });
+	it('collapses optional(repeat1(x)) to a REPEAT carrying the separator shape', () => {
+		const inner = { type: REPEAT1, content: str('x'), separator: ',', trailing: 'optional' } as const;
+		expect(canonicalRuleTree(structuralBuilder.optional(inner))).toEqual({
+			type: 'REPEAT',
+			content: str('x'),
+			separator: ',',
+			trailing: 'optional'
 		});
 	});
 
-	describe('optional', () => {
-		it('produces an OptionalRule with the given content', () => {
-			const rule = structuralBuilder.optional({ type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'OPTIONAL', content: { type: 'STRING', value: 'x' } });
-		});
+	it('collapses an OPTIONAL(REPEAT(x)) field body to REPEAT(x)', () => {
+		const repeat = structuralBuilder.repeat({ type: SYMBOL, name: 'item' });
+		const rule = structuralBuilder.field('items', { type: OPTIONAL, content: repeat });
+		expect(canonicalRuleTree(rule)).toEqual({ type: 'FIELD', name: 'items', content: repeat });
+	});
 
-		it('collapses optional(optional(x)) to the inner OPTIONAL', () => {
-			const inner = structuralBuilder.optional({ type: 'STRING', value: 'x' });
-			expect(structuralBuilder.optional(inner)).toBe(inner);
+	it('gives every token an immediate flag', () => {
+		expect(canonicalRuleTree(structuralBuilder.token(str('x')))).toEqual({
+			type: 'TOKEN',
+			content: str('x'),
+			immediate: false
 		});
-
-		it('collapses optional(repeat(x)) to the inner REPEAT', () => {
-			const inner = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
-			expect(structuralBuilder.optional(inner)).toBe(inner);
-		});
-
-		it('collapses optional(repeat1(x)) to a REPEAT carrying the separator shape', () => {
-			const inner = {
-				type: REPEAT1,
-				content: { type: 'STRING', value: 'x' },
-				separator: ',',
-				trailing: 'optional',
-				leading: undefined
-			} as const;
-			expect(structuralBuilder.optional(inner)).toEqual({
-				type: 'REPEAT',
-				content: inner.content,
-				separator: inner.separator,
-				trailing: inner.trailing,
-				leading: inner.leading
-			});
+		expect(canonicalRuleTree(structuralBuilder.token.immediate(str('x')))).toEqual({
+			type: 'TOKEN',
+			content: str('x'),
+			immediate: true
 		});
 	});
 
-	describe('repeat', () => {
-		it('produces a RepeatRule with the given content', () => {
-			const rule = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'REPEAT', content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('preserves a leading-separator SEQ content un-lifted (lift happens at link)', () => {
-			const content = structuralBuilder.seq({ type: 'STRING', value: ',' }, { type: 'SYMBOL', name: 'item' });
-			expect(structuralBuilder.repeat(content)).toEqual({ type: 'REPEAT', content });
-		});
-
-		it('preserves a trailing-separator SEQ content un-lifted (lift happens at link)', () => {
-			const content = structuralBuilder.seq({ type: 'SYMBOL', name: 'item' }, { type: 'STRING', value: ';' });
-			expect(structuralBuilder.repeat(content)).toEqual({ type: 'REPEAT', content });
-		});
-
-		it('collapses repeat(repeat(x)) without a separator to the inner REPEAT', () => {
-			const inner = structuralBuilder.repeat({ type: 'STRING', value: 'x' });
-			expect(structuralBuilder.repeat(inner)).toBe(inner);
-		});
-
-		it('does not collapse repeat(repeat(x)) when the inner REPEAT has a separator', () => {
-			const inner = { type: REPEAT, content: { type: 'STRING', value: 'x' }, separator: ',' } as const;
-			expect(structuralBuilder.repeat(inner)).toEqual({ type: 'REPEAT', content: inner });
-		});
-
-		it('collapses repeat(optional(x)) to repeat(x)', () => {
-			const rule = structuralBuilder.repeat(structuralBuilder.optional({ type: 'STRING', value: 'x' }));
-			expect(rule).toEqual({ type: 'REPEAT', content: { type: 'STRING', value: 'x' } });
-		});
+	it('peels every precedence wrapper', () => {
+		expect(canonicalRuleTree(structuralBuilder.prec.left(0, structuralBuilder.prec(2, str('x'))))).toEqual(str('x'));
 	});
+});
 
-	describe('repeat1', () => {
-		it('produces a Repeat1Rule with the given content', () => {
-			const rule = structuralBuilder.repeat1({ type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'REPEAT1', content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('collapses repeat1(repeat1(x)) without a separator to the inner REPEAT1', () => {
-			const inner = structuralBuilder.repeat1({ type: 'STRING', value: 'x' });
-			expect(structuralBuilder.repeat1(inner)).toBe(inner);
-		});
-	});
-
-	describe('field', () => {
-		it('produces a FieldRule with name and content', () => {
-			const rule = structuralBuilder.field('body', { type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'FIELD', name: 'body', content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('collapses an OPTIONAL(REPEAT(x)) field body to REPEAT(x)', () => {
-			const repeatRule = structuralBuilder.repeat({ type: 'SYMBOL', name: 'item' });
-			const rule = structuralBuilder.field('items', { type: OPTIONAL, content: repeatRule });
-			expect(rule).toEqual({ type: 'FIELD', name: 'items', content: repeatRule });
-		});
-
-		it('collapses an OPTIONAL(REPEAT1(x)) field body to a REPEAT carrying the separator shape', () => {
-			const repeat1Rule = { type: REPEAT1, content: { type: SYMBOL, name: 'item' }, separator: ',' } as const;
-			const rule = structuralBuilder.field('items', { type: OPTIONAL, content: repeat1Rule });
-			expect(rule).toEqual({
-				type: 'FIELD',
-				name: 'items',
-				content: {
-					type: 'REPEAT',
-					content: repeat1Rule.content,
-					separator: repeat1Rule.separator,
-					trailing: undefined,
-					leading: undefined
-				}
-			});
-		});
-	});
-
-	describe('token', () => {
-		it('produces a TokenRule with immediate=false', () => {
-			const rule = structuralBuilder.token({ type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'TOKEN', content: { type: 'STRING', value: 'x' }, immediate: false });
-		});
-
-		it('token.immediate produces a real IMMEDIATE_TOKEN node', () => {
-			// Real IMMEDIATE_TOKEN tag (tree-sitter's own dsl.js shape), not
-			// `{type: TOKEN, immediate: true}` — enrich's minting/dedup decisions
-			// need the distinct tag to tell token.immediate(x) apart from
-			// token(x); grammarFn's normalizeImmediateTokens folds this into
-			// TOKEN+immediate once those decisions are locked in.
-			const rule = structuralBuilder.token.immediate({ type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'IMMEDIATE_TOKEN', content: { type: 'STRING', value: 'x' } });
-		});
-	});
-
-	describe('prec', () => {
-		it('wraps content in a PREC node, preserving the precedence value', () => {
-			const rule = structuralBuilder.prec(1, { type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'PREC', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.left wraps content in a PREC_LEFT node', () => {
-			const rule = structuralBuilder.prec.left(1, { type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'PREC_LEFT', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.right wraps content in a PREC_RIGHT node', () => {
-			const rule = structuralBuilder.prec.right(1, { type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'PREC_RIGHT', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-
-		it('prec.dynamic wraps content in a PREC_DYNAMIC node', () => {
-			const rule = structuralBuilder.prec.dynamic(1, { type: 'STRING', value: 'x' });
-			expect(rule).toEqual({ type: 'PREC_DYNAMIC', value: 1, content: { type: 'STRING', value: 'x' } });
-		});
-	});
-
+describe('transform', () => {
 	describe('transform — sub-rule modification', () => {
 		// transform() uses RAW positions: patches target members by their
 		// literal index in the seq, including anonymous-string delimiters

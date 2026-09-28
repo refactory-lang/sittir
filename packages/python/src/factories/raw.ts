@@ -5882,6 +5882,14 @@ export function buildStringEnd(text: string): T.StringEnd.Built {
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
 export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
@@ -5892,14 +5900,6 @@ export function buildBlankline(): TSKindId.Blankline {
 
 export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
 	return TSKindId.DoubleBlankline;
-}
-
-export function buildTight(): TSKindId.Tight {
-	return TSKindId.Tight;
-}
-
-export function buildSpace(): TSKindId.Space {
-	return TSKindId.Space;
 }
 
 export function buildIndent(text: string): T.Indent.Built {
@@ -6177,11 +6177,11 @@ export type FluentKindMap = {
 	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
+	_tight: T.Tight;
+	_space: T.Space;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	_tight: T.Tight;
-	_space: T.Space;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	names: T.Names.Built;
@@ -6371,11 +6371,11 @@ export const _factoryMap = {
 	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
+	_tight: buildTight,
+	_space: buildSpace,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
-	_tight: buildTight,
-	_space: buildSpace,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	names: buildNames,

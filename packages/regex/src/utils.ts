@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Newline, NamespaceMap } from './types.js';
+import type { Blankline, DoubleBlankline, Newline, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -58,9 +58,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['_newline']),
+		kinds: new Set<string>(['_blankline', '_double_blankline', '_newline']),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\r?\n))+)$/u, kindIdByText: { '\n': 49 } }
+		whitespace: { run: /^(?:(?:(?:\r?\n))+)$/u, kindIdByText: { '\n': 48, '\n\n': 49, '\n\n\n': 50 } }
 	}
 } satisfies WithMethodsEngine;
 
@@ -70,11 +70,19 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(...args: ((Newline | string) | { leading?: (Newline | string)[]; trailing?: (Newline | string)[] })[]): Self;
-	leading(): readonly Newline[];
-	leading(...items: (Newline | string)[]): Self;
-	trailing(): readonly Newline[];
-	trailing(...items: (Newline | string)[]): Self;
+	(
+		...args: (
+			| (Blankline | DoubleBlankline | Newline | string)
+			| {
+					leading?: (Blankline | DoubleBlankline | Newline | string)[];
+					trailing?: (Blankline | DoubleBlankline | Newline | string)[];
+			  }
+		)[]
+	): Self;
+	leading(): readonly (Blankline | DoubleBlankline | Newline)[];
+	leading(...items: (Blankline | DoubleBlankline | Newline | string)[]): Self;
+	trailing(): readonly (Blankline | DoubleBlankline | Newline)[];
+	trailing(...items: (Blankline | DoubleBlankline | Newline | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
@@ -91,8 +99,8 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly Newline[];
-	inner(...items: (Newline | string)[]): N;
+	inner(): readonly (Blankline | DoubleBlankline | Newline)[];
+	inner(...items: (Blankline | DoubleBlankline | Newline | string)[]): N;
 }
 
 export function isEmpty(node: T.CharacterClass): node is T.EmptyCharacterClass;

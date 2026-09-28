@@ -37,7 +37,11 @@ export const _fromMap = {
 	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
-	_newline: coerceToNewline
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -54,7 +58,11 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	_tight: { values: [''], factory: () => F.buildTight() },
 	_space: { values: [' '], factory: () => F.buildSpace() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() }
+	_newline: { values: ['\n'], factory: () => F.buildNewline() },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['escape_sequence', 'comment']);
 
@@ -69,7 +77,17 @@ function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
 	return entry.factory(v);
 }
 
-const _TEXT_KINDS_BY_RANK: readonly string[] = ['_tight', '_space', '_newline', 'identifier', '_immediate_identifier'];
+const _TEXT_KINDS_BY_RANK: readonly string[] = [
+	'_tight',
+	'_space',
+	'_newline',
+	'_blankline',
+	'_double_blankline',
+	'_indent',
+	'_dedent',
+	'identifier',
+	'_immediate_identifier'
+];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {};
 
@@ -125,14 +143,14 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 31
+	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 35
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
-	string: new Set([36]),
-	immediate_string: new Set([36]),
+	string: new Set([40]),
+	immediate_string: new Set([40]),
 	negated_field: new Set([5]),
-	grouping_group: new Set([38, 39, 40, 41, 44, 46, 47, 51, 52])
+	grouping_group: new Set([42, 43, 44, 45, 48, 50, 51, 55, 56])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
@@ -1110,4 +1128,20 @@ export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.build
 
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
 	return F.buildNewline();
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
+	return F.buildBlankline();
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
+	return F.buildDoubleBlankline();
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
+	return F.buildIndent();
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
+	return F.buildDedent();
 }

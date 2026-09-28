@@ -76,10 +76,11 @@ generated enum and the enum's own variants cannot disagree.
 
 ```text
 /**
- * Convert a snake_case name to camelCase — the single source of truth for
- * this transformation in the codegen pipeline. Used by field/child
- * `propertyName` derivation here, and re-exported for emitters and
- * validators that need the same canonical form.
+ * Convert a snake_case name to camelCase for config keys and accessors, over
+ * the words of `casingWords`: the first word is kept verbatim (case and all,
+ * so `MISSING_keyword` → `MISSINGKeyword`), every later word gets its first
+ * letter upper-cased, and each extra underscore stays one `_`
+ * (`future___keyword` → `future__Keyword`).
  *
  * Appends a trailing underscore when the camelCased result collides with a
  * reserved `Object.prototype` member name (see `RESERVED_ACCESSOR_NAMES`) —
@@ -116,117 +117,10 @@ generated enum and the enum's own variants cannot disagree.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isTokenLikeChoiceMember`
-
-```text
-/**
- * Test a single `choice` member for being structurally "token-like" — a
- * bare kind reference (symbol / supertype / enum) or a repeat1 of
- * strings / enums. Both forms surface at parse time as a SINGLE child
- * with one typed union, not as a heterogeneous structure the trivial
- * derive walk would need to branch on.
- *
- * @remarks
- * Peels transparent wrappers (`alias`, `token`) before classifying — an
- * alias's surface kind lives in its target, and a `token` wrapper marks
- * a lexeme-level production that behaves like a terminal for derivation
- * purposes. `repeat1(enum(...))` / `repeat1(choice(string, string,
- * ...))` captures the `_non_special_token` pattern in tree-sitter
- * grammars — a run of operator punctuation tokens that tree-sitter
- * lexes as a single token stream; the derive walker treats this as a
- * single-value child slot just like a symbol member.
- */
-```
-
-#### body
-
-```text
-// Bare `string` / `pattern` members — token-literal alternatives.
-// `_non_special_token` has a choice containing dozens of bare
-// keyword strings alongside symbol refs; each contributes a
-// single-token alternative to the union, not a structural branch.
-```
-
-#### body
-
-```text
-// Structural-whitespace tokens (python-style indent/dedent/newline).
-// These behave as anonymous token separators — they don't surface
-// as addressable children, so they never contribute structural
-// branching to a choice arm.
-```
-
-#### body
-
-```text
-// TERMINAL case removed — terminal-shaped rules now arrive as their original unwrapped
-// type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
-// `optional(token-like)` preserves the union shape — the branch contributes either the
-// wrapped token or nothing. Rust's `reference_expression` has `choice(choice-of-syms,
-// optional(sym))` for the raw-pointer-modifier spot; both arms are union-safe even though
-// one is an optional. Recurse to classify the inner.
-```
-
-#### body
-
-```text
-// Nested choice of token-like members — simplify should have
-// flattened this, but when flattening is blocked (e.g. by a
-// variant wrapper on the inner choice), the nested shape is still
-// structurally a union of tokens. `_lhs_expression` hits this
-// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::isFlatSymbolSeqOrTokenLike`
-
-```text
-/**
- * Test a choice member for being a flat seq of token-like atoms — the
- * canonical shape for left-recursive operator chains and similar
- * "scalar list" productions.
- *
- * @remarks
- * `_let_chain` expands to `choice(seq(_let_chain, '&&', let_condition),
- * ...)` — every branch is a fixed-length seq of symbol/literal
- * references with no fields and no nested structure. Each branch
- * contributes a flat alternative to the union; the walker enumerates
- * each alternative's symbols as child values, which is a canonical
- * shape even though the raw rule.type is `seq`, not `symbol`. Falls
- * through to `isTokenLikeChoiceMember` for non-seq members so a mixed
- * choice `(seq(X, '&&', Y), bareY)` still qualifies.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::dumpDerivationAudit`
-
-```text
-/** Log accumulated audit counts. Called by codegen entry points. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
-```text
-/**
- * Internal — fields-side walk over the SIMPLIFIED rule. The exported
- * derivation surface is `deriveSlots`; this helper is its fields-portion.
- *
- * Consumes the simplified tree exactly as `computeSimplifiedRules` produced
- * it — no re-flattening. A nested bare seq that simplify left behind reaches
- * `auditDerivationShape` as `seq-with-nested-seq` (a simplify defect the
- * derive-audit is there to surface); re-splicing it here would mask that.
- * `DeriveCtx.shapeAudit` lets a caller opt a rule out of the audit
- * (`shapeAudit: false`); every current caller derives slots straight from
- * the simplified tree and leaves the audit on.
- */
-```
-
-#### body
-
-```text
-// Set the audit kind context for the duration of this derivation so
-// auditDerivationShape() can attribute shapes to their originating kind.
-// Save/restore guards against cross-kind bleed if derivations nest.
-```
+The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
+`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`.
 
 #### body
 
@@ -439,15 +333,12 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::nameNode`
 
-```text
-/**
- * Derive `typeName`, `factoryName`, and `irKey` from a raw grammar kind string.
- *
- * Moved here from assemble.ts so the `AssembledNodeBase` constructor can call
- * it directly, eliminating the need for callers to pre-compute and pass these
- * derived fields.
- */
-```
+Derives `typeName` (`pascalCase`), `factoryName` and `irKey`
+(`lowerCamelCase`) from a kind key, so the `AssembledNodeBase` constructor
+names every node the same way. A key whose Pascal form starts with a digit is
+prefixed `Tok_`/`tok_`. The derivations are not injective (C's
+`_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
+type-name renames resolve that as a naming event.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
 
@@ -1646,32 +1537,6 @@ The regex source the kind's whole text must match: the pattern composed from the
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DERIVE_AUDIT`
-
-```text
-/**
- * Dev audit — log shapes that reach derivation in a non-canonical form.
- * Simplify's canonicalization should produce a top-level `seq` (or a
- * single atomic member) with members that are
- * fields / literals / repeats / symbols. Anything else means simplify
- * didn't finish normalizing, and the trivialized `projectFields` /
- * `projectChildren` walks won't see the content.
- *
- * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
- * normal codegen runs). Captures per-kind shape signatures so we can
- * count distinct non-canonical patterns across the corpus and decide
- * which simplify passes still need work.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::currentAuditKind`
-
-```text
-/** Transient — each AssembledNode's constructor sets this before the lazy
- * `fields` / `children` getters fire, so the audit can attribute shapes
- * to their originating kind. */
-```
-
 ---
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.keywordConstructibleText`
@@ -1715,8 +1580,8 @@ The regex source the kind's whole text must match: the pattern composed from the
  * co-located rather than forming a cyclic two-file pair. Major sections are
  * delimited by `// ===` banners:
  *
- *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
- *      accumulators + the audit-context module pointer.
+ *   1. Diagnostics — the parse-kind, assemble-warning and naming-event
+ *      collectors.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
  *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
@@ -1751,11 +1616,18 @@ The regex source the kind's whole text must match: the pattern composed from the
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::NamingEvent`
+
+An automatic type-name rename assemble applied to resolve a collision: `kind` was renamed from `from` to `to`, and
+`message` names the siblings it collided with. A naming event is codegen output, not a grammar diagnostic:
+`generate()` prints it in the gen log (`formatNamingEvents`). Deduped per kind and new name
+(`namingEventKey`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembleDiagnosticsCollector`
 
 ```text
-The assemble phase's three diagnostic streams (parse-kind collisions,
-derive-shape diagnostics, assemble warnings) live on one collector per
+The assemble phase's record streams (parse-kind collisions, assemble
+warnings, naming events) live on one collector per
 `assemble()` call, never at module scope, so two grammars compiling in one
 process cannot see each other's. One `AssembleDiagnosticsCollector`
 instance is born with each `AssembleCtx` (`ctx.assembleDiagnostics`) and
@@ -1764,7 +1636,7 @@ threaded down through `CompoundOpts.assembleDiagnostics` →
 `AbstractAssembledCompound`'s constructor already builds for `deriveSlots`/
 `resolveParseKindCollisions` — reaching collect-slots.ts's `resolveMember`/
 `buildSlot`/`recordUnclassifiableShape` and node-map.ts's own
-`auditDerivationShape`/`resolveParseKindCollisionsInSlot` call sites.
+`resolveParseKindCollisionsInSlot` call sites.
 
 `AssembledList` is the one class that does NOT forward this transparently:
 its constructor builds its OWN opts object for the `super()` call into
@@ -1776,8 +1648,7 @@ choice-shaped as often as branch/envelope kinds are, so this is not a
 theoretical case; a real grammar's `enum_body_elements` list caught it).
 
 `DedupedCollector<T>` is the shared generic underneath: a keyed
-record-once-then-push, replacing the three near-identical
-key/seen-Set/push trios. `record()` returns whether the item was newly
+record-once-then-push. `record()` returns whether the item was newly
 added (not already deduped), which the slot-grouping caller
 (`simplify.ts`'s `computeSimplifiedRules`) uses to gate a one-time
 `ctx.diagnostics.info()` emission per distinct diagnostic.
@@ -2023,117 +1894,6 @@ from the model instead of recovering them from the subtype's name.
 
 ```text
 // TypeScript reserved words that must be avoided as parameter names.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::deriveAuditMode`
-
-```text
-// Audit default is now 'strict' — every non-canonical shape across the
-// curated grammars has been drained via variant adoption + inline
-// (`rust`, `python`, `typescript` all audit clean). Any non-canonical
-// rule reaching derivation throws with a diagnostic so the walker can
-// safely assume canonical input.
-//
-// Opt-outs:
-//   SITTIR_AUDIT_DERIVE=1        → 'report' mode (log + accumulate,
-//                                   don't throw). Used by tests that
-//                                   consume raw base grammars without
-//                                   override() / variant() applied.
-//   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::auditDerivationShape`
-
-#### body
-
-```text
-// Record a structured diagnostic and continue — the old strict-mode throw
-// is replaced by accumulation so codegen completes and the preflight can
-// surface all derive-shape issues in a single pass. drainDeriveShapeDiagnostics()
-// is called by assemble() to attach them to AssembledNodeMap.
-```
-
-#### body
-
-```text
-// SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::classifyTopLevelShape`
-
-#### body
-
-```text
-// Canonical for the trivial walk: the tree rooted at `rule`
-// — traversed through the structural wrappers the walker descends
-// (seq, optional, repeat, repeat1, choice, clause) — must
-// satisfy:
-//
-//  - Every choice encountered during the traversal is "union-shaped"
-//    (token-like or flat-symbol-seq). No choice anywhere in the
-//    field/child-finding path has heterogeneous structural branches.
-//    A heterogeneous choice is a polymorph by any other name; the
-//    walker would have to case-analyze it, so flag it for variant()
-//    adoption (or hoisting into a proper polymorph parent).
-//  - Field contents are opaque to this classifier — `deriveValuesForRule`
-//    owns that subtree and its own simplification.
-//
-// Non-canonical shapes:
-//
-//  - `seq-with-nested-seq`: flattening gap (should be caught by the
-//     simplify fixpoint + flatten).
-//  - `*-with-heterogeneous-choice`: an inner choice with field-bearing
-//     branches. Needs variant() adoption at the parent kind or the
-//     branches hoisted / merged.
-//  - `group` / `alias` / `token` wrappers mid-tree: simplify should
-//     peel them.
-//  - `polymorph` anywhere: the PolymorphRule IR type (and its
-//     AssembledPolymorph node class) are retired. Reaching derivation
-//     with one means a legacy/synthetic rule object leaked in.
-```
-
-#### body
-
-```text
-// A nested seq that carries its OWN cardinality
-// (multiplicity / separator) is a canonical repeated /
-// optional GROUP, not a flattening gap. simplify deliberately
-// does NOT splice such a seq (splicing would lose the shared
-// cardinality and hoist any inner choice to this seq's
-// position). `deriveSlotsRaw` threads the group's multiplicity
-// into its members and handles an inner choice via its own
-// choice case, so we accept it here WITHOUT recursing.
-```
-
-#### body
-
-```text
-// ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above. PR-P Task 2:
-// TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-```
-
-#### body
-
-```text
-// Every choice in the traversal must be a simple union — no
-// structural branches with fields. Flag heterogeneous
-// choices here instead of leaving the walker to merge them:
-// they are polymorphs in all but declaration.
-```
-
-#### body
-
-```text
-// Distinct-named-fields choice: every branch is either a
-// `field(A, ...)` with its own name or a token-like atom.
-// Rust's `function_modifiers` (`choice(field('async', …),
-// field('const', …), field('unsafe', …), extern_modifier)`)
-// is the canonical example — the branches contribute
-// different fields to the enclosing kind rather than
-// different kinds themselves, so this is a legitimate
-// "one-of-these-fields" shape, NOT a polymorph. The walker's
-// choice case enumerates each branch and downgrades every
-// field to `optional` multiplicity; that's correct behavior.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeDelimiterMode`
@@ -3022,6 +2782,14 @@ The enum's literal arms with nested choices flattened, the list its `values` rea
 choice onto a display arrives as a choice inside a choice.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::enumLiteralMembersOf`
+
+The literal members of a choice as `AssembledEnum` reads them: nested choices flattened, one member per arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::enumValuesOf`
+
+The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the one derivation of an enum's values. Assemble counts them before it builds an `AssembledEnum`, and records `single-literal-choice` when there are fewer than two, so the constructor's own check is an invariant no grammar reaches.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body
@@ -3299,6 +3067,52 @@ that may be absent. A choice is immediate when every arm is.
  *  class `varies`, no edge char set (except as a nullable SEQ member, which
  *  contributes and falls through). */
 ```
+
+`firstTokenSets` in `first-tokens.ts` reads the same predicate for nullability, so a rule the edge walkers treat as possibly-empty is possibly-empty to the FIRST computation too.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts`
+
+Token-level FIRST and direct-follow sets over the render rules (`NodeMap.normalizedRules`). They are grammar facts about which token can open a rule and which token can come straight after another; the lexer-merge guard is their consumer.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::OPAQUE_TOKEN`
+
+The stand-in for a terminal whose text is not fixed — a PATTERN or an INDENT/DEDENT/NEWLINE layout token — and for a symbol the rule set does not define. It can never start with a doubled punctuation char, so it never produces a merge pair.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::FirstTokenSets`
+
+The fixpoint result: the names of the nullable rules, and each rule's FIRST set (the token texts that can open it).
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::Rules`
+
+The render-rule set the walks read, keyed by kind: `NodeMap.normalizedRules`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::terminalOf`
+
+The terminal a render-rule node is, if any: a STRING's value, `OPAQUE_TOKEN` for a PATTERN or a layout token, and the link-stamped `literal` of a SYMBOL that names an anonymous token. Render rules carry optionality and repetition as `multiplicity` and fields as `fieldName`, so there are no wrapper nodes to see through.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::repeats`
+
+True for a rule whose multiplicity is `array` or `nonEmptyArray`: its content can follow itself.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleNullable`
+
+Whether a rule can render nothing: `isNullableMultiplicity`, an empty terminal, a nullable symbol, a SEQ of nullable members, or a CHOICE or SUPERTYPE with a nullable arm.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::ruleFirst`
+
+The tokens that can open a rule, reading the current per-symbol FIRST sets: a SEQ contributes members up to and including its first non-nullable one; CHOICE and SUPERTYPE union their arms; a symbol missing from the rule set opens with `OPAQUE_TOKEN`.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::firstTokenSets`
+
+Iterates `ruleNullable` and `ruleFirst` over every rule until neither the nullable set nor any FIRST set grows. Recursive rules (`expression` through `binary_expression`) resolve by the fixpoint, not by cutting cycles.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::directFollowers`
+
+For each terminal text, the tokens that can come immediately after it. Within a rule, a member's followers are the FIRST of the members after it, through nullable ones, plus the rule-level follow when everything after it can be empty; a repeating rule's own FIRST follows its content. A hidden rule (`hidden`, which is spliced into its parent) takes the follow of every site that references it, so a token inside `_unary_expression_operator` is followed by what follows the operator in `unary_expression`. A visible rule takes no follow from its reference sites: the tokens after a visible node belong to a different parse context, which is why `>>` after a nested generic's closing `>` is not a follower.
+
+### `packages/codegen/src/compiler/model/first-tokens.ts::sameCharMergePairs`
+
+The single-char tokens `c` for which some direct follower begins with `cc`: writing `c` and then that follower with no space would lex as the doubled token. `literalMergePairs` adds each as the pair `c|c`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeClassCtx`
 
@@ -3860,7 +3674,7 @@ slot, else nothing.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`
 
-The slot name of a member that is a field referencing a keyword node
+The slot name, the field name as the model spells it (case kept, like the key it may derive from), of a member that is a field referencing a keyword node
 (`AssembledKeyword` with the `word` flag), such as an arrow function's
 `async_marker`. It names a seam like an enum slot does, so a cascaded
 opener after the marker meets the keyword's face instead of nothing. A
@@ -3880,13 +3694,19 @@ rebuild, so `keywordSlotOf` can ask whether a member sat in an arm.
 
 Whether a member, or any arm of a choice member, is optional.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::keywordKindOfLiteral`
+
+The model kind of a literal when that kind is a keyword the grammar's `word`
+rule claims — the catalog entry's node is an `AssembledKeyword` — and
+undefined otherwise. A keyword is a word-shaped literal by construction
+(`assemble` builds one only when the text matches the grammar's word
+matcher), so the class test is the whole answer; no text is matched against
+a pattern here. The template emitter reads the kind to gate a mixed slot's
+seams on its keyword values.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
 
-Whether a literal's kind is a keyword the grammar's `word` rule claims: the
-catalog entry's node is an `AssembledKeyword`. A keyword is a word-shaped
-literal by construction (`assemble` builds one only when the text matches the
-grammar's word matcher), so the class test is the whole answer; no text is
-matched against a pattern here.
+Whether a literal's kind is a keyword: `keywordKindOfLiteral` finds one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
 
@@ -3923,6 +3743,8 @@ renders indentation, on both sides of every token, since an indent may
 open after a token or before one (`lbrace_after`, a method chain's
 `dot_before`) and its dedent close wherever the kind's depth walk pairs
 it.
+
+A site whose arms are narrower than the grammar's (a line-terminated after edge) carries its own `defaultArm`, which `resolveSeam` takes in place of the grammar default when no declaration reaches the site.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isSeamChoice`
 
@@ -4000,7 +3822,7 @@ them. A kind with any non-lexical leaf is not, so a statement that merely
 contains a `_newline` external does not glue its list.
 
 This answers "can extras occur inside this node", not "does the parser issue
-this as a token" (`dsl/rule-patterns.ts::parserSymbolClassOf`). The two
+this as a token" (the catalog's `terminal` fact). The two
 differ both ways: a nonterminal made only of lexical leaves (`string_content`)
 admits no extras, and so does a `token(...)` rule the parser files as a
 nonterminal because it is used more than once. It reads the facts the render
@@ -4039,10 +3861,10 @@ under, so the two can never name it differently.
 Resolves each site's default: the arm the `options:` block declares for it
 (`declaredOptionArms`, keyed by kind and address, with supertype and
 wildcard declarations already matched to the sites they reach), otherwise
-the fallback — `space` for a separator gap, `tight` for a flank, and for a
-token seam the arm the seam-stamping dry run baked (`space` where the body
-had a static space, `tight` otherwise). A site's label is its address; a
-seam's resolved arm must be one its site admits.
+the grammar's default arm, derived once in the constructor
+(`defaultWhitespaceArmOf`) and the same for a separator gap, a flank and a
+seam. A site's label is its address; a seam's resolved arm must be one its
+site admits.
 
 `declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
 `origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
@@ -4059,7 +3881,7 @@ to be nameable there without importing back up from this module.
 separator gaps and flanks are outside the seam census's origin tracking.
 
 A `'word-default'` origin marks a seam on a keyword that no row reaches:
-`resolveSeam` gives it the fallback arm (`space`) but at the declared
+`resolveSeam` gives it the grammar's default arm but at the declared
 strength, so a keyword never loses its space to a cascaded tight — `return
 (x)`, `typeof (x)`, `case (1)` — while a declared tight (`return;`,
 `pub(crate)`) still wins by rank. It applies to token seams, literal and
@@ -4073,6 +3895,8 @@ A fourth origin, `'cascade'`, marks a site whose arm came from its edge
 token's `_`-scope face through the cascade path rather than from a row
 naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
 turns it into the middle strength tier the writer honours.
+
+A seam site that states its own default (`SeamArms.defaultArm`) uses it instead of the grammar's. There is no positional fallback: a site whose arms exclude the grammar default and that states none stops codegen with the address and its arms.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::DisplaySource`
 
@@ -4331,6 +4155,15 @@ Whether the grammar has a `_whitespace` supertype. Every real grammar does; a un
 
 The arms of `whitespaceSymbolsOf`, in declaration order.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::defaultWhitespaceArmOf`
+
+The arm every site falls back to when no declaration reaches it: the arm of
+`_space` when the grammar's `_whitespace` supertype lists it, otherwise the
+arm of `_tight`. Enrich admits `_space` only when the grammar's extras accept
+a space, so a grammar that cannot lex one between tokens (regex) renders
+tight by default instead of emitting text its parser rejects. `_tight` is
+always a member; a supertype listing neither is an error.
+
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
 
 `whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
@@ -4338,7 +4171,7 @@ separator gap admits, where moving depth has no meaning.
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::lineBreakingArms`
 
-The spacing arms whose whitespace kind's literal text contains a line break, narrowest first: `newline` before `blankline` in every grammar today. Read from the `_whitespace` members' own text, never from the arm names. It is the arm set for the after edge of a line-terminated trivia kind, and its first arm is that edge's default.
+The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_whitespace` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 
@@ -4588,7 +4421,7 @@ The single predicate for which kinds can be trivia entries: the kinds the gramma
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
 
-A text made of one or more of the grammar's lexical extras: `^(?:p1|p2|…)+$` over the PATTERN extras and the escaped STRING extras (`ruleListParts`), compiled as a leaf guard is. Undefined for a grammar with no lexical extra.
+A text made of one or more of the grammar's node-less extras: the `nodelessExtrasRun` link stamped on the node map, over the PATTERN and STRING extras and the SYMBOL extras naming hidden rules. A visible extra such as a comment is a node, never part of the run. Undefined for a grammar with no lexical extra.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
 
@@ -4919,3 +4752,35 @@ One compound's full form: find the literal runs at each end, require exactly one
 
 The memo `stampFullForms` walks with: each compound's full form computed once, so a polymorph can ask whether its arms have one in any order. A kind is marked undefined while it is being computed, so a cycle reads as no full form. It carries the edge context (`edges`) the separation check reads.
 
+
+### `packages/codegen/src/compiler/model/casing.ts::casingWords`
+
+The one word-splitter behind every casing a kind key, field name or label is
+turned into: splits on `_`, whitespace and `-`, then at a lower-to-upper
+boundary, and treats a run of capitals as one word (`MISSING_keyword` →
+`MISSING`, `keyword`; `JSXElement` → `JSX`, `Element`). Case is kept; each
+casing decides what to fold.
+
+### `packages/codegen/src/compiler/model/casing.ts::pascalCase`
+
+Every word of `casingWords` with its first letter upper-cased, joined:
+`MISSING_keyword` → `MISSINGKeyword`, `_field_identifier` → `FieldIdentifier`.
+
+### `packages/codegen/src/compiler/model/casing.ts::lowerCamelCase`
+
+`pascalCase` with the first word lowered: a first word that is a run of
+capitals lowers whole (`MISSING_keyword` → `missingKeyword`), any other only its
+first letter (`AlignofKeyword2` → `alignofKeyword2`).
+
+### `packages/codegen/src/compiler/model/casing.ts::screamingSnakeCase`
+
+Every word of `casingWords` upper-cased, joined with `_`: `MISSINGKeyword` →
+`MISSING_KEYWORD`.
+
+### `packages/codegen/src/compiler/model/casing.ts::toScreamingSnakeCase`
+
+The rust const name for a kind: `screamingSnakeCase` of its PascalCase member
+name, re-attaching exactly the leading underscores the raw kind carries
+(`FieldIdentifier` for `_field_identifier` → `_FIELD_IDENTIFIER`). The member
+name's own leading underscores are dropped first so they never double up, and a
+member name with no lower-case letter is already screaming and passes through.

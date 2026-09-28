@@ -16,6 +16,9 @@ export function showBody(body: Body): string {
 			case 'tokenSeam':
 				out += `⟨tokenSeam ${JSON.stringify(node.text)}⟩`;
 				break;
+			case 'wordSeam':
+				out += '⟨wordSeam⟩';
+				break;
 			case 'slot':
 				out += `⟨${node.name}⟩`;
 				break;

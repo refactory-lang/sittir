@@ -5,8 +5,6 @@ import {
 	reconstructPrec,
 	reconstructContainer,
 	wrapInPrecStack,
-	getGroupLiftRuleBody,
-	setGroupLiftRuleBody,
 	isEnrichGroupLiftSymbol,
 	ApplyPathSkip
 } from './transform-path.ts';
@@ -21,7 +19,7 @@ import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName } f
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
-import type { PreferencePlaceholder } from '../primitives/preference.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
@@ -29,7 +27,8 @@ import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
 import {
-	wireRegisterSymbolRename,
+	wireRenameLift,
+	wireWithPatchSites,
 	wireHasAuthoredRule,
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
@@ -40,7 +39,11 @@ import {
 	wireHasDeposit,
 	wireDeclareRuleBody,
 	wireAutomaticVariants,
-	makeSimpleDollarProxy
+	wireRecordPatchSite,
+	wireGetLiftBody,
+	wireSetLiftBody,
+	makeSimpleDollarProxy,
+	type PatchSite
 } from '../wire/wire.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
@@ -50,14 +53,12 @@ import {
 	isWrapperType,
 	isSeqType,
 	isChoiceType,
-	isOptionalType,
 	isPlainRepeatType,
-	isSymbolType,
-	matchesEmpty
+	isSymbolType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { isHiddenKind, lexesAsOneToken } from '../rule-patterns.ts';
+import { isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -98,6 +99,7 @@ type PatchSet = Record<number | string, PatchValue>;
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
 	for (const patches of patchSets) {
+		recordPatchSites(patches);
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
 			(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
@@ -111,6 +113,29 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	return rule;
 }
 
+function recordPatchSites(patches: PatchSet): void {
+	for (const site of patchSitesOf(Object.entries(patches))) wireRecordPatchSite(site);
+}
+
+function patchSitesOf(entries: ReadonlyArray<readonly [string, PatchValue]>): PatchSite[] {
+	const ownerKind = wireGetCurrentRuleKind();
+	return ownerKind === null ? [] : entries.map(([path, value]) => ({ ownerKind, path, ...patchFormOf(value) }));
+}
+
+function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
+	if (isRulePlaceholder(value)) return { form: 'rule', name: value.name };
+	if (isFieldPlaceholder(value)) return { form: 'field', name: value.name };
+	if (isAliasPlaceholder(value)) return { form: 'alias', name: value.name };
+	if (isVariantPlaceholder(value)) return { form: 'variant', name: value.name };
+	if (isArmDefault(value)) return { form: 'default' };
+	if (isGroupPlaceholder(value)) return { form: 'group' };
+	if (isFlattenPlaceholder(value)) return { form: 'flatten' };
+	if (isRegexPlaceholder(value)) return { form: 'regex' };
+	if (isPreference(value)) return { form: 'preference' };
+	if (isFieldLike(value)) return { form: 'field', name: value.name };
+	return { form: 'literal' };
+}
+
 function requiresPathMode(patches: PatchSet): boolean {
 	return Object.keys(patches).some((k) => !/^\d+$/.test(k));
 }
@@ -119,9 +144,11 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
-		const segments = parsePath(String(key));
-		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
-		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, String(key), precStack));
+		const segments = parsePath(key);
+		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
+		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+			applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+		);
 		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
 	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
@@ -181,7 +208,7 @@ function applyVariantPatches(
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
 ): RuntimeRule {
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
-	const hoisted = tryHoistSiblingVariants(rule, ordered);
+	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
 	if (hoisted === null) {
 		const absent = ordered.find(([, v]) => v.absent === true);
 		if (absent !== undefined) {
@@ -195,7 +222,9 @@ function applyVariantPatches(
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
 		try {
-			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack));
+			result = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+				applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+			);
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
 			throw error;
@@ -296,7 +325,7 @@ function planSiblingVariantHoist(
 	}
 	const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
 	const emptyArm = choiceMembers.findIndex(
-		(arm) => (isBlank(arm) || matchesEmpty(arm)) && scaffolding.every((m) => matchesEmpty(m))
+		(arm) => matchesEmpty(arm) && scaffolding.every((m) => matchesEmpty(m))
 	);
 	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
 	const bareArm = choiceMembers.findIndex((arm) =>
@@ -304,10 +333,6 @@ function planSiblingVariantHoist(
 	);
 	if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
 	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, lifted };
-}
-
-function isBlank(rule: RuntimeRule): boolean {
-	return (rule.type as string) === 'BLANK';
 }
 
 function hoistChoiceOf(
@@ -324,13 +349,6 @@ function hoistChoiceOf(
 	}
 	if (throughOptional || !isChoiceType(rule.type)) return null;
 	return { choice: rule, choiceMembers: [...membersOf(rule)], absentIdx: undefined };
-}
-
-function optionalContentOf(rule: RuntimeRule): RuntimeRule | undefined {
-	if ((rule.type as string) === 'OPTIONAL') return contentOf(rule);
-	if (!isChoiceType(rule.type)) return undefined;
-	const members = membersOf(rule);
-	return members.length === 2 && isBlank(members[1]!) && !isBlank(members[0]!) ? members[0] : undefined;
 }
 
 function tryHoistSiblingVariants(
@@ -421,14 +439,14 @@ function buildHoistedVariants(
 		const altMember = choiceMembers[resolvedAlt]!;
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
-		if (lift !== null) wireRegisterSymbolRename(lift.liftName, name);
+		if (lift !== null) wireRenameLift(lift.liftName, name);
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
 		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
 	}
 	for (const { altIdx, lift } of lifted) {
-		setGroupLiftRuleBody(lift.liftName, hoist(lift.body));
+		wireSetLiftBody(lift.liftName, hoist(lift.body));
 		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
@@ -458,7 +476,7 @@ function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } 
 	const t = rule.type;
 	if (t === 'STRING' || t === 'PATTERN' || t === 'TOKEN') return { tokens: 1, named: 0 };
 	if (t === 'SYMBOL') return { tokens: 0, named: 1 };
-	if (t === 'BLANK') return { tokens: 0, named: 0 };
+	if (isBlank(rule)) return { tokens: 0, named: 0 };
 	if (isSeqType(rule.type) || isChoiceType(rule.type)) {
 		return membersOf(rule).reduce(
 			(acc, m) => {
@@ -482,7 +500,7 @@ function enrichLiftArmOf(
 	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
 		return null;
 	}
-	const body = getGroupLiftRuleBody(symbol.name);
+	const body = wireGetLiftBody(symbol.name);
 	return body === undefined ? null : { body, liftName: symbol.name, symbol };
 }
 
@@ -493,7 +511,7 @@ function renameEnrichLift(
 	nodeName: string
 ): RuntimeRule {
 	if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
-	wireRegisterSymbolRename(lift.liftName, ruleName);
+	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;
 	if ((member as { type?: string }).type !== 'ALIAS') return ruleRef(ruleName, nodeName);
 	return {
@@ -587,7 +605,7 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
-		members[index] = resolvePatch(patch, members[index]!, key);
+		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolvePatch(patch, members[index]!, key));
 	}
 	return reconstructContainer(original, members);
 }
@@ -671,85 +689,15 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
 	const r = node as Record<string, unknown>;
-	if (!r || typeof r !== 'object') return null;
-	const t = r.type as string | undefined;
-	if (!t) return null;
-
-	const isSittirOptional = t === 'OPTIONAL';
-	if (isSittirOptional) {
-		const inner = r.content as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
-			};
-		}
-		return null;
-	}
-
-	if (isChoiceType(t)) {
-		const members = r.members as unknown[] | undefined;
-		if (!Array.isArray(members) || members.length !== 2) return null;
-		const blankIdx = members.findIndex((m) => {
-			const mt = (m as Record<string, unknown>).type;
-			return mt === 'BLANK';
-		});
-		if (blankIdx === -1) return null;
-		const contentIdx = 1 - blankIdx;
-		const inner = members[contentIdx] as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => {
-					const newMembers = [...members];
-					newMembers[contentIdx] = newInner;
-					return { ...r, members: newMembers };
-				}
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => {
-					const newMembers = [...members];
-					newMembers[contentIdx] = deeper.reconstruct(newInner);
-					return { ...r, members: newMembers };
-				}
-			};
-		}
-		return null;
-	}
-
-	if (isPrecWrapper(r as { type: string })) {
-		const inner = r.content as unknown;
-		if (!inner || typeof inner !== 'object') return null;
-		if (isEnrichShapedFieldWrapper(inner)) {
-			return {
-				found: inner,
-				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
-			};
-		}
-		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
-		if (deeper) {
-			return {
-				found: deeper.found,
-				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
-			};
-		}
-		return null;
-	}
-
-	return null;
+	if (!r || typeof r !== 'object' || typeof r.type !== 'string') return null;
+	const optional = optionalContentOf(r as { type: string });
+	const inner = optional ?? (isPrecWrapper(r as { type: string }) ? r.content : undefined);
+	if (!inner || typeof inner !== 'object') return null;
+	const rebuild = (newInner: unknown): unknown =>
+		optional !== undefined ? withOptionalContent(r as { type: string }, newInner as { type: string }) : { ...r, content: newInner };
+	if (isEnrichShapedFieldWrapper(inner)) return { found: inner, reconstruct: rebuild };
+	const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
+	return deeper ? { found: deeper.found, reconstruct: (newInner: unknown) => rebuild(deeper.reconstruct(newInner)) } : null;
 }
 
 function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
@@ -783,7 +731,7 @@ function relabelUniformFieldSet(content: unknown, newName: string): unknown | nu
 		}
 		if (isEnrichGroupLiftSymbol(n as RuntimeRule) && isHiddenKind((n as { name?: string }).name ?? '')) {
 			const liftName = (n as { name?: string }).name;
-			const body = liftName === undefined ? undefined : getGroupLiftRuleBody(liftName);
+			const body = liftName === undefined ? undefined : wireGetLiftBody(liftName);
 			if (liftName !== undefined && body !== undefined && !liftBodies.has(liftName)) {
 				liftBodies.set(liftName, body);
 				collect(body, inRepeat);
@@ -817,7 +765,7 @@ function relabelUniformFieldSet(content: unknown, newName: string): unknown | nu
 		return n;
 	};
 	for (const [liftName, body] of liftBodies) {
-		setGroupLiftRuleBody(liftName, rewrite(body) as RuntimeRule);
+		wireSetLiftBody(liftName, rewrite(body) as RuntimeRule);
 	}
 	return rewrite(content);
 }
@@ -959,10 +907,8 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		};
 		return { nonEmpty };
 	}
-	if (isOptionalType(t)) {
-		const inner = contentOf(rule);
-		return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
-	}
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) return matchesEmpty(optional) ? extractNonEmpty(optional) : { nonEmpty: optional };
 	if (isChoiceType(t)) {
 		const members = membersOf(rule);
 		const nonEmpty = members.filter((m) => !matchesEmpty(m));

@@ -2,6 +2,7 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
+import { ruleIdPath } from '../compiler/rule-catalog.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	const src = original as StampedAttrs & { id?: string };
@@ -102,13 +103,11 @@ export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
 	return id !== undefined ? { ...rule, id } : rule;
 }
 
-const RULE_ID_OWNER_PREFIX = /^rule:[^:]*:/;
-
 export function rebaseRuleIds<R extends AnyRule>(body: R, hostId: RuleId | undefined): R {
 	if (hostId === undefined) return body;
 	const rebase = (r: R): R => {
 		if (r.id === undefined) return r;
-		const path = r.id.replace(RULE_ID_OWNER_PREFIX, '');
+		const path = ruleIdPath(r.id);
 		return { ...r, id: path === 'root' ? hostId : `${hostId}/${path}` };
 	};
 	return rebase(new RuleWalker<R>().map(body, rebase));

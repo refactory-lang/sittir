@@ -365,7 +365,22 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_node_identifier: new Set(['identifier']),
 	named_node: new Set(['named_node_plain', 'named_node_supertyped']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
-	_whitespace: new Set(['_tight', 'tight', '_space', 'space', '_newline', 'newline'])
+	_whitespace: new Set([
+		'_tight',
+		'tight',
+		'_space',
+		'space',
+		'_newline',
+		'newline',
+		'_blankline',
+		'blankline',
+		'_double_blankline',
+		'double_blankline',
+		'_indent',
+		'indent',
+		'_dedent',
+		'dedent'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -899,7 +914,7 @@ export function wrapList(data: T.List, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			definitions() {
@@ -949,7 +964,7 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			groupingGroups() {
@@ -1000,7 +1015,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			name() {
@@ -1053,7 +1068,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			name() {
@@ -1397,7 +1412,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle) {
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			name() {
@@ -1465,7 +1480,7 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 				),
 				{ '*': 2, '+': 3, '?': 4 },
 				undefined,
-				[31]
+				[35]
 			),
 
 			supertype() {
@@ -1609,7 +1624,11 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t),
 	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
 	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
-	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const })
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
+	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
 };
 
 interface _WrapReturnByKindId {
@@ -1648,6 +1667,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
 	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
 	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
+	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
+	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
+	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
+	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

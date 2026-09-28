@@ -35,12 +35,14 @@ export const classAtom: {
 
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
-	readonly space: typeof F.buildSpace;
 	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly doubleBlankline: typeof F.buildDoubleBlankline;
 } = {
 	tight: F.buildTight,
-	space: F.buildSpace,
-	newline: F.buildNewline
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	doubleBlankline: F.buildDoubleBlankline
 };
 
 export const characterEscape: typeof F.characterEscape = F.characterEscape;

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -6,19 +6,6 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import { resolveGrammarJsPath } from '../resolve-grammar.ts';
 import { soleSlotFacts } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
-
-// Raw base grammars (no override() / variant() applied) still contain
-// non-canonical shapes that would trip the derive-audit default. Switch
-// to report mode for this file.
-let _prevAudit: string | undefined;
-beforeAll(() => {
-	_prevAudit = process.env.SITTIR_AUDIT_DERIVE;
-	process.env.SITTIR_AUDIT_DERIVE = '1';
-});
-afterAll(() => {
-	if (_prevAudit === undefined) delete process.env.SITTIR_AUDIT_DERIVE;
-	else process.env.SITTIR_AUDIT_DERIVE = _prevAudit;
-});
 
 let nodeMap: NodeMap;
 

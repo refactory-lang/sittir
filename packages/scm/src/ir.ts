@@ -25,10 +25,18 @@ export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
 	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly doubleBlankline: typeof F.buildDoubleBlankline;
+	readonly indent: typeof F.buildIndent;
+	readonly dedent: typeof F.buildDedent;
 } = {
 	tight: F.buildTight,
 	space: F.buildSpace,
-	newline: F.buildNewline
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	doubleBlankline: F.buildDoubleBlankline,
+	indent: F.buildIndent,
+	dedent: F.buildDedent
 };
 
 export const definition: typeof F.definition = F.definition;

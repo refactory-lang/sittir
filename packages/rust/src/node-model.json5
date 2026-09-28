@@ -42,22 +42,88 @@
     "token_tree_pattern"
   ],
   "externals": [
-    "_blankline",
-    "_block_comment_content",
-    "_dedent",
-    "_error_sentinel",
-    "_indent",
-    "_newline",
-    "_space",
-    "_tight",
-    "doc_comment",
-    "float_literal",
-    "inner_doc_comment_marker",
-    "outer_doc_comment_marker",
-    "raw_string_literal_content",
-    "raw_string_literal_end",
-    "raw_string_literal_start",
-    "string_content"
+    {
+      "type": "SYMBOL",
+      "name": "string_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_string_literal_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "float_literal"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "outer_doc_comment_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inner_doc_comment_marker"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_block_comment_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "doc_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_error_sentinel"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_indent"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
+    }
+  ],
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "block_comment"
+    }
   ],
   "polymorphVariants": {
     "expression_statement": {
@@ -3779,27 +3845,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_compound_assignment_expr_operator",
-      "modelType": "enum",
-      "typeName": "CompoundAssignmentExprOperator",
-      "factoryName": "compoundAssignmentExprOperator",
-      "irKey": "compoundAssignmentExprOperator",
-      "hidden": false,
-      "values": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "&=",
-        "|=",
-        "^=",
-        "<<=",
-        ">>="
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_condition",
       "modelType": "supertype",
       "typeName": "Condition",
@@ -3867,6 +3912,18 @@
         "dollar",
         "non_special_token"
       ]
+    },
+    {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_error_sentinel",
@@ -4588,6 +4645,7 @@
       "subtypes": [
         "_blankline",
         "_dedent",
+        "_double_blankline",
         "_indent",
         "_newline",
         "_space",
@@ -8240,15 +8298,67 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_compound_assignment_expr_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_compound_assignment_expr_operator",
-              "parseKind": "_compound_assignment_expr_operator"
+              "value": "+=",
+              "parseKind": "plus_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-=",
+              "parseKind": "dash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*=",
+              "parseKind": "star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/=",
+              "parseKind": "slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%=",
+              "parseKind": "percent_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&=",
+              "parseKind": "amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|=",
+              "parseKind": "pipe_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^=",
+              "parseKind": "caret_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
             }
           ]
         },
@@ -11888,6 +11998,7 @@
       "irKey": "functionTypeTraitForm",
       "hidden": false,
       "annotations": {
+        "variantOf": "function_type",
         "hoisted": true
       },
       "slots": [
@@ -16307,6 +16418,7 @@
       "irKey": "orPatternPrefix",
       "hidden": false,
       "annotations": {
+        "variantOf": "or_pattern",
         "hoisted": true
       },
       "slots": [
@@ -17566,6 +17678,7 @@
       "irKey": "rangeExpressionBinary",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [
@@ -17656,6 +17769,7 @@
       "irKey": "rangeExpressionPostfix",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [
@@ -17778,6 +17892,7 @@
       "irKey": "rangeExpressionPrefix",
       "hidden": false,
       "annotations": {
+        "variantOf": "range_expression",
         "hoisted": true
       },
       "slots": [

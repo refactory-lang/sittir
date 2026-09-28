@@ -13,7 +13,16 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Blankline, BlockComment, Comment, LineComment, Newline, Space, NamespaceMap } from './types.js';
+import type {
+	Blankline,
+	BlockComment,
+	Comment,
+	DoubleBlankline,
+	LineComment,
+	Newline,
+	Space,
+	NamespaceMap
+} from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -58,9 +67,17 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['_blankline', '_newline', '_space', 'block_comment', 'comment', 'line_comment']),
+		kinds: new Set<string>([
+			'_blankline',
+			'_double_blankline',
+			'_newline',
+			'_space',
+			'block_comment',
+			'comment',
+			'line_comment'
+		]),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\s))+)$/u, kindIdByText: { ' ': 166, '\n': 167, '\n\n': 168 } },
+		whitespace: { run: /^(?:(?:(?:\s))+)$/u, kindIdByText: { ' ': 166, '\n': 167, '\n\n': 168, '\n\n\n': 169 } },
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -73,17 +90,21 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)
+			| (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)
 			| {
-					leading?: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[];
-					trailing?: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[];
+					leading?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
+					trailing?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Blankline | BlockComment | Comment | LineComment | Newline | Space)[];
-	leading(...items: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[]): Self;
-	trailing(): readonly (Blankline | BlockComment | Comment | LineComment | Newline | Space)[];
-	trailing(...items: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[]): Self;
+	leading(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	leading(
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+	): Self;
+	trailing(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	trailing(
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+	): Self;
 }
 
 export interface NodeMethodsOf {
@@ -100,8 +121,8 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Blankline | BlockComment | Comment | LineComment | Newline | Space)[];
-	inner(...items: (Blankline | BlockComment | Comment | LineComment | Newline | Space | string)[]): N;
+	inner(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	inner(...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]): N;
 }
 
 export function isEmpty(node: T.SourceFile): node is T.EmptySourceFile;

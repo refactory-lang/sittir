@@ -1,6 +1,6 @@
 import type { SeamOrigin } from '../types/rule.ts';
-import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import type { KindEntryLike } from '../dsl/symbol-table.ts';
+import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -9,7 +9,7 @@ import { admitsDepth } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
-import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineTerminatedTrivia } from '../compiler/model/trivia.ts';

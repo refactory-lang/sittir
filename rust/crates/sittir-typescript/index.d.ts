@@ -239,7 +239,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _left: SlotValue<Box<AugmentedAssignmentExpressionLeftTransportSlot>>
-  _operator: SlotValue<AugmentedAssignmentExpressionOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -1012,7 +1012,7 @@ export interface LhsExpressionTransport {
 export interface LiteralTypeNegativeNumberTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _operator: SlotValue<NumberOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<NumberTransport>
 }
 
@@ -1690,7 +1690,7 @@ export interface TypesTransport {
 export interface UnaryExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _operator: SlotValue<UnaryExpressionOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 
@@ -1705,13 +1705,13 @@ export interface UpdateExpressionPostfixTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _argument: SlotValue<Box<ExpressionTransport>>
-  _operator: SlotValue<OperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
 }
 
 export interface UpdateExpressionPrefixTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _operator: SlotValue<OperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _argument: SlotValue<Box<ExpressionTransport>>
 }
 

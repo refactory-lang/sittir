@@ -1,5 +1,6 @@
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -11,12 +12,10 @@ import { lineTerminatedTrivia, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { lineBreakingArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { defaultWhitespaceArmOf, lineBreakingArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
-	FLANK_DEFAULT,
-	SPACING_DEFAULT,
 	flankAddress,
 	parseSeamLabel,
 	seamLabel,
@@ -192,7 +191,7 @@ function labelsOf(gap: { readonly token?: string }): readonly { readonly label: 
 const walker = new RuleWalker<RenderRule>();
 
 function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, RenderRule>>): Map<RuleId, Gap> {
-	const externals = config.nodeMap.externals ?? new Set<string>();
+	const externals = new Set(ruleListParts(config.nodeMap.externals ?? []).names);
 	const gaps = new Map<RuleId, Gap>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		walker.fold(rule, undefined, (_, r) => {
@@ -226,29 +225,32 @@ export interface DeclaredArm {
 class DefaultResolver {
 	readonly #nodeMap: NodeMap;
 	readonly #declared: ReadonlyMap<string, DeclaredArm>;
+	readonly #defaultArm: WhitespaceArm;
 
 	constructor(nodeMap: NodeMap, declared?: ReadonlyMap<string, DeclaredArm>) {
 		this.#nodeMap = nodeMap;
 		this.#declared = declared ?? new Map();
+		this.#defaultArm = defaultWhitespaceArmOf(nodeMap);
 	}
 
-	#resolve(kind: string, address: string, fallback: WhitespaceArm): { readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
+	#resolve(kind: string, address: string): { readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
 		const hit = this.#declared.get(declaredKey(kind, address));
-		return hit === undefined ? { arm: fallback, origin: 'fallback' } : { arm: hit.arm as WhitespaceArm, origin: hit.origin };
+		return hit === undefined ? { arm: this.#defaultArm, origin: 'fallback' } : { arm: hit.arm as WhitespaceArm, origin: hit.origin };
 	}
 
 	resolveSeparator(kind: string, slot: string, label: string): SpacingArm {
-		return this.#resolve(kind, siteKey(slot, label), SPACING_DEFAULT).arm as SpacingArm;
+		return this.#resolve(kind, siteKey(slot, label)).arm;
 	}
 
 	resolveSeam(
 		kind: string,
 		address: string,
-		fallback: WhitespaceArm,
-		arms: readonly WhitespaceArm[],
+		seams: Pick<SeamArms, 'arms' | 'defaultArm'>,
 		wordShaped: boolean = false
 	): { readonly label: string; readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
-		const resolved = this.#resolve(kind, address, fallback);
+		const { arms } = seams;
+		const declared = this.#resolve(kind, address);
+		const resolved = declared.origin === 'fallback' && seams.defaultArm !== undefined ? { ...declared, arm: seams.defaultArm } : declared;
 		const { arm, origin } = wordShaped && resolved.origin === 'fallback' ? { arm: resolved.arm, origin: 'word-default' as const } : resolved;
 		if (!arms.includes(arm)) throw new Error(`options: '${address}' on ${displayNameOf(kind, this.#nodeMap)} is '${arm}', not one of ${arms.join(', ')}`);
 		return { label: address, arm, origin };
@@ -256,7 +258,7 @@ class DefaultResolver {
 
 	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: WhitespaceArm } {
 		const address = flankAddress(displayNameOf(kind, this.#nodeMap), side);
-		return { label: address, arm: this.#resolve(kind, address, FLANK_DEFAULT).arm };
+		return { label: address, arm: this.#resolve(kind, address).arm };
 	}
 }
 
@@ -487,10 +489,15 @@ function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig
 	return r.type === SYMBOL && r.name !== undefined ? punctuationTokenOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
 }
 
+export function keywordKindOfLiteral(text: string, nodeMap: NodeMap, kindEntries: readonly KindEntryLike[]): string | undefined {
+	const entry = findEntryForLiteralText(kindEntries, text);
+	if (entry === undefined) return undefined;
+	const kind = modelKindOfEntry(entry, kindEntries);
+	return nodeMap.nodes.get(kind) instanceof AssembledKeyword ? kind : undefined;
+}
+
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
-	const entry = findEntryForLiteralText(config.kindEntries, text);
-	const node = entry === undefined ? undefined : config.nodeMap.nodes.get(modelKindOfEntry(entry, config.kindEntries));
-	return node instanceof AssembledKeyword;
+	return keywordKindOfLiteral(text, config.nodeMap, config.kindEntries) !== undefined;
 }
 
 function isKeywordSeam(rule: RenderRule, config: RenderRulesConfig): boolean {
@@ -538,7 +545,7 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	const punctuated = texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher));
 	if (!punctuated && isOptionalRule(rule)) return undefined;
 	const [field] = fields;
-	return field === undefined ? undefined : field.toLowerCase();
+	return field;
 }
 
 function enumSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
@@ -548,7 +555,7 @@ function enumSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undef
 	if (!(target instanceof AssembledEnum)) return undefined;
 	const values = target.values;
 	if (values.length === 0 || values.some((v) => !matchesWordShape(v, config.nodeMap.wordMatcher))) return undefined;
-	return r.fieldName.toLowerCase();
+	return r.fieldName;
 }
 
 function choiceArmNodesOf(rule: RenderRule): Set<RenderRule> {
@@ -571,7 +578,7 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	const r = bag(rule);
 	if (r.type !== SYMBOL || r.fieldName === undefined || r.name === undefined || config.choiceArmNodes?.has(rule) === true) return undefined;
 	const target = config.nodeMap.nodes.get(r.name);
-	return target instanceof AssembledKeyword ? r.fieldName.toLowerCase() : undefined;
+	return target instanceof AssembledKeyword ? r.fieldName : undefined;
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
@@ -593,18 +600,18 @@ function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): Readonly
 interface SeamArms {
 	readonly arms: readonly WhitespaceArm[];
 	readonly symbols: Symbols;
+	readonly defaultArm?: WhitespaceArm;
 }
 
 function seamChoice(
 	kind: string,
 	address: string,
-	fallback: WhitespaceArm,
 	resolver: DefaultResolver,
 	seams: SeamArms,
 	edgeLiterals?: readonly string[],
 	wordShaped: boolean = false
 ): RenderRule {
-	const { label, arm, origin } = resolver.resolveSeam(kind, address, fallback, seams.arms, wordShaped);
+	const { label, arm, origin } = resolver.resolveSeam(kind, address, seams, wordShaped);
 	return whitespaceChoice(
 		{ fieldName: address, label, side: 'seam', defaultArm: arm, origin, ...(edgeLiterals === undefined ? {} : { edgeLiterals }), arms: seams.arms },
 		seams.arms,
@@ -649,7 +656,6 @@ function withArmEdgeSeams(
 	side: 'first' | 'last',
 	kind: string,
 	config: RenderRulesConfig,
-	fallback: SpacingArm,
 	resolver: DefaultResolver,
 	seams: SeamArms
 ): RenderRule | undefined {
@@ -662,7 +668,7 @@ function withArmEdgeSeams(
 		if (side === 'first' && isImmediateRight(edge, config)) return arm;
 		const token = literalTokenOf(edge, config) ?? punctuationReferenceTokenOf(edge, config);
 		if (token === undefined) return arm;
-		const seam = seamChoice(kind, seamLabel(token, side === 'last' ? 'after' : 'before'), fallback, resolver, seams, undefined, isKeywordSeam(edge, config));
+		const seam = seamChoice(kind, seamLabel(token, side === 'last' ? 'after' : 'before'), resolver, seams, undefined, isKeywordSeam(edge, config));
 		changed = true;
 		if (edgeMember(arm, side) === undefined) {
 			return { type: SEQ, nonterminal: true, members: side === 'last' ? [arm, seam] : [seam, arm] } as unknown as RenderRule;
@@ -681,15 +687,14 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 		const left = members[members.length - 1]!;
 		let right = r.members[i]!;
 		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right)) {
-			const fallback: SpacingArm = 'space';
 			const leftArms =
-				seamNameOf(left, config) === undefined ? withArmEdgeSeams(left, 'last', kind, config, fallback, resolver, seams) : undefined;
+				seamNameOf(left, config) === undefined ? withArmEdgeSeams(left, 'last', kind, config, resolver, seams) : undefined;
 			if (leftArms !== undefined) {
 				members[members.length - 1] = leftArms;
 				changed = true;
 			}
 			const rightArms =
-				seamNameOf(right, config) === undefined ? withArmEdgeSeams(right, 'first', kind, config, fallback, resolver, seams) : undefined;
+				seamNameOf(right, config) === undefined ? withArmEdgeSeams(right, 'first', kind, config, resolver, seams) : undefined;
 			if (rightArms !== undefined) {
 				right = rightArms;
 				changed = true;
@@ -701,13 +706,13 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 			const leftToken = seamNameOf(leftEdge ?? leftNow, config);
 			const rightToken = seamNameOf(rightEdge ?? right, config);
 			if (!rightImmediate && leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
-				const seam = seamChoice(kind, seamLabel(leftToken, 'after'), fallback, resolver, seams, undefined, isKeywordSeam(leftEdge ?? leftNow, config));
+				const seam = seamChoice(kind, seamLabel(leftToken, 'after'), resolver, seams, undefined, isKeywordSeam(leftEdge ?? leftNow, config));
 				if (leftEdge === undefined) members.push(seam);
 				else members[members.length - 1] = withEdgeSeam(leftNow, seam, 'last');
 				changed = true;
 			}
 			if (!rightImmediate && rightToken !== undefined && !(rightEdge !== undefined && isAnyWhitespaceChoice(rightEdge))) {
-				const seam = seamChoice(kind, seamLabel(rightToken, 'before'), fallback, resolver, seams, undefined, isKeywordSeam(rightEdge ?? right, config));
+				const seam = seamChoice(kind, seamLabel(rightToken, 'before'), resolver, seams, undefined, isKeywordSeam(rightEdge ?? right, config));
 				if (rightEdge === undefined) members.push(seam);
 				else right = withEdgeSeam(right, seam, 'first');
 				changed = true;
@@ -740,7 +745,7 @@ function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig,
 		const name = names[i];
 		if (name === undefined) return member;
 		const wordShaped = isKeywordSeam(member, config);
-		const seam = (side: SeparatorSide): RenderRule => seamChoice(kind, seamLabel(name, side), 'space', resolver, seams, undefined, wordShaped);
+		const seam = (side: SeparatorSide): RenderRule => seamChoice(kind, seamLabel(name, side), resolver, seams, undefined, wordShaped);
 		const before = isImmediateRight(member, config) ? [] : [seam('before')];
 		return { type: SEQ, nonterminal: true, members: [...before, member, seam('after')] } as unknown as RenderRule;
 	});
@@ -767,19 +772,20 @@ function withKindEdges(
 ): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
-	const breaking = lineTerminatedTrivia(kind, config.nodeMap) ? lineBreakingArms(config.nodeMap) : [];
-	const breakingSeams: SeamArms = { ...seams, arms: seams.arms.filter((arm) => breaking.includes(arm)) };
-	const part = (side: SeparatorSide): RenderRule => {
-		const after = side === 'after' && breaking.length > 0;
-		return seamChoice(
+	const breaking = lineTerminatedTrivia(kind, config.nodeMap) ? lineBreakingArms(config.nodeMap) : undefined;
+	const breakingSeams: SeamArms | undefined = breaking && {
+		...seams,
+		arms: seams.arms.filter((arm) => breaking.arms.includes(arm)),
+		defaultArm: breaking.defaultArm
+	};
+	const part = (side: SeparatorSide): RenderRule =>
+		seamChoice(
 			kind,
 			seamLabel(displayNameOf(kind, config.nodeMap), side),
-			after ? breaking[0]! : 'space',
 			resolver,
-			after ? breakingSeams : seams,
+			side === 'after' && breakingSeams !== undefined ? breakingSeams : seams,
 			edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
 		);
-	};
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {

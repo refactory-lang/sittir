@@ -1,5 +1,7 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import type { WhitespaceCollision } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
+import type { PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -9,6 +11,7 @@ import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
 
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
@@ -103,7 +106,7 @@ export interface RawGrammar {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
 	readonly extras: RuleListEntry[];
-	readonly externals: string[];
+	readonly externals: RuleListEntry[];
 	readonly supertypes: string[];
 	readonly factoryInline: string[];
 	readonly inline: string[];
@@ -117,14 +120,36 @@ export interface RawGrammar {
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
+	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
+	readonly undeclaredRules?: readonly string[];
+	readonly patchSites?: readonly PatchSite[];
+	readonly stages?: EvaluationStages;
 	readonly orphanedSyntheticGroups?: readonly string[];
+	readonly predictedKinds?: PredictedKinds;
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
+}
+
+export interface StageEvaluation<G = RawGrammar> {
+	readonly grammar: G;
+	readonly ruleNames: readonly string[];
+}
+
+export interface EvaluationStages<G = RawGrammar> {
+	readonly raw: StageEvaluation<G>;
+	readonly enriched: StageEvaluation<G>;
+}
+
+export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages'> {
+	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
+	readonly protectedRuleNames?: readonly string[];
+	readonly stages?: EvaluationStages<EvaluatedGrammar>;
 }
 
 export interface DesugarDivergenceEvent {
@@ -132,7 +157,7 @@ export interface DesugarDivergenceEvent {
 	readonly name: string;
 }
 
-import type { RefineForm } from '../dsl/wire/wire.ts';
+import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
 export type { RefineForm };
 
 export interface NarrowedField {
@@ -186,8 +211,9 @@ export interface LinkedGrammar {
 	readonly supertypes: Set<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
-	readonly externals?: readonly string[];
+	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
@@ -220,8 +246,9 @@ export interface NormalizedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly externals?: readonly string[];
+	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -250,8 +277,9 @@ export interface SimplifiedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly externals?: readonly string[];
+	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly derivations: DerivationLog;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
@@ -289,8 +317,9 @@ export interface NodeMap {
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly externals?: ReadonlySet<string>;
+	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 }

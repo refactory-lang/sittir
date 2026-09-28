@@ -10,7 +10,7 @@ function raw(rules: Record<string, Rule<'evaluate'>>, externals: string[]): RawG
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
-		externals,
+		externals: externals.map((name) => ({ type: SYMBOL, name })),
 		supertypes: [],
 		factoryInline: [],
 		inline: [],

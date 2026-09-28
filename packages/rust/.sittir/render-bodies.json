@@ -1363,8 +1363,16 @@
 			"name": "left"
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -2629,9 +2637,6 @@
 			"text": "<"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lt_after"
 		},
@@ -3168,9 +3173,6 @@
 			"text": "::"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "colon_colon_after"
 		},
@@ -3199,9 +3201,6 @@
 		{
 			"kind": "text",
 			"text": "::"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -3250,9 +3249,6 @@
 		{
 			"kind": "text",
 			"text": "::"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -5777,9 +5773,6 @@
 		{
 			"kind": "text",
 			"text": "::"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

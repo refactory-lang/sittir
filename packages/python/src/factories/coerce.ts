@@ -193,11 +193,11 @@ export const _fromMap = {
 	string_fragment: coerceToStringFragment,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
-	_tight: coerceToTight,
-	_space: coerceToSpace,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
 	format_expression: coerceToFormatExpression
@@ -290,11 +290,11 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_fragment: { pattern: /^(?:(?:[^"'\\{}\n]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:["']+))$/u, factory: F.buildStringEnd },
+	_tight: { values: [''], factory: () => F.buildTight() },
+	_space: { values: [' '], factory: () => F.buildSpace() },
 	_newline: { values: ['\n'], factory: () => F.buildNewline() },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() }
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'comment',
@@ -705,9 +705,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	format_expression: new Set([246])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
-	49: ['_unary_operator_operator'],
-	50: ['_unary_operator_operator'],
-	60: ['_unary_operator_operator'],
 	77: ['_augmented_assignment_operator'],
 	78: ['_augmented_assignment_operator'],
 	79: ['_augmented_assignment_operator'],
@@ -4347,7 +4344,7 @@ export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
 ): T.UnaryOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'+' | '-' | '~'>(value, '_unary_operator_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'+' | '-' | '~'>(value, _K0, _K0)),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const, ['~', TSKindId.Tilde] as const]
 	);
 }
@@ -7301,6 +7298,14 @@ export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 }
 
+export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
+	return F.buildTight();
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
+	return F.buildSpace();
+}
+
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
 	return F.buildNewline();
 }
@@ -7311,14 +7316,6 @@ export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof
 
 export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
 	return F.buildDoubleBlankline();
-}
-
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
-}
-
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
 }
 
 export function resolveNames_content(value: T.Names.LooseConfig['content']): T.Names['_content'] {

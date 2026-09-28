@@ -12,18 +12,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::isExpectedDiagnostic`
 
-```text
-/**
- * Is `ownerKind` declared as an expected (non-blocking) exception for `code`?
- * `expectDiagnostics` comes from the grammar's OWN `grammar.sittir.ts` (`wire()`'s
- * `expectDiagnostics:` block, threaded through `RawGrammar.expectDiagnostics`)
- * — grammar-scoped by construction, since only the grammar whose grammar.sittir.ts
- * declares an entry ever supplies a non-empty `expectDiagnostics` here. See
- * docs/KNOWN_ISSUES.md for the canonical example (typescript's
- * `_object_type_group1`, exempted from both `content-collision` and
- * `storagename-collision`).
- */
-```
+Is `ownerKind` floor-listed for `code` in the grammar's own `expectDiagnostics:` block (threaded through
+`RawGrammar.expectDiagnostics`)? A floor is per code and per owner: an owner listed for one code still blocks on
+another. The gate (`blockedRecords`) is its one caller, so a floor applies in exactly one place; records carry
+their code's intrinsic `canProceed`.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromBodyPatternZeroMatch`
 
@@ -39,6 +31,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * incident, 2026-07-25).
  */
 ```
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::formatNamingEvents`
+
+One `[naming]` line per automatic type-name rename, for the gen log.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::formatCompilerDiagnostics`
 
@@ -316,73 +312,38 @@ kind from recursing forever.
 
 ### `fromSlotGrouping` — `canProceed` forwarding (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
 
-The producer's `canProceed` is forwarded verbatim rather than hardcoded to
-`true`. `content-collision` always pushes `false` when it fires; the
-accepted-floor exception is applied by the caller,
-`collectGrammarDiagnostics`, where the grammar name is known. The other three
-`SlotGroupingShape` codes still always push `true`. Hardcoding `true` here
-would silently swallow the flip.
+The producer's `canProceed` is forwarded verbatim. Both `SlotGroupingShape` codes, `content-collision` and
+`multi-slot-nested-seq`, push `false` when they fire; a floor for either applies only at the gate.
 
-### `collectGrammarDiagnostics` — blocking overrides (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnostics`
 
-Three severity overrides are applied at collection time, all for the same
-reason: the producer can't see the grammar-level expectation lists.
-
-`diagnoseParseKindCollisions` has exactly one caller — the assemble-time
-resolution in `node-map.ts` — so every `parsekind-noninjective` diagnostic
-reaching this collector is an assemble-time collision, always genuinely
-blocking. The override forces `canProceed: false` on every instance
-unconditionally.
-
-`isBlockingAssembleWarningCode` names the only two assemble-warning codes that
-block: `storagename-collision`, and `nonterminal-separator-unstamped` — a
-zero-instance guard, where any firing means a nonterminal separator reached the
-slot-value stamp path and would silently render as a hardcoded space (see
-`collect-slots.ts`). `typename-collision`, the only other code sharing
-`fromAssembleWarning`, stays exactly as `fromAssembleWarning` maps it because
-it still has live, accepted, non-blocking instances. The check must stay in the
-caller — flipping `fromAssembleWarning` itself would take `typename-collision`
-with it as a side effect.
-
-`content-collision`'s producer (`slot-grouping.ts`) always emits
-`canProceed: false` when it fires, so the `expectDiagnostics` exception is
-applied here instead, mirroring the `storagename-collision` override. The other
-three `SlotGroupingShape` codes always push `canProceed: true` at their own
-construction sites, so this override never touches them.
+Maps assemble's records to grammar diagnostics, each with its code's intrinsic `canProceed`; floors are the
+gate's business. `diagnoseParseKindCollisions` has one caller, the assemble-time resolution in `node-map.ts`, so
+every `parsekind-noninjective` reaching here is an assemble-time collision and is forced to `canProceed: false`.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromParseKindCollision`
 
-#### body
-
-```text
-// Forward the producer's message/severity/canProceed verbatim rather than
-// regenerating — keeps the wording single-sourced in the producer.
-```
-
-### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDeriveShape`
-
-#### body
-
-```text
-// canProceed: true — derive-shape issues are surfaced as informational
-// warnings; codegen continues so all issues are visible in one pass.
-```
+Forwards the producer's message, severity and `canProceed` verbatim, so the wording has one source.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromAssembleWarning`
 
-#### body
+Maps an assemble warning to a grammar diagnostic. A code in `BLOCKING_SHAPE_CODES` is an `error` with
+`canProceed: false`; any other is a non-blocking `warning`.
 
-```text
-// typename-collision is auto-resolved at assemble time (the rename already
-// succeeded). Downgrade to 'info' so the channel stays signal-only; genuine
-// unresolved collisions keep 'warning'.
-```
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::BLOCKING_SHAPE_CODES`
 
-#### body
+The assemble-warning codes that block (spec §3):
 
-```text
-// Assemble warnings are observational — codegen continues.
-```
+- `storagename-collision`;
+- `nonterminal-separator-unstamped`, a zero-instance guard: any firing means a nonterminal separator reached the
+  slot-value stamp path and would render as a hardcoded space (see `collect-slots.ts`);
+- `unclassifiable-shape`, `union-slot-mixed-row` and `union-slot-unaddressable`, shapes collect-slots has no
+  model for. It would otherwise fall back to structural recursion or keep the arms distributed, which is a guess
+  about the node's shape. Each message names the form that resolves it;
+- `kind-shape-mismatch` and `single-literal-choice`, which drop the kind.
+
+`union-slot-routed` is deliberately absent: it reports the union-slot design's supported routing (unnamed
+nonterminal arms, with any label-routed degenerate arms, in one kind-dispatched `content` slot), not a fallback.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseDistributedAliases`
 
@@ -400,21 +361,6 @@ no single model node to be wrong about. The known unnamed case is
 typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
 'unique symbol')`.
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolFacts`
-
-The grammar facts `symbolSourceOf` builds a source from: rule bodies, external and `inline:` names, and the catalog rows (empty before the first generate).
-
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
-
-Chooses the grammar diagnostics' `SymbolSource` (`dsl/rule-patterns.ts::SymbolSource`) once, so each alias diagnostic has a single code path:
-
-- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
-- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`dsl/rule-patterns.ts::predictedSymbolSource`), so the diagnostics still fire in that phase.
-
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`
-
-Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
-
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
 
 The distributed shape an alias's content has, described for the message, or
@@ -426,7 +372,7 @@ An invariant guard, not a user-facing shape check: enrich
 (`unaliasOverloadedDisplays`) resolves every display that would sit over both
 a terminal and a nonterminal storage, so after enrich no display union holds
 both. Members are classified by the `SymbolSource` (`isTerminal`: the
-parser catalog after the first generate, the shape prediction before it),
+kind catalog evaluate predicted, which link asserts against the parser's),
 and a literal member is a terminal by its own stamp
 (`DisplayUnionMember.literal`).
 A member that is neither a rule, an external nor a literal is reported
@@ -442,42 +388,82 @@ One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTer
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
-Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from it (`symbolSourceOf`: the
-catalog's facts once parser.c exists, else the same prediction enrich
-classifies with), and hands it to both alias diagnostics.
+The front half of a compile over one evaluated stage: link, normalize and assemble, and the grammar diagnostics
+they report. It needs no parser tables and reads no generate output: the inline list comes from the evaluated
+grammar itself (`RawGrammar.inline`). Collapses renamed rules first
+(`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the
+caller read one grammar. Link and assemble read one kind catalog (`dsl/symbol-table.ts::kindCatalogOf`): the
+parser's rows when id tables are passed, else the predicted rows, which match the parser's on every field
+including the ids. Builds one `SymbolSource` from the predicted catalog, asked through
+`dsl/symbol-table.ts::renameAwareSymbolSource` since the rules may still carry pre-rename names, for both alias
+diagnostics. The caller guarantees the prediction built (the gate, or `diagnoseStage`); link asserts it
+(`link.ts::assertPredictedKinds`). Records owned by a kind the grammar's own override orphaned are dropped
+(`withoutOrphanedGroups`).
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODES`
 
-#### body
+The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid config records
+(`groups-config-invalid`, `refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
+(a token whose interior the grammar addresses but the pass cannot structure), so they reach the generation gate. The kind-id stamp reports (`kindid-*`) stay compiler warnings
+and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
-```text
-// Link's own sink carries the kindId stamp-miss report (the per-build
-// phantom-kind inventory) when id tables are supplied.
-```
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-#### body
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), and a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
-```text
-// The inline set mirrors generate.ts's NormalizeCtx input (shared via
-// inline-sets.ts). The link-phase repeated-seq check reads the same set to see
-// through inline kinds, so both shapes land in the persisted
-// grammar-diagnostics.json through one collector.
-```
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
-#### body
+One blocking `expect-diagnostics-invalid` record per `expectDiagnostics` key in `UNEXPECTABLE_CODES`, so an entry that could never take effect is reported rather than silently ignored.
 
-```text
-// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
-// contentAliasedTo map (empty today; guards a future violation).
-```
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::GrammarDiagnosticError`
 
-#### body
+The gate's rejection. `diagnostics` are the blocked records; `records` are every record the gate saw, so the
+preflight can persist the whole set to `grammar-diagnostics.json` when the compile stops.
 
-```text
-// Drop diagnostics for a kind this grammar's own override provably
-// orphaned (see `RawGrammar.orphanedSyntheticGroups`) — it can never
-// occur in a real parse, so any diagnostic about it is phantom
-// regardless of code.
-```
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::DiagnosticFloors`
+
+A grammar's `expectDiagnostics` map, code to floor-listed owner kinds, as the gate reads it.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::blockedRecords`
+
+The gate's verdict: the records with `canProceed: false` whose code the caller does not allow and whose owner is
+not floor-listed for that code (`isExpectedDiagnostic`). The one place a floor or an allowed code applies.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::assertGatePasses`
+
+Throws `GrammarDiagnosticError` when `blockedRecords` is non-empty. `compile.ts::diagnoseGrammar` applies it twice:
+before link over the evaluate-time records, and after assemble over the shape records. `allow` is the caller's
+override (`--allow-diagnostic`, or a confirmed interactive run).
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::predictionFailed`
+
+Whether evaluate's catalog prediction failed for this grammar, which means tree-sitter rejects it.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::predictionRecords`
+
+The records for a failed catalog prediction: one `dangling-internal-ref` per name the grammar references that
+names no rule and no external, or one `unpredictable-symbol-table` when the failure names none. A catalog that
+was predicted still yields one `kind-key-collision` per key two parser symbols derive (`KindKeyCollision`),
+naming both; the second symbol has no kind, so sittir cannot model it. Both block and
+neither is expectable. This is how an upstream grammar tree-sitter rejects is reported, as a record rather than a
+throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is a separate invariant.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
+
+The records answerable from the evaluated grammar alone, before link: the prediction records, the
+`expect-diagnostics-invalid` entries, and evaluate's own events (`body-pattern-zero-match`,
+`desugar-divergence-*`).
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
+
+Every grammar diagnostic of one evaluated stage, ungated: `evaluateRecords`, then the front half's records when
+the prediction built, with the collapsed grammar's rule catalog so a record's owner resolves to its root rule id.
+The evaluation stages (`stage.ts::diagnoseEvaluationStage`) use it, and through them the `grammar-diagnostics` tool's `--stage` inspection. It is not the final gate: that is `compile.ts::diagnoseGrammar`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::withoutOrphanedGroups`
+
+Drops records owned by a kind the grammar's own override provably orphaned (`RawGrammar.orphanedSyntheticGroups`):
+it never occurs in a parse, so a record about it is phantom whatever its code.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::module`
 
@@ -509,4 +495,124 @@ console during regen and the persisted grammar-diagnostics.json.
 // Public types
 // ---------------------------------------------------------------------------
 ```
+
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES`
+
+Which upstream diagnostic codes justify each `reauthored` cause. A code
+counts on the rule it names (`ownerKind`), whether or not it blocks yet, so the
+judgement does not depend on which shape codes have been flipped to blocking.
+The table lists only codes the enriched stages are observed to report:
+`'alias-shape'` has the
+alias codes and the four collect-slots shape codes; `'ambiguity'` has none,
+because no detector for an upstream generate conflict exists yet. A rule whose
+cause has no detector lands on its grammar's
+`rule-reauthored-without-cause` floor, named per rule, and leaves it when the
+detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
+enriched stage has no generated parser, so it fires on every anonymous literal.
+`content-collision` and `storagename-collision` are absent too: a `field()`
+patch resolves them, so they are patch-site provocations, not rule causes.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
+
+Judges a grammar's hand-authored departures against its enriched stage's records. They are evaluate-time
+records, so the gate checks them before link. A grammar that departs from its
+upstream in no rule or patch has no stages; it is judged only for whitespace
+collisions, which need none.
+Both sides are compared by authored names: `compileGrammar` passes the
+evaluated grammar, not the one `collectGrammarDiagnosticsForGrammar` returns,
+because with generated id tables that one has hidden rules and `renderAs:`
+keys collapsed to their display names, while the enriched stage (no id
+tables) never collapses. Every code it emits blocks, and every message names
+the declaration or deletion that resolves it:
+
+- `whitespace-mint-collision`: a name enrich mints for the whitespace
+  vocabulary that the grammar also defines, stamped where it is found
+  (`WhitespaceCollision`): a `visibleExternals:` key naming a minted member
+  (delete the entry), or an upstream rule named `_whitespace` or a member
+  whose definition differs from the minted one. The minted definition wins in
+  both, so the tree-sitter build still completes; this record stops the
+  compile. Judged without the enriched stage.
+- `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
+  enriched stage.
+- `render-only-not-external`: a `renderAs:` key that is not an upstream
+  external, as the evaluated externals list spells it.
+- `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
+  rule.
+- `rule-cause-mismatch`: a `reauthored` entry whose cause is not a cause, on a
+  name upstream does not declare, or whose upstream provocations all belong to
+  other causes.
+- `rule-reauthored-without-cause`: a `reauthored` entry no `PROVOKING_CODES`
+  code provokes. The one floorable code; the floor applies at the gate.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeVocabulary`
+
+`vocabulary-replaces-upstream` for a `vocabulary` entry upstream also
+declares, else nothing.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::WHITESPACE_COLLISION_MESSAGES`
+
+The `whitespace-mint-collision` message for each collision site: a `visibleExternals` key is deleted by its author, while an upstream definition is replaced by the minted one.
+
+## `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
+
+The `reauthored` judgement: the declared cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
+`PROVOKING_CODES` code must fire on it upstream, and one of those codes must
+belong to the declared cause.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
+
+Labels each patch site from the diagnostic records. A site is `resolving` when wire resolves some record the
+enriched stage raised and credits the site with it (`DiagnosticRecord.resolvedBy`); it claims those records'
+codes. Otherwise it is `authoring` and claims nothing. The credit is path-blind: a site is credited with every
+record owned by its owner kind or by an enrich lift it rewrote or renamed, so an authoring `field()` on an owner
+wire otherwise repairs also reads as resolving. Only `diagnosePatchSites` acts on the labels, and it judges
+`rule()` sites alone. Records of every code count, blocking or not: `content-collision` and
+`storagename-collision` among them, since a `field()` patch resolves them.
+
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::diagnosePatchSites`
+
+`patch-without-cause` for every `rule()` site labelled authoring: a
+`rule(name, body)` placeholder can only be justified by an enriched-stage record wire resolves, so one
+credited with none resolves nothing. It blocks;
+a floor for it applies at the gate. Authoring
+forms (`field`, `variant`, `alias` used to name) are never judged.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::sameSite`
+
+Whether a credited patch names the site: same owner kind, path and form.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::DiagnosticRecord`
+
+One record per key `(code, owner root rule id, slot name)`, folded over the raw, enriched and final stages.
+`ownerKind` is the owner's name in the latest stage that raises the key, since a catalog rename changes the name
+but not the root id. `ruleProvenance` says where the owner kind comes from: `upstream` when the raw stage
+declares it, `enrich` when only the enriched stage does, `wire` otherwise. `resolved` means the final stage no
+longer raises the key. `resolvedBy.stage` is `enrich` when the enriched stage already dropped it, with an empty
+`by` because nothing names the enrich pass; it is `wire` when the enriched stage still raised it, and `by` then
+lists the `rules:` entries and patch sites credited with it.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::deriveDiagnosticRecords`
+
+Folds the stage diagnoses and the final stage's records into `DiagnosticRecord`s, one per key, in first-seen
+order (raw, then enriched, then final). The final stage is `evaluateRecords` plus the front half's records of
+the compiled grammar, the same composition `diagnoseStage` makes; the rule-cause and patch-site records are
+about the departure itself and stay out.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::keyedDiagnostics`
+
+One stage's records by key; a record with no owner has no key and stays out.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::ownerRootId`
+
+A record's owner as a root rule id: the owner of its stamped `ruleId` when it has one, else its owner kind
+looked up in the stage's catalog, else the id `createRuleId` mints for that name. The last case is a record
+raised before link, whose owner kind is still its source name, so it is the id link would mint.
+
+### `packages/codegen/src/compiler/diagnostics/diagnostic-records.ts::claimantsOf`
+
+What wire resolved a key with: the `rules:` entry named like the owner, and every patch site on the owner or
+whose `PatchSite.lifts` holds it. The lift writers record that evidence; nothing here matches names across
+kinds.
 

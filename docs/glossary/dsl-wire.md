@@ -349,8 +349,8 @@ patched a reference to it in.
  *      `blank()`, breaking every rule that uses the hidden symbol.
  *
  *   3. **`blank()` fallback** — when neither source has content.
- *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
- *      BLANK orphans don't pollute the grammar.
+ *      An orphaned blank rule is pruned at the compile boundary
+ *      (`canonicalGrammar`), so it doesn't pollute the grammar.
  */
 ```
 
@@ -562,27 +562,6 @@ patched a reference to it in.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
-
-```text
-/**
- * Normalize tree-sitter's `choice(x, BLANK)` to `optional(x)` so body-pattern
- * matching works on the wire/tree-sitter-CLI path, where the IR's later
- * `choice(x,BLANK)→optional(x)` normalization hasn't run yet. Without this,
- * an authored body fn that writes `optional($.x)` never matches the raw base
- * grammar's `choice($.x, BLANK)` form, so the alias-to-visible-kind never
- * fires (e.g. rust `attributed_parameter` stayed a phantom IR-only kind).
- */
-```
-
-#### body
-
-```text
-// Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
-// uses for its `CHOICE[seq, BLANK]` → optional handling), so the two wire
-// passes recognize the tree-sitter-lowered optional form identically.
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::replaceInBodyRt`
 
 ```text
@@ -707,6 +686,10 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  * `applyVisibleExternalsRewrite` (the sittir-pipeline path).
  */
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::withEnrichedWhitespace`
+
+The `visibleExternals:` config `wire()` runs with, and the whitespace collisions it stamps on the wire context. The whitespace-member bodies enrich minted (`getEnrichWhitespace`) merge over the grammar's own entries, so every consumer (the wire context sittir's `evaluate()` drains, the base-rule passthrough, the visible-name rewrite) sees one record. Enrich owns the whitespace vocabulary and a grammar's `visibleExternals:` holds only its own scanned externals (typescript's automatic semicolons), so a key that redeclares a minted member is a `visibleExternals` collision: the minted body wins and the collision, with enrich's upstream ones, reaches the gate as `whitespace-mint-collision`. With no minted bodies the config is unchanged.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
@@ -870,7 +853,7 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`automaticVariants` is the context's one automatic-variant record, made when
+`whitespaceCollisions` holds the whitespace names the grammar also defines (`withEnrichedWhitespace`), which evaluate carries to the gate. `automaticVariants` is the context's one automatic-variant record, made when
 the context is built and never at a read site (`seedAutomaticVariants`): a
 copy of the base's record when the base went through `enrich`, otherwise an
 empty record, because without an enrich pass no label is automatic. A
@@ -898,6 +881,108 @@ body-pattern substitution.
 // WireContext + module-level current pointer
 // ---------------------------------------------------------------------------
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.ruleCauses`
+
+The `rules:` entries' declarations by name (`reauthored` or `vocabulary`),
+read from each rule function with `ruleCauseOf`. Together with
+`undeclaredRules` it partitions `authoredRuleNames`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.undeclaredRules`
+
+The `rules:` entries whose function carries no declaration (bare bodies).
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredRuleCauses`
+
+Partitions the config's `rules:` functions into `ruleCauses` and
+`undeclaredRules` for the wire context.
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchSite`
+
+One `patches:` entry: the owner kind it patches, its path key, and the form
+of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
+`default`, `group`, `flatten`, `regex`, `preference`, or `literal` for a raw
+rule value), with the placeholder's name where it has one. `lifts` names the enrich lifts the entry rewrote or
+renamed while it applied (`WireContext.liftClaims`), so the diagnostic records credit it with the records those
+lifts own.
+
+### `packages/codegen/src/dsl/wire/wire.ts::patchSiteKey`
+
+A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` and `WireContext.liftClaims`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
+
+Every `patches:` entry applied under this wire context, keyed by
+owner|path|form so an entry recorded by a rule function that runs more than
+once counts once.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
+
+The rule bodies of the base `wire()` received (the enriched grammar's
+rules), read-only. The lift overlay falls back to them.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
+
+The lift overlay: every enrich group-lift body a patch rewrote, by lift
+name. Patches write here, never into the base, so the upstream grammar and
+its enriched form stay untouched.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetLiftBody`
+
+A lift's current body: the overlay's patched body, else the base body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireSetLiftBody`
+
+Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
+applying (`recordLiftClaim`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRenameLift`
+
+Renames an enrich lift to a patch-chosen name (`wireRegisterSymbolRename`) and credits the lift to the patch
+sites applying. With `wireSetLiftBody` it is the only writer of a lift, so every lift a patch touches is recorded
+as evidence where the patch touches it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithPatchSites`
+
+Runs a patch application with the given sites as the active ones (`WireContext.activePatchSites`) and restores
+the prior set after, so a nested `transform()` credits its own sites. Outside a wire context it only runs the
+function.
+
+### `packages/codegen/src/dsl/wire/wire.ts::recordLiftClaim`
+
+Adds a lift to the claims of every active patch site; a no-op outside a wire context or while no patch applies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftClaims`
+
+The lifts each patch site rewrote or renamed, by `patchSiteKey`. `drainPatchSitesMetadata` copies them onto
+`PatchSite.lifts`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.activePatchSites`
+
+The keys of the patch sites whose application is running, set by `wireWithPatchSites`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.source`
+
+The upstream base before enrich: `wire()`'s third argument, which defaults to the base it was given, since a
+grammar wired without `sittirGrammar` ran no enrich. Evaluate reads it as the raw stage.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseRuleBodiesOf`
+
+The rules of a `wire()` base, wrapped or bare; an empty record without one.
+
+### `packages/codegen/src/dsl/wire/wire.ts::enrichLiftNames`
+
+Every rule enrich lifted out of a parent body: its clause groups and its
+visible-group sources. `wire()` gives each one still in the base a
+`passthroughBaseRuleFn`, inserted after the
+authored and patched-parent rule fns. Both tree-sitter's `grammar()` and
+sittir's `grammarFn` run rule fns in key insertion order, so a lift's fn
+runs after every fn whose patch can descend into it and returns the patched
+body in both pipelines.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRecordPatchSite`
+
+Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::deposits`
 
@@ -1248,12 +1333,6 @@ are what the shape-free half of the load-time check can promise.
 	 */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::__enrichOverrides__`
-
-```text
-/** Side-channel from `enrich()` — preserved unchanged. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
@@ -1356,28 +1435,6 @@ are what the shape-free half of the load-time check can promise.
 	 *  pattern entries; absent for legacy `_`-prefix candidates. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::unwrapOptionalChoiceRt`
-
-```text
-/**
- * Structural equality for two RuntimeRule bodies. Recursive.
- *
- * A candidate body evaluated in the sittir runtime matches a rule body
- * evaluated in tree-sitter's runtime because both agree on UPPERCASE
- * discriminants — no case reconciliation needed.
- *
- * Edge cases:
- * - PREC/PREC_LEFT/PREC_RIGHT wrappers: sittir's `prec()` helper strips the
- *   wrapper before storing the rule, so they won't appear in sittir-runtime
- *   bodies. Tree-sitter preserves them. We treat them as non-matching (return
- *   false for unknown types) — prec-wrapped patterns are more specific than
- *   the declared body and should NOT be replaced.
- * - FIELD wrappers: name AND content must match. A field carrying the same
- *   content but a different name is a different structural pattern.
- * - ALIAS: not handled — an alias is semantically distinct from its content.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::ShapedSymbols`
 
 ```text
@@ -1399,8 +1456,9 @@ are what the shape-free half of the load-time check can promise.
 
 ```text
 /**
- * Passthrough rule fn for base rules that wire couldn't otherwise reach.
- * Returns `previous` unchanged; the pattern-replacement pass wraps this
+ * Rule fn for a base rule wire doesn't otherwise author: returns the rule's
+ * patched lift body from the active wire context when a patch descended
+ * into it, and `previous` otherwise. The pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
 ```
@@ -1470,7 +1528,7 @@ are what the shape-free half of the load-time check can promise.
 	 * Kinds with no top-level `ir.*` builder: constructed only through nested
 	 * config on the slot(s) that reference them. Assemble stamps the names
 	 * listed here onto `AssembledNodeBase.factoryInline`; a listed kind with
-	 * nowhere to nest fails the `factory-inline-unnestable` diagnostic.
+	 * nowhere to nest makes assemble throw (`FactoryInlineUnnestableError`).
 	 */
 ```
 
@@ -1503,6 +1561,16 @@ are what the shape-free half of the load-time check can promise.
 
 Whether the base grammar (the enriched base, with or without its `grammar` wrapper) declares a property. `wire()` wraps a callback for `extras`, `externals` or `precedences` when the config defines it or the base declares it, so a rename registered while the rules evaluated reaches the base's own entries even when the config never mentions the property.
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithoutConfig`
+
+`wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
+evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
+
+The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
+generic base type only checks the authored config's keys; `wireWithoutConfig` calls it directly.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 
 ```text
@@ -1511,7 +1579,7 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
  *
  * @param config - Options to pass to `grammar()` plus the optional
  *   `patches` declaration.
- * @param base - Optional enriched-base grammar object. When supplied AND
+ * @param base - The enriched-base grammar object. When
  *   `config.groups` declares body-pattern entries (function values), wire
  *   walks every base rule and injects a pattern-replacing override for it.
  *   This is necessary because tree-sitter only invokes override rule fns
@@ -1532,10 +1600,7 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 // `B` infers from `base` (the enriched-base grammar), so the config
 // literal is contextually typed — and IntelliSense'd — against the
 // precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
-// No explicit `WireConfig` annotation is needed at the call site. When
-// `base` is omitted, `B` defaults to `any` (the loose form, identical to
-// the prior `C extends WireConfig<any>` behavior — there is nothing to
-// infer grammar precision from).
+// No explicit `WireConfig` annotation is needed at the call site.
 ```
 
 The `patches` and `options` blocks are inferred on their own (`P`, `O`) so
@@ -1545,8 +1610,16 @@ whole literal, because a type parameter that the contextual type of a
 context-sensitive callback mentions gets fixed before the callbacks are typed
 — inferring the whole config would fix it to its default and check nothing.
 Neither block holds a function, so neither is fixed early. An explicit type
-argument disables inference for the parameters after it; the grammars pass
-`enrich(base)` and let every parameter infer.
+argument disables inference for the parameters after it. The base is
+required: without it the base-dependent passes (base-rule passthroughs, enrich
+lift registration, body-pattern replacement over base rules) would silently not
+run. Grammars do not call `wire` directly; `sittirGrammar` composes it with
+`enrich` and `grammar()`, and forwards its own `P` and `O` explicitly so the
+checks judge the grammar's written keys.
+
+Wire writes nothing into the base it is given: every rule it adds or changes
+goes into its own options, and the enriched base stays exactly as enrich
+built it, the same object the upstream diagnostic stage reads.
 
 
 #### body
@@ -1637,7 +1710,7 @@ argument disables inference for the parameters after it; the grammars pass
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 // auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
 // `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
-// desugaring, per `peelOptionalSeq`): inline-SAFE into a hidden
+// desugaring, per `optionalSeqBodyOf`): inline-SAFE into a hidden
 // `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
 // `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
 // registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
@@ -1731,25 +1804,13 @@ argument disables inference for the parameters after it; the grammars pass
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::adoptMintedGroups`
+### `packages/codegen/src/dsl/wire/wire.ts::authoredGroupBodies`
 
-An authored `groups:` pattern takes over an enrich-minted visible group whose
-whole body it matches, the same way enrich's automatic facts give way to an
-authored declaration elsewhere (automatic arm labels vs `variant()`). The
-minted groups come only from enrich's own record
-(`getEnrichVisibleGroupSources`), never a name pattern. The minted body is
-compared with `unwrapPrec` applied, since enrich re-registers the ambient prec
-on it, using `patternBodyEqual`, the predicate the replacement itself uses. An
-adopted group is deleted from the enriched base's rule map, which wire runs
-before `grammar()` copies it in both pipelines. Its references are rewritten to
-the authored alias by `replaceInBodyRt` through the candidate's `adopts` set.
-Adopted names are skipped when wire registers enrich's visible groups for
-inline removal and conflicts. A partial match adopts nothing: the pattern is
-replaced inside the minted group as usual.
-
-This is a bridge until enrich sees the authored config directly (a combined
-`sittirGrammar(base, cfg)` entry point); enrich then declines the mint instead
-of wire undoing it.
+The evaluated bodies of a config's `groups:` body-pattern entries, through
+`declaredPatterns`. `sittirGrammar` hands them to `enrich` so enrich declines
+any visible group whose whole body an authored pattern covers; wire then
+replaces the pattern where it stands in the enriched rule, and never has a
+minted group to take over.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
 
@@ -1762,37 +1823,7 @@ Evaluates the body-pattern entries of `groups:` and `injects:` once, with the
 validation both consumers share: a `groups:` key must be visible, the body fn
 must return a rule, and the body must be a complex structural pattern
 (`isComplexBodyRt`). Used by `applyWirePatternReplacement` and
-`adoptMintedGroups`.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.adoptedGroups`
-
-Minted visible-group name → the authored `groups:` key that adopted it
-(`adoptMintedGroups`). Empty without an enriched base.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate.adopts`
-
-Minted group names this authored candidate adopted. `replaceInBodyRt` treats a
-reference to one of them as a match of the candidate's body.
-
-### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
-
-#### body
-
-```text
-// Types must match.
-```
-
-```text
-// BLANK is a singleton — type match is sufficient
-```
-
-#### body
-
-```text
-// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
-// in addition to `content`. Two aliases are structurally equal when all
-// three match — e.g. `alias($._not_in, 'not in')` vs itself.
-```
+`authoredGroupBodies`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
 

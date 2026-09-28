@@ -1,4 +1,5 @@
 export { run as listKinds, type ListKindsOptions } from './discover/list-kinds.ts';
+export { run as overrideCensus, type OverrideCensusOptions } from './discover/override-census.ts';
 export {
 	run as separatedLists,
 	computeSeparatedListsCensus,

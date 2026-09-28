@@ -1,6 +1,6 @@
 {
   "name": "regex",
-  "nodeCount": 80,
+  "nodeCount": 81,
   "word": null,
   "supertypes": [
     "_character_escape",
@@ -9,9 +9,28 @@
     "inline_flags_group"
   ],
   "externals": [
-    "_newline",
-    "_space",
-    "_tight"
+    {
+      "type": "SYMBOL",
+      "name": "_tight"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
+    }
+  ],
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    }
   ],
   "polymorphVariants": {
     "pattern": {
@@ -424,6 +443,18 @@
   "innerGapsKeyed": false,
   "nodes": [
     {
+      "kind": "_blankline",
+      "modelType": "punctuation",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "text": "\n\n",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_character_escape",
       "modelType": "supertype",
       "typeName": "CharacterEscape",
@@ -455,6 +486,18 @@
       ]
     },
     {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
@@ -464,18 +507,6 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_space",
-      "modelType": "punctuation",
-      "typeName": "Space",
-      "factoryName": "space",
-      "irKey": "space",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\" \" as const",
-      "text": " ",
       "factoryShape": "text"
     },
     {
@@ -498,8 +529,9 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_blankline",
+        "_double_blankline",
         "_newline",
-        "_space",
         "_tight"
       ]
     },
@@ -1807,6 +1839,26 @@
       "text": "(?"
     },
     {
+      "kind": "lparen_qmarkP_eq",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPEq",
+      "irKey": "lparenQmarkPEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P=\" as const",
+      "text": "(?P="
+    },
+    {
+      "kind": "lparen_qmarkP_lt",
+      "modelType": "punctuation",
+      "typeName": "LparenQmarkPLt",
+      "irKey": "lparenQmarkPLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(?P<\" as const",
+      "text": "(?P<"
+    },
+    {
       "kind": "lparen_qmark_colon",
       "modelType": "punctuation",
       "typeName": "LparenQmarkColon",
@@ -1825,26 +1877,6 @@
       "isParameterless": true,
       "stampExpression": "\"(?<\" as const",
       "text": "(?<"
-    },
-    {
-      "kind": "lparen_qmarkp_eq",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpEq",
-      "irKey": "lparenQmarkpEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P=\" as const",
-      "text": "(?P="
-    },
-    {
-      "kind": "lparen_qmarkp_lt",
-      "modelType": "punctuation",
-      "typeName": "LparenQmarkpLt",
-      "irKey": "lparenQmarkpLt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(?P<\" as const",
-      "text": "(?P<"
     },
     {
       "kind": "lt",
@@ -1884,7 +1916,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "(?P<",
-              "parseKind": "lparen_qmarkp_lt"
+              "parseKind": "lparen_qmarkP_lt"
             }
           ]
         },

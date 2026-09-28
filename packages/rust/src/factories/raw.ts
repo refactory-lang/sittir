@@ -10236,6 +10236,10 @@ export function buildBlankline(): TSKindId.Blankline {
 	return TSKindId.Blankline;
 }
 
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
 export function buildIndent(): TSKindId.Indent {
 	return TSKindId.Indent;
 }
@@ -10573,6 +10577,7 @@ export type FluentKindMap = {
 	_space: T.Space;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	_error_sentinel: T.ErrorSentinel;
@@ -10834,6 +10839,7 @@ export const _factoryMap = {
 	_space: buildSpace,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	_error_sentinel: buildErrorSentinel,

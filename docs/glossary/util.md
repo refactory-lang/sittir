@@ -109,6 +109,8 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
  */
 ```
 
+Besides word shapes, `nodelessExtrasRun` resolves a grammar's hidden SYMBOL extras through it.
+
 #### body
 
 ```text
@@ -124,6 +126,10 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
 			   newline — none of these have a single regex representation
 			   without additional context. */
 ```
+
+### `packages/codegen/src/util/word-matcher.ts::escapeRegexLiteral`
+
+A literal's text as a RegExp source that matches exactly that text: every RegExp metacharacter is backslash-escaped. `ruleToRegexSource` spells a STRING through it, and `nodelessExtrasRun` spells a grammar's literal extras through it.
 
 ### `packages/codegen/src/util/word-matcher.ts::module`
 
@@ -208,6 +214,10 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
  */
 ```
 
+### `packages/codegen/src/util/reachable-rules.ts::grammarRootNames`
+
+The rules tree-sitter keeps a grammar's reachability from: the start rule (`rootRuleName`) and every rule an extras SYMBOL entry names. The symbol-table predictor (`liveRuleNames`) walks from exactly these, and `canonicalGrammar` adds sittir's own protections to them for its orphan prune and rule catalog, so a hidden rule referenced only from the extras (a `_ws` whitespace token) survives in sittir's grammar as it does in the parser's.
+
 ### `packages/codegen/src/util/reachable-rules.ts::collectSymbolRefs`
 
 ```text
@@ -219,8 +229,21 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
 Rules nothing reaches from the grammar's roots. The roots are every visible
 rule with a body plus `protectedNames` (the names the grammar machinery
 references outside rule bodies). A visible rule whose body is empty
-(`isEmptyBody`: a pre-registered placeholder nothing deposited into) is not
+(`isBlank`: a pre-registered placeholder nothing deposited into) is not
 a root, so it survives only while something references or protects it.
 Reachability rather than reference counting, so a rule kept alive only by
-other dead rules (or by itself) is still reported. Callers delete the
-returned names.
+other dead rules (or by itself) is still reported.
+
+### `packages/codegen/src/util/reachable-rules.ts::pruneOrphanedRules`
+
+A grammar without its orphaned rules (`collectOrphanedRules`): the rules
+map, and the `inline` and `conflicts` lists without the dead names, plus the
+pruned names. `compiler/canonical-rules.ts::canonicalGrammar` and
+`transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` both call
+it, so the evaluated grammar and grammar.json drop the same names from the
+same lists. `inline` and `conflicts` do not root: an orphaned mint would
+otherwise keep itself alive through its own entries.
+
+### `packages/codegen/src/util/reachable-rules.ts::OrphanPrune`
+
+`pruneOrphanedRules`' result.

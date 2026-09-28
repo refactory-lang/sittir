@@ -73,7 +73,6 @@ const NODE_KINDS = [
 	'interpolation',
 	'key_value_pattern',
 	'keyword_argument',
-	'keyword_identifier',
 	'keyword_pattern',
 	'lambda',
 	'lambda_parameters',
@@ -148,7 +147,6 @@ const LEAF_KINDS = [
 	'_indent',
 	'_kw_async_marker',
 	'_newline',
-	'_unary_operator_operator',
 	'and_keyword',
 	'as_keyword',
 	'assert_keyword',
@@ -1988,7 +1986,3 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
 	'|='
 ] as const;
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
-
-/** Valid values for `_unary_operator_operator` nodes. */
-export const _UNARY_OPERATOR_OPERATORS = ['+', '-', '~'] as const;
-export type UnaryOperatorOperatorValue = (typeof _UNARY_OPERATOR_OPERATORS)[number];

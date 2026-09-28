@@ -9,7 +9,7 @@ import {
 	isNodeRef,
 	storageKindOfRef
 } from './node-map.ts';
-import { anchoredLeafRegex, leadingRegex } from './leaf-pattern.ts';
+import { leadingRegex } from './leaf-pattern.ts';
 import { declaresWhitespace, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -116,18 +116,15 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 }
 
 export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {
-	const { literals, patterns: sources } = ruleListParts(nodeMap.extras ?? []);
-	const patterns = [...sources, ...literals.map(escapeRegexLiteral)];
-	if (patterns.length === 0) return undefined;
-	return anchoredLeafRegex('extras', `(?:${patterns.map((pattern) => `(?:${pattern})`).join('|')})+`);
+	return nodeMap.nodelessExtrasRun;
 }
 
 export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
-	const extrasRun = lexicalExtrasRun(nodeMap);
-	if (extrasRun === undefined || !declaresWhitespace(nodeMap)) return [];
+	const nodelessExtrasRun = lexicalExtrasRun(nodeMap);
+	if (nodelessExtrasRun === undefined || !declaresWhitespace(nodeMap)) return [];
 	return [...whitespaceSymbolsOf(nodeMap).values()].filter((kind) => {
 		const node = nodeMap.nodes.get(kind);
-		return node instanceof AssembledPunctuation && extrasRun.test(node.text);
+		return node instanceof AssembledPunctuation && nodelessExtrasRun.test(node.text);
 	});
 }
 

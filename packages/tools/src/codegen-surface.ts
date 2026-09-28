@@ -40,6 +40,10 @@ const MODULES = {
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
+	stage: '../../codegen/src/compiler/stage.ts',
+	ruleCatalog: '../../codegen/src/compiler/rule-catalog.ts',
+	compile: '../../codegen/src/compiler/compile.ts',
+	patchSites: '../../codegen/src/compiler/diagnostics/patch-sites.ts',
 	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
 	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
 	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
@@ -50,6 +54,7 @@ const MODULES = {
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
 	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
+	symbolTable: '../../codegen/src/dsl/symbol-table.ts',
 	spacing: '../../codegen/src/dsl/primitives/spacing.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
@@ -69,6 +74,10 @@ export interface CodegenSurface {
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
+	stage: typeof import('../../codegen/src/compiler/stage.ts');
+	ruleCatalog: typeof import('../../codegen/src/compiler/rule-catalog.ts');
+	compile: typeof import('../../codegen/src/compiler/compile.ts');
+	patchSites: typeof import('../../codegen/src/compiler/diagnostics/patch-sites.ts');
 	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
 	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
 	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');
@@ -79,6 +88,7 @@ export interface CodegenSurface {
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');
 	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');
+	symbolTable: typeof import('../../codegen/src/dsl/symbol-table.ts');
 	spacing: typeof import('../../codegen/src/dsl/primitives/spacing.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
@@ -141,8 +151,8 @@ export async function load<M extends keyof CodegenSurface>(module: M): Promise<C
 export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
 export type RenderBody = import('../../codegen/src/emitters/render-body.ts').Body;
-export type GeneratedIdTables = import('../../codegen/src/compiler/generated-metadata.ts').GeneratedIdTables;
-export type GeneratedKindEntry = import('../../codegen/src/compiler/generated-metadata.ts').GeneratedKindEntry;
+export type GeneratedIdTables = import('../../codegen/src/dsl/symbol-table.ts').GeneratedIdTables;
+export type GeneratedKindEntry = import('../../codegen/src/dsl/symbol-table.ts').GeneratedKindEntry;
 export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate']>>;
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;

@@ -19,7 +19,7 @@ function makeNodeMap(): NodeMap {
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		rules: {},
-		externals: new Set(),
+		externals: [],
 		word: undefined,
 	} as unknown as NodeMap;
 }
@@ -100,7 +100,7 @@ describe('loop-driven emitters', () => {
 			signatures: { signatures: new Map() },
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
-			externals: new Set(),
+			externals: [],
 			word: undefined,
 		} as any;
 

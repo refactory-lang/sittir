@@ -62,7 +62,7 @@ describe('loose trivia strings build ir.comment', () => {
 
 	it('refuses whitespace text no whitespace kind spells exactly', () => {
 		expect(() => ir.identifier('a').$trivia.leading('\n \n')).toThrow(/no whitespace kind is spelled/);
-		expect(() => ir.identifier('a').$trivia.leading('\n\n\n')).toThrow(/no whitespace kind is spelled/);
+		expect(() => ir.identifier('a').$trivia.leading('\n\n\n\n')).toThrow(/no whitespace kind is spelled/);
 	});
 
 	it('builds a line comment from its full spelling, not a doubled marker', () => {

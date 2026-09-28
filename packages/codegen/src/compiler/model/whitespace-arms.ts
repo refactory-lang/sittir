@@ -1,7 +1,8 @@
 import type { NodeMap } from '../types.ts';
 import { AssembledSupertype, isFixedTextLeaf } from './node-map.ts';
 import { displayNameOf } from './display-name.ts';
-import { DEPTH_ARMS, WHITESPACE_SUPERTYPE } from '../../dsl/primitives/spacing.ts';
+import { DEPTH_ARMS, WHITESPACE_SUPERTYPE, type WhitespaceArm } from '../../dsl/primitives/spacing.ts';
+import { NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER } from '../../dsl/whitespace.ts';
 
 export function declaresWhitespace(nodeMap: Pick<NodeMap, 'nodes'>): boolean {
 	return nodeMap.nodes.get(WHITESPACE_SUPERTYPE) instanceof AssembledSupertype;
@@ -24,13 +25,28 @@ export function spacingArmsOf(nodeMap: NodeMap): readonly string[] {
 	return whitespaceArmsOf(nodeMap).filter((arm) => !(DEPTH_ARMS as readonly string[]).includes(arm));
 }
 
-export function lineBreakingArms(nodeMap: NodeMap): readonly string[] {
+export interface LineBreakingArms {
+	readonly arms: readonly string[];
+	readonly defaultArm: WhitespaceArm;
+}
+
+export function lineBreakingArms(nodeMap: NodeMap): LineBreakingArms {
 	const symbols = whitespaceSymbolsOf(nodeMap);
 	const textOf = (arm: string): string | undefined => {
 		const node = nodeMap.nodes.get(symbols.get(arm)!);
 		return node !== undefined && isFixedTextLeaf(node) ? node.text : undefined;
 	};
-	return spacingArmsOf(nodeMap)
-		.filter((arm) => textOf(arm)?.includes('\n') === true)
-		.sort((a, b) => textOf(a)!.length - textOf(b)!.length);
+	const arms = spacingArmsOf(nodeMap).filter((arm) => textOf(arm)?.includes('\n') === true);
+	const defaultArm = arms.find((arm) => symbols.get(arm) === NEWLINE_MEMBER);
+	if (defaultArm === undefined) {
+		throw new Error(`grammar: a line-terminated trivia kind's after edge admits only line breaks, but '${WHITESPACE_SUPERTYPE}' lists no '${NEWLINE_MEMBER}' to default to`);
+	}
+	return { arms, defaultArm };
+}
+
+export function defaultWhitespaceArmOf(nodeMap: NodeMap): WhitespaceArm {
+	const armOf = new Map([...whitespaceSymbolsOf(nodeMap)].map(([arm, symbol]) => [symbol, arm]));
+	const arm = armOf.get(SPACE_MEMBER) ?? armOf.get(TIGHT_MEMBER);
+	if (arm === undefined) throw new Error(`grammar: '${WHITESPACE_SUPERTYPE}' lists neither '${SPACE_MEMBER}' nor '${TIGHT_MEMBER}'`);
+	return arm;
 }

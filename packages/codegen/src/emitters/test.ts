@@ -11,7 +11,7 @@ import {
 	isNodeRef,
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,

@@ -2828,52 +2828,6 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  */
 ```
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::toScreamingSnakeCase`
-
-```text
-/**
- * Convert a PascalCase `typeName` (as returned by `kindIdMemberName`) into
- * SCREAMING_SNAKE_CASE, preserving any leading underscore that marks the
- * kind as a hidden alias source.
- *
- * @param memberName - PascalCase member name, e.g. `'CallExpression'` or
- *   `'FieldIdentifier'` (already had its leading underscore stripped by
- *   `kindIdMemberName`; hidden kinds arrive here as `'FieldIdentifier'`).
- * @param rawKind - The original grammar kind string, used to detect whether
- *   a leading underscore must be re-attached (hidden kinds start with `_`).
- * @returns SCREAMING_SNAKE_CASE constant name, e.g. `'CALL_EXPRESSION'` or
- *   `'_FIELD_IDENTIFIER'`.
- */
-```
-
-#### body
-
-```text
-// `rawKind` is the source of truth for leading underscores (hidden-kind
-// marker — `_field_identifier`, `_call_signature`). The grammar may
-// produce a typeName that already carries the underscore (`_CallSignature`)
-// — that would double up if both were preserved (`__CALL_SIGNATURE`).
-// Strip leading underscores from `memberName` before processing, then
-// re-attach exactly as many as `rawKind` carried.
-```
-
-#### body
-
-```text
-// Defense for all-uppercase input (e.g. `LPAREN`, `PLUS`): a memberName
-// with no lowercase letters has no word boundaries to split on. Treat it
-// as a single token and pass it through. The regex split below assumes
-// PascalCase (`CallExpression` → `Call_Expression`); applying it to
-// `LPAREN` would produce `L_P_A_R_E_N`. The catalog now lowercases
-// `anon_sym_*` names upstream so this branch should rarely trigger;
-// kept defensively so any other source of uppercase memberName (future
-// emitters, edge cases) doesn't silently break.
-```
-
-```text
-// remove leading underscore added by replace
-```
-
 ### `packages/codegen/src/emitters/kind-id-rust.ts::emitKindIdRust`
 
 ```text
@@ -3031,24 +2985,6 @@ The fields and the concrete kinds `wireRoutesOf` finds for one slot.
  * `narrowedFields` list — the form's factory still exists but narrows
  * nothing at the Config surface, which is the intended behavior for
  * selections that target anonymous structural literals.
- */
-```
-
-### `packages/codegen/src/emitters/refine-emit.ts::pascalCase`
-
-```text
-/**
- * PascalCase a form name for type / factory naming. Treats `_` as a
- * word boundary so `snake_case` forms pascal-case correctly.
- */
-```
-
-### `packages/codegen/src/emitters/refine-emit.ts::camelCase`
-
-```text
-/**
- * camelCase a form name for fluent-key naming on the parent namespace
- * (e.g. `ir.interfaceBody.curly`).
  */
 ```
 
@@ -5508,6 +5444,31 @@ its only values are visible punctuation kinds (`seamNamesOf`, supplied by the
 caller), so an optional `?.` reference folds `qmark_dot_before` and
 `qmark_dot_after` into its presence gate and an absent chain marker leaves no
 site behind.
+
+### `packages/codegen/src/emitters/render-body.ts::WordSeamNode`
+
+A seam whose payload is one space, written as a plain (non-token) seam: it
+coalesces with its neighbours like a site's space arm and drops at the render's
+edges, so a keyword that opens a standalone render gets no leading space.
+
+### `packages/codegen/src/emitters/render-body.ts::WORD_SEAM`
+
+The body holding one `WordSeamNode`; the Rust printer writes it as
+`w.seam(" ")`.
+
+### `packages/codegen/src/emitters/render-body.ts::gateKeywordSlotSeams`
+
+A slot preference addresses the slot's punctuation values; keyword values
+keep their word seam. For a slot whose values mix keywords and punctuation
+(`keywordKindsOf` returns the keyword kinds, supplied by the caller), the
+seam named `<slot>_after` right after the slot and the seam named
+`<slot>_before` right before it become a kind gate: when the rendered value is
+one of the keyword kinds the seam is `WORD_SEAM`, otherwise it is the slot's
+own site. A tight preference on an operator slot that holds both `!` and
+`typeof` renders `!x` tight while `typeof x` and `typeof (x)` keep their
+space. A slot that is not mixed, and a seam not beside its slot, is left as it
+is. `TemplateEmitter` applies it after `gateOptionalSlotSeams`, so a seam
+already folded into an optional slot's gate is gated inside that arm.
 
 ### `packages/codegen/src/emitters/render-body.ts::liftGates`
 
@@ -9671,12 +9632,14 @@ there, not by the hoisted flag here.
  * tight. Derived from the grammar's own anonymous-literal inventory —
  * never hand-picked.
  *
- * Identical-char pairs are deliberately excluded: a real doubled-char
- * token (rust's `>>`) only exists with its own disambiguation context in
- * the grammar (nested-generic `>` `>` re-lexes correctly), and spacing
- * every repeated symbol char would make already-common constructs noisy
- * for no correctness gain — same exemption the SpacingWriter's seam check
- * applies.
+ * An identical-char pair `c|c` is never derived from the literal
+ * inventory: it comes from `sameCharMergePairs` over the grammar's render
+ * rules (the `rules` argument), which admits it only when the doubled
+ * token `cc` can begin what directly follows the single token `c`
+ * (typescript's `--` after a unary `-`, rust's `::` after a type-annotation
+ * `:`). A doubled token that begins nothing that follows its single char
+ * (`>>` after a nested-generic `>`) yields no pair, so those seams stay
+ * tight.
  *
  * Word-class and whitespace characters are excluded even when they occur
  * inside a multi-character literal (e.g. python's `alias($._not_in, 'not
@@ -10331,6 +10294,13 @@ each value that is a visible punctuation kind, through
 `punctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
 to `gateOptionalSlotSeams`.
 
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.mixedSlotKeywordKinds`
+
+The keyword kinds among a slot's literal values, through
+`keywordKindOfLiteral`, when the slot also has a value that is not a keyword;
+undefined for a slot whose values are all keywords or all punctuation. It is
+the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
+
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
 
 #### body
@@ -10741,9 +10711,9 @@ absent optional slot leaves no mark behind. The boundary is recorded as static-g
 
 ```text
 /**
- * The SpacingWriter's seam law — `word_seam(l, r) ∨ (l ≠ r ∧
- * literal_merge_pair(l, r))`, same word table, same pair table, including
- * the identical-char exclusion (see `spacing.rs::write_str`) — applied
+ * The SpacingWriter's seam law — `word_seam(l, r) ∨
+ * literal_merge_pair(l, r)`, same word table, same pair table (identical-char
+ * pairs included exactly when `literalMergePairs` derives them) — applied
  * STATICALLY to a list's interior boundaries, for the census:
  *
  * - `runtime-derivable`: the checks' outcome is a statically-known
@@ -11339,6 +11309,8 @@ passes the generator's `generatedIdTables` through for that reason.
 
 `innerGapsKeyed` publishes the predicate that decided whether the emitted `InnerTrivia` takes a gap key, so the source emitter prints the inner-trivia surface that was emitted: `innerAt(gap, …)` when keyed, `.inner(…)` otherwise.
 
+`externals` and `extras` are the grammar's rule lists, serialized as grammar.json holds them (SYMBOL, STRING and PATTERN entries, in declaration order).
+
 `variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.
 
 Each kind that takes a bare input on the loose surface also carries
@@ -11532,6 +11504,13 @@ under its tree name, not its grammar name. A key with no row maps to itself.
 
 The id-table entries for a list of keys, each keyed through `keyOf`
 (identity for fields; `modelKindKeyOf` for kinds).
+
+### `packages/codegen/src/emitters/consts.ts::treeSitterPascalCase`
+
+The `enumName` column of the kind-id table, Pascal-cased from the parser.c symbol name with each word's tail
+lower-cased. It mirrors tree-sitter's own C symbol naming, which upper-cases anonymous names, so it is a
+different namespace from the kind keys by design: it may disagree with the `TSKindId` member where a key keeps
+a literal letter's case (regex `lparen_qmarkP_lt` → `AnonLparenQmarkpLt` beside `LparenQmarkPLt`).
 
 ### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 

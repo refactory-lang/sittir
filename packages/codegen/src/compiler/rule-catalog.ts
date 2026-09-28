@@ -20,6 +20,7 @@ import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import { classifyByType } from '../dsl/rule-patterns.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
@@ -42,6 +43,7 @@ export interface RuleCatalogBuildResult {
 export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 	readonly roots?: readonly string[];
+	readonly sourceKindOf?: ReadonlyMap<string, string>;
 }
 
 export function buildRuleCatalog(
@@ -65,6 +67,7 @@ export function buildRuleCatalog(
 		const result = identifyRule({
 			rule,
 			ownerKind,
+			sourceKind: ctx.sourceKindOf?.get(ownerKind) ?? ownerKind,
 			parentId: undefined,
 			path: [],
 			provenance,
@@ -82,20 +85,50 @@ export function buildRuleCatalog(
 	};
 }
 
-export interface AttachReferenceRuleIdsCtx {
+export interface CollectReferencesCtx {
 	readonly ruleCatalog: RuleCatalog;
 }
 
-export function attachReferenceRuleIds(references: readonly SymbolRef[], ctx: AttachReferenceRuleIdsCtx): SymbolRef[] {
-	return references.map((ref) => {
-		const fromRuleId = ctx.ruleCatalog.rootsByKind.get(ref.from);
-		return fromRuleId ? { ...ref, fromRuleId } : { ...ref };
-	});
+interface ReferenceScope {
+	readonly fieldName?: string;
+	readonly optional: boolean;
+	readonly repeated: boolean;
+}
+
+export function collectReferences(rules: Readonly<Record<string, Rule<'evaluate'>>>, ctx: CollectReferencesCtx): SymbolRef[] {
+	const walker = new RuleWalker<Rule<'evaluate'>>();
+	const references: SymbolRef[] = [];
+	for (const [from, root] of Object.entries(rules)) {
+		const fromRuleId = ctx.ruleCatalog.rootsByKind.get(from);
+		const visit = (rule: Rule<'evaluate'>, scope: ReferenceScope): void => {
+			if (rule.type === SYMBOL) {
+				references.push({
+					refType: 'symbol',
+					from,
+					to: rule.name,
+					...(fromRuleId === undefined ? {} : { fromRuleId }),
+					...(scope.fieldName === undefined ? {} : { fieldName: scope.fieldName }),
+					...(scope.optional ? { optional: true } : {}),
+					...(scope.repeated ? { repeated: true } : {})
+				});
+				return;
+			}
+			const inner: ReferenceScope = {
+				fieldName: rule.type === FIELD ? rule.name : scope.fieldName,
+				optional: scope.optional || rule.type === OPTIONAL,
+				repeated: scope.repeated || rule.type === REPEAT || rule.type === REPEAT1
+			};
+			for (const child of walker.childrenOf(rule)) visit(child, inner);
+		};
+		visit(root, { optional: false, repeated: false });
+	}
+	return references;
 }
 
 interface IdentifyParams {
 	readonly rule: Rule<'evaluate'>;
 	readonly ownerKind: string;
+	readonly sourceKind: string;
 	readonly parentId: RuleId | undefined;
 	readonly path: readonly RulePathSegment[];
 	readonly provenance: RuleProvenance;
@@ -105,7 +138,7 @@ interface IdentifyParams {
 }
 
 function identifyRule(params: IdentifyParams): BuildResult {
-	const id = createRuleId(params.ownerKind, { path: params.path });
+	const id = createRuleId(params.sourceKind, { path: params.path });
 	const children = identifyChildren({ ...params, selfId: id });
 	const childIds = children.map((child) => child.id);
 	const rule = withIdentifiedChildren({ rule: params.rule, id, children });
@@ -132,6 +165,7 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		identifyRule({
 			rule: childArgs.rule,
 			ownerKind: params.ownerKind,
+			sourceKind: params.sourceKind,
 			parentId: selfId,
 			path: [...params.path, childArgs.segment],
 			provenance: params.provenance,
@@ -251,9 +285,19 @@ function classifyIntrinsic(
 	return classifyByType(rule.type, anyChildNonterminal);
 }
 
+const RULE_ID_SCHEME = 'rule:';
+
 export function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
-	if (ctx.path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
-	return `rule:${encodeURIComponent(ownerKind)}:${ctx.path.map(formatPathSegment).join('/')}`;
+	const owner = `${RULE_ID_SCHEME}${encodeURIComponent(ownerKind)}:`;
+	return ctx.path.length === 0 ? `${owner}root` : `${owner}${ctx.path.map(formatPathSegment).join('/')}`;
+}
+
+export function ruleIdPath(id: RuleId): string {
+	return id.slice(id.indexOf(':', RULE_ID_SCHEME.length) + 1);
+}
+
+export function ruleIdOwner(id: RuleId): string {
+	return decodeURIComponent(id.slice(RULE_ID_SCHEME.length, id.indexOf(':', RULE_ID_SCHEME.length)));
 }
 
 function formatPathSegment(segment: RulePathSegment): string {

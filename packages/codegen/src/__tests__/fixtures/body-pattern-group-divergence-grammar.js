@@ -21,6 +21,9 @@ module.exports = grammar({
 		refineForms: new Map(),
 		groups: { orphan_group: (_$) => seq('a', 'b') },
 		currentRuleKind: null,
-		authoredRuleNames: new Set(['host'])
+		authoredRuleNames: new Set(['host']),
+		ruleCauses: new Map(),
+		undeclaredRules: new Set(['host']),
+		patchSites: new Map()
 	}
 });

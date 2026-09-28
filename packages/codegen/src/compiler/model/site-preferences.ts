@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
+import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule, SeamOrigin } from '../../types/rule.ts';
 import { DELIMITER_LABEL, SEPARATOR_LABEL, VARIANT_LABEL } from '../../dsl/primitives/spacing.ts';

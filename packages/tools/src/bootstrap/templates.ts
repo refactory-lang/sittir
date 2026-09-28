@@ -88,28 +88,11 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 			path: 'grammar.sittir.ts',
 			contents: `// @ts-nocheck — grammar.js is untyped
 import base from '${v.upstreamDependency}/grammar.js';
-import { enrich, wire } from '../codegen/src/dsl/index.ts';
+import { sittirGrammar } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base);
-export default grammar(
-	enrichedBase,
-	wire(
-		{
-			name: '${v.name}',
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline],
-			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-			visibleExternals: (_$) => ({
-				_tight: string(''),
-				_space: string(' '),
-				_newline: string('\\n')
-			}),
-			rules: {
-				_whitespace: ($) => choice($._tight, $._space, $._newline)
-			}
-		},
-		enrichedBase
-	)
-);
+export default sittirGrammar(base, {
+	name: '${v.name}'
+});
 `
 		},
 		{

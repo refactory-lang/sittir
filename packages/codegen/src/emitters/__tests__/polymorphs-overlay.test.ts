@@ -6,7 +6,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import type { GeneratedIdEntry, GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdEntry, GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';

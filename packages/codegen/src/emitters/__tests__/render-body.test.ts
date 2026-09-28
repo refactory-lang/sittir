@@ -13,7 +13,9 @@ import {
 	edgeChar,
 	equalBodies,
 	gate,
+	gateKeywordSlotSeams,
 	gateOptionalSlotSeams,
+	WORD_SEAM,
 	isExpression,
 	liftGates,
 	mentions,
@@ -309,5 +311,36 @@ describe('duplicateSlots', () => {
 		expect(duplicateSlots(branches([{ test: 'a', body: slot('x') }, { test: 'b', body: slot('x') }], slot('x')))).toEqual([]);
 		expect(duplicateSlots(concat(gate('readonly_marker', slot('readonly_marker')), slot('abstract_marker'), gate('readonly_marker', slot('readonly_marker'))))).toEqual(['readonly_marker']);
 		expect(duplicateSlots(concat(slot('x'), gate('y', concat(slot('y'), slot('x')))))).toEqual(['x']);
+	});
+});
+
+describe('gateKeywordSlotSeams', () => {
+	const operatorKeywords = (slotName: string): readonly string[] | undefined => (slotName === 'operator' ? ['typeof_keyword'] : undefined);
+	it('gives a keyword value of a mixed slot the word seam and leaves the slot site to its punctuation values', () => {
+		const body = concat(slot('operator'), seam('operator_after'), slot('argument'));
+		expect(gateKeywordSlotSeams(body, operatorKeywords)).toEqual(
+			concat(slot('operator'), branches([{ test: 'operator', kinds: ['typeof_keyword'], body: WORD_SEAM }], seam('operator_after')), slot('argument'))
+		);
+	});
+
+	it('gates the seam before a mixed slot the same way', () => {
+		const body = concat(text('('), seam('operator_before'), slot('operator'));
+		expect(gateKeywordSlotSeams(body, operatorKeywords)).toEqual(
+			concat(text('('), branches([{ test: 'operator', kinds: ['typeof_keyword'], body: WORD_SEAM }], seam('operator_before')), slot('operator'))
+		);
+	});
+
+	it('leaves the seams of a slot that is not mixed, and a seam that is not beside its slot', () => {
+		const body = concat(slot('argument'), seam('argument_after'), seam('operator_after'), slot('operator'));
+		expect(gateKeywordSlotSeams(body, operatorKeywords)).toEqual(body);
+	});
+
+	it('prints the word seam as a plain seam, which drops at the render edges', () => {
+		const lines = printRustBody(gateKeywordSlotSeams(concat(slot('operator'), seam('operator_after')), operatorKeywords), {
+			field: (n) => n,
+			site: (n) => `options::SITE_${n.toUpperCase()}`,
+			kinds: (names) => `&[${names.join(', ')}]`
+		});
+		expect(lines.join('\n')).toContain('if operator.kind_in(&*w, &[typeof_keyword]) {\n        w.seam(" ");\n    } else {\n        w.site_at(options::SITE_OPERATOR_AFTER);');
 	});
 });

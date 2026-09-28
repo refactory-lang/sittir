@@ -768,6 +768,22 @@ export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
 
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
+export function buildIndent(): TSKindId.Indent {
+	return TSKindId.Indent;
+}
+
+export function buildDedent(): TSKindId.Dedent {
+	return TSKindId.Dedent;
+}
+
 export type FluentKindMap = {
 	program: T.Program.Built;
 	escape_sequence: T.EscapeSequence.Built;
@@ -796,6 +812,10 @@ export type FluentKindMap = {
 	_tight: T.Tight;
 	_space: T.Space;
 	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 };
 
 export const _factoryMap = {
@@ -825,6 +845,10 @@ export const _factoryMap = {
 	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast,
 	_tight: buildTight,
 	_space: buildSpace,
-	_newline: buildNewline
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

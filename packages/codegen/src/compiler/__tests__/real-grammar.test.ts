@@ -1,25 +1,11 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { resolveGrammarJsPath } from '../resolve-grammar.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
-
-// Raw base grammars (no override() / variant() applied) still contain
-// non-canonical shapes that would trip the derive-audit default. Switch
-// to report mode for this file; the canonical-surface invariant is
-// tested separately via corpus-validation against the over-ridden
-// grammars.
-let _prevAudit: string | undefined;
-beforeAll(() => {
-	_prevAudit = process.env.SITTIR_AUDIT_DERIVE;
-	process.env.SITTIR_AUDIT_DERIVE = '1';
-});
-afterAll(() => {
-	if (_prevAudit === undefined) delete process.env.SITTIR_AUDIT_DERIVE;
-	else process.env.SITTIR_AUDIT_DERIVE = _prevAudit;
-});
+import { ruleListParts } from '../../dsl/rule-patterns.ts';
 
 const pythonGrammar = resolveGrammarJsPath('python');
 const rustGrammar = resolveGrammarJsPath('rust');
@@ -46,19 +32,19 @@ describe('Evaluate — real tree-sitter grammars', () => {
 	});
 
 	it.each([
-		['python', (): string => pythonGrammar, [']', ')', '}']],
-		['typescript', (): string => tsGrammar, ['||']]
+		['python', (): string => resolveOverridesPath('python'), [']', ')', '}']],
+		['typescript', (): string => resolveOverridesPath('typescript'), ['||']]
 	])('%s keeps literal-text externals but mints no rule for them', async (_name, grammar, literals) => {
 		const raw = await evaluate(grammar());
-		expect(literals.every((t) => raw.externals.includes(t))).toBe(true);
+		expect(literals.every((t) => ruleListParts(raw.externals).literals.includes(t))).toBe(true);
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
 		expect(literals.filter((t) => linked.rules[t] !== undefined)).toEqual([]);
 	});
 
 	it.each([
-		['python', (): string => pythonGrammar],
-		['rust', (): string => rustGrammar],
-		['typescript', (): string => tsGrammar]
+		['python', (): string => resolveOverridesPath('python')],
+		['rust', (): string => resolveOverridesPath('rust')],
+		['typescript', (): string => resolveOverridesPath('typescript')]
 	])('%s mints no rule keyed by literal token text', async (_name, grammar) => {
 		const raw = await evaluate(grammar());
 		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });

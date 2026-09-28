@@ -18,7 +18,7 @@
 import { CHOICE, PATTERN, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { AssembledKeyword, AssembledPunctuation, deriveValuesForRule, type DeriveCtx } from '../model/node-map.ts';
-import type { GeneratedKindEntry } from '../generated-metadata.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { Rule, StringRule } from '../../types/rule.ts';
 
 const kindEntries: readonly GeneratedKindEntry[] = [

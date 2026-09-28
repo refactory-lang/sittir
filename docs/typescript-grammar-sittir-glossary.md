@@ -20,14 +20,14 @@ wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
 
-### `enrichedBase` (`packages/typescript/grammar.sittir.ts:19`)
+### `sittirGrammar(base, …)` (`packages/typescript/grammar.sittir.ts:25`)
 
-`enrich(base)` is bound once and the SAME enriched grammar is handed to both
-`grammar()` and `wire()` (matching rust). `wire` needs the enriched base so its
-base-dependent passes — auto-group synthesis, body-pattern groups, and the
-enrich-hoisted-clause inline registration — operate on the post-enrich shape.
-Without the second argument those passes silently no-op, leaving
-enrich-hoisted clause groups un-inlined and producing LR conflicts.
+`export default sittirGrammar(base, {…})` composes the grammar in one call:
+enrich runs over the upstream base with the config's authored `groups:`
+patterns visible, so it declines any group a pattern covers; wire runs over
+that enriched base; `grammar()` receives both. There is no separate enriched
+binding to hand to two places, so the base wire sees and the base tree-sitter
+compiles cannot drift apart.
 
 ### `conflicts` (`packages/typescript/grammar.sittir.ts:25`)
 
@@ -888,39 +888,32 @@ overriding the canonical rule too.
 				// base grammar's conflict resolution carries through.
 ```
 
-### `string` (`packages/typescript/grammar.sittir.ts:1052`)
+### `string` (`packages/typescript/grammar.sittir.ts`, `patches`)
 
-```text
-				// string: variant() adoption on the quote-style choice. Base
-				// grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
-				// walker's primary-branch-wins would always pick the first
-				// (double-quoted) branch as the template, so `'x'` source
-				// round-trips as `"x"` — AST mismatch. Splitting into variant
-				// children (`string_double` / `string_single`) gives each its
-				// own template that preserves the quote style.
-				//
-				// Restored 2026-07-20 (was removed in c5f7f88ff, 2026-05-12,
-				// in favor of a `rules:` rewrite using `refine()` to
-				// correlate an uncorrelated flat seq — see that rule's
-				// former doc comment for the intent). refine() is
-				// authoring-only metadata (packages/codegen/src/dsl/primitives/refine.ts)
-				// and never constrains the actual generated parser: the
-				// rewritten grammar left `unescaped_double_string_fragment`
-				// and `unescaped_single_string_fragment` lexically reachable
-				// in the SAME parser state regardless of which quote char
-				// opened the string, so tree-sitter's longest-match lexer
-				// could pick the wrong fragment token and consume past the
-				// intended closing quote — every plain string literal
-				// produced ERROR (rust/crates/sittir-parity-tests/tests/native_parser.rs's
-				// `typescript_lexical_declaration_reads_override_named_fields`,
-				// confirmed via `tree-sitter parse` on the compiled parser
-				// directly, no read/transport layer involved). This variant
-				// split leaves the base grammar's already-correlated
-				// `choice(seq('"',…,'"'), seq("'",…,"'"))` untouched — the
-				// quote literal and its matching fragment token are baked
-				// into the same seq branch, so there's no cross-branch
-				// lexical ambiguity for tree-sitter to resolve at runtime.
-```
+`string: [{ '0/2': token.immediate('"'), '1/2': token.immediate("'") }, { 0: variant('double'), 1: variant('single') }]`.
+The base rule is `choice(seq('"', …, '"'), seq("'", …, "'"))`. The first set
+makes each closing quote immediate, so the render glues it to the last fragment
+(without it `"baz"` renders `" baz "`); the fragments already absorb every
+character the closing token could follow, so the parse table is unchanged. The
+second set splits the arms into `string_double` / `string_single`, giving each
+quote style its own template; it comes second so the paths in the first set
+still address the unsplit arms. Keeping the quote literal and its fragment
+token inside one arm leaves no cross-arm lexical ambiguity.
+
+### Template delimiters (`packages/typescript/grammar.sittir.ts`, `patches`)
+
+`template_string: { 2: token.immediate('`') }`,
+`template_literal_type: { 2: token.immediate('`') }`,
+`template_type: { 0: token.immediate('${'), 1: field('type') }`,
+`template_substitution: { 0: token.immediate('${'), 1: field('expression') }`.
+The closing backtick is immediate for the same reason as `string`'s closing
+quote. The opening `${` is immediate so the render never spaces it from a
+preceding fragment: `$` is word-class, so without the stamp the seam before
+the substitution is a runtime-varying option site, and in `template_literal_type`
+the seam after the opening backtick becomes a spaced-by-default `bquote_after`
+option. `field('type')` names `template_type`'s `choice(primary_type,
+infer_type)`; fielding it keeps enrich from splitting the kind into variants.
+`field('expression')` names the substitution's `_expressions`.
 
 ### `update_expression` (`packages/typescript/grammar.sittir.ts:1086`)
 
@@ -928,16 +921,30 @@ overriding the canonical rule too.
 				// update_expression: postfix vs prefix `++` / `--`.
 ```
 
-### `_whitespace` (`packages/typescript/grammar.sittir.ts:647`)
+### `options` — `literal_type_negative_number` (`packages/typescript/grammar.sittir.ts`)
 
-The grammar's whitespace supertype: `supertypes:` lists it, and the rule is
-a choice over the six whitespace externals (`_tight`, `_space`, `_newline`,
-`_blankline`, `_indent`, `_dedent`), each written as the visible alias
-`visibleExternals` registers. Every spacing site's arms, the generated
-`options.ts` unions and the whitespace text the render crate writes are
-read from this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in
-codegen names a whitespace kind. A grammar that wants another gap width
-adds an external here, as python does with `_double_blankline`.
+The sign of a negative-number literal type binds tight to its number
+(`-1`, not `- 1`). The site is the variant's `operator:/after` seam: the
+upstream `_number` rule is hidden and spliced into the variant, so its
+operator field is addressed there.
+
+### `options` — `unary_expression`
+
+`operator:/after` is tight, so a factory-built `unary_expression` renders
+`!x`, `-x`, `~x`. The preference addresses the slot's punctuation values
+only: a keyword operator keeps its word seam (`typeof x`, `typeof (x)`,
+`typeof -x`, `void 0`). A repeated sign stays spaced (`- -x`, `+ +x`,
+`- --x`): the render crate guards the `-|-` and `+|+` seams, because `--` and
+`++` can begin what directly follows a unary `-` or `+`, and a tight site
+still takes that lexical space.
+
+### `options` — `update_expression_postfix` / `update_expression_prefix`
+
+The update operator binds tight to its operand: `operator:/before` on the
+postfix variant (`x++`), `operator:/after` on the prefix variant (`--x`).
+Upstream spells both operators as an inline `choice('++', '--')` in each
+arm, so the operator is a slot of the variant itself and takes the
+grammar-wide `operator:` spacing unless its variant says otherwise.
 
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 
@@ -972,46 +979,26 @@ adds an external here, as python does with `_double_blankline`.
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.
 ```
 
-### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts:1120`)
+### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts`)
 
-```text
-			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
-			// orphaned duplicate — enrich's raw clause-hoist mint of
-			// `_export_statement_default`'s `from_arm` position, superseded once
-			// the nested `patches:` entry (`_export_statement_default`
-			// → `_export_statement_default_from_arm`) properly splits the SAME
-			// content under its own name (transform.ts's ALIAS-rename deposit now
-			// repoints the live alias there). `_export_statement_group2` is
-			// provably unreachable from `export_statement` but assemble's
-			// diagnostics still scan it like live structure — see
-			// docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan
-			// every `rules` map entry, including ones unreachable from any
-			// top-level kind" for the principled (reachability-based) fix,
-			// tracked there rather than implemented here.
-```
+The `rule-reauthored-without-cause` floor: `rules:` entries that replace an
+upstream rule whose shape no current diagnostic provokes. Each stays because
+deleting it (so the upstream body stands) makes the output worse; the floor
+only shrinks, and an entry leaves when its detector lands.
 
-### `_reserved_identifier` (`packages/typescript/grammar.sittir.ts:1137`)
+- `object_type` (declared `'ambiguity'`, unverified: no detector): without it, generate blocks on
+  `storagename-collision` / `content-collision` on `object_type`. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
 
-```text
-				// _reserved_identifier — upstream shape is
-				// `(_, previous) => choice(...18 TS-specific bare strings,
-				// previous)`, where `previous` is the base JS grammar's own
-				// `_reserved_identifier` (get/set/async/static/export/let),
-				// left NESTED as a sub-CHOICE member rather than flattened.
-				// That nesting blocks classifyHiddenChoiceRule's ENUM
-				// admission (requires flat SYMBOL/STRING/named-ALIAS members
-				// only — mirrors rust's `_non_special_token` REPEAT1 case,
-				// specs/026), so `_reserved_identifier` stays unclassified
-				// (rule.type=CHOICE, "mixed/structural — survive as-is") and
-				// inlines directly into `_property_identifier`'s occurrence
-				// with no node of its own — which is what lets
-				// `_property_identifier`'s alias (`statement_identifier_group1`)
-				// collapse into a text-only leaf when the matched alternative
-				// is one of these bare reserved words, hitting the same
-				// anonymous-token-fusion path the wrap.ts fallback exists for.
-				// Flatten programmatically (not hardcoding the string list,
-				// so this stays correct if upstream's own list ever changes).
-```
+Shape floors (the compiler has no model for these shapes yet; each blocks
+without its entry):
+
+- `unclassifiable-shape` on `binary_expression` and `public_field_definition`:
+  a choice with structured arms beside leaves. Resolve with `rule(name, body)`
+  in `patches:` naming the structured arm as its own rule.
+- `union-slot-mixed-row` on `binary_expression`: a singular row with a
+  structured named arm beside union arms. Resolve with `variant(name)`
+  splitting the row, until the structured-arm enrich mint gives each
+  structured arm its own kind in the union slot.
 
 ### `jsx_namespace_name` (`packages/typescript/grammar.sittir.ts:1194`)
 

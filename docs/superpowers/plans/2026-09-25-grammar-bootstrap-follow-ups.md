@@ -3,7 +3,11 @@
 Core defects and hazards found while bootstrapping `scm` and `regex`. Each
 is worked around in the grammar packages today; none is fixed in codegen.
 
-## 1. wire's base parameter is optional but semantically required
+## 1. wire's base parameter is optional but semantically required (closed)
+
+Closed: `wire(cfg, base)` requires the base, and grammars compose through
+`sittirGrammar(base, cfg)`, where enrich sees the authored `groups:` patterns
+and declines a group they cover, so wire has no minted group to adopt.
 
 `wire(cfg, base?)` accepts a missing base, yet without it wire silently
 skips its base-dependent passes: no passthrough callbacks for base rules,

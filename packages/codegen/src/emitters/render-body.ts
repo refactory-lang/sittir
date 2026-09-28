@@ -27,6 +27,10 @@ export interface SeamNode {
 	readonly field: string;
 }
 
+export interface WordSeamNode {
+	readonly kind: 'wordSeam';
+}
+
 export interface IndentNode {
 	readonly kind: 'indent';
 }
@@ -64,7 +68,8 @@ export type BodyNode =
 	| IfNode
 	| IndentNode
 	| DedentNode
-	| TokenSeamNode;
+	| TokenSeamNode
+	| WordSeamNode;
 export type Body = readonly BodyNode[];
 
 export const EMPTY: Body = [];
@@ -107,6 +112,40 @@ function isBareSlotGate(node: BodyNode): node is IfNode & { readonly arms: reado
 	const arm = node.arms[0]!;
 	const only = arm.body.length === 1 ? arm.body[0]! : undefined;
 	return arm.kinds === undefined && only?.kind === 'slot' && only.name === arm.test;
+}
+
+export const WORD_SEAM: Body = [{ kind: 'wordSeam' }];
+
+export function gateKeywordSlotSeams(body: Body, keywordKindsOf: (slot: string) => readonly string[] | undefined): Body {
+	const out: BodyNode[] = [];
+	for (let i = 0; i < body.length; i++) {
+		const node = body[i]!;
+		if (node.kind === 'if') {
+			out.push({
+				...node,
+				arms: node.arms.map((arm) => ({ ...arm, body: gateKeywordSlotSeams(arm.body, keywordKindsOf) })),
+				fallback: node.fallback === undefined ? undefined : gateKeywordSlotSeams(node.fallback, keywordKindsOf)
+			});
+			continue;
+		}
+		const prev = out[out.length - 1];
+		const next = body[i + 1];
+		const slotName =
+			node.kind !== 'seam'
+				? undefined
+				: prev?.kind === 'slot' && node.field === `${prev.name}_after`
+					? prev.name
+					: next?.kind === 'slot' && node.field === `${next.name}_before`
+						? next.name
+						: undefined;
+		const kinds = slotName === undefined ? undefined : keywordKindsOf(slotName);
+		if (slotName === undefined || kinds === undefined) {
+			out.push(node);
+			continue;
+		}
+		out.push(...branches([{ test: slotName, kinds, body: WORD_SEAM }], [node]));
+	}
+	return out;
 }
 
 export function gateOptionalSlotSeams(body: Body, seamNamesOf: (slot: string) => readonly string[]): Body {
@@ -205,6 +244,7 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 		case 'if':
 			return DYNAMIC_EDGE;
 		case 'seam':
+		case 'wordSeam':
 		case 'indent':
 		case 'dedent':
 		case 'tokenSeam':
@@ -237,6 +277,7 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 			return a.field === (b as SeamNode).field;
 		case 'space':
 		case 'adjacent':
+		case 'wordSeam':
 		case 'indent':
 		case 'dedent':
 			return true;
@@ -331,6 +372,7 @@ export function weight(body: Body): number {
 				break;
 			case 'space':
 			case 'adjacent':
+			case 'wordSeam':
 				total += 1;
 				break;
 			case 'indent':
@@ -610,6 +652,10 @@ function printStatements(
 			case 'tokenSeam':
 				flush();
 				lines.push(`${pad}w.token_seam(${rustStringLiteral(node.text + payload)});`);
+				break;
+			case 'wordSeam':
+				flush();
+				lines.push(`${pad}w.seam(" ");`);
 				break;
 			case 'if': {
 				flush();

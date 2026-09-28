@@ -24,7 +24,7 @@ import {
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
 import type { SeqRule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
-import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { emitRenderModule } from '../render-module.ts';

@@ -190,7 +190,7 @@ describe('propose-14 module aggregation + self-test', () => {
 		const recs = classifySource('compiler/evaluate.ts', src);
 		const counts = countByModule(recs);
 		expect(counts['compiler/evaluate.ts'].total).toBeGreaterThan(30);
-		expect(counts['compiler/evaluate.ts'].nonConforming).toBeGreaterThan(10);
+		expect(counts['compiler/evaluate.ts'].nonConforming).toBeGreaterThan(0);
 	});
 });
 

@@ -33,7 +33,11 @@ export type LeafStringMap = {
 	[TSKindId.PredicateType]: '?' | '!';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Newline]: '\n';
-	[TSKindId.MissingKeyword]: 'MISSING';
+	[TSKindId.Blankline]: '\n\n';
+	[TSKindId.DoubleBlankline]: '\n\n\n';
+	[TSKindId.Indent]: '﷐\n';
+	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.MISSINGKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
 };
 
@@ -54,7 +58,7 @@ export enum TSKindId {
 	Rbrack = 14,
 	Lparen = 15,
 	Rparen = 16,
-	MissingKeyword = 17,
+	MISSINGKeyword = 17,
 	Colon = 18,
 	Bang = 19,
 	Pound = 20,
@@ -64,40 +68,44 @@ export enum TSKindId {
 	Tight = 24,
 	Space = 25,
 	Newline = 26,
-	Program = 27,
-	Definition = 28,
-	GroupExpression = 29,
-	NamedNodeExpression = 30,
-	Quantifier = 31,
-	NodeIdentifier = 32,
-	Capture = 33,
-	String = 34,
-	ImmediateString = 35,
-	StringContent = 36,
-	Parameters = 37,
-	List = 38,
-	Grouping = 39,
-	MissingNode = 40,
-	AnonymousNode = 41,
-	NamedNode = 42,
-	_FieldName = 43,
-	FieldDefinition = 44,
-	NegatedField = 45,
-	Predicate = 46,
-	GroupExpressionArm = 47,
-	NamedNodeExpressionArm = 48,
-	GroupingGroup = 49,
-	NamedNodeGroup = 50,
-	NamedNodePlain = 51,
-	NamedNodeSupertyped = 52,
-	NamedNodeGroupChildren = 53,
-	NamedNodeGroupAnchoredLast = 54,
-	ProgramRepeat1 = 55,
-	StringContentRepeat1 = 56,
-	ParametersRepeat1 = 57,
-	ListRepeat1 = 58,
-	GroupingRepeat1 = 59,
-	NamedNodeGroupChildrenRepeat1 = 60
+	Blankline = 27,
+	DoubleBlankline = 28,
+	Indent = 29,
+	Dedent = 30,
+	Program = 31,
+	Definition = 32,
+	GroupExpression = 33,
+	NamedNodeExpression = 34,
+	Quantifier = 35,
+	NodeIdentifier = 36,
+	Capture = 37,
+	String = 38,
+	ImmediateString = 39,
+	StringContent = 40,
+	Parameters = 41,
+	List = 42,
+	Grouping = 43,
+	MissingNode = 44,
+	AnonymousNode = 45,
+	NamedNode = 46,
+	_FieldName = 47,
+	FieldDefinition = 48,
+	NegatedField = 49,
+	Predicate = 50,
+	GroupExpressionArm = 51,
+	NamedNodeExpressionArm = 52,
+	GroupingGroup = 53,
+	NamedNodeGroup = 54,
+	NamedNodePlain = 55,
+	NamedNodeSupertyped = 56,
+	NamedNodeGroupChildren = 57,
+	NamedNodeGroupAnchoredLast = 58,
+	ProgramRepeat1 = 59,
+	StringContentRepeat1 = 60,
+	ParametersRepeat1 = 61,
+	ListRepeat1 = 62,
+	GroupingRepeat1 = 63,
+	NamedNodeGroupChildrenRepeat1 = 64
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -117,7 +125,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[14, 'rbrack'],
 	[15, 'lparen'],
 	[16, 'rparen'],
-	[17, 'missing_keyword'],
+	[17, 'MISSING_keyword'],
 	[18, 'colon'],
 	[19, 'bang'],
 	[20, 'pound'],
@@ -127,40 +135,44 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, '_tight'],
 	[25, '_space'],
 	[26, '_newline'],
-	[27, 'program'],
-	[28, 'definition'],
-	[29, '_group_expression'],
-	[30, '_named_node_expression'],
-	[31, 'quantifier'],
-	[32, '_node_identifier'],
-	[33, 'capture'],
-	[34, 'string'],
-	[35, 'immediate_string'],
-	[36, 'string_content'],
-	[37, 'parameters'],
-	[38, 'list'],
-	[39, 'grouping'],
-	[40, 'missing_node'],
-	[41, 'anonymous_node'],
-	[42, 'named_node'],
-	[43, '_field_name'],
-	[44, 'field_definition'],
-	[45, 'negated_field'],
-	[46, 'predicate'],
-	[47, 'group_expression_arm'],
-	[48, 'named_node_expression_arm'],
-	[49, 'grouping_group'],
-	[50, 'named_node_group'],
-	[51, 'named_node_plain'],
-	[52, 'named_node_supertyped'],
-	[53, 'named_node_group_children'],
-	[54, 'named_node_group_anchored_last'],
-	[55, 'program_repeat1'],
-	[56, 'string_content_repeat1'],
-	[57, 'parameters_repeat1'],
-	[58, 'list_repeat1'],
-	[59, 'grouping_repeat1'],
-	[60, 'named_node_group_children_repeat1']
+	[27, '_blankline'],
+	[28, '_double_blankline'],
+	[29, '_indent'],
+	[30, '_dedent'],
+	[31, 'program'],
+	[32, 'definition'],
+	[33, '_group_expression'],
+	[34, '_named_node_expression'],
+	[35, 'quantifier'],
+	[36, '_node_identifier'],
+	[37, 'capture'],
+	[38, 'string'],
+	[39, 'immediate_string'],
+	[40, 'string_content'],
+	[41, 'parameters'],
+	[42, 'list'],
+	[43, 'grouping'],
+	[44, 'missing_node'],
+	[45, 'anonymous_node'],
+	[46, 'named_node'],
+	[47, '_field_name'],
+	[48, 'field_definition'],
+	[49, 'negated_field'],
+	[50, 'predicate'],
+	[51, 'group_expression_arm'],
+	[52, 'named_node_expression_arm'],
+	[53, 'grouping_group'],
+	[54, 'named_node_group'],
+	[55, 'named_node_plain'],
+	[56, 'named_node_supertyped'],
+	[57, 'named_node_group_children'],
+	[58, 'named_node_group_anchored_last'],
+	[59, 'program_repeat1'],
+	[60, 'string_content_repeat1'],
+	[61, 'parameters_repeat1'],
+	[62, 'list_repeat1'],
+	[63, 'grouping_repeat1'],
+	[64, 'named_node_group_children_repeat1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -191,40 +203,44 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, '_tight'],
 	[25, '_space'],
 	[26, '_newline'],
-	[27, 'program'],
-	[28, 'definition'],
-	[29, '_group_expression'],
-	[30, '_named_node_expression'],
-	[31, 'quantifier'],
-	[32, '_node_identifier'],
-	[33, 'capture'],
-	[34, 'string'],
-	[35, 'immediate_string'],
-	[36, 'string_content'],
-	[37, 'parameters'],
-	[38, 'list'],
-	[39, 'grouping'],
-	[40, 'missing_node'],
-	[41, 'anonymous_node'],
-	[42, 'named_node'],
-	[43, '_field_name'],
-	[44, 'field_definition'],
-	[45, 'negated_field'],
-	[46, 'predicate'],
-	[47, 'group_expression_arm'],
-	[48, 'named_node_expression_arm'],
-	[49, 'grouping_group'],
-	[50, 'named_node_group'],
-	[51, 'named_node_plain'],
-	[52, 'named_node_supertyped'],
-	[53, 'named_node_group_children'],
-	[54, 'named_node_group_anchored_last'],
-	[55, 'program_repeat1'],
-	[56, 'string_content_repeat1'],
-	[57, 'parameters_repeat1'],
-	[58, 'list_repeat1'],
-	[59, 'grouping_repeat1'],
-	[60, 'named_node_group_children_repeat1']
+	[27, '_blankline'],
+	[28, '_double_blankline'],
+	[29, '_indent'],
+	[30, '_dedent'],
+	[31, 'program'],
+	[32, 'definition'],
+	[33, '_group_expression'],
+	[34, '_named_node_expression'],
+	[35, 'quantifier'],
+	[36, '_node_identifier'],
+	[37, 'capture'],
+	[38, 'string'],
+	[39, 'immediate_string'],
+	[40, 'string_content'],
+	[41, 'parameters'],
+	[42, 'list'],
+	[43, 'grouping'],
+	[44, 'missing_node'],
+	[45, 'anonymous_node'],
+	[46, 'named_node'],
+	[47, '_field_name'],
+	[48, 'field_definition'],
+	[49, 'negated_field'],
+	[50, 'predicate'],
+	[51, 'group_expression_arm'],
+	[52, 'named_node_expression_arm'],
+	[53, 'grouping_group'],
+	[54, 'named_node_group'],
+	[55, 'named_node_plain'],
+	[56, 'named_node_supertyped'],
+	[57, 'named_node_group_children'],
+	[58, 'named_node_group_anchored_last'],
+	[59, 'program_repeat1'],
+	[60, 'string_content_repeat1'],
+	[61, 'parameters_repeat1'],
+	[62, 'list_repeat1'],
+	[63, 'grouping_repeat1'],
+	[64, 'named_node_group_children_repeat1']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -264,8 +280,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lparen;
 		case 'rparen':
 			return TSKindId.Rparen;
-		case 'missing_keyword':
-			return TSKindId.MissingKeyword;
+		case 'MISSING_keyword':
+			return TSKindId.MISSINGKeyword;
 		case 'colon':
 			return TSKindId.Colon;
 		case 'bang':
@@ -284,6 +300,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Space;
 		case '_newline':
 			return TSKindId.Newline;
+		case '_blankline':
+			return TSKindId.Blankline;
+		case '_double_blankline':
+			return TSKindId.DoubleBlankline;
+		case '_indent':
+			return TSKindId.Indent;
+		case '_dedent':
+			return TSKindId.Dedent;
 		case 'program':
 			return TSKindId.Program;
 		case 'definition':
@@ -373,7 +397,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case 'MISSING':
-			return TSKindId.MissingKeyword;
+			return TSKindId.MISSINGKeyword;
 		case ':':
 			return TSKindId.Colon;
 		case '!':
@@ -389,8 +413,20 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
-export type SpacingArm = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
-export type WhitespaceArm = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type SpacingArm =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleBlankline;
+export type WhitespaceArm =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleBlankline
+	| TSKindId.Indent
+	| TSKindId.Dedent;
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
@@ -440,7 +476,11 @@ export enum NamedNodeGroupKind {
 export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
-	Newline = '_newline'
+	Newline = '_newline',
+	Blankline = '_blankline',
+	DoubleBlankline = '_double_blankline',
+	Indent = '_indent',
+	Dedent = '_dedent'
 }
 
 // Node types — concrete interfaces
@@ -652,6 +692,10 @@ export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Newline = TSKindId.Newline;
+export type Blankline = TSKindId.Blankline;
+export type DoubleBlankline = TSKindId.DoubleBlankline;
+export type Indent = TSKindId.Indent;
+export type Dedent = TSKindId.Dedent;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
@@ -691,8 +735,20 @@ export interface SpaceTree extends AnyTreeNode {
 export interface NewlineTree extends AnyTreeNode {
 	readonly type: '_newline';
 }
-export interface MissingKeywordTree extends AnyTreeNode {
-	readonly type: 'missing_keyword';
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
+}
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
+}
+export interface MISSINGKeywordTree extends AnyTreeNode {
+	readonly type: 'MISSING_keyword';
 }
 export interface UnderscoreTree extends AnyTreeNode {
 	readonly type: 'underscore';
@@ -729,9 +785,16 @@ export type NamedNodeGroup = NamedNodeGroupChildren | NamedNodeGroupAnchoredLast
 
 export type NamedNodeGroupTree = NamedNodeGroupChildrenTree | NamedNodeGroupAnchoredLastTree;
 
-export type Whitespace = Tight | Space | Newline;
+export type Whitespace = Tight | Space | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
-export type WhitespaceTree = TightTree | SpaceTree | NewlineTree;
+export type WhitespaceTree =
+	| TightTree
+	| SpaceTree
+	| NewlineTree
+	| BlanklineTree
+	| DoubleBlanklineTree
+	| IndentTree
+	| DedentTree;
 
 export namespace Definition {
 	export type Kind = 'definition';
@@ -821,16 +884,20 @@ export interface OptionsHintMap {
 export namespace Program {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
 			readonly definitions?: {
-				readonly anonymousNode?: { readonly after?: SpacingArm };
-				readonly fieldDefinition?: { readonly after?: SpacingArm };
-				readonly grouping?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNodePlain?: { readonly after?: SpacingArm };
-				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
-				readonly predicate?: { readonly after?: SpacingArm };
+				readonly anonymousNode?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly fieldDefinition?: { readonly after?: WhitespaceArm };
+				readonly grouping?: { readonly after?: WhitespaceArm };
+				readonly list?: { readonly after?: WhitespaceArm };
+				readonly missingNode?: { readonly after?: WhitespaceArm };
+				readonly namedNodePlain?: { readonly after?: WhitespaceArm };
+				readonly namedNodeSupertyped?: { readonly after?: WhitespaceArm };
+				readonly predicate?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
 			};
 		};
 	}
@@ -838,29 +905,33 @@ export namespace Program {
 
 export namespace Capture {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
 export namespace String {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
 export namespace ImmediateString {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
 	}
 }
 
 export namespace Parameters {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
 			readonly elements?: {
-				readonly capture?: { readonly after?: SpacingArm };
+				readonly capture?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
 				readonly separator?: SpacingArm;
-				readonly string?: { readonly after?: SpacingArm };
+				readonly start?: WhitespaceArm;
+				readonly string?: { readonly after?: WhitespaceArm };
 			};
 		};
 	}
@@ -869,22 +940,22 @@ export namespace Parameters {
 export namespace List {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
 			readonly definitions?: {
-				readonly anonymousNode?: { readonly after?: SpacingArm };
-				readonly fieldDefinition?: { readonly after?: SpacingArm };
-				readonly grouping?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNodePlain?: { readonly after?: SpacingArm };
-				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
-				readonly predicate?: { readonly after?: SpacingArm };
+				readonly anonymousNode?: { readonly after?: WhitespaceArm };
+				readonly fieldDefinition?: { readonly after?: WhitespaceArm };
+				readonly grouping?: { readonly after?: WhitespaceArm };
+				readonly list?: { readonly after?: WhitespaceArm };
+				readonly missingNode?: { readonly after?: WhitespaceArm };
+				readonly namedNodePlain?: { readonly after?: WhitespaceArm };
+				readonly namedNodeSupertyped?: { readonly after?: WhitespaceArm };
+				readonly predicate?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
 			};
-			readonly lbrack?: { readonly after?: SpacingArm };
-			readonly rbrack?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -892,15 +963,15 @@ export namespace List {
 export namespace Grouping {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
 			readonly groupingGroup?: {
-				readonly groupingGroup?: { readonly after?: SpacingArm };
+				readonly groupingGroup?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
 			};
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -908,12 +979,17 @@ export namespace Grouping {
 export namespace MissingNode {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly missingKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly MISSINGKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: {
+				readonly capture?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -921,10 +997,15 @@ export namespace MissingNode {
 export namespace AnonymousNode {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
-			readonly underscore?: { readonly after?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: {
+				readonly capture?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly underscore?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -932,9 +1013,9 @@ export namespace AnonymousNode {
 export namespace FieldDefinition {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -942,9 +1023,9 @@ export namespace FieldDefinition {
 export namespace NegatedField {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly bang?: { readonly after?: SpacingArm };
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
 		};
 	}
 }
@@ -952,12 +1033,12 @@ export namespace NegatedField {
 export namespace Predicate {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly after?: SpacingArm };
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly pound?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm };
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly pound?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -965,9 +1046,9 @@ export namespace Predicate {
 export namespace GroupExpressionArm {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -975,28 +1056,33 @@ export namespace GroupExpressionArm {
 export namespace NamedNodeExpressionArm {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
 
 export namespace GroupingGroup {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
 export namespace NamedNodePlain {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly underscore?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: {
+				readonly capture?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly underscore?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -1004,11 +1090,16 @@ export namespace NamedNodePlain {
 export namespace NamedNodeSupertyped {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
-			readonly lparen?: { readonly after?: SpacingArm };
-			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly content?: {
+				readonly capture?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -1016,20 +1107,22 @@ export namespace NamedNodeSupertyped {
 export namespace NamedNodeGroupChildren {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
 			readonly namedNodeExpressions?: {
-				readonly anonymousNode?: { readonly after?: SpacingArm };
-				readonly fieldDefinition?: { readonly after?: SpacingArm };
-				readonly grouping?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNodeExpressionArm?: { readonly after?: SpacingArm };
-				readonly namedNodePlain?: { readonly after?: SpacingArm };
-				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
-				readonly negatedField?: { readonly after?: SpacingArm };
-				readonly predicate?: { readonly after?: SpacingArm };
+				readonly anonymousNode?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly fieldDefinition?: { readonly after?: WhitespaceArm };
+				readonly grouping?: { readonly after?: WhitespaceArm };
+				readonly list?: { readonly after?: WhitespaceArm };
+				readonly missingNode?: { readonly after?: WhitespaceArm };
+				readonly namedNodeExpressionArm?: { readonly after?: WhitespaceArm };
+				readonly namedNodePlain?: { readonly after?: WhitespaceArm };
+				readonly namedNodeSupertyped?: { readonly after?: WhitespaceArm };
+				readonly negatedField?: { readonly after?: WhitespaceArm };
+				readonly predicate?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
 			};
 		};
 	}
@@ -1038,21 +1131,23 @@ export namespace NamedNodeGroupChildren {
 export namespace NamedNodeGroupAnchoredLast {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: SpacingArm;
-			readonly before?: SpacingArm;
-			readonly dot?: { readonly before?: SpacingArm };
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly before?: WhitespaceArm };
 			readonly namedNodeExpressions?: {
-				readonly anonymousNode?: { readonly after?: SpacingArm };
-				readonly fieldDefinition?: { readonly after?: SpacingArm };
-				readonly grouping?: { readonly after?: SpacingArm };
-				readonly list?: { readonly after?: SpacingArm };
-				readonly missingNode?: { readonly after?: SpacingArm };
-				readonly namedNodeExpressionArm?: { readonly after?: SpacingArm };
-				readonly namedNodePlain?: { readonly after?: SpacingArm };
-				readonly namedNodeSupertyped?: { readonly after?: SpacingArm };
-				readonly negatedField?: { readonly after?: SpacingArm };
-				readonly predicate?: { readonly after?: SpacingArm };
+				readonly anonymousNode?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly fieldDefinition?: { readonly after?: WhitespaceArm };
+				readonly grouping?: { readonly after?: WhitespaceArm };
+				readonly list?: { readonly after?: WhitespaceArm };
+				readonly missingNode?: { readonly after?: WhitespaceArm };
+				readonly namedNodeExpressionArm?: { readonly after?: WhitespaceArm };
+				readonly namedNodePlain?: { readonly after?: WhitespaceArm };
+				readonly namedNodeSupertyped?: { readonly after?: WhitespaceArm };
+				readonly negatedField?: { readonly after?: WhitespaceArm };
+				readonly predicate?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
 			};
 		};
 	}
@@ -1061,9 +1156,9 @@ export namespace NamedNodeGroupAnchoredLast {
 export namespace Quantifier {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly plus?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly qmark?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly star?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly plus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly star?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -1071,8 +1166,8 @@ export namespace Quantifier {
 export namespace PredicateType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly bang?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly qmark?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
 	}
 }
@@ -1323,6 +1418,15 @@ export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
+export interface DoubleBlanklineNs extends KeywordNs<
+	TSKindId.DoubleBlankline,
+	'\n\n\n',
+	DoubleBlanklineTree,
+	'_double_blankline'
+> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', IndentTree, '_indent'> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', DedentTree, '_dedent'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
 export interface ImmediateIdentifierNs extends LeafNs<
 	ImmediateIdentifier,
@@ -1358,6 +1462,10 @@ export interface NamespaceMap {
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Newline]: NewlineNs;
+	[TSKindId.Blankline]: BlanklineNs;
+	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
 }
@@ -1816,6 +1924,46 @@ export namespace Newline {
 	export type LooseArgs = NewlineNs['LooseArgs'];
 	export type Tree = NewlineNs['Tree'];
 	export type Kind = '_newline';
+}
+export namespace Blankline {
+	export type Config = BlanklineNs['Config'];
+	export type Built = BlanklineNs['Built'];
+	export type Loose = BlanklineNs['Loose'];
+	export type LooseConfig = BlanklineNs['LooseConfig'];
+	export type BuildArgs = BlanklineNs['BuildArgs'];
+	export type LooseArgs = BlanklineNs['LooseArgs'];
+	export type Tree = BlanklineNs['Tree'];
+	export type Kind = '_blankline';
+}
+export namespace DoubleBlankline {
+	export type Config = DoubleBlanklineNs['Config'];
+	export type Built = DoubleBlanklineNs['Built'];
+	export type Loose = DoubleBlanklineNs['Loose'];
+	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
+	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
+	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
+	export type Tree = DoubleBlanklineNs['Tree'];
+	export type Kind = '_double_blankline';
+}
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Built = IndentNs['Built'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Tree = IndentNs['Tree'];
+	export type Kind = '_indent';
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Built = DedentNs['Built'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Tree = DedentNs['Tree'];
+	export type Kind = '_dedent';
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];

@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::{ResolvedOptions, NO_SITE};
 
-pub const SPACING_SITE_COUNT: usize = 975;
+pub const SPACING_SITE_COUNT: usize = 970;
 pub const DELIMITER_SITE_COUNT: usize = 20;
 
 pub const SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE: usize = 0;
@@ -931,55 +931,50 @@ pub const SITE_TYPES_TYPE_UNARY_OPERATOR_AFTER: usize = 922;
 pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 923;
 pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 924;
 pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 925;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 926;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 927;
-pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE: usize = 928;
-pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER: usize = 929;
-pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE: usize = 930;
-pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER: usize = 931;
-pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE: usize = 932;
-pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER: usize = 933;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 934;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 935;
-pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 936;
-pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 937;
-pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 938;
-pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 939;
-pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 940;
-pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 941;
-pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 942;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 943;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 944;
-pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 945;
-pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 946;
-pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 947;
-pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 948;
-pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 949;
-pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 950;
-pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 951;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 952;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 953;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 954;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 955;
-pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 956;
-pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 957;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 958;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 959;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 960;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 961;
-pub const SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER: usize = 962;
-pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 963;
-pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 964;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 965;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 966;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 967;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 968;
-pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 969;
-pub const SITE_YIELD_YIELD_BEFORE: usize = 970;
-pub const SITE_YIELD_YIELD_AFTER: usize = 971;
-pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 972;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 973;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 974;
+pub const SITE_UNARY_OPERATOR_OPERATOR_AFTER: usize = 926;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 927;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 928;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 929;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 930;
+pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 931;
+pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 932;
+pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 933;
+pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 934;
+pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 935;
+pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 936;
+pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 937;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 938;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 939;
+pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 940;
+pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 941;
+pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 942;
+pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 943;
+pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 944;
+pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 945;
+pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 946;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 947;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 948;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 949;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 950;
+pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 951;
+pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 952;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 953;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 954;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 955;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 956;
+pub const SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER: usize = 957;
+pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 958;
+pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 959;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 960;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 961;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 962;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 963;
+pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 964;
+pub const SITE_YIELD_YIELD_BEFORE: usize = 965;
+pub const SITE_YIELD_YIELD_AFTER: usize = 966;
+pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 967;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 968;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 969;
 pub const DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT: usize = 0;
 pub const DELIM_CASE_PATTERNS_CASE_PATTERN: usize = 1;
 pub const DELIM_COLLECTION_ELEMENTS_ELEMENT: usize = 2;
@@ -1929,14 +1924,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("types", "type_union_type_after", "union_type_after", &[120, 121, 113, 122, 123]),
     ("types", "type_separator_space_before", "comma_separator_space_before", &[120, 121, 113, 122, 123]),
     ("types", "type_separator_space_after", "comma_separator_space_after", &[120, 121, 113, 122, 123]),
+    ("unary_operator", "operator_after", "operator_after", &[120, 121, 113, 122, 123]),
     ("unary_operator", "unary_operator_before", "unary_operator_before", &[120, 121, 113, 122, 123]),
     ("unary_operator", "unary_operator_after", "unary_operator_after", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "plus_before", "plus_before", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "plus_after", "plus_after", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "dash_before", "dash_before", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "dash_after", "dash_after", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "tilde_before", "tilde_before", &[120, 121, 113, 122, 123]),
-    ("unary_operator_operator", "tilde_after", "tilde_after", &[120, 121, 113, 122, 123]),
     ("union_pattern", "patterns_case_list_pattern_after", "case_list_pattern_after", &[120, 121, 113, 122, 123]),
     ("union_pattern", "patterns_case_tuple_pattern_after", "case_tuple_pattern_after", &[120, 121, 113, 122, 123]),
     ("union_pattern", "patterns_class_pattern_after", "class_pattern_after", &[120, 121, 113, 122, 123]),
@@ -2000,11 +1990,11 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 577, after: 578 },
     ::sittir_core::options::EdgeSite { before: 152, after: 153 },
     ::sittir_core::options::EdgeSite { before: 465, after: 466 },
-    ::sittir_core::options::EdgeSite { before: 952, after: 953 },
+    ::sittir_core::options::EdgeSite { before: 947, after: 948 },
     ::sittir_core::options::EdgeSite { before: 865, after: 866 },
     ::sittir_core::options::EdgeSite { before: 295, after: 296 },
     ::sittir_core::options::EdgeSite { before: 420, after: 421 },
-    ::sittir_core::options::EdgeSite { before: 967, after: 968 },
+    ::sittir_core::options::EdgeSite { before: 962, after: 963 },
     ::sittir_core::options::EdgeSite { before: 477, after: 478 },
     ::sittir_core::options::EdgeSite { before: 612, after: 613 },
     ::sittir_core::options::EdgeSite { before: 565, after: 566 },
@@ -2038,13 +2028,13 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 604, after: 605 },
     ::sittir_core::options::EdgeSite { before: 141, after: 142 },
     ::sittir_core::options::EdgeSite { before: 124, after: 125 },
-    ::sittir_core::options::EdgeSite { before: 926, after: 927 },
+    ::sittir_core::options::EdgeSite { before: 927, after: 928 },
     ::sittir_core::options::EdgeSite { before: 211, after: 212 },
     ::sittir_core::options::EdgeSite { before: 541, after: 542 },
     ::sittir_core::options::EdgeSite { before: 546, after: 547 },
     ::sittir_core::options::EdgeSite { before: 91, after: 92 },
     ::sittir_core::options::EdgeSite { before: 635, after: 636 },
-    ::sittir_core::options::EdgeSite { before: 970, after: 971 },
+    ::sittir_core::options::EdgeSite { before: 965, after: 966 },
     ::sittir_core::options::EdgeSite { before: 89, after: 90 },
     ::sittir_core::options::EdgeSite { before: 826, after: 827 },
     ::sittir_core::options::EdgeSite { before: 782, after: 783 },
@@ -2052,7 +2042,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 892, after: 893 },
     ::sittir_core::options::EdgeSite { before: 792, after: 793 },
     ::sittir_core::options::EdgeSite { before: 490, after: 491 },
-    ::sittir_core::options::EdgeSite { before: 947, after: 948 },
+    ::sittir_core::options::EdgeSite { before: 942, after: 943 },
     ::sittir_core::options::EdgeSite { before: 236, after: 237 },
     ::sittir_core::options::EdgeSite { before: 581, after: 582 },
     ::sittir_core::options::EdgeSite { before: 532, after: 533 },
@@ -2085,12 +2075,12 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 75, after: 76 },
     ::sittir_core::options::EdgeSite { before: 79, after: 80 },
     ::sittir_core::options::EdgeSite { before: 85, after: 86 },
-    ::sittir_core::options::EdgeSite { before: 958, after: 959 },
+    ::sittir_core::options::EdgeSite { before: 953, after: 954 },
     ::sittir_core::options::EdgeSite { before: 572, after: 573 },
     ::sittir_core::options::EdgeSite { before: 858, after: 859 },
     ::sittir_core::options::EdgeSite { before: 856, after: 857 },
     ::sittir_core::options::EdgeSite { before: 214, after: 215 },
-    ::sittir_core::options::EdgeSite { before: 973, after: 974 },
+    ::sittir_core::options::EdgeSite { before: 968, after: 969 },
 ];
 
 /// Per kind id, its row in EDGE_SITES.
@@ -3107,12 +3097,7 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
@@ -3737,13 +3722,13 @@ pub static SEATS_UNION_PATTERN_PATTERNS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 939, NO_SITE, NO_SITE, 941, 936, 937, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 934, NO_SITE, NO_SITE, 936, 931, 932, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 938, 942, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, 933, 937, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    935, 934, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 940,
+    930, 929, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 935,
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -6321,19 +6306,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "unaryOperator", path: "(unary_operator)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER, path: "(unary_operator)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE, path: "(unary_operator)/before" }] },
-    ] },
-    ::sittir_core::options::AddressNode::Branch { key: "unaryOperatorOperator", path: "(unary_operator_operator)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "dash", path: "(unary_operator_operator)/\"-\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER, path: "(unary_operator_operator)/\"-\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE, path: "(unary_operator_operator)/\"-\"/before" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "plus", path: "(unary_operator_operator)/\"+\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER, path: "(unary_operator_operator)/\"+\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE, path: "(unary_operator_operator)/\"+\"/before" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "tilde", path: "(unary_operator_operator)/\"~\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER, path: "(unary_operator_operator)/\"~\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE, path: "(unary_operator_operator)/\"~\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(unary_operator)/operator:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_OPERATOR_OPERATOR_AFTER, path: "(unary_operator)/operator:/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "unionPattern", path: "(union_pattern)", children: &[

@@ -1,7 +1,15 @@
-import { isEmptyBody } from '../types/runtime-shapes.ts';
+import { isBlank, ruleListParts, type RuleListEntry } from '../dsl/rule-patterns.ts';
 
 export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
 	return Object.keys(rules)[0];
+}
+
+export function grammarRootNames(grammar: {
+	readonly rules: Readonly<Record<string, unknown>>;
+	readonly extras: readonly RuleListEntry[];
+}): string[] {
+	const start = rootRuleName(grammar.rules);
+	return [...(start === undefined ? [] : [start]), ...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)];
 }
 
 export function collectSymbolRefs(node: unknown, into: Set<string>): void {
@@ -26,7 +34,7 @@ export function collectOrphanedRules(
 		reachable.add(name);
 		queue.push(name);
 	};
-	const isRoot = (name: string): boolean => !name.startsWith('_') && !isEmptyBody(rules[name]);
+	const isRoot = (name: string): boolean => !name.startsWith('_') && !isBlank(rules[name]);
 	for (const name of Object.keys(rules)) {
 		if (isRoot(name)) enqueue(name);
 	}
@@ -37,4 +45,29 @@ export function collectOrphanedRules(
 		for (const ref of refs) enqueue(ref);
 	}
 	return Object.keys(rules).filter((name) => !isRoot(name) && !reachable.has(name));
+}
+
+export interface OrphanPrune<R> {
+	readonly rules: Record<string, R>;
+	readonly inline: string[];
+	readonly conflicts: string[][];
+	readonly pruned: readonly string[];
+}
+
+export function pruneOrphanedRules<R>(
+	grammar: {
+		readonly rules: Readonly<Record<string, R>>;
+		readonly inline?: readonly string[];
+		readonly conflicts?: readonly (readonly string[])[];
+	},
+	protectedNames: ReadonlySet<string>
+): OrphanPrune<R> {
+	const pruned = collectOrphanedRules(grammar.rules, protectedNames);
+	const dead = new Set(pruned);
+	return {
+		rules: Object.fromEntries(Object.entries(grammar.rules).filter(([name]) => !dead.has(name))),
+		inline: (grammar.inline ?? []).filter((name) => !dead.has(name)),
+		conflicts: (grammar.conflicts ?? []).filter((pair) => !pair.some((name) => dead.has(name))).map((pair) => [...pair]),
+		pruned
+	};
 }

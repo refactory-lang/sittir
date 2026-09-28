@@ -16,6 +16,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, RawGrammar, RefineForm } from '../../compiler/types.ts';
 import { link } from '../../compiler/link.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -24,7 +25,7 @@ import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
 import { emitRefinesOverlay } from '../overlays/refines.ts';
-import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -218,24 +219,37 @@ describe('link-refine — validateRefineForms', () => {
 		expect(() => link(raw)).not.toThrow();
 	});
 
-	it('throws when a path does not resolve to a choice', () => {
-		const raw = makeRefineRaw([{ name: 'curly', selections: { 'nonexistent:': '{' } }]);
-		expect(() => link(raw)).toThrow(/does not match any field/);
+	const refineRecords = (forms: RefineForm[]) => {
+		const diagnostics = new DiagnosticSink();
+		const linked = link(makeRefineRaw(forms), { diagnostics });
+		return { linked, messages: diagnostics.all().filter((d) => d.code === 'refine-config-invalid').map((d) => d.message) };
+	};
+
+	it('records refine-config-invalid when a path does not resolve to a choice', () => {
+		expect(refineRecords([{ name: 'curly', selections: { 'nonexistent:': '{' } }]).messages).toEqual([
+			expect.stringMatching(/does not match any field/)
+		]);
 	});
 
-	it('throws when a string selection does not match any branch literal', () => {
-		const raw = makeRefineRaw([{ name: 'curly', selections: { 'opening:': '<bogus>' } }]);
-		expect(() => link(raw)).toThrow(/selection '<bogus>' does not match/);
+	it('records refine-config-invalid when a string selection does not match any branch literal', () => {
+		expect(refineRecords([{ name: 'curly', selections: { 'opening:': '<bogus>' } }]).messages).toEqual([
+			expect.stringMatching(/selection '<bogus>' does not match/)
+		]);
 	});
 
-	it('throws when an index selection is out of range', () => {
-		const raw = makeRefineRaw([{ name: 'curly', selections: { 'opening:': 5 } }]);
-		expect(() => link(raw)).toThrow(/out of range/);
+	it('records refine-config-invalid when an index selection is out of range', () => {
+		expect(refineRecords([{ name: 'curly', selections: { 'opening:': 5 } }]).messages).toEqual([
+			expect.stringMatching(/out of range/)
+		]);
 	});
 
-	it('throws with path + form + kind context in the message', () => {
-		const raw = makeRefineRaw([{ name: 'funky', selections: { 'opening:': '<bogus>' } }]);
-		expect(() => link(raw)).toThrow(/refine\(iface_body\) form 'funky': path 'opening:'/);
+	it('names the kind, form and path, skips the invalid form and keeps the valid ones', () => {
+		const { linked, messages } = refineRecords([
+			{ name: 'funky', selections: { 'opening:': '<bogus>' } },
+			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }
+		]);
+		expect(messages).toEqual([expect.stringMatching(/refine\(iface_body\) form 'funky': path 'opening:'/)]);
+		expect(linked.refineForms?.get('iface_body')?.map((form) => form.name)).toEqual(['curly']);
 	});
 });
 

@@ -1277,19 +1277,28 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_space"
+            "name": "_newline"
           },
           "named": true,
-          "value": "space"
+          "value": "newline"
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_newline"
+            "name": "_blankline"
           },
           "named": true,
-          "value": "newline"
+          "value": "blankline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_double_blankline"
+          },
+          "named": true,
+          "value": "double_blankline"
         }
       ]
     },
@@ -1538,11 +1547,15 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_space"
+      "name": "_newline"
     },
     {
       "type": "SYMBOL",
-      "name": "_newline"
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
     }
   ],
   "inline": [

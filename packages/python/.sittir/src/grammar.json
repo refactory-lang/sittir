@@ -7974,14 +7974,6 @@
           },
           "named": true,
           "value": "double_blankline"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_indent"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_dedent"
         }
       ]
     },

@@ -35,7 +35,7 @@ describe('enrich: token forms', () => {
 		const rule = token(seq(P('[0-9]+'), choice(choice(S('u8'), S('i8')), { type: 'BLANK' })));
 		const out = enrich(grammarWith({ suffixed: rule }));
 		expect(rulesOf(out).suffixed.type).toBe('TOKEN');
-		expect((out as any).supertypes).toEqual([]);
+		expect((out as any).supertypes).toEqual(['_whitespace']);
 	});
 
 	it('appends to a function-valued supertypes list', () => {
@@ -55,13 +55,13 @@ describe('enrich: token forms', () => {
 		const grammar = { ...grammarWith({ number: token(numberBody()) }), word: ($: any) => $.number };
 		const out = enrich(grammar);
 		expect(rulesOf(out).number.type).toBe('TOKEN');
-		expect((out as any).supertypes).toEqual([]);
+		expect((out as any).supertypes).toEqual(['_whitespace']);
 	});
 
 	it('leaves a rule the grammar declares as an external token alone', () => {
 		const grammar = { ...grammarWith({ number: token(numberBody()) }), externals: ($: any) => [$.number] };
 		const out = enrich(grammar);
 		expect(rulesOf(out).number.type).toBe('TOKEN');
-		expect((out as any).supertypes).toEqual([]);
+		expect((out as any).supertypes).toEqual(['_whitespace']);
 	});
 });

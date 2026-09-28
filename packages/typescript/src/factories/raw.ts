@@ -4640,7 +4640,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[356], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[357], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	return withMethods(
 		withAccessors(
@@ -9756,6 +9756,10 @@ export function buildBlankline(): TSKindId.Blankline {
 	return TSKindId.Blankline;
 }
 
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
 export function buildIndent(): TSKindId.Indent {
 	return TSKindId.Indent;
 }
@@ -10581,6 +10585,7 @@ export type FluentKindMap = {
 	_space: T.Space;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	_ternary_qmark: T.TernaryQmark;
@@ -10834,6 +10839,7 @@ export const _factoryMap = {
 	_space: buildSpace,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	_ternary_qmark: buildTernaryQmark,

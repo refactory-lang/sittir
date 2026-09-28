@@ -178,9 +178,14 @@ Reference: [glossary/dsl.md](glossary/dsl.md).
 
 `evaluate(entryPath)` executes the grammar DSL (grammar.js or
 grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,
-`transform()`) and produces a `RawGrammar`. The DSL constructors normalize
-as they build (degenerate-nesting collapse, `choice(x, blank())` →
-optional, all-string choices → enum, comma-separated seq lift). Inline
+`transform()`) and produces a `RawGrammar`. The DSL constructors build
+the shapes tree-sitter's DSL builds — the one rewrite is
+`choice(x, blank())` → `optional(x)`, the same language; `isBlank`,
+`optionalContentOf` and `isImmediateToken` (dsl/rule-patterns.ts) read each
+representation pair as one shape. `evaluate` then crosses the compile
+boundary (`compiler/canonical-rules.ts`): precedence wrappers are peeled,
+immediate tokens folded and degenerate nesting collapsed, once, into the
+canonical shape the later phases read. Inline
 alias content is not rewritten here: enrich (Phase 0) distributes an alias
 over a choice and mints the storage of an alias over literals, and
 field-enum synthesis is enrich's job too, so the same rule tree-sitter
@@ -327,16 +332,29 @@ Reference: [glossary/emitters.md](glossary/emitters.md).
 
 ## Diagnostics
 
-Compiler diagnostics flow through a shared sink
-(`compiler/diagnostics/grammar-diagnostics.ts`) and are persisted per
-grammar to `packages/<lang>/.sittir/grammar-diagnostics.json` (committed,
-so drift shows up in review). Notable codes: `kindid-unstamped-*` (the
-phantom-kind inventory — see Link), `parsekind-noninjective`,
-`seq-with-nested-seq`, `typename-collision`. Inspect via
-`sittir tool grammar-diagnostics`.
+Two vocabularies, kept apart. **Grammar diagnostics**
+(`compiler/diagnostics/grammar-diagnostics.ts`) report shapes and
+declarations the grammar's author resolves; each carries its code's
+intrinsic `canProceed`, and they are persisted per grammar to
+`packages/<lang>/.sittir/grammar-diagnostics.json` (committed, so drift
+shows up in review). `compile.ts::compileGrammar` gates them twice through
+`assertGatePasses`: the evaluate-time records before link, so a grammar
+tree-sitter rejects is never linked, and the shape records after assemble.
+The grammar's `expectDiagnostics:` floors, per code and per owner, apply
+only at the gate. Inspect via `sittir tool grammar-diagnostics`.
+
+**Compiler diagnostics** go to the phase sink (`DiagnosticSink`) and print
+in the gen log. A compiler invariant (a fixpoint that never converges, an
+alias target the parser never mints, a `factoryInline` kind with nowhere
+to nest, a hydrate-time reference to an absent kind) is a throw in the
+phase that owns it, not a diagnostic. An automatic type-name rename is a
+naming event (`AssembledNodeMap.namingEvents`), printed in the gen log as
+`[naming]` lines.
 
 `kindid-unstamped-symbols`/`kindid-unstamped-literals` (`link.ts`'s
-`reportKindIdStampMisses`) are `warning`-severity, promoted from `info`: a
+`reportKindIdStampMisses`) are compiler warnings, not grammar diagnostics:
+they compare sittir's kinds with the parser's ids, and the phantom-kind
+ratchet gates the count. A
 stamp miss means a referenced kind or literal never resolved a parser
 kindId — visible now instead of deferring the gap to a native "unknown
 kind id" render error, per the invariant's end-state goal. They report the

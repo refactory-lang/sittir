@@ -48,7 +48,7 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 	return Array.from({ length: 128 }, (_, i) => isWord(String.fromCharCode(i)));
 }
 
-function ruleToRegexSource(rule: AnyRule): string | null {
+export function ruleToRegexSource(rule: AnyRule): string | null {
 	const shaped = rule as {
 		value?: string;
 		content?: AnyRule;

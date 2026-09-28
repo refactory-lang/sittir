@@ -336,7 +336,16 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	inline_flags_group: new Set(['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable']),
 	_character_escape: new Set(['control_escape', 'control_letter_escape', 'identity_escape']),
-	_whitespace: new Set(['_tight', 'tight', '_space', 'space', '_newline', 'newline'])
+	_whitespace: new Set([
+		'_tight',
+		'tight',
+		'_newline',
+		'newline',
+		'_blankline',
+		'blankline',
+		'_double_blankline',
+		'double_blankline'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -817,7 +826,7 @@ export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeH
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkpLt]),
+						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkPLt]),
 					'content',
 					true,
 					data.$type,
@@ -1151,8 +1160,8 @@ export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '^': 53, $: 4, '\\b': 5, '\\B': 6, '.': 2 },
-				{ 3: 53 }
+				{ '^': 54, $: 4, '\\b': 5, '\\B': 6, '.': 2 },
+				{ 3: 54 }
 			),
 			_quantifier: normalizeSingularWrapSlot(data._quantifier, 'quantifier', false, data.$type, {
 				tree,
@@ -1562,8 +1571,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
 	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
-	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
 	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
 	[TSKindId.Lazy]: (d, t) => wrapLazy(_aliasEnvelope(d, t) as unknown as T.Lazy, t),
 	[TSKindId.UnicodePropertyName]: (d, t) =>
 		wrapUnicodePropertyName(_aliasEnvelope(d, t) as unknown as T.UnicodePropertyName, t)
@@ -1649,8 +1659,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.InlineFlagsGroupToggle]: ReturnType<typeof wrapInlineFlagsGroupToggle>;
 	[TSKindId.InlineFlagsGroupDisable]: ReturnType<typeof wrapInlineFlagsGroupDisable>;
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
-	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
 	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
+	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
+	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
 	[TSKindId.Lazy]: ReturnType<typeof wrapLazy>;
 	[TSKindId.UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
 }
