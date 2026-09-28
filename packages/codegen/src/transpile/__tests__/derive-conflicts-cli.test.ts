@@ -62,16 +62,18 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			sourceChains: [['bogus']],
 			conflict: { symbolSequence: [], lookahead: '', interpretations: ['bogus'] }
 		};
+		const generate = async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
+			writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
+			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
+			return parseGenerateOutcome(run.status, run.stderr);
+		};
 		const result = await reuseOrDeriveConflictResolutions({
 			saved: { grammarHash: 'h', resolutions: [bogus] },
 			grammarHash: 'h',
 			ruleCount: 4,
 			upstream: { upstreamConflicts: [], sourceEdges: {} },
-			generate: async (resolutions): Promise<GenerateOutcome> => {
-				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
-				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
-				return parseGenerateOutcome(run.status, run.stderr);
-			}
+			generate,
+			generateSaved: () => generate([bogus])
 		});
 		expect(result).toMatchObject({ kind: 'stale', outcome: { kind: 'error' } });
 	});

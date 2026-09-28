@@ -477,7 +477,7 @@ resolution list.
 ```text
 Skips the derivation when nothing it depends on changed. When the saved
 resolutions carry the evaluated grammar's hash, they are tried in a single
-`generate`; a clean run is `reused`. Any failure of that run, a conflict or a
+`generate` (`generateSaved`, which runs them without writing them); a clean run is `reused`. Any failure of that run, a conflict or a
 build error such as a rule the set names that does not exist, is `stale`
 with the failed outcome, not a cue to derive again: the hash covers every input of the derivation, so the
 saved file was edited by hand or the hash misses an input, and either has to
@@ -595,18 +595,24 @@ read, and throws `GrammarDiagnosticError`.
 ### `packages/codegen/src/transpile/conflict-driver.ts::ConflictResolutionsStore`
 
 ```text
-Where a package's resolutions are read from and written to. The package's
-store writes `resolutions.json` and re-bundles, since the bundle inlines it.
+Where a package's resolutions are read from and written to, and how its
+grammar is bundled for a `generate`. The package's store writes
+`resolutions.json` and re-bundles, since the bundle inlines it; `bundle`
+alone re-bundles for the reuse probe, which never writes.
 ```
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::settleConflictResolutions`
 
 ```text
-Reuses the saved resolutions or derives new ones against a store. Every probe
-writes its candidate set with `UNVERIFIED_GRAMMAR_HASH`; only a `reused` or
-`converged` result is stamped with the grammar hash, once, after its clean
-run. A derivation that fails or throws therefore leaves an unverified file,
-and the next run derives again instead of reporting the partial set stale.
+Reuses the saved resolutions or derives new ones against a store. The reuse
+probe leaves the saved file untouched: it bundles and generates, so a stale
+set stays stamped and keeps failing on every run until someone intervenes,
+rather than a rerun re-deriving and hiding an input the hash misses. Every
+derivation probe writes its candidate set with `UNVERIFIED_GRAMMAR_HASH`, and
+only a `converged` result is stamped with the grammar hash, once, after its
+clean run. A derivation that fails or throws therefore leaves an unverified
+file, and the next run derives again instead of reporting the partial set
+stale.
 ```
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`

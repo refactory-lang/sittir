@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
+import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile, type DerivedResolution } from '../../dsl/conflict-resolutions.ts';
 import type { ConflictReport, GenerateOutcome } from '../conflict-summary.ts';
 import { settleConflictResolutions, type ConflictResolutionsStore } from '../conflict-driver.ts';
 import type { DerivationInputs } from '../evaluate-for-derivation.ts';
@@ -13,15 +13,22 @@ function reportFor(a: string, b: string): ConflictReport {
 	};
 }
 
-function memoryStore(initial: ConflictResolutionsFile): ConflictResolutionsStore & { readonly writes: ConflictResolutionsFile[] } {
+function memoryStore(
+	initial: ConflictResolutionsFile
+): ConflictResolutionsStore & { readonly writes: ConflictResolutionsFile[]; readonly bundles: { count: number } } {
 	const writes: ConflictResolutionsFile[] = [];
+	const bundles = { count: 0 };
 	let current = initial;
 	return {
 		writes,
+		bundles,
 		read: () => current,
 		write: async (file) => {
 			writes.push(file);
 			current = file;
+		},
+		bundle: async () => {
+			bundles.count++;
 		}
 	};
 }
@@ -59,12 +66,30 @@ describe('settleConflictResolutions', () => {
 		expect(store.read().grammarHash).toBe('h1');
 	});
 
-	it('keeps the stamp when the saved set is reused', async () => {
-		const settled = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
-		await settleConflictResolutions({ store: settled, inputs, runGenerate: async () => ({ kind: 'clean' }) });
-		const store = memoryStore(settled.read());
+	it('leaves a reused set untouched: no write, only a bundle for its one generate', async () => {
+		const saved: ConflictResolutionsFile = { grammarHash: 'h1', resolutions: [] };
+		const store = memoryStore(saved);
 		const result = await settleConflictResolutions({ store, inputs, runGenerate: async () => ({ kind: 'clean' }) });
 		expect(result).toMatchObject({ kind: 'reused' });
-		expect(store.read()).toEqual({ grammarHash: 'h1', resolutions: [] });
+		expect(store.writes).toEqual([]);
+		expect(store.bundles.count).toBe(1);
+		expect(store.read()).toBe(saved);
+	});
+
+	it('keeps a stale saved set stale on every run until someone intervenes', async () => {
+		const bogus: DerivedResolution = {
+			resolution: { kind: 'AddConflict', symbols: ['bogus_rule'] },
+			step: 'default',
+			sourceChains: [['bogus_rule']],
+			conflict: { symbolSequence: [], lookahead: '', interpretations: ['bogus_rule'] }
+		};
+		const saved: ConflictResolutionsFile = { grammarHash: 'h1', resolutions: [bogus] };
+		const store = memoryStore(saved);
+		const runGenerate = async (): Promise<GenerateOutcome> => ({ kind: 'error', summary: { UndefinedSymbol: 'bogus_rule' } });
+		for (const _run of [1, 2]) {
+			expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({ kind: 'stale', outcome: { kind: 'error' } });
+		}
+		expect(store.writes).toEqual([]);
+		expect(store.read()).toBe(saved);
 	});
 });

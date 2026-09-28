@@ -82,10 +82,14 @@ export async function deriveConflictResolutions(input: DerivationInput): Promise
 }
 
 export async function reuseOrDeriveConflictResolutions(
-	input: DerivationInput & { readonly saved: ConflictResolutionsFile; readonly grammarHash: string }
+	input: DerivationInput & {
+		readonly saved: ConflictResolutionsFile;
+		readonly grammarHash: string;
+		readonly generateSaved: () => Promise<GenerateOutcome>;
+	}
 ): Promise<DerivationResult> {
 	if (input.saved.grammarHash === input.grammarHash) {
-		const outcome = await input.generate(input.saved.resolutions);
+		const outcome = await input.generateSaved();
 		if (outcome.kind === 'clean') return { kind: 'reused', resolutions: input.saved.resolutions, iterations: 1 };
 		return { kind: 'stale', outcome, resolutions: input.saved.resolutions };
 	}

@@ -170,14 +170,14 @@ describe('reuseOrDeriveConflictResolutions', () => {
 
 	it('runs a single generate with the saved resolutions when the grammar hash is unchanged', async () => {
 		const { calls, generate } = recordingGenerate([]);
-		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate });
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate, generateSaved: () => generate(saved.resolutions) });
 		expect(result).toEqual({ kind: 'reused', resolutions: saved.resolutions, iterations: 1 });
 		expect(calls).toEqual([[['stale', 'x']]]);
 	});
 
 	it('re-derives from an empty list when the grammar hash changed, dropping stale entries', async () => {
 		const { calls, generate } = recordingGenerate([reportFor('a', 'b')]);
-		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h2', ruleCount: 10, upstream: identity, generate });
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h2', ruleCount: 10, upstream: identity, generate, generateSaved: () => generate(saved.resolutions) });
 		expect(result).toMatchObject({ kind: 'converged', iterations: 2 });
 		expect(result.resolutions.map((entry) => entry.resolution.symbols)).toEqual([['a', 'b']]);
 		expect(calls[0]).toEqual([]);
@@ -185,7 +185,7 @@ describe('reuseOrDeriveConflictResolutions', () => {
 
 	it('reports the saved resolutions stale when they fail to generate under an unchanged hash', async () => {
 		const { calls, generate } = recordingGenerate([reportFor('a', 'b'), reportFor('c', 'd')]);
-		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate });
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate, generateSaved: () => generate(saved.resolutions) });
 		expect(result).toEqual({ kind: 'stale', outcome: { kind: 'conflict', report: reportFor('c', 'd') }, resolutions: saved.resolutions });
 		expect(calls).toEqual([[['stale', 'x']]]);
 	});
@@ -197,7 +197,10 @@ describe('reuseOrDeriveConflictResolutions', () => {
 			grammarHash: 'h1',
 			ruleCount: 10,
 			upstream: identity,
-			generate: async () => ({ kind: 'error', summary })
+			generate: async () => {
+				throw new Error('the reuse path never derives');
+			},
+			generateSaved: async () => ({ kind: 'error', summary })
 		});
 		expect(result).toEqual({ kind: 'stale', outcome: { kind: 'error', summary }, resolutions: saved.resolutions });
 	});

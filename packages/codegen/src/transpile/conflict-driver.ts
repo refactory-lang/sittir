@@ -14,6 +14,7 @@ import { transpileOverrides } from './transpile-overrides.ts';
 export interface ConflictResolutionsStore {
 	read(): ConflictResolutionsFile;
 	write(file: ConflictResolutionsFile): Promise<void>;
+	bundle(): Promise<void>;
 }
 
 export async function settleConflictResolutions(input: {
@@ -30,9 +31,13 @@ export async function settleConflictResolutions(input: {
 		generate: async (resolutions) => {
 			await store.write({ grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions });
 			return input.runGenerate();
+		},
+		generateSaved: async () => {
+			await store.bundle();
+			return input.runGenerate();
 		}
 	});
-	if (result.kind === 'reused' || result.kind === 'converged') {
+	if (result.kind === 'converged') {
 		await store.write({ grammarHash: inputs.grammarHash, resolutions: result.resolutions });
 	}
 	return result;
@@ -45,13 +50,17 @@ function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
 
 export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise<DerivationResult> {
 	const sittirDir = sittirDirOf(pkg);
+	const bundle = async () => {
+		await transpileOverrides({ package: pkg });
+	};
 	const result = await settleConflictResolutions({
 		store: {
 			read: () => readConflictResolutions(pkg),
 			write: async (file) => {
 				writeConflictResolutions(pkg, file);
-				await transpileOverrides({ package: pkg });
-			}
+				await bundle();
+			},
+			bundle
 		},
 		inputs: evaluateForDerivation(pkg),
 		runGenerate: async () => {
