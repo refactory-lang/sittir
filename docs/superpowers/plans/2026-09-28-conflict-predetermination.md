@@ -441,17 +441,22 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 
 Every conflict is resolved with `AddConflict`. A declared conflict is settled at parse time by `prec.dynamic`, which is upstream's own tie-breaker, so it must survive reshaping.
 
+- As landed (census: nothing lost in any grammar; brainstorm rulings):
+  - Scope is every upstream rule with `prec.dynamic`, not only conflict rules. Values are compared as a multiset landed on the upstream source through `sourceChain`, so a wrapper that moved onto a split-out rule still counts.
+  - A rule authored in `rules:` (or whose values landed on one) is never blocked: any difference is the informational `conflict-dynamic-precedence-authored` (python: `primary_expression`, upstream [] → [-1]). Only a loss elsewhere blocks, as `conflict-dynamic-precedence-lost`, which is not floorable. Additions are never an error.
+  - The facts are collected in `attachDerivationRecords` (`upstreamDynamicPrecedence`, `dynamicPrecedence`) and checked in `compiler/diagnostics/dynamic-precedence.ts`, not in the transpile loop. `sourceChain` moved to `dsl/conflict-resolutions.ts`.
+
 **Files:**
 - Create: `packages/codegen/src/transpile/dynamic-precedence.ts` (the census and the check)
 - Modify: `packages/codegen/src/transpile/evaluate-for-derivation.ts`. `DerivationInputs` gains the dynamic precedence of every rule, upstream and evaluated.
 - Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`. Add `conflict-dynamic-precedence-lost`, blocking and not floorable.
 - Test: `packages/codegen/src/transpile/__tests__/dynamic-precedence.test.ts`
 
-- [ ] **Step 1: Census, reported to brainstorm before any code acts on it.** For every rule in every derived conflict of the five grammars, compare the `prec.dynamic` of its upstream source (through `sourceChain`) with the one the reshaped rule carries. Report the carried and lost rows per grammar.
-- [ ] **Step 2 (none lost):** the check becomes the blocking diagnostic `conflict-dynamic-precedence-lost`. Parsers stay identical.
-- [ ] **Step 2 (some lost):** the loop copies the source's `prec.dynamic` onto the reshaped rule, with each copy recorded and reviewed. The mechanism is settled with brainstorm after the census.
-- [ ] **Step 3:** Add a fixture where the upstream rule carries `prec.dynamic` and a reshaped variant lost it; it raises the diagnostic (or gets the copy).
-- [ ] **Step 4:** Regenerate all five grammars, run the gates, and commit by pathspec.
+- [x] **Step 1: Census, reported to brainstorm before any code acts on it.** For every rule in every derived conflict of the five grammars, compare the `prec.dynamic` of its upstream source (through `sourceChain`) with the one the reshaped rule carries. Report the carried and lost rows per grammar.
+- [x] **Step 2 (none lost):** the check becomes the blocking diagnostic `conflict-dynamic-precedence-lost`. Parsers stay identical.
+- [ ] **Step 2 (some lost, not taken):** the loop copies the source's `prec.dynamic` onto the reshaped rule, with each copy recorded and reviewed. The mechanism is settled with brainstorm after the census.
+- [x] **Step 3:** Add a fixture where the upstream rule carries `prec.dynamic` and a reshaped variant lost it; it raises the diagnostic (or gets the copy).
+- [x] **Step 4:** Regenerate all five grammars, run the gates, and commit by pathspec.
 
 ### Task 8: Retire the remaining hand-written conflicts
 

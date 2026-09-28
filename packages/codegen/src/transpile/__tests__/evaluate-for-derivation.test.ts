@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { grammarPackage, type GrammarName } from '../../grammars.ts';
-import { sourceChain } from '../derive-conflicts.ts';
+import { sourceChain } from '../../dsl/conflict-resolutions.ts';
 import { evaluateForDerivation, grammarHash, type DerivationInputs } from '../evaluate-for-derivation.ts';
 import { treeSitterCliVersion } from '../tree-sitter-cli.ts';
 

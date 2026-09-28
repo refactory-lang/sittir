@@ -420,14 +420,6 @@ runs, or `unresolvable` with the reason, the report that stopped it,
 and the resolutions gathered so far.
 ```
 
-### `packages/codegen/src/transpile/derive-conflicts.ts::sourceChain`
-
-```text
-The chain from a rule name to its upstream source: follow the reshaping edges
-until a name has none. A name with no edge is its own source. The records
-cannot legitimately form a cycle; one throws with the chain in the message.
-```
-
 ### `packages/codegen/src/transpile/derive-conflicts.ts::declaredUpstream`
 
 ```text

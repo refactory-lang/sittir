@@ -425,7 +425,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), and dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -528,6 +528,10 @@ detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
 enriched stage has no generated parser, so it fires on every anonymous literal.
 `content-collision` and `storagename-collision` are absent too: a `field()`
 patch resolves them, so they are patch-site provocations, not rule causes.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::authoredRuleNames`
+
+The rules a grammar authors in `rules:`, with a declared cause or without one. The diagnostic records and the dynamic-precedence check read the same set.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
 
@@ -653,3 +657,18 @@ The blocking `conflict-unresolvable` for a derivation that stopped: its reason a
 ### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictStaleRecord`
 
 The blocking `conflict-resolutions-stale` for saved resolutions that carry the current grammar hash but reported a conflict: the file was edited by hand or the hash misses an input of the derivation. The conflict driver writes it as the package's grammar diagnostics and stops the regen.
+
+### `packages/codegen/src/compiler/diagnostics/dynamic-precedence.ts::sortedValues`
+
+A rule's `prec.dynamic` values in ascending order, the form the records report and compare.
+
+### `packages/codegen/src/compiler/diagnostics/dynamic-precedence.ts::contains`
+
+Whether every upstream value is among the landed values, counting repeats: a multiset inclusion, so extra landed values pass.
+
+### `packages/codegen/src/compiler/diagnostics/dynamic-precedence.ts::dynamicPrecedenceRecords`
+
+Checks that upstream's `prec.dynamic`, its own tie-breaker between the parses its conflicts allow, survives reshaping. Every wired rule's values land on its upstream source (`dsl/conflict-resolutions.ts::sourceChain` over the reshaping edges), so a value that moved onto a variant or a split-out rule counts for the rule it came from: the comparison is by what the parse path carries, not by where the wrapper sits. Then, for every upstream rule that has values or received some:
+
+- when the rule, or a rule its values landed on, is authored in `rules:` (`rule-causes.ts::authoredRuleNames`), any difference is an informational `conflict-dynamic-precedence-authored`: the author stated the rule, so the change is theirs, recorded with both values;
+- otherwise an upstream value missing from what landed is the blocking `conflict-dynamic-precedence-lost`, which cannot be expected away. Added values are never an error.

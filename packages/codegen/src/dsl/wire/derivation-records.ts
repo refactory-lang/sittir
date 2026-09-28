@@ -3,6 +3,7 @@ import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarResult } from '../enrich.ts';
 import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
 import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
+import { baseRulesOf } from '../shared.ts';
 
 type WiredGrammar = GrammarResult['grammar'];
 
@@ -13,6 +14,8 @@ export interface DerivationRecords {
 	readonly sourceEdges: Readonly<Record<string, string>>;
 	readonly resolutions: readonly ConflictResolutionRecord[];
 	readonly conflictsAuthored: boolean;
+	readonly upstreamDynamicPrecedence: Readonly<Record<string, readonly number[]>>;
+	readonly dynamicPrecedence: Readonly<Record<string, readonly number[]>>;
 }
 
 export interface ConflictConfig {
@@ -32,6 +35,16 @@ function variantEdgesOf(rules: Readonly<Record<string, AnyRule>>): Map<string, s
 	return edges;
 }
 
+function dynamicPrecedenceOf(rules: Readonly<Record<string, AnyRule>>): Record<string, number[]> {
+	const walker = new RuleWalker(rules);
+	const values: Record<string, number[]> = {};
+	for (const [name, rule] of Object.entries(rules)) {
+		const found = walker.fold(rule, [] as number[], (acc, node) => (node.type === 'PREC_DYNAMIC' ? [...acc, node.value] : acc));
+		if (found.length > 0) values[name] = found;
+	}
+	return values;
+}
+
 export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
 	const upstreamSymbols = upstreamSymbolNames(base);
 	const edges = new Map<string, string>();
@@ -44,7 +57,9 @@ export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, op
 	const records: DerivationRecords = {
 		upstreamConflicts: upstreamConflictSets(base),
 		sourceEdges: Object.fromEntries(edges),
-		...conflicts
+		...conflicts,
+		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(base) ?? {}),
+		dynamicPrecedence: dynamicPrecedenceOf(grammar.rules)
 	};
 	Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }

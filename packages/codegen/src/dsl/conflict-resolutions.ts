@@ -34,6 +34,15 @@ export function sameConflictSet(left: readonly string[], right: readonly string[
 	return members.size === new Set(right).size && right.every((name) => members.has(name));
 }
 
+export function sourceChain(name: string, edges: Readonly<Record<string, string>>): readonly string[] {
+	const chain = [name];
+	for (let next = edges[name]; next !== undefined; next = edges[next]) {
+		if (chain.includes(next)) throw new Error(`reshaping records form a cycle: ${[...chain, next].join(' → ')}`);
+		chain.push(next);
+	}
+	return chain;
+}
+
 export function upstreamSourcesOf(sourceChains: readonly (readonly string[])[]): readonly string[] {
 	return [...new Set(sourceChains.map((chain) => chain[chain.length - 1]!))];
 }

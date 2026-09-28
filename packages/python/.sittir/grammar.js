@@ -7168,6 +7168,15 @@ function variantEdgesOf(rules) {
   }
   return edges;
 }
+function dynamicPrecedenceOf(rules) {
+  const walker = new RuleWalker(rules);
+  const values = {};
+  for (const [name, rule2] of Object.entries(rules)) {
+    const found = walker.fold(rule2, [], (acc, node) => node.type === "PREC_DYNAMIC" ? [...acc, node.value] : acc);
+    if (found.length > 0) values[name] = found;
+  }
+  return values;
+}
 function attachDerivationRecords(grammar, base2, opts, conflicts) {
   const upstreamSymbols = upstreamSymbolNames(base2);
   const edges = /* @__PURE__ */ new Map();
@@ -7180,7 +7189,9 @@ function attachDerivationRecords(grammar, base2, opts, conflicts) {
   const records = {
     upstreamConflicts: upstreamConflictSets(base2),
     sourceEdges: Object.fromEntries(edges),
-    ...conflicts
+    ...conflicts,
+    upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf(base2) ?? {}),
+    dynamicPrecedence: dynamicPrecedenceOf(grammar.rules)
   };
   Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }

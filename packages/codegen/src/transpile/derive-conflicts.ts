@@ -1,4 +1,10 @@
-import { sameConflictSet, upstreamSourcesOf, type ConflictResolutionsFile, type DerivedResolution } from '../dsl/conflict-resolutions.ts';
+import {
+	sameConflictSet,
+	sourceChain,
+	upstreamSourcesOf,
+	type ConflictResolutionsFile,
+	type DerivedResolution
+} from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
 
 export interface UpstreamContext {
@@ -18,15 +24,6 @@ export type DerivationResult =
 			readonly report: ConflictReport;
 			readonly resolutions: readonly DerivedResolution[];
 	  };
-
-export function sourceChain(name: string, edges: Readonly<Record<string, string>>): readonly string[] {
-	const chain = [name];
-	for (let next = edges[name]; next !== undefined; next = edges[next]) {
-		if (chain.includes(next)) throw new Error(`reshaping records form a cycle: ${[...chain, next].join(' → ')}`);
-		chain.push(next);
-	}
-	return chain;
-}
 
 function declaredUpstream(sources: readonly string[], upstream: UpstreamContext): boolean {
 	return upstream.upstreamConflicts.some((declared) => sameConflictSet(declared, sources));

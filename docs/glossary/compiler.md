@@ -1701,7 +1701,8 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 The one gate over a grammar's final diagnostics, shared by `compileGrammar` and the `grammar-diagnostics` tool so
 the tool reports exactly what generation rejects. It stamps the id tables (`stampVisibleExternals`), then gates
 twice, each time with the floors its records are named against. Before link it checks the evaluate-time records
-(`evaluateRecords`, the conflict records `diagnostics/conflicts.ts::conflictRecords`, and when the grammar departs
+(`evaluateRecords`, the conflict records `diagnostics/conflicts.ts::conflictRecords` and
+`diagnostics/dynamic-precedence.ts::dynamicPrecedenceRecords`, and when the grammar departs
 from its base, `diagnoseRuleCauses` over the enriched stage),
 with the evaluated grammar's `expectDiagnostics`; a grammar tree-sitter rejects therefore never reaches link, and
 the diagnosis stops there. Otherwise it collects the front half (`collectGrammarDiagnosticsForGrammar`), folds the

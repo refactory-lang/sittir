@@ -482,6 +482,25 @@
   },
   {
     "scope": "grammar",
+    "code": "conflict-dynamic-precedence-authored",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "primary_expression",
+    "message": "the authored 'primary_expression' changes its dynamic precedence from [] upstream to [-1]",
+    "canProceed": true,
+    "details": {
+      "rule": "primary_expression",
+      "upstream": [],
+      "landed": [
+        -1
+      ],
+      "landedIn": [
+        "primary_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "grammar": "python",
     "code": "patch-without-cause",
     "severity": "error",

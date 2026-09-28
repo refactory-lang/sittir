@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { ConflictResolutionsFile, DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import { sourceChain, type ConflictResolutionsFile, type DerivedResolution } from '../../dsl/conflict-resolutions.ts';
 import {
 	chooseResolution,
 	deriveConflictResolutions,
 	reuseOrDeriveConflictResolutions,
-	sourceChain,
 	type UpstreamContext
 } from '../derive-conflicts.ts';
 import type { ConflictReport, GenerateOutcome } from '../conflict-summary.ts';

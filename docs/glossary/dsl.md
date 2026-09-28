@@ -6766,6 +6766,12 @@ One entry of `resolutions.json` as the JSON reads: `DerivedResolution` with the 
 
 Set equality of two rule-name lists, order and duplicates ignored: how a conflict's sources are compared with a set upstream declared.
 
+### `packages/codegen/src/dsl/conflict-resolutions.ts::sourceChain`
+
+The chain from a rule name to its upstream source: follow the reshaping edges
+until a name has none. A name with no edge is its own source. The records
+cannot legitimately form a cycle; one throws with the chain in the message. The conflict policy and the dynamic-precedence check both map names through it.
+
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::upstreamSourcesOf`
 
 The distinct upstream sources of a resolution: the last name of each source chain, deduplicated, so two variants of one upstream rule count as that rule once. Both the policy's declared test and the unnecessary-upstream diagnostic compare these with the upstream sets.
