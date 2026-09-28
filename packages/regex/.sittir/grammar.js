@@ -37,7 +37,7 @@ var import_grammar = __toESM(require("tree-sitter-regex/grammar.js"), 1);
 
 // packages/regex/.sittir/resolutions.json
 var resolutions_default = {
-  grammarHash: "a42130a34563d9d0184a17c468072d4945b2edfe17f8b779cb7c943ded9da282",
+  grammarHash: "6ab30d13dd06049a9df56b6bc4612797544f82aba2998e66bb25ce71a0cafe05",
   resolutions: [
     {
       resolution: {

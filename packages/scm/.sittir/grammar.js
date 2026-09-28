@@ -37,7 +37,7 @@ var import_grammar = __toESM(require("tree-sitter-scm/grammar.js"), 1);
 
 // packages/scm/.sittir/resolutions.json
 var resolutions_default = {
-  grammarHash: "e5dcdd03484bf89b4c6ccb8164774ffebf0ae5a403cfeea59f18504f6a82cac7",
+  grammarHash: "7f3d61d8c7ce090d1dcfc76cae1f4676e02d4400766849b043616f8cbccddd46",
   resolutions: []
 };
 
