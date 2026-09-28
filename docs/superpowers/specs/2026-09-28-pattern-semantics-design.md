@@ -127,43 +127,10 @@ path. Its declarations are documented in a new glossary, `docs/glossary/pattern.
 
 ### The `@sittir/regex` dependency
 
-`@sittir/codegen` depends on `@sittir/regex`, which `@sittir/codegen` generates. This
-is a bootstrap, the same shape as a compiler built by an earlier build of itself. The
-generator never uses the live workspace copy of `@sittir/regex`; it uses a build of a
-pinned commit.
-
-**The pin.** One committed file, `bootstrap.json`, records the commit:
-`{ "regex": "<sha>" }`. It is the only statement of which `@sittir/regex` the
-generator runs.
-
-**The bootstrap build.** A bootstrap command makes the pinned build:
-
-1. It checks the pinned commit out as a detached `git worktree` in a cache directory
-   outside the repository, keyed by the SHA.
-2. In that checkout it installs dependencies, builds the TypeScript packages, and
-   builds the `sittir-regex` native binding.
-3. It records that the build is complete for that SHA. A cache hit skips steps 1 and 2.
-
-`@sittir/regex`, `@sittir/common`, `@sittir/types` and `sittir-core` all come from the
-same commit, so they always match each other. Nothing is published, and no binary is
-committed. CI caches the directory by SHA.
-
-**One loader.** The pattern module is the only importer of `@sittir/regex` in the
-generator. It resolves the package from the pinned build, types included. When the
-pinned build is missing, it fails with a message naming the bootstrap command; it
-never falls back to the workspace copy.
-
-**Moving the pin** is its own commit, which changes only `bootstrap.json` and passes:
-
-- **Round trip:** every distinct grammar pattern, parsed and rendered by the new pin,
-  is byte-identical to its source. This is a permanent test.
-- **Fixed point:** all five grammars regenerated with the new pin are byte-identical
-  to their output with the old one. A difference is a real change in pattern handling
-  and is reviewed; it never lands inside a pin move.
-
-A regeneration of `packages/regex` therefore cannot change the generator's behaviour
-until the pin is moved on purpose. A generator change that breaks the regex package
-cannot stop the generator from regenerating a fix.
+The pattern module is the generator's only importer of `@sittir/regex`, and it loads
+the build of the pinned commit specified in the sittir bootstrap spec
+(`2026-09-28-sittir-bootstrap-design.md`), never the workspace copy. The round trip
+over every grammar pattern is part of that spec's pin-move gate.
 
 ## What moves
 
@@ -187,9 +154,6 @@ cannot stop the generator from regenerating a fix.
   set drawn from the DFA (accepted strings) and its complement (rejected strings).
 - The line-end fact over the new DFA gives the same line-terminated kind sets on all
   five grammars.
-- The fixed-point check and the round trip on a pin move (above).
-- With the pinned build removed from the cache, the generator stops with the message
-  naming the bootstrap command, and does not load the workspace package.
 
 ## Out of scope
 
@@ -202,4 +166,3 @@ cannot stop the generator from regenerating a fix.
 - Resolving tokens against each other (keyword over identifier, longest match). A guard
   checks one token's language; the parser can still pick another token. The types
   accept a superset of what parses, and the reserved-word type covers keywords.
-- Publishing `@sittir/*` packages. The pin does not depend on it.
