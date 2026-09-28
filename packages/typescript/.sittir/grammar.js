@@ -2447,7 +2447,7 @@ function enrichWhitespace(externals, extras, rules) {
   const run = extrasRun(extras, rules);
   const upstream = new Set(ruleListParts(externals).names);
   const members = WHITESPACE_MEMBERS.filter(
-    (member) => member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)
+    (member) => (member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)) && !(isDepthText(member.body.value) && upstream.has(member.name))
   );
   const rule2 = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
   const minted = [
@@ -2457,9 +2457,7 @@ function enrichWhitespace(externals, extras, rules) {
   return {
     members: members.map((member) => member.name),
     addedExternals: members.filter((member) => !upstream.has(member.name)).map((member) => member.name),
-    bodies: Object.fromEntries(
-      members.filter((member) => !isDepthText(member.body.value) || !upstream.has(member.name)).map((member) => [member.name, member.body])
-    ),
+    bodies: Object.fromEntries(members.map((member) => [member.name, member.body])),
     rule: rule2,
     collisions: minted.filter(([name, body]) => rules[name] !== void 0 && !rulesEqual(rules[name], body)).map(([name]) => ({ name, site: "upstream" }))
   };

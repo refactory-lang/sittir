@@ -12,4 +12,12 @@ describe('the enriched stage sees the whitespace bodies enrich mints', () => {
 		expect(tight).toBeInstanceOf(AssembledPunctuation);
 		expect(tight).not.toBeInstanceOf(AssembledPattern);
 	}, 120_000);
+
+	it('leaves out depth members that collide with upstream externals, so python has no _indent/_dedent members', async () => {
+		const raw = await evaluate(resolve(__dirname, '../../../../python/grammar.sittir.ts'));
+		const members = JSON.stringify(raw.stages!.enriched.grammar.rules['_whitespace']);
+		expect(members).toContain('"_tight"');
+		expect(members).not.toContain('"_indent"');
+		expect(members).not.toContain('"_dedent"');
+	}, 120_000);
 });
