@@ -128,18 +128,42 @@ path. Its declarations are documented in a new glossary, `docs/glossary/pattern.
 ### The `@sittir/regex` dependency
 
 `@sittir/codegen` depends on `@sittir/regex`, which `@sittir/codegen` generates. This
-is a bootstrap, the same shape as a compiler built by an earlier build of itself:
+is a bootstrap, the same shape as a compiler built by an earlier build of itself. The
+generator never uses the live workspace copy of `@sittir/regex`; it uses a build of a
+pinned commit.
 
-- The committed `packages/regex` sources and its built native binding are the
-  generator's regex parser. The binding is built before any grammar is generated.
-- **Fixed point:** after regenerating `packages/regex`, regenerating all five grammars
-  must be byte-identical. A change that breaks the regex package therefore fails at
-  once instead of when a later change hits a pattern.
-- **Round trip:** a permanent test parses and renders every distinct grammar pattern
-  and compares it with its source.
-- **Version:** the dependency is `workspace:*` while no `@sittir/*` package is
-  published. Once publishing works, it becomes an exact version, raised only in its own
-  commit, which passes the fixed-point check.
+**The pin.** One committed file, `bootstrap.json`, records the commit:
+`{ "regex": "<sha>" }`. It is the only statement of which `@sittir/regex` the
+generator runs.
+
+**The bootstrap build.** A bootstrap command makes the pinned build:
+
+1. It checks the pinned commit out as a detached `git worktree` in a cache directory
+   outside the repository, keyed by the SHA.
+2. In that checkout it installs dependencies, builds the TypeScript packages, and
+   builds the `sittir-regex` native binding.
+3. It records that the build is complete for that SHA. A cache hit skips steps 1 and 2.
+
+`@sittir/regex`, `@sittir/common`, `@sittir/types` and `sittir-core` all come from the
+same commit, so they always match each other. Nothing is published, and no binary is
+committed. CI caches the directory by SHA.
+
+**One loader.** The pattern module is the only importer of `@sittir/regex` in the
+generator. It resolves the package from the pinned build, types included. When the
+pinned build is missing, it fails with a message naming the bootstrap command; it
+never falls back to the workspace copy.
+
+**Moving the pin** is its own commit, which changes only `bootstrap.json` and passes:
+
+- **Round trip:** every distinct grammar pattern, parsed and rendered by the new pin,
+  is byte-identical to its source. This is a permanent test.
+- **Fixed point:** all five grammars regenerated with the new pin are byte-identical
+  to their output with the old one. A difference is a real change in pattern handling
+  and is reviewed; it never lands inside a pin move.
+
+A regeneration of `packages/regex` therefore cannot change the generator's behaviour
+until the pin is moved on purpose. A generator change that breaks the regex package
+cannot stop the generator from regenerating a fix.
 
 ## What moves
 
@@ -163,7 +187,9 @@ is a bootstrap, the same shape as a compiler built by an earlier build of itself
   set drawn from the DFA (accepted strings) and its complement (rejected strings).
 - The line-end fact over the new DFA gives the same line-terminated kind sets on all
   five grammars.
-- The fixed-point check (above).
+- The fixed-point check and the round trip on a pin move (above).
+- With the pinned build removed from the cache, the generator stops with the message
+  naming the bootstrap command, and does not load the workspace package.
 
 ## Out of scope
 
@@ -176,4 +202,4 @@ is a bootstrap, the same shape as a compiler built by an earlier build of itself
 - Resolving tokens against each other (keyword over identifier, longest match). A guard
   checks one token's language; the parser can still pick another token. The types
   accept a superset of what parses, and the reserved-word type covers keywords.
-- Publishing `@sittir/*` packages.
+- Publishing `@sittir/*` packages. The pin does not depend on it.
