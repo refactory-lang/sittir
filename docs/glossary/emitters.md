@@ -16536,11 +16536,11 @@ Whether a slot takes an anonymous child from `$other`: it is unnamed and stores 
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. The one exception is `build.rs`, marked `scaffoldOnly`: it is written only when missing, because a grammar whose build needs more (typescript's scanner header) edits it after scaffolding. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by tests: every crate's generated files match, and a scaffold reproduces `sittir-python` byte-for-byte.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
-One crate file: its path under the crate, its contents, and `scaffoldOnly` when the grammar owns the file after its first write.
+One crate file: its path under the crate and its contents.
 
 ### `packages/codegen/src/emitters/grammar-runtime.ts::EmitGrammarRuntimeConfig`
 

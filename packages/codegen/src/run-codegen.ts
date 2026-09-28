@@ -312,10 +312,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	if (shouldEmitRustRender) {
 		const crateDir = nativeCrateDir(grammar);
 		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
-		for (const file of nativeCrateFiles(grammar)) {
-			const path = join(crateDir, file.path);
-			if (!file.scaffoldOnly || !existsSync(path)) await writeFile(path, file.contents);
-		}
+		for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
 		if (scaffoldCrate) {
 			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
 			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
