@@ -11355,7 +11355,7 @@
             }
           ],
           "annotations": {
-            "variantOf": "attribute_arm"
+            "variantOf": "attribute_input"
           }
         },
         {
@@ -11366,7 +11366,7 @@
             "name": "delim_token_tree"
           },
           "annotations": {
-            "variantOf": "attribute_arm"
+            "variantOf": "attribute_input"
           }
         }
       ],
@@ -12081,7 +12081,7 @@
               "name": "self",
               "annotations": {
                 "variant": "self",
-                "variantOf": "visibility_modifier_group"
+                "variantOf": "visibility_modifier_pub_scope"
               }
             },
             {
@@ -12089,7 +12089,7 @@
               "name": "super",
               "annotations": {
                 "variant": "super",
-                "variantOf": "visibility_modifier_group"
+                "variantOf": "visibility_modifier_pub_scope"
               }
             },
             {
@@ -12097,7 +12097,7 @@
               "name": "crate",
               "annotations": {
                 "variant": "crate",
-                "variantOf": "visibility_modifier_group"
+                "variantOf": "visibility_modifier_pub_scope"
               }
             },
             {
@@ -13668,14 +13668,14 @@
               "type": "STRING",
               "value": "..=",
               "annotations": {
-                "variantOf": "range_pattern_arm3"
+                "variantOf": "range_pattern_prefix"
               }
             },
             {
               "type": "STRING",
               "value": "..",
               "annotations": {
-                "variantOf": "range_pattern_arm3"
+                "variantOf": "range_pattern_prefix"
               }
             }
           ]
@@ -13712,21 +13712,21 @@
               "type": "STRING",
               "value": "...",
               "annotations": {
-                "variantOf": "range_pattern_arm1"
+                "variantOf": "range_pattern_with_left_with_right"
               }
             },
             {
               "type": "STRING",
               "value": "..=",
               "annotations": {
-                "variantOf": "range_pattern_arm1"
+                "variantOf": "range_pattern_with_left_with_right"
               }
             },
             {
               "type": "STRING",
               "value": "..",
               "annotations": {
-                "variantOf": "range_pattern_arm1"
+                "variantOf": "range_pattern_with_left_with_right"
               }
             }
           ]

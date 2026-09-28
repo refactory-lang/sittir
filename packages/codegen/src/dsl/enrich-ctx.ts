@@ -45,7 +45,7 @@ interface EnrichCtxFields extends EnrichCtxInit {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
-	readonly clauseGroupOwners: Map<string, string>;
+	readonly subsequenceOwners: Map<string, string>;
 	readonly hoist: ClauseHoistState | undefined;
 }
 
@@ -64,7 +64,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
-	readonly clauseGroupOwners: Map<string, string>;
+	readonly subsequenceOwners: Map<string, string>;
 	readonly hoist: ClauseHoistState | undefined;
 
 	private constructor(fields: EnrichCtxFields) {
@@ -82,7 +82,7 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.clauseDedupeMap = fields.clauseDedupeMap;
 		this.groupDedupeMap = fields.groupDedupeMap;
 		this.ruleOrigins = fields.ruleOrigins;
-		this.clauseGroupOwners = fields.clauseGroupOwners;
+		this.subsequenceOwners = fields.subsequenceOwners;
 		this.hoist = fields.hoist;
 	}
 
@@ -95,7 +95,7 @@ export class EnrichCtx implements EnrichCtxFields {
 			clauseDedupeMap: {},
 			groupDedupeMap: {},
 			ruleOrigins: new Map(),
-			clauseGroupOwners: new Map(),
+			subsequenceOwners: new Map(),
 			hoist: undefined
 		});
 	}

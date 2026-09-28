@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichHiddenSubsequences, getEnrichClauseGroupOwners, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichHiddenSubsequences, getEnrichSubsequenceOwners, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -480,7 +480,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 			context.inlineRemovals.add(name);
 		}
 		const inlineSafeNames = getEnrichHiddenSubsequences(base);
-		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
+		for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base)) {
 			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
 				const pairKey = [ownerKind, syntheticName].join('\u0000');
 				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {

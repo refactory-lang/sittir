@@ -31,7 +31,7 @@ The extras of a grammar closed over supertypes, in both directions: each listed 
 
 The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `hidden-subsequence`. Wire adds them to the grammar's `inline:` list.
 
-### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroupOwners`
+### `packages/codegen/src/dsl/enrich.ts::getEnrichSubsequenceOwners`
 
 ```text
 /**
@@ -591,7 +591,7 @@ not immediate.
 
 ```text
 // Record which parent's body this hoist was minted from — see
-// `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs this.
+// `ENRICH_SUBSEQUENCE_OWNERS_KEY` for why wire() needs this.
 ```
 
 #### body
@@ -644,7 +644,7 @@ not immediate.
 
 ```text
 // Record which parent's body this visible-group hoist was minted
-// from — see `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs
+// from — see `ENRICH_SUBSEQUENCE_OWNERS_KEY` for why wire() needs
 // this (an override that redeclares `parentKind` orphans this hidden
 // rule, since the synthesized name could never appear in the
 // override author's own text).
@@ -2500,7 +2500,7 @@ through the alias.
 
 The non-enumerable key under which `enrich()` attaches its rule-origin map to the grammar result (see `getEnrichRuleOrigins`).
 
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUP_OWNERS_KEY`
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_SUBSEQUENCE_OWNERS_KEY`
 
 ```text
 /**
@@ -2921,7 +2921,7 @@ before the later passes and wire's override callbacks read names. Renames
 the hidden rule key (in the merged bag AND the minted-rule bag, whose keys
 later derive the `inline:` list), the visible alias value, every symbol
 reference, and the wire-facing tracking structures (`ruleOrigins`,
-`clauseGroupOwners`). A name collision with any existing rule keeps the
+`subsequenceOwners`). A name collision with any existing rule keeps the
 ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
 registered but later unused still counts as a sibling.
 
@@ -4588,7 +4588,7 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 ```text
 // Synthesized clause-hoist name → the parent kind whose body it was
 // hoisted FROM (recorded once, at first mint — see the two record sites
-// inside `applyClauseHoist`). Exposed via `ENRICH_CLAUSE_GROUP_OWNERS_KEY`
+// inside `applyClauseHoist`). Exposed via `ENRICH_SUBSEQUENCE_OWNERS_KEY`
 // so wire() can tell, once an override redeclares that owner, that the
 // synthesized name is now orphaned (the override author could never have
 // typed a reference to a name that doesn't exist until THIS enrich() call
@@ -4712,7 +4712,7 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // Attach the synthesized-name → owning-parent-kind map (BOTH categories —
 // inline-safe AND visible-aliased) so wire() can detect when an override
 // redeclares the owner and orphans the synthesized rule. See
-// `getEnrichClauseGroupOwners`.
+// `getEnrichSubsequenceOwners`.
 ```
 
 #### body
@@ -6067,7 +6067,7 @@ Reads the sidecar enrich left under `ENRICH_WHITESPACE_KEY`; a grammar enrich di
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 
-Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
+Applies a rename map to every `SYMBOL` name and every `variantOf` arm owner in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
 
@@ -6185,7 +6185,7 @@ Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), o
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`, `clauseGroupOwners`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`, `subsequenceOwners`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 

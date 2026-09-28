@@ -1714,6 +1714,49 @@ function regex(pattern) {
   return { __sittirPlaceholder: "regex", source: pattern.source };
 }
 
+// packages/codegen/src/dsl/wire/symbol-renames.ts
+function resolveName(name, renames) {
+  let current = name;
+  for (let hops = 0; hops < renames.size; hops++) {
+    const next = renames.get(current);
+    if (next === void 0 || next === current) return current;
+    current = next;
+  }
+  return current;
+}
+function renameRule(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) {
+    const mapped = value.map((entry) => renameRule(entry, renames));
+    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
+  }
+  if (value === null || typeof value !== "object") return value;
+  const record = value;
+  const changes = {};
+  for (const [key, entry] of Object.entries(record)) {
+    const next = renameRule(entry, renames);
+    if (next !== entry) changes[key] = next;
+  }
+  if (record.type === "SYMBOL" && typeof record.name === "string") {
+    const name = resolveName(record.name, renames);
+    if (name !== record.name) changes.name = name;
+  }
+  if (typeof record.variantOf === "string") {
+    const owner = resolveName(record.variantOf, renames);
+    if (owner !== record.variantOf) changes.variantOf = owner;
+  }
+  if (Object.keys(changes).length === 0) return value;
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
+  return Object.create(Object.getPrototypeOf(value), descriptors);
+}
+function renameNameList(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
+  if (typeof value === "string") return resolveName(value, renames);
+  return renameRule(value, renames);
+}
+
 // packages/codegen/src/dsl/arm-names.ts
 function polymorphVisibleName(parentKind, suffix) {
   return `${undisplayedKindAddress(parentKind)}_${suffix}`;
@@ -2734,7 +2777,7 @@ var EnrichCtx = class _EnrichCtx {
   clauseDedupeMap;
   groupDedupeMap;
   ruleOrigins;
-  clauseGroupOwners;
+  subsequenceOwners;
   hoist;
   constructor(fields) {
     this.rulesBag = fields.rulesBag;
@@ -2751,7 +2794,7 @@ var EnrichCtx = class _EnrichCtx {
     this.clauseDedupeMap = fields.clauseDedupeMap;
     this.groupDedupeMap = fields.groupDedupeMap;
     this.ruleOrigins = fields.ruleOrigins;
-    this.clauseGroupOwners = fields.clauseGroupOwners;
+    this.subsequenceOwners = fields.subsequenceOwners;
     this.hoist = fields.hoist;
   }
   static create(init) {
@@ -2763,7 +2806,7 @@ var EnrichCtx = class _EnrichCtx {
       clauseDedupeMap: {},
       groupDedupeMap: {},
       ruleOrigins: /* @__PURE__ */ new Map(),
-      clauseGroupOwners: /* @__PURE__ */ new Map(),
+      subsequenceOwners: /* @__PURE__ */ new Map(),
       hoist: void 0
     });
   }
@@ -3224,7 +3267,7 @@ function enrich(baseInput, authored = {}) {
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
   });
-  const { kwRules, clauseGroupRules, ruleOrigins, clauseGroupOwners } = ctx;
+  const { kwRules, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
@@ -3284,7 +3327,7 @@ function enrich(baseInput, authored = {}) {
     if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins, clauseGroupOwners);
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins, subsequenceOwners);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule = mergedRules[name];
@@ -3313,9 +3356,9 @@ function enrich(baseInput, authored = {}) {
     writable: false,
     configurable: true
   });
-  if (clauseGroupOwners.size > 0) {
-    Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
-      value: clauseGroupOwners,
+  if (subsequenceOwners.size > 0) {
+    Object.defineProperty(result, ENRICH_SUBSEQUENCE_OWNERS_KEY, {
+      value: subsequenceOwners,
       enumerable: false,
       writable: false,
       configurable: true
@@ -3349,10 +3392,10 @@ function getEnrichWhitespace(grammar2) {
 function getEnrichHiddenSubsequences(grammar2) {
   return enrichRuleNamesOf(grammar2, (origin) => origin.kind === "hidden-subsequence");
 }
-var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
-function getEnrichClauseGroupOwners(grammar2) {
+var ENRICH_SUBSEQUENCE_OWNERS_KEY = "__enrichedSubsequenceOwners__";
+function getEnrichSubsequenceOwners(grammar2) {
   if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+  const owners = grammar2[ENRICH_SUBSEQUENCE_OWNERS_KEY];
   if (owners instanceof Map) return owners;
   return /* @__PURE__ */ new Map();
 }
@@ -3402,7 +3445,7 @@ function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames) {
       "arm"
     );
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
-    if (!ctx.clauseGroupOwners.has(minted)) ctx.clauseGroupOwners.set(minted, parentKind);
+    if (!ctx.subsequenceOwners.has(minted)) ctx.subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   });
   let out = { ...core, members };
@@ -4563,7 +4606,7 @@ function absorbTrailingListSeparators(members, symbols) {
   return changed ? out : null;
 }
 function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosingFieldName) {
-  const { rulesBag, clauseGroupOwners } = ctx;
+  const { rulesBag, subsequenceOwners } = ctx;
   const seqBody = optionalSeqBodyOf(rule);
   if (seqBody !== void 0) {
     const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
@@ -4574,7 +4617,7 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule, name);
         return withOptionalContent(rule, symbolRef2);
       }
@@ -4583,7 +4626,7 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
       counter.opt += 1;
       const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule, name);
         return withOptionalContent(rule, groupRef);
       }
@@ -4636,7 +4679,7 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
         ) : seqFn(...run.info.flatMembers);
         const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
         if (name === null) continue;
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(body, name);
         const replacement = isTail ? optionalFn(groupRef) : groupRef;
         newMembers.splice(run.start, run.size, replacement);
@@ -4682,7 +4725,7 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
     if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
       const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         return withContent(rule, makeGroupLiftSymbol(newContent, name));
       }
     }
@@ -4730,7 +4773,7 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   ruleOrigins.set(name, { kind: "hidden-subsequence" });
   return name;
 }
-function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, clauseGroupOwners) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, subsequenceOwners) {
   const byParentFlavor = /* @__PURE__ */ new Map();
   for (const hidden of Object.keys(mintedRules)) {
     const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
@@ -4765,10 +4808,10 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, cl
       ruleOrigins.delete(oldName);
       ruleOrigins.set(newName, origin);
     }
-    const owner = clauseGroupOwners.get(oldName);
+    const owner = subsequenceOwners.get(oldName);
     if (owner !== void 0) {
-      clauseGroupOwners.delete(oldName);
-      clauseGroupOwners.set(newName, owner);
+      subsequenceOwners.delete(oldName);
+      subsequenceOwners.set(newName, owner);
     }
   }
   const rewrite = (node) => {
@@ -4890,7 +4933,7 @@ function promotePermutationArmKeywords(choiceRule, ctx) {
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
 function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const { rulesBag, clauseGroupRules, ruleOrigins, clauseGroupOwners } = ctx;
+  const { rulesBag, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -4921,7 +4964,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
     ruleOrigins.set(name, { kind: "promoted-group", visibleName: promoted.visibleName });
-    if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+    if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
@@ -4930,7 +4973,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
     if (minted === null) return null;
-    if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+    if (!subsequenceOwners.has(minted)) subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
@@ -5563,7 +5606,9 @@ function enrichLiftArmOf(member) {
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(member, lift, ruleName, nodeName) {
-  if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
+  if (!wireHasAuthoredRule(ruleName)) {
+    wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(renameRule(lift.body, /* @__PURE__ */ new Map([[lift.liftName, ruleName]]))));
+  }
   wireRenameLift(lift.liftName, ruleName);
   if (ruleName === nodeName) return { ...lift.symbol, name: nodeName };
   if (member.type !== "ALIAS") return ruleRef(ruleName, nodeName);
@@ -5937,45 +5982,6 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/wire/symbol-renames.ts
-function resolveName(name, renames) {
-  let current = name;
-  for (let hops = 0; hops < renames.size; hops++) {
-    const next = renames.get(current);
-    if (next === void 0 || next === current) return current;
-    current = next;
-  }
-  return current;
-}
-function renameRule(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) {
-    const mapped = value.map((entry) => renameRule(entry, renames));
-    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
-  }
-  if (value === null || typeof value !== "object") return value;
-  const record = value;
-  const changes = {};
-  for (const [key, entry] of Object.entries(record)) {
-    const next = renameRule(entry, renames);
-    if (next !== entry) changes[key] = next;
-  }
-  if (record.type === "SYMBOL" && typeof record.name === "string") {
-    const name = resolveName(record.name, renames);
-    if (name !== record.name) changes.name = name;
-  }
-  if (Object.keys(changes).length === 0) return value;
-  const descriptors = Object.getOwnPropertyDescriptors(value);
-  for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };
-  return Object.create(Object.getPrototypeOf(value), descriptors);
-}
-function renameNameList(value, renames) {
-  if (renames.size === 0) return value;
-  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
-  if (typeof value === "string") return resolveName(value, renames);
-  return renameRule(value, renames);
-}
-
 // packages/codegen/src/dsl/extras.ts
 function extrasClosure(extras, supertypes, subtypesOf) {
   const names = /* @__PURE__ */ new Set();
@@ -6182,7 +6188,7 @@ function wireImpl(cfg, base2, source) {
       context.inlineRemovals.add(name);
     }
     const inlineSafeNames = getEnrichHiddenSubsequences(base2);
-    for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
+    for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base2)) {
       if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
         const pairKey = [ownerKind, syntheticName].join("\0");
         if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {

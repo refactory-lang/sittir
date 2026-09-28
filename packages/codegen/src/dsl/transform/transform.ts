@@ -45,6 +45,7 @@ import {
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
+import { renameRule } from '../wire/symbol-renames.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
@@ -510,7 +511,9 @@ function renameEnrichLift(
 	ruleName: string,
 	nodeName: string
 ): RuntimeRule {
-	if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
+	if (!wireHasAuthoredRule(ruleName)) {
+		wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(renameRule(lift.body, new Map([[lift.liftName, ruleName]])) as RuntimeRule));
+	}
 	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;
 	if ((member as { type?: string }).type !== 'ALIAS') return ruleRef(ruleName, nodeName);

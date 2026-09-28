@@ -204,6 +204,18 @@
         "namespace_import": "namespace_import",
         "named_imports": "named_imports"
       }
+    },
+    "import_clause_default_import": {
+      "definedBy": "override",
+      "childKind": {
+        "import_clause_group": "import_clause_group"
+      }
+    },
+    "export_statement_default_from": {
+      "definedBy": "override",
+      "childKind": {
+        "export_clause": "export_clause"
+      }
     }
   },
   "variantRoutes": {

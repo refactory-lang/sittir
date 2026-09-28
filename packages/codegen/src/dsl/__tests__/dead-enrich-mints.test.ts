@@ -10,7 +10,7 @@ import { isBlank } from '../rule-patterns.ts';
 import type { WiredOpts } from '../wire/wire.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluate, evaluateDsl } from '../../compiler/evaluate.ts';
 
 const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
 const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;
@@ -96,6 +96,20 @@ describe('dead enrich mints in the in-repo grammars', () => {
 				expect(evaluated.conflicts.flat()).not.toContain(dead);
 			}
 			expect(readFileSync(join(pkg.dir, '.sittir', 'src', 'grammar.json'), 'utf8')).not.toContain(DEAD_ENRICH_MINTS_KEY);
+		}, 120_000);
+
+		it(`${name}: every arm label names a rule the final grammar keeps`, async () => {
+			const final = await evaluate(packageEntryPath(grammarPackage(name)));
+			const owners = new Set<string>();
+			const collect = (node: unknown): void => {
+				if (Array.isArray(node)) return node.forEach(collect);
+				if (node === null || typeof node !== 'object') return;
+				const owner = (node as { annotations?: { variantOf?: unknown } }).annotations?.variantOf;
+				if (typeof owner === 'string') owners.add(owner);
+				Object.values(node).forEach(collect);
+			};
+			collect(Object.values(final.rules));
+			expect([...owners].filter((owner) => !(owner in final.rules))).toEqual([]);
 		}, 120_000);
 	}
 });

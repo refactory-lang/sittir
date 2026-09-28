@@ -175,7 +175,7 @@ polymorph helpers need to appear explicitly.
 				// `'1/0/0'`/`'1/0/1'`/`'1/0/3'` entry above already uses — means
 				// `_export_statement_default` is fully materialized in ONE
 				// resolvePatch call, so wire()'s existing orphan-detection
-				// (`getEnrichClauseGroupOwners`/`context.authoredRuleNames`) marks
+				// (`getEnrichSubsequenceOwners`/`context.authoredRuleNames`) marks
 				// its raw enrich mint as orphaned in that ONE pass, instead of
 				// leaving a nested raw mint behind for a LATER, separate
 				// resolvePatch call to orphan. Produces the exact same final kind

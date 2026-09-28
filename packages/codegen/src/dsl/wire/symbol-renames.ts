@@ -27,6 +27,10 @@ export function renameRule(value: unknown, renames: SymbolRenames): unknown {
 		const name = resolveName(record.name, renames);
 		if (name !== record.name) changes.name = name;
 	}
+	if (typeof record.variantOf === 'string') {
+		const owner = resolveName(record.variantOf, renames);
+		if (owner !== record.variantOf) changes.variantOf = owner;
+	}
 	if (Object.keys(changes).length === 0) return value;
 	const descriptors = Object.getOwnPropertyDescriptors(value);
 	for (const [key, entry] of Object.entries(changes)) descriptors[key] = { ...descriptors[key], value: entry };

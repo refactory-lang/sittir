@@ -828,7 +828,9 @@ wrapper is dropped, so the stamp must sit on the seq itself.
 ```
 
 A lift deposited under the patch-chosen name is stamped `annotations.hoisted`
-on the way in; an authored body of that name is left as authored.
+on the way in, and its arms' `variantOf` owners are renamed from the lift to the new
+name (`renameRule`), so no label names the lift once the lift is pruned. An authored
+body of that name is left as authored.
 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
@@ -1404,7 +1406,7 @@ as one arm fact, not two derivations of the same declaration.
 // grammar's rules map (tree-sitter tolerates dead/unreferenced
 // entries, but relocating-then-deleting risks stranding OTHER
 // consumers keyed by the old name — e.g. enrich's own
-// getEnrichClauseGroupOwners snapshot, taken before this rename
+// getEnrichSubsequenceOwners snapshot, taken before this rename
 // runs). Just relabel the outer alias's visible identity to what
 // variant()/polymorphs intends; the underlying enrich-minted
 // hidden rule keeps its own name. Double-mint collisions this
