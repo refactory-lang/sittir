@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "652e5990e310411ef0c4f5e7703c5ed54c594ba205f39227ea5b2c88571822b5",
+  "source_hash": "51c70fcdc96c18020d2e57a4ad5b12e7b5fdefd4307c8eccf2459eb007cd3fb9",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "1f9f485c7a38a5161c246aec4ca1f2eb4e68ca17900a4cd1acca0e0b59ad53ad",
     "packages/regex/.sittir/grammar.js": "29c8b7103a726914a74d6b111d81015bee01384eb424e80a343d0b1df4f42a89",
@@ -31,7 +31,7 @@
     "packages/regex/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
     "packages/regex/src/ir.ts": "bf7e3ae560f80da56f5c58ec583a5e39807dc20885319a48fe7d377a7db8132d",
     "packages/regex/src/is.ts": "b5ffb551210358e3505dec04a33a661f80791e3cac63b1845b5db54e65176ec9",
-    "packages/regex/src/node-model.json5": "479058b262b5dc898f7f971b95e35ab0a4f5ebf3c160ab9807e7ca8c13b57875",
+    "packages/regex/src/node-model.json5": "d796821444a043394389e03c3e305ba12598267093e208f37f3cd6baa34c58df",
     "packages/regex/src/options.ts": "3865cb462b84728608aa9d6748b477faedec4ee4a8ba2295793a96c460f24715",
     "packages/regex/src/render-engine.ts": "6205daf0ce76bc1ea5da005075791bdc92b90ed143582d9afcc48040558bb47c",
     "packages/regex/src/types.ts": "2bdb2f8013109791eb7030870daa6324a016f242fc2b1b52398fb16cd9d19d5a",

@@ -9,6 +9,7 @@ import {
 } from '../validate/common.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia } from '@sittir/types';
+import { mapTriviaEntries, type TriviaSides } from '@sittir/common';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -28,6 +29,7 @@ export interface PrintContext {
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
 	readonly source?: string;
+	readonly innerGapsKeyed?: boolean;
 	readonly loose?: LooseFacts;
 }
 
@@ -52,6 +54,7 @@ export interface PrintedFacts {
 	readonly inner?: unknown;
 	readonly elements?: { readonly options?: Record<string, unknown>; readonly items: readonly unknown[] };
 	readonly config?: string;
+	readonly emptyCall?: string;
 }
 
 export class Printed {
@@ -84,6 +87,11 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 	return v !== null && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Printed);
 }
 
+function printedSource(value: Printed): string {
+	const inner = Object.values(value.$_trivia?.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0);
+	return (inner ? value.facts?.emptyCall : undefined) ?? value.source;
+}
+
 function triviaSuffix(trivia: ReadTrivia | undefined, ctx: PrintContext): string {
 	if (trivia === undefined) return '';
 	const args = (entries: readonly unknown[]): string => entries.map((entry) => printValue(entry, ctx, 0)).join(', ');
@@ -93,7 +101,11 @@ function triviaSuffix(trivia: ReadTrivia | undefined, ctx: PrintContext): string
 	};
 	const inner = Object.entries(trivia.inner ?? {})
 		.filter(([, entries]) => (entries?.length ?? 0) > 0)
-		.map(([gap, entries]) => `.$trivia.innerAt(${JSON.stringify(gap)}, ${args(entries!)})`)
+		.map(([gap, entries]) =>
+			ctx.innerGapsKeyed === true
+				? `.$trivia.innerAt(${JSON.stringify(gap)}, ${args(entries!)})`
+				: `.$trivia.inner(${args(entries!)})`
+		)
 		.join('');
 	return side('leading') + side('trailing') + inner;
 }
@@ -130,7 +142,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
-		return reindent(value.source, depth) + triviaSuffix(value.$_trivia, ctx);
+		return reindent(printedSource(value), depth) + triviaSuffix(value.$_trivia, ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -629,7 +641,8 @@ export function printingFactoryMap(
 					const argSource = optionsSource === undefined ? configSource : `${configSource}, ${optionsSource}`;
 					const source =
 						ctx.loose !== undefined && argSource === '{}' && optionsSource === undefined ? `${call}()` : `${call}(${argSource})`;
-					return new Printed(id, source, kind, argSource, { config: configSource });
+					const emptyCall = argSource === '{}' ? `${call}()` : undefined;
+					return new Printed(id, source, kind, argSource, { config: configSource, emptyCall });
 				}
 			}
 		};
@@ -704,7 +717,7 @@ export function printFactorySource(
 	if (!(printed instanceof Printed)) {
 		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
 	}
-	return printed.source + triviaSuffix(printed.$_trivia, ctx);
+	return printedSource(printed) + triviaSuffix(printed.$_trivia, ctx);
 }
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -717,7 +730,8 @@ import {
 	loadLanguageForGrammar,
 	loadNodeModel,
 	loadReadTreeNode,
-	materializeWrappedNodeData
+	materializeWrappedNodeData,
+	type ModelFullForm
 } from '../validate/common.ts';
 import { invoke, load } from '../codegen-surface.ts';
 import type { GeneratedIdTables, GeneratedKindEntry } from '../codegen-surface.ts';
@@ -803,6 +817,62 @@ function irPathResolver(
 		return [...segments(form.parent, seen), camelCase(form.form)];
 	};
 	return (kind: string): string => `ir.${segments(kind, new Set()).join('.')}`;
+}
+
+interface TriviaTextContext {
+	readonly kindNameFromId: (id: number) => string | undefined;
+	readonly kindIdOfName: (kind: string) => number | undefined;
+	readonly textLeafKinds: ReadonlySet<string>;
+	readonly fullForms: Record<string, ModelFullForm>;
+	readonly factoryFields: Record<string, readonly string[]>;
+	readonly slotDefaults: Record<string, Record<string, string>>;
+}
+
+function spellTriviaTree(node: unknown, ctx: TriviaTextContext, depth = 0): void {
+	if (depth > 256) return;
+	if (Array.isArray(node)) {
+		for (const entry of node) spellTriviaTree(entry, ctx, depth + 1);
+		return;
+	}
+	if (!isPlainObject(node)) return;
+	for (const [key, value] of Object.entries(node)) {
+		if (key.startsWith('_')) spellTriviaTree(value, ctx, depth + 1);
+	}
+	const trivia = node.$_trivia as ReadTrivia | undefined;
+	if (trivia === undefined) return;
+	node.$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) =>
+		entries.map((entry) => spelledTriviaEntry(entry, ctx))
+	) as ReadTrivia;
+}
+
+function spelledTriviaEntry(entry: unknown, ctx: TriviaTextContext): unknown {
+	if (!isPlainObject(entry) || typeof entry.$text !== 'string' || typeof entry.$type !== 'number') return entry;
+	if (Object.keys(entry).some((key) => key.startsWith('_'))) return entry;
+	const kind = ctx.kindNameFromId(entry.$type);
+	if (kind === undefined || ctx.textLeafKinds.has(kind)) return entry;
+	const form = ctx.fullForms[kind];
+	const field = ctx.factoryFields[kind]?.[0];
+	const contentKind = field === undefined ? undefined : ctx.slotDefaults[kind]?.[camelCase(field)];
+	const contentId = contentKind === undefined ? undefined : ctx.kindIdOfName(contentKind);
+	const interior = form === undefined ? undefined : fullFormInterior(entry.$text, form);
+	if (interior === undefined || contentId === undefined) {
+		throw new Error(
+			`emit-factory-source: trivia '${kind}' reads as text only, and its full form cannot spell ${JSON.stringify(entry.$text)}`
+		);
+	}
+	const { $text: _text, ...rest } = entry;
+	return { ...rest, [`_${field}`]: { $type: contentId, $text: interior } };
+}
+
+function fullFormInterior(text: string, form: ModelFullForm): string | undefined {
+	for (const open of form.open.texts) {
+		for (const close of form.close.texts) {
+			if (text.length >= open.length + close.length && text.startsWith(open) && text.endsWith(close)) {
+				return text.slice(open.length, text.length - close.length);
+			}
+		}
+	}
+	return undefined;
 }
 
 interface SeatWalkContext {
@@ -899,8 +969,16 @@ export async function emitFactorySourceText(
 	const { findEntryForLiteralText } = await load('generatedMetadata');
 	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
-	const leafFindings: string[] = [];
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
+	spellTriviaTree(root, {
+		kindNameFromId,
+		kindIdOfName: (kind) => idOfName.get(kind),
+		textLeafKinds,
+		fullForms: model.fullForms,
+		factoryFields: model.factoryFields,
+		slotDefaults: model.slotDefaults
+	});
+	const leafFindings: string[] = [];
 	const ctx: PrintContext = {
 		grammar,
 		kindNameFromId,
@@ -927,6 +1005,7 @@ export async function emitFactorySourceText(
 		),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		source,
+		innerGapsKeyed: model.innerGapsKeyed,
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;

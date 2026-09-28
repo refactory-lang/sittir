@@ -73,6 +73,22 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		name: 'ListSeatConfigsRust',
 		surfaces: ['strict', 'loose'],
 		rendered: 'list-seat-configs-rust.rendered'
+	},
+	{
+		grammar: 'rust',
+		source: 'packages/tools/tests/emit/__fixtures__/trivia.rs',
+		stem: '22-trivia-rust',
+		name: 'TriviaRust',
+		surfaces: ['strict'],
+		rendered: 'trivia-rust.rendered'
+	},
+	{
+		grammar: 'typescript',
+		source: 'packages/tools/tests/emit/__fixtures__/trivia.ts',
+		stem: '22-trivia-typescript',
+		name: 'TriviaTypescript',
+		surfaces: ['strict'],
+		rendered: 'trivia-typescript.rendered'
 	}
 ];
 

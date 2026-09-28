@@ -367,6 +367,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "_group_expression",
@@ -581,6 +582,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "@"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_immediate_identifier",
       "factoryFields": [
@@ -642,6 +655,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            ";"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -727,6 +752,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -1669,6 +1706,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [

@@ -303,6 +303,9 @@ fn read_ts_node(
 /// Each entry still carries a coordinate — the tree's tag in `$nodeHandle`
 /// and its own `$span` — so an untouched comment renders as the bytes it
 /// spans, whatever its kind's transport would otherwise need.
+/// An entry read with no fields and no children (rust's regular `/* a */`,
+/// whose content is not a node) carries its bytes as `$text`, so its text is a
+/// read fact rather than something only the span can recover.
 fn node_trivia(
     node: tree_sitter::Node<'_>,
     source: &str,
@@ -312,17 +315,27 @@ fn node_trivia(
     if node.is_extra() {
         return None;
     }
-    let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| NodeData {
-        same_line,
-        tokens_between,
-        ..read_ts_node(
+    let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
+        let data = read_ts_node(
             extra,
             source,
             tree_handle,
             tree_handle,
             ReadDepth::Deep,
             model,
-        )
+        );
+        let childless = data.fields.is_none() && data.children.is_none();
+        let text = data.text.or_else(|| {
+            childless
+                .then(|| source.get(extra.byte_range()).map(str::to_string))
+                .flatten()
+        });
+        NodeData {
+            same_line,
+            tokens_between,
+            text,
+            ..data
+        }
     };
 
     let mut leading = Vec::new();

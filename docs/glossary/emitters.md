@@ -11336,6 +11336,8 @@ passes the generator's `generatedIdTables` through for that reason.
 
 `textLeavesThrough` publishes `transparentEnvelopeTextLeaves` per envelope, so the loose source emitter predicts which bare strings the coercer routes through an envelope.
 
+`innerGapsKeyed` publishes the predicate that decided whether the emitted `InnerTrivia` takes a gap key, so the source emitter prints the inner-trivia surface that was emitted: `innerAt(gap, …)` when keyed, `.inner(…)` otherwise.
+
 `variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.
 
 Each kind that takes a bare input on the loose surface also carries
@@ -16435,6 +16437,8 @@ The key under which a lexed kind's per-slot guard regex is registered.
 
 ```text
 A lexed kind serializes its `interior` beside its slots, from the same derivation the runtime table uses.
+
+A kind with a full form serializes it (`fullForm`, its literal `open` and `close` texts), the same stamp the coercer's full-form acceptance reads. The source emitter spells a text-only read entry with it.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::factoryRef`

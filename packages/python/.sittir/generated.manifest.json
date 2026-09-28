@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "3551b1cff0dc1996d56055bcb78defef50825264f210723887cf7e0a963d4ea5",
+  "source_hash": "98fdc4d16e4442a08aff7e2b8c1e51ddfe42e70b9dcf4a11c6d3d5d39d841156",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "28b375f2f8ac665e296bd0ac15079c87368fb7dadb56e146c5fff8ae9a48ce9c",
     "packages/python/.sittir/grammar.js": "08db1d0a4d535b88650c20cca3cd559ef8fc87738b87087c93ed4a52f8f3e9df",
@@ -32,7 +32,7 @@
     "packages/python/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
     "packages/python/src/ir.ts": "8c38d5acfa28d58fad981eb393b97daf504b3df185d841ccc1b667071c7326f6",
     "packages/python/src/is.ts": "ebfb2b679c4409bf618017b85047383c7a22b0c323134744565c00bee02a8451",
-    "packages/python/src/node-model.json5": "a2d38b6b9eb34fd9c2996c0038d2dee4892cd66a1efcc478dd03e3ae883f13c3",
+    "packages/python/src/node-model.json5": "e6fde041885044bbc9142d33fa416cbdce4c7f4994d5db31b26aa2d4cc8f4151",
     "packages/python/src/options.ts": "efd7f51b5f292343a719b9d6f46fcadc4dc0ddd37f78206a56b17df7c046b217",
     "packages/python/src/render-engine.ts": "fcc45ec4608a066a7491d575700c3f1d704dfcf4048c8883feeb659a9b569018",
     "packages/python/src/types.ts": "8d12713d5c9d6575a3ba923f9f40ede25c9130441e0f86d9843e3c1158c01c85",

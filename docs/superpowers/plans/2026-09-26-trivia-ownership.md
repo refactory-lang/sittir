@@ -644,6 +644,8 @@ prints as `.$trivia.innerAt("<gap>", ...)`. The validator's `carryTrivia`
 resolves entries through `resolveChild`. Still open: whitespace entries
 (after Task 5w), and printing through `.inner` when the gap is the first one.
 
+**Landed:** entries print through their kind's strict builder; inner entries print as `.$trivia.inner(…)`, or `innerAt(gap, …)` when the grammar keys its gaps (the node model's `innerGapsKeyed`); an owner of inner trivia prints its no-argument call, the empty form. A rust regular `/* a */` reads with its text (`$text` on an entry read with no children) and prints as `ir.blockComment.strict(ir.blockCommentContent(" a "))`, spelled by the kind's `fullForm`. The `22-trivia-{rust,typescript}` dogfood examples pin it, type-checked and rendered. **Blocked:** printing whitespace entries: no read tree carries them, since read whitespace stays with the source coordinates.
+
 **Files:**
 - Modify: `packages/tools/src/emit/factory-source.ts` (`triviaSuffix` and the
   inner-trivia print): every entry prints through its kind's builder (via

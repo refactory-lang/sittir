@@ -1702,3 +1702,11 @@ The placement rows for one source text, for probes and tests.
 ### `packages/tools/src/validate/trivia-placement.ts::computeTriviaPlacementCensus`
 
 The rows and summary for one grammar's whole corpus.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
+
+Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
+
+Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.

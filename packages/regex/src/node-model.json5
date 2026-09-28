@@ -421,6 +421,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "_character_escape",
@@ -617,6 +618,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\k<"
+          ]
+        },
+        "close": {
+          "texts": [
+            ">"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "group_name",
       "factoryFields": [
@@ -1170,6 +1183,18 @@
         }
       ],
       "name": "count_quantifier_group",
+      "fullForm": {
+        "open": {
+          "texts": [
+            ","
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "decimal_digits",
       "factoryFields": [
@@ -1307,6 +1332,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -1928,6 +1965,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "(?P="
+          ]
+        },
+        "close": {
+          "texts": [
+            ")"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "group_name",
       "factoryFields": [
@@ -2104,6 +2153,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "[:"
+          ]
+        },
+        "close": {
+          "texts": [
+            ":]"
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "posix_class_name",
       "factoryFields": [
@@ -2579,6 +2640,18 @@
         }
       ],
       "name": "unicode_property_value_expression_group",
+      "fullForm": {
+        "open": {
+          "texts": [
+            ""
+          ]
+        },
+        "close": {
+          "texts": [
+            "="
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "unicode_property_name",
       "factoryFields": [

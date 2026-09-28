@@ -661,6 +661,13 @@ export interface LoadedNodeModel {
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
+	readonly fullForms: Record<string, ModelFullForm>;
+	readonly innerGapsKeyed: boolean;
+}
+
+export interface ModelFullForm {
+	readonly open: { readonly texts: readonly string[] };
+	readonly close: { readonly texts: readonly string[] };
 }
 
 interface ParsedNodeModel {
@@ -688,7 +695,9 @@ interface ParsedNodeModel {
 		forwardsTo?: string;
 		defaultDelimiter?: string;
 		leafPattern?: string;
+		fullForm?: ModelFullForm;
 	}>;
+	innerGapsKeyed?: boolean;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
@@ -717,7 +726,9 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	textLeavesThrough: {},
 	forwardsTo: {},
 	listDefaults: {},
-	listElementKinds: {}
+	listElementKinds: {},
+	fullForms: {},
+	innerGapsKeyed: false
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
@@ -760,6 +771,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
+	const fullForms: Record<string, ModelFullForm> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
@@ -794,6 +806,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
+		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
 	}
 	return {
 		irKeys,
@@ -817,7 +830,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		textLeavesThrough,
 		forwardsTo,
 		listDefaults,
-		listElementKinds
+		listElementKinds,
+		fullForms,
+		innerGapsKeyed: model.innerGapsKeyed === true
 	};
 }
 

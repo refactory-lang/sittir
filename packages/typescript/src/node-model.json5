@@ -4153,6 +4153,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "__error_recovery",
@@ -8734,6 +8735,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/*"
+          ]
+        },
+        "close": {
+          "texts": [
+            "*/"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -8786,6 +8799,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "//"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -10777,6 +10802,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -14152,6 +14189,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -18368,6 +18417,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            ""
+          ]
+        },
+        "close": {
+          "texts": [
+            "n"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -18451,6 +18512,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0b",
+            "0B"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -19023,6 +19098,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0x",
+            "0X"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -19117,6 +19206,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0o",
+            "0O"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -21390,6 +21493,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [

@@ -3753,6 +3753,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "_blankline",
@@ -6721,6 +6722,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/*"
+          ]
+        },
+        "close": {
+          "texts": [
+            "*/"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6764,6 +6777,18 @@
         }
       ],
       "name": "block_comment_doc_inner",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
@@ -6806,6 +6831,18 @@
         }
       ],
       "name": "block_comment_doc_outer",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "*"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
@@ -9447,6 +9484,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9499,6 +9548,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -9553,6 +9614,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9605,6 +9678,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -13778,6 +13863,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "'"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -14126,6 +14223,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "'"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -14296,6 +14405,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "//"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -14341,6 +14462,18 @@
         }
       ],
       "name": "line_comment_doc_inner",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "doc_comment",
       "factoryFields": [
@@ -14383,6 +14516,18 @@
         }
       ],
       "name": "line_comment_doc_outer",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "doc_comment",
       "factoryFields": [
@@ -15523,6 +15668,18 @@
             "configKey": "name"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "$"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -20581,6 +20738,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#!"
+          ]
+        },
+        "close": {
+          "texts": [
+            "\n"
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
