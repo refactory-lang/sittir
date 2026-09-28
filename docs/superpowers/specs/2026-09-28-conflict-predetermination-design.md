@@ -13,8 +13,8 @@ entry is still needed.
 
 ## Goal
 
-A grammar's conflicts and the precedences that resolve them are derived, not
-written. Generation reaches zero unresolved conflicts without hand-written
+A grammar's conflicts are derived, not written, and upstream's dynamic
+precedences survive reshaping. Generation reaches zero unresolved conflicts without hand-written
 conflict entries, and the derived set is exactly what the final grammar needs:
 no entry that tree-sitter would call unnecessary.
 
@@ -90,31 +90,36 @@ Hand-written entries in `grammar.sittir.ts` are retired. After migration, any
 
 ### Policy: which resolution the loop applies
 
-For a reported conflict, in order:
+Every reported conflict is resolved with `AddConflict`. The loop never applies a
+static precedence or associativity: upstream's own static precedences stay as upstream
+wrote them, and the probe shows that declaring every conflict reproduces today's
+parsers exactly.
 
-1. **The conflict was declared upstream.** If the rules in the conflict are, up to
-   the reshaping records (below), a set upstream listed in its own `conflicts`,
-   that is upstream's choice: apply `AddConflict`. The loop never replaces a
-   conflict upstream chose with a precedence or associativity, so parse trees
-   match upstream's.
-2. **Upstream resolved the source rule with precedence or associativity.** When
-   tree-sitter offers `Associativity` or a precedence resolution, the direction is
-   copied from the upstream rule the reshaped rule came from: its `prec.left`,
-   `prec.right` or `prec(n)`. The loop never invents a direction.
-3. **Otherwise:** apply `AddConflict`.
+A declared conflict is settled at parse time by dynamic precedence (`prec.dynamic`).
+That is upstream's own tie-breaker, so it must survive reshaping. For every rule in a
+derived conflict, the loop compares the dynamic precedence of the rule's upstream
+source (below) with the dynamic precedence the reshaped rule carries:
+
+- **Carried:** nothing to do.
+- **Lost:** the reshaped rule gets its source's `prec.dynamic` copied onto it. Each
+  copy is recorded and reviewed, since it changes the parser toward upstream's parse.
+
+A first census over the five grammars decides which of these exists today. If no
+dynamic precedence is lost, the check stays as the blocking diagnostic
+`conflict-dynamic-precedence-lost`, and parsers stay identical to the current ones.
 
 ### Finding the upstream source of a reshaped rule
 
-The direction and the "declared upstream" test both need the upstream rule a
-reshaped rule came from. They read the records enrich and wire already keep; no
+The dynamic-precedence check needs the upstream rule a reshaped rule came from. It
+reads the records enrich and wire already keep; no
 name matching:
 
-- enrich's minted-rules sidecar (the rule and its origin, including a promoted
-  group's visible name);
-- wire's lift-body and rename records.
+- wire's rename records, which include lifts;
+- the variant annotation (`variantOf`), which wins over a rename on the same rule.
 
-A rule with no upstream source (a pure sittir mint with no enclosing upstream
-precedence) has no upstream direction, and falls to `AddConflict`.
+A name upstream defines, as a rule or an external, is its own source. A promoted group
+keeps its upstream name (its visible name is an alias, never a rule). Any other sittir
+mint has no upstream source, so there is no dynamic precedence to compare.
 
 ### Diagnostics
 
@@ -124,15 +129,17 @@ precedence) has no upstream direction, and falls to `AddConflict`.
 - `conflict-unresolvable` (blocking, not floorable): the termination cases above.
 - `conflict-authored` (blocking, not floorable): a `conflicts:` entry written in
   `grammar.sittir.ts`.
+- `conflict-dynamic-precedence-lost` (blocking, not floorable): a rule in a derived
+  conflict lacks the dynamic precedence its upstream source carries.
 - An upstream conflict the loop never re-derives is recorded as unnecessary in
   the final grammar (informational). It shows what reshaping removed.
 
 ## Testing
 
-- A small fixture with `binary: _expr '+' _expr`, and an upstream variant that
-  resolves it with `prec.left`, converges to the copied associativity. Without the
-  upstream precedence it converges to `AddConflict`.
-- A fixture whose upstream declares a conflict converges to that same conflict.
+- A fixture with `binary: _expr '+' _expr` converges to `AddConflict`.
+- A fixture whose upstream rule carries `prec.dynamic`, reshaped into a variant that
+  lost it, gets the dynamic precedence copied (or raises
+  `conflict-dynamic-precedence-lost` while the census finds none).
 - python: with its four hand-written conflicts deleted, generation converges, and
   the derived set replaces them. `parser.c` is byte-identical when the derived set
   equals the removed one; any difference is reported for review.
@@ -146,7 +153,7 @@ precedence) has no upstream direction, and falls to `AddConflict`.
 
 ## Out of scope
 
-- Choosing between several valid precedence levels beyond copying upstream's.
+- Applying static precedence or associativity to resolve a conflict.
 - Precedence declarations upstream wrote outside `conflicts` (its `precedences`
   list, `prec` on rules). They are kept as upstream wrote them; only the
   `conflicts` array is re-derived.
