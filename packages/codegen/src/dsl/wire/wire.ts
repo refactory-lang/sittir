@@ -29,6 +29,7 @@ import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGrou
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
+import { extrasClosure } from '../extras.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
@@ -688,11 +689,18 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 }
 
 interface BaseArg {
-	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown; extras?: unknown; precedences?: unknown };
+	grammar?: {
+		rules?: Record<string, RuleFn>;
+		externals?: unknown;
+		extras?: unknown;
+		precedences?: unknown;
+		supertypes?: unknown;
+	};
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
 	extras?: unknown;
 	precedences?: unknown;
+	supertypes?: unknown;
 }
 
 function symbolNamesOf(entries: unknown): Set<string> {
@@ -710,54 +718,59 @@ function symbolNamesOf(entries: unknown): Set<string> {
 	return names;
 }
 
-function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const basePrecedences = base?.grammar?.precedences ?? base?.precedences;
+function overriddenList(baseValue: unknown, own: unknown): unknown {
 	const previous = withStringGlobalShim(() =>
-		typeof basePrecedences === 'function'
-			? (basePrecedences as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
-			: basePrecedences
+		typeof baseValue === 'function'
+			? (baseValue as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
+			: baseValue
 	);
-	const own = (cfg as { precedences?: unknown }).precedences;
-	const groups =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? []))
-			: (own ?? previous);
+	return typeof own === 'function'
+		? withStringGlobalShim(() =>
+				(own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? [])
+			)
+		: (own ?? previous);
+}
+
+function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const groups = overriddenList(
+		base?.grammar?.precedences ?? base?.precedences,
+		(cfg as { precedences?: unknown }).precedences
+	);
 	const names = new Set<string>();
 	for (const group of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group)) names.add(name);
 	return names;
 }
 
 function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const baseExtras = base?.grammar?.extras ?? base?.extras;
-	const previous = withStringGlobalShim(() =>
-		typeof baseExtras === 'function' ? (baseExtras as (dollar: unknown) => unknown)(makeSimpleDollarProxy()) : baseExtras
+	const extras = symbolNamesOf(
+		overriddenList(base?.grammar?.extras ?? base?.extras, (cfg as { extras?: unknown }).extras)
 	);
-	const own = (cfg as { extras?: unknown }).extras;
-	const entries =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous))
-			: (own ?? previous);
-	return symbolNamesOf(entries);
+	const supertypes = symbolNamesOf(
+		overriddenList(base?.grammar?.supertypes ?? base?.supertypes, (cfg as { supertypes?: unknown }).supertypes)
+	);
+	return extrasClosure(extras, supertypes, (name) => {
+		if (!supertypes.has(name)) return undefined;
+		const baseRule: unknown = base?.grammar?.rules?.[name] ?? base?.rules?.[name];
+		const own: unknown = cfg.rules?.[name];
+		const body = own ?? baseRule;
+		const rule = (
+			typeof body === 'function'
+				? withStringGlobalShim(() =>
+						(body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), baseRule)
+					)
+				: body
+		) as { type?: unknown; members?: unknown } | undefined;
+		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
+	});
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
 	const externals = base?.grammar?.externals ?? base?.externals;
-	const entries =
+	return symbolNamesOf(
 		typeof externals === 'function'
 			? withStringGlobalShim(() => (externals as (dollar: unknown) => unknown)(makeSimpleDollarProxy()))
-			: externals;
-	const names = new Set<string>();
-	for (const external of Array.isArray(entries) ? entries : []) {
-		if (typeof external === 'string') {
-			names.add(external);
-			continue;
-		}
-		const symbol = external as { type?: unknown; name?: unknown } | null;
-		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
-			names.add(symbol.name);
-		}
-	}
-	return names;
+			: externals
+	);
 }
 
 function injectPlaceholderHiddenRules(

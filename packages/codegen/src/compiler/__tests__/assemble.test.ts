@@ -24,7 +24,7 @@ import {
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPunctuation,
-	isVisibleTextLeaf,
+	isBuilderTextLeaf,
 	isHiddenPunctuationLeaf,
 	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
@@ -195,7 +195,7 @@ describe('Assemble — classifyNode', () => {
 		const word = nodes.get('true')!;
 		expect(visible).toBeInstanceOf(AssembledPunctuation);
 		expect(hidden).toBeInstanceOf(AssembledPunctuation);
-		expect([visible, hidden, word].map(isVisibleTextLeaf)).toEqual([true, false, true]);
+		expect([visible, hidden, word].map(isBuilderTextLeaf)).toEqual([true, false, true]);
 		expect([visible, hidden, word].map(isHiddenPunctuationLeaf)).toEqual([false, true, false]);
 		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
 	});

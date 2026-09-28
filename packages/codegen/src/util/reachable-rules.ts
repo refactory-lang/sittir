@@ -1,7 +1,15 @@
-import { isBlank } from '../dsl/rule-patterns.ts';
+import { isBlank, ruleListParts, type RuleListEntry } from '../dsl/rule-patterns.ts';
 
 export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
 	return Object.keys(rules)[0];
+}
+
+export function grammarRootNames(grammar: {
+	readonly rules: Readonly<Record<string, unknown>>;
+	readonly extras: readonly RuleListEntry[];
+}): string[] {
+	const start = rootRuleName(grammar.rules);
+	return [...(start === undefined ? [] : [start]), ...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)];
 }
 
 export function collectSymbolRefs(node: unknown, into: Set<string>): void {

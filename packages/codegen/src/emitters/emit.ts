@@ -1,5 +1,5 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
-import { isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
@@ -278,7 +278,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isHiddenPunctuationLeaf(node)) break;
+				if (isBuilderlessPunctuationLeaf(node)) break;
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);

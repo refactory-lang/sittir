@@ -29,7 +29,7 @@ describe('utils facade surface', () => {
 
 	it('$toEdit and $replace produce correct Edit objects (via mock engine)', () => {
 		// Use a mock engine so this test does not depend on the native render boundary.
-		const mockEngine: WithMethodsEngine = {
+		const mockEngine = {
 			render(n: AnyNodeData): string {
 				return n.$text ?? '';
 			},
@@ -42,8 +42,9 @@ describe('utils facade surface', () => {
 				const start = typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index;
 				const end = typeof startOrRange === 'number' ? (endPos ?? start) : startOrRange.end.index;
 				return { startPos: start, endPos: end, insertedText: text };
-			}
-		};
+			},
+			trivia: methodsEngine.trivia
+		} satisfies WithMethodsEngine;
 		const node = withMethods(
 			{ $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' },
 			mockEngine

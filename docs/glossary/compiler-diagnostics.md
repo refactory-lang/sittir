@@ -398,6 +398,10 @@ the separator is a required construction input.
 
 One `reserved-member-not-literal` warning per reserved-wordset member that `reservedWordset` cannot read as literal text. The word builder's reserved guard cannot reject a word it cannot spell, so the member is named for the author to rewrite as a string or a single-literal symbol.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::triviaLineEndDiagnostics`
+
+One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTerminated` is undetermined: an arm ends in an external token with no render rule. The remedy is to author the external's render-only rule in `grammar.sittir.ts` (the text it scans), which `lineTerminated` then reads like any token body. No grammar has one today.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
 The front half of a compile over one evaluated stage: link, normalize and assemble, and the grammar diagnostics

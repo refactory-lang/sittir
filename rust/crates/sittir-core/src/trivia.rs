@@ -1,0 +1,364 @@
+//! `TransportTrivia` — the trivia a transport carries, and where it renders.
+//!
+//! A read gives every extra one owner (`read_node::node_trivia`): leading
+//! entries render before the owner, trailing entries after it, and inner
+//! entries at the gap they occupy inside an owner with no named child. A
+//! trailing entry on its owner's last row renders after the anonymous tokens
+//! that follow the owner on that row, so the sink holds it until the next
+//! owner, coordinate or line break (`RenderSink::defer_trailing`).
+
+use crate::options::Side;
+use crate::render::{Render, RenderResult, RenderSink};
+use crate::types::KindId;
+use crate::slot::SlotValue;
+use std::collections::BTreeMap;
+
+/// One trivia entry: the node (or the coordinate of one), whether it shares
+/// a row with its owner, and on a same-line trailing entry the anonymous
+/// tokens between the owner and it.
+#[derive(Debug, Clone)]
+pub struct TriviaEntry<T> {
+    pub value: SlotValue<T>,
+    pub same_line: bool,
+    pub tokens_between: u16,
+}
+
+impl<T: Render> Render for TriviaEntry<T> {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.value.render(w)
+    }
+}
+
+/// A trivia value that is whitespace answers its text: it is merged into the
+/// gap it sits in (`RenderSink::trivia_seam`), replacing that gap's default,
+/// instead of being written as a line of its own.
+pub trait TriviaSeam {
+    fn seam_text(&self) -> Option<&str> {
+        None
+    }
+    /// The kind of this entry, when it has one.
+    fn kind(&self) -> Option<KindId> {
+        None
+    }
+    /// Whether this entry's kind ends only at a line break (a line comment),
+    /// from the kind flag table the sink holds.
+    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
+        self.kind().is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED))
+    }
+}
+
+impl<T: Render + TriviaSeam> TriviaEntry<T> {
+    fn seam_text(&self) -> Option<&str> {
+        match &self.value {
+            SlotValue::Transport(value) => value.seam_text(),
+            SlotValue::Coord(_) => None,
+        }
+    }
+
+    fn line_terminated(&self, w: &dyn RenderSink) -> bool {
+        match &self.value {
+            SlotValue::Transport(value) => value.line_terminated(w),
+            SlotValue::Coord(coord) => w
+                .kind_of(coord)
+                .is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED)),
+        }
+    }
+
+    /// Render the entry, and hold the break a line-terminated entry leaves.
+    fn render_entry(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.value.render(w)?;
+        if self.line_terminated(w) {
+            w.hold_line_end();
+        }
+        Ok(())
+    }
+}
+
+impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> {
+    /// Every entry is prepared like a slot value: a coordinate entry takes its
+    /// kind's edges, as a coordinate in a slot does.
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
+        let inner = self.inner.iter_mut().flat_map(|gaps| gaps.values_mut());
+        for entry in sides.chain(inner).flatten() {
+            entry.value.prepare(ctx)?;
+        }
+        Ok(())
+    }
+}
+
+/// Trivia read from source and detached from its tree: the text the reader
+/// captured, with the kind the reader stamped on it. It writes that kind's
+/// edges around the text, as a rendered node of the kind does.
+#[derive(Debug, Clone)]
+pub struct TriviaText {
+    pub kind: KindId,
+    pub text: String,
+}
+
+impl Render for TriviaText {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        w.edge(self.kind, Side::Before, None);
+        w.text(&self.text)?;
+        w.edge(self.kind, Side::After, None);
+        Ok(())
+    }
+}
+
+impl crate::prepare::Prepare for TriviaText {
+    fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+/// The trivia one transport owns. Mirrors `NodeTrivia` in `@sittir/types`.
+#[derive(Debug, Clone)]
+pub struct TransportTrivia<T> {
+    pub leading: Option<Vec<TriviaEntry<T>>>,
+    pub trailing: Option<Vec<TriviaEntry<T>>>,
+    pub inner: Option<BTreeMap<String, Vec<TriviaEntry<T>>>>,
+}
+
+impl<T> Default for TransportTrivia<T> {
+    fn default() -> Self {
+        Self {
+            leading: None,
+            trailing: None,
+            inner: None,
+        }
+    }
+}
+
+/// A join written between trivia entries, or between an entry and its owner.
+/// It is a fact of the source layout, so it holds its gap at trivia strength,
+/// but it never takes away a line break the entry before it left pending: a
+/// line-terminated entry's after edge breaks the line, and whatever follows
+/// a line comment on its row would be swallowed by it. Where the output
+/// already stands at a line start (an entry whose span includes its
+/// terminator), the join is already made.
+fn join(text: &str, w: &mut dyn RenderSink) {
+    if !w.ends_line() {
+        whitespace(text, true, w);
+    }
+}
+
+/// A whitespace entry's text, which replaces the seam at its gap. Right
+/// after an entry (`after_entry`) it is kept to at least the line break that
+/// entry left pending; anywhere else it replaces the gap's seam outright.
+fn whitespace(text: &str, after_entry: bool, w: &mut dyn RenderSink) {
+    let keeps_break = after_entry && w.pending_break() && !text.contains('\n');
+    w.trivia_seam(if keeps_break { "\n" } else { text });
+}
+
+/// Render `entries` separated by `between`, a whitespace entry taking the
+/// place of the join at its gap. Each entry's own edges write what follows
+/// it; only the joins are written here.
+fn render_joined<T: Render + TriviaSeam>(
+    entries: &[TriviaEntry<T>],
+    between: &dyn Fn(&TriviaEntry<T>) -> &'static str,
+    w: &mut dyn RenderSink,
+) -> RenderResult {
+    let mut previous: Option<&TriviaEntry<T>> = None;
+    for entry in entries {
+        if let Some(text) = entry.seam_text() {
+            whitespace(text, previous.is_some(), w);
+            previous = None;
+            continue;
+        }
+        if let Some(previous) = previous {
+            join(between(previous), w);
+        }
+        entry.render_entry(w)?;
+        previous = Some(entry);
+    }
+    Ok(())
+}
+
+/// Hold a run of same-line trailing entries in the sink.
+fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
+    w.defer_trailing(&mut |w| {
+        for entry in run {
+            entry.render_entry(w)?;
+        }
+        Ok(())
+    })
+}
+
+impl<T: Render + TriviaSeam> TransportTrivia<T> {
+    /// Leading entries, before the owner renders: an entry that shares the
+    /// owner's row joins it with a space, any other ends its line.
+    pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
+        let leading = self.leading.as_deref().unwrap_or(&[]);
+        let owner_join = |entry: &TriviaEntry<T>| if entry.same_line { " " } else { "\n" };
+        render_joined(leading, &owner_join, w)?;
+        if let Some(last) = leading.last().filter(|entry| entry.seam_text().is_none()) {
+            join(owner_join(last), w);
+        }
+        Ok(())
+    }
+
+    /// Trailing entries, after the owner renders, in source order. A
+    /// same-line entry with no tokens between it and its owner is seated
+    /// right after the owner; one after tokens is held past the tokens that
+    /// follow the owner. Own-line entries seat the held ones first, then each
+    /// renders on its own line, and the seam the owner left (its after edge)
+    /// is written after them.
+    pub fn render_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
+        let trailing = self.trailing.as_deref().unwrap_or(&[]);
+        let own = trailing
+            .iter()
+            .position(|entry| !entry.same_line)
+            .unwrap_or(trailing.len());
+        let held = trailing[..own]
+            .iter()
+            .position(|entry| entry.tokens_between > 0)
+            .unwrap_or(own);
+        let (adjacent, rest) = trailing.split_at(held);
+        let (after_tokens, own_line) = rest.split_at(own - held);
+        if !adjacent.is_empty() {
+            defer_run(adjacent, w)?;
+            w.seat_trailing()?;
+        }
+        if !after_tokens.is_empty() {
+            defer_run(after_tokens, w)?;
+        }
+        if !own_line.is_empty() {
+            w.seat_trailing()?;
+            let owner_seam = w.take_seam();
+            let mut gap_set = false;
+            let mut after_entry = false;
+            for entry in own_line {
+                if let Some(text) = entry.seam_text() {
+                    whitespace(text, std::mem::replace(&mut after_entry, false), w);
+                    gap_set = true;
+                    continue;
+                }
+                if !std::mem::replace(&mut gap_set, false) {
+                    join("\n", w);
+                }
+                entry.render_entry(w)?;
+                after_entry = true;
+            }
+            if let Some(seam) = owner_seam {
+                w.restore_seam(seam);
+            }
+        }
+        Ok(())
+    }
+
+    /// The inner entries at the gap `key`, where the owner renders that gap's
+    /// slot: one per line when the gap starts a line (the start of a block
+    /// body, which the body's own indent and dedent frame, or output standing
+    /// at a line start, as at the grammar root), and joined by spaces
+    /// anywhere else.
+    pub fn render_inner(&self, key: &str, w: &mut dyn RenderSink) -> RenderResult {
+        let Some(entries) = self.inner.as_ref().and_then(|inner| inner.get(key)) else {
+            return Ok(());
+        };
+        let between: &'static str = if w.at_body_start() || w.ends_line() { "\n" } else { " " };
+        render_joined(entries, &|_| between, w)
+    }
+}
+
+/// The inner entries at gap `key` of a transport's trivia, if it has any.
+pub fn render_inner<T: Render + TriviaSeam>(
+    trivia: &Option<TransportTrivia<T>>,
+    key: &str,
+    w: &mut dyn RenderSink,
+) -> RenderResult {
+    match trivia {
+        Some(trivia) => trivia.render_inner(key, w),
+        None => Ok(()),
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
+    for TriviaEntry<T>
+{
+    /// A trivia entry is a slot value that may carry `$sameLine`: a node, a
+    /// coordinate, bare text, or text with its stamped kind (`{ $type,
+    /// $text }`, which the entry type decodes). Kindless text that shares its
+    /// owner's row arrives as `{ $text, $sameLine }`, since a bare string has
+    /// nowhere to carry the flag; it renders as the same bare text.
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if unsafe { crate::slot::transport_value_type(env, napi_val)? } != ::napi::ValueType::Object
+        {
+            return Ok(Self {
+                value: unsafe { SlotValue::from_napi_value(env, napi_val)? },
+                same_line: false,
+                tokens_between: 0,
+            });
+        }
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        let same_line = obj.get::<bool>("$sameLine")?.unwrap_or(false);
+        let tokens_between = obj.get::<u32>("$tokensBetween")?.unwrap_or(0) as u16;
+        let value = match (obj.get::<u32>("$type")?, obj.get::<String>("$text")?) {
+            (None, Some(text)) => unsafe {
+                let text = ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, text)?;
+                SlotValue::from_napi_value(env, text)?
+            },
+            _ => unsafe { SlotValue::from_napi_value(env, napi_val)? },
+        };
+        Ok(Self {
+            value,
+            same_line,
+            tokens_between,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
+    for TransportTrivia<T>
+{
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        let inner = match obj.get::<::napi::bindgen_prelude::Object>("inner")? {
+            None => None,
+            Some(gaps) => {
+                let mut inner = BTreeMap::new();
+                for key in ::napi::bindgen_prelude::Object::keys(&gaps)? {
+                    if let Some(entries) = gaps.get::<Vec<TriviaEntry<T>>>(&key)? {
+                        inner.insert(key, entries);
+                    }
+                }
+                Some(inner)
+            }
+        };
+        Ok(Self {
+            leading: obj.get("leading")?,
+            trailing: obj.get("trailing")?,
+            inner,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ()) }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T> ::napi::bindgen_prelude::TypeName for TransportTrivia<T> {
+    fn type_name() -> &'static str {
+        "TransportTrivia"
+    }
+    fn value_type() -> ::napi::ValueType {
+        ::napi::ValueType::Object
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T> ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia<T> {}

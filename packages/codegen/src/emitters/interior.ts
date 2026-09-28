@@ -1,5 +1,6 @@
 import { CHOICE, PATTERN, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
+import { escapeRegexLiteral } from '../util/word-matcher.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledNonterminal,
@@ -11,7 +12,8 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { anchoredLeafRegex, lexedContentSlot, slotLiteralValues } from './shared.ts';
+import { lexedContentSlot, slotLiteralValues } from './shared.ts';
+import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -27,15 +29,13 @@ export interface NodeInterior {
 	readonly slots: readonly { readonly name: string; readonly configKey: string; readonly flag?: true }[];
 }
 
-const escapeRegex = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 export function interiorEnumArms(values: readonly string[]): string {
-	return [...values].sort((a, b) => b.length - a.length).map(escapeRegex).join('|');
+	return [...values].sort((a, b) => b.length - a.length).map(escapeRegexLiteral).join('|');
 }
 
 export function interiorEntryPattern(entry: InteriorEntry): string {
-	if ('lit' in entry) return escapeRegex(entry.lit);
-	if ('flag' in entry) return `(?<${entry.flag}>${escapeRegex(entry.text)})?`;
+	if ('lit' in entry) return escapeRegexLiteral(entry.lit);
+	if ('flag' in entry) return `(?<${entry.flag}>${escapeRegexLiteral(entry.text)})?`;
 	if ('enum' in entry) {
 		return `(?<${entry.enum}>${interiorEnumArms(entry.values)})${entry.optional ? '?' : ''}`;
 	}

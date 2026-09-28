@@ -20,7 +20,7 @@ import type {
 	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf } from './utils.js';
+import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { RustGrammar };
 
@@ -172,6 +172,12 @@ export type LeafStringMap = {
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.OuterDocCommentMarker]: '*';
 	[TSKindId.InnerDocCommentMarker]: '!';
+	[TSKindId.Space]: ' ';
+	[TSKindId.Newline]: '\n';
+	[TSKindId.Blankline]: '\n\n';
+	[TSKindId.DoubleBlankline]: '\n\n\n';
+	[TSKindId.Indent]: '﷐\n';
+	[TSKindId.Dedent]: '﷑\n';
 	[TSKindId.BlockKeyword]: 'block';
 	[TSKindId.ExprKeyword]: 'expr';
 	[TSKindId.Expr2021Keyword]: 'expr_2021';
@@ -3331,6 +3337,11 @@ export enum EscapeSequenceKind {
 	EscapeSequenceUnicodeFixed = 'escape_sequence_unicode_fixed',
 	EscapeSequenceUnicodeBraced = 'escape_sequence_unicode_braced',
 	EscapeSequenceHex = 'escape_sequence_hex'
+}
+
+export enum CommentKind {
+	LineComment = 'line_comment',
+	BlockComment = 'block_comment'
 }
 
 export enum PathKind {
@@ -7175,10 +7186,10 @@ export interface LetCondition {
 
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
-	readonly _left?: LetChain | LetCondition | Expression;
+	readonly _left: LetChain | LetCondition | Expression;
 	readonly _right?: readonly (LetCondition | Expression)[];
 	readonly __inputHints__?: {
-		readonly left?:
+		readonly left:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| LetChain
 			| LetCondition
@@ -7189,7 +7200,7 @@ export interface LetChain {
 			| Expression
 		)[];
 	};
-	left(): LetChain | LetCondition | Expression | undefined;
+	left(): LetChain | LetCondition | Expression;
 	rights(): readonly (LetCondition | Expression)[];
 }
 
@@ -9940,6 +9951,13 @@ export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, str
 export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type DocComment = Terminal<TSKindId.DocComment, string>;
 export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
+export type Tight = TSKindId.Tight;
+export type Space = TSKindId.Space;
+export type Newline = TSKindId.Newline;
+export type Blankline = TSKindId.Blankline;
+export type DoubleBlankline = TSKindId.DoubleBlankline;
+export type Indent = TSKindId.Indent;
+export type Dedent = TSKindId.Dedent;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 export type U8Keyword = TSKindId.U8Keyword;
 export type I8Keyword = TSKindId.I8Keyword;
@@ -10288,6 +10306,27 @@ export interface RawStringLiteralEndTree extends TreeNode<'raw_string_literal_en
 export interface DocCommentTree extends TreeNode<'doc_comment'> {}
 export interface BlockCommentContentTree extends AnyTreeNode {
 	readonly type: '_block_comment_content';
+}
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
+}
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
+}
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
 }
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
@@ -11182,6 +11221,10 @@ export type EscapeSequenceTree =
 	| EscapeSequenceUnicodeBracedTree
 	| EscapeSequenceHexTree;
 
+export type Comment = LineComment | BlockComment;
+
+export type CommentTree = LineCommentTree | BlockCommentTree;
+
 export type Path =
 	| Self
 	| U8Keyword
@@ -11239,6 +11282,15 @@ export type PathTree =
 	| GenKeywordTree;
 
 export type Whitespace = Tight | Space | Newline | Blankline | DoubleBlankline | Indent | Dedent;
+
+export type WhitespaceTree =
+	| TightTree
+	| SpaceTree
+	| NewlineTree
+	| BlanklineTree
+	| DoubleBlanklineTree
+	| IndentTree
+	| DedentTree;
 
 export namespace Statement {
 	export type Kind = '_statement';
@@ -11410,6 +11462,11 @@ export namespace EscapeSequence {
 	export type Tree = EscapeSequenceTree;
 }
 
+export namespace Comment {
+	export type Kind = 'comment';
+	export type Tree = CommentTree;
+}
+
 export namespace Path {
 	export type Kind = '_path';
 	export type Tree = PathTree;
@@ -11417,37 +11474,10 @@ export namespace Path {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Tree = WhitespaceTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Tight = TSKindId.Tight;
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export type Space = TSKindId.Space;
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export type Newline = TSKindId.Newline;
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export type Blankline = TSKindId.Blankline;
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export type DoubleBlankline = TSKindId.DoubleBlankline;
-export interface DoubleBlanklineTree extends AnyTreeNode {
-	readonly type: '_double_blankline';
-}
-export type Indent = TSKindId.Indent;
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export type Dedent = TSKindId.Dedent;
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
-}
 export type Dollar = TSKindId.Dollar;
 export interface DollarTree extends AnyTreeNode {
 	readonly type: 'dollar';
@@ -11850,10 +11880,6 @@ export interface OptionsHintMap {
 	foreignModItemBody: ForeignModItemBody.Hints;
 	matchArmWithComma: MatchArmWithComma.Hints;
 	matchArmBlockEnding: MatchArmBlockEnding.Hints;
-	lineCommentDocOuter: LineCommentDocOuter.Hints;
-	lineCommentDocInner: LineCommentDocInner.Hints;
-	blockCommentDocOuter: BlockCommentDocOuter.Hints;
-	blockCommentDocInner: BlockCommentDocInner.Hints;
 	tokenTreePatternParen: TokenTreePatternParen.Hints;
 	tokenTreePatternBracket: TokenTreePatternBracket.Hints;
 	tokenTreePatternBrace: TokenTreePatternBrace.Hints;
@@ -13394,18 +13420,16 @@ export namespace RawStringLiteral {
 
 export namespace LineComment {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
+			readonly before?: WhitespaceArm;
+		};
 	}
 }
 
 export namespace BlockComment {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly slashStar?: { readonly after?: WhitespaceArm };
-			readonly starSlash?: { readonly before?: WhitespaceArm };
-		};
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
@@ -14152,30 +14176,6 @@ export namespace MatchArmBlockEnding {
 			readonly before?: WhitespaceArm;
 			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
-	}
-}
-
-export namespace LineCommentDocOuter {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
-	}
-}
-
-export namespace LineCommentDocInner {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
-	}
-}
-
-export namespace BlockCommentDocOuter {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly star?: { readonly after?: WhitespaceArm } };
-	}
-}
-
-export namespace BlockCommentDocInner {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly bang?: { readonly after?: WhitespaceArm } };
 	}
 }
 
@@ -17276,6 +17276,18 @@ export interface InnerDocCommentMarkerNs extends KeywordNs<
 	InnerDocCommentMarkerTree,
 	'inner_doc_comment_marker'
 > {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
+export interface DoubleBlanklineNs extends KeywordNs<
+	TSKindId.DoubleBlankline,
+	'\n\n\n',
+	DoubleBlanklineTree,
+	'_double_blankline'
+> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', IndentTree, '_indent'> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', DedentTree, '_dedent'> {}
 export interface U8KeywordNs extends KeywordNs<TSKindId.U8Keyword, 'u8', U8KeywordTree, 'u8_keyword'> {}
 export interface I8KeywordNs extends KeywordNs<TSKindId.I8Keyword, 'i8', I8KeywordTree, 'i8_keyword'> {}
 export interface U16KeywordNs extends KeywordNs<TSKindId.U16Keyword, 'u16', U16KeywordTree, 'u16_keyword'> {}
@@ -17625,6 +17637,13 @@ export interface NamespaceMap {
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.OuterDocCommentMarker]: OuterDocCommentMarkerNs;
 	[TSKindId.InnerDocCommentMarker]: InnerDocCommentMarkerNs;
+	[TSKindId.Tight]: TightNs;
+	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Newline]: NewlineNs;
+	[TSKindId.Blankline]: BlanklineNs;
+	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.U8Keyword]: U8KeywordNs;
 	[TSKindId.I8Keyword]: I8KeywordNs;
 	[TSKindId.U16Keyword]: U16KeywordNs;
@@ -19833,15 +19852,15 @@ export namespace LetChain {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			left(value?: NonNullable<T.LetChain.Config>['left']): T.LetChain.Built;
+			left(value: NonNullable<T.LetChain.Config>['left']): T.LetChain.Built;
 			rights(value?: NonNullable<T.LetChain.Config>['right']): T.LetChain.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LetChain>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LetChain>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.LetChain>>];
+	export type BuildArgs = [config: ConfigOf<T.LetChain>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.LetChain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LetChain
+		config: LooseConfigOf<T.LetChain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LetChain
 	];
 	export type Tree = TreeFor<TSKindId.LetChain>;
 	export type Kind = '_let_chain';
@@ -23396,6 +23415,76 @@ export namespace InnerDocCommentMarker {
 	export type Tree = InnerDocCommentMarkerNs['Tree'];
 	export type Kind = 'inner_doc_comment_marker';
 }
+export namespace Tight {
+	export type Config = TightNs['Config'];
+	export type Built = TightNs['Built'];
+	export type Loose = TightNs['Loose'];
+	export type LooseConfig = TightNs['LooseConfig'];
+	export type BuildArgs = TightNs['BuildArgs'];
+	export type LooseArgs = TightNs['LooseArgs'];
+	export type Tree = TightNs['Tree'];
+	export type Kind = '_tight';
+}
+export namespace Space {
+	export type Config = SpaceNs['Config'];
+	export type Built = SpaceNs['Built'];
+	export type Loose = SpaceNs['Loose'];
+	export type LooseConfig = SpaceNs['LooseConfig'];
+	export type BuildArgs = SpaceNs['BuildArgs'];
+	export type LooseArgs = SpaceNs['LooseArgs'];
+	export type Tree = SpaceNs['Tree'];
+	export type Kind = '_space';
+}
+export namespace Newline {
+	export type Config = NewlineNs['Config'];
+	export type Built = NewlineNs['Built'];
+	export type Loose = NewlineNs['Loose'];
+	export type LooseConfig = NewlineNs['LooseConfig'];
+	export type BuildArgs = NewlineNs['BuildArgs'];
+	export type LooseArgs = NewlineNs['LooseArgs'];
+	export type Tree = NewlineNs['Tree'];
+	export type Kind = '_newline';
+}
+export namespace Blankline {
+	export type Config = BlanklineNs['Config'];
+	export type Built = BlanklineNs['Built'];
+	export type Loose = BlanklineNs['Loose'];
+	export type LooseConfig = BlanklineNs['LooseConfig'];
+	export type BuildArgs = BlanklineNs['BuildArgs'];
+	export type LooseArgs = BlanklineNs['LooseArgs'];
+	export type Tree = BlanklineNs['Tree'];
+	export type Kind = '_blankline';
+}
+export namespace DoubleBlankline {
+	export type Config = DoubleBlanklineNs['Config'];
+	export type Built = DoubleBlanklineNs['Built'];
+	export type Loose = DoubleBlanklineNs['Loose'];
+	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
+	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
+	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
+	export type Tree = DoubleBlanklineNs['Tree'];
+	export type Kind = '_double_blankline';
+}
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Built = IndentNs['Built'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Tree = IndentNs['Tree'];
+	export type Kind = '_indent';
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Built = DedentNs['Built'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Tree = DedentNs['Tree'];
+	export type Kind = '_dedent';
+}
 export namespace U8Keyword {
 	export type Config = U8KeywordNs['Config'];
 	export type Built = U8KeywordNs['Built'];
@@ -23790,4 +23879,80 @@ export namespace ErrorSentinel {
 	export type LooseArgs = ErrorSentinelNs['LooseArgs'];
 	export type Tree = ErrorSentinelNs['Tree'];
 	export type Kind = '_error_sentinel';
+}
+
+export interface EmptySourceFile extends SourceFile.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyDeclarationList extends DeclarationList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyEnumVariantList extends EnumVariantList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyFieldDeclarationList extends FieldDeclarationList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyOrderedFieldDeclarationList extends OrderedFieldDeclarationList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyUseList extends UseList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyParameters extends Parameters.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyUseBounds extends UseBounds.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyArguments extends Arguments.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyFieldInitializerList extends FieldInitializerList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyMatchBlock extends MatchBlock.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyClosureParameters extends ClosureParameters.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyBlock extends Block.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTuplePattern extends TuplePattern.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptySlicePattern extends SlicePattern.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyArrayExpressionList extends ArrayExpressionList.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreePatternParen extends TokenTreePatternParen.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreePatternBracket extends TokenTreePatternBracket.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreePatternBrace extends TokenTreePatternBrace.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreeParen extends TokenTreeParen.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreeBracket extends TokenTreeBracket.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyTokenTreeBrace extends TokenTreeBrace.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyDelimTokenTreeParen extends DelimTokenTreeParen.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyDelimTokenTreeBracket extends DelimTokenTreeBracket.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export interface EmptyDelimTokenTreeBrace extends DelimTokenTreeBrace.Built {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

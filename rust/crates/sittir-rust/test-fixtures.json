@@ -24065,7 +24065,7 @@
         }
       ]
     },
-    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -24073,9 +24073,9 @@
     "sourceIn": "\nextern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
-    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
   {
@@ -24989,7 +24989,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -24997,9 +24997,9 @@
     "sourceIn": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
-    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
   {
@@ -25816,7 +25816,7 @@
       ],
       "_statements": []
     },
-    "expectedOutput": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -25824,9 +25824,9 @@
     "sourceIn": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))",
-    "wrappedText": "fn _f() { let _ = {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}; }",
+    "wrappedText": "fn _f() { let _ = {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -190808,6 +190808,47 @@
             "$type": 415,
             "$source": 0,
             "$named": true,
+            "$_trivia": {
+              "inner": {
+                "delim_tokens": [
+                  {
+                    "$type": 333,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": {
+                      "$type": 153,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": " one",
+                      "$span": {
+                        "start": 11,
+                        "end": 15
+                      }
+                    },
+                    "$other": [
+                      {
+                        "$type": 120,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "//",
+                        "$span": {
+                          "start": 9,
+                          "end": 11
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 9,
+                      "end": 15
+                    }
+                  },
+                  {
+                    "$type": 336,
+                    "$text": "/* two */"
+                  }
+                ]
+              }
+            },
             "_delim_tokens": []
           },
           "$other": [
@@ -190829,7 +190870,7 @@
         }
       ]
     },
-    "expectedOutput": "ok!{}"
+    "expectedOutput": "ok!{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -190837,9 +190878,9 @@
     "sourceIn": "\nok! {\n  // one\n  /* two */\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "ok!{}",
-    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) arguments: (delim_token_tree_brace)))",
-    "wrappedText": "ok!{}",
+    "expectedSourceOut": "ok!{// one\n/* two */}",
+    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) arguments: (delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment))))",
+    "wrappedText": "ok!{// one\n/* two */}",
     "wrappedOffset": 0
   },
   {
@@ -190864,6 +190905,47 @@
         "$type": 415,
         "$source": 0,
         "$named": true,
+        "$_trivia": {
+          "inner": {
+            "delim_tokens": [
+              {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 153,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " one",
+                  "$span": {
+                    "start": 11,
+                    "end": 15
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 120,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "//",
+                    "$span": {
+                      "start": 9,
+                      "end": 11
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 9,
+                  "end": 15
+                }
+              },
+              {
+                "$type": 336,
+                "$text": "/* two */"
+              }
+            ]
+          }
+        },
         "_delim_tokens": []
       },
       "$other": [
@@ -190883,7 +190965,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "ok!{}"
+    "expectedOutput": "ok!{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -190891,9 +190973,9 @@
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "ok!{}",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_brace))",
-    "wrappedText": "ok!{}",
+    "expectedSourceOut": "ok!{// one\n/* two */}",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment)))",
+    "wrappedText": "ok!{// one\n/* two */}",
     "wrappedOffset": 0
   },
   {
@@ -190904,9 +190986,50 @@
       "$type": 415,
       "$source": 0,
       "$named": true,
+      "$_trivia": {
+        "inner": {
+          "delim_tokens": [
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": " one",
+                "$span": {
+                  "start": 11,
+                  "end": 15
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 9,
+                    "end": 11
+                  }
+                }
+              ],
+              "$span": {
+                "start": 9,
+                "end": 15
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/* two */"
+            }
+          ]
+        }
+      },
       "_delim_tokens": []
     },
-    "expectedOutput": "{}"
+    "expectedOutput": "{// one\n/* two */}"
   },
   {
     "kind": "roundtrip",
@@ -190914,9 +191037,9 @@
     "sourceIn": "{\n  // one\n  /* two */\n}",
     "pattern": "delim_token_tree_brace",
     "edits": [],
-    "expectedSourceOut": "{}",
-    "expectedReparseTree": "(delim_token_tree_brace)",
-    "wrappedText": "fn _f() { mac! {} }",
+    "expectedSourceOut": "{// one\n/* two */}",
+    "expectedReparseTree": "(delim_token_tree_brace (line_comment (line_comment_regular)) (block_comment))",
+    "wrappedText": "fn _f() { mac! {// one\n/* two */} }",
     "wrappedOffset": 15
   },
   {
@@ -225214,15 +225337,1556 @@
     "wrappedOffset": 18
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 336,
+              "$text": "/*\n * Block comments\n */"
+            },
+            {
+              "$type": 336,
+              "$text": "/* Comment with asterisks **/"
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 405,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " Outer block comment ",
+                  "$span": {
+                    "start": 61,
+                    "end": 82
+                  }
+                },
+                "$span": {
+                  "start": 60,
+                  "end": 82
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 58,
+                    "end": 60
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 82,
+                    "end": 84
+                  }
+                }
+              ],
+              "$span": {
+                "start": 58,
+                "end": 84
+              }
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 406,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " Inner block comment ",
+                  "$span": {
+                    "start": 90,
+                    "end": 111
+                  }
+                },
+                "$span": {
+                  "start": 89,
+                  "end": 111
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 87,
+                    "end": 89
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 111,
+                    "end": 113
+                  }
+                }
+              ],
+              "$span": {
+                "start": 87,
+                "end": 113
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/**/"
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/",
+    "expectedReparseTree": "(source_file (block_comment) (block_comment) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment))",
+    "wrappedText": "/*\n * Block comments\n */\n/* Comment with asterisks **/\n/** Outer block comment */\n/*! Inner block comment */\n/**/",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 336,
+              "$text": "/* /* double nested */ */"
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": " ---",
+                "$span": {
+                  "start": 30,
+                  "end": 34
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 28,
+                    "end": 30
+                  }
+                }
+              ],
+              "$span": {
+                "start": 28,
+                "end": 34
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/*/*/* triple nested */*/*/"
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": " ---",
+                "$span": {
+                  "start": 67,
+                  "end": 71
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 65,
+                    "end": 67
+                  }
+                }
+              ],
+              "$span": {
+                "start": 65,
+                "end": 71
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/"
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": " ---",
+                "$span": {
+                  "start": 203,
+                  "end": 207
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 201,
+                    "end": 203
+                  }
+                }
+              ],
+              "$span": {
+                "start": 201,
+                "end": 207
+              }
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "/* /* double nested */ */\n// ---\n/*/*/* triple nested */*/*/\n// ---\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n// ---\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "/* /* double nested */ */\n// ---\n/*/*/* triple nested */*/*/\n// ---\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n// ---\n",
+    "expectedReparseTree": "(source_file (block_comment) (line_comment (line_comment_regular)) (block_comment) (line_comment (line_comment_regular)) (block_comment) (line_comment (line_comment_regular)))",
+    "wrappedText": "/* /* double nested */ */\n// ---\n/*/*/* triple nested */*/*/\n// ---\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n// ---\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": " Comment",
+                "$span": {
+                  "start": 3,
+                  "end": 11
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 1,
+                    "end": 3
+                  }
+                }
+              ],
+              "$span": {
+                "start": 1,
+                "end": 11
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 403,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " Outer line doc comment\n",
+                  "$span": {
+                    "start": 16,
+                    "end": 40
+                  }
+                },
+                "$span": {
+                  "start": 15,
+                  "end": 40
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 13,
+                    "end": 15
+                  }
+                }
+              ],
+              "$span": {
+                "start": 13,
+                "end": 40
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " Inner line doc comment\n",
+                  "$span": {
+                    "start": 44,
+                    "end": 68
+                  }
+                },
+                "$span": {
+                  "start": 43,
+                  "end": 68
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 41,
+                    "end": 43
+                  }
+                }
+              ],
+              "$span": {
+                "start": 41,
+                "end": 68
+              }
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "// Comment\n/// Outer line doc comment\n//! Inner line doc comment\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "// Comment\n/// Outer line doc comment\n//! Inner line doc comment\n",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) (line_comment (line_comment_doc_outer outer: (outer_line_doc_comment_marker) doc: (doc_comment))) (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))))",
+    "wrappedText": "// Comment\n/// Outer line doc comment\n//! Inner line doc comment\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  - Inner line doc\n",
+                  "$span": {
+                    "start": 3,
+                    "end": 22
+                  }
+                },
+                "$span": {
+                  "start": 2,
+                  "end": 22
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 0,
+                    "end": 2
+                  }
+                }
+              ],
+              "$span": {
+                "start": 0,
+                "end": 22
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "! - Still an inner line doc (but with a bang at the beginning)\n",
+                  "$span": {
+                    "start": 25,
+                    "end": 88
+                  }
+                },
+                "$span": {
+                  "start": 24,
+                  "end": 88
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 22,
+                    "end": 24
+                  }
+                }
+              ],
+              "$span": {
+                "start": 22,
+                "end": 88
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 153,
+                "$source": 0,
+                "$named": true,
+                "$text": "   - Only a comment",
+                "$span": {
+                  "start": 91,
+                  "end": 110
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 89,
+                    "end": 91
+                  }
+                }
+              ],
+              "$span": {
+                "start": 89,
+                "end": 110
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 403,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  - Outer line doc (exactly 3 slashes)\n",
+                  "$span": {
+                    "start": 114,
+                    "end": 153
+                  }
+                },
+                "$span": {
+                  "start": 113,
+                  "end": 153
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 111,
+                    "end": 113
+                  }
+                }
+              ],
+              "$span": {
+                "start": 111,
+                "end": 153
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 403,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\n",
+                  "$span": {
+                    "start": 156,
+                    "end": 157
+                  }
+                },
+                "$span": {
+                  "start": 155,
+                  "end": 157
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 153,
+                    "end": 155
+                  }
+                }
+              ],
+              "$span": {
+                "start": 153,
+                "end": 157
+              }
+            },
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 402,
+                "$source": 0,
+                "$named": true,
+                "$text": "// - Only a comment",
+                "$span": {
+                  "start": 159,
+                  "end": 178
+                }
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 157,
+                    "end": 159
+                  }
+                }
+              ],
+              "$span": {
+                "start": 157,
+                "end": 178
+              }
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))) (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))) (line_comment (line_comment_regular)) (line_comment (line_comment_doc_outer outer: (outer_line_doc_comment_marker) doc: (doc_comment))) (line_comment (line_comment_doc_outer outer: (outer_line_doc_comment_marker) doc: (doc_comment))) (line_comment (line_comment_extra_slashes)))",
+    "wrappedText": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 406,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  - Inner block doc ",
+                  "$span": {
+                    "start": 4,
+                    "end": 24
+                  }
+                },
+                "$span": {
+                  "start": 3,
+                  "end": 24
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 1,
+                    "end": 3
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 24,
+                    "end": 26
+                  }
+                }
+              ],
+              "$span": {
+                "start": 1,
+                "end": 26
+              }
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 406,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "! - Still an inner block doc (but with a bang at the beginning) ",
+                  "$span": {
+                    "start": 30,
+                    "end": 94
+                  }
+                },
+                "$span": {
+                  "start": 29,
+                  "end": 94
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 27,
+                    "end": 29
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 94,
+                    "end": 96
+                  }
+                }
+              ],
+              "$span": {
+                "start": 27,
+                "end": 96
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/*   - Only a comment */"
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 405,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  - Outer block doc (exactly) 2 asterisks ",
+                  "$span": {
+                    "start": 126,
+                    "end": 168
+                  }
+                },
+                "$span": {
+                  "start": 125,
+                  "end": 168
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 123,
+                    "end": 125
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 168,
+                    "end": 170
+                  }
+                }
+              ],
+              "$span": {
+                "start": 123,
+                "end": 170
+              }
+            },
+            {
+              "$type": 336,
+              "$text": "/*** - Only a comment */"
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */",
+    "expectedReparseTree": "(source_file (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))) (block_comment))",
+    "wrappedText": "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 336,
+              "$text": "/*   /* */  /** */  /*! */  */"
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 406,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  /* */  /** */  /*! */  ",
+                  "$span": {
+                    "start": 35,
+                    "end": 60
+                  }
+                },
+                "$span": {
+                  "start": 34,
+                  "end": 60
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 32,
+                    "end": 34
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 60,
+                    "end": 62
+                  }
+                }
+              ],
+              "$span": {
+                "start": 32,
+                "end": 62
+              }
+            },
+            {
+              "$type": 336,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 405,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 162,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "  /* */  /** */  /*! */  ",
+                  "$span": {
+                    "start": 66,
+                    "end": 91
+                  }
+                },
+                "$span": {
+                  "start": 65,
+                  "end": 91
+                },
+                "$slotOrder": [
+                  "outer",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 123,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "/*",
+                  "$span": {
+                    "start": 63,
+                    "end": 65
+                  }
+                },
+                {
+                  "$type": 124,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "*/",
+                  "$span": {
+                    "start": 91,
+                    "end": 93
+                  }
+                }
+              ],
+              "$span": {
+                "start": 63,
+                "end": 93
+              }
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */",
+    "expectedReparseTree": "(source_file (block_comment) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_outer outer: (outer_doc_comment_marker) doc: (doc_comment))))",
+    "wrappedText": "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 219,
+          "$source": 0,
+          "$named": true,
+          "_pattern": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "x",
+            "$span": {
+              "start": 25,
+              "end": 26
+            }
+          },
+          "$other": [
+            {
+              "$type": 46,
+              "$source": 0,
+              "$named": false,
+              "$text": "let",
+              "$span": {
+                "start": 21,
+                "end": 24
+              }
+            },
+            {
+              "$type": 2,
+              "$source": 0,
+              "$named": false,
+              "$text": ";",
+              "$span": {
+                "start": 26,
+                "end": 27
+              }
+            }
+          ],
+          "$_trivia": {
+            "leading": [
+              {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 404,
+                  "$source": 0,
+                  "$named": true,
+                  "_doc": {
+                    "$type": 163,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\n",
+                    "$span": {
+                      "start": 4,
+                      "end": 5
+                    }
+                  },
+                  "$span": {
+                    "start": 3,
+                    "end": 5
+                  },
+                  "$slotOrder": [
+                    "inner",
+                    "doc"
+                  ]
+                },
+                "$other": [
+                  {
+                    "$type": 120,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "//",
+                    "$span": {
+                      "start": 1,
+                      "end": 3
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 1,
+                  "end": 5
+                }
+              },
+              {
+                "$type": 336,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 406,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 8,
+                    "end": 9
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 123,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "/*",
+                    "$span": {
+                      "start": 6,
+                      "end": 8
+                    }
+                  },
+                  {
+                    "$type": 124,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "*/",
+                    "$span": {
+                      "start": 9,
+                      "end": 11
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 6,
+                  "end": 11
+                }
+              },
+              {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 153,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "",
+                  "$span": {
+                    "start": 15,
+                    "end": 15
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 120,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "//",
+                    "$span": {
+                      "start": 13,
+                      "end": 15
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 13,
+                  "end": 15
+                }
+              },
+              {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 403,
+                  "$source": 0,
+                  "$named": true,
+                  "_doc": {
+                    "$type": 163,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\n",
+                    "$span": {
+                      "start": 20,
+                      "end": 21
+                    }
+                  },
+                  "$span": {
+                    "start": 19,
+                    "end": 21
+                  },
+                  "$slotOrder": [
+                    "outer",
+                    "doc"
+                  ]
+                },
+                "$other": [
+                  {
+                    "$type": 120,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "//",
+                    "$span": {
+                      "start": 17,
+                      "end": 19
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 17,
+                  "end": 21
+                }
+              }
+            ],
+            "trailing": [
+              {
+                "$type": 333,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 153,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " <- immediate item after an empty line doc comment",
+                  "$span": {
+                    "start": 30,
+                    "end": 80
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 120,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "//",
+                    "$span": {
+                      "start": 28,
+                      "end": 30
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 28,
+                  "end": 80
+                },
+                "$sameLine": true
+              },
+              {
+                "$type": 336,
+                "$text": "/**/"
+              },
+              {
+                "$type": 336,
+                "$text": "/***/"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\n//!\n\n/*!*/\n\n//\n\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n\n/***/\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x;\n// <- immediate item after an empty line doc comment\n/**/\n/***/\n",
+    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "expectedReparseTree": "(source_file (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))) (block_comment (block_comment_doc_inner inner: (inner_doc_comment_marker))) (line_comment (line_comment_regular)) (line_comment (line_comment_doc_outer outer: (outer_line_doc_comment_marker) doc: (doc_comment))) statements: (let_declaration pattern: (identifier)) (line_comment (line_comment_regular)) (block_comment) (block_comment))",
-    "wrappedText": "//!\n/*!*/\n//\n///\nlet x;\n// <- immediate item after an empty line doc comment\n/**/\n/***/\n",
+    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "let_declaration",
+    "input": {
+      "$type": 219,
+      "$source": 0,
+      "$named": true,
+      "_pattern": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "x",
+        "$span": {
+          "start": 25,
+          "end": 26
+        }
+      },
+      "$other": [
+        {
+          "$type": 46,
+          "$source": 0,
+          "$named": false,
+          "$text": "let",
+          "$span": {
+            "start": 21,
+            "end": 24
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 26,
+            "end": 27
+          }
+        }
+      ],
+      "$_trivia": {
+        "leading": [
+          {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 404,
+              "$source": 0,
+              "$named": true,
+              "_doc": {
+                "$type": 163,
+                "$source": 0,
+                "$named": true,
+                "$text": "\n",
+                "$span": {
+                  "start": 4,
+                  "end": 5
+                }
+              },
+              "$span": {
+                "start": 3,
+                "end": 5
+              },
+              "$slotOrder": [
+                "inner",
+                "doc"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 120,
+                "$source": 0,
+                "$named": false,
+                "$text": "//",
+                "$span": {
+                  "start": 1,
+                  "end": 3
+                }
+              }
+            ],
+            "$span": {
+              "start": 1,
+              "end": 5
+            }
+          },
+          {
+            "$type": 336,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 406,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 8,
+                "end": 9
+              }
+            },
+            "$other": [
+              {
+                "$type": 123,
+                "$source": 0,
+                "$named": false,
+                "$text": "/*",
+                "$span": {
+                  "start": 6,
+                  "end": 8
+                }
+              },
+              {
+                "$type": 124,
+                "$source": 0,
+                "$named": false,
+                "$text": "*/",
+                "$span": {
+                  "start": 9,
+                  "end": 11
+                }
+              }
+            ],
+            "$span": {
+              "start": 6,
+              "end": 11
+            }
+          },
+          {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 153,
+              "$source": 0,
+              "$named": true,
+              "$text": "",
+              "$span": {
+                "start": 15,
+                "end": 15
+              }
+            },
+            "$other": [
+              {
+                "$type": 120,
+                "$source": 0,
+                "$named": false,
+                "$text": "//",
+                "$span": {
+                  "start": 13,
+                  "end": 15
+                }
+              }
+            ],
+            "$span": {
+              "start": 13,
+              "end": 15
+            }
+          },
+          {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 403,
+              "$source": 0,
+              "$named": true,
+              "_doc": {
+                "$type": 163,
+                "$source": 0,
+                "$named": true,
+                "$text": "\n",
+                "$span": {
+                  "start": 20,
+                  "end": 21
+                }
+              },
+              "$span": {
+                "start": 19,
+                "end": 21
+              },
+              "$slotOrder": [
+                "outer",
+                "doc"
+              ]
+            },
+            "$other": [
+              {
+                "$type": 120,
+                "$source": 0,
+                "$named": false,
+                "$text": "//",
+                "$span": {
+                  "start": 17,
+                  "end": 19
+                }
+              }
+            ],
+            "$span": {
+              "start": 17,
+              "end": 21
+            }
+          }
+        ],
+        "trailing": [
+          {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 153,
+              "$source": 0,
+              "$named": true,
+              "$text": " <- immediate item after an empty line doc comment",
+              "$span": {
+                "start": 30,
+                "end": 80
+              }
+            },
+            "$other": [
+              {
+                "$type": 120,
+                "$source": 0,
+                "$named": false,
+                "$text": "//",
+                "$span": {
+                  "start": 28,
+                  "end": 30
+                }
+              }
+            ],
+            "$span": {
+              "start": 28,
+              "end": 80
+            },
+            "$sameLine": true
+          },
+          {
+            "$type": 336,
+            "$text": "/**/"
+          },
+          {
+            "$type": 336,
+            "$text": "/***/"
+          }
+        ]
+      }
+    },
+    "expectedOutput": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/"
   },
   {
     "kind": "roundtrip",
@@ -225230,9 +226894,82 @@
     "sourceIn": "let x;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x;\n// <- immediate item after an empty line doc comment\n/**/\n/***/\n",
+    "expectedSourceOut": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
     "expectedReparseTree": "(let_declaration pattern: (identifier))",
-    "wrappedText": "//!\n/*!*/\n//\n///\nlet x;\n// <- immediate item after an empty line doc comment\n/**/\n/***/\n",
+    "wrappedText": "//!\n/*!*/\n//\n///\nlet x; // <- immediate item after an empty line doc comment\n/**/\n/***/",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 172,
+      "$source": 0,
+      "$named": true,
+      "$_trivia": {
+        "inner": {
+          "statements": [
+            {
+              "$type": 333,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 404,
+                "$source": 0,
+                "$named": true,
+                "_doc": {
+                  "$type": 163,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " Doc comment",
+                  "$span": {
+                    "start": 4,
+                    "end": 16
+                  }
+                },
+                "$span": {
+                  "start": 3,
+                  "end": 16
+                },
+                "$slotOrder": [
+                  "inner",
+                  "doc"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 120,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "//",
+                  "$span": {
+                    "start": 1,
+                    "end": 3
+                  }
+                }
+              ],
+              "$span": {
+                "start": 1,
+                "end": 16
+              }
+            }
+          ]
+        }
+      },
+      "_statements": []
+    },
+    "expectedOutput": "//! Doc comment\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\n//! Doc comment",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "//! Doc comment\n",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_doc_inner inner: (inner_line_doc_comment_marker) doc: (doc_comment))))",
+    "wrappedText": "//! Doc comment\n",
     "wrappedOffset": 0
   },
   {
@@ -247769,7 +249506,10 @@
           ],
           "$_trivia": {
             "leading": [
-              "/* plain block comment */"
+              {
+                "$type": 336,
+                "$text": "/* plain block comment */"
+              }
             ]
           },
           "$slotOrder": [
@@ -247840,7 +249580,10 @@
       ],
       "$_trivia": {
         "leading": [
-          "/* plain block comment */"
+          {
+            "$type": 336,
+            "$text": "/* plain block comment */"
+          }
         ]
       },
       "$slotOrder": [

@@ -22,6 +22,8 @@ import {
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { lineTerminated, triviaKinds } from '../model/trivia.ts';
+import type { NodeMap } from '../types.ts';
 
 export type { GrammarDiagnostic };
 
@@ -216,6 +218,21 @@ export function reservedMemberDiagnostics(
 	);
 }
 
+export function triviaLineEndDiagnostics(grammar: string, nodeMap: NodeMap): GrammarDiagnostic[] {
+	return [...triviaKinds(nodeMap)]
+		.filter((kind) => lineTerminated(nodeMap, kind) === undefined)
+		.map((kind) => ({
+			scope: 'grammar' as const,
+			code: 'trivia-line-end-undetermined',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: kind,
+			message: `trivia kind '${kind}' ends in an external token with no render rule, so whether it ends its line cannot be read from the grammar.`,
+			proposal: `Author a render-only rule for the external token in grammar.sittir.ts, giving the text it scans.`,
+			canProceed: false
+		}));
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -337,6 +354,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
+			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
 			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...surfacedCompilerDiagnostics

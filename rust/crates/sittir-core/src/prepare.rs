@@ -80,10 +80,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         match self {
             SlotValue::Coord(coord) => {
                 coord.resolve(ctx.sources)?;
-                coord.edges = ctx
-                    .sources
-                    .kind_of(coord)
-                    .and_then(|kind| ctx.options.edge_arms(kind));
+                coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
                 Ok(())
             }
             SlotValue::Transport(t) => t.prepare(ctx),

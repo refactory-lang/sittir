@@ -71,6 +71,25 @@ emitted ASCII table (`wordCharAsciiTable`) and the fixed-literal join
 (`collectFixedLiteral`) both read it; nothing else decides word-ness. Without a
 matcher the class is `\w+`.
 
+### `packages/codegen/src/util/word-matcher.ts::wordCharAsciiTable`
+
+```text
+/**
+ * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
+ * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
+ * already carried on LinkedGrammar — no new configuration").
+ *
+ * Per-char classification uses the PAIR test rather than a single-char
+ * match: a char is word-class iff it would EXTEND a word match ('a'+c
+ * matches longer than 'a') or START one that the next word char joins
+ * (c+'a' matches longer than c). This is grammar-faithful where a naive
+ * single-char test fails — digits are word-INTERIOR for identifier-shaped
+ * word patterns without being valid word STARTS.
+ */
+```
+
+Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex probe of its own, so the table and the fixed-literal join can never disagree about a character.
+
 ### `packages/codegen/src/util/word-matcher.ts::ruleToRegexSource`
 
 ```text
@@ -90,7 +109,7 @@ matcher the class is `\w+`.
  */
 ```
 
-Besides word shapes, `extrasRun` resolves a grammar's SYMBOL extras through it.
+Besides word shapes, `nodelessExtrasRun` resolves a grammar's hidden SYMBOL extras through it.
 
 #### body
 
@@ -110,7 +129,7 @@ Besides word shapes, `extrasRun` resolves a grammar's SYMBOL extras through it.
 
 ### `packages/codegen/src/util/word-matcher.ts::escapeRegexLiteral`
 
-A literal's text as a RegExp source that matches exactly that text: every RegExp metacharacter is backslash-escaped. `ruleToRegexSource` spells a STRING through it, and `extrasRun` spells a grammar's literal extras through it.
+A literal's text as a RegExp source that matches exactly that text: every RegExp metacharacter is backslash-escaped. `ruleToRegexSource` spells a STRING through it, and `nodelessExtrasRun` spells a grammar's literal extras through it.
 
 ### `packages/codegen/src/util/word-matcher.ts::module`
 
@@ -194,6 +213,10 @@ A literal's text as a RegExp source that matches exactly that text: every RegExp
  * only for an empty rule map.
  */
 ```
+
+### `packages/codegen/src/util/reachable-rules.ts::grammarRootNames`
+
+The rules tree-sitter keeps a grammar's reachability from: the start rule (`rootRuleName`) and every rule an extras SYMBOL entry names. The symbol-table predictor (`liveRuleNames`) walks from exactly these, and `canonicalGrammar` adds sittir's own protections to them for its orphan prune and rule catalog, so a hidden rule referenced only from the extras (a `_ws` whitespace token) survives in sittir's grammar as it does in the parser's.
 
 ### `packages/codegen/src/util/reachable-rules.ts::collectSymbolRefs`
 

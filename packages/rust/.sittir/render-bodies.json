@@ -1,18 +1,8 @@
 {
 	"_let_chain": [
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "left",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "left"
-						}
-					]
-				}
-			]
+			"kind": "slot",
+			"name": "left"
 		},
 		{
 			"kind": "seam",
@@ -879,10 +869,6 @@
 			"text": "/*"
 		},
 		{
-			"kind": "seam",
-			"field": "slash_star_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -895,10 +881,6 @@
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "star_slash_before"
 		},
 		{
 			"kind": "text",
@@ -915,10 +897,6 @@
 			"text": "!"
 		},
 		{
-			"kind": "seam",
-			"field": "bang_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -931,10 +909,6 @@
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "block_comment_doc_inner_after"
 		}
 	],
 	"block_comment_doc_outer": [
@@ -943,10 +917,6 @@
 			"text": "*"
 		},
 		{
-			"kind": "seam",
-			"field": "star_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -959,10 +929,6 @@
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "block_comment_doc_outer_after"
 		}
 	],
 	"bounded_type": [
@@ -4148,10 +4114,6 @@
 		{
 			"kind": "slot",
 			"name": "doc"
-		},
-		{
-			"kind": "seam",
-			"field": "line_comment_doc_inner_after"
 		}
 	],
 	"line_comment_doc_outer": [
@@ -4162,10 +4124,6 @@
 		{
 			"kind": "slot",
 			"name": "doc"
-		},
-		{
-			"kind": "seam",
-			"field": "line_comment_doc_outer_after"
 		}
 	],
 	"loop_expression": [

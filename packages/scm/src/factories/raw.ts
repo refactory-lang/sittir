@@ -23,6 +23,8 @@ const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*)
 const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
+export function buildProgram(): T.EmptyProgram;
+export function buildProgram(...children: T.Definition[]): T.Program.Built;
 export function buildProgram(...children: T.Definition[]): T.Program.Built {
 	const _definitions = rejectBareText(children, 'Program.definitions', 'a built Definition');
 	return withMethods(
@@ -333,6 +335,8 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Built {
 	);
 }
 
+export function buildMissingNode(): T.EmptyMissingNode;
+export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Built;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Built {
 	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
 	const _content = rejectBareText(
@@ -407,52 +411,6 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 	);
 }
 
-export function buildNamedNode(config: Partial<T.NamedNode.Config> = {}): T.NamedNode.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
-		'NamedNode.name',
-		'buildIdentifier(…)'
-	);
-	const _named_node_arm = rejectBareText(config.namedNodeArm, 'NamedNode.namedNodeArm', 'a built NamedNodeArm');
-	const _named_node_group = rejectBareText(config.namedNodeGroup, 'NamedNode.namedNodeGroup', 'a built NamedNodeGroup');
-	const _quantifier = coerceKindEnumStorage<NonNullable<T.NamedNode['_quantifier']>>(config.quantifier ?? [], [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
-	const _capture = rejectBareText(config.capture ?? [], 'NamedNode.capture', 'a built Capture');
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NamedNode as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_named_node_arm,
-				_named_node_group,
-				_quantifier,
-				_capture,
-				$with: {
-					name: (value?: NonNullable<T.NamedNode.Config>['name']) => buildNamedNode({ ...config, name: value }),
-					namedNodeArm: (value?: T.NamedNodeArm) => buildNamedNode({ ...config, namedNodeArm: value }),
-					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNode({ ...config, namedNodeGroup: value }),
-					quantifiers: (value?: NonNullable<T.NamedNode.Config>['quantifier']) =>
-						buildNamedNode({ ...config, quantifier: value }),
-					captures: (...values: T.Capture[]) => buildNamedNode({ ...config, capture: values })
-				}
-			},
-			{
-				name: () => _name,
-				namedNodeArm: () => _named_node_arm,
-				namedNodeGroup: () => _named_node_group,
-				quantifiers: () => _quantifier,
-				captures: () => _capture
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldDefinition.Built {
 	const _name = rejectBareText(config.name, 'FieldDefinition.name', 'buildIdentifier(…)');
 	const _definition = rejectBareText(config.definition, 'FieldDefinition.definition', 'a built Definition');
@@ -519,11 +477,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 		['#', TSKindId.Pound] as const,
 		['.', TSKindId.Dot] as const
 	]);
-	const _immediate_identifier = rejectBareText(
-		config.immediateIdentifier,
-		'Predicate.immediateIdentifier',
-		'buildImmediateIdentifier(…)'
-	);
+	const _name = rejectBareText(config.name, 'Predicate.name', 'buildImmediateIdentifier(…)');
 	const _type = coerceKindEnumStorage<NonNullable<T.Predicate['_type']>>(config.type, [
 		['?', TSKindId.Qmark] as const,
 		['!', TSKindId.Bang] as const
@@ -536,20 +490,19 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_immediate_identifier,
+				_name,
 				_type,
 				_parameters,
 				$with: {
 					content: (value: NonNullable<T.Predicate.Config>['content']) => buildPredicate({ ...config, content: value }),
-					immediateIdentifier: (value: T.ImmediateIdentifier) =>
-						buildPredicate({ ...config, immediateIdentifier: value }),
+					name: (value: T.ImmediateIdentifier) => buildPredicate({ ...config, name: value }),
 					type: (value: NonNullable<T.Predicate.Config>['type']) => buildPredicate({ ...config, type: value }),
 					parameters: (value?: T.Parameters) => buildPredicate({ ...config, parameters: value })
 				}
 			},
 			{
 				content: () => _content,
-				immediateIdentifier: () => _immediate_identifier,
+				name: () => _name,
 				type: () => _type,
 				parameters: () => _parameters
 			}
@@ -643,25 +596,94 @@ export function buildGroupingGroup(value: T.Definition | T.GroupExpressionArm): 
 	);
 }
 
-export function buildNamedNodeArm(config: T.NamedNodeArm.Config): T.NamedNodeArm.Built {
-	const _supertype = rejectBareText(config.supertype, 'NamedNodeArm.supertype', 'buildIdentifier(…)');
-	const _name = rejectBareText(config.name, 'NamedNodeArm.name', 'buildImmediateIdentifier(…)');
+export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Built {
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+		'NamedNodePlain.name',
+		'buildIdentifier(…)'
+	);
+	const _named_node_group = rejectBareText(
+		config.namedNodeGroup,
+		'NamedNodePlain.namedNodeGroup',
+		'a built NamedNodeGroup'
+	);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedNodePlain['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'NamedNodePlain.content',
+		'a built Capture'
+	);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.NamedNodeArm as const,
+				$type: TSKindId.NamedNodePlain as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_named_node_group,
+				_content,
+				$with: {
+					name: (value: NonNullable<T.NamedNodePlain.Config>['name']) =>
+						buildNamedNodePlain({ ...config, name: value }),
+					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodePlain({ ...config, namedNodeGroup: value }),
+					contents: (value?: NonNullable<T.NamedNodePlain.Config>['content']) =>
+						buildNamedNodePlain({ ...config, content: value })
+				}
+			},
+			{
+				name: () => _name,
+				namedNodeGroup: () => _named_node_group,
+				contents: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): T.NamedNodeSupertyped.Built {
+	const _supertype = rejectBareText(config.supertype, 'NamedNodeSupertyped.supertype', 'buildIdentifier(…)');
+	const _name = rejectBareText(config.name, 'NamedNodeSupertyped.name', 'buildImmediateIdentifier(…)');
+	const _named_node_group = rejectBareText(
+		config.namedNodeGroup,
+		'NamedNodeSupertyped.namedNodeGroup',
+		'a built NamedNodeGroup'
+	);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedNodeSupertyped['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'NamedNodeSupertyped.content',
+		'a built Capture'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NamedNodeSupertyped as const,
 				$source: 2 as const,
 				$named: true as const,
 				_supertype,
 				_name,
+				_named_node_group,
+				_content,
 				$with: {
-					supertype: (value: T.Identifier) => buildNamedNodeArm({ ...config, supertype: value }),
-					name: (value: T.ImmediateIdentifier | T.ImmediateString) => buildNamedNodeArm({ ...config, name: value })
+					supertype: (value: T.Identifier) => buildNamedNodeSupertyped({ ...config, supertype: value }),
+					name: (value: T.ImmediateIdentifier | T.ImmediateString) =>
+						buildNamedNodeSupertyped({ ...config, name: value }),
+					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }),
+					contents: (value?: NonNullable<T.NamedNodeSupertyped.Config>['content']) =>
+						buildNamedNodeSupertyped({ ...config, content: value })
 				}
 			},
 			{
 				supertype: () => _supertype,
-				name: () => _name
+				name: () => _name,
+				namedNodeGroup: () => _named_node_group,
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -734,6 +756,34 @@ export function buildNamedNodeGroupAnchoredLast(
 	);
 }
 
+export function buildTight(): TSKindId.Tight {
+	return TSKindId.Tight;
+}
+
+export function buildSpace(): TSKindId.Space {
+	return TSKindId.Space;
+}
+
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
+export function buildBlankline(): TSKindId.Blankline {
+	return TSKindId.Blankline;
+}
+
+export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
+	return TSKindId.DoubleBlankline;
+}
+
+export function buildIndent(): TSKindId.Indent {
+	return TSKindId.Indent;
+}
+
+export function buildDedent(): TSKindId.Dedent {
+	return TSKindId.Dedent;
+}
+
 export type FluentKindMap = {
 	program: T.Program.Built;
 	escape_sequence: T.EscapeSequence.Built;
@@ -749,16 +799,23 @@ export type FluentKindMap = {
 	grouping: T.Grouping.Built;
 	missing_node: T.MissingNode.Built;
 	anonymous_node: T.AnonymousNode.Built;
-	named_node: T.NamedNode.Built;
 	field_definition: T.FieldDefinition.Built;
 	negated_field: T.NegatedField.Built;
 	predicate: T.Predicate.Built;
 	group_expression_arm: T.GroupExpressionArm.Built;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Built;
 	grouping_group: T.GroupingGroup.Built;
-	named_node_arm: T.NamedNodeArm.Built;
+	named_node_plain: T.NamedNodePlain.Built;
+	named_node_supertyped: T.NamedNodeSupertyped.Built;
 	named_node_group_children: T.NamedNodeGroupChildren.Built;
 	named_node_group_anchored_last: T.NamedNodeGroupAnchoredLast.Built;
+	_tight: T.Tight;
+	_space: T.Space;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 };
 
 export const _factoryMap = {
@@ -776,15 +833,22 @@ export const _factoryMap = {
 	grouping: buildGrouping,
 	missing_node: buildMissingNode,
 	anonymous_node: buildAnonymousNode,
-	named_node: buildNamedNode,
 	field_definition: buildFieldDefinition,
 	negated_field: buildNegatedField,
 	predicate: buildPredicate,
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
-	named_node_arm: buildNamedNodeArm,
+	named_node_plain: buildNamedNodePlain,
+	named_node_supertyped: buildNamedNodeSupertyped,
 	named_node_group_children: buildNamedNodeGroupChildren,
-	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast
+	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast,
+	_tight: buildTight,
+	_space: buildSpace,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

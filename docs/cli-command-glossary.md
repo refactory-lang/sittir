@@ -670,6 +670,22 @@ List texts a higher-ranked candidate text kind takes from a lower-ranked one in 
 pnpm exec tsx packages/cli/src/cli.ts tool text-kind-overlap [options]
 ```
 
+### `tool trivia-placement`
+
+Report the owner and position the reader gives every corpus extra; exits 1 if any is lost
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
+- `--json` — Print rows and summary as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool trivia-placement [options]
+```
+
 ### `tool variant-derivation-probe`
 
 Assert the live structural variantChildKinds derivation equals committed node-model.json5 (cross-commit drift detector)

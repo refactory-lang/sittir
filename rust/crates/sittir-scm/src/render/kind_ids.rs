@@ -61,16 +61,17 @@ pub const PREDICATE: KindId = KindId(50);
 pub const GROUP_EXPRESSION_ARM: KindId = KindId(51);
 pub const NAMED_NODE_EXPRESSION_ARM: KindId = KindId(52);
 pub const GROUPING_GROUP: KindId = KindId(53);
-pub const NAMED_NODE_ARM: KindId = KindId(54);
-pub const NAMED_NODE_GROUP: KindId = KindId(55);
-pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(56);
-pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(57);
-pub const PROGRAM_REPEAT1: KindId = KindId(58);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(59);
-pub const PARAMETERS_REPEAT1: KindId = KindId(60);
-pub const LIST_REPEAT1: KindId = KindId(61);
-pub const GROUPING_REPEAT1: KindId = KindId(62);
-pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(63);
+pub const NAMED_NODE_GROUP: KindId = KindId(54);
+pub const NAMED_NODE_PLAIN: KindId = KindId(55);
+pub const NAMED_NODE_SUPERTYPED: KindId = KindId(56);
+pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(57);
+pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(58);
+pub const PROGRAM_REPEAT1: KindId = KindId(59);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(60);
+pub const PARAMETERS_REPEAT1: KindId = KindId(61);
+pub const LIST_REPEAT1: KindId = KindId(62);
+pub const GROUPING_REPEAT1: KindId = KindId(63);
+pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(64);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -129,16 +130,17 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         51 => "group_expression_arm", // "group_expression_arm"
         52 => "named_node_expression_arm", // "named_node_expression_arm"
         53 => "grouping_group", // "grouping_group"
-        54 => "named_node_arm", // "named_node_arm"
-        55 => "named_node_group", // "named_node_group"
-        56 => "named_node_group_children", // "named_node_group_children"
-        57 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
-        58 => "program_repeat1", // "program_repeat1"
-        59 => "string_content_repeat1", // "string_content_repeat1"
-        60 => "parameters_repeat1", // "parameters_repeat1"
-        61 => "list_repeat1", // "list_repeat1"
-        62 => "grouping_repeat1", // "grouping_repeat1"
-        63 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
+        54 => "named_node_group", // "named_node_group"
+        55 => "named_node_plain", // "named_node_plain"
+        56 => "named_node_supertyped", // "named_node_supertyped"
+        57 => "named_node_group_children", // "named_node_group_children"
+        58 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
+        59 => "program_repeat1", // "program_repeat1"
+        60 => "string_content_repeat1", // "string_content_repeat1"
+        61 => "parameters_repeat1", // "parameters_repeat1"
+        62 => "list_repeat1", // "list_repeat1"
+        63 => "grouping_repeat1", // "grouping_repeat1"
+        64 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
         _ => "<unknown>",
     }
 }
@@ -161,7 +163,7 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
 /// when it has no named child: an unnamed slot of the kind stores terminal
 /// kinds, and the wrap layer reclaims that slot's value from `$other`.
 pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 42 | 43 | 44 | 45 | 50)
+    matches!(kind.0, 42 | 43 | 44 | 45 | 50 | 55 | 56)
 }
 
 /// The model slot a child is stored under where its name differs from the
@@ -179,10 +181,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (44, Some("quantifier"), _) => Some("content"),
         (45, None, "capture") => Some("content"),
         (45, Some("quantifier"), _) => Some("content"),
-        (46, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (46, None, "named_node_group_children") => Some("named_node_group"),
         (50, None, "dot") => Some("content"),
-        (50, None, "identifier") => Some("immediate_identifier"),
         (50, None, "pound") => Some("content"),
         (53, None, "anonymous_node") => Some("group_expression"),
         (53, None, "field_definition") => Some("group_expression"),
@@ -190,8 +189,28 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (53, None, "grouping") => Some("group_expression"),
         (53, None, "list") => Some("group_expression"),
         (53, None, "missing_node") => Some("group_expression"),
-        (53, None, "named_node") => Some("group_expression"),
+        (53, None, "named_node_plain") => Some("group_expression"),
+        (53, None, "named_node_supertyped") => Some("group_expression"),
         (53, None, "predicate") => Some("group_expression"),
+        (55, None, "capture") => Some("content"),
+        (55, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (55, None, "named_node_group_children") => Some("named_node_group"),
+        (55, Some("quantifier"), _) => Some("content"),
+        (56, None, "capture") => Some("content"),
+        (56, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (56, None, "named_node_group_children") => Some("named_node_group"),
+        (56, Some("quantifier"), _) => Some("content"),
+        _ => None,
+    }
+}
+
+/// The gap an extra occupies inside a node with no named child to own it,
+/// by (kind id, anonymous tokens before the extra): the model slot whose
+/// position the gap holds. `None` when the model has no slot there.
+pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+    match (kind.0, preceding_tokens) {
+        (31, 0) => Some("definitions"),
+        (44, 2) => Some("name"),
         _ => None,
     }
 }
@@ -204,10 +223,31 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
 /// back the same slot contents.
 static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (48, "name", &[18]),
+    (50, "name", &[20, 21]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
     SLOT_SEPARATORS
         .iter()
         .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
+}
+
+/// Whether the model stores a `child` of a `parent` node, reached under the
+/// parser field `field` (`None` for an untagged child), as a scalar: a
+/// presence flag or a kind id rather than a node. Such a child keeps no
+/// trivia, so the reader never makes it an owner.
+pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {
+    match (parent.0, field) {
+        (42, None) => matches!(child.0, 2 | 3 | 4),
+        (43, None) => matches!(child.0, 2 | 3 | 4),
+        (44, None) => matches!(child.0, 2 | 3 | 4),
+        (45, None) => matches!(child.0, 2 | 3 | 4),
+        (45, Some("name")) => matches!(child.0, 7),
+        (50, None) => matches!(child.0, 20 | 21),
+        (50, Some("type")) => matches!(child.0, 4 | 19),
+        (55, None) => matches!(child.0, 2 | 3 | 4),
+        (55, Some("name")) => matches!(child.0, 7),
+        (56, None) => matches!(child.0, 2 | 3 | 4),
+        _ => false,
+    }
 }

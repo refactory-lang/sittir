@@ -21,3 +21,13 @@ export function attachLeadingTrivia() {
 		body: ir.block.strict(),
 	}).$trivia.leading(ir.lineComment.docOuter('Main entry point.'));
 }
+
+export function commentAnEmptyBody() {
+	return ir.statement
+		.function({
+			name: 'todo',
+			parameters: ir.parameters.strict(),
+			body: ir.block.strict().$trivia.inner(ir.lineComment(' TODO')),
+		})
+		.$render();
+}

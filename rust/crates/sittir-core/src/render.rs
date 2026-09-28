@@ -113,6 +113,12 @@ pub trait RenderSink {
     fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>);
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
+    /// A whitespace trivia entry: its text replaces whatever seam the gap it
+    /// sits in would otherwise get. A sink that knows no strengths writes it
+    /// as a token seam.
+    fn trivia_seam(&mut self, text: &str) {
+        self.token_seam(text);
+    }
     /// Write the bytes a coordinate names, from the tree table this writer
     /// holds. The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
@@ -138,6 +144,63 @@ pub trait RenderSink {
     /// caller never asks it.
     fn dedent(&mut self, seam: &str);
     fn ends_line(&self) -> bool;
+    /// Whether the seam held for the next write breaks the line.
+    fn pending_break(&self) -> bool {
+        false
+    }
+    /// Whether the output stands right after an indent that nothing has been
+    /// written under yet: the start of a block body.
+    fn at_body_start(&self) -> bool {
+        false
+    }
+    /// The trivia entry just written is line-terminated, so a line break
+    /// follows it: at least the one its lexical fact requires, or the wider
+    /// one its after edge left pending. No later seam takes it away (a rank
+    /// above it still widens it), and it is written even at the end of the
+    /// render, where any other held seam is dropped. An entry whose own text
+    /// ends its line (a grammar may include the terminator in the span)
+    /// already wrote that break, so one break comes off what its edge left.
+    fn hold_line_end(&mut self) {}
+    /// Set aside the seam held for the next write, leaving none held: an
+    /// owner's after edge while its own-line trailing entries render, since
+    /// that seam belongs after them.
+    fn take_seam(&mut self) -> Option<HeldSeam> {
+        None
+    }
+    /// Merge a seam set aside by `take_seam` back in, under two seam laws.
+    /// Where the output already stands at a line start (text whose span
+    /// includes its terminator), one break of the seam is already written.
+    /// Two line breaks merge by width whatever their strengths: the wider
+    /// wins, and a break is never narrowed or added to. Anything else merges
+    /// as any seam does, the stronger mark first.
+    fn restore_seam(&mut self, seam: HeldSeam) {
+        let _ = seam;
+    }
+    /// Whether `kind` carries `flag` (`options::KIND_ANON`, ...) in the kind
+    /// flag table of the options this sink holds; a sink with none answers no.
+    fn kind_has(&self, kind: KindId, flag: u8) -> bool {
+        let _ = (kind, flag);
+        false
+    }
+    /// Render trailing trivia that shares its owner's row, held until the
+    /// anonymous tokens after the owner are written: the sink seats it before
+    /// the next owner, coordinate or line break, or at the end of the render.
+    fn defer_trailing(
+        &mut self,
+        render: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult;
+    /// Write any held trailing trivia now. An owner calls this before it
+    /// renders, and before its own-line trailing entries.
+    fn seat_trailing(&mut self) -> RenderResult;
+}
+
+/// A seam set aside from the sink: its text, the strength it holds, and
+/// whether a whitespace token wrote it.
+#[derive(Debug, Clone)]
+pub struct HeldSeam {
+    pub text: String,
+    pub strength: u8,
+    pub token: bool,
 }
 
 pub trait Render {

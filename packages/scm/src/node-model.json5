@@ -1,6 +1,6 @@
 {
   "name": "scm",
-  "nodeCount": 55,
+  "nodeCount": 56,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -8,6 +8,7 @@
     "_node_identifier",
     "_whitespace",
     "definition",
+    "named_node",
     "named_node_group"
   ],
   "externals": [
@@ -80,28 +81,22 @@
       "childKind": {
         "capture": "capture"
       }
-    },
-    "named_node": {
-      "definedBy": "enrich",
-      "childKind": {
-        "named_node_arm": "arm",
-        "named_node_group": "group",
-        "capture": "capture"
-      }
     }
   },
   "variantRoutes": {
     "named_node_group_anchored_last": "namedNodeGroup.anchoredLast",
-    "named_node_group_children": "namedNodeGroup.children"
+    "named_node_group_children": "namedNodeGroup.children",
+    "named_node_plain": "namedNode.plain",
+    "named_node_supertyped": "namedNode.supertyped"
   },
   "fieldAliasMap": {
     "capture.name": {
       "identifier": "_immediate_identifier"
     },
-    "predicate.immediate_identifier": {
+    "predicate.name": {
       "identifier": "_immediate_identifier"
     },
-    "named_node_arm.name": {
+    "named_node_supertyped.name": {
       "identifier": "_immediate_identifier"
     }
   },
@@ -242,43 +237,6 @@
         "nonEmpty": false
       }
     },
-    "named_node": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_arm": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "quantifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "capture": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
     "field_definition": {
       "name": {
         "unnamed": false,
@@ -312,7 +270,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "immediate_identifier": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -375,7 +333,30 @@
         "nonEmpty": false
       }
     },
-    "named_node_arm": {
+    "named_node_plain": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "named_node_group": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "named_node_supertyped": {
       "supertype": {
         "unnamed": false,
         "slotCount": 1,
@@ -388,6 +369,20 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      },
+      "named_node_group": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -417,6 +412,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "MISSING_keyword",
@@ -433,31 +429,37 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
+      "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
-      "text": "﷑\n"
+      "text": "﷑\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_double_blankline",
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
       "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
-      "text": "\n\n\n"
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_group_expression",
@@ -486,11 +488,13 @@
       "kind": "_indent",
       "modelType": "punctuation",
       "typeName": "Indent",
+      "factoryName": "indent",
       "irKey": "indent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
-      "text": "﷐\n"
+      "text": "﷐\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_named_node_expression",
@@ -509,11 +513,13 @@
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
+      "factoryName": "newline",
       "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_node_identifier",
@@ -530,21 +536,25 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_whitespace",
@@ -680,6 +690,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "@"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_immediate_identifier",
       "factoryFields": [
@@ -741,6 +763,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            ";"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -826,6 +860,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -1069,7 +1115,8 @@
         "grouping",
         "list",
         "missing_node",
-        "named_node",
+        "named_node_plain",
+        "named_node_supertyped",
         "predicate"
       ]
     },
@@ -1275,198 +1322,14 @@
     },
     {
       "kind": "named_node",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "NamedNode",
-      "factoryName": "namedNode",
       "irKey": "namedNode",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "_",
-              "parseKind": "underscore"
-            }
-          ]
-        },
-        {
-          "name": "named_node_arm",
-          "propertyName": "namedNodeArm",
-          "paramName": "namedNodeArm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "named_node_arm"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "named_node_arm",
-              "parseKind": "named_node_arm",
-              "seat": {
-                "kind": "named_node_arm",
-                "shape": "arm",
-                "mount": "arm",
-                "seated": true
-              }
-            }
-          ]
-        },
-        {
-          "name": "named_node_group",
-          "propertyName": "namedNodeGroup",
-          "paramName": "namedNodeGroup",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "named_node_group"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "named_node_group",
-              "parseKind": "named_node_group"
-            }
-          ]
-        },
-        {
-          "name": "quantifier",
-          "propertyName": "quantifiers",
-          "paramName": "quantifiers",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [
-            "quantifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
-            }
-          ]
-        },
-        {
-          "name": "capture",
-          "propertyName": "captures",
-          "paramName": "captures",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "capture"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "name",
-        "named_node_arm",
-        "named_node_group",
-        "quantifier",
-        "capture"
-      ]
-    },
-    {
-      "kind": "named_node_arm",
-      "modelType": "branch",
-      "typeName": "NamedNodeArm",
-      "factoryName": "namedNodeArm",
-      "irKey": "namedNodeArm",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "supertype",
-          "propertyName": "supertype",
-          "paramName": "supertype",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            }
-          ]
-        },
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "_immediate_identifier",
-            "immediate_string"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_immediate_identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "immediate_string",
-              "parseKind": "immediate_string"
-            }
-          ]
-        }
-      ],
-      "name": "named_node_arm",
-      "factoryShape": "config",
-      "factoryFields": [
-        "supertype",
-        "name"
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "named_node_plain",
+        "named_node_supertyped"
       ]
     },
     {
@@ -1704,6 +1567,214 @@
       ]
     },
     {
+      "kind": "named_node_plain",
+      "modelType": "branch",
+      "typeName": "NamedNodePlain",
+      "factoryName": "namedNodePlain",
+      "irKey": "namedNodePlain",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_",
+              "parseKind": "underscore"
+            }
+          ]
+        },
+        {
+          "name": "named_node_group",
+          "propertyName": "namedNodeGroup",
+          "paramName": "namedNodeGroup",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "named_node_group"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "named_node_group",
+              "parseKind": "named_node_group"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "capture",
+            "quantifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "capture",
+              "parseKind": "capture"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "quantifier",
+              "parseKind": "quantifier"
+            }
+          ]
+        }
+      ],
+      "name": "named_node_plain",
+      "factoryShape": "config",
+      "factoryFields": [
+        "name",
+        "named_node_group",
+        "content"
+      ]
+    },
+    {
+      "kind": "named_node_supertyped",
+      "modelType": "branch",
+      "typeName": "NamedNodeSupertyped",
+      "factoryName": "namedNodeSupertyped",
+      "irKey": "namedNodeSupertyped",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "supertype",
+          "propertyName": "supertype",
+          "paramName": "supertype",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_immediate_identifier",
+            "immediate_string"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_immediate_identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "immediate_string",
+              "parseKind": "immediate_string"
+            }
+          ]
+        },
+        {
+          "name": "named_node_group",
+          "propertyName": "namedNodeGroup",
+          "paramName": "namedNodeGroup",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "named_node_group"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "named_node_group",
+              "parseKind": "named_node_group"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "capture",
+            "quantifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "capture",
+              "parseKind": "capture"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "quantifier",
+              "parseKind": "quantifier"
+            }
+          ]
+        }
+      ],
+      "name": "named_node_supertyped",
+      "factoryShape": "config",
+      "factoryFields": [
+        "supertype",
+        "name",
+        "named_node_group",
+        "content"
+      ]
+    },
+    {
       "kind": "negated_field",
       "modelType": "envelope",
       "typeName": "NegatedField",
@@ -1732,6 +1803,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -1842,9 +1925,9 @@
           ]
         },
         {
-          "name": "immediate_identifier",
-          "propertyName": "immediateIdentifier",
-          "paramName": "immediateIdentifier",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1905,7 +1988,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "content",
-        "immediate_identifier",
+        "name",
         "type",
         "parameters"
       ]

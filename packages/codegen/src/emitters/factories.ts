@@ -1,7 +1,7 @@
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isPatternValue, separatorRequired } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
 import {
 	interiorEnumArms,
 	interiorOf,
@@ -46,9 +46,8 @@ import {
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
+import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
-	anchoredLeafRegexLiteral,
-	anchoredLeafRegex,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -57,7 +56,6 @@ import {
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
-	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
@@ -76,6 +74,7 @@ import {
 	enumMemberDiscriminant,
 	expandAndDedupeContentTypes,
 	registeredSlots,
+	withEmptyOverload,
 	pruneUnusedImports
 } from './shared.ts';
 import {
@@ -285,7 +284,7 @@ function buildFactoryMapEntries(
 		const isHiddenGroup = node.surfaceHidden && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
+		if (isHiddenPresenceMarker(node)) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
@@ -348,7 +347,7 @@ export namespace factory {
 			}
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) {
+				if (isBuilderTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -1115,7 +1114,7 @@ export function constructorSurface(
 		}
 		case 'keyword':
 		case 'punctuation':
-			if (!isVisibleTextLeaf(target)) return undefined;
+			if (!isBuilderTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: leafTextParams(target), args: 'text' };
@@ -1253,12 +1252,12 @@ function emitFieldCarryingFactory(
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
 		const targetOverloads = targetSurface?.paramsOverloads ?? [rawTargetParams];
 		const overloadParams = [surface.params, ...targetOverloads].map(declarationParams);
-		const wrapper: string[] = [
+		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...[...overloadParams.filter((params) => params === ''), ...overloadParams.filter((params) => params !== '')].map(
 				(params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`
 			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
-		];
+		]);
 		if (registered.length > 0) {
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
@@ -1300,8 +1299,11 @@ function emitFieldCarryingFactory(
 			);
 		}
 		lines.unshift(...wrapper);
+		return renameUnusedConfigParam(lines);
 	}
-	return renameUnusedConfigParam(lines);
+	return renameUnusedConfigParam(
+		withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, lines, `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`)
+	);
 }
 
 export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {
@@ -1884,7 +1886,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) this.emitLeaf(node);
+				if (isBuilderTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

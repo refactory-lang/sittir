@@ -70,6 +70,11 @@ Two committed ratchets back the run (both only ever tighten):
   a tracked source class); a class absent from the file has ceiling 0, so
   cleared classes stay cleared. When a run reports a class below its
   ceiling, lower the ceiling in the same commit.
+- `packages/tools/validation-report.json` — the report the committed
+  ceilings are checked against (a unit test pins the committed pair).
+  Commit it, as `validate` wrote it, in the same commit as any change to
+  `sclass-ceilings.json` or to the validated rows; otherwise leave it out,
+  since every run rewrites it.
 
 ## Native engine build
 

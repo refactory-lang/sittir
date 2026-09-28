@@ -21,6 +21,24 @@ export const nodeIdentifier: {
 	identifier: F.buildIdentifier
 };
 
+export const whitespace: {
+	readonly tight: typeof F.buildTight;
+	readonly space: typeof F.buildSpace;
+	readonly newline: typeof F.buildNewline;
+	readonly blankline: typeof F.buildBlankline;
+	readonly doubleBlankline: typeof F.buildDoubleBlankline;
+	readonly indent: typeof F.buildIndent;
+	readonly dedent: typeof F.buildDedent;
+} = {
+	tight: F.buildTight,
+	space: F.buildSpace,
+	newline: F.buildNewline,
+	blankline: F.buildBlankline,
+	doubleBlankline: F.buildDoubleBlankline,
+	indent: F.buildIndent,
+	dedent: F.buildDedent
+};
+
 export const definition: typeof F.definition = F.definition;
 
 export const groupExpression: typeof F.groupExpression = F.groupExpression;
@@ -40,16 +58,17 @@ export const ir: {
 	readonly grouping: typeof F.grouping;
 	readonly missingNode: typeof F.missingNode;
 	readonly anonymousNode: typeof F.anonymousNode;
-	readonly namedNode: typeof F.namedNode;
 	readonly fieldDefinition: typeof F.fieldDefinition;
 	readonly negatedField: typeof F.negatedField;
 	readonly predicate: typeof F.predicate;
 	readonly groupExpressionArm: typeof F.groupExpressionArm;
 	readonly namedNodeExpressionArm: typeof F.namedNodeExpressionArm;
+	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly nodeIdentifier: typeof nodeIdentifier;
+	readonly whitespace: typeof whitespace;
 	readonly definition: typeof definition;
 	readonly groupExpression: typeof groupExpression;
 	readonly namedNodeExpression: typeof namedNodeExpression;
@@ -67,12 +86,12 @@ export const ir: {
 	grouping: F.grouping,
 	missingNode: F.missingNode,
 	anonymousNode: F.anonymousNode,
-	namedNode: F.namedNode,
 	fieldDefinition: F.fieldDefinition,
 	negatedField: F.negatedField,
 	predicate: F.predicate,
 	groupExpressionArm: F.groupExpressionArm,
 	namedNodeExpressionArm: F.namedNodeExpressionArm,
+	namedNode: F.namedNode,
 	namedNodeGroup: F.namedNodeGroup,
 
 	// Keyword factories
@@ -83,6 +102,7 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	nodeIdentifier,
+	whitespace,
 	definition,
 	groupExpression,
 	namedNodeExpression

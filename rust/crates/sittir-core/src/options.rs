@@ -29,7 +29,14 @@ pub struct ResolvedOptions {
     pub edge_rows: &'static [u16],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
+    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`).
+    pub kind_flags: &'static [u8],
 }
+
+/// The parser's anonymous kind: a token, never an owner of trivia.
+pub const KIND_ANON: u8 = 1;
+/// A trivia kind that ends only at a line break.
+pub const KIND_LINE_TERMINATED: u8 = 2;
 
 /// One spacing site's default arm and the strength a default carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -142,6 +149,11 @@ impl ResolvedOptions {
         })
     }
 
+    /// Whether `kind` carries `flag` in the kind flag table.
+    pub fn kind_has(&self, kind: crate::types::KindId, flag: u8) -> bool {
+        self.kind_flags.get(kind.0 as usize).is_some_and(|flags| flags & flag != 0)
+    }
+
     fn edge_row(&self, kind: crate::types::KindId) -> Option<&EdgeSite> {
         match self.edge_rows.get(kind.0 as usize) {
             Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),
@@ -159,6 +171,7 @@ impl Default for ResolvedOptions {
             edges: &[],
             edge_rows: &[],
             sites: &[],
+            kind_flags: &[],
         }
     }
 }

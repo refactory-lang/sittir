@@ -58,6 +58,7 @@
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, built from rust/crates/sittir-typescript.",
 	"sittir": {
-		"stable": true
+		"stable": true,
+		"displayName": "TypeScript"
 	}
 }

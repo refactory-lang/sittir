@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 438,
+  "nodeCount": 439,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -23,6 +23,7 @@
     "array_expression",
     "char_literal",
     "closure_expression",
+    "comment",
     "delim_token_tree",
     "escape_sequence",
     "field_pattern",
@@ -1929,7 +1930,7 @@
       "left": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       },
@@ -3818,16 +3819,19 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_block_comment_content",
@@ -3888,11 +3892,13 @@
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
+      "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
-      "text": "﷑\n"
+      "text": "﷑\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_delim_tokens",
@@ -3911,11 +3917,13 @@
       "kind": "_double_blankline",
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
       "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
-      "text": "\n\n\n"
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_error_sentinel",
@@ -4101,11 +4109,13 @@
       "kind": "_indent",
       "modelType": "punctuation",
       "typeName": "Indent",
+      "factoryName": "indent",
       "irKey": "indent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
-      "text": "﷐\n"
+      "text": "﷐\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_kw_async",
@@ -4227,7 +4237,7 @@
           "name": "left",
           "propertyName": "left",
           "paramName": "left",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "mixedEnum",
@@ -4239,19 +4249,19 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_let_chain",
               "parseKind": "_let_chain"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "let_condition",
               "parseKind": "let_condition"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_expression",
               "parseKind": "_expression"
             }
@@ -4328,11 +4338,13 @@
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
+      "factoryName": "newline",
       "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_non_delim_token",
@@ -4434,11 +4446,13 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_statement",
@@ -4477,11 +4491,13 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_token_keywords",
@@ -6764,6 +6780,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/*"
+          ]
+        },
+        "close": {
+          "texts": [
+            "*/"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6807,6 +6835,18 @@
         }
       ],
       "name": "block_comment_doc_inner",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
@@ -6849,6 +6889,18 @@
         }
       ],
       "name": "block_comment_doc_outer",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "*"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
@@ -8199,6 +8251,18 @@
       "text": ","
     },
     {
+      "kind": "comment",
+      "modelType": "supertype",
+      "typeName": "Comment",
+      "irKey": "comment",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "block_comment",
+        "line_comment"
+      ]
+    },
+    {
       "kind": "compound_assignment_expr",
       "modelType": "branch",
       "typeName": "CompoundAssignmentExpr",
@@ -8879,8 +8943,8 @@
       "factoryName": "docComment",
       "irKey": "docComment",
       "hidden": false,
-      "pattern": ".*",
-      "leafPattern": "/^(?:(?:.*))$/u",
+      "pattern": ".*\\n?",
+      "leafPattern": "/^(?:(?:.*\\n?))$/u",
       "factoryShape": "text"
     },
     {
@@ -9530,6 +9594,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9582,6 +9658,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -9636,6 +9724,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -9688,6 +9788,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -13862,6 +13974,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "'"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -14210,6 +14334,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "'"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "identifier",
       "factoryFields": [
@@ -14380,6 +14516,18 @@
           ]
         }
       ],
+      "fullForm": {
+        "open": {
+          "texts": [
+            "//"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -14425,6 +14573,18 @@
         }
       ],
       "name": "line_comment_doc_inner",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "doc_comment",
       "factoryFields": [
@@ -14467,6 +14627,18 @@
         }
       ],
       "name": "line_comment_doc_outer",
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "forwarded",
       "forwardsTo": "doc_comment",
       "factoryFields": [
@@ -15607,6 +15779,18 @@
             "configKey": "name"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "$"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -20669,6 +20853,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#!"
+          ]
+        },
+        "close": {
+          "texts": [
+            "\n"
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [

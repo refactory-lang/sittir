@@ -6,6 +6,7 @@ import {
 	toTransportData,
 	toEditAt,
 	markEdited as $edited,
+	mapTriviaEntries,
 	projectInterior
 } from '@sittir/common';
 import type { TreeHandle, TokenInterior } from '@sittir/common';
@@ -210,6 +211,7 @@ function _treeEngine(tree: TreeHandle): typeof methodsEngine {
 		const render = (node: AnyNodeData) =>
 			tree.render === undefined ? methodsEngine.render(project(node)) : tree.render(project(node));
 		engine = {
+			...methodsEngine,
 			render,
 			toEdit: (node, startOrRange, endPos) => toEditAt(render(node), startOrRange, endPos)
 		};
@@ -1568,6 +1570,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
+	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
+	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
 	[TSKindId.Lazy]: (d, t) => wrapLazy(_aliasEnvelope(d, t) as unknown as T.Lazy, t),
 	[TSKindId.UnicodePropertyName]: (d, t) =>
 		wrapUnicodePropertyName(_aliasEnvelope(d, t) as unknown as T.UnicodePropertyName, t)
@@ -1576,7 +1582,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	type Wire = _NodeData & {
 		readonly $storageType?: number;
-		readonly $_trivia?: unknown;
 		readonly $nodeHandle?: number;
 		readonly $childIndex?: number;
 		readonly $span?: unknown;
@@ -1601,7 +1606,7 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		$span: shown.$span,
 		$nodeHandle: shown.$nodeHandle,
 		$childIndex: shown.$childIndex,
-		$_trivia,
+		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: { ...storage, $type: $storageType }
 	} as unknown as _NodeData;
 }
@@ -1653,6 +1658,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.InlineFlagsGroupEnable]: ReturnType<typeof wrapInlineFlagsGroupEnable>;
 	[TSKindId.InlineFlagsGroupToggle]: ReturnType<typeof wrapInlineFlagsGroupToggle>;
 	[TSKindId.InlineFlagsGroupDisable]: ReturnType<typeof wrapInlineFlagsGroupDisable>;
+	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
+	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
+	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
+	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
 	[TSKindId.Lazy]: ReturnType<typeof wrapLazy>;
 	[TSKindId.UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
 }
@@ -1674,6 +1683,10 @@ function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData
 	return out as unknown as _NodeData;
 }
 
+function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
+	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree));
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
@@ -1686,8 +1699,9 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree);
-	return fn(data, tree);
+	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	if (!fn) return _drillUnknownKindChildren(shown, tree);
+	return fn(shown, tree);
 }
 
 /**

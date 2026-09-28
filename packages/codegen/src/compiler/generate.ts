@@ -19,13 +19,13 @@ import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
+import { triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -104,10 +104,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			process.stderr.write(formatNamingEvents(nodeMap.namingEvents) + '\n');
 		}
 
-		const rootKind = rootRuleName(normalized.rules)!;
+		const rootKind = normalized.root!;
 		const grammarRoles = withRootRole(extractGrammarRoles(pkg), rootKind);
 		const nodeTypes = loadPackageNodeTypes(pkg);
-		const triviaKinds = grammarRoles.get('trivia');
+		const triviaKindNames = [...triviaKinds(nodeMap)];
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
@@ -120,7 +120,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			inlineKinds: [...inlineKinds],
 			synthesizedKinds: evaluateSynthesizedKinds,
 			strict: cfg.strict,
-			triviaKinds,
+			triviaKinds: triviaKindNames,
 			grammarRoles,
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,

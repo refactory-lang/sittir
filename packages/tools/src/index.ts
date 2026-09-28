@@ -30,6 +30,15 @@ export {
 	type CorpusCoverageCensusOptions,
 	type CorpusCoverageCensus
 } from './validate/corpus-coverage-census.ts';
+export {
+	run as triviaPlacement,
+	runTriviaPlacement,
+	computeTriviaPlacementCensus,
+	type TriviaPlacementOptions,
+	type TriviaPlacementRow,
+	type TriviaPlacementSummary,
+	type TriviaPlacementCensus
+} from './validate/trivia-placement.ts';
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
