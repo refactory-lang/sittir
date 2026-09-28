@@ -150,6 +150,7 @@ export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'refe
 	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
+	readonly derivationRecords?: DerivationRecords;
 }
 
 export interface DesugarDivergenceEvent {
@@ -158,6 +159,7 @@ export interface DesugarDivergenceEvent {
 }
 
 import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
+import type { DerivationRecords } from '../dsl/wire/derivation-records.ts';
 export type { RefineForm };
 
 export interface NarrowedField {

@@ -698,12 +698,14 @@ interface BaseArg {
 		extras?: unknown;
 		precedences?: unknown;
 		supertypes?: unknown;
+		conflicts?: unknown;
 	};
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
 	extras?: unknown;
 	precedences?: unknown;
 	supertypes?: unknown;
+	conflicts?: unknown;
 }
 
 export function symbolNamesOf(entries: unknown): Set<string> {
@@ -765,6 +767,17 @@ function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 		) as { type?: unknown; members?: unknown } | undefined;
 		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
 	});
+}
+
+export function upstreamSymbolNames(base: unknown): ReadonlySet<string> {
+	const arg = base as BaseArg | undefined;
+	return new Set([...Object.keys(baseRulesOf<unknown>(arg) ?? {}), ...baseExternalNames(arg)]);
+}
+
+export function upstreamConflictSets(base: unknown): string[][] {
+	const arg = base as BaseArg | undefined;
+	const conflicts = arg?.grammar?.conflicts ?? arg?.conflicts;
+	return (Array.isArray(conflicts) ? conflicts : []).map((set) => [...symbolNamesOf(set)]);
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {

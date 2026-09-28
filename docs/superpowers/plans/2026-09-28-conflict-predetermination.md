@@ -283,19 +283,19 @@ Lands before Task 3, because the driver needs it for the hash, the rule count an
 - Produces:
 
 ```ts
-export interface DerivationInputs {
+export interface DerivationInputs extends UpstreamContext {
 	readonly grammarHash: string;
 	readonly ruleCount: number;
-	readonly upstreamConflicts: readonly (readonly string[])[];
-	readonly upstreamSources: Readonly<Record<string, string>>;
 }
-export function evaluateForDerivation(pkg: GrammarPackage): DerivationInputs;
-export function grammarHash(evaluated: { readonly conflicts?: unknown }): string;
+export function evaluateForDerivation(pkg: Pick<GrammarPackage, 'dir'>): DerivationInputs;
+export function grammarHash(evaluated: { readonly conflicts?: unknown; readonly derivationRecords?: unknown }): string;
+// derive-conflicts.ts: UpstreamContext = { upstreamConflicts; sourceEdges }, and
+export function sourceChain(name: string, edges: Readonly<Record<string, string>>): readonly string[];
 ```
 
 - `evaluateForDerivation` runs the child entry with `tsx` in a fresh process. The child evaluates `packageEntryPath(pkg)` and prints `DerivationInputs` as JSON, and the parent reads it from stdout.
 - `grammarHash` is sha256 of canonical JSON (keys sorted recursively) of the evaluated grammar with `conflicts` removed.
-- `upstreamSources` maps only names that differ from their upstream source. `UpstreamContext.upstreamSourceOf` is `(n) => upstreamSources[n] ?? n`.
+- `sourceEdges` holds one step per reshaped rule, with one edge per rule. A rename maps the new name to the old one; a variant maps to its `variantOf` owner and wins over a rename. A name upstream defines (a rule or an external) gets no edge, and neither does a promoted group. `sourceChain` follows the edges to a fixpoint and throws on a cycle. Each `DerivedResolution` records its `sourceChains`.
 - `upstreamConflicts` is upstream's own declared list, which reaches `sittirGrammar` as the conflicts callback's `previous` argument.
 
 - [ ] **Step 1:** Write the failing tests:

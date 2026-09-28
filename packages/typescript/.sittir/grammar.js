@@ -5256,6 +5256,15 @@ function extraRuleNames(cfg, base2) {
     return rule2?.type === "CHOICE" ? symbolNamesOf(rule2.members) : void 0;
   });
 }
+function upstreamSymbolNames(base2) {
+  const arg = base2;
+  return /* @__PURE__ */ new Set([...Object.keys(baseRulesOf(arg) ?? {}), ...baseExternalNames(arg)]);
+}
+function upstreamConflictSets(base2) {
+  const arg = base2;
+  const conflicts = arg?.grammar?.conflicts ?? arg?.conflicts;
+  return (Array.isArray(conflicts) ? conflicts : []).map((set) => [...symbolNamesOf(set)]);
+}
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
   return symbolNamesOf(
@@ -6892,6 +6901,35 @@ function blankDeadEnrichMints(grammar, enriched, opts) {
   grammar.conflicts = withoutDeadConflicts(grammar.conflicts, dead);
 }
 
+// packages/codegen/src/dsl/wire/derivation-records.ts
+var DERIVATION_RECORDS_KEY = "__derivationRecords__";
+function variantEdgesOf(rules) {
+  const walker = new RuleWalker(rules);
+  const edges = /* @__PURE__ */ new Map();
+  for (const rule2 of Object.values(rules)) {
+    walker.fold(rule2, edges, (acc, node) => {
+      if (node.type === "SYMBOL" && typeof node.annotations?.variantOf === "string") acc.set(node.name, node.annotations.variantOf);
+      return acc;
+    });
+  }
+  return edges;
+}
+function attachDerivationRecords(grammar, base2, opts) {
+  const upstreamSymbols = upstreamSymbolNames(base2);
+  const edges = /* @__PURE__ */ new Map();
+  for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
+    if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
+  }
+  for (const [name, owner] of variantEdgesOf(grammar.rules)) {
+    if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
+  }
+  const records = {
+    upstreamConflicts: upstreamConflictSets(base2),
+    sourceEdges: Object.fromEntries(edges)
+  };
+  Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
+}
+
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
   const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
@@ -6899,6 +6937,7 @@ function sittirGrammar(base2, config) {
   const opts = wire(config, enriched, base2);
   const result = grammar(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
+  attachDerivationRecords(result.grammar, base2, opts);
   return result;
 }
 

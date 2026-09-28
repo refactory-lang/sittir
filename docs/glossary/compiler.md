@@ -2270,7 +2270,9 @@ them, without a rule catalog or reference list. It carries what the compile
 boundary needs to finish the grammar — `provenanceByKind` for the rule
 catalog and `protectedRuleNames` for the orphan pass — and nothing reads it as
 compiler input except `canonicalGrammar`. It is also what an extending grammar
-receives as its base.
+receives as its base. `derivationRecords` carries the conflict-derivation
+records `sittirGrammar` attached; only the conflict loop's evaluate reads
+them, and `canonicalGrammar` drops them.
 
 ### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStage`
 
@@ -2857,7 +2859,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
  */
 ```
 
-The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result.
+The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -7866,7 +7868,8 @@ own facts.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalGrammar`
 
-Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads:
+Takes `evaluateDsl`'s grammar to the `RawGrammar` the compiler reads (the
+conflict-derivation records stay behind; the compiler never reads them):
 canonicalizes every rule body, the `renderAs` and `visibleExternals` records,
 and the evaluated upstream; removes orphaned rules and their `inline` and `conflicts` entries; then builds the rule
 catalog and the reference list over the canonical rules. The predicted kind

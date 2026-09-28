@@ -34,6 +34,7 @@ import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
 import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
+import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -963,7 +964,12 @@ async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGram
 	const result = (mod.default ?? mod) as { grammar?: unknown };
 	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
 	const deadMints = getDeadEnrichMints(grammarObj);
-	return deadMints.size === 0 ? grammarObj : { ...grammarObj, orphanedSyntheticGroups: [...deadMints] };
+	const derivationRecords = getDerivationRecords(grammarObj);
+	return {
+		...grammarObj,
+		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
+		...(derivationRecords === undefined ? {} : { derivationRecords })
+	};
 }
 
 function restoreSavedGlobals(g: Record<string, unknown>, savedGlobals: Record<string, unknown>): void {

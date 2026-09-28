@@ -4496,8 +4496,10 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
-and last `blankDeadEnrichMints` on that result, which blanks the rules enrich
-added that the wired grammar never reaches.
+then `blankDeadEnrichMints` on that result, which blanks the rules enrich
+added that the wired grammar never reaches, and last `attachDerivationRecords`,
+which records the upstream conflicts and each reshaped rule's upstream source
+for the conflict loop.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 

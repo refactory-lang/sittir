@@ -387,7 +387,9 @@ copied from the upstream source rule's precedence), or `default`
 One entry of `resolutions.json`: the resolution applied, the policy step that
 chose it, and the conflict it resolved (symbol sequence, lookahead, and the
 rules of each interpretation), so a diagnostic record can show what was
-resolved and why.
+resolved and why. `sourceChains` holds, for each rule of the resolution, the
+chain from its name to its upstream source (`sourceChain`), so a reviewer can
+see why a set counted as declared upstream.
 ```
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::ConflictResolutionsFile`
@@ -403,8 +405,8 @@ from empty.
 
 ```text
 What the policy knows about upstream: the conflict sets upstream declared, and
-the upstream source of each final rule name, read from the reshaping records
-(identity for a rule reshaping never renamed).
+the reshaping records' one-step edges toward each reshaped rule's upstream
+source (`dsl/wire/derivation-records.ts::DerivationRecords`).
 ```
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyChoice`
@@ -428,12 +430,21 @@ and the resolutions gathered so far.
 Set equality of two rule-name lists, order and duplicates ignored.
 ```
 
+### `packages/codegen/src/transpile/derive-conflicts.ts::sourceChain`
+
+```text
+The chain from a rule name to its upstream source: follow the reshaping edges
+until a name has none. A name with no edge is its own source. The records
+cannot legitimately form a cycle; one throws with the chain in the message.
+```
+
 ### `packages/codegen/src/transpile/derive-conflicts.ts::declaredUpstream`
 
 ```text
-Whether a conflict's rules, each mapped to its upstream source, are exactly a
-set upstream declared. A subset or superset of a declared set is not
-upstream's choice.
+Whether a conflict's upstream sources (each rule mapped through
+`sourceChain`), deduplicated, are exactly a set upstream declared. Two
+variants of one upstream rule map to that rule once. A subset or superset of a
+declared set is not upstream's choice.
 ```
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::chooseResolution`
@@ -454,4 +465,74 @@ is clean. It stops unresolvable when a conflict is reported a second time
 when the resolutions already number the grammar's rules (the cap: each
 resolution names at least one rule). A `generate` error throws — a grammar
 that fails to build for any other reason is broken, not conflicted.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
+
+```text
+What one conflict derivation needs from the evaluated grammar: its hash, its
+rule count (the loop's cap), and the upstream context (declared conflicts and
+reshaping edges).
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DERIVATION_INPUTS_MARKER`
+
+```text
+Precedes the child process's JSON on stdout, so anything the grammar printed
+while evaluating cannot be mistaken for the result.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::canonical`
+
+```text
+A value with every object's keys sorted and every Map and Set as sorted
+entries, so its JSON depends only on content, not on insertion order.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::byJson`
+
+```text
+Orders two canonical values by their JSON text.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::grammarHash`
+
+```text
+sha256 of the evaluated grammar's canonical JSON, without `conflicts` and
+without the derivation records. While every resolution is an AddConflict,
+`conflicts` is the only field the resolutions change, so the hash identifies
+the grammar the resolutions were derived for.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
+
+```text
+The derivation inputs of an evaluated grammar. A grammar without derivation
+records was not built by `sittirGrammar`, which the loop cannot derive for.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
+
+```text
+Resolves tsx from codegen's own dependencies, so the child process uses the
+same loader whatever the caller's working directory.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::evaluateForDerivation`
+
+```text
+Evaluates a grammar package's `grammar.sittir.ts` in a fresh Node process
+(tsx loader, `evaluate-for-derivation.child.ts`) and returns its derivation
+inputs. A fresh process because Node caches an ES module, and the JSON it
+imports, for the life of the process: evaluating the grammar in the regen
+process would pin the `resolutions.json` it imported, and the compile that
+follows the loop would read those stale resolutions.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.child.ts::module`
+
+```text
+The child entry of `evaluateForDerivation`: evaluates the entry path given as
+its argument and writes the marker and the derivation inputs as JSON to
+stdout.
 ```

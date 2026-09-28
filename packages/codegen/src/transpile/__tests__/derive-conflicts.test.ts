@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chooseResolution, deriveConflictResolutions, type DerivedResolution, type UpstreamContext } from '../derive-conflicts.ts';
+import { chooseResolution, deriveConflictResolutions, sourceChain, type DerivedResolution, type UpstreamContext } from '../derive-conflicts.ts';
 import type { ConflictReport, GenerateOutcome } from '../conflict-summary.ts';
 
 function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
@@ -22,7 +22,7 @@ function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
 
 const identity: UpstreamContext = {
 	upstreamConflicts: [['pattern', 'primary_expression']],
-	upstreamSourceOf: (name) => name
+	sourceEdges: {}
 };
 
 describe('chooseResolution', () => {
@@ -32,6 +32,7 @@ describe('chooseResolution', () => {
 			resolution: {
 				resolution: { kind: 'AddConflict', symbols: ['primary_expression', 'pattern'] },
 				step: 'upstream-declared',
+				sourceChains: [['primary_expression'], ['pattern']],
 				conflict: {
 					symbolSequence: ['expression'],
 					lookahead: "';'",
@@ -42,18 +43,20 @@ describe('chooseResolution', () => {
 	});
 
 	it('maps reshaped names back to their upstream source before the declared test', () => {
-		const upstream: UpstreamContext = {
-			upstreamConflicts: [['a', 'b']],
-			upstreamSourceOf: (name) => (name === 'a_tuple' ? 'a' : name)
-		};
-		expect(chooseResolution(reportFor('a_tuple', 'b'), upstream)).toMatchObject({
+		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b']], sourceEdges: { a_x: 'a' } };
+		expect(chooseResolution(reportFor('a_x', 'b'), upstream)).toMatchObject({
 			kind: 'chosen',
-			resolution: { step: 'upstream-declared', resolution: { symbols: ['a_tuple', 'b'] } }
+			resolution: { step: 'upstream-declared', resolution: { symbols: ['a_x', 'b'] }, sourceChains: [['a_x', 'a'], ['b']] }
 		});
 	});
 
+	it('dedupes mapped sources before comparing: two variants of one upstream rule match its singleton set', () => {
+		const upstream: UpstreamContext = { upstreamConflicts: [['a']], sourceEdges: { a_x: 'a', a_y: 'a' } };
+		expect(chooseResolution(reportFor('a_x', 'a_y'), upstream)).toMatchObject({ resolution: { step: 'upstream-declared' } });
+	});
+
 	it('does not treat a strict subset of an upstream set as declared', () => {
-		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b', 'c']], upstreamSourceOf: (name) => name };
+		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b', 'c']], sourceEdges: {} };
 		expect(chooseResolution(reportFor('a', 'b'), upstream)).toMatchObject({ resolution: { step: 'default' } });
 	});
 
@@ -67,6 +70,18 @@ describe('chooseResolution', () => {
 	it('is unusable when tree-sitter offers no AddConflict', () => {
 		const report: ConflictReport = { ...reportFor('x', 'y'), possible_resolutions: [{ Precedence: { symbols: ['x'] } }] };
 		expect(chooseResolution(report, identity)).toEqual({ kind: 'unusable' });
+	});
+});
+
+describe('sourceChain', () => {
+	it('follows edges to a fixpoint', () => {
+		expect(sourceChain('a_x_y', { a_x_y: 'a_x', a_x: 'a' })).toEqual(['a_x_y', 'a_x', 'a']);
+	});
+	it('is the name alone when it has no edge', () => {
+		expect(sourceChain('a', { b: 'c' })).toEqual(['a']);
+	});
+	it('throws with the chain on a cycle', () => {
+		expect(() => sourceChain('a', { a: 'b', b: 'a' })).toThrow('reshaping records form a cycle: a → b → a');
 	});
 });
 

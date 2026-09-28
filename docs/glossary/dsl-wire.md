@@ -265,6 +265,14 @@ The names of the grammar's extra rules: the `extras` list read through `overridd
 
 The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs` and `visibleExternals` names, read off each callback's keys with a symbol proxy. `evaluate` joins them with the supertypes as `protectedRuleNames`, and `reachableRuleNames` counts them as roots, so the canonical prune and the dead-mint pass keep the same rules.
 
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamSymbolNames`
+
+The names the upstream grammar defines: its rules and its externals, read the way wire reads every upstream list (the grammar object or its `grammar` field; an `externals` callback run over a symbol proxy).
+
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamConflictSets`
+
+The upstream grammar's own `conflicts`, as rule-name sets. The upstream `grammar()` has already run the conflicts callback, so each entry is names or symbols.
+
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::DEAD_ENRICH_MINTS_KEY`
 
 The non-enumerable key under which `blankDeadEnrichMints` attaches the dead set to `result.grammar`. tree-sitter's loader serializes the grammar with an object spread, which copies only enumerable properties, so the key never reaches grammar.json.
@@ -296,6 +304,31 @@ The dead set is attached to the grammar under `DEAD_ENRICH_MINTS_KEY` and become
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::getDeadEnrichMints`
 
 The dead set `blankDeadEnrichMints` attached to a grammar; empty when it attached none.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DERIVATION_RECORDS_KEY`
+
+The non-enumerable key under which `attachDerivationRecords` puts the conflict-derivation records on `result.grammar`. Like the dead-mint key, it never reaches grammar.json.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationRecords`
+
+What the conflict loop needs from the reshaping: `upstreamConflicts`, the conflict sets the upstream grammar declared itself (its own `conflicts`, never sittir's), and `sourceEdges`, one step from a reshaped rule's name toward the upstream rule it came from. `derive-conflicts.ts::sourceChain` follows the edges to a fixpoint.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
+
+The variant records: every SYMBOL reference that carries `annotations.variantOf` names a variant of that owner (`transform.ts::withVariantAnnotation`). Read off the final rules, so every rename is already applied to both names.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
+
+Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so wire's rename map is complete. One edge per rule, set from two records in order, the later winning:
+
+1. a symbol rename (a lift renamed onto its hoisted name is recorded as a rename, `wireRenameLift`) maps the new name to the old one;
+2. a variant maps to its `variantOf` owner. It wins over a rename: a hoisted variant made from a lift is both renamed from the lift's mint name and a variant of its parent, and the parent is the upstream rule, while the lift name is a mint with no upstream source.
+
+A name the upstream grammar defines (a rule or an external) never gets an edge; it is its own source. Automatic arm labels put `variantOf` on references to existing upstream rules too, and an upstream rule is not reshaped by being labelled. A promoted group gets no edge: it is an upstream rule unchanged, and its visible name is an alias, which a conflict report never names. Any other enrich mint has no record here and so no source.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
+
+The records `attachDerivationRecords` put on a grammar; undefined for a grammar not built by `sittirGrammar`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
