@@ -2210,6 +2210,11 @@ subtypes. It emits `_kindNameOf`, the one reading of a `kind:` discriminant:
 a supertype tag that is not itself a from kind resolves to its default arm,
 and one without a default throws naming the arms.
 
+`_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
+the leaf registry, a plain tag object hands its `text` to the leaf's
+resolver, and one without a string `text` throws naming the shape. Bare
+strings, numbers and built nodes pass through unchanged.
+
 ### `packages/codegen/src/emitters/from.ts::resolveScalarParamName`
 
 ```text

@@ -45,10 +45,31 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 			right: { kind: 'integer_decimal', text: '42' } as any
 		}) as any;
 		expect(result.$type).toBe(TSKindId.AssignmentEq);
+		expect(result.right().$type).toBe(TSKindId.IntegerDecimalPlain);
+		expect(result.right().$text).toBe('42');
+	});
+
+	it('a leaf tag builds that leaf from its text', () => {
+		const result = ir.assignment.eq({ left: 'x' as any, right: { kind: 'identifier', text: 'y' } as any }) as any;
+		expect(result.right().$type).toBe(TSKindId.Identifier);
+		expect(result.right().$text).toBe('y');
+	});
+
+	it('a leaf tag without its text throws naming the shape', () => {
+		expect(() => ir.assignment.eq({ left: 'x' as any, right: { kind: 'identifier', value: 'y' } as any })).toThrow(
+			/the identifier tag takes its text: \{ kind: "identifier", text: "…" \}/
+		);
 	});
 });
 
 describe('loose from() — a supertype kind tag', () => {
+	it('resolves through the default arm chain', () => {
+		for (const kind of ['integer', 'integer_decimal']) {
+			const result = ir.assignment.eq({ left: 'x' as any, right: { kind, text: '42' } as any }) as any;
+			expect(result.right().$type).toBe(TSKindId.IntegerDecimalPlain);
+		}
+	});
+
 	it('throws naming the arms when the supertype has no default', () => {
 		expect(() => ir.expressionStatement({ kind: 'primary_expression', text: '1' } as any)).toThrow(
 			/kind "primary_expression" has no default arm; name one of \[.*\binteger\b/
@@ -66,6 +87,7 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 			text: '1'
 		} as any) as any;
 		expect(result.$type).toBe(TSKindId.ExpressionStatement);
+		expect(result.content().$type).toBe(TSKindId.IntegerDecimalPlain);
 	});
 });
 

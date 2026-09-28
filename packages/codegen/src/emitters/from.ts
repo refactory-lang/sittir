@@ -1192,7 +1192,10 @@ function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('  rest: _LooseFieldInput,');
 	lines.push('): ReturnType<_FromMap[K]> {');
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
-	lines.push('  return fn(rest);');
+	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNodeData(rest)) return fn(rest);');
+	lines.push('  const text = (rest as { text?: unknown }).text;');
+	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);');
+	lines.push('  return fn(text);');
 	lines.push('}');
 	lines.push('');
 }
