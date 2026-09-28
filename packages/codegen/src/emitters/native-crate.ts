@@ -5,6 +5,7 @@ export const NATIVE_RENDER_TRANSPORT_ABI = 2;
 export interface NativeCrateFile {
 	readonly path: string;
 	readonly contents: string;
+	readonly scaffoldOnly?: true;
 }
 
 const json = (value: unknown): string => `${JSON.stringify(value, null, '\t')}\n`;
@@ -47,6 +48,7 @@ cc = { workspace = true }
 		},
 		{
 			path: 'build.rs',
+			scaffoldOnly: true,
 			contents: `fn main() {
     napi_build::setup();
 
@@ -95,7 +97,7 @@ cc = { workspace = true }
 				name: `sittir-${v.name}`,
 				version: '0.1.0',
 				description: `Grammar-local Rust / napi-rs engine for @sittir/${v.name}.`,
-				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'],
+				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'].sort(),
 				homepage: 'https://github.com/refactory-lang/sittir#readme',
 				license: 'MIT',
 				author: 'Pradeep Mouli',
