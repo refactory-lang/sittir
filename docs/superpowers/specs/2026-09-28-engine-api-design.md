@@ -87,11 +87,11 @@ interface Engine<API extends LanguageAPI> {
   render(
     node: API['node'] | ((build: API['build']) => API['node']),
     options?: RenderOptions<API['options']>,
-  ): string;
+  ): Rendered;
 
-  create(path: string, fn: (build: API['build']) => API['root']): Promise<void>;
-  edit(path: string, fn: (root: API['root']) => API['root']): Promise<void>;
-  write(path: string, node: API['root']): Promise<void>;
+  create(path: string, fn: (build: API['build']) => API['root']): Pending;
+  edit(path: string, fn: (root: API['root']) => API['root']): Pending;
+  write(path: string, node: API['root']): Pending;
 
   applyEdits(source: string, edits: readonly Edit[]): string;
   dispose(): void;
@@ -104,7 +104,10 @@ interface Engine<API extends LanguageAPI> {
 - **`types`** is type-only: a phantom member mapping each kind to its node type, for
   generic code (`typeof rs.types.functionItem`, `Types<typeof rs>`). It is derived
   from the same kind map as the static type exports, and has no runtime value.
-- **`render`** takes a node or a callback that receives `build`, and returns the text.
+- **`render`** takes a node or a callback that receives `build`, and returns a
+  `Rendered` handle: `Disposable` (disposing frees the native render buffer),
+  `toString()` and `text` give the text, and a handle that is never disposed is freed
+  when it is garbage-collected. `using out = rs.render(node)` frees it at scope exit.
 - **File verbs**, following the create/transform split of code-generation APIs
   (Angular schematics, ts-morph, jscodeshift):
   - `create(path, build => root)`: a new file only. It throws, naming the path, if
@@ -116,6 +119,19 @@ interface Engine<API extends LanguageAPI> {
   - `write(path, node)`: the whole file from a finished node, creating or overwriting
     it. It does not read the file.
   - `read(path)`: parse only.
+- **Pending changes.** `create`, `edit` and `write` return a `Pending`: one staged
+  change to one file, with `path`, `before`, `after` and `diff()`. It is both
+  thenable and `AsyncDisposable`:
+  - `await rs.edit(path, f)` commits it at once.
+  - `await using change = rs.create(path, g)` commits it when the scope exits.
+  - A `Pending` that is neither awaited nor disposed writes nothing. Being thenable,
+    it is flagged by the usual floating-promise lint.
+  - The callback runs when the verb is called. If it throws, the call throws and no
+    `Pending` exists, so disposal can never commit a half-built file. Across
+    statements, a later throw does not undo an earlier `Pending` committed at scope
+    exit; atomic multi-file work belongs in a project.
+  - Committing a `Pending` re-checks its precondition against disk (see the project's
+    commit) and writes through the same temporary-file-and-rename path.
 - `diagnostics` stays on the engine for tools, outside the documented surface.
 
 ### Nodes are bound to their engine
@@ -147,7 +163,7 @@ interface Project {
   files(): ReadonlyMap<string, string>;
   commit(): Promise<void>;
   discard(): void;
-  dispose(): void;
+  [Symbol.asyncDispose](): Promise<void>;   // discards uncommitted changes, disposes engines
 }
 ```
 
@@ -171,15 +187,21 @@ interface Project {
     rename fails, the files already replaced are restored from the texts the project
     read, and the commit rejects with the cause.
   - After a successful commit the staged set is empty.
-- `discard()` drops the staged set. `dispose()` disposes the project's engines.
+- `discard()` drops the staged set.
 - **Paths** are relative to the directory. A path that resolves outside it is
   rejected.
 - **A null directory** is an in-memory project: files exist only in the staged set,
   `read` and `edit` see only what the project created, `files()` returns everything,
   and `commit()` is unavailable (it throws). It serves tests, browsers and tools that
   hand the texts elsewhere.
-- **A standalone engine** (`createEngine`) writes immediately: each file verb is one
-  staged change committed at once, through the same code path as a project's commit.
+- **Pending changes in a project** join the project's staged set. Awaiting or
+  disposing them does not write; `project.commit()` writes them all.
+- **The project is `AsyncDisposable`, and disposal discards.** `await using p =
+  await createProject(dir)` disposes the engines and drops anything not committed, as
+  a database transaction rolls back on dispose. Writing always needs an explicit
+  `await p.commit()`, so a block that throws partway never writes half a batch.
+- **A standalone engine** (`createEngine`) commits each `Pending` on its own, through
+  the same code path as a project's commit.
 - **Cross-file facts.** The project owns the file set and its engines, so later
   cross-file work (reference tracking, renames across files, import graphs) attaches
   to it. None of that is in this spec.
@@ -234,6 +256,15 @@ engine surface.
 - `edit`: an unchanged root leaves the file untouched (modification time unchanged),
   and untouched regions re-render byte for byte.
 - `create` and `edit` precondition errors.
+- Disposal:
+  - an awaited `Pending` commits at once;
+  - an `await using` `Pending` commits at scope exit, and one neither awaited nor
+    disposed writes nothing;
+  - a callback that throws leaves no `Pending` and writes nothing;
+  - a project disposed without `commit()` writes nothing, including when its block
+    throws;
+  - a disposed `Rendered` frees its native buffer, and `toString()` after disposal
+    throws.
 - Type level: `typeof rs.types.functionItem` equals `FunctionItem`; a node from
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
