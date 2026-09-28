@@ -2860,52 +2860,6 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  */
 ```
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::toScreamingSnakeCase`
-
-```text
-/**
- * Convert a PascalCase `typeName` (as returned by `kindIdMemberName`) into
- * SCREAMING_SNAKE_CASE, preserving any leading underscore that marks the
- * kind as a hidden alias source.
- *
- * @param memberName - PascalCase member name, e.g. `'CallExpression'` or
- *   `'FieldIdentifier'` (already had its leading underscore stripped by
- *   `kindIdMemberName`; hidden kinds arrive here as `'FieldIdentifier'`).
- * @param rawKind - The original grammar kind string, used to detect whether
- *   a leading underscore must be re-attached (hidden kinds start with `_`).
- * @returns SCREAMING_SNAKE_CASE constant name, e.g. `'CALL_EXPRESSION'` or
- *   `'_FIELD_IDENTIFIER'`.
- */
-```
-
-#### body
-
-```text
-// `rawKind` is the source of truth for leading underscores (hidden-kind
-// marker — `_field_identifier`, `_call_signature`). The grammar may
-// produce a typeName that already carries the underscore (`_CallSignature`)
-// — that would double up if both were preserved (`__CALL_SIGNATURE`).
-// Strip leading underscores from `memberName` before processing, then
-// re-attach exactly as many as `rawKind` carried.
-```
-
-#### body
-
-```text
-// Defense for all-uppercase input (e.g. `LPAREN`, `PLUS`): a memberName
-// with no lowercase letters has no word boundaries to split on. Treat it
-// as a single token and pass it through. The regex split below assumes
-// PascalCase (`CallExpression` → `Call_Expression`); applying it to
-// `LPAREN` would produce `L_P_A_R_E_N`. The catalog now lowercases
-// `anon_sym_*` names upstream so this branch should rarely trigger;
-// kept defensively so any other source of uppercase memberName (future
-// emitters, edge cases) doesn't silently break.
-```
-
-```text
-// remove leading underscore added by replace
-```
-
 ### `packages/codegen/src/emitters/kind-id-rust.ts::emitKindIdRust`
 
 ```text
@@ -3047,24 +3001,6 @@ The fields and the concrete kinds `wireRoutesOf` finds for one slot.
  * `narrowedFields` list — the form's factory still exists but narrows
  * nothing at the Config surface, which is the intended behavior for
  * selections that target anonymous structural literals.
- */
-```
-
-### `packages/codegen/src/emitters/refine-emit.ts::pascalCase`
-
-```text
-/**
- * PascalCase a form name for type / factory naming. Treats `_` as a
- * word boundary so `snake_case` forms pascal-case correctly.
- */
-```
-
-### `packages/codegen/src/emitters/refine-emit.ts::camelCase`
-
-```text
-/**
- * camelCase a form name for fluent-key naming on the parent namespace
- * (e.g. `ir.interfaceBody.curly`).
  */
 ```
 

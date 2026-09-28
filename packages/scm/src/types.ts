@@ -30,7 +30,7 @@ export type LeafScalarMap = {};
 export type LeafStringMap = {
 	[TSKindId.Quantifier]: '*' | '+' | '?';
 	[TSKindId.PredicateType]: '?' | '!';
-	[TSKindId.MissingKeyword]: 'MISSING';
+	[TSKindId.MISSINGKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
 };
 
@@ -51,7 +51,7 @@ export enum TSKindId {
 	Rbrack = 14,
 	Lparen = 15,
 	Rparen = 16,
-	MissingKeyword = 17,
+	MISSINGKeyword = 17,
 	Colon = 18,
 	Bang = 19,
 	Pound = 20,
@@ -113,7 +113,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[14, 'rbrack'],
 	[15, 'lparen'],
 	[16, 'rparen'],
-	[17, 'missing_keyword'],
+	[17, 'MISSING_keyword'],
 	[18, 'colon'],
 	[19, 'bang'],
 	[20, 'pound'],
@@ -258,8 +258,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lparen;
 		case 'rparen':
 			return TSKindId.Rparen;
-		case 'missing_keyword':
-			return TSKindId.MissingKeyword;
+		case 'MISSING_keyword':
+			return TSKindId.MISSINGKeyword;
 		case 'colon':
 			return TSKindId.Colon;
 		case 'bang':
@@ -365,7 +365,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case 'MISSING':
-			return TSKindId.MissingKeyword;
+			return TSKindId.MISSINGKeyword;
 		case ':':
 			return TSKindId.Colon;
 		case '!':
@@ -663,8 +663,8 @@ export interface ImmediateIdentifierTree extends AnyTreeNode {
 	readonly type: '_immediate_identifier';
 }
 export interface PredicateTypeTree extends TreeNode<'predicate_type'> {}
-export interface MissingKeywordTree extends AnyTreeNode {
-	readonly type: 'missing_keyword';
+export interface MISSINGKeywordTree extends AnyTreeNode {
+	readonly type: 'MISSING_keyword';
 }
 export interface UnderscoreTree extends AnyTreeNode {
 	readonly type: 'underscore';
@@ -879,11 +879,11 @@ export namespace Grouping {
 export namespace MissingNode {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly MISSINGKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly content?: { readonly capture?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
 			readonly lparen?: { readonly after?: SpacingArm };
-			readonly missingKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly rparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}

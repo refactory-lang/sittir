@@ -1,7 +1,8 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import { AssembledList } from '../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../shared.ts';
-import { camelCase, collectRefineKindInfos, refineFormFactoryName } from '../refine-emit.ts';
+import { collectRefineKindInfos, refineFormFactoryName } from '../refine-emit.ts';
+import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
 
 export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
@@ -16,7 +17,7 @@ export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 		lines.push(`	...B.${key},`);
 		for (const form of info.forms) {
 			const fn = `F.${refineFormFactoryName(node.rawFactoryName, form.name)}`;
-			const keys = [camelCase(form.name)];
+			const keys = [lowerCamelCase(form.name)];
 			if (keys[0] !== form.name) keys.push(form.name);
 			for (const formKey of keys) {
 				lines.push(

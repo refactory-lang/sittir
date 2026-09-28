@@ -437,7 +437,9 @@ Whether evaluate's catalog prediction failed for this grammar, which means tree-
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::predictionRecords`
 
 The records for a failed catalog prediction: one `dangling-internal-ref` per name the grammar references that
-names no rule and no external, or one `unpredictable-symbol-table` when the failure names none. Both block and
+names no rule and no external, or one `unpredictable-symbol-table` when the failure names none. A catalog that
+was predicted still yields one `kind-key-collision` per key two parser symbols derive (`KindKeyCollision`),
+naming both; the second symbol has no kind, so sittir cannot model it. Both block and
 neither is expectable. This is how an upstream grammar tree-sitter rejects is reported, as a record rather than a
 throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is a separate invariant.
 

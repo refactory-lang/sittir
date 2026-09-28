@@ -88,7 +88,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         14 => "]", // "rbrack"
         15 => "(", // "lparen"
         16 => ")", // "rparen"
-        17 => "MISSING", // "missing_keyword"
+        17 => "MISSING", // "MISSING_keyword"
         18 => ":", // "colon"
         19 => "!", // "bang"
         20 => "#", // "pound"

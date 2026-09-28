@@ -13,9 +13,9 @@ import {
 	kindIdMemberName,
 	findKindEntry,
 	findKindEntryForLiteral,
-	toPascal,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
+import { pascalCase } from '../compiler/model/casing.ts';
 export {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -189,7 +189,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const emittedKindEnums = new Set<string>();
 		for (const st of supertypes) {
 			const stNode = nodeMap.nodes.get(st.kind);
-			const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''));
+			const typeName = stNode?.typeName ?? pascalCase(st.kind);
 			const enumName = typeName + 'Kind';
 			if (emittedKindEnums.has(enumName)) continue;
 			emittedKindEnums.add(enumName);
@@ -197,7 +197,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
 				const subNode = nodeMap.nodes.get(sub);
-				const member = subNode?.typeName ?? toPascal(sub);
+				const member = subNode?.typeName ?? pascalCase(sub);
 				if (seenSubMembers.has(member)) continue;
 				seenSubMembers.add(member);
 				lines.push(`  ${member} = ${JSON.stringify(sub)},`);
@@ -469,7 +469,7 @@ function emitDelimiterEnum(lines: string[]): void {
 	lines.push(" *  and the list factories' `delimiter` option. */");
 	lines.push('export enum Delimiter {');
 	for (const [member, value] of Object.entries(DelimiterFlags)) {
-		lines.push(`  ${toPascal(member)} = ${value},`);
+		lines.push(`  ${pascalCase(member)} = ${value},`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -634,7 +634,7 @@ interface EmittedSupertype {
 }
 
 function supertypeTypeName(kind: string, nodeMap: NodeMap): string {
-	return nodeMap.nodes.get(kind)?.typeName ?? toPascal(kind.replace(/^_/, ''));
+	return nodeMap.nodes.get(kind)?.typeName ?? pascalCase(kind);
 }
 
 function emitOptionsHints(

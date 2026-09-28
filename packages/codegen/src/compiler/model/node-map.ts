@@ -29,6 +29,7 @@ import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAlia
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
+import { casingWords, lowerCamelCase, pascalCase } from './casing.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
@@ -303,7 +304,8 @@ const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 ]);
 
 export function snakeToCamel(name: string): string {
-	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase()).replace(/_(\d)/g, '$1');
+	const [first = '', ...rest] = casingWords(name);
+	const camel = first + rest.map((word) => (word === '' ? '_' : word.charAt(0).toUpperCase() + word.slice(1))).join('');
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
@@ -888,14 +890,10 @@ export function nameNode(kind: string): {
 } {
 	const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind);
 	const marked = prepareKindForPascalCase(normalized);
-	let typeName =
-		marked
-			.split('_')
-			.filter(Boolean)
-			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-			.join('') || 'Anonymous';
-	if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`;
-	let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1);
+	const pascal = pascalCase(marked) || 'Anonymous';
+	const leadingDigit = /^\d/.test(pascal);
+	const typeName = leadingDigit ? `Tok_${pascal}` : pascal;
+	let factoryName = leadingDigit ? `tok_${pascal}` : lowerCamelCase(marked) || 'anonymous';
 	const irKey = factoryName;
 	if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`;
 	return { typeName, factoryName, irKey };

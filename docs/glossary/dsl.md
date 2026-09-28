@@ -6131,6 +6131,43 @@ Whether a rule, under its `TOKEN`/`IMMEDIATE_TOKEN`/`PREC` wrappers, is a single
 
 ### `packages/codegen/src/dsl/symbol-table.ts::joinIdNames`
 
+Joins a symbol table's C enum to runtime keys, one row per key, and never
+throws. Two symbols deriving one key resolve three ways: a named symbol and a
+punctuation token share the key by giving the punctuation side the
+`PUNCTUATION_KEY_SUFFIX` (Go's `.` becomes `dot_punctuation` beside the named
+`dot`) — punctuation meaning not stamped `keyword`, the same fact that gives a
+keyword its `KEYWORD_KEY_SUFFIX`, so a keyword clashing with a named rule is a
+`KindKeyCollision` with the named rule kept;
+an alias symbol folds onto the row it aliases (`parseId`/`parseName`); any
+other pair is a `KindKeyCollision`, the first symbol kept and the second left
+without a row. The collisions come back beside the rows (`JoinedIds`), and the
+predicted catalog turns them into `kind-key-collision` records.
+
+### `packages/codegen/src/dsl/symbol-table.ts::KindKeyCollision`
+
+A key two parser symbols derive, with both C names: the one the catalog kept,
+then the one left without a row.
+
+### `packages/codegen/src/dsl/symbol-table.ts::JoinedIds`
+
+What `joinIdNames` returns: the rows by key and the collisions it could not
+resolve.
+
+### `packages/codegen/src/dsl/symbol-table.ts::KEYWORD_KEY_SUFFIX`
+
+`_keyword`, the suffix a keyword-shaped anonymous token's key takes after its
+own spelling, case kept (C's `_Alignof` becomes `_Alignof_keyword`).
+
+### `packages/codegen/src/dsl/symbol-table.ts::PUNCTUATION_KEY_SUFFIX`
+
+`_punctuation`, the suffix a punctuation token's key takes when a named rule
+derives the same key; the named rule keeps the plain key, as a keyword's
+`KEYWORD_KEY_SUFFIX` never displaces a named kind either.
+
+### `packages/codegen/src/dsl/symbol-table.ts::ParsedIdEntry`
+
+A catalog row whose parser metadata is present, the shape `joinIdNames` places.
+
 #### body
 
 ```text
@@ -6199,13 +6236,11 @@ Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed into `cr
 ### `packages/codegen/src/dsl/symbol-table.ts::deriveSymbolRuntimeName`
 
 Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
-arrive in parser.c with all-caps tail names. Lowercase them so the catalog
-`key` is consistently snake-case across all kinds (aligns with
-`call_expression`, `_array_expression_list`, etc.) and the downstream
-PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
-Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase` regex
-inserts `_` before every letter, and the emitted Rust constant becomes
-`L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is preserved in
+arrive in parser.c with all-caps tail names made by per-character
+substitution; lowercase them so a symbolic token's key reads like every other
+snake-case key (`lparen`, `comma`). A keyword's key is the exception: it keeps
+the keyword's spelling (below), since two keywords may differ only by case
+(C's `_alignof` and `_Alignof`). The original C-side name is preserved in
 `parser.cSymbol`; the parser's display name is preserved in
 `parser.symbolName`, and the token's own verbatim text — which for an
 aliased anonymous token differs from `symbolName` — is `parser.literalText`.
@@ -6220,9 +6255,12 @@ tree-sitter minted that symbol from an identifier-shaped keyword — `class`,
 name substitution (`anon_sym_COMMA` for `,`, `anon_sym_macro_rules_BANG` for
 `macro_rules!`), which never reproduces the literal text after the
 `anon_sym_` prefix. That exact match (`cName === 'anon_sym_' + literalText`)
-is the one predicate: every keyword token gets the `_keyword` suffix,
-collision with a same-named kind or not — `fn_keyword`, `class_keyword`,
-`u8_keyword`, `tt_keyword`. `_` is punctuation, not a keyword, even though
+is the one predicate: every keyword token gets the `_keyword` suffix on its
+spelling, case kept, collision with a same-named kind or not — `fn_keyword`,
+`class_keyword`, `u8_keyword`, `tt_keyword`, `MISSING_keyword`,
+`_Alignof_keyword`. Every name derived from the key keeps its case too: seam and
+slot labels, options keys, and the Rust constant (`toScreamingSnakeCase` reads a
+run of capitals as one word). `_` is punctuation, not a keyword, even though
 its C name matches the exact-text predicate: text made of nothing but
 underscores derives `underscore` (`underscore2` for `__`, one more
 underscore character per further doubling, mirroring tree-sitter's own `LT2`
@@ -6232,9 +6270,8 @@ to a symbolic name, so this is the symbolic name it omitted, sitting beside
 `comma`/`lparen`. A symbolic token keeps its plain derived name (`comma`,
 `macro_rules_bang`). This is the ONE derivation of a keyword's runtime name:
 the `TSKindId` member, the kind string, factories, and the nested option key
-`nestedKey` derives all follow from it. If a suffixed name still collides
-with an existing key, `joinIdNames` throws naming both symbols — there is no
-second, id-suffixed fallback.
+`nestedKey` derives all follow from it. If a derived key still collides,
+`joinIdNames` records the collision rather than guess a second name.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::keywordTextOf`
 
@@ -6572,7 +6609,7 @@ A predicted symbol table and the names the grammar references that are neither r
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -6592,7 +6629,7 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names beside them.
+The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 

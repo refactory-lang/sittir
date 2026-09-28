@@ -195,6 +195,7 @@ const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-inv
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
+	'kind-key-collision',
 	'groups-config-invalid',
 	'refine-config-invalid',
 	'rule-cause-missing',
@@ -303,7 +304,19 @@ export function predictionFailed(raw: Pick<RawGrammar, 'predictedKinds'>): boole
 
 export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
 	const kinds = raw.predictedKinds;
-	if (kinds === undefined || 'entries' in kinds) return [];
+	if (kinds === undefined) return [];
+	if ('entries' in kinds) {
+		return kinds.keyCollisions.map(({ key, symbols: [kept, dropped] }) => ({
+			scope: 'grammar',
+			code: 'kind-key-collision',
+			severity: 'error',
+			grammar: raw.name,
+			ownerKind: key,
+			message: `the kind key '${key}' names both ${kept} and ${dropped}; the catalog keeps ${kept}, so ${dropped} has no kind`,
+			canProceed: false,
+			details: { key, symbols: [kept, dropped] }
+		}));
+	}
 	if (kinds.undefinedNames.length === 0) {
 		return [
 			{

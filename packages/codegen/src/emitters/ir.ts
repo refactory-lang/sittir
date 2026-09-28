@@ -10,6 +10,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
 import { supertypeMemberName } from '../dsl/arm-names.ts';
+import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
@@ -249,24 +250,13 @@ function isFlatLeafOrKeyword(
 
 function groupNameFor(supertypeKind: string): string {
 	const bare = supertypeKind.replace(/^_+/, '');
-	return toCamel(bare);
+	return lowerCamelCase(bare);
 }
 
 function memberKeyFor(memberKind: string, supertypeKind: string): string {
-	return toCamel(supertypeMemberName(memberKind, supertypeKind));
+	return lowerCamelCase(supertypeMemberName(memberKind, supertypeKind));
 }
 
-function toCamel(snake: string): string {
-	const parts = snake.split('_').filter((p) => p.length > 0);
-	if (parts.length === 0) return snake;
-	return (
-		parts[0] +
-		parts
-			.slice(1)
-			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-			.join('')
-	);
-}
 
 function isPolymorphTextParent(node: AssembledNode): boolean {
 	return node instanceof AssembledSupertype && node.irKey !== undefined && node.annotations?.hoisted !== true;

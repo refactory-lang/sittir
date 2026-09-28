@@ -753,9 +753,9 @@ throws rather than emit an unreachable builder.
 
 #### body
 
-```text
-// _TypeName → _typeName (camelCase with leading _)
-```
+The renamed node's `irKey` follows its new `typeName` (`lowerCamelCase`), so a
+node without a factory — a keyword leaf — never keeps the `irKey` it shared;
+its `factoryName` is the original type name lower-camel-cased under a `_`.
 
 ### `packages/codegen/src/compiler/assemble.ts::renameCollidingVisibleKinds`
 
@@ -774,6 +774,10 @@ throws rather than emit an unreachable builder.
  */
 ```
 
+The renamed node's `irKey` and `factoryName` follow its new `typeName`
+(`lowerCamelCase`), so two keywords that differ only by case (C's `_alignof` and
+`_Alignof`) end with distinct type names, `irKey`s and rust consts.
+
 ### `packages/codegen/src/compiler/assemble.ts::renameCollidingHiddenOnlyKinds`
 
 ```text
@@ -788,6 +792,9 @@ throws rather than emit an unreachable builder.
  *   node after the first. Each rename is recorded as a naming event.
  */
 ```
+
+The renamed node's `irKey` and `factoryName` follow its new `typeName`
+(`lowerCamelCase`).
 
 ### `packages/codegen/src/compiler/assemble.ts::preclaimSupertypeIrKeys`
 
@@ -3171,6 +3178,14 @@ fallback an unstamped list reports.
  * @returns A `ReadonlySet<string>` of synthesized kind names.
  */
 ```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collisionFreeIds`
+
+The rows of a parser.c id table, asserting it records no key collision. The
+evaluate-time gate blocks a grammar whose predicted catalog has a
+`kind-key-collision`, and the prediction is the same derivation, so a collision
+here is a broken invariant and throws, naming the artifact, the key and both
+symbols.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::loadGeneratedIdTables`
 

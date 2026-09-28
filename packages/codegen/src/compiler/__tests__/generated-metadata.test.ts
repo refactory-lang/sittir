@@ -432,7 +432,7 @@ static const char * const ts_field_names[] = {
 		expect(isNotEntry?.literalRule).toBe(true);
 	});
 
-	it('throws when two distinct anonymous symbols derive the same key', async () => {
+	it('keeps two keywords that differ only by case apart, each keyed by its own spelling', async () => {
 		const source = `
 enum ts_symbol_identifiers {
   anon_sym_False = 20,
@@ -451,12 +451,16 @@ static const char * const ts_field_names[] = {
   [0] = NULL,
 };
 `;
-		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
-			"generated-metadata: key 'false_keyword' names both 'anon_sym_False' and 'anon_sym_false'"
+		const { kindIds } = await deriveGeneratedIdTablesFromParserCSource(source, 'parser.c');
+		expect(kindIds).toEqual(
+			new Map([
+				['False_keyword', expect.objectContaining({ id: 20 })],
+				['false_keyword', expect.objectContaining({ id: 21 })]
+			])
 		);
 	});
 
-	it('throws when an anonymous token and a named rule derive the same key', async () => {
+	it('refuses a parser.c whose keys collide, since the evaluate-time gate blocks any kind-key-collision', async () => {
 		const source = `
 enum ts_symbol_identifiers {
   sym_true_keyword = 30,
@@ -487,7 +491,7 @@ static const char * const ts_field_names[] = {
 };
 `;
 		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
-			"generated-metadata: key 'true_keyword' names both anonymous token \"true\" (anon_sym_true) and kind 'true_keyword' (sym_true_keyword)"
+			"generated-metadata: parser.c derives key 'true_keyword' for both sym_true_keyword and anon_sym_true, a kind-key-collision the evaluate-time gate blocks"
 		);
 	});
 

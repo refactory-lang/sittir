@@ -36,7 +36,7 @@ export interface ParserSymbolTable {
 	readonly facts: ParserSymbolFacts;
 }
 
-export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: unknown): Map<string, GeneratedIdEntry> {
+export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: unknown): JoinedIds {
 	const symbolTextFacts = resolveSymbolTextFacts(table.names, collectGrammarFacts(grammarJson));
 	return joinIdNames(
 		table.symbols,
@@ -206,6 +206,21 @@ export interface ParserSymbolFacts {
 	readonly tokenCount: number | undefined;
 }
 
+export interface KindKeyCollision {
+	readonly key: string;
+	readonly symbols: readonly [string, string];
+}
+
+export interface JoinedIds {
+	readonly ids: Map<string, GeneratedIdEntry>;
+	readonly collisions: readonly KindKeyCollision[];
+}
+
+export const KEYWORD_KEY_SUFFIX = '_keyword';
+export const PUNCTUATION_KEY_SUFFIX = '_punctuation';
+
+type ParsedIdEntry = GeneratedIdEntry & { readonly parser: KindParserMetadata };
+
 export function joinIdNames(
 	ids: ReadonlyMap<string, CEnumEntry>,
 	names: ReadonlyMap<string, string>,
@@ -213,44 +228,44 @@ export function joinIdNames(
 	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>,
 	symbolFacts?: ParserSymbolFacts,
 	lexicalRanks?: ReadonlyMap<string, number>
-): Map<string, GeneratedIdEntry> {
+): JoinedIds {
 	const result = new Map<string, GeneratedIdEntry>();
+	const collisions: KindKeyCollision[] = [];
+	const place = (key: string, row: ParsedIdEntry): void => {
+		const existing = result.get(key);
+		const existingParser = existing?.parser;
+		if (existing === undefined || existingParser === undefined || existingParser.cSymbol === row.parser.cSymbol) {
+			result.set(key, row);
+			return;
+		}
+		if (existingParser.anon !== row.parser.anon) {
+			const existingRow: ParsedIdEntry = { ...existing, parser: existingParser };
+			const [named, anonymous] = existingParser.anon ? [row, existingRow] : [existingRow, row];
+			result.set(key, named);
+			if (anonymous.parser.keyword === true) {
+				collisions.push({ key, symbols: [named.parser.cSymbol, anonymous.parser.cSymbol] });
+				return;
+			}
+			place(`${key}${PUNCTUATION_KEY_SUFFIX}`, anonymous);
+			return;
+		}
+		if (!shouldReplaceSymbol(existingParser.cSymbol, row.parser.cSymbol)) {
+			if (row.parser.alias) {
+				if (row.parser.symbolName !== undefined && row.parser.symbolName !== existingParser.symbolName) {
+					result.set(key, { id: existing.id, parseId: row.id, parseName: row.parser.symbolName, parser: existingParser });
+				}
+				return;
+			}
+			collisions.push({ key, symbols: [existingParser.cSymbol, row.parser.cSymbol] });
+			return;
+		}
+		result.set(key, row);
+	};
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
-		const parser = createParserMetadata(entry, key, names, symbolTextFacts, symbolFacts, lexicalRanks);
-		const existing = result.get(key);
-		if (!existing || !existing.parser) {
-			result.set(key, { id: entry.id, parser });
-			continue;
-		}
-		if (existing.parser.cSymbol === entry.cName) {
-			result.set(key, { id: entry.id, parser });
-			continue;
-		}
-		if (existing.parser.anon !== parser.anon) {
-			const anonSide = existing.parser.anon ? existing.parser : parser;
-			const namedSide = existing.parser.anon ? parser : existing.parser;
-			throw new Error(
-				`generated-metadata: key '${key}' names both anonymous token ${JSON.stringify(anonSide.symbolName)} (${anonSide.cSymbol}) and kind '${key}' (${namedSide.cSymbol})`
-			);
-		}
-		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
-			if (parser.alias) {
-				if (parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
-					result.set(key, {
-						id: existing.id,
-						parseId: entry.id,
-						parseName: parser.symbolName,
-						parser: existing.parser
-					});
-				}
-				continue;
-			}
-			throw new Error(`generated-metadata: key '${key}' names both '${existing.parser.cSymbol}' and '${entry.cName}'`);
-		}
-		result.set(key, { id: entry.id, parser });
+		place(key, { id: entry.id, parser: createParserMetadata(entry, key, names, symbolTextFacts, symbolFacts, lexicalRanks) });
 	}
-	return result;
+	return { ids: result, collisions };
 }
 
 function createParserMetadata(
@@ -302,8 +317,9 @@ function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolText
 	return (cName) => {
 		if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
 		if (cName.startsWith('anon_sym_')) {
-			const base = cName.slice('anon_sym_'.length).toLowerCase();
-			if (keywordTextOf(cName, symbolTextFacts) !== undefined) return `${base}_keyword`;
+			const spelled = cName.slice('anon_sym_'.length);
+			if (keywordTextOf(cName, symbolTextFacts) !== undefined) return `${spelled}${KEYWORD_KEY_SUFFIX}`;
+			const base = spelled.toLowerCase();
 			const text = symbolTextFacts.get(cName)?.literalText;
 			if (text === undefined || cName !== `anon_sym_${text}`) return base;
 			return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
@@ -1255,7 +1271,7 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 }
 
 export type PredictedKinds =
-	| { readonly entries: readonly GeneratedKindEntry[] }
+	| { readonly entries: readonly GeneratedKindEntry[]; readonly keyCollisions: readonly KindKeyCollision[] }
 	| { readonly failure: string; readonly undefinedNames: readonly string[] };
 
 export function undefinedNamesOf(kinds: PredictedKinds | undefined): readonly string[] {
@@ -1315,25 +1331,26 @@ export function assertPredictedKindEntries(
 export interface PredictedKindCatalog {
 	readonly entries: readonly GeneratedKindEntry[];
 	readonly undefinedNames: readonly string[];
+	readonly keyCollisions: readonly KindKeyCollision[];
 }
 
 export function predictKindCatalog(
 	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
 ): PredictedKindCatalog {
 	const table = predictSymbolTable(grammar);
-	const kindIds = kindTableOfSymbolTable(table, grammar);
+	const { ids: kindIds, collisions } = kindTableOfSymbolTable(table, grammar);
 	const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, grammar)).map(
 		({ lexicalRank: _lexicalRank, ...entry }) => entry
 	);
-	return { entries, undefinedNames: table.undefinedNames };
+	return { entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
 }
 
 export function predictedKindsOf(
 	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
 ): PredictedKinds {
 	try {
-		const { entries, undefinedNames } = predictKindCatalog(grammar);
-		if (undefinedNames.length === 0) return { entries };
+		const { entries, undefinedNames, keyCollisions } = predictKindCatalog(grammar);
+		if (undefinedNames.length === 0) return { entries, keyCollisions };
 		return {
 			failure: `symbol-table: ${undefinedNames.map((name) => `'${name}'`).join(', ')} name no rule and no external`,
 			undefinedNames

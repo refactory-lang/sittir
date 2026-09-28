@@ -594,6 +594,13 @@ being its catalog kind name (`lparen_before`). It is the site's field on
 the owning transport, its address under the kind, and a top-level key of
 the grammar's `Options` type and of its `defaults`.
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::LABEL_TOKEN`
+
+The token part every spacing, seam and flank label shares, one pattern for all
+three: a letter of either case, then letters, digits and underscores. A label
+names its token by the kind key, which keeps a keyword's case
+(`MISSING_keyword_before`).
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
 
 Recognises a token seam label and never a separator spacing label, so the

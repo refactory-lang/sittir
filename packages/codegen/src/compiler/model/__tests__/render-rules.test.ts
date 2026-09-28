@@ -368,7 +368,7 @@ describe('seamRenderRules', () => {
 		};
 		const { out, config } = seamed(rules);
 		expect(memberNames(out.rules.binary!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
-		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(sign_after)']);
+		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(Sign_after)']);
 		expect(memberNames(out.rules.linked!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
 		expect(out.rules.mixed).toBe(rules.mixed);
 		expect(memberNames(out.rules.words!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
@@ -376,7 +376,7 @@ describe('seamRenderRules', () => {
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} @${s.address}`)).toEqual([
 			'binary.operator @operator_before',
 			'binary.operator @operator_after',
-			'unary.sign @sign_after',
+			'unary.Sign @Sign_after',
 			'linked.operator @operator_before',
 			'linked.operator @operator_after',
 			'words.operator @operator_before',

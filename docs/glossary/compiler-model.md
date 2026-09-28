@@ -76,10 +76,11 @@ generated enum and the enum's own variants cannot disagree.
 
 ```text
 /**
- * Convert a snake_case name to camelCase — the single source of truth for
- * this transformation in the codegen pipeline. Used by field/child
- * `propertyName` derivation here, and re-exported for emitters and
- * validators that need the same canonical form.
+ * Convert a snake_case name to camelCase for config keys and accessors, over
+ * the words of `casingWords`: the first word is kept verbatim (case and all,
+ * so `MISSING_keyword` → `MISSINGKeyword`), every later word gets its first
+ * letter upper-cased, and each extra underscore stays one `_`
+ * (`future___keyword` → `future__Keyword`).
  *
  * Appends a trailing underscore when the camelCased result collides with a
  * reserved `Object.prototype` member name (see `RESERVED_ACCESSOR_NAMES`) —
@@ -332,15 +333,12 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::nameNode`
 
-```text
-/**
- * Derive `typeName`, `factoryName`, and `irKey` from a raw grammar kind string.
- *
- * Moved here from assemble.ts so the `AssembledNodeBase` constructor can call
- * it directly, eliminating the need for callers to pre-compute and pass these
- * derived fields.
- */
-```
+Derives `typeName` (`pascalCase`), `factoryName` and `irKey`
+(`lowerCamelCase`) from a kind key, so the `AssembledNodeBase` constructor
+names every node the same way. A key whose Pascal form starts with a digit is
+prefixed `Tok_`/`tok_`. The derivations are not injective (C's
+`_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
+type-name renames resolve that as a naming event.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
 
@@ -3651,7 +3649,7 @@ slot, else nothing.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`
 
-The slot name of a member that is a field referencing a keyword node
+The slot name, the field name as the model spells it (case kept, like the key it may derive from), of a member that is a field referencing a keyword node
 (`AssembledKeyword` with the `word` flag), such as an arrow function's
 `async_marker`. It names a seam like an enum slot does, so a cascaded
 opener after the marker meets the keyword's face instead of nothing. A
@@ -4389,3 +4387,35 @@ Whether a slot value's node is hidden on the surface: the node's own `surfaceHid
 ### `packages/codegen/src/compiler/model/node-map.ts::isSurfaceHiddenIn`
 
 Whether a kind is hidden on the surface, read from its node in the map (`surfaceHidden`), or by name through `surfaceHiddenOf` when the map has no node for it. Emitters ask this instead of testing a name's leading underscore.
+
+### `packages/codegen/src/compiler/model/casing.ts::casingWords`
+
+The one word-splitter behind every casing a kind key, field name or label is
+turned into: splits on `_`, whitespace and `-`, then at a lower-to-upper
+boundary, and treats a run of capitals as one word (`MISSING_keyword` →
+`MISSING`, `keyword`; `JSXElement` → `JSX`, `Element`). Case is kept; each
+casing decides what to fold.
+
+### `packages/codegen/src/compiler/model/casing.ts::pascalCase`
+
+Every word of `casingWords` with its first letter upper-cased, joined:
+`MISSING_keyword` → `MISSINGKeyword`, `_field_identifier` → `FieldIdentifier`.
+
+### `packages/codegen/src/compiler/model/casing.ts::lowerCamelCase`
+
+`pascalCase` with the first word lowered: a first word that is a run of
+capitals lowers whole (`MISSING_keyword` → `missingKeyword`), any other only its
+first letter (`AlignofKeyword2` → `alignofKeyword2`).
+
+### `packages/codegen/src/compiler/model/casing.ts::screamingSnakeCase`
+
+Every word of `casingWords` upper-cased, joined with `_`: `MISSINGKeyword` →
+`MISSING_KEYWORD`.
+
+### `packages/codegen/src/compiler/model/casing.ts::toScreamingSnakeCase`
+
+The rust const name for a kind: `screamingSnakeCase` of its PascalCase member
+name, re-attaching exactly the leading underscores the raw kind carries
+(`FieldIdentifier` for `_field_identifier` → `_FIELD_IDENTIFIER`). The member
+name's own leading underscores are dropped first so they never double up, and a
+member name with no lower-case letter is already screaming and passes through.

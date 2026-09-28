@@ -10,6 +10,7 @@ import {
 	type CEnumEntry,
 	type ParserSymbolFacts,
 	type GeneratedIdTables,
+	type JoinedIds,
 	type ParserSymbolTable
 } from '../dsl/symbol-table.ts';
 
@@ -42,10 +43,20 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	};
 
 	return {
-		kindIds: kindTableOfSymbolTable(table, grammarJson),
-		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
+		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson), sourceArtifact),
+		fieldIds: collisionFreeIds(joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName), sourceArtifact),
 		sourceArtifact
 	};
+}
+
+function collisionFreeIds({ ids, collisions }: JoinedIds, sourceArtifact: string): JoinedIds['ids'] {
+	const [first] = collisions;
+	if (first !== undefined) {
+		throw new Error(
+			`generated-metadata: ${sourceArtifact} derives key '${first.key}' for both ${first.symbols[0]} and ${first.symbols[1]}, a kind-key-collision the evaluate-time gate blocks`
+		);
+	}
+	return ids;
 }
 
 type CParser = TS.Parser;

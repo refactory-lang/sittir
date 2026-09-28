@@ -1,5 +1,6 @@
 import type { VariantChild } from './variant-structural.ts';
 import { isHiddenPunctuationLeaf } from './model/node-map.ts';
+import { lowerCamelCase } from './model/casing.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -792,8 +793,9 @@ function renameCollidingHiddenKinds(
 			message: `visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')}`
 		});
 		h.typeName = newType;
+		h.irKey = lowerCamelCase(newType);
 		if (h.factoryName !== undefined) {
-			h.factoryName = `_${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}`;
+			h.factoryName = `_${lowerCamelCase(typeName)}`;
 		}
 	}
 }
@@ -817,8 +819,9 @@ function renameCollidingVisibleKinds(
 				.join(', ')}`
 		});
 		n.typeName = newType;
+		n.irKey = lowerCamelCase(newType);
 		if (n.factoryName !== undefined) {
-			n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
+			n.factoryName = n.irKey;
 		}
 	}
 }
@@ -833,8 +836,9 @@ function renameCollidingHiddenOnlyKinds(
 		const newType = `${typeName}${i + 1}`;
 		diagnostics.namingEvents.record({ kind: h.kind, from: typeName, to: newType, message: 'hidden siblings' });
 		h.typeName = newType;
+		h.irKey = lowerCamelCase(newType);
 		if (h.factoryName !== undefined) {
-			h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
+			h.factoryName = h.irKey;
 		}
 	}
 }
@@ -895,11 +899,7 @@ function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): voi
 }
 
 function shortenIrKey(kind: string): string {
-	const stripped = kind;
-	const parts = stripped.split('_').filter(Boolean);
-	if (parts.length === 0) return nameNode(kind).irKey;
-	const camel = parts.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))).join('');
-	return camel;
+	return lowerCamelCase(kind) || nameNode(kind).irKey;
 }
 
 function collectAnonymousNodes(

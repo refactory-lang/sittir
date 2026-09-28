@@ -13,7 +13,7 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
-import { camelCase } from '../refine-emit.ts';
+import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
 
@@ -74,7 +74,7 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 		if (node instanceof AssembledAlias) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
-		const key = node.irKey ?? camelCase(kind);
+		const key = node.irKey ?? lowerCamelCase(kind);
 		if (!isValidIdent(key) || used.has(key)) continue;
 		used.add(key);
 		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node });
@@ -153,13 +153,13 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 				...(mintedBy(kind, childKind, ref.variant) ? { minted: true as const } : {})
 			};
 			if (nestedParentKey !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, nestedParentKey, ...facts });
 			} else if (child.rawFactoryName !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, ...facts });
 			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
 				waiting = true;
 			} else if (isKindIdStored(child) && !(child instanceof AssembledEnum)) {
-				routes.push({ name: camelCase(ref.variant), child, leaf: true, ...facts });
+				routes.push({ name: lowerCamelCase(ref.variant), child, leaf: true, ...facts });
 			} else {
 				return null;
 			}
@@ -179,7 +179,7 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			pending.splice(i--, 1);
 			progressed = true;
 			if (routes === null) continue;
-			const key = node.irKey ?? camelCase(kind.replace(/^_+/, ''));
+			const key = node.irKey ?? lowerCamelCase(kind.replace(/^_+/, ''));
 			if (!isValidIdent(key) || taken.has(key)) continue;
 			taken.add(key);
 			keyByParent.set(kind, key);

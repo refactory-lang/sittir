@@ -174,8 +174,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("missing_node", "lparen_after", "lparen_after", &[24, 25, 26]),
     ("missing_node", "rparen_before", "rparen_before", &[24, 25, 26]),
     ("missing_node", "rparen_after", "rparen_after", &[24, 25, 26]),
-    ("missing_node", "missing_keyword_before", "missing_keyword_before", &[24, 25, 26]),
-    ("missing_node", "missing_keyword_after", "missing_keyword_after", &[24, 25, 26]),
+    ("missing_node", "MISSING_keyword_before", "MISSING_keyword_before", &[24, 25, 26]),
+    ("missing_node", "MISSING_keyword_after", "MISSING_keyword_after", &[24, 25, 26]),
     ("missing_node", "missing_node_before", "missing_node_before", &[24, 25, 26]),
     ("missing_node", "missing_node_after", "missing_node_after", &[24, 25, 26]),
     ("named_node", "lparen_after", "lparen_after", &[24, 25, 26]),
@@ -620,6 +620,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "missingNode", path: "(missing_node)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "MISSINGKeyword", path: "(missing_node)/\"MISSING\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_KEYWORD_AFTER, path: "(missing_node)/\"MISSING\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE, path: "(missing_node)/\"MISSING\"/before" }] },
+        ] },
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_NODE_AFTER, path: "(missing_node)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_NODE_BEFORE, path: "(missing_node)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "content", path: "(missing_node)/content:", children: &[
@@ -630,10 +634,6 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(missing_node)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_LPAREN_AFTER, path: "(missing_node)/\"(\"/after" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "missingKeyword", path: "(missing_node)/\"MISSING\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_KEYWORD_AFTER, path: "(missing_node)/\"MISSING\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE, path: "(missing_node)/\"MISSING\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(missing_node)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MISSING_NODE_RPAREN_AFTER, path: "(missing_node)/\")\"/after" }] },

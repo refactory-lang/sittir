@@ -24,9 +24,9 @@ const NODE_KINDS = [
 
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
+	'MISSING_keyword',
 	'_immediate_identifier',
 	'identifier',
-	'missing_keyword',
 	'predicate_type',
 	'quantifier',
 	'underscore'
@@ -36,7 +36,7 @@ const LEAF_KINDS = [
 export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
-export const KEYWORDS = ['missing_keyword', 'underscore'] as const;
+export const KEYWORDS = ['MISSING_keyword', 'underscore'] as const;
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
@@ -85,7 +85,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	rbrack: 14,
 	lparen: 15,
 	rparen: 16,
-	missing_keyword: 17,
+	MISSING_keyword: 17,
 	colon: 18,
 	bang: 19,
 	pound: 20,
@@ -147,7 +147,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[14]: 'rbrack',
 	[15]: 'lparen',
 	[16]: 'rparen',
-	[17]: 'missing_keyword',
+	[17]: 'MISSING_keyword',
 	[18]: 'colon',
 	[19]: 'bang',
 	[20]: 'pound',
@@ -209,7 +209,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'rbrack', id: 14, enumName: 'AnonRbrack', cName: 'anon_sym_RBRACK' },
 	{ name: 'lparen', id: 15, enumName: 'AnonLparen', cName: 'anon_sym_LPAREN' },
 	{ name: 'rparen', id: 16, enumName: 'AnonRparen', cName: 'anon_sym_RPAREN' },
-	{ name: 'missing_keyword', id: 17, enumName: 'AnonMissing', cName: 'anon_sym_MISSING' },
+	{ name: 'MISSING_keyword', id: 17, enumName: 'AnonMissing', cName: 'anon_sym_MISSING' },
 	{ name: 'colon', id: 18, enumName: 'AnonColon', cName: 'anon_sym_COLON' },
 	{ name: 'bang', id: 19, enumName: 'AnonBang', cName: 'anon_sym_BANG' },
 	{ name: 'pound', id: 20, enumName: 'AnonPound', cName: 'anon_sym_POUND' },

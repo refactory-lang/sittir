@@ -71,7 +71,7 @@ import {
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import { pascalCase, toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import {
 	carriesPerNodeValue,
 	edgeKindId,
@@ -3556,7 +3556,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 function perSlotEnumName(typeName: string, fieldName: string): string {
 	const base = rustTypeIdent(typeName);
 	const segments = fieldName.split(/[^A-Za-z0-9]+/).filter((s) => s.length > 0);
-	const pascalField = segments.map((s) => (s.length === 0 ? s : s[0]!.toUpperCase() + s.slice(1))).join('');
+	const pascalField = pascalCase(segments.join('_'));
 	const sanitized = rustTypeIdent(pascalField);
 	return `${base}${sanitized}TransportSlot`;
 }
@@ -3780,11 +3780,7 @@ function literalToVariantName(literal: string): string {
 	if (known !== undefined) return known;
 
 	if (isAsciiIdentifier(literal)) {
-		const pascal = literal
-			.split('_')
-			.filter(Boolean)
-			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-			.join('');
+		const pascal = pascalCase(literal);
 		if (pascal.length > 0 && /^[A-Za-z]/.test(pascal)) {
 			return RUST_KEYWORDS.has(pascal) ? `${pascal}Kw` : pascal;
 		}

@@ -403,6 +403,17 @@
   },
   "nodes": [
     {
+      "kind": "MISSING_keyword",
+      "modelType": "keyword",
+      "typeName": "MISSINGKeyword",
+      "irKey": "missingKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"MISSING\" as const",
+      "text": "MISSING",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_group_expression",
       "modelType": "supertype",
       "typeName": "GroupExpression",
@@ -1132,17 +1143,6 @@
       "isParameterless": true,
       "stampExpression": "\"(\" as const",
       "text": "("
-    },
-    {
-      "kind": "missing_keyword",
-      "modelType": "keyword",
-      "typeName": "MissingKeyword",
-      "irKey": "missingKeyword",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"MISSING\" as const",
-      "text": "MISSING",
-      "factoryShape": "text"
     },
     {
       "kind": "missing_node",

@@ -24,7 +24,7 @@ import {
 	type SubFactory
 } from './sub-factories.ts';
 import { bundleEntries, flattenedVariantParents, overlayFrame, overlayImportPath } from './module.ts';
-import { camelCase } from '../refine-emit.ts';
+import { lowerCamelCase } from '../../compiler/model/casing.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -99,7 +99,7 @@ function variantAliasWires(
 		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
 		if (child === undefined || child.rawFactoryName === undefined) continue;
 		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
-		const name = camelCase(variantChild.name);
+		const name = lowerCamelCase(variantChild.name);
 		if (claimedNames.has(name)) continue;
 		aliases.push({ name, child });
 	}

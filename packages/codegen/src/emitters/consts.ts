@@ -18,6 +18,7 @@ import {
 } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
 import { collectInteriors } from './interior.ts';
+import { pascalCase, toScreamingSnakeCase } from '../compiler/model/casing.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -112,13 +113,8 @@ export function emitConsts(config: EmitConstsConfig): string {
 
 	const emittedValueTypes = new Set<string>();
 	for (const ek of enumEntries.sort((a, b) => compareOrdinal(a.kind, b.kind))) {
-		const constName = ek.kind.toUpperCase() + 'S';
-		const typeName =
-			ek.kind
-				.split('_')
-				.filter(Boolean)
-				.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-				.join('') + 'Value';
+		const constName = toScreamingSnakeCase(ek.kind, ek.kind) + 'S';
+		const typeName = pascalCase(ek.kind) + 'Value';
 
 		lines.push(`/** Valid values for \`${ek.kind}\` nodes. */`);
 		lines.push(`export const ${constName} = [`);
@@ -327,10 +323,10 @@ function collectFieldNames(nodeMap: NodeMap): string[] {
 
 function treeSitterIdMemberName(key: string): string {
 	if (key.startsWith('_')) {
-		const name = pascalCaseFromSnake(key);
+		const name = pascalCase(key);
 		return name ? `Hidden${name}` : 'Hidden';
 	}
-	if (/^[A-Za-z_]\w*$/.test(key)) return pascalCaseFromSnake(key);
+	if (/^[A-Za-z_]\w*$/.test(key)) return pascalCase(key);
 	return bitflagMemberName(key);
 }
 
@@ -414,11 +410,11 @@ function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 }
 
 export function bitflagBareConstName(propertyName: string): string {
-	return pascalCaseFromCamel(propertyName);
+	return pascalCase(propertyName);
 }
 
 export function bitflagPrefixedConstName(kind: string, propertyName: string): string {
-	return pascalCaseFromSnake(kind) + pascalCaseFromCamel(propertyName);
+	return pascalCase(kind) + pascalCase(propertyName);
 }
 
 export function resolveBitflagConstName(
@@ -516,20 +512,7 @@ function bitflagMemberName(keyword: string): string {
 			.join('');
 		return `Op_${codepoints || 'empty'}`;
 	}
-	const name = segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+	const name = pascalCase(segments.join('_'));
 	return /^\d/.test(name) ? `K${name}` : name;
 }
 
-function pascalCaseFromSnake(s: string): string {
-	return s
-		.replace(/^_+/, '')
-		.split('_')
-		.filter(Boolean)
-		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-		.join('');
-}
-
-function pascalCaseFromCamel(s: string): string {
-	if (s.length === 0) return s;
-	return s.charAt(0).toUpperCase() + s.slice(1);
-}

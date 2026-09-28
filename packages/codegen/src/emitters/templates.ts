@@ -408,7 +408,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 		case STRING: {
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
 			if (rule.nonterminal === true && stringFieldName !== undefined) {
-				return emitScalarSlot(stringFieldName.toLowerCase());
+				return emitScalarSlot(stringFieldName);
 			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
@@ -420,7 +420,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
-			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule, ctx);
+			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName, rule, ctx);
 			const ownerSlotNames = ctx.ownerSlots ? Object.keys(ctx.ownerSlots) : [];
 			if (ownerSlotNames.length === 1) {
 				return emitSlotReference(rule, ctx.ownerSlots![ownerSlotNames[0]!]!, ctx);
@@ -615,7 +615,7 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 	if (ctx.ownerSlots) {
 		const boundaryFieldName = (rule as { fieldName?: string }).fieldName;
 		if (boundaryFieldName !== undefined) {
-			const byFieldName = ctx.ownerSlots[boundaryFieldName.toLowerCase()];
+			const byFieldName = ctx.ownerSlots[boundaryFieldName];
 			if (byFieldName) {
 				recovered = byFieldName;
 			}
@@ -626,14 +626,14 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			(rule as { fieldName?: string }).fieldName === undefined &&
 			!isSurfaceHiddenIn(rule.name, ctx.nodeMap)
 		) {
-			const exactName = rule.name.toLowerCase();
+			const exactName = rule.name;
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
 				recovered = byExactName;
 			}
 		}
 		if (recovered === undefined && rule.type === SYMBOL && rule.aliasedTo !== undefined) {
-			const aliasSourceName = rule.name.replace(/^_+/, '').toLowerCase();
+			const aliasSourceName = rule.name.replace(/^_+/, '');
 			const byAliasSource = ctx.ownerSlots[aliasSourceName];
 			if (byAliasSource) {
 				recovered = byAliasSource;
@@ -772,7 +772,7 @@ function emitScalarSlot(slotName: string): Body {
 }
 
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): Body {
-	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+	const slotName = slot.storageName.replace(/^_+/, '') || 'children';
 	if (ctx.emittedSlotNames.has(slotName)) return EMPTY;
 	ctx.emittedSlotNames.add(slotName);
 	const mult = (rule as { multiplicity?: string }).multiplicity;
@@ -828,7 +828,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		if (slot) {
 			return emitSlotReference(rule, slot, ctx);
 		}
-		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule, ctx);
+		return emitFieldNameSlot(symbolFieldName, rule, ctx);
 	}
 
 	const slot = lookupSlot(rule, ctx);
@@ -839,7 +839,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		const targetNode = ctx.nodeMap.nodes.get(rule.name);
 		if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
 			if (ctx.visitingHelpers.has(rule.name)) {
-				const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				const slotName = rule.name.replace(/^_+/, '') || 'children';
 				return emitScalarSlot(slotName);
 			}
 			ctx.visitingHelpers.add(rule.name);
@@ -853,13 +853,13 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 					const listName = slot
-						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
+						? (slot.storageName.replace(/^_+/, '') || 'children')
 						: (pickConditionalKey(helperRenderRule, helperCtx) ??
-							(rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+							(rule.name.replace(/^_+/, '') || 'children'));
 					return emitListSlot(listName, rule, slot, helperCtx);
 				}
 				if (multiplicity === 'optional' && helperBody.length !== 0) {
-					const symbolFieldKey = symbolFieldName?.toLowerCase();
+					const symbolFieldKey = symbolFieldName;
 					const addressableFieldKey =
 						symbolFieldKey !== undefined &&
 						(ctx.ownerSlots === undefined || ctx.ownerSlots[symbolFieldKey] !== undefined)
@@ -868,7 +868,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 					const condKey =
 						addressableFieldKey ??
 						pickConditionalKey(helperRenderRule, helperCtx) ??
-						(rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+						(rule.name.replace(/^_+/, '') || 'children');
 					return gate(condKey, helperBody);
 				}
 				return helperBody;
@@ -879,7 +879,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	}
 	if (rule.type === SYMBOL && rule.inline === true && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
-			const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+			const slotName = rule.name.replace(/^_+/, '') || 'children';
 			return emitScalarSlot(slotName);
 		}
 		ctx.visitingHelpers.add(rule.name);
@@ -889,12 +889,12 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 			if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 				const listName = slot
-					? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
-					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+					? (slot.storageName.replace(/^_+/, '') || 'children')
+					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children'));
 				return emitListSlot(listName, rule, slot, ctx);
 			}
 			if (multiplicity === 'optional' && helperBody.length !== 0) {
-				const condKey = pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				const condKey = pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children');
 				return gate(condKey, helperBody);
 			}
 			return helperBody;
@@ -902,7 +902,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			ctx.visitingHelpers.delete(rule.name);
 		}
 	}
-	const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+	const slotName = rule.name.replace(/^_+/, '') || 'children';
 	return emitScalarSlot(slotName);
 }
 
@@ -932,7 +932,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	if (isSeamChoice(content)) return undefined;
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
-		const key = contentFieldName.toLowerCase();
+		const key = contentFieldName;
 		if (ctx.ownerSlots === undefined || ctx.ownerSlots[key] !== undefined) return key;
 	}
 	if (content.type === SEQ) {
@@ -955,7 +955,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	}
 	if (content.type === SYMBOL) {
 		const sym = content as Extract<RenderRule, { type: 'SYMBOL' }>;
-		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
+		return sym.name.replace(/^_+/, '') || 'children';
 	}
 	return undefined;
 }
@@ -1181,7 +1181,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			choiceRuleId !== undefined &&
 			slot.sourceRuleIds.includes(choiceRuleId);
 		if (unionBacked) {
-			const unionName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+			const unionName = slot.storageName.replace(/^_+/, '') || 'children';
 			const blockByKey = new Map<string, Body>();
 			const arraySlotDeltaByKey = new Map<string, string[]>();
 			for (const arm of rule.members) {
@@ -1208,7 +1208,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	}
 	const choiceFieldName = (rule as { fieldName?: string }).fieldName;
 	if (choiceFieldName !== undefined) {
-		return emitFieldNameSlot(choiceFieldName.toLowerCase(), rule, ctx);
+		return emitFieldNameSlot(choiceFieldName, rule, ctx);
 	}
 	if (rule.id === '__synthetic_exclusive_choice__') {
 		return concat(...rule.members.map((m) => emitRule(m, ctx)));

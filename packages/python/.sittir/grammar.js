@@ -264,7 +264,8 @@ function preference(arm2) {
 
 // packages/codegen/src/dsl/primitives/spacing.ts
 var EMPTY_SEPARATOR_TOKEN = "empty";
-var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+var LABEL_TOKEN = "[A-Za-z][A-Za-z0-9_]*?";
+var SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
   if (!m) return void 0;
@@ -273,13 +274,13 @@ function parseSpacingLabel(name) {
   if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
   return side === void 0 ? void 0 : { token: token2, side };
 }
-var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+var SEAM_LABEL = new RegExp(`^(${LABEL_TOKEN})_(before|after)$`);
 function parseSeamLabel(name) {
   if (parseSpacingLabel(name) !== void 0) return void 0;
   const m = SEAM_LABEL.exec(name);
   return m ? { token: m[1], side: m[2] } : void 0;
 }
-var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
+var FLANK_ADDRESS = new RegExp(`^(_*${LABEL_TOKEN})_(start|end)$`);
 function parseFlankAddress(key) {
   const m = FLANK_ADDRESS.exec(key);
   return m ? { kind: m[1], side: m[2] } : void 0;
@@ -1359,44 +1360,46 @@ function resolveSymbolTextFacts(names, grammar) {
   }
   return result;
 }
+var KEYWORD_KEY_SUFFIX = "_keyword";
+var PUNCTUATION_KEY_SUFFIX = "_punctuation";
 function joinIdNames(ids, names, fallbackName2, symbolTextFacts, symbolFacts, lexicalRanks) {
   const result = /* @__PURE__ */ new Map();
+  const collisions = [];
+  const place = (key, row) => {
+    const existing = result.get(key);
+    const existingParser = existing?.parser;
+    if (existing === void 0 || existingParser === void 0 || existingParser.cSymbol === row.parser.cSymbol) {
+      result.set(key, row);
+      return;
+    }
+    if (existingParser.anon !== row.parser.anon) {
+      const existingRow = { ...existing, parser: existingParser };
+      const [named, anonymous] = existingParser.anon ? [row, existingRow] : [existingRow, row];
+      result.set(key, named);
+      if (anonymous.parser.keyword === true) {
+        collisions.push({ key, symbols: [named.parser.cSymbol, anonymous.parser.cSymbol] });
+        return;
+      }
+      place(`${key}${PUNCTUATION_KEY_SUFFIX}`, anonymous);
+      return;
+    }
+    if (!shouldReplaceSymbol(existingParser.cSymbol, row.parser.cSymbol)) {
+      if (row.parser.alias) {
+        if (row.parser.symbolName !== void 0 && row.parser.symbolName !== existingParser.symbolName) {
+          result.set(key, { id: existing.id, parseId: row.id, parseName: row.parser.symbolName, parser: existingParser });
+        }
+        return;
+      }
+      collisions.push({ key, symbols: [existingParser.cSymbol, row.parser.cSymbol] });
+      return;
+    }
+    result.set(key, row);
+  };
   for (const entry of ids.values()) {
     const key = fallbackName2(entry.cName);
-    const parser = createParserMetadata(entry, key, names, symbolTextFacts, symbolFacts, lexicalRanks);
-    const existing = result.get(key);
-    if (!existing || !existing.parser) {
-      result.set(key, { id: entry.id, parser });
-      continue;
-    }
-    if (existing.parser.cSymbol === entry.cName) {
-      result.set(key, { id: entry.id, parser });
-      continue;
-    }
-    if (existing.parser.anon !== parser.anon) {
-      const anonSide = existing.parser.anon ? existing.parser : parser;
-      const namedSide = existing.parser.anon ? parser : existing.parser;
-      throw new Error(
-        `generated-metadata: key '${key}' names both anonymous token ${JSON.stringify(anonSide.symbolName)} (${anonSide.cSymbol}) and kind '${key}' (${namedSide.cSymbol})`
-      );
-    }
-    if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
-      if (parser.alias) {
-        if (parser.symbolName !== void 0 && parser.symbolName !== existing.parser.symbolName) {
-          result.set(key, {
-            id: existing.id,
-            parseId: entry.id,
-            parseName: parser.symbolName,
-            parser: existing.parser
-          });
-        }
-        continue;
-      }
-      throw new Error(`generated-metadata: key '${key}' names both '${existing.parser.cSymbol}' and '${entry.cName}'`);
-    }
-    result.set(key, { id: entry.id, parser });
+    place(key, { id: entry.id, parser: createParserMetadata(entry, key, names, symbolTextFacts, symbolFacts, lexicalRanks) });
   }
-  return result;
+  return { ids: result, collisions };
 }
 function createParserMetadata(entry, parserName, names, symbolTextFacts, symbolFacts, lexicalRanks) {
   const facts = symbolTextFacts?.get(entry.cName);
@@ -1433,8 +1436,9 @@ function deriveSymbolRuntimeName(symbolTextFacts) {
   return (cName) => {
     if (cName.startsWith("sym_")) return cName.slice("sym_".length);
     if (cName.startsWith("anon_sym_")) {
-      const base2 = cName.slice("anon_sym_".length).toLowerCase();
-      if (keywordTextOf(cName, symbolTextFacts) !== void 0) return `${base2}_keyword`;
+      const spelled = cName.slice("anon_sym_".length);
+      if (keywordTextOf(cName, symbolTextFacts) !== void 0) return `${spelled}${KEYWORD_KEY_SUFFIX}`;
+      const base2 = spelled.toLowerCase();
       const text = symbolTextFacts.get(cName)?.literalText;
       if (text === void 0 || cName !== `anon_sym_${text}`) return base2;
       return text.length <= 1 ? "underscore" : `underscore${text.length}`;
@@ -2112,11 +2116,11 @@ function predictSymbolTable(grammar) {
 }
 function predictKindCatalog(grammar) {
   const table = predictSymbolTable(grammar);
-  const kindIds = kindTableOfSymbolTable(table, grammar);
+  const { ids: kindIds, collisions } = kindTableOfSymbolTable(table, grammar);
   const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: "predicted" }, grammar)).map(
     ({ lexicalRank: _lexicalRank, ...entry }) => entry
   );
-  return { entries, undefinedNames: table.undefinedNames };
+  return { entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
 }
 function catalogRenames(names, entries) {
   const renames = /* @__PURE__ */ new Map();

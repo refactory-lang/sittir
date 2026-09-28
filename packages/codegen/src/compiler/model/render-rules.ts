@@ -543,7 +543,7 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	const punctuated = texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher));
 	if (!punctuated && isOptionalRule(rule)) return undefined;
 	const [field] = fields;
-	return field === undefined ? undefined : field.toLowerCase();
+	return field;
 }
 
 function enumSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
@@ -553,7 +553,7 @@ function enumSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undef
 	if (!(target instanceof AssembledEnum)) return undefined;
 	const values = target.values;
 	if (values.length === 0 || values.some((v) => !matchesWordShape(v, config.nodeMap.wordMatcher))) return undefined;
-	return r.fieldName.toLowerCase();
+	return r.fieldName;
 }
 
 function choiceArmNodesOf(rule: RenderRule): Set<RenderRule> {
@@ -576,7 +576,7 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	const r = bag(rule);
 	if (r.type !== SYMBOL || r.fieldName === undefined || r.name === undefined || config.choiceArmNodes?.has(rule) === true) return undefined;
 	const target = config.nodeMap.nodes.get(r.name);
-	return target instanceof AssembledKeyword ? r.fieldName.toLowerCase() : undefined;
+	return target instanceof AssembledKeyword ? r.fieldName : undefined;
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {

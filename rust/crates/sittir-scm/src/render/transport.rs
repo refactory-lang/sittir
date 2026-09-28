@@ -60,7 +60,7 @@ pub enum AnyTransport {
     Rbrack(RbrackTransport),
     Lparen(LparenTransport),
     Rparen(RparenTransport),
-    MissingKeyword(MissingKeywordTransport),
+    MISSINGKeyword(MISSINGKeywordTransport),
     Underscore(UnderscoreTransport),
     Colon(ColonTransport),
     Bang(BangTransport),
@@ -119,7 +119,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack(t) => t.prepare(ctx),
             AnyTransport::Lparen(t) => t.prepare(ctx),
             AnyTransport::Rparen(t) => t.prepare(ctx),
-            AnyTransport::MissingKeyword(t) => t.prepare(ctx),
+            AnyTransport::MISSINGKeyword(t) => t.prepare(ctx),
             AnyTransport::Underscore(t) => t.prepare(ctx),
             AnyTransport::Colon(t) => t.prepare(ctx),
             AnyTransport::Bang(t) => t.prepare(ctx),
@@ -306,9 +306,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 16 => Ok(AnyTransport::Rparen(
                     RparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: missing_keyword (MISSING_KEYWORD)
-                17 => Ok(AnyTransport::MissingKeyword(
-                    MissingKeywordTransport::from_napi_value(env, napi_val)?
+                // kind: MISSING_keyword (MISSING_KEYWORD)
+                17 => Ok(AnyTransport::MISSINGKeyword(
+                    MISSINGKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: underscore (UNDERSCORE)
                 7 => Ok(AnyTransport::Underscore(
@@ -6956,38 +6956,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct MissingKeywordTransport {
+pub struct MISSINGKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for MissingKeywordTransport {
+impl ::sittir_core::view::KindOf for MISSINGKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for MissingKeywordTransport {
+impl ::sittir_core::options::Edged for MISSINGKeywordTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(17) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for MissingKeywordTransport {
+impl ::sittir_core::render::Render for MISSINGKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for MissingKeywordTransport {
+impl ::sittir_core::prepare::Prepare for MISSINGKeywordTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MISSINGKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7012,7 +7012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MISSINGKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7030,7 +7030,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MissingKeywordTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for MISSINGKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -7040,22 +7040,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for MissingKeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MissingKeywordTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MISSINGKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MissingKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+        MISSINGKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MissingKeywordTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MISSINGKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MissingKeywordTransport::to_napi_value(env, *val)
+        MISSINGKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -8491,7 +8491,7 @@ fn render_rparen(t: &RparenTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_missing_keyword(t: &MissingKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_missingkeyword(t: &MISSINGKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -8598,7 +8598,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Rbrack(inner) => inner.kind_in(kinds),
             Self::Lparen(inner) => inner.kind_in(kinds),
             Self::Rparen(inner) => inner.kind_in(kinds),
-            Self::MissingKeyword(inner) => inner.kind_in(kinds),
+            Self::MISSINGKeyword(inner) => inner.kind_in(kinds),
             Self::Underscore(inner) => inner.kind_in(kinds),
             Self::Colon(inner) => inner.kind_in(kinds),
             Self::Bang(inner) => inner.kind_in(kinds),
@@ -8651,7 +8651,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Rbrack(t) => t.render(w),
             AnyTransport::Lparen(t) => t.render(w),
             AnyTransport::Rparen(t) => t.render(w),
-            AnyTransport::MissingKeyword(t) => t.render(w),
+            AnyTransport::MISSINGKeyword(t) => t.render(w),
             AnyTransport::Underscore(t) => t.render(w),
             AnyTransport::Colon(t) => t.render(w),
             AnyTransport::Bang(t) => t.render(w),
