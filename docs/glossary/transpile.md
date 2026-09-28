@@ -304,3 +304,69 @@ C source for an external scanner that never produces a token: create/destroy/ser
 
 File names tree-sitter recognises as an external scanner source.
 
+
+### `packages/codegen/src/transpile/conflict-summary.ts::ConflictInterpretation`
+
+```text
+One parse the LR builder could continue with at a conflicting state, as
+`tree-sitter generate --json-summary` reports it: the rule (`variable_name`),
+its production's symbols, and how far into that production the state sits
+(`step_index`, `done`). Field names are tree-sitter's own, unchanged.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::ConflictOffer`
+
+```text
+A resolution tree-sitter offers for a conflict. `Precedence` and
+`Associativity` name the rule(s) that would carry the precedence;
+`AddConflict` names the rule set to list in the grammar's `conflicts`.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::ConflictReport`
+
+```text
+The first unresolved conflict `generate` found, under the summary's
+`BuildTables.Conflict` key. `generate` stops at the first one, so each run
+reports at most one.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::GenerateOutcome`
+
+```text
+What one `generate` run means to the conflict loop: `clean` (exit 0, tables
+built), `conflict` (a report to resolve), or `error` (anything else — a grammar
+that fails to load or a table error that is not a conflict). An `error` is a
+broken grammar, never something the loop resolves.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::GenerateSummary`
+
+```text
+The slice of the `--json-summary` object the loop reads.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::lastSummary`
+
+```text
+The summary is the last top-level JSON object on stderr: tree-sitter writes it
+after anything the grammar printed while it was evaluated, and pretty-prints
+it, so it starts at a line that is exactly `{`. Returns undefined when stderr
+carries no parseable summary.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::parseGenerateOutcome`
+
+```text
+Classifies one `generate` run from its exit status and stderr. A failure with
+no summary keeps the raw stderr as the error's summary so the caller can show
+it.
+```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::conflictKey`
+
+```text
+Identity of a conflict for the loop's "reported twice" test: the symbol
+sequence, the lookahead, and each interpretation's rule, production and step.
+The offered resolutions are excluded — the same conflict can list its offers
+in any order.
+```
