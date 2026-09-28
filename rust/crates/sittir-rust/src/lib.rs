@@ -81,6 +81,15 @@ impl sittir_core::read_node::ReadModel for RustGrammar {
     fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
         render::kind_ids::inner_gap_key(kind, preceding_tokens)
     }
+
+    fn stores_scalar(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: Option<&str>,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::stores_scalar(parent, field, child)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

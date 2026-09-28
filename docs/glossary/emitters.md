@@ -2948,16 +2948,47 @@ name, and the slot name the reader stores the child under.
 The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
 own kind id, which is the grammar symbol the reader stamps and passes in. The
 reader asks for a key only when a node has no owner child (named, not an
-extra, and at least one byte wide), so the
-rows cover the gaps an extra can reach inside an otherwise ownerless node: an
-empty block (rust `block`, after `{`, keys to `statements`) or an empty root
-(token-less, keyed to its first repeat slot). A gap with no row drops the
-extra from the read.
+extra, at least one byte wide, and not stored as a scalar per
+`stores_scalar`), so the rows cover the gaps an extra can reach inside an
+otherwise ownerless node: an empty block (rust `block`, after `{`, keys to
+`statements`) or an empty root (token-less, keyed to its first repeat slot).
+An extra in a gap with no row is the node's own entry: leading when no named
+child precedes it, trailing otherwise.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::InnerGapRow`
 
 One `inner_gap_key` arm: the kind id, the count of anonymous tokens before the
 extra, and the slot name the gap is keyed by.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::stores_scalar`
+
+The generated table behind the reader's owner test: whether the model stores
+a child as a scalar (a presence flag or a kind id) rather than a node. A
+scalar keeps no trivia, so the reader never makes that child an owner, and an
+extra beside it goes to the next owner outward (typescript `(/* c */ this)`
+reads the comment as the parenthesized expression's leading entry, since
+`this` is stored as a kind id). Keyed by `(parent kind id, tree-sitter field
+name or None, child kind id)`, the three facts `read_node::stored_as_scalar`
+has in hand. Rows come from `scalarChildRows`.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::scalarChildRows`
+
+The `stores_scalar` rows: for every slot of every catalogued parent whose
+`storageInfo` is a scalar kind (`SCALAR_STORAGE`), the kind ids in its
+`enumKindsById` under `(parent id, slot.fieldName)`. A `mixedEnum` slot lists
+only its kind-id arms; its node arms stay owners. Slots sharing a parent and
+field merge into one row.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::ScalarChildRow`
+
+One `stores_scalar` arm: the parent kind id, the field (absent for an
+untagged child), and the child kind ids stored as scalars there.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::SCALAR_STORAGE`
+
+The `FieldStorageKind`s whose value is not a node: `boolean` and `bitflag`
+presence, and the `kindEnum` / `mixedEnum` kind ids. `verbatim` stores the
+node.
 
 ### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
 

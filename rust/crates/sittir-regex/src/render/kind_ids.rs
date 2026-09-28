@@ -286,3 +286,21 @@ pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
         .iter()
         .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
 }
+
+/// Whether the model stores a `child` of a `parent` node, reached under the
+/// parser field `field` (`None` for an untagged child), as a scalar: a
+/// presence flag or a kind id rather than a node. Such a child keeps no
+/// trivia, so the reader never makes it an owner.
+pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {
+    match (parent.0, field) {
+        (56, None) => matches!(child.0, 8 | 9),
+        (57, None) => matches!(child.0, 8 | 9),
+        (58, Some("class_atoms")) => matches!(child.0, 19),
+        (61, Some("end")) => matches!(child.0, 14),
+        (61, Some("start")) => matches!(child.0, 14),
+        (63, None) => matches!(child.0, 11 | 22),
+        (77, None) => matches!(child.0, 2 | 4 | 5 | 6 | 54),
+        (88, Some("content")) => matches!(child.0, 26),
+        _ => false,
+    }
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { loadLanguageForGrammar } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 
 async function sourceRenderer(grammar: string): Promise<(source: string, deep: boolean) => string> {
@@ -57,9 +58,38 @@ describe('trivia probes', () => {
 		}
 	}
 
-	// Follow-up: the reader gives this comment to the header's first empty_statement, which its slot stores as a
-	// kind id, so the entry has nowhere to live. Flips once a scalar-stored child no longer owns trivia.
-	it.fails('typescript: a comment in a for header survives a detached read (scalar-stored owner follow-up)', async () => {
-		expect((await detachedRenderer('typescript'))('for (/*a*/;;) {}\n')).toContain('/*a*/');
-	});
+	const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
+		typescript: [
+			['x = (/* c */ this);', 'x = /* c */ (this);'],
+			['x = (/* c */ undefined);', 'x = /* c */ (undefined);'],
+			['x = (/* c */ true);', 'x = /* c */ (true);'],
+			['x = (/* c */ null);', 'x = /* c */ (null);'],
+			['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n    m() {\n        /* c */ (super).m();\n    }\n}\n'],
+			['for (/* c */;;) {}', 'for (;;) /* c */ {}\n'],
+			['x = (// c\n this);', 'x = // c\n(this);'],
+			['x = (this /* c */);', 'x = (this) /* c */;']
+		],
+		rust: [
+			['fn f() { (/* c */ self); }', 'fn f() {\n    /* c */ (self);\n}'],
+			['fn f() { (self /* c */); }', 'fn f() {\n    (self) /* c */;\n}'],
+			['fn f() { (// c\n self); }', 'fn f() {\n    // c\n    (self);\n}']
+		],
+		python: [
+			['x = (  # c\n    True)\n', 'x = # c\n(True)\n'],
+			['x = (  # c\n    True) + 1\n', 'x = # c\n(True) + 1\n'],
+			['a = 1; x = (  # c\n    True)\n', 'a = 1; x = # c\n(True)\n']
+		]
+	};
+	for (const [grammar, cases] of Object.entries(ORPHANS)) {
+		for (const [source, detached] of cases) {
+			it(`${grammar}: ${JSON.stringify(source)} keeps a comment beside a scalar-stored leaf on the enclosing node`, async () => {
+				const rendered = (await detachedRenderer(grammar))(source);
+				expect(rendered).toBe(detached);
+				const { Parser, lang } = await loadLanguageForGrammar(grammar);
+				const parser = new Parser();
+				parser.setLanguage(lang);
+				expect(parser.parse(rendered)!.rootNode.hasError).toBe(false);
+			});
+		}
+	}
 });

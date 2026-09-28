@@ -108,6 +108,14 @@ pub trait ReadModel {
         let _ = (kind, preceding_tokens);
         None
     }
+
+    /// Whether the model stores a `child` of a `parent` node, reached under
+    /// the parser field `field`, as a scalar: a presence flag or a kind id.
+    /// Such a child keeps no trivia, so it never owns an extra.
+    fn stores_scalar(&self, parent: KindId, field: Option<&str>, child: KindId) -> bool {
+        let _ = (parent, field, child);
+        false
+    }
 }
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
@@ -340,8 +348,9 @@ fn node_trivia(
 
     let mut leading = Vec::new();
     let mut trailing = Vec::new();
-    if is_owner(&node) {
-        let (before, prev) = extras_run(node, |n| n.prev_sibling());
+    let owner = is_owner(&node, model);
+    if owner {
+        let (before, prev) = extras_run(node, |n| n.prev_sibling(), model);
         for (extra, _) in before.into_iter().rev() {
             let trails_prev = prev.is_some_and(|p| end_row(&p) == extra.start_position().row);
             if !trails_prev {
@@ -352,7 +361,7 @@ fn node_trivia(
                 ));
             }
         }
-        let (after, next) = extras_run(node, |n| n.next_sibling());
+        let (after, next) = extras_run(node, |n| n.next_sibling(), model);
         for (extra, tokens) in after {
             let same_line = end_row(&node) == extra.start_position().row;
             if same_line {
@@ -366,16 +375,24 @@ fn node_trivia(
     let mut inner: BTreeMap<String, Vec<NodeData>> = BTreeMap::new();
     let mut cursor = node.walk();
     let children: Vec<_> = node.children(&mut cursor).collect();
-    if !children.iter().any(is_owner) {
+    if !children.iter().any(|child| is_owner(child, model)) {
         let mut preceding_tokens: u16 = 0;
+        let mut named_before = false;
         for child in children {
             if !child.is_extra() {
                 preceding_tokens += 1;
+                named_before |= child.is_named();
             } else if let Some(key) = model.inner_gap_key(stamped_kind(&node), preceding_tokens) {
                 inner
                     .entry(key.to_string())
                     .or_default()
                     .push(entry(child, false, 0));
+            } else if owner {
+                if named_before {
+                    trailing.push(entry(child, true, 0));
+                } else {
+                    leading.push(entry(child, true, 0));
+                }
             }
         }
     }
@@ -404,11 +421,36 @@ fn end_row(node: &tree_sitter::Node<'_>) -> usize {
     }
 }
 
-/// A node that can own trivia: named, not itself an extra, and spanning at
-/// least one byte. A zero-width node (typescript's `automatic_semicolon`) is
-/// never written around, so an entry it owned would have nowhere to render.
-fn is_owner(node: &tree_sitter::Node<'_>) -> bool {
-    node.is_named() && !node.is_extra() && node.end_byte() > node.start_byte()
+/// A node that can own trivia: named, not itself an extra, spanning at
+/// least one byte, and stored by its slot as a node. A zero-width node
+/// (typescript's `automatic_semicolon`) is never written around, and a child
+/// its slot stores as a scalar (a flag or a kind id) keeps no trivia, so an
+/// entry either owned would have nowhere to render.
+fn is_owner(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    node.is_named() && !node.is_extra() && node.end_byte() > node.start_byte() && !stored_as_scalar(node, model)
+}
+
+fn stored_as_scalar(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    let Some(parent) = node.parent() else {
+        return false;
+    };
+    model.stores_scalar(stamped_kind(&parent), field_in_parent(node, &parent), stamped_kind(node))
+}
+
+/// The parser field `parent` tags `node` with, if any.
+fn field_in_parent(node: &tree_sitter::Node<'_>, parent: &tree_sitter::Node<'_>) -> Option<&'static str> {
+    let mut cursor = parent.walk();
+    if !cursor.goto_first_child() {
+        return None;
+    }
+    loop {
+        if cursor.node().id() == node.id() {
+            return cursor.field_name();
+        }
+        if !cursor.goto_next_sibling() {
+            return None;
+        }
+    }
 }
 
 /// The extras between `node` and the nearest owner in one direction, nearest
@@ -417,6 +459,7 @@ fn is_owner(node: &tree_sitter::Node<'_>) -> bool {
 fn extras_run<'t>(
     node: tree_sitter::Node<'t>,
     step: impl Fn(tree_sitter::Node<'t>) -> Option<tree_sitter::Node<'t>>,
+    model: &dyn ReadModel,
 ) -> (
     Vec<(tree_sitter::Node<'t>, u16)>,
     Option<tree_sitter::Node<'t>>,
@@ -425,7 +468,7 @@ fn extras_run<'t>(
     let mut tokens: u16 = 0;
     let mut cursor = step(node);
     while let Some(sibling) = cursor {
-        if is_owner(&sibling) {
+        if is_owner(&sibling, model) {
             return (extras, Some(sibling));
         }
         if sibling.is_extra() {

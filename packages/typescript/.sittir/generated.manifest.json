@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "7ec613688e4ee78acf2594bb10bc2a0c61df84f59ed0472528c4e1ee0b62cc3d",
+  "source_hash": "3d83c47e67b0b789f822e973373706e67206ab709f88b8aa9e61b2a8b9a97f59",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "0f7d8c11a04065fd10039ce0b011ff0ac5c4fb44f02b992af25605480d8a0831",
     "packages/typescript/.sittir/grammar.js": "214202dc60370e2c841a79fd476176227fcb633423924320870597c125f151b1",
@@ -40,9 +40,9 @@
     "packages/typescript/src/wrap.ts": "14be912f6b06630db9901608c1d1861325e6b7d7186bf3fd074097de5c9faf79",
     "rust/crates/sittir-typescript/index.d.ts": "8b9878ff289ec35068542de194782a73e341cb9a3988f1089243286fe6c04141",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
-    "rust/crates/sittir-typescript/src/lib.rs": "d51545782464015195e0e2133b1d4eaade93f597aa6ffcfbd0ff72404971a384",
+    "rust/crates/sittir-typescript/src/lib.rs": "29244cfe9782cad27e8d3d68531aec8f87bfd8459a1b7f07354b91d402b6eade",
     "rust/crates/sittir-typescript/src/render/hash.rs": "2829101960f685d72da5581099352d8a36b8ca6dda71224d05ea4592051e6081",
-    "rust/crates/sittir-typescript/src/render/kind_ids.rs": "b179038eb9bf8900e9c04b5614310c886faf0f52219271e7996875b6b97c894e",
+    "rust/crates/sittir-typescript/src/render/kind_ids.rs": "92c4c0b36e68c0cc9e2b1aebe171fac4be821125df4d21f32a660b2dbb9ebd59",
     "rust/crates/sittir-typescript/src/render/mod.rs": "bbce90c45f59fb49d0c5ae0c934cb843b9786eb6eecf32300357531fe5ef3517",
     "rust/crates/sittir-typescript/src/render/options.rs": "de5b21620627fc63dddfdbc424ee81ba3ad691dd3621d4c7cf2547f198b79d5a",
     "rust/crates/sittir-typescript/src/render/transport.rs": "82b362fb52d43112638981057736b8e70494b5914cd2c001f05d8b66a65973a8"

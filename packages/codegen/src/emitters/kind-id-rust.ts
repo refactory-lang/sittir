@@ -172,6 +172,21 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('}');
 
 	lines.push('');
+	lines.push('/// Whether the model stores a `child` of a `parent` node, reached under the');
+	lines.push('/// parser field `field` (`None` for an untagged child), as a scalar: a');
+	lines.push('/// presence flag or a kind id rather than a node. Such a child keeps no');
+	lines.push('/// trivia, so the reader never makes it an owner.');
+	lines.push('pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {');
+	lines.push('    match (parent.0, field) {');
+	for (const row of scalarChildRows(nodeMap, entries)) {
+		const fieldPattern = row.field === undefined ? 'None' : `Some(${JSON.stringify(row.field)})`;
+		lines.push(`        (${row.parentId}, ${fieldPattern}) => matches!(child.0, ${row.childIds.join(' | ')}),`);
+	}
+	lines.push('        _ => false,');
+	lines.push('    }');
+	lines.push('}');
+
+	lines.push('');
 
 	return lines.join('\n');
 }
@@ -193,6 +208,37 @@ function innerGapRows(
 			return kindId === undefined ? [] : node.innerGaps.map((gap) => ({ kindId, ...gap }));
 		})
 		.sort((a, b) => a.kindId - b.kindId || a.precedingTokens - b.precedingTokens);
+}
+
+const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
+
+export interface ScalarChildRow {
+	readonly parentId: number;
+	readonly field?: string;
+	readonly childIds: readonly number[];
+}
+
+export function scalarChildRows(
+	nodeMap: NodeMap,
+	entries: readonly (KindEntryLike & { readonly id: number })[]
+): readonly ScalarChildRow[] {
+	const rows = new Map<string, { parentId: number; field?: string; childIds: Set<number> }>();
+	for (const [, node] of nodeMap.nodes) {
+		const parentId = findOwnKindEntry(entries, node.kind)?.id;
+		if (parentId === undefined) continue;
+		for (const slot of node.slots) {
+			const info = slot.storageInfo;
+			if (info === undefined || !SCALAR_STORAGE.has(info.kind) || info.enumKindsById.size === 0) continue;
+			const field = slot.fieldName;
+			const key = `${parentId} ${field ?? ''}`;
+			const row = rows.get(key) ?? { parentId, ...(field === undefined ? {} : { field }), childIds: new Set<number>() };
+			for (const id of info.enumKindsById.values()) row.childIds.add(id);
+			rows.set(key, row);
+		}
+	}
+	return [...rows.values()]
+		.map((row) => ({ ...row, childIds: [...row.childIds].sort((a, b) => a - b) }))
+		.sort((a, b) => a.parentId - b.parentId || (a.field ?? '').localeCompare(b.field ?? ''));
 }
 
 export interface WireSlotRow {
