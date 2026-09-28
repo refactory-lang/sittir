@@ -38,6 +38,11 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{// one\n/* two */}');
 	});
 
+	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
+		const render = await detachedRenderer('rust');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+	});
+
 	it('lays root entries one per line, since the root gap starts a line', async () => {
 		const render = await detachedRenderer('rust');
 		expect(render('/* a */\n/* Comment */\n')).toBe('/* a */\n/* Comment */');

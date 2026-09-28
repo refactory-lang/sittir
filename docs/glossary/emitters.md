@@ -14587,6 +14587,8 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 // never actually boxed get DCE'd by the compiler.
 ```
 
+A leaf whose kind entry is anonymous (`anon`, the parser's fact) renders with `render_with_trivia!(token …)`. The reader counts such a token among the tokens between an owner and its same-line trailing entries (`$tokensBetween`), never as an owner. So its transport leaves those entries held and doesn't seat them ahead of itself: `a + /* x */ b` keeps the comment after `+`.
+
 ### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
 
 The text a value-less leaf takes when it arrives over napi as a bare kind

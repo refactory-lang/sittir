@@ -3240,7 +3240,8 @@ function renderTransportDataStruct(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, w, ${leafRenderExpr(node, 'self')})`);
+		const token = kindEntries !== undefined && findKindEntry(kindEntries, node.kind)?.anon === true ? 'token ' : '';
+		lines.push(`        render_with_trivia!(${token}self, w, ${leafRenderExpr(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
 		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);

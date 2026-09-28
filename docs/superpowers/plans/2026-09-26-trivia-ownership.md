@@ -631,7 +631,7 @@ it('renders a built trailing line comment followed by the next statement on a ne
   grammar. If a row regresses, stop and report old/new/where.
 
 **Follow-ups after Task 7 (not in its scope):**
-- A trailing entry held past a field-held token seats before that token. The token renders through its own transport, and `render_with_trivia` seats held trailing on entry. Repro: `fn f() { x = a + /* x */ b; }` renders `x = a /* x */ + b`, although the reader stamps `$tokensBetween: 1` on the comment. The entry must seat after the token.
+- **Done:** a trailing entry held past a field-held token seated before that token. Anonymous-kind transports now render with `render_with_trivia!(token …)` and don't seat. The token renders through its own transport, and `render_with_trivia` seats held trailing on entry. Repro: `fn f() { x = a + /* x */ b; }` renders `x = a /* x */ + b`, although the reader stamps `$tokensBetween: 1` on the comment. The entry must seat after the token.
 - A line continuation that ends its own line is still followed by the parent's held statement separator. Repro: python `def foo():\n    pass \\\n\\\n\\\n` renders `pass \\\n\n\\\n\\\n`, one break too many. This predates Task 7.
 
 ### Task 7b: The source emitter prints trivia as kinds

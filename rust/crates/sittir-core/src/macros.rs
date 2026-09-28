@@ -23,8 +23,25 @@
 ///
 /// `$self` has a `transport_trivia_data: Option<TransportTrivia<T>>` field;
 /// bool/enum transport variants have none and write directly to `$w`.
+///
+/// `render_with_trivia!(token self, w, ...)` is the form for an anonymous
+/// token's transport. The reader counts such a token among the tokens
+/// between an owner and its same-line trailing entries, never as an owner,
+/// so it does not seat the held trailing entries: they stay held past it.
 #[macro_export]
 macro_rules! render_with_trivia {
+    (token $self:expr, $w:expr, $render:expr) => {
+        (|| -> $crate::render::RenderResult {
+            if let Some(ref __trivia) = $self.transport_trivia_data {
+                __trivia.render_leading($w)?;
+            }
+            $render?;
+            if let Some(ref __trivia) = $self.transport_trivia_data {
+                __trivia.render_trailing($w)?;
+            }
+            Ok(())
+        })()
+    };
     ($self:expr, $w:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
             $w.seat_trailing()?;
@@ -252,6 +269,26 @@ mod trivia_macro_tests {
         let text = render_with(|w| {
             left.render(w)?;
             w.text("+")?;
+            right.render(w)
+        });
+        assert_eq!(text, "a+ /* x */ b");
+    }
+
+    #[test]
+    fn a_held_trailing_entry_seats_after_a_token_that_renders_through_a_transport() {
+        struct Token(MockTransport);
+        impl Render for Token {
+            fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+                let token = &self.0;
+                render_with_trivia!(token token, w, w.text(token.text))
+            }
+        }
+        let left = owner("a", &[], &["/* x */"], true);
+        let plus = Token(MockTransport { text: "+", transport_trivia_data: None });
+        let right = owner("b", &[], &[], false);
+        let text = render_with(|w| {
+            left.render(w)?;
+            plus.render(w)?;
             right.render(w)
         });
         assert_eq!(text, "a+ /* x */ b");
