@@ -292,18 +292,18 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 		}
 	}
 	pushNativeCandidates(d.$other, out);
+	return out;
+}
+
+function nativeTriviaEntries(d: AnyNodeData): AnyNodeData[] {
+	const out: AnyNodeData[] = [];
 	const trivia = d.$_trivia;
 	if (trivia) {
 		pushNativeCandidates(trivia.leading, out);
 		pushNativeCandidates(trivia.trailing, out);
+		for (const entries of Object.values(trivia.inner ?? {})) pushNativeCandidates(entries, out);
 	}
 	return out;
-}
-
-function isTriviaEntry(parent: AnyNodeData, child: AnyNodeData): boolean {
-	const trivia = parent.$_trivia;
-	if (!trivia) return false;
-	return (trivia.leading?.includes(child) ?? false) || (trivia.trailing?.includes(child) ?? false);
 }
 
 function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
@@ -322,7 +322,8 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	span?: { readonly start: number; readonly end: number }
 ): NativeNodeCoords | null {
 	if (!handle.read) return null;
 	const read = handle.read;
@@ -336,11 +337,25 @@ export function findNativeNodeId(
 		return {};
 	}
 
-	function walk(d: AnyNodeData): NativeNodeCoords | null {
+	function spanMatches(d: AnyNodeData): boolean {
+		return span === undefined || (d.$span?.start === span.start && d.$span?.end === span.end);
+	}
+
+	function findEmbedded(d: AnyNodeData): NativeNodeCoords | null {
+		if (kindOf(d) === kind && spanMatches(d)) return { embeddedData: d };
 		for (const child of collectNativeChildNodes(d)) {
-			if (kindOf(child) === kind && isTriviaEntry(d, child)) {
-				return { embeddedData: child };
-			}
+			const found = findEmbedded(child);
+			if (found !== null) return found;
+		}
+		return null;
+	}
+
+	function walk(d: AnyNodeData): NativeNodeCoords | null {
+		for (const entry of nativeTriviaEntries(d)) {
+			const found = findEmbedded(entry);
+			if (found !== null) return found;
+		}
+		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
 			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };

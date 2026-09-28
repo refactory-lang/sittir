@@ -54,6 +54,10 @@ A comment is attached to one node, in one of three positions:
 | `trailing` | after the owner | the comment starts on the line where its previous named sibling ends, or it has no following named sibling |
 | `inner` | inside the owner, which has no named children around the comment | the comment's parent has no named non-extra sibling on either side of it |
 
+A named sibling is an owner only when it spans at least one byte: a zero-width
+node (typescript's `automatic_semicolon`) is never written around, so it owns
+nothing, and `{ /* empty */ }` keeps its comment inner.
+
 `inner` exists only for a node whose optional and repeat slots are all empty
 (see "Empty kinds"). In every other case a comment has a neighbour, and leading
 or trailing on that neighbour expresses it.

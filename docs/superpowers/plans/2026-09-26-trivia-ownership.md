@@ -635,6 +635,8 @@ it('renders a built trailing line comment followed by the next statement on a ne
 - **Done:** the same seating when the token is kept as a source coordinate (an edited tree). The sink reads the grammar's `KIND_FLAGS` table: a coordinate onto a `KIND_ANON` kind seats no held trailing entries, and `KIND_LINE_TERMINATED` replaces the per-grammar line-terminated match.
 - **Done:** an own-line trailing entry no longer swallows its owner's after edge. The sink sets that seam aside while the run renders and merges it back after, so a built `fn g() {}` with a trailing `/* t */` keeps its blank line before `fn h`. The same root cause fixed the python line continuation that was followed by an extra break: `def foo():\n    pass \\\n\\\n\\\n` now renders as its source.
 
+- **Open (user's ruling):** the reader can choose an owner that its slot stores as a scalar, and the entry is lost. typescript `for (/*a*/;;) {}` gives the comment to the header's first `empty_statement`, which the wrap stores as the kind id `_initializer: 219`; a detached read renders `for (;;) {}`. Pinned as an expected-fail probe (`trivia-probes.test.ts`). Candidate fix: a stamped per-(parent, slot) "stores a scalar" fact that excludes the child from ownership, plus a decision on where a comment inside a for header lives. That changes the ownership law, so it goes to the user with a census of the (parent, slot) pairs that store scalars and can sit beside a comment.
+
 ### Task 7b: The source emitter prints trivia as kinds
 
 **As landed (with Task 5):** `triviaSuffix` prints every entry through
@@ -676,6 +678,8 @@ it('prints inner trivia on an empty body', async () => {
 - [ ] **Step 5:** Commit.
 
 ### Task 8: Probes, examples and the validation ratchet
+
+**Landed:** the probes live in `packages/tools/src/validate/__tests__/trivia-probes.test.ts`, one table across the three grammars, since the detached render they need is a tools helper. A zero-width node owns no trivia (typescript `{ /* empty */ }` keeps its comment inner). The from validator locates a node inside a trivia entry by `$span`, so the rust trivia row is 0 and its ceiling with it. The for-header comment is the open follow-up above, pinned as an expected fail.
 
 **Files:**
 - Test: `packages/rust/tests/trivia-probes.test.ts`,

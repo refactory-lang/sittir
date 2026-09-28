@@ -293,6 +293,8 @@ would otherwise report a passing 0/0 run.
  */
 ```
 
+Every trivia side is walked (leading, trailing and inner), and a node found in a trivia entry or anywhere inside one is returned as `embeddedData`: an entry is read whole and has no handle and child index of its own. When the caller passes a `span` (the from validator passes its CST node's), a node inside trivia matches only at that `$span`, a stamped read fact, so no text is compared.
+
 #### body
 
 ```text

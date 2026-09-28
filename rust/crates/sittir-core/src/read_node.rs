@@ -404,9 +404,11 @@ fn end_row(node: &tree_sitter::Node<'_>) -> usize {
     }
 }
 
-/// A node that can own trivia: named and not itself an extra.
+/// A node that can own trivia: named, not itself an extra, and spanning at
+/// least one byte. A zero-width node (typescript's `automatic_semicolon`) is
+/// never written around, so an entry it owned would have nowhere to render.
 fn is_owner(node: &tree_sitter::Node<'_>) -> bool {
-    node.is_named() && !node.is_extra()
+    node.is_named() && !node.is_extra() && node.end_byte() > node.start_byte()
 }
 
 /// The extras between `node` and the nearest owner in one direction, nearest

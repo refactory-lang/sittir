@@ -2993,7 +2993,8 @@ name, and the slot name the reader stores the child under.
 
 The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
 own kind id, which is the grammar symbol the reader stamps and passes in. The
-reader asks for a key only when a node has no named non-extra child, so the
+reader asks for a key only when a node has no owner child (named, not an
+extra, and at least one byte wide), so the
 rows cover the gaps an extra can reach inside an otherwise ownerless node: an
 empty block (rust `block`, after `{`, keys to `statements`) or an empty root
 (token-less, keyed to its first repeat slot). A gap with no row drops the
