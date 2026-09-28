@@ -99,7 +99,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-  render(node: AnyNodeData, options?: RenderOptions<API['options']>): { toString(): string };
+  render(node: AnyNodeData, options?: API['options'] & { ignoreFormat?: boolean }): { toString(): string };   // already merged over the engine's render options
   applyEdits(source: string, edits: readonly Edit[]): string;
   parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: unknown };
   holdsTree(tree: unknown): boolean;
@@ -504,6 +504,7 @@ Behaviour:
 - `edit(path, fn)`: the file must exist, or it throws `edit: <path> does not exist`. It parses the file, runs `fn(root)`, and if the returned root is the same object it stages nothing: the `Pending` resolves without writing. Otherwise it renders and stages `{ before, after, expectExists: true, baseHash: sha256(before) }`. A structurally equal but new root is a change and writes (Review Focus 4).
 - `write(path, node)` stages the whole file, with create or overwrite, and no precondition.
 - `read(path)` parses the file set's text.
+- Every commit, standalone or project, runs through the engine's composed `file` interceptor chain, one call per change, with `next` doing the actual write. An interceptor that skips `next` blocks that file.
 - `createPending`: `then` runs the commit once, and `[Symbol.asyncDispose]` runs the same commit once. A `Pending` that is neither awaited nor disposed never commits.
 - `commitChanges`:
   - It re-checks every change against disk: `expectExists` against existence, and `baseHash` against `sha256` of the current text. It throws one error naming every failing path, before writing anything.
