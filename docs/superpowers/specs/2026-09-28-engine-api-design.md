@@ -90,8 +90,17 @@ export async function createEngine<API extends LanguageAPI, const M extends ApiS
   - `'portable'`: reserved for the portability surface. It is not implemented: its
     `build` type is `never`, and `createEngine` rejects with
     `api "portable" is not implemented`.
-  `API` carries both surfaces (`build` and `strictBuild`), so the choice is a lookup,
-  not a second generated package.
+  The strict surface is derived, not generated: the `build` proxy that binds builders
+  to the engine takes the `.strict` flavour of each builder it resolves, and keeps
+  descending through every other property (variants such as `build.number.bigint`),
+  hiding `.strict` and `.coerce` themselves. Its type is one recursive mapped type over
+  the default surface:
+
+  ```ts
+  type StrictSurface<T> =
+    (T extends { strict: infer S } ? S : T)
+    & { [K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]> };
+  ```
 
 - **Interceptors** wrap the engine's operations like middleware, for logging,
   instrumentation and tooling:
@@ -123,7 +132,7 @@ export async function createEngine<API extends LanguageAPI, const M extends ApiS
 ```ts
 interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   readonly language: API['name'];
-  readonly build: M extends 'strict' ? API['strictBuild'] : M extends 'portable' ? never : API['build'];
+  readonly build: M extends 'strict' ? StrictSurface<API['build']> : M extends 'portable' ? never : API['build'];
   readonly is: API['is'];
   readonly kinds: API['kinds'];
   readonly types: API['types'];
