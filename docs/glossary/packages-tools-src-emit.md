@@ -204,6 +204,19 @@ rebuilds reads this table: `pnpm run gen:examples`
 (`dogfood-render-bytes.test.ts`). A new target is one row here and nothing
 else.
 
+A target may carry `renderOptions`, the render options of its grammar's own
+`Options` type (`GrammarRenderOptions`, keyed by the grammars this package
+depends on). The render-bytes test renders the rebuild through the grammar's
+engine with them, and compares against the fixture as a file snapshot, so
+`vitest -u` rewrites it. The typescript `format.ts` target sets
+`indent: '\t'` because its source is tab-indented, so its fixture shows the
+render's real differences from the source rather than the indent unit.
+
+### `packages/tools/src/emit/dogfood-targets.ts::GrammarRenderOptions`
+
+The render-options type of each grammar a dogfood target may set options for,
+taken from that grammar package's `Options`: typescript today.
+
 ### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_REBUILDS`
 
 `DOGFOOD_TARGETS` expanded one row per surface, with the derived export name

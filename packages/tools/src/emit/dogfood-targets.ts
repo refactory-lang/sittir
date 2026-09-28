@@ -1,6 +1,11 @@
 import type { GrammarName } from '@sittir/codegen/grammars';
+import type { Options as TypescriptOptions } from '@sittir/typescript';
 
 export type DogfoodSurface = 'strict' | 'loose';
+
+interface GrammarRenderOptions {
+	readonly typescript: TypescriptOptions;
+}
 
 export interface DogfoodTarget {
 	readonly grammar: GrammarName;
@@ -9,6 +14,7 @@ export interface DogfoodTarget {
 	readonly name: string;
 	readonly surfaces: readonly DogfoodSurface[];
 	readonly rendered: string;
+	readonly renderOptions?: GrammarRenderOptions[keyof GrammarRenderOptions];
 }
 
 export interface DogfoodRebuild extends Omit<DogfoodTarget, 'surfaces'> {
@@ -32,7 +38,8 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		stem: '18-dogfood-typescript',
 		name: 'Format',
 		surfaces: ['strict', 'loose'],
-		rendered: 'dogfood-typescript.rendered'
+		rendered: 'dogfood-typescript.rendered',
+		renderOptions: { indent: '\t' }
 	},
 	{
 		grammar: 'python',

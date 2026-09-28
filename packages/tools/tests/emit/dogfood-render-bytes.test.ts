@@ -5,14 +5,15 @@ import { DOGFOOD_REBUILDS } from '../../src/emit/dogfood-targets.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
+type RenderEngine = { render(node: unknown, options?: { options?: object }): { toString(): string } };
+
 describe('dogfood rebuild render bytes', () => {
-	for (const { grammar, file, exportName, rendered: fixture } of DOGFOOD_REBUILDS) {
+	for (const { grammar, file, exportName, rendered: fixture, renderOptions } of DOGFOOD_REBUILDS) {
 		it(`${grammar}: ${exportName} renders the committed fixture byte-for-byte`, async () => {
-			const absolute = ROOT + file;
-			const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
-			const rendered = mod[exportName]!().$render();
-			const expected = readFileSync(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture, 'utf8');
-			expect(rendered).toBe(expected);
+			const mod = (await import(pathToFileURL(ROOT + file).href)) as Record<string, () => unknown>;
+			const { createEngine } = (await import(`@sittir/${grammar}`)) as { createEngine: () => RenderEngine };
+			const rendered = createEngine().render(mod[exportName]!(), { options: renderOptions }).toString();
+			await expect(rendered).toMatchFileSnapshot(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture);
 		});
 	}
 });
