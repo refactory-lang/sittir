@@ -29,6 +29,7 @@ function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
 }
 import {
+	isArmChoice,
 	separatorOf,
 	matchesEmpty,
 	isInlineSafe,
@@ -651,7 +652,7 @@ function sameElementShape(a: Rule, b: Rule): boolean {
 function hasFieldedArm(rule: Rule): boolean {
 	const cursor = peelTransparentElementWrappers(rule);
 	const members = (cursor as unknown as { members?: Rule[] }).members;
-	return isChoiceType((cursor as { type: string }).type) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
+	return isArmChoice(cursor) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
 }
 
 function peelTransparentElementWrappers(rule: Rule): Rule {

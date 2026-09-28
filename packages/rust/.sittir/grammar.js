@@ -836,6 +836,9 @@ function optionalContentOf(rule) {
   if (isBlank(first) === isBlank(second)) return void 0;
   return isBlank(second) ? first : second;
 }
+function isArmChoice(rule) {
+  return rule.type === CHOICE && optionalContentOf(rule) === void 0;
+}
 function isImmediateToken(rule) {
   return rule.type === IMMEDIATE_TOKEN || rule.type === TOKEN && rule.immediate === true;
 }
@@ -887,7 +890,7 @@ function separatorOf(resolved, symbols) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.isTerminal);
+  const isToken = (r) => isArmChoice(r) && terminalContentOf(r, symbols.isTerminal);
   if (isToken(first) && !secondIsStr) return { content: second, separator: first };
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
@@ -1478,6 +1481,8 @@ function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) 
   seen.add(rule);
   const t = rule.type;
   if (typeof t !== "string") return void 0;
+  const optional2 = optionalContentOf(rule);
+  if (optional2 !== void 0) return armLeadingSymbolName(optional2, rulesBag, seen);
   if (isSymbolType(t)) {
     const name = rule.name;
     if (typeof name !== "string") return void 0;
@@ -3660,7 +3665,7 @@ function sameElementShape(a, b) {
 function hasFieldedArm(rule) {
   const cursor = peelTransparentElementWrappers(rule);
   const members = cursor.members;
-  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+  return isArmChoice(cursor) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
 }
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
@@ -5525,6 +5530,8 @@ function deField(rule) {
   const inner = isFieldLike(rule) ? contentOf3(rule) : rule;
   const stripPropagated = (r) => {
     const { fieldName: _drop, ...rest } = r;
+    const optional2 = optionalContentOf(rest);
+    if (optional2 !== void 0) return withOptionalContent(rest, stripPropagated(optional2));
     const content = rest.content;
     if (content && typeof content === "object" && !isSeqType(rest.type) && !isChoiceType(rest.type)) {
       return { ...rest, content: stripPropagated(content) };
@@ -5672,7 +5679,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
 }
 function unifyChoiceArmFieldNames(content, unifiedName) {
   const r = content;
-  if (!r || typeof r !== "object" || !isChoiceType(r.type)) return content;
+  if (!r || typeof r !== "object" || !isArmChoice(r)) return content;
   const members = r.members;
   if (!Array.isArray(members)) return content;
   let anyChanged = false;
