@@ -30977,7 +30977,7 @@
         }
       ]
     },
-    "expectedOutput": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};"
+    "expectedOutput": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};"
   },
   {
     "kind": "roundtrip",
@@ -30985,9 +30985,9 @@
     "sourceIn": "\nlet Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};",
+    "expectedSourceOut": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};",
     "expectedReparseTree": "(source_file statements: (let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))) statements: (let_declaration pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier) alternative: (block statements: (let_declaration pattern: (identifier) value: (identifier) alternative: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (break_expression))))) statements: (expression_statement (expression_statement_with_semi expression: (continue_expression))))))",
-    "wrappedText": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};",
+    "wrappedText": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};",
     "wrappedOffset": 0
   },
   {
@@ -31434,7 +31434,7 @@
         "alternative"
       ]
     },
-    "expectedOutput": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};"
+    "expectedOutput": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};"
   },
   {
     "kind": "roundtrip",
@@ -31442,9 +31442,9 @@
     "sourceIn": "let Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};",
+    "expectedSourceOut": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};",
     "expectedReparseTree": "(let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))))",
-    "wrappedText": "let Foo::Bar{texts, values,} = foo().bar().await ? else {\n    return Err(index)\n};",
+    "wrappedText": "let Foo::Bar { texts, values, } = foo().bar().await ? else {\n    return Err(index)\n};",
     "wrappedOffset": 0
   },
   {
@@ -32193,7 +32193,7 @@
         "fields"
       ]
     },
-    "expectedOutput": "Foo::Bar{texts, values,}"
+    "expectedOutput": "Foo::Bar { texts, values, }"
   },
   {
     "kind": "roundtrip",
@@ -32201,9 +32201,9 @@
     "sourceIn": "Foo::Bar {\n    texts,\n    values,\n}",
     "pattern": "struct_pattern",
     "edits": [],
-    "expectedSourceOut": "Foo::Bar{texts, values,}",
+    "expectedSourceOut": "Foo::Bar { texts, values, }",
     "expectedReparseTree": "(struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier))))",
-    "wrappedText": "fn _f() { let Foo::Bar{texts, values,} = (); }",
+    "wrappedText": "fn _f() { let Foo::Bar { texts, values, } = (); }",
     "wrappedOffset": 14
   },
   {
@@ -199765,7 +199765,7 @@
         }
       ]
     },
-    "expectedOutput": "match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}"
+    "expectedOutput": "match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}"
   },
   {
     "kind": "roundtrip",
@@ -199773,9 +199773,9 @@
     "sourceIn": "\nmatch x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
+    "expectedSourceOut": "match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier)))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))))",
-    "wrappedText": "match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
+    "wrappedText": "match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
     "wrappedOffset": 0
   },
   {
@@ -200422,7 +200422,7 @@
         "body"
       ]
     },
-    "expectedOutput": "match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}"
+    "expectedOutput": "match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}"
   },
   {
     "kind": "roundtrip",
@@ -200430,9 +200430,9 @@
     "sourceIn": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
     "pattern": "match_expression",
     "edits": [],
-    "expectedSourceOut": "match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
+    "expectedSourceOut": "match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}",
     "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier)))))))",
-    "wrappedText": "fn _f() { let _ = match x {\n    Person{name, age} if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}; }",
+    "wrappedText": "fn _f() { let _ = match x {\n    Person { name, age } if age < 5 => (\"toddler\", name),\n    Person { name: adult_name, age: _ } => (\"adult\", adult_name),\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -200991,7 +200991,7 @@
         "fields"
       ]
     },
-    "expectedOutput": "Person{name, age}"
+    "expectedOutput": "Person { name, age }"
   },
   {
     "kind": "roundtrip",
@@ -200999,9 +200999,9 @@
     "sourceIn": "Person{name, age}",
     "pattern": "struct_pattern",
     "edits": [],
-    "expectedSourceOut": "Person{name, age}",
+    "expectedSourceOut": "Person { name, age }",
     "expectedReparseTree": "(struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_shorthand name: (shorthand_field_identifier)) element: (field_pattern_shorthand name: (shorthand_field_identifier))))",
-    "wrappedText": "fn _f() { let Person{name, age} = (); }",
+    "wrappedText": "fn _f() { let Person { name, age } = (); }",
     "wrappedOffset": 14
   },
   {
@@ -201157,7 +201157,7 @@
         "fields"
       ]
     },
-    "expectedOutput": "Person{name: adult_name, age: _}"
+    "expectedOutput": "Person { name: adult_name, age: _ }"
   },
   {
     "kind": "roundtrip",
@@ -201165,9 +201165,9 @@
     "sourceIn": "Person{name: adult_name, age: _}",
     "pattern": "struct_pattern",
     "edits": [],
-    "expectedSourceOut": "Person{name: adult_name, age: _}",
+    "expectedSourceOut": "Person { name: adult_name, age: _ }",
     "expectedReparseTree": "(struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))",
-    "wrappedText": "fn _f() { let Person{name: adult_name, age: _} = (); }",
+    "wrappedText": "fn _f() { let Person { name: adult_name, age: _ } = (); }",
     "wrappedOffset": 14
   },
   {
@@ -203014,7 +203014,7 @@
         }
       ]
     },
-    "expectedOutput": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}"
+    "expectedOutput": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}"
   },
   {
     "kind": "roundtrip",
@@ -203022,9 +203022,9 @@
     "sourceIn": "\nmatch x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}",
+    "expectedSourceOut": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}",
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements element: (identifier) element: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (remaining_field_pattern)))) value: (identifier)))))))",
-    "wrappedText": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}",
+    "wrappedText": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}",
     "wrappedOffset": 0
   },
   {
@@ -203511,7 +203511,7 @@
         "body"
       ]
     },
-    "expectedOutput": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}"
+    "expectedOutput": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}"
   },
   {
     "kind": "roundtrip",
@@ -203519,9 +203519,9 @@
     "sourceIn": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
     "pattern": "match_expression",
     "edits": [],
-    "expectedSourceOut": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}",
+    "expectedSourceOut": "match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}",
     "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements element: (identifier) element: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (remaining_field_pattern)))) value: (identifier)))))",
-    "wrappedText": "fn _f() { let _ = match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E{f: g, ..} => g\n}; }",
+    "wrappedText": "fn _f() { let _ = match x {\n    (a, ..) => a,\n    B(..) => c,\n    D::E { f: g, .. } => g\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -203841,7 +203841,7 @@
         "fields"
       ]
     },
-    "expectedOutput": "D::E{f: g, ..}"
+    "expectedOutput": "D::E { f: g, .. }"
   },
   {
     "kind": "roundtrip",
@@ -203849,9 +203849,9 @@
     "sourceIn": "D::E{f: g, ..}",
     "pattern": "struct_pattern",
     "edits": [],
-    "expectedSourceOut": "D::E{f: g, ..}",
+    "expectedSourceOut": "D::E { f: g, .. }",
     "expectedReparseTree": "(struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements element: (field_pattern_named name: (field_identifier) pattern: (identifier)) element: (remaining_field_pattern)))",
-    "wrappedText": "fn _f() { let D::E{f: g, ..} = (); }",
+    "wrappedText": "fn _f() { let D::E { f: g, .. } = (); }",
     "wrappedOffset": 14
   },
   {

@@ -126,7 +126,8 @@ export default sittirGrammar(base, {
 			'operator:/after': preference('space')
 		},
 
-		struct_pattern: { '"{"/before': preference('tight') },
+		struct_pattern: { '"{"/before': preference('space') },
+		struct_pattern_elements: { 'element:/start': preference('space'), 'element:/end': preference('space') },
 		macro_invocation: { '"!"/after': preference('tight') },
 		visibility_modifier_pub: { '"pub"/after': preference('tight') },
 		self_parameter: { 'reference:/after': preference('tight') },
