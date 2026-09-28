@@ -41,38 +41,15 @@ I appended `module.exports.grammar.conflicts = [...]` to scratch copies of each 
 - `--no-parser` skips table building, so it reports no conflicts. The loop must run the full `generate`.
 - Python's derived 11 are upstream's 9 minus `[print_statement, primary_expression]`, plus 3 of the 4 hand-written entries. `[_expressions, expression_list]` is never reported.
 - Keeping `previous` and the auto groups, and deleting only the 4 hand entries, also converges (3 iterations, byte-identical parser.c). Tree-sitter then warns about roughly 80 of python's 108 conflicts as unnecessary.
-- Every derivation used `AddConflict` only, and every parser.c matches master. So master's parsers are exactly the `AddConflict` resolution of each conflict. Policy step 2 (copy an upstream prec/assoc) would change a parser relative to master wherever it fires. See Open Question Q3.
+- Every derivation used `AddConflict` only, and every parser.c matches master. So master's parsers are exactly the `AddConflict` resolution of each conflict. Policy step 2 (copy an upstream prec/assoc) would change a parser relative to master wherever it fires. That question is with the user (see Rulings).
 
-## Open questions for brainstorm (not settled here)
+## Rulings
 
-- **Q1 — How `sittirGrammar` finds `resolutions.json` in both runtimes.**
-  - Under the CLI, the grammar runs as a CJS bundle in `.sittir/`, where `import.meta.url` is empty.
-  - Under `evaluate`, `grammar.sittir.ts` is imported from `packages/<g>/`.
-  - Candidates:
-    - (a) an esbuild-inlined JSON import. This requires re-transpiling each iteration, since esbuild is cheap; `evaluate` then imports the JSON directly.
-    - (b) a runtime `fs` read of a path handed to `sittirGrammar` through `grammar.sittir.ts`.
-    - (c) a path set in an environment variable by the driver and by `evaluate`.
-  - Task 3 codes against one function, `loadConflictResolutions(): ConflictResolutionsFile | undefined`; the ruling fills in its body.
-- **Q2 — Retiring the auto producers.** This plan retires them, in Task 3:
-  - enrich's subsequence-owner pairs and self entries (relabelled at `wire.ts` `conflictGroups.push`);
-  - transform's `registerHoistedVariantConflicts`;
-  - wire's `conflictGroups` drain.
-
-  The probes show none of them is needed. Please confirm the retirement, or rule that they stay in some derived form.
-- **Q3 — How a Precedence or Associativity resolution is applied, and whether step 2 should fire when AddConflict reproduces master.**
-  - Tree-sitter's `Precedence {symbols:[X]}` offer means "give X higher precedence than the other interpretations", and `Associativity {symbols:[X]}` means "give X an associativity".
-  - Neither says where the wrapper goes: the whole rule body, or the one production.
-  - Task 7 is blocked on this ruling.
-- **Q4 — How the grammar hash is computed ("the evaluated grammar without the resolutions").**
-  - Candidates:
-    - (a) sha256 of `.sittir/src/grammar.json` with `conflicts` emptied. This needs one `generate --no-parser` per regen.
-    - (b) sha256 of the in-process `evaluate` result with resolutions disabled.
-    - (c) sha256 of the bundled `grammar.js` bytes. This is cheapest but coarser: any bundle change re-derives.
-  - Task 5 is blocked on this ruling.
-- **Q5 — How the driver gets the reshaping records for the "declared upstream" test and step 2's source lookup.**
-  - The records are enrich's rule-origin sidecar, and wire's lift and rename records.
-  - The driver runs outside the grammar process. Proposal: attach them as a non-enumerable sidecar on the `sittirGrammar` result, like the dead-mint key, and read them from one in-process `evaluate` per derivation. They do not depend on the resolutions.
-  - Task 2's policy takes them as a plain `UpstreamContext` argument, so the ruling changes only how the driver builds it.
+- **Where the resolutions live (both runtimes):** an esbuild-inlined JSON import. The bundle is the artifact both runtimes execute, so the resolutions ride inside it; `evaluate` imports the same JSON. The loop re-bundles each iteration. Generated-output hygiene covers `resolutions.json` as a bundle input.
+- **Auto conflict producers:** retired in Task 3. These are enrich's subsequence-owner pairs and self entries, their relabel in wire, transform's `registerHoistedVariantConflicts`, and wire's `conflictGroups` drain, together with their glossary entries.
+- **Grammar hash:** sha256 of canonical JSON of the in-process `evaluate` result with resolutions disabled. `grammar.json` would need a generate run to produce, and the bundle bytes carry non-grammar reorder churn.
+- **Reshaping records:** a non-enumerable sidecar on the `sittirGrammar` result, the same pattern as the dead-mint sidecar. The driver reads it once per derivation from the one in-process `evaluate`, with no name matching.
+- **Open, with the user:** how a Precedence or Associativity resolution is applied, and whether policy step 2 fires at all, given that `AddConflict` alone reproduces every master parser. Task 7 waits on this.
 
 ---
 
@@ -215,7 +192,7 @@ export function deriveConflictResolutions(input: {
 }): DerivationResult;
 ```
 
-`resolution.kind` is only `'AddConflict'` until Task 7 widens it under the Q3 ruling. Until then, step 2 cannot fire, and `chooseResolution` returns step `'upstream-declared'` or `'default'`. `generate` is injected, so the loop can be tested without the CLI.
+`resolution.kind` is only `'AddConflict'` until Task 7 widens it under the user's ruling on step 2. Until then, step 2 cannot fire, and `chooseResolution` returns step `'upstream-declared'` or `'default'`. `generate` is injected, so the loop can be tested without the CLI.
 
 - [ ] **Step 1:** Write the failing tests:
 
@@ -297,7 +274,7 @@ describe('deriveConflictResolutions', () => {
 
   `conflicts` passes the user callback through `renamingCallback` unchanged, until Task 6 turns an authored callback into a diagnostic.
 - Modify: `packages/codegen/src/dsl/transform/transform.ts`. Remove `registerHoistedVariantConflicts` and its call.
-- Modify: `packages/codegen/src/transpile/transpile-overrides.ts`, only if Q1 rules (a).
+- Modify: `packages/codegen/src/transpile/transpile-overrides.ts` so that the bundle inlines `.sittir/resolutions.json` as a JSON import. When the file is absent, the bundle inlines an empty `{ grammarHash: '', resolutions: [] }`.
 - Test: `packages/codegen/src/dsl/__tests__/conflict-resolutions.test.ts`; update `packages/codegen/src/dsl/__tests__/wire.test.ts` (its `conflicts:` case at line ~409 pins the drain).
 - Glossary: `docs/glossary/dsl.md`, `docs/glossary/dsl-wire.md`, `docs/glossary/dsl-transform.md`. Delete the entries for removed declarations.
 
@@ -306,7 +283,7 @@ describe('deriveConflictResolutions', () => {
 - Produces:
 
 ```ts
-export function loadConflictResolutions(): ConflictResolutionsFile | undefined; // body per Q1 ruling
+export function loadConflictResolutions(): ConflictResolutionsFile | undefined;
 export function applyConflictResolutions(grammar: { conflicts?: unknown }, file: ConflictResolutionsFile | undefined): void;
 ```
 
@@ -316,7 +293,7 @@ export function applyConflictResolutions(grammar: { conflicts?: unknown }, file:
   - `applyConflictResolutions` replaces a pre-existing `[['x','y']]` with the file's sets;
   - it yields `[]` for `undefined`;
   - it ignores `previous`: a grammar evaluated with an upstream conflict list and no resolutions ends with `conflicts: []`;
-  - sittir's `evaluate` of a fixture grammar with a resolutions file (placed per Q1) returns `conflicts` equal to the file's sets. This is the runtime-agreement pin; the CLI side is pinned by Task 4's byte-identical parser.c.
+  - sittir's `evaluate` of a fixture grammar with a `resolutions.json` beside it returns `conflicts` equal to the file's sets. This is the runtime-agreement pin; the CLI side is pinned by Task 4's byte-identical parser.c.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement, and remove the producers listed above.
   - Before removing each, use `find_all_references` so no dangling caller is left.
@@ -339,11 +316,11 @@ export function applyConflictResolutions(grammar: { conflicts?: unknown }, file:
 
 The driver's `generate` callback:
 1. writes the candidate resolutions file;
-2. makes it visible to the bundle, per Q1 (for option (a), this means re-running `transpileOverrides`);
+2. re-runs `transpileOverrides`, so the bundle inlines the file;
 3. runs `spawnSync(treeSitterBin, ['generate', '--json-summary'], { cwd: sittirDir, encoding: 'utf8', maxBuffer: 1 << 28 })`;
 4. returns `parseGenerateOutcome(status, stderr)`.
 
-`ruleCount` is `Object.keys(grammar.json rules).length` from the last generate. `UpstreamContext` is built per Q5.
+`ruleCount` is `Object.keys(grammar.json rules).length` from the last generate. `UpstreamContext` is built from the reshaping-records sidecar on the result of one in-process `evaluate` per derivation.
 
 - [ ] **Step 1:** Write the CLI fixture test.
   - Create a temp dir with a `grammar.js`: `grammar({ name: 'fx', rules: { source: $ => repeat($._expr), _expr: $ => choice($.binary, $.num), binary: $ => seq($._expr, '+', $._expr), num: _ => /\d+/ } })` and no conflicts.
@@ -366,7 +343,7 @@ The driver's `generate` callback:
   - the full vitest suite as its own Bash call.
 - [ ] **Step 8:** Commit the source, the test, the python grammar and glossary, and the regenerated outputs, by pathspec.
 
-### Task 5: Reuse when the grammar is unchanged (blocked on Q4)
+### Task 5: Reuse when the grammar is unchanged
 
 **Files:**
 - Modify: `packages/codegen/src/transpile/derive-conflicts.ts` (`grammarHashForResolutions`)
@@ -374,7 +351,7 @@ The driver's `generate` callback:
 - Test: `packages/codegen/src/transpile/__tests__/derive-conflicts.test.ts`
 
 **Interfaces:**
-- Produces: `export function grammarHashForResolutions(sittirDir: string): string`, with its body per Q4.
+- Produces: `export function grammarHashForResolutions(sittirDir: string): string`, computed as sha256 of canonical JSON of the in-process `evaluate` result with resolutions disabled.
 - The driver reads the existing `resolutions.json`:
   - if `grammarHash` matches, it runs a single `generate`;
   - otherwise it re-derives from `[]`.
@@ -410,21 +387,21 @@ The driver's `generate` callback:
 - [ ] **Step 2:** Run, implement, run. Mutation check: register `conflict-authored` as floorable and confirm the blocking test fails.
 - [ ] **Step 3:** Regenerate all five grammars. rust and typescript now block on `conflict-authored`, which is expected until Task 8; run Task 8 before the gates. Commit Tasks 6 and 8 together if the executor prefers a green commit.
 
-### Task 7: Policy step 2, copying upstream precedence (blocked on Q3)
+### Task 7: Policy step 2, copying upstream precedence (waits on the user's ruling)
 
 **Files:**
-- Modify: `derive-conflicts.ts` (widen `DerivedResolution.resolution`); `dsl/conflict-resolutions.ts` (apply a Precedence/Associativity resolution per Q3)
+- Modify: `derive-conflicts.ts` (widen `DerivedResolution.resolution`); `dsl/conflict-resolutions.ts` (apply a Precedence/Associativity resolution per the user's ruling)
 - Test: the CLI fixture from Task 4, extended with the spec's case
 
 **Interfaces:**
 - `DerivedResolution.resolution` gains `{ kind: 'Precedence' | 'Associativity'; symbols; direction: 'left' | 'right' | number }`.
-- `UpstreamContext` gains `upstreamPrecedenceOf(finalName): { kind: 'left' | 'right' | 'plain'; value: number } | undefined`, read per Q5.
+- `UpstreamContext` gains `upstreamPrecedenceOf(finalName): { kind: 'left' | 'right' | 'plain'; value: number } | undefined`, read from the reshaping-records sidecar.
 
 - [ ] **Step 1:** Write the failing fixture test.
   - Upstream `binary: $ => prec.left(seq($._expr, '+', $._expr))`, and a reshaped copy without the prec, converges to `Associativity` with direction `left`, step `upstream-precedence`.
   - Without the upstream prec, it converges to `AddConflict`.
-- [ ] **Step 2:** Implement per the Q3 ruling.
-- [ ] **Step 3:** Regenerate all five grammars. Every parser.c that changes is a place step 2 fired where master used `AddConflict`. Report each one to brainstorm before committing (see Q3).
+- [ ] **Step 2:** Implement per the user's ruling.
+- [ ] **Step 3:** Regenerate all five grammars. Every parser.c that changes is a place step 2 fired where master used `AddConflict`. Report each one to brainstorm before committing.
 - [ ] **Step 4:** Commit by pathspec after brainstorm's review.
 
 ### Task 8: Retire the remaining hand-written conflicts
