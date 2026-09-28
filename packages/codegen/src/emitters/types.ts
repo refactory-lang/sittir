@@ -91,7 +91,6 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
@@ -515,7 +514,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	const literalTextById = new Map<number, string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
-		for (const candidate of collectSeparatorCandidateKindNames(node.separatorRule)) {
+		for (const candidate of node.separatorCandidateKindNames) {
 			const entry = findKindEntry(entries, candidate);
 			if (entry === undefined) continue;
 			literalTextById.set(entry.id, candidate);

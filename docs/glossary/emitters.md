@@ -633,11 +633,11 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 #### body
 
 ```text
-// A field with an optional delimiter flank cannot reach this emitter: a
-// delimiter-bearing list is a separatedList KIND (classifyNode routes it
-// there, peeling group wrappers), and the delimiter is stored kind-level
-// on that kind — field-prefixed delimiter storage is retired. Fail fast
-// if classification ever regresses.
+// A field with an optional delimiter flank has no control on this
+// factory's surface: only a list kind stores a delimiter. Such a field
+// is a blocking `field-optional-delimiter` record, so it reaches this
+// emitter only when floored, and then the render keeps the flank as the
+// grammar authors it.
 ```
 
 #### body
@@ -3296,8 +3296,8 @@ carry no per-slot separator stamp.
  * KindId back to its compile-time-known literal text (design doc's "Render"
  * section: the render side never stores separator text, only resynthesizes it).
  *
- * Candidates come from `collectSeparatorCandidateKindNames` — the SAME walk
- * wrap.ts's `_separator_kind` wire capture uses (kind-discriminant.ts), so the
+ * Candidates are the list's `separatorCandidateKindNames` — the SAME stamped
+ * arms wrap.ts's `_separator_kind` wire capture reads, so the
  * match arms enumerate exactly the kinds a real `_separator_kind` value can
  * hold. For a `STRING` arm, `rule.value` doubles as both the catalog lookup
  * key (an anon token's literal text IS its `symbolName`, per
@@ -7442,37 +7442,6 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::collectSeparatorCandidateKindNames`
-
-```text
-/**
- * Recursively collect candidate separator token kind names from a
- * nonterminal separator rule (`AssembledList.separatorRule`) —
- * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves, gathering the
- * set of literal texts / referenced rule names the runtime `$other` scan
- * must match against. A plain leaf-collecting walk, not related to
- * `link.ts`'s flank-absorption (which does structural `rulesEqual`
- * comparison between two rule trees — a different mechanism entirely).
- *
- * Throws on any rule shape this walk doesn't know how to resolve to a
- * kind-discriminant leaf (e.g. a `SEQ`-shaped separator — a genuinely
- * different scenario needing multi-token matching, not a single kind-id
- * probe) — no real grammar currently sets a nonterminal `separatorRule`
- * at all (see `emitSeparatedListWrap`'s doc comment), so a silent `[]`
- * here would make `_separator_kind` silently always resolve to
- * `undefined` for whatever future kind first reaches this gap, rather
- * than failing loudly at codegen time the way `kindDiscriminantExpr`
- * (this file) already does for its own unresolvable-kind case.
- *
- * Exported for reuse by render-module.ts, which needs the SAME candidate
- * set to resynthesize `_separator_kind`'s literal text on the render side
- * (see `buildSeparatorKindMatchLines` there) — the render-side match arms
- * must enumerate exactly the kinds this wire-capture walk can produce, or
- * a real runtime `_separator_kind` value could hit the render match's
- * fallback arm instead of its correct literal.
- */
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::buildSeparatedListContentSlot`
 
 ```text
@@ -9201,15 +9170,6 @@ pipeline — which falls back to string equality.
 // One derivation shared by the runtime string routes and the
 // config-literal widening — see glossary.
 ```
-
-### `packages/codegen/src/emitters/shared.ts::isAuthoredCompound`
-
-A compound that is not a list: `AssembledBranch`, `AssembledEnvelope` or
-`AssembledPolymorph`, hoisted or not. Hoisting seats a kind on its parent; it
-does not make the kind unnameable to the from() coercer, whose keyword and
-string routes build through the raw factory — `ir.visibilityModifier('pub')`
-routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
-would otherwise fall through to the in-path arm and render `pub(in pub)`.
 
 ### `packages/codegen/src/emitters/shared.ts::wordConstructibleText`
 
@@ -11757,9 +11717,19 @@ The kind-id expression a separated-list factory stamps as `_separator`
 when the caller gives none, and the wrap stamps when a parsed list carries
 no separator token: the grammar's declared `preference('separator',
 <kind>)` for that list's `<slot>_separator` site, resolved through the kind
-catalog. A list whose separator is a choice of literals and declares no
-default is a build error; the site-preference model reports the same
-omission with the list's arms.
+catalog, or `undefined` when the list declares none. With no default the
+separator is a required construction input: the list factory's
+`separator` option loses its `?`, the overload without options is not
+emitted, the factory throws when a caller omits it, and the wrap stores
+the separator kind it reads with no fallback (`separatorDefaultSuffix`).
+The grammar reports the omission as a blocking
+`separator-default-undeclared` record, so this path is reached only when
+the record is floored.
+
+### `packages/codegen/src/emitters/wrap.ts::separatorDefaultSuffix`
+
+The ` ?? <default>` tail of the wrap's `_separator` capture, or nothing
+when the list declares no default separator.
 
 ### `packages/codegen/src/emitters/factories.ts::delimiterUnionFor`
 

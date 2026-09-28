@@ -2925,6 +2925,51 @@ display. A supertype with no row is stamped `supertype`.
 	 */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorTokenArms`
+
+The separator's token arms (STRING or SYMBOL rules), flattened once from
+`separatorRule` by `separatorArmsOf`; empty when the list has no
+per-instance separator. Every reader of the separator's arms (the wrap
+capture, the render-module match, the kind-literal table, the factory
+option type, the separator option site) reads this stamp, so no reader
+walks the separator rule itself and none meets a non-token arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorCandidateKindNames`
+
+The kind name each token arm resolves by: a string arm's text, a symbol
+arm's name.
+
+### `packages/codegen/src/compiler/model/node-map.ts::separatorArmsOf`
+
+Splits a separator rule into its token arms (STRING and SYMBOL leaves,
+through CHOICE) and every other arm (a PATTERN, or any other shape). The
+one walk over a separator's arms: assemble reports the non-token arms as
+`separator-pattern`, and the list stamps the token arms.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SeparatorArms`
+
+`separatorArmsOf`'s result: the token arms and the other arms.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SeparatorTokenArm`
+
+A separator arm a kind can name: a STRING or a SYMBOL rule.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isAuthoredCompound`
+
+A compound that is not a list: `AssembledBranch`, `AssembledEnvelope` or
+`AssembledPolymorph`, hoisted or not. Hoisting seats a kind on its parent; it
+does not make the kind unnameable to the from() coercer, whose keyword and
+string routes build through the raw factory — `ir.visibilityModifier('pub')`
+routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
+would otherwise fall through to the in-path arm and render `pub(in pub)`.
+emitters/shared.ts re-exports it for the emitters.
+
+### `packages/codegen/src/compiler/model/node-map.ts::optionalFlankSlots`
+
+The slots of an authored compound (never a list) that carry an optional
+leading or trailing delimiter. A field factory has no control for such a
+flank, so each one is a blocking `field-optional-delimiter` record.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.leadingDelimiter`
 
 ```text
@@ -3334,6 +3379,12 @@ address may span sites of different arm spaces without failing on the ones it
 does not fit. An address that names sites and is admitted by none of them is
 refused — the arm is wrong, not merely inapplicable.
 
+`requireHit` is false only for `undeclaredSeparatorSites`, which the
+grammar-diagnostics pass calls before any render rules exist: its site set
+lacks the spacing sites, so an address naming none of its sites is skipped
+rather than refused, since it may name a spacing site. Every other caller
+refuses an address that names no site.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3384,9 +3435,30 @@ A separated list whose separator is a choice of literal tokens is a
 `separator` site on the list kind (`<slot>_separator`, label
 `separator`): its arms are the choice's literal kinds
 (`separatorArmKinds`) and its default is the one the `options:` block
-declares at `<kind>/<slot>:/separator/kind`. Unlike the delimiter, the
-default is required: a choice separator with no declaration is a build
-error, as is a declared arm no site admits (`withDeclaredArms`).
+declares at `<kind>/<slot>:/separator/kind`. A separator site with no
+declared default is not an option site: it is left out of the returned
+sites and no default is stamped, so the list's factory takes the
+separator as a required input. The grammar reports it as a blocking
+`separator-default-undeclared` record from `undeclaredSeparatorSites`,
+the same resolution. A declared arm no site admits is a build error
+(`withDeclaredArms`).
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::resolveSitePreferences`
+
+Every site with its resolved default, before undeclared separator sites
+are set apart: the one resolution `collectSitePreferences` and
+`undeclaredSeparatorSites` both read. `requireHit` is passed through to
+`withDeclaredArms`.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::undeclaredSeparatorSites`
+
+The separator sites no `options:` entry gives a default. The
+`separator-default-undeclared` check reports these; the emitter leaves
+them out of the option sites.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::isUndeclaredSeparator`
+
+A separator site whose default is still the undeclared arm.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
 
@@ -3398,7 +3470,7 @@ and `separator` sites are per-kind keys with no top-level label.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
 
-The catalog kinds of a list's separator tokens: one for a literal or a terminal symbol, the members' kinds for a choice of them — the token shape `separatorOf` detects. A token with no catalog kind, or a separator of any other shape, is a build error naming the list.
+The catalog kinds of a list's separator token arms (`AssembledList.separatorTokenArms`): a string arm's token kind, a symbol arm's display name. A token with no catalog kind is a build error naming the list.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
 

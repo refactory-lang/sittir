@@ -10233,3 +10233,16 @@ Link runs only on a grammar whose catalog prediction built: a failed prediction 
 (`grammar-diagnostics.ts::predictionRecords`) and gated, or, for an evaluation stage, stops at its records
 (`diagnoseStage`). Reaching link with a failed prediction throws.
 
+### `packages/codegen/src/compiler/assemble.ts::perInstanceSeparator`
+
+The separator a list keeps per instance. A separator whose arms are all
+tokens is kept as is. Otherwise its non-token arms are reported as one
+blocking `separator-pattern` record on the list kind, and the separator
+is kept only if a remaining token arm is nonterminal; with none, the list
+has no per-instance separator, the same as a terminal separator. The
+list then stamps only the token arms (`AssembledList.separatorTokenArms`).
+
+### `packages/codegen/src/compiler/assemble.ts::ruleLabel`
+
+How a `separator-pattern` record names a non-token arm: a pattern as
+`/source/`, any other rule by its type.

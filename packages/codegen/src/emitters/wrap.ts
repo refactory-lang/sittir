@@ -11,7 +11,6 @@ import {
 	AssembledPunctuation,
 	isNodeRef
 } from '../compiler/model/node-map.ts';
-import type { Rule } from '../types/rule.ts';
 
 type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
@@ -316,25 +315,6 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	].join('\n');
 }
 
-export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
-	switch (rule.type) {
-		case 'STRING':
-			return [rule.value];
-		case 'SYMBOL':
-			return [rule.name];
-		case 'CHOICE':
-			return rule.members.flatMap((m) => collectSeparatorCandidateKindNames(m));
-		case 'OPTIONAL':
-			return collectSeparatorCandidateKindNames(rule.content);
-		default:
-			throw new Error(
-				`collectSeparatorCandidateKindNames: unhandled separator rule shape '${rule.type}' — ` +
-					`extend this walk to resolve its kind-discriminant leaves before this kind can emit ` +
-					`_separator.`
-			);
-	}
-}
-
 export function buildSeparatedListContentSlot(node: AssembledList): AssembledNonterminal {
 	return new AssembledNonterminal({
 		values: node.elements,
@@ -400,12 +380,11 @@ function emitSeparatedListWrap(
 		lines.push(`    ${canonical.storageKey}: _content,`);
 	}
 	if (node.separatorRule) {
-		const candidateKindNames = collectSeparatorCandidateKindNames(node.separatorRule);
-		const candidateExprs = candidateKindNames
+		const candidateExprs = node.separatorCandidateKindNames
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(
-			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)},`
+			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}])${separatorDefaultSuffix(declaredSeparatorDefault(node, nodeMap, kindEntries))},`
 		);
 	}
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
@@ -1582,4 +1561,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 		return pruneUnusedImports(lines, ['Delimiter']).join('\n');
 	}
+}
+
+function separatorDefaultSuffix(separatorDefault: string | undefined): string {
+	return separatorDefault === undefined ? '' : ` ?? ${separatorDefault}`;
 }
