@@ -209,6 +209,10 @@ pub struct OptionTables {
     pub depth_sites: &'static [(&'static str, &'static [usize])],
     pub indent: u16,
     pub dedent: u16,
+    /// The characters an `indent` unit may be made of: the texts of the
+    /// admitted `_space` and `_tab` whitespace members. Empty when the
+    /// grammar admits neither, and then `indent` is not an option.
+    pub indent_chars: &'static str,
 }
 
 /// A grammar's option tables, named by a marker type.
@@ -237,7 +241,7 @@ pub struct Options<S> {
 impl<S: OptionSites> Options<S> {
     pub fn read<O: OptionObject>(obj: &O) -> Result<Self, String> {
         let mut options = Self {
-            indent: obj.string("indent")?,
+            indent: if S::TABLES.indent_chars.is_empty() { None } else { obj.string("indent")? },
             spacing: Vec::new(),
             delimiter: Vec::new(),
             sites: ::std::marker::PhantomData,
@@ -248,7 +252,7 @@ impl<S: OptionSites> Options<S> {
 
     fn read_level<O: OptionObject>(&mut self, obj: &O, nodes: &'static [AddressNode], at: &str) -> Result<(), String> {
         for key in obj.keys()? {
-            if at.is_empty() && key == "indent" {
+            if at.is_empty() && key == "indent" && !S::TABLES.indent_chars.is_empty() {
                 continue;
             }
             let Some(node) = nodes.iter().find(|n| n.key() == key) else {
@@ -285,6 +289,12 @@ impl<S: OptionSites> Options<S> {
         let tables = S::TABLES;
         let mut table = base.clone();
         if let Some(indent) = &self.indent {
+            if indent.is_empty() || !indent.chars().all(|c| tables.indent_chars.contains(c)) {
+                return Err(format!(
+                    "options: indent {indent:?} is not a unit of {:?} (one or more of them)",
+                    tables.indent_chars.chars().collect::<Vec<_>>()
+                ));
+            }
             table.indent = indent.clone();
         }
         for (site, value) in &self.spacing {

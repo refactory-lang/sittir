@@ -13,6 +13,7 @@ import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
+import { indentChars } from '../compiler/model/whitespace-arms.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -83,6 +84,7 @@ export interface RenderOptionsPlan {
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
+	readonly indentChars: readonly string[];
 }
 
 const KIND_ANON = 1;
@@ -213,7 +215,8 @@ export function planRenderOptions(
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id),
-		kindFlags: kindFlagsOf(kindEntries, nodeMap)
+		kindFlags: kindFlagsOf(kindEntries, nodeMap),
+		indentChars: indentChars(nodeMap)
 	};
 }
 
@@ -569,6 +572,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        depth_sites: DEPTH_SITES,');
 	L.push('        indent: INDENT_KIND,');
 	L.push('        dedent: DEDENT_KIND,');
+	L.push(`        indent_chars: ${rustStringLiteral(plan.indentChars.join(''))},`);
 	L.push('    };');
 	L.push('}', '');
 	L.push('pub type Options = ::sittir_core::options::Options<Sites>;', '');

@@ -331,28 +331,6 @@ export interface FormatRecord {
 }
 
 // ---------------------------------------------------------------------------
-// Render context
-// ---------------------------------------------------------------------------
-
-/** Context threaded through render calls. */
-export interface RenderContext {
-	/** Tree-sitter parser instance for full validation. Optional. */
-	parser?: unknown;
-	/** Indentation unit. Default: two spaces. */
-	indent?: string;
-	/** Tree-level format record. The render path resolves format for each node as:
-	 *    node.$format                      // per-node inline override (highest priority)
-	 *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record
-	 *    ?? ctx.format                      // tree-level default
-	 *    ?? undefined                       // template-canonical fallback
-	 *  When absent (and node.$format absent), template-canonical output is used. */
-	format?: FormatRecord;
-	/** When true, ignore all format records and render template-canonical.
-	 *  Default: false (apply format when present). */
-	ignoreFormat?: boolean;
-}
-
-// ---------------------------------------------------------------------------
 // Render registries
 // ---------------------------------------------------------------------------
 

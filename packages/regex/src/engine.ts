@@ -10,7 +10,8 @@
 import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/engine';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
 import { wrapNode, type PatternTree } from './wrap.js';
-import type { Options } from './options.js';
+import type { IndentChar, Options } from './options.js';
+import type { IndentOption } from '@sittir/types';
 
 export type { PatternRoot };
 export type { EngineOptions, ParseOptions, RenderOptions, PatternTree };
@@ -21,7 +22,7 @@ export type { EngineOptions, ParseOptions, RenderOptions, PatternTree };
  * accessors on the result return wrapped nodes too, with children expanding
  * lazily unless `{ deep: true }` is passed.
  */
-export interface PatternEngine extends SittirEngine<PatternRoot, Options>, ParseEngine<PatternTree> {}
+export interface PatternEngine extends SittirEngine<PatternRoot, Options, IndentChar>, ParseEngine<PatternTree> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -32,8 +33,10 @@ export interface PatternEngine extends SittirEngine<PatternRoot, Options>, Parse
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing PatternEngine.
  */
-export function createEngine(options?: EngineOptions<Options>): PatternEngine {
-	const engine = createRenderEngine(options);
+export function createEngine<const I extends string = string>(
+	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+): PatternEngine {
+	const engine = createRenderEngine<I>(options);
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): PatternTree {

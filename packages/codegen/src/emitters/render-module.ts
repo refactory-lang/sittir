@@ -1053,7 +1053,8 @@ const EMPTY_PLAN: RenderPlan = {
 	indentId: 0,
 	dedentId: 0,
 	whitespaceText: [],
-	kindFlags: []
+	kindFlags: [],
+	indentChars: []
 };
 const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 

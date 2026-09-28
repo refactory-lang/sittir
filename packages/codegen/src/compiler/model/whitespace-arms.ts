@@ -2,7 +2,7 @@ import type { NodeMap } from '../types.ts';
 import { AssembledSupertype, isFixedTextLeaf } from './node-map.ts';
 import { displayNameOf } from './display-name.ts';
 import { DEPTH_ARMS, WHITESPACE_SUPERTYPE, type WhitespaceArm } from '../../dsl/primitives/spacing.ts';
-import { NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER } from '../../dsl/whitespace.ts';
+import { INDENT_MEMBERS, NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER } from '../../dsl/whitespace.ts';
 
 export function declaresWhitespace(nodeMap: Pick<NodeMap, 'nodes'>): boolean {
 	return nodeMap.nodes.get(WHITESPACE_SUPERTYPE) instanceof AssembledSupertype;
@@ -49,4 +49,13 @@ export function defaultWhitespaceArmOf(nodeMap: NodeMap): WhitespaceArm {
 	const arm = armOf.get(SPACE_MEMBER) ?? armOf.get(TIGHT_MEMBER);
 	if (arm === undefined) throw new Error(`grammar: '${WHITESPACE_SUPERTYPE}' lists neither '${SPACE_MEMBER}' nor '${TIGHT_MEMBER}'`);
 	return arm;
+}
+
+export function indentChars(nodeMap: NodeMap): readonly string[] {
+	if (!declaresWhitespace(nodeMap)) return [];
+	const admitted = new Set(whitespaceSymbolsOf(nodeMap).values());
+	return INDENT_MEMBERS.flatMap((member) => {
+		const node = admitted.has(member) ? nodeMap.nodes.get(member) : undefined;
+		return node !== undefined && isFixedTextLeaf(node) ? [node.text] : [];
+	});
 }

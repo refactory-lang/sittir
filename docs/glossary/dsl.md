@@ -3630,13 +3630,21 @@ The render body of a whitespace member: a STRING, whose value is the member's te
 
 `_space`, the whitespace member that renders one space, and the default arm of every grammar that admits it.
 
+### `packages/codegen/src/dsl/whitespace.ts::TAB_MEMBER`
+
+`_tab`, the whitespace member that renders one tab. Admitted where the grammar's extras accept a tab, like any member (`admitsWhitespaceMember`).
+
+### `packages/codegen/src/dsl/whitespace.ts::INDENT_MEMBERS`
+
+The members an indentation unit is made of: `_space` and `_tab`. The characters a render's `indent` may use are the texts of those of them the grammar admits (`indentChars`), so the unit is always text the grammar lexes as whitespace.
+
 ### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_MEMBER`
 
 `_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingArms`).
 
 ### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
 
-Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
+Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
 
 ### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
 

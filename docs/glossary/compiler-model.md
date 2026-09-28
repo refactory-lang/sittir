@@ -4256,6 +4256,10 @@ separator gap admits, where moving depth has no meaning.
 
 The seam arms of a site that admits only line breaks, the after edge of a line-terminated trivia kind: the spacing arms whose whitespace kind's literal text contains a line break (read from the `_whitespace` members' own text, never from the arm names), and the site's stated default, the arm spelled by `_newline` (`NEWLINE_MEMBER`). A grammar that lists no `_newline` stops codegen, since such a site would have no default.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::indentChars`
+
+The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_whitespace` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_whitespace` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 
 Each site's arm, with the narrowest address that reaches it winning.

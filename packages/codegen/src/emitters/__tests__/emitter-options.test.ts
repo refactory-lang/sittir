@@ -57,8 +57,10 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain("import type { TSKindId, SpacingArm, WhitespaceArm } from './types.js';");
 		expect(src).toContain('export type { SpacingArm, WhitespaceArm };');
 		expect(src).toContain('export interface LabelOptions {\n\treadonly returnStatement?: { readonly terminator?: { readonly statementTerminator?: TSKindId.automatic_semicolon | TSKindId.semi } };\n}');
-		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap> & LabelOptions;');
+		expect(src).toContain('export type IndentChar = never;');
+		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;');
 		expect(src).not.toMatch(/AddressRoot|AddressBranch|AddressLeaf|AddressedOptions|export const/);
+		expect(renderOptionsModule({ arms, hints, indentChars: [' ', '\t'] })).toContain('export type IndentChar = " " | "\\t";');
 	});
 
 	it('spells every key camel-cased, including literal tokens and list kinds', () => {

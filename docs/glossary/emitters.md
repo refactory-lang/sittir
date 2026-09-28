@@ -129,7 +129,14 @@ seam on the members; `seamRenderRules` reads those stamps to inject the
 token seam choices. The template, render-module and options emitters all
 read the third pass's rules.
 
+### `packages/codegen/src/emitters/engine.ts::emitRenderEngine`
+
+The grammar's `render-engine.ts`: `createRenderEngine`, generic in the indent unit `I` it is given (`const I extends string`), so a literal `indent` in its options is checked whole against the grammar's `IndentChar` (`IndentOption`). The engine it returns is a `SittirEngine<Root, Options, IndentChar>`, whose `render` checks a per-call unit the same way.
+
 ### `packages/codegen/src/emitters/engine.ts::emitEngine`
+
+The grammar's `engine.ts`: `createEngine`, generic in the indent unit like `createRenderEngine`, to which it passes `I` explicitly (inferring it again from an already-checked type does not resolve).
+
 
 ```text
 /**
@@ -15449,20 +15456,23 @@ It imports the grammar types as `T` when any emitted block names `T.`.
 
 Source text for `options.ts`: a re-export of `SpacingArm` and `WhitespaceArm`
 (declared in `types.ts`, where the hints that use them live), `LabelOptions`
-from the label roots, and `Options = DerivedOptions<T.OptionsHintMap> &
-LabelOptions`. There is no address table and no mapped type over one: every
+from the label roots, `IndentChar` (the `indentChars` texts as a union,
+`never` when there are none), and `Options = DerivedOptions<T.OptionsHintMap,
+IndentChar> & LabelOptions`. There is no address table and no mapped type over one: every
 kind's sites are on its namespace as `X.Hints` (`emitOptionsHints`),
 `OptionsHintMap` points at them by key, and `DerivedOptions` in
 `@sittir/types` is a plain mapped type over that map, so each property
-resolves lazily. `indent` comes with `DerivedOptions`. Without arm aliases (a
+resolves lazily. `indent` comes with `DerivedOptions`, only where `IndentChar`
+is not `never`. Without arm aliases (a
 grammar with no sites) the two aliases are declared `never` here instead of
 re-exported.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the module is written from: the arm aliases (`armAliasesOf`) and the
+What the module is written from: the arm aliases (`armAliasesOf`), the
 hint emitter over the address tables (`hintEmitterOf`), whose label roots
-become `LabelOptions`.
+become `LabelOptions`, and the grammar's indent characters (`indentChars`),
+which become `IndentChar`.
 
 ### `packages/codegen/src/emitters/options.ts::addressTablesFor`
 
@@ -15710,6 +15720,8 @@ grouping whether a slot has seats.
 *  delimiter sites, the merged path table over both, the depth walk, and
  *  the whitespace kinds' render text. */
 ```
+
+`indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses an `indent` unit that is empty or holds any other character, and treats `indent` as an unknown key when there are none.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 

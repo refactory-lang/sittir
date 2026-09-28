@@ -36,7 +36,7 @@ export function emitIndex(_config: EmitIndexConfig): string {
 		'',
 		'// Core re-exports',
 		"export type { NodeData, TreeNode } from './types.js';",
-		"export type { Edit, CSTNode, RenderContext } from '@sittir/types';",
+		"export type { Edit, CSTNode } from '@sittir/types';",
 		'',
 		'// Boundary shim — render/toEdit/applyEdits route through',
 		'// `getActiveBackend()`; the engine is native-only (`createEngine()`',

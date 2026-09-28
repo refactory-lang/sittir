@@ -44,7 +44,6 @@ export type {
 	NodeTrivia,
 	TriviaEntry,
 	NativeParseResult,
-	RenderContext,
 	ReplaceTarget,
 	Renderable
 } from './core-types.ts';
@@ -1494,11 +1493,12 @@ export interface LeafNs<
 	readonly Kind: Kind;
 }
 
-export type { DerivedOptions, OptionsHintOf } from './options.ts';
+export type { DerivedOptions, IndentOption, OptionsHintOf } from './options.ts';
 export type {
 	Interior,
 	LeadCheck,
 	MatchedAlternative,
+	OnlyOf,
 	SiblingLeadRefusal,
 	SpelledAffix,
 	WithSpelling

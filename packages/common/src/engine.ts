@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
+import type { AnyNodeData, Edit, FormatRecord, IndentOption } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
 import { toTransportData } from './transport-data.ts';
 
@@ -133,8 +133,8 @@ export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
  * through `utils.ts`. Depending on the narrower contract there is what keeps
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
-export interface RenderEngine<O extends object = RenderOptionValues> {
-	render(node: AnyNodeData, options?: RenderOptions<O>): RenderHandle;
+export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
+	render<const I extends string = string>(node: AnyNodeData, options?: RenderOptions<O & IndentOption<I, IndentChar>>): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
@@ -154,8 +154,11 @@ export interface ParseEngine<TTree> {
  * internals under `diagnostics`. A grammar's own engine composes this with
  * `ParseEngine<TTree>` to add the public `parse`.
  */
-export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData, O extends object = RenderOptionValues>
-	extends RenderEngine<O> {
+export interface SittirEngine<
+	TRoot extends AnyNodeData = AnyNodeData,
+	O extends object = RenderOptionValues,
+	IndentChar extends string = never
+> extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
 
@@ -210,17 +213,22 @@ const treeDisposalRegistry = new FinalizationRegistry<{
  */
 export type CreateNativeEngineResult<
 	TRoot extends AnyNodeData = AnyNodeData,
-	O extends object = RenderOptionValues
+	O extends object = RenderOptionValues,
+	IndentChar extends string = never
 > =
-	| { readonly engine: SittirEngine<TRoot, O>; readonly reason?: undefined }
+	| { readonly engine: SittirEngine<TRoot, O, IndentChar>; readonly reason?: undefined }
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
 	TRoot extends AnyNodeData = AnyNodeData,
 	O extends object = RenderOptionValues,
+	IndentChar extends string = never,
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
->(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions<O>): CreateNativeEngineResult<TRoot, O> {
+>(
+	config: GrammarEngineConfig<TTransport, TModule>,
+	options?: EngineOptions<O & IndentOption<string, IndentChar>>
+): CreateNativeEngineResult<TRoot, O, IndentChar> {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') {
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
