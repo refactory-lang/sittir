@@ -8,6 +8,7 @@ import {
 	unaliasOverloadedDisplays
 } from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
+import { isLexedBoundary, SyntacticRuleWalker } from './rule-walker.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -28,6 +29,7 @@ function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
 }
 import {
+	isArmChoice,
 	separatorOf,
 	matchesEmpty,
 	isInlineSafe,
@@ -545,16 +547,14 @@ function applyChoiceArmFieldWrap(ruleName: string, rule: Rule, ctx: EnrichCtx): 
 	return result;
 }
 
+const syntacticWalker = new SyntacticRuleWalker<Rule>();
+
 function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
-	if (isFieldType((rule as { type: string }).type) && typeof (rule as { name?: unknown }).name === 'string') {
-		into.add((rule as { name: string }).name);
-	}
-	const bag = rule as unknown as { members?: readonly Rule[]; content?: Rule };
-	if (Array.isArray(bag.members)) {
-		for (const m of bag.members) collectAllFieldNamesDeep(m, into);
-	} else if (bag.content && typeof bag.content === 'object') {
-		collectAllFieldNamesDeep(bag.content, into);
-	}
+	syntacticWalker.fold(rule, into, (names, r) => {
+		const name = (r as { name?: unknown }).name;
+		if (isFieldType(r.type) && typeof name === 'string') names.add(name);
+		return names;
+	});
 }
 
 function isAllArmsNodeShaped(choiceRule: Rule): boolean {
@@ -652,7 +652,7 @@ function sameElementShape(a: Rule, b: Rule): boolean {
 function hasFieldedArm(rule: Rule): boolean {
 	const cursor = peelTransparentElementWrappers(rule);
 	const members = (cursor as unknown as { members?: Rule[] }).members;
-	return isChoiceType((cursor as { type: string }).type) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
+	return isArmChoice(cursor) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
 }
 
 function peelTransparentElementWrappers(rule: Rule): Rule {
@@ -751,7 +751,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 
 	const refCounts = new Map<string, number>();
 	const countEligibleRefs = (r: Rule): void => {
-		if (isFieldType((r as { type: string }).type)) return;
+		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return;
 		if (isSymbolType((r as { type: string }).type)) {
 			const name = (r as unknown as { name: string }).name;
 			if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
@@ -769,7 +769,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 	countEligibleRefs(rule);
 
 	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
-		if (isFieldType((r as { type: string }).type)) return r;
+		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return r;
 
 		if (!suppressed && isRepeatType((r as { type: string }).type)) {
 			const content = (r as unknown as { content: Rule }).content;
@@ -915,7 +915,7 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 		alts.length === 1 ? alts[0]! : (choiceFn(...alts) as Rule);
 
 	const expand = (node: Rule): readonly Rule[] => {
-		if (!node || typeof node !== 'object') return [node];
+		if (!node || typeof node !== 'object' || isLexedBoundary(node)) return [node];
 		let out: Rule = node;
 		const members = (node as unknown as { members?: Rule[] }).members;
 		const content = (node as unknown as { content?: Rule }).content;
@@ -950,28 +950,17 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 
 function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
 	const { rulesBag } = ctx;
-	const preExistingFieldNames = new Set<string>();
-	const collectNames = (node: Rule): void => {
-		const n = node as unknown as {
-			type: string;
-			name?: unknown;
-			content?: Rule;
-			members?: Rule[];
-			metadata?: { fieldSource?: string };
-		};
-		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') {
-			preExistingFieldNames.add(n.name);
-		}
-		if (n.members) for (const m of n.members) collectNames(m);
-		else if (n.content) collectNames(n.content);
-	};
-	collectNames(rule);
+	const preExistingFieldNames = syntacticWalker.fold(rule, new Set<string>(), (names, node) => {
+		const n = node as unknown as { type: string; name?: unknown; metadata?: { fieldSource?: string } };
+		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') names.add(n.name);
+		return names;
+	});
 	const mintedBySymbol = new Map<string, string>();
 	const mintedNames = new Set<string>();
 
 	const rebuild = (node: Rule): Rule => {
 		const n = node as unknown as { type: string; content?: Rule; members?: Rule[] };
-		if (isFieldType(n.type)) return node;
+		if (isFieldType(n.type) || isLexedBoundary(n)) return node;
 		if (isRepeatType(n.type) && n.content) {
 			let inner: Rule = n.content;
 			while (isPrecWrapper(inner as { type: string })) inner = (inner as unknown as { content: Rule }).content;
@@ -2150,7 +2139,6 @@ function walkFieldEnums(rule: Rule, rules: Record<string, Rule>, parentKind: str
 		case 'OPTIONAL':
 		case 'REPEAT':
 		case 'REPEAT1':
-		case 'TOKEN':
 			walkFieldEnums((rule as unknown as { content: Rule }).content, rules, parentKind, out);
 			return;
 		default:
@@ -2348,8 +2336,7 @@ function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweep
 		}
 		case 'OPTIONAL':
 		case 'REPEAT':
-		case 'REPEAT1':
-		case 'TOKEN': {
+		case 'REPEAT1': {
 			const content = (rule as unknown as { content: Rule }).content;
 			const newContent = recurse(content);
 			if (newContent === content) return rule;

@@ -158,6 +158,10 @@ export function optionalContentOf<R extends RuleLike>(rule: R): R | undefined {
 	return isBlank(second) ? first : second;
 }
 
+export function isArmChoice(rule: RuleLike): boolean {
+	return rule.type === CHOICE && optionalContentOf(rule) === undefined;
+}
+
 export function isImmediateToken(rule: RuleLike): boolean {
 	return rule.type === IMMEDIATE_TOKEN || (rule.type === TOKEN && (rule as { immediate?: unknown }).immediate === true);
 }
@@ -226,7 +230,7 @@ export function separatorOf<R extends RuntimeRule>(
 	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
 	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	const isToken = (r: RuntimeRule): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as AnyRule, symbols.isTerminal);
+	const isToken = (r: RuntimeRule): boolean => isArmChoice(r) && terminalContentOf(r as AnyRule, symbols.isTerminal);
 	if (isToken(first) && !secondIsStr) return { content: second, separator: first };
 	if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
 
@@ -1026,6 +1030,8 @@ export function armLeadingSymbolName<P extends PhaseName>(
 	seen.add(rule);
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return undefined;
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) return armLeadingSymbolName(optional, rulesBag, seen);
 	if (isSymbolType(t)) {
 		const name = (rule as { name?: string }).name;
 		if (typeof name !== 'string') return undefined;

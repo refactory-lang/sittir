@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
 
 import { evaluate } from './evaluate.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
+import { packageEntryPath, packageGrammarJsPath } from './resolve-grammar.ts';
+import type { GrammarPackage } from '../grammars.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { blockedRecords, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
@@ -15,6 +16,7 @@ import { deriveDiagnosticRecords, type DiagnosticRecord } from './diagnostics/di
 
 export interface Compilation {
 	readonly grammar: string;
+	readonly package: GrammarPackage;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly raw: RawGrammar;
 	readonly linked: LinkedGrammar;
@@ -28,20 +30,20 @@ export interface Compilation {
 }
 
 export interface CompileGrammarConfig {
-	readonly grammar: string;
+	readonly package: GrammarPackage;
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
 }
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
-	const overridesPath = resolveOverridesPath(cfg.grammar);
-	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
+	const grammar = cfg.package.name;
+	const overridesPath = packageEntryPath(cfg.package);
+	const entryPath = existsSync(overridesPath) ? overridesPath : packageGrammarJsPath(cfg.package);
 
 	const evaluated = await evaluate(entryPath);
 	const diagnosis = diagnoseGrammar({
-		grammar: cfg.grammar,
+		grammar,
 		evaluated,
 		include: cfg.include,
 		generatedIdTables: cfg.generatedIdTables,
@@ -54,11 +56,12 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	hydrateSlotRefs(nodeMap, {
 		inline: new Set(raw.inline),
 		reportedAbsentNames: nodeMap.droppedKinds,
-		grammar: cfg.grammar
+		grammar
 	});
 
 	return {
-		grammar: cfg.grammar,
+		grammar,
+		package: cfg.package,
 		generatedIdTables,
 		raw,
 		linked,

@@ -416,7 +416,7 @@ export function canonicalizeRuleLiterals(
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean,
 	misses: KindIdStampMisses,
-	stampable = true,
+	syntactic = true,
 	aliasBodies?: ReadonlyMap<string, AliasRule<'link'>>
 ): Rule<'link'> {
 	switch (rule.type) {
@@ -424,14 +424,14 @@ export function canonicalizeRuleLiterals(
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, false, misses, syntactic, aliasBodies)
 				)
 			};
 		case CHOICE:
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, syntactic, aliasBodies)
 				)
 			};
 		case OPTIONAL:
@@ -444,7 +444,7 @@ export function canonicalizeRuleLiterals(
 					kindEntries,
 					allowLiteralRewrite,
 					misses,
-					stampable,
+					syntactic,
 					aliasBodies
 				)
 			};
@@ -456,7 +456,7 @@ export function canonicalizeRuleLiterals(
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodies)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, syntactic, aliasBodies)
 			};
 		case ALIAS: {
 			const content = canonicalizeRuleLiterals(
@@ -464,10 +464,10 @@ export function canonicalizeRuleLiterals(
 				kindEntries,
 				allowLiteralRewrite,
 				misses,
-				stampable,
+				syntactic,
 				aliasBodies
 			);
-			if (!stampable || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
+			if (!syntactic || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
 			const entry = findEntryForKindName(kindEntries, rule.value);
@@ -478,11 +478,11 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, content, kindId: entry.parseId ?? entry.id };
 		}
 		case SYMBOL:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodies });
 		case SUPERTYPE:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: {
 						...rule,
@@ -491,7 +491,7 @@ export function canonicalizeRuleLiterals(
 		case STRING: {
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
-				if (entry) {
+				if (entry && (syntactic || entry.anon === true)) {
 					return {
 						type: SYMBOL,
 						name: entry.kind,
@@ -503,7 +503,7 @@ export function canonicalizeRuleLiterals(
 					};
 				}
 			}
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				misses.literals.add(rule.value);
@@ -512,7 +512,7 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const patternEntry = findEntryForPatternValue(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}

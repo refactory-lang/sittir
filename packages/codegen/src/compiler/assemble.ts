@@ -39,7 +39,7 @@ import type {
 	SubtypeRef,
 	UnresolvedRef
 } from './model/node-map.ts';
-import { armFactsOf } from './model/node-map.ts';
+import { armFactsOf, separatorArmsOf } from './model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
@@ -264,7 +264,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					continue;
 				}
 				const sep = listRule.separator;
-				const separatorRule = sep && isNonterminalRuleType(sep.value) ? sep.value : undefined;
+				const separatorRule = sep && isNonterminalRuleType(sep.value) ? perInstanceSeparator({ kind, separator: sep.value }, dropCtx) : undefined;
 				nodes.set(
 					kind,
 					new AssembledList(
@@ -1113,4 +1113,24 @@ export { nameNode } from './model/node-map.ts';
 
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
+}
+
+function perInstanceSeparator(list: { readonly kind: string; readonly separator: RenderRule }, ctx: DroppedKindCtx): RenderRule | undefined {
+	const { kind, separator } = list;
+	const { tokens, others } = separatorArmsOf(separator);
+	if (others.length === 0) return separator;
+	ctx.assembleDiagnostics.assembleWarnings.record({
+		code: 'separator-pattern',
+		ownerKind: kind,
+		message:
+			`[assemble] kind '${kind}': its separator has ${others.length} arm(s) that are not tokens ` +
+			`(${others.map(ruleLabel).join(', ')}); a separator arm must be a token or a choice of tokens. ` +
+			`Resolve with a rule() patch that gives each pattern a kind of its own.`,
+		details: { arms: others.map(ruleLabel) }
+	});
+	return tokens.some(isNonterminalRuleType) ? separator : undefined;
+}
+
+function ruleLabel(rule: Rule<'normalize'>): string {
+	return rule.type === PATTERN ? `/${rule.value}/` : rule.type;
 }

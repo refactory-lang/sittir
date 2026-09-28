@@ -11,6 +11,7 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
 import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 // evaluate() reads a module from disk, so an inline grammar has to become a
 // real file. The chain below mirrors generate()'s own phase order.
@@ -26,6 +27,7 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
 		assertCompilation({
 			grammar: 'fi',
+			package: grammarPackage('fi'),
 			raw,
 			linked,
 			normalized,

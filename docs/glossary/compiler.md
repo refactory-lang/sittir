@@ -1686,10 +1686,14 @@ vocabularies stay separate: a grammar diagnostic blocks through `canProceed: fal
 
 `generatedIdTables` is the id tables after `stampVisibleExternals`; generation reads them from the compilation instead of loading and stamping a second copy.
 
+`package` is the grammar package the compile resolved (`grammarPackage`): generation reads the package's grammar.json, node types and query roles through it, so every step after the compile reads the same package the compile evaluated.
+
 ### `packages/codegen/src/compiler/compile.ts::compileGrammar`
 
-Evaluates the grammar and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
-records and every record the gate saw when it does not pass. Hydrate then runs on the collected grammar with
+Evaluates the grammar package's entry (its `grammar.sittir.ts`, or the upstream `grammar.js` when there is none)
+and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
+records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
+caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
@@ -3164,8 +3168,11 @@ symbols.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::loadGeneratedIdTables`
 
-The grammar's generated id tables, read from its own package
-(`grammarPackageDir`): the committed `.sittir/src/parser.c`, with its
+`loadPackageIdTables` for the grammar's own package.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::loadPackageIdTables`
+
+A grammar package's generated id tables: the committed `.sittir/src/parser.c`, with its
 `grammar.json`; `undefined` before the grammar's first generate. The parser.c
 tables are the only source: they carry the full symbol catalog (C names,
 visibility, named/anonymous split, supertypes), which a loaded language does
@@ -4608,13 +4615,21 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  */
 ```
 
+### `packages/codegen/src/compiler/resolve-grammar.ts::packageGrammarJsPath`
+
+The absolute path of a grammar package's upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar package's own directory (`packageRequire`) — the grammar package is the one place its upstream dependency is declared.
+
+### `packages/codegen/src/compiler/resolve-grammar.ts::packageEntryPath`
+
+A grammar package's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside the package directory.
+
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
-Resolve a grammar name to the absolute path of its upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar's own package directory (`grammarRequire`) — the grammar package is the one place its upstream dependency is declared.
+`packageGrammarJsPath` for the grammar's own package.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveOverridesPath`
 
-The grammar's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside `grammarPackageDir(grammar)`.
+`packageEntryPath` for the grammar's own package.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
@@ -7286,9 +7301,14 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
- * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
- * strings are lexeme fragments of the token, not separate anon tokens, so
- * a miss there is meaningless by construction.
+ * diagnostic. `syntactic` is false inside a lexed interior (below a
+ * TOKEN): stamping is suppressed there, since its inner strings are lexeme
+ * fragments of the token, not separate anon tokens, so a miss there is
+ * meaningless by construction. A FIELD inside the interior (a structured
+ * token-interior slot) still rewrites its literals, but only to an
+ * anonymous token kind, never to a named rule: a named rule is a parser
+ * node, and a lexed interior holds none (Go's `_` digit separator stays
+ * text rather than becoming `blank_identifier`).
  *
  * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
  * in `aliasBodies` is not stamped in place — its alias body is spliced in
@@ -10228,3 +10248,21 @@ Link runs only on a grammar whose catalog prediction built: a failed prediction 
 (`grammar-diagnostics.ts::predictionRecords`) and gated, or, for an evaluation stage, stops at its records
 (`diagnoseStage`). Reaching link with a failed prediction throws.
 
+### `packages/codegen/src/compiler/assemble.ts::perInstanceSeparator`
+
+The separator a list keeps per instance. A separator whose arms are all
+tokens is kept as is. Otherwise its non-token arms are reported as one
+blocking `separator-pattern` record on the list kind, and the separator
+is kept only if a remaining token arm is nonterminal; with none, the list
+has no per-instance separator, the same as a terminal separator. The
+list then stamps only the token arms (`AssembledList.separatorTokenArms`).
+
+### `packages/codegen/src/compiler/assemble.ts::ruleLabel`
+
+How a `separator-pattern` record names a non-token arm: a pattern as
+`/source/`, any other rule by its type.
+
+### `packages/codegen/src/compiler/generate.ts::compileFromPackage`
+
+The gated compile `generate` runs when the caller passes no compilation:
+the package's own id tables, then `compileGrammar` on that package.

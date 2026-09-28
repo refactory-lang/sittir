@@ -110,7 +110,6 @@ import {
 } from './render-body.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import type { GrammarName } from '../grammars.ts';
@@ -807,13 +806,13 @@ function renderTypedBranchFn(
 }
 
 function buildSeparatorKindMatchLines(
-	separatorRule: Rule<'link'>,
+	candidateKindNames: readonly string[],
 	fallbackSeparator: string,
 	kindIdByKind: ReadonlyMap<string, number> | undefined
 ): string[] | undefined {
 	if (kindIdByKind === undefined) return undefined;
 	const arms: string[] = [];
-	for (const name of collectSeparatorCandidateKindNames(separatorRule)) {
+	for (const name of candidateKindNames) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
 		arms.push(`Some(${id}) => ${JSON.stringify(name)},`);
@@ -896,7 +895,7 @@ function buildTypedTemplateBody(
 				separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
-					? buildSeparatorKindMatchLines(separatedList.separatorRule, fallback, kindIdByKind)
+					? buildSeparatorKindMatchLines(separatedList.separatorCandidateKindNames, fallback, kindIdByKind)
 					: undefined;
 			const spacing = spacingFieldExprs(plan, node, f.name);
 			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
-import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import { grammarPackage, isGrammar, sittirDirOf, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
@@ -355,7 +355,7 @@ export async function spawnIsolatedGrammarWorker(grammar: GrammarName): Promise<
  * failures as synthetic entries rather than throwing out of the report loop.
  */
 export function readGrammarDiagnosticsEntries(grammar: GrammarName): GrammarDiagnosticEntry[] {
-	const path = resolvePath(join('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
+	const path = join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json');
 	if (!existsSync(path)) return [];
 	try {
 		const raw = JSON.parse(readFileSync(path, 'utf8')) as ReadonlyArray<

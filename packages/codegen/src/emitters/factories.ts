@@ -1,7 +1,7 @@
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isPatternValue, separatorRequired } from '../compiler/model/node-map.ts';
 import {
 	interiorEnumArms,
 	interiorOf,
@@ -85,7 +85,7 @@ import {
 	type RefineKindInfo,
 	type RefineFormInfo
 } from './refine-emit.ts';
-import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
+import { buildSeparatedListContentSlot } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -1141,14 +1141,6 @@ function emitFieldCarryingFactory(
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
 
-	const flankField = slots.find((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional');
-	if (flankField !== undefined) {
-		throw new Error(
-			`emitFieldCarryingFactory: '${typeKind}' field '${flankField.name}' carries an optional delimiter — ` +
-				`a delimiter-bearing list must classify as its own separatedList kind (kind-level _delimiter storage)`
-		);
-	}
-
 	const builtName = `T.${node.typeName}.Built`;
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
 	const signature = `${exportKw}function ${fn}(${surface.params}): ${builtName} {`;
@@ -1535,6 +1527,7 @@ export function separatedListSurface(
 	readonly separatorKindUnion: string;
 	readonly candidateKindNames: readonly string[];
 	readonly hasSeparatorKindOption: boolean;
+	readonly separatorRequired: boolean;
 	readonly hasDelimiterOption: boolean;
 	readonly optionsType: string | undefined;
 	readonly wrapper?: {
@@ -1569,7 +1562,7 @@ export function separatedListSurface(
 	const elementsType = elementsTypeOf(node.nonEmpty, elemType);
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
 	const candidateKindNames = hasSeparatorKindOption
-		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		? node.separatorCandidateKindNames.filter((k) => hasCatalogEntry(kindEntries, k))
 		: [];
 	const hasDelimiterOption = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
 	const separatorKindUnion =
@@ -1577,7 +1570,8 @@ export function separatedListSurface(
 			? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ')
 			: 'never';
 	const optionsTypeParts: string[] = [];
-	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
+	const required = separatorRequired(node);
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separator${required ? '' : '?'}: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
 	const optionsType = optionsTypeParts.length > 0 ? `{ ${optionsTypeParts.join('; ')} }` : undefined;
 	return {
@@ -1587,6 +1581,7 @@ export function separatedListSurface(
 		separatorKindUnion,
 		candidateKindNames,
 		hasSeparatorKindOption,
+		separatorRequired: required,
 		hasDelimiterOption,
 		optionsType,
 		wrapper,
@@ -1624,11 +1619,9 @@ export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
+): string | undefined {
 	const declared = node.resolvedSeparatorArm;
-	if (declared === undefined)
-		throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
-	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
+	return declared === undefined ? undefined : kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
 export function declaredDelimiterDefault(node: AssembledList): string {
@@ -1657,7 +1650,7 @@ function emitSeparatedListFactory(
 	const lines: string[] = [];
 	const listBuiltName = `T.${node.typeName}.Built`;
 	if (hasOptions) {
-		lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
+		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(
 			`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
 		);
@@ -1697,7 +1690,11 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = ${admitted};`);
 	}
 	if (hasSeparatorKindOption) {
-		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
+		const separatorDefault = declaredSeparatorDefault(node, nodeMap, kindEntries);
+		if (separatorDefault === undefined) {
+			lines.push(`  if (options.separator === undefined) throw new Error('${node.kind}: its separator has no declared default; pass options.separator');`);
+			lines.push('  const _separator = options.separator;');
+		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
 	}
 	if (hasDelimiterOption) {
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);

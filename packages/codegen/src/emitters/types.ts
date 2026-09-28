@@ -52,7 +52,7 @@ import type {
 	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
-import { loadRawEntries } from '../validate/node-types-loader.ts';
+import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -91,7 +91,6 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
@@ -100,6 +99,7 @@ type StructuralNode = SlotBearingCompound;
 
 export interface EmitTypesConfig {
 	grammar: string;
+	nodeTypes: readonly RawNodeEntry[];
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	sites?: readonly SitePreference[];
@@ -114,7 +114,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	referencedBitflagConsts.clear();
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
-	const grammarKeys = buildGrammarKeySet(grammar);
+	const grammarKeys = grammarKeySetOf(config.nodeTypes);
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
 	const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1);
@@ -398,15 +398,8 @@ const VOCABULARY_IMPORTS = [
 	'OmitEach'
 ];
 
-function buildGrammarKeySet(grammar: string): Set<string> {
-	const grammarKeys = new Set<string>();
-	try {
-		for (const entry of loadRawEntries(grammar)) {
-			const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
-			grammarKeys.add(key);
-		}
-	} catch {}
-	return grammarKeys;
+function grammarKeySetOf(nodeTypes: readonly RawNodeEntry[]): Set<string> {
+	return new Set(nodeTypes.map((entry) => (entry.named ? entry.type : `_anonymous_${entry.type}`)));
 }
 
 interface NodeCategories {
@@ -515,7 +508,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	const literalTextById = new Map<number, string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
-		for (const candidate of collectSeparatorCandidateKindNames(node.separatorRule)) {
+		for (const candidate of node.separatorCandidateKindNames) {
 			const entry = findKindEntry(entries, candidate);
 			if (entry === undefined) continue;
 			literalTextById.set(entry.id, candidate);

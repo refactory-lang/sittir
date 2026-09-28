@@ -169,6 +169,13 @@ anything else, including a choice whose two members are both blank. Every
 site that treats a rule as "optional x" reads through it, so an OPTIONAL and a
 CHOICE-with-blank always take the same path.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isArmChoice`
+
+A `CHOICE` that is not optional-shaped (`optionalContentOf` finds no content).
+A predicate that asks "is this a choice between arms" uses it, so
+`CHOICE(x, BLANK)` from tree-sitter's `optional()` reads as the `OPTIONAL(x)`
+sittir's builder produces, never as a two-arm choice.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::withOptionalContent`
 
 Rebuilds an optional rule around new content in the representation it
@@ -1006,8 +1013,10 @@ not immediate.
  * Resolve `rule`'s LEFTMOST reachable symbol name — descending through a
  * SEQ's first member and single-content wrappers (optional/field/repeat/
  * prec/token/...), the same shape a parser's FIRST-set walk would follow.
- * A CHOICE has no single leftmost symbol (it varies per arm) and resolves
- * to `undefined`; the `seen` set guards against infinite recursion on a
+ * An optional `x` in either spelling (`optionalContentOf`) resolves to `x`'s
+ * leftmost symbol, so both pipelines decline or mint the same arms. Any
+ * other CHOICE has no single leftmost symbol (it varies per arm) and
+ * resolves to `undefined`; the `seen` set guards against infinite recursion on a
  * self-referential rule.
  *
  * For a SYMBOL, hiddenness gates whether the name IS the leftmost
@@ -2209,7 +2218,7 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 	 * THE canonical child-edge relation — single source of truth for "what
 	 * are this rule's children" (see `childEdgesOf` for the edge/path detail).
 	 * map, fold, find, foldDeep, and findDeep all use this relation
-	 * identically — no narrower traversal exists.
+	 * identically; a subclass narrows it only through `descends`.
 	 */
 ```
 
@@ -2266,6 +2275,40 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 	 * keyed on node identity); symbol refs are followed through the bound
 	 * rules map.
 	 */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::isLexedBoundary`
+
+```text
+/**
+ * True for a TOKEN or IMMEDIATE_TOKEN node: the boundary of a lexed
+ * interior. Everything under it is lexed as one token, so it holds no parser
+ * nodes, no fields and no kind references of the syntactic grammar. Every
+ * enrich pass that mints fields, labels or lifts stops here, through
+ * SyntacticRuleWalker or by checking this predicate in its own descent. The
+ * boundary node itself is still visited; only its interior is not.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker.descends`
+
+```text
+/**
+ * Whether the walker enters this node's children. childEdgesOf (and so
+ * childrenOf, fold, find, foldDeep, findDeep) and map all consult it, so a
+ * subclass narrows every traversal at one place. The base walker descends
+ * everywhere.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::SyntacticRuleWalker`
+
+```text
+/**
+ * A RuleWalker that walks the syntactic layer only: it never descends past
+ * isLexedBoundary. Enrich's rewriting passes use it so nothing they mint
+ * lands inside a token's lexed interior.
+ */
 ```
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringField`
@@ -3837,7 +3880,7 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatorOf`
 
-Recognizes a two-member `seq` as one separated-list step: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing). A separator is a token: a literal, or a choice whose every arm lexes as one token by `terminalContentOf` over the grammar's source symbols — literals, patterns, token bodies, externals, and inlined rules whose own bodies are tokens (typescript's `_semicolon`, a choice of the external `_automatic_semicolon` and `;`). The full choice is kept, never narrowed to one literal arm; `separatorArmKinds` consumes the same shape.
+Recognizes a two-member `seq` as one separated-list step: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing). A separator is a token: a literal, or an arm choice (`isArmChoice`; an optional literal is not a separator) whose every arm lexes as one token by `terminalContentOf` over the grammar's source symbols — literals, patterns, token bodies, externals, and inlined rules whose own bodies are tokens (typescript's `_semicolon`, a choice of the external `_automatic_semicolon` and `;`). The full choice is kept, never narrowed to one literal arm; `separatorArmKinds` consumes the same shape.
 
 A choice of nonterminals is content, not a separator: regex's `term` is `seq(choice(<atoms>), optional(<quantifier>))`, an element followed by its quantifier. An optional token (`choice(tok, blank)`) is not one either — it may be absent, so it is a per-element flank.
 
@@ -5062,8 +5105,9 @@ enum_assignment)`) is the shape this covers.
 
 ### `packages/codegen/src/dsl/enrich.ts::hasFieldedArm`
 
-Whether a list element, once its transparent wrappers are peeled, is a
-choice with at least one `field(...)` arm. Such an element keeps its own
+Whether a list element, once its transparent wrappers are peeled, is an
+arm choice (`isArmChoice`; an optional `x` is not one) with at least one
+`field(...)` arm. Such an element keeps its own
 field labels instead of taking the minted `element` field.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyNodeChoiceFieldWrap`

@@ -1,7 +1,8 @@
 import * as esbuild from 'esbuild';
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { PACKAGES_DIR, grammarRequire, upstreamPackage } from '../grammars.ts';
+import { packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
+import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 
 function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 	if (existsSync(path)) {
@@ -16,8 +17,7 @@ function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 
 
 export interface TranspileOptions {
-	grammar: string;
-	packagesRoot?: string;
+	package: GrammarPackage;
 }
 
 export interface TranspileResult {
@@ -27,9 +27,9 @@ export interface TranspileResult {
 }
 
 export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
-	const root = opts.packagesRoot ?? PACKAGES_DIR;
-	const inputPath = join(root, opts.grammar, 'grammar.sittir.ts');
-	const outputDir = join(root, opts.grammar, '.sittir');
+	const grammar = opts.package.name;
+	const inputPath = packageEntryPath(opts.package);
+	const outputDir = sittirDirOf(opts.package);
 	const outputPath = join(outputDir, 'grammar.js');
 
 	if (!existsSync(inputPath)) {
@@ -38,17 +38,17 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 
 	mkdirSync(outputDir, { recursive: true });
 
-	copyExternalScannerSources(opts.grammar, outputDir);
+	copyExternalScannerSources(opts.package, outputDir);
 
 	writeFileIfChanged(
 		join(outputDir, 'package.json'),
 		JSON.stringify(
 			{
-				name: `tree-sitter-${opts.grammar}`,
+				name: `tree-sitter-${grammar}`,
 				type: 'commonjs',
 				'tree-sitter': [
 					{
-						scope: `source.${opts.grammar}`,
+						scope: `source.${grammar}`,
 						'file-types': []
 					}
 				]
@@ -65,9 +65,9 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 				$schema: 'https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json',
 				grammars: [
 					{
-						name: opts.grammar,
-						camelcase: opts.grammar.charAt(0).toUpperCase() + opts.grammar.slice(1),
-						scope: `source.${opts.grammar}`,
+						name: grammar,
+						camelcase: grammar.charAt(0).toUpperCase() + grammar.slice(1),
+						scope: `source.${grammar}`,
 						path: '.',
 						'file-types': []
 					}
@@ -75,7 +75,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 				metadata: {
 					version: '0.0.1',
 					license: 'MIT',
-					description: `Sittir-bundled ${opts.grammar} grammar`,
+					description: `Sittir-bundled ${grammar} grammar`,
 					authors: [{ name: 'sittir', email: 'noreply@example.com' }]
 				}
 			},
@@ -102,7 +102,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 
 	if (result.errors.length > 0) {
 		const messages = result.errors.map((e) => e.text).join('\n');
-		throw new Error(`transpileOverrides(${opts.grammar}): esbuild errors:\n${messages}`);
+		throw new Error(`transpileOverrides(${grammar}): esbuild errors:\n${messages}`);
 	}
 
 	for (const file of result.outputFiles ?? []) {
@@ -138,10 +138,11 @@ function stubScannerSource(grammar: string): string {
 	].join('\n');
 }
 
-function copyExternalScannerSources(grammar: string, outputDir: string): void {
+function copyExternalScannerSources(pkg: GrammarPackage, outputDir: string): void {
+	const grammar = pkg.name;
 	let basePkgPath: string;
 	try {
-		basePkgPath = dirname(grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/package.json`));
+		basePkgPath = dirname(packageRequire(pkg).resolve(`${upstreamPackage(grammar)}/package.json`));
 	} catch (e) {
 		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return;
 		throw e;

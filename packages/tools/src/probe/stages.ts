@@ -101,7 +101,8 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 		hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline) });
 		try {
 			const { emitTypes } = await load('types');
-			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
+			const { loadRawEntries } = await load('nodeTypesLoader');
+			const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: loadRawEntries(grammar) });
 			const ifacePat = new RegExp(`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`, 'm');
 			const m = (types as unknown as string).match(ifacePat);
 			stages.emitInterface = m ? m[0] : null;

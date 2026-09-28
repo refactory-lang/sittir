@@ -336,7 +336,7 @@ function runPipelineRaw(raw: RawGrammar) {
 	const generatedIdTables = makeGeneratedIdTables();
 	return {
 		nodeMap,
-		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
+		typesSrc: emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap, generatedIdTables }),
 		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
 		irSrc: emitIr({ grammar: 'synth', nodeMap })
 	};
@@ -430,6 +430,7 @@ describe('types emitter — per-form namespace sugar', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const src = emitTypes({
 			grammar: 'synth',
+			nodeTypes: [],
 			nodeMap,
 			generatedIdTables: makeGeneratedIdTables()
 		});
@@ -491,7 +492,7 @@ describe('factories emitter — per-form factory emission', () => {
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
-		const { factories } = emitAll({ grammar: 'synth', nodeMap });
+		const { factories } = emitAll({ grammar: 'synth', nodeTypes: [], nodeMap });
 		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
 		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);
 	});

@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
-import { grammarPackageDir } from '../grammars.ts';
+import { grammarPackage, REPO_ROOT, sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type * as TS from 'web-tree-sitter';
 import {
 	joinIdNames,
@@ -14,12 +14,16 @@ import {
 	type ParserSymbolTable
 } from '../dsl/symbol-table.ts';
 
-export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
-	const parserCPath = join(grammarPackageDir(grammar), '.sittir', 'src', 'parser.c');
+export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables | undefined> {
+	const parserCPath = join(sittirDirOf(pkg), 'src', 'parser.c');
 	if (!existsSync(parserCPath)) return undefined;
 	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
 	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
-	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), `packages/${grammar}/.sittir/src/parser.c`, grammarJson);
+	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
+}
+
+export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
+	return loadPackageIdTables(grammarPackage(grammar));
 }
 
 export async function deriveGeneratedIdTablesFromParserCSource(

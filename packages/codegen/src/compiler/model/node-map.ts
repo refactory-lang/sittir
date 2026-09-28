@@ -2,6 +2,7 @@ import type { VariantChild } from '../variant-structural.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
+	Rule,
 	RuleBase,
 	RenderRule,
 	SimplifiedRule,
@@ -1665,6 +1666,19 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 
 export type AuthoredCompound = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
 
+export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
+	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
+}
+
+export function optionalFlankSlots(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (!isAuthoredCompound(node)) return [];
+	return node.slots.filter((slot) => slot.leadingDelimiter === 'optional' || slot.trailingDelimiter === 'optional');
+}
+
+export function separatorRequired(list: AssembledList): boolean {
+	return list.separatorRule !== undefined && list.resolvedSeparatorArm === undefined;
+}
+
 export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
 export type CompoundClass =
@@ -1995,10 +2009,32 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 export type SeparatedListElementRule = SymbolRule | ChoiceRule;
 
+export type SeparatorTokenArm = StringRule | SymbolRule;
+
+export interface SeparatorArms {
+	readonly tokens: readonly SeparatorTokenArm[];
+	readonly others: readonly Rule<'normalize'>[];
+}
+
+export function separatorArmsOf(rule: Rule<'normalize'>): SeparatorArms {
+	switch (rule.type) {
+		case STRING:
+		case SYMBOL:
+			return { tokens: [rule], others: [] };
+		case CHOICE: {
+			const arms = rule.members.map(separatorArmsOf);
+			return { tokens: arms.flatMap((a) => a.tokens), others: arms.flatMap((a) => a.others) };
+		}
+		default:
+			return { tokens: [], others: [rule] };
+	}
+}
+
 export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, 'list'> {
 	override readonly modelType = 'list' as const;
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
+	readonly separatorTokenArms: readonly SeparatorTokenArm[];
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	resolvedDelimiterArm?: string;
@@ -2036,8 +2072,13 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			rule.multiplicity === 'nonEmptyArray' ? 'nonEmptyArray' : 'array'
 		);
 		this.separatorRule = opts.separatorRule;
+		this.separatorTokenArms = opts.separatorRule === undefined ? [] : separatorArmsOf(opts.separatorRule).tokens;
 		this.leadingDelimiter = sep?.leading ?? 'none';
 		this.trailingDelimiter = sep?.trailing ?? 'none';
+	}
+
+	get separatorCandidateKindNames(): readonly string[] {
+		return this.separatorTokenArms.map((arm) => (arm.type === STRING ? arm.value : arm.name));
 	}
 
 	override get parameterless(): boolean {

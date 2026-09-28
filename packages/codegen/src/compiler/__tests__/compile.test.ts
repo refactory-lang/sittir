@@ -3,10 +3,12 @@ import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from '../types.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
 import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
 import { assertCompilation, type Compilation } from '../compile.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 function makeCompilation(overrides: Partial<Compilation> = {}): Compilation {
 	return {
 		grammar: 'synth',
+		package: grammarPackage('synth'),
 		raw: {} as RawGrammar,
 		linked: {} as LinkedGrammar,
 		normalized: {} as NormalizedGrammar,
