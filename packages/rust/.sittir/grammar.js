@@ -6913,7 +6913,6 @@ var grammar_sittir_default = sittirGrammar(base_default, {
   ],
   supertypes: ($, previous) => [...previous ?? [], $.comment],
   groups: {
-    visibility_modifier_in_path: ($) => seq("in", $._path),
     attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
     attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
     attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),
