@@ -2251,7 +2251,7 @@ path.
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
 
 Evaluates one base a second time through `wire` with no config (only the grammar's name), and records every rule
-name it declares: the base's rules plus any enrich overrides merged into the stage options. Going through `wire`
+name it declares: the base's rules plus the rules `wire` hands the stage. Going through `wire`
 means the stage sees what enrich hands wire, such as the whitespace bodies it mints (`withEnrichedWhitespace`),
 so the enriched stage and the final evaluation agree that `_tight` and the other members are literal kinds rather
 than empty patterns. The evaluated rules alone are not that list, because the
@@ -2412,34 +2412,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 // struct gets emitted from the empty placeholder (no render text).
 // The visible name stays parse-identity-only, carried by the ALIAS
 // wrap on references; the whole mint modeling path handles the rest.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::mergeEnrichOverridesIntoOptions`
-
-```text
-/**
- * Merge enrich-generated override callbacks from the base grammar's
- * `__enrichOverrides__` side-channel into `opts.rules`.
- *
- * @param optionsOrBase - The first argument passed to `grammarFn`, which may
- *   carry the `__enrichOverrides__` property when the base was produced by
- *   `enrich()` in `dsl/enrich.ts`.
- * @param opts - The resolved `GrammarOptions` for the current grammar. User
- *   overrides already in `opts.rules` win on name collisions.
- * @remarks
- * Mirrors what `wrappedGrammar` does under tree-sitter CLI so both
- * runtimes process enrich identically.
- * @remarks
- * Known limitation: when a user override exists for a rule, enrich is
- * skipped entirely for that rule. The optional-keyword-prefix and
- * bare-keyword-prefix passes therefore don't auto-wrap tokens the user
- * would otherwise need to add via `field()` overrides (see rust's
- * `impl_item`/`async_block` unsafe/move overrides for the duplicated
- * pattern). Straight composition (enrich first, then user) was tried and
- * regressed several python rules — enrich's bare-keyword pass interferes
- * with user field/variant paths. Proper fix needs path-aware composition;
- * deferred.
- */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluate`
@@ -7921,11 +7893,9 @@ wire has no protected names and prunes nothing.
 
 ### `packages/codegen/src/compiler/evaluate.ts::coerceToRule`
 
-```text
-// ---------------------------------------------------------------------------
-// normalize — convert raw input to a Rule<'evaluate'>
-// ---------------------------------------------------------------------------
-```
+Converts a callback's result to a `Rule<'evaluate'>`: a string is a `STRING`, a RegExp a `PATTERN`, an object with
+a `type` a rule as is; anything else throws. It takes `unknown` because rule callbacks return `unknown` under the
+shared `grammar()` contract, and it is the runtime check that contract relies on.
 
 ### `packages/codegen/src/compiler/evaluate.ts::createProxy`
 
@@ -8013,22 +7983,15 @@ the wrappers exactly as tree-sitter does; the compile boundary peels every one
 
 ### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
 
-```text
-// ---------------------------------------------------------------------------
-// evaluate() — execute grammar.js and produce RawGrammar
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions.rules`
-
-```text
-// tree-sitter's DSL passes `($, previous)` to every rule / metadata
-// callback — `previous` is the base grammar's version in
-// extension mode. We type the second arg loosely so extension
-// callbacks that forward it (`previous.concat([...])`) compile.
-```
+The options `grammar()` receives: `WiredOpts`, the one contract the DSL and evaluate share for the global
+`grammar(base, options)`. Rule and metadata callbacks return `unknown`; evaluate coerces each result
+(`coerceToRule`), so no callback's return is trusted by type.
 
 ### `packages/codegen/src/compiler/evaluate.ts::grammarFn`
+
+The global `grammar()` during evaluation, under the DSL's contract: `grammar(options)` for a grammar of its own,
+`grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
+property, and a call that mixes the two shapes throws.
 
 #### body
 

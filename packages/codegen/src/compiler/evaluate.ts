@@ -32,12 +32,12 @@ import { canonicalGrammar } from './canonical-rules.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
-import { wire, type PatchSite, type WireContext, type RefineForm } from '../dsl/wire/wire.ts';
-import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
+import { wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
+import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
-function coerceToRule(input: Input): Rule<'evaluate'> {
+function coerceToRule(input: unknown): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
@@ -157,19 +157,7 @@ function string(value: string): StringRule<'evaluate'> {
 	return structuralBuilder.string(value);
 }
 
-interface GrammarOptions {
-	name: string;
-	rules: Record<string, ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input>;
-	extras?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
-	externals?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
-	supertypes?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
-	factoryInline?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
-	inline?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
-	conflicts?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[][];
-	word?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => SymbolRule<'evaluate'>;
-	precedences?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[][];
-	reserved?: Record<string, ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[]>;
-}
+type GrammarOptions = WiredOpts;
 
 interface MetadataSinks {
 	extras: RuleListEntry[];
@@ -196,20 +184,22 @@ export interface EvaluateCtx {
 	readonly desugarDivergences: DesugarDivergenceEvent[];
 }
 
-function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
+function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: GrammarOptions): { grammar: EvaluatedGrammar } {
 	let baseRules: Record<string, Rule<'evaluate'>> = {};
 	let baseGrammar: any = null;
+	let base: GrammarResult | undefined;
 	let opts: GrammarOptions;
 
 	if (options === undefined) {
-		opts = optionsOrBase as GrammarOptions;
+		if ('grammar' in optionsOrBase) throw new Error('grammar(): a base grammar is given without options');
+		opts = optionsOrBase;
 	} else {
-		baseGrammar = (optionsOrBase as { grammar: any }).grammar;
+		if (!('grammar' in optionsOrBase)) throw new Error(`grammar(base, options): '${options.name}' extends a base that is not a grammar() result`);
+		base = optionsOrBase;
+		baseGrammar = base.grammar;
 		baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
 		opts = options;
 	}
-
-	mergeEnrichOverridesIntoOptions(optionsOrBase, opts);
 
 	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
 	const provenanceByKind = new Map<string, RuleProvenance>();
@@ -268,7 +258,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const optionsBlock = drainOptionsMetadata(opts);
 	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
 	const patchSites = drainPatchSitesMetadata(opts);
-	const stages = departsFromBase(ctx) ? evaluateStages(optionsOrBase, ctx) : undefined;
+	const stages = base !== undefined && departsFromBase(ctx) ? evaluateStages(base, ctx) : undefined;
 
 	const grammarResult = {
 		name: opts.name,
@@ -366,15 +356,15 @@ function departsFromBase(ctx: EvaluateCtx): boolean {
 	return wireCtx.authoredRuleNames.size > 0 || Object.keys(patches ?? {}).length > 0;
 }
 
-function evaluateStages(enriched: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
+function evaluateStages(enriched: GrammarResult, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
 	const wireCtx = getWireContext(ctx.opts);
 	if (!wireCtx) throw new Error(`evaluateStages('${ctx.opts.name}'): the grammar departs from its base but carries no wire context`);
-	return { raw: evaluateStage(wireCtx.source as { grammar: any }, ctx), enriched: evaluateStage(enriched, ctx) };
+	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx), enriched: evaluateStage(enriched, ctx) };
 }
 
-function evaluateStage(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
-	const stageOpts = wire({ name: ctx.opts.name }, base as unknown as GrammarJson) as GrammarOptions;
-	const grammar = grammarFn(base, stageOpts).grammar as EvaluatedGrammar;
+function evaluateStage(base: GrammarResult, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
+	const stageOpts = wireWithoutConfig(ctx.opts.name, base);
+	const { grammar } = grammarFn(base, stageOpts);
 	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
 	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
 	return { grammar, ruleNames };
@@ -441,20 +431,6 @@ function drainVisibleExternalsMetadata(
 		provenanceByKind.set(name, 'evaluate-synthesized');
 	}
 	return result;
-}
-
-function mergeEnrichOverridesIntoOptions(optionsOrBase: GrammarOptions | { grammar: any }, opts: GrammarOptions): void {
-	const enrichOverrides = (
-		optionsOrBase as {
-			__enrichOverrides__?: Record<string, (...a: any[]) => any>;
-		}
-	).__enrichOverrides__;
-	if (enrichOverrides && opts) {
-		if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>;
-		for (const [name, fn] of Object.entries(enrichOverrides)) {
-			if (!(name in opts.rules)) opts.rules[name] = fn;
-		}
-	}
 }
 
 function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
@@ -928,7 +904,8 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.word) {
 		const $ = createProxy();
-		const w = opts.word.call($, $);
+		const w = coerceToRule(opts.word.call($, $));
+		if (w.type !== SYMBOL) throw new Error(`grammar '${opts.name}': word is a ${w.type}, not a symbol`);
 		setWord(w.name);
 	}
 }

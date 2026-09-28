@@ -4863,7 +4863,9 @@ function baseRuleBodiesOf(base2) {
   return baseRulesOf(base2) ?? {};
 }
 function wire(config, base2, source = base2) {
-  const cfg = config;
+  return wireImpl(config, base2, source);
+}
+function wireImpl(cfg, base2, source) {
   const baseArg = base2;
   const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base2);
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));

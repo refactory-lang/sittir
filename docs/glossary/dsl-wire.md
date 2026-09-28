@@ -1329,12 +1329,6 @@ are what the shape-free half of the load-time check can promise.
 	 */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::__enrichOverrides__`
-
-```text
-/** Side-channel from `enrich()` — preserved unchanged. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
@@ -1562,6 +1556,16 @@ are what the shape-free half of the load-time check can promise.
 ### `packages/codegen/src/dsl/wire/wire.ts::baseDeclares`
 
 Whether the base grammar (the enriched base, with or without its `grammar` wrapper) declares a property. `wire()` wraps a callback for `extras`, `externals` or `precedences` when the config defines it or the base declares it, so a rename registered while the rules evaluated reaches the base's own entries even when the config never mentions the property.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithoutConfig`
+
+`wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
+evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
+
+The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
+generic base type only checks the authored config's keys; `wireWithoutConfig` calls it directly.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 

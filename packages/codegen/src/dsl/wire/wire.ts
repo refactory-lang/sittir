@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace } from '../enrich.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -379,7 +379,6 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
 	readonly options?: OptionsConfig;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -387,7 +386,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 };
 
 export interface WiredOpts {
-	readonly name?: string;
+	readonly name: string;
 	readonly rules: Record<string, RuleFn>;
 	readonly conflicts?: ConflictsFn;
 	readonly externals?: DollarFn<unknown[]>;
@@ -398,7 +397,6 @@ export interface WiredOpts {
 	readonly word?: DollarFn<unknown>;
 	readonly precedences?: DollarFn<unknown[][]>;
 	readonly reserved?: Record<string, DollarFn<unknown[]>>;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly __wireContext__?: WireContext;
 }
 
@@ -412,8 +410,15 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	base: B,
 	source: unknown = base
 ): WiredOpts {
-	const cfg = config as unknown as WireConfig<any>;
-	const baseArg = base as unknown as BaseArg | undefined;
+	return wireImpl(config as unknown as WireConfig<any>, base, source);
+}
+
+export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
+	return wireImpl({ name }, base, base);
+}
+
+function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
+	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
