@@ -13,44 +13,12 @@ import {
 	type ParserSymbolTable
 } from '../dsl/symbol-table.ts';
 
-export interface TreeSitterLanguageMetadata {
-	readonly nodeTypeCount: number;
-	readonly fieldCount: number;
-	nodeTypeForId(id: number): string | null;
-	nodeTypeIsVisible(id: number): boolean;
-	nodeTypeIsNamed(id: number): boolean;
-	fieldNameForId(id: number): string | null;
-}
-
 export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
 	const parserCPath = join(grammarPackageDir(grammar), '.sittir', 'src', 'parser.c');
-	if (existsSync(parserCPath)) {
-		const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
-		const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
-		return deriveGeneratedIdTablesFromParserCSource(
-			readFileSync(parserCPath, 'utf8'),
-			`packages/${grammar}/.sittir/src/parser.c`,
-			grammarJson
-		);
-	}
-
-	const wasmPath = join(grammarPackageDir(grammar), '.sittir', 'parser.wasm');
-	if (!existsSync(wasmPath)) return undefined;
-
-	const { Language } = await loadWebTreeSitter();
-	const language = (await Language.load(wasmPath)) as TreeSitterLanguageMetadata;
-	return deriveGeneratedIdTablesFromLanguage(language, `packages/${grammar}/.sittir/parser.wasm`);
-}
-
-export function deriveGeneratedIdTablesFromLanguage(
-	language: TreeSitterLanguageMetadata,
-	sourceArtifact: string
-): GeneratedIdTables {
-	return {
-		kindIds: collectKindIds(language),
-		fieldIds: collectFieldIds(language),
-		sourceArtifact
-	};
+	if (!existsSync(parserCPath)) return undefined;
+	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
+	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
+	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), `packages/${grammar}/.sittir/src/parser.c`, grammarJson);
 }
 
 export async function deriveGeneratedIdTablesFromParserCSource(
@@ -78,38 +46,6 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
 		sourceArtifact
 	};
-}
-
-function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {
-	const result = new Map<string, number>();
-	const namedness = new Map<string, boolean>();
-
-	for (let id = 0; id < language.nodeTypeCount; id += 1) {
-		if (!language.nodeTypeIsVisible(id)) continue;
-		const name = language.nodeTypeForId(id);
-		if (!name) continue;
-
-		const isNamed = language.nodeTypeIsNamed(id);
-		const existingIsNamed = namedness.get(name);
-		if (existingIsNamed === true) continue;
-		if (existingIsNamed === undefined || isNamed) {
-			result.set(name, id);
-			namedness.set(name, isNamed);
-		}
-	}
-
-	return result;
-}
-
-function collectFieldIds(language: TreeSitterLanguageMetadata): Map<string, number> {
-	const result = new Map<string, number>();
-
-	for (let id = 1; id <= language.fieldCount; id += 1) {
-		const name = language.fieldNameForId(id);
-		if (name) result.set(name, id);
-	}
-
-	return result;
 }
 
 type CParser = TS.Parser;

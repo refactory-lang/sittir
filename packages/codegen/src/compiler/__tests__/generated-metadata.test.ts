@@ -1,35 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { deriveGeneratedIdTablesFromLanguage, deriveGeneratedIdTablesFromParserCSource, type TreeSitterLanguageMetadata } from '../generated-metadata.ts';
+import { deriveGeneratedIdTablesFromParserCSource } from '../generated-metadata.ts';
 import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
 describe('generated metadata', () => {
-	it('derives generated kind and field IDs from the tree-sitter language API', () => {
-		const language = {
-			nodeTypeCount: 5,
-			fieldCount: 2,
-			nodeTypeForId: (id: number) => ['end', 'identifier', ';', 'hidden', 'identifier'][id] ?? null,
-			nodeTypeIsVisible: (id: number) => id === 1 || id === 2 || id === 4,
-			nodeTypeIsNamed: (id: number) => id === 1 || id === 4,
-			fieldNameForId: (id: number) => [null, 'item', 'name'][id] ?? null
-		} satisfies TreeSitterLanguageMetadata;
-
-		const tables = deriveGeneratedIdTablesFromLanguage(language, 'parser.wasm');
-
-		expect(tables.sourceArtifact).toBe('parser.wasm');
-		expect(tables.kindIds).toEqual(
-			new Map([
-				['identifier', 1],
-				[';', 2]
-			])
-		);
-		expect(tables.fieldIds).toEqual(
-			new Map([
-				['item', 1],
-				['name', 2]
-			])
-		);
-	});
-
 	it.skip('derives generated IDs and C names from generated parser.c', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			`
