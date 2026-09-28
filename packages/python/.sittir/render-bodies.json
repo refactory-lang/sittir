@@ -1674,6 +1674,9 @@
 			]
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "."
 		},
@@ -1750,6 +1753,9 @@
 		{
 			"kind": "slot",
 			"name": "integer"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",

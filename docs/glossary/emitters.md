@@ -16408,8 +16408,10 @@ content may then equal the whole text (rust integer_literal). See "affixed leave
 ### `packages/codegen/src/emitters/render-body.ts::adjacentInto`
 
 ```text
-Puts an adjacency mark before every slot and seam of a body, descending into the arms of a gate so the mark
-is only written when the gated member is.
+Puts an adjacency mark before every slot, seam and literal of a body, descending into the arms of a gate so
+the mark is only written when the gated member is. A lexed token's interior joins its parts through this:
+tree-sitter lexes the token as one unit, so no join inside it may take the word-boundary space, a literal
+after a slot (a bigint's `n`) included.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`

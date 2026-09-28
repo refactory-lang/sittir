@@ -51171,6 +51171,7 @@ fn render_float_point(node: &FloatPointTransport, w: &mut dyn ::sittir_core::ren
     let integer = &node.integer;
     let marker = View::new(&node.marker, "{}");
     integer.render(w)?;
+    w.adjacent();
     w.text(".")?;
     if fraction.is_present() {
         w.adjacent();
@@ -51200,6 +51201,7 @@ fn render_float_leading_point(node: &FloatLeadingPointTransport, w: &mut dyn ::s
     let integer = View::new(&node.integer, "{}");
     let marker = View::new(&node.marker, "{}");
     integer.render(w)?;
+    w.adjacent();
     w.text(".")?;
     w.adjacent();
     fraction.render(w)?;

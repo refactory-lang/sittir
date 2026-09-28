@@ -79739,9 +79739,11 @@ fn render_char_literal_escaped(node: &CharLiteralEscapedTransport, w: &mut dyn :
     let b = View::new(&node.b, "b");
     let content = &node.content;
     b.render(w)?;
+    w.adjacent();
     w.text("'")?;
     w.adjacent();
     content.render(w)?;
+    w.adjacent();
     w.text("'")?;
     Ok(())
 }
@@ -79750,9 +79752,11 @@ fn render_char_literal_plain(node: &CharLiteralPlainTransport, w: &mut dyn ::sit
     let b = View::new(&node.b, "b");
     let content = &node.content;
     b.render(w)?;
+    w.adjacent();
     w.text("'")?;
     w.adjacent();
     content.render(w)?;
+    w.adjacent();
     w.text("'")?;
     Ok(())
 }

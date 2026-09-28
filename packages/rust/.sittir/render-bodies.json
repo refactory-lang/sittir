@@ -1091,6 +1091,9 @@
 			"name": "b"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "'"
 		},
@@ -1100,6 +1103,9 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",
@@ -1112,6 +1118,9 @@
 			"name": "b"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "'"
 		},
@@ -1121,6 +1130,9 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",

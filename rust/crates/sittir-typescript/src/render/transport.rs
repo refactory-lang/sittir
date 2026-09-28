@@ -100400,6 +100400,7 @@ fn render_comment_block(node: &CommentBlockTransport, w: &mut dyn ::sittir_core:
     w.text("/*")?;
     w.adjacent();
     content.render(w)?;
+    w.adjacent();
     w.text("*/")?;
     Ok(())
 }
@@ -100431,6 +100432,7 @@ fn render_number_float_point(node: &NumberFloatPointTransport, w: &mut dyn ::sit
     let marker = View::new(&node.marker, "{}");
     let sign = View::new(&node.sign, "{}");
     integer.render(w)?;
+    w.adjacent();
     w.text(".")?;
     if fraction.is_present() {
         w.adjacent();
@@ -100520,6 +100522,7 @@ fn render_number_octal(node: &NumberOctalTransport, w: &mut dyn ::sittir_core::r
 fn render_number_bigint(node: &NumberBigintTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     content.render(w)?;
+    w.adjacent();
     w.text("n")?;
     Ok(())
 }

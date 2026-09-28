@@ -1490,6 +1490,9 @@
 			"name": "content"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "*/"
 		}
@@ -5568,6 +5571,9 @@
 			"name": "content"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "n"
 		}
@@ -5663,6 +5669,9 @@
 		{
 			"kind": "slot",
 			"name": "integer"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",
