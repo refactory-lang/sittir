@@ -52,7 +52,7 @@ export function enrichWhitespace(
 	extras: readonly RuleListEntry[],
 	rules: Readonly<Record<string, Rule>>
 ): EnrichedWhitespace {
-	const run = extrasRun(extras);
+	const run = extrasRun(extras, rules);
 	const upstream = new Set(ruleListParts(externals).names);
 	const members = WHITESPACE_MEMBERS.filter(
 		(member) => member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)

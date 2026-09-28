@@ -754,9 +754,14 @@ function ruleListParts(rules) {
   }
   return parts;
 }
-function extrasRun(extras) {
-  const { literals, patterns } = ruleListParts(extras);
-  const sources = [...patterns, ...literals.map(escapeRegexLiteral)];
+function extrasRun(extras, rules) {
+  const { names, literals, patterns } = ruleListParts(extras);
+  const symbolSources = names.flatMap((name) => {
+    const rule2 = rules[name];
+    const source = rule2 === void 0 ? null : ruleToRegexSource(rule2);
+    return source === null ? [] : [source];
+  });
+  const sources = [...patterns, ...literals.map(escapeRegexLiteral), ...symbolSources];
   if (sources.length === 0) return void 0;
   const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join("|")})+`);
   if ("error" in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
@@ -2439,7 +2444,7 @@ function admittedTextOf(body) {
   return isDepthText(body.value) ? HORIZONTAL_SPACE : body.value;
 }
 function enrichWhitespace(externals, extras, rules) {
-  const run = extrasRun(extras);
+  const run = extrasRun(extras, rules);
   const upstream = new Set(ruleListParts(externals).names);
   const members = WHITESPACE_MEMBERS.filter(
     (member) => member.alwaysAdmitted === true || (run?.test(admittedTextOf(member.body)) ?? false)
@@ -2783,7 +2788,7 @@ function enrich(baseInput, authored = {}) {
     supertypeNames,
     externals: extractGrammarRuleList(base2, hasWrapper, "externals"),
     inline: inlineNames,
-    extras: extractGrammarRuleList(base2, hasWrapper, "extras"),
+    extras: effectiveExtras(base2, hasWrapper, authored.extras),
     word: extractWordName(grammarMeta?.word),
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
@@ -3067,7 +3072,11 @@ function grammarListOf(base2, hasWrapper, key) {
   const list = root?.[key];
   if (Array.isArray(list)) return list;
   if (typeof list !== "function") return [];
-  const dollar = new Proxy(
+  const result = list(symbolDollar());
+  return Array.isArray(result) ? result : [];
+}
+function symbolDollar() {
+  return new Proxy(
     {},
     {
       get(_t, prop) {
@@ -3075,14 +3084,21 @@ function grammarListOf(base2, hasWrapper, key) {
       }
     }
   );
-  const result = list(dollar);
-  return Array.isArray(result) ? result : [];
+}
+function effectiveExtras(base2, hasWrapper, authored) {
+  const upstream = extractGrammarRuleList(base2, hasWrapper, "extras");
+  if (authored === void 0) return upstream;
+  const result = authored(symbolDollar(), upstream);
+  return ruleListEntries(Array.isArray(result) ? result : [], "extras");
 }
 function extractGrammarSymbolNames(base2, hasWrapper, key) {
   return harvestSupertypeNames(grammarListOf(base2, hasWrapper, key));
 }
 function extractGrammarRuleList(base2, hasWrapper, key) {
-  return grammarListOf(base2, hasWrapper, key).map((value) => {
+  return ruleListEntries(grammarListOf(base2, hasWrapper, key), key);
+}
+function ruleListEntries(values, key) {
+  return values.map((value) => {
     const entry = ruleListEntryOf(value);
     if (entry === void 0) throw new Error(`enrich: an entry of ${key} is not a SYMBOL, STRING or PATTERN rule`);
     return entry;
@@ -6734,7 +6750,7 @@ function refine(original, forms) {
 
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups) });
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
   const grammar = globalThis.grammar;
   return grammar(enriched, wire(config, enriched, base2));
 }

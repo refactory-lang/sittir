@@ -12,7 +12,7 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 		readonly options?: O & OptionsCheck<EnrichedGrammar<B>, O>;
 	}
 ): GrammarResult {
-	const enriched = enrich(base, { groupBodies: authoredGroupBodies(config.groups) });
+	const enriched = enrich(base, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
 	return grammar(enriched, wire<EnrichedGrammar<B>, P, O>(config, enriched, base));
 }

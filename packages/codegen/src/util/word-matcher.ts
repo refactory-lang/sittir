@@ -43,7 +43,7 @@ export function wordCharClass(wordMatcher: RegExp | undefined): (c: string) => b
 	return (c: string) => c.length > 0 && (joins(`a${c}`) || joins(`${c}a`));
 }
 
-function ruleToRegexSource(rule: AnyRule): string | null {
+export function ruleToRegexSource(rule: AnyRule): string | null {
 	const shaped = rule as {
 		value?: string;
 		content?: AnyRule;

@@ -3546,7 +3546,19 @@ The one derivation of names, literals and patterns from an `extras` or `external
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::extrasRun`
 
-The anchored RegExp matching a whole run of a grammar's lexical extras: one or more of its PATTERN sources and escaped STRING literals, in any order. It answers whether the grammar lexes a given text as nothing but extras, which is how enrich decides the whitespace members a grammar admits. A grammar with no lexical extras has no run; an extra that does not compile as a JavaScript RegExp is an error, not a silent miss.
+The anchored RegExp matching a whole run of a grammar's lexical extras: one or more of its PATTERN sources, escaped STRING literals and SYMBOL extras resolved through their rules (`ruleToRegexSource`), in any order. A symbol whose rule no single RegExp expresses (one that references another symbol) contributes nothing; `ruleToRegexSource` never follows a symbol, so resolution cannot cycle. It answers whether the grammar lexes a given text as nothing but extras, which is how enrich decides the whitespace members a grammar admits. A grammar with no lexical extras has no run; an extra that does not compile as a JavaScript RegExp is an error, not a silent miss.
+
+### `packages/codegen/src/dsl/enrich.ts::effectiveExtras`
+
+The extras the final grammar lexes: the upstream list, or what the config's `extras:` callback returns when handed a symbol `$` and that list as `previous`, the call tree-sitter makes. Enrich reads every extras fact from it (the predicted symbol source, the whitespace vocabulary), so a config that adds or clears whitespace extras changes the vocabulary with the parser.
+
+### `packages/codegen/src/dsl/enrich.ts::symbolDollar`
+
+The `$` enrich hands a grammar list callback: any name reads as a SYMBOL rule of that name.
+
+### `packages/codegen/src/dsl/enrich.ts::ruleListEntries`
+
+A list of `extras` or `externals` values as rule-list entries (`ruleListEntryOf`); an entry that is not a SYMBOL, STRING or PATTERN rule is an error naming the list.
 
 ### `packages/codegen/src/dsl/whitespace.ts::WhitespaceBody`
 
@@ -4406,7 +4418,9 @@ stage to take back.
 ### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
 
 The part of a grammar's authored config enrich reads: `groupBodies`, the
-evaluated `groups:` body patterns (`authoredGroupBodies`).
+evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
+config's `extras:` callback, which decides the extras the final grammar
+lexes (`effectiveExtras`).
 
 ### `packages/codegen/src/dsl/enrich.ts::coveredByAuthoredGroup`
 
@@ -4420,8 +4434,8 @@ minted group.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
 
-The one composition of a sittir grammar: `enrich(base, { groupBodies })`
-with the config's authored group patterns, then `wire(config, enriched, base)`, which keeps the pre-enrich
+The one composition of a sittir grammar: `enrich(base, { groupBodies, extras })`
+with the config's authored group patterns and `extras:` callback, then `wire(config, enriched, base)`, which keeps the pre-enrich
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options.

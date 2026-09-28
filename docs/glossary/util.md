@@ -90,6 +90,8 @@ matcher the class is `\w+`.
  */
 ```
 
+Besides word shapes, `extrasRun` resolves a grammar's SYMBOL extras through it.
+
 #### body
 
 ```text

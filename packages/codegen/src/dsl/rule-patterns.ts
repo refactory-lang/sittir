@@ -11,7 +11,7 @@ import {
 	typeEq,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
-import { escapeRegexLiteral, matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
 import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 import {
 	ALIAS,
@@ -660,9 +660,14 @@ export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
 	return parts;
 }
 
-export function extrasRun(extras: readonly RuleListEntry[]): RegExp | undefined {
-	const { literals, patterns } = ruleListParts(extras);
-	const sources = [...patterns, ...literals.map(escapeRegexLiteral)];
+export function extrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, Rule>>): RegExp | undefined {
+	const { names, literals, patterns } = ruleListParts(extras);
+	const symbolSources = names.flatMap((name) => {
+		const rule = rules[name];
+		const source = rule === undefined ? null : ruleToRegexSource(rule);
+		return source === null ? [] : [source];
+	});
+	const sources = [...patterns, ...literals.map(escapeRegexLiteral), ...symbolSources];
 	if (sources.length === 0) return undefined;
 	const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join('|')})+`);
 	if ('error' in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);

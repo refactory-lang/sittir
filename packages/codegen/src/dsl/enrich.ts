@@ -83,6 +83,7 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 
 export interface EnrichAuthoredConfig {
 	readonly groupBodies?: readonly RuntimeRule[];
+	readonly extras?: (...args: never[]) => unknown;
 }
 
 export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
@@ -104,7 +105,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		supertypeNames,
 		externals: extractGrammarRuleList(base, hasWrapper, 'externals'),
 		inline: inlineNames,
-		extras: extractGrammarRuleList(base, hasWrapper, 'extras'),
+		extras: effectiveExtras(base, hasWrapper, authored.extras),
 		word: extractWordName(grammarMeta?.word),
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
 		authoredGroupBodies: authored.groupBodies ?? []
@@ -428,7 +429,12 @@ function grammarListOf(
 	const list = root?.[key];
 	if (Array.isArray(list)) return list;
 	if (typeof list !== 'function') return [];
-	const dollar = new Proxy(
+	const result = (list as (proxy: unknown) => unknown)(symbolDollar());
+	return Array.isArray(result) ? result : [];
+}
+
+function symbolDollar(): unknown {
+	return new Proxy(
 		{},
 		{
 			get(_t, prop) {
@@ -436,8 +442,13 @@ function grammarListOf(
 			}
 		}
 	);
-	const result = (list as (proxy: unknown) => unknown)(dollar);
-	return Array.isArray(result) ? result : [];
+}
+
+function effectiveExtras(base: unknown, hasWrapper: boolean, authored: EnrichAuthoredConfig['extras']): RuleListEntry[] {
+	const upstream = extractGrammarRuleList(base, hasWrapper, 'extras');
+	if (authored === undefined) return upstream;
+	const result = (authored as (dollar: unknown, previous: readonly RuleListEntry[]) => unknown)(symbolDollar(), upstream);
+	return ruleListEntries(Array.isArray(result) ? result : [], 'extras');
 }
 
 function extractGrammarSymbolNames(base: unknown, hasWrapper: boolean, key: 'supertypes' | 'inline'): ReadonlySet<string> {
@@ -445,7 +456,11 @@ function extractGrammarSymbolNames(base: unknown, hasWrapper: boolean, key: 'sup
 }
 
 function extractGrammarRuleList(base: unknown, hasWrapper: boolean, key: 'externals' | 'extras'): RuleListEntry[] {
-	return grammarListOf(base, hasWrapper, key).map((value) => {
+	return ruleListEntries(grammarListOf(base, hasWrapper, key), key);
+}
+
+function ruleListEntries(values: readonly unknown[], key: 'externals' | 'extras'): RuleListEntry[] {
+	return values.map((value) => {
 		const entry = ruleListEntryOf(value);
 		if (entry === undefined) throw new Error(`enrich: an entry of ${key} is not a SYMBOL, STRING or PATTERN rule`);
 		return entry;

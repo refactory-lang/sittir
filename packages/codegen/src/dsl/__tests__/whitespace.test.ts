@@ -12,18 +12,23 @@ const ALL = ['_tight', '_space', '_newline', '_blankline', '_double_blankline', 
 
 describe('extrasRun', () => {
 	it('matches a whole run of pattern and literal extras, with literals taken as text', () => {
-		const run = extrasRun([P('\\n'), S('.')])!;
+		const run = extrasRun([P('\\n'), S('.')], {})!;
 		expect(run.test('\n\n.')).toBe(true);
 		expect(run.test('a')).toBe(false);
 		expect(run.test('\n ')).toBe(false);
 	});
 
+	it('resolves a symbol extra through its lexical rule', () => {
+		const run = extrasRun([sym('_ws')], { _ws: P('\\s') })!;
+		expect(run.test(' \n')).toBe(true);
+	});
+
 	it('is undefined when the grammar has no lexical extras', () => {
-		expect(extrasRun([sym('comment')])).toBeUndefined();
+		expect(extrasRun([sym('comment')], { comment: { type: 'SEQ', members: [S('#'), sym('text')] } as never })).toBeUndefined();
 	});
 
 	it('rejects an extra that is not a JavaScript RegExp', () => {
-		expect(() => extrasRun([P('(')])).toThrow(/do not compile/);
+		expect(() => extrasRun([P('(')], {})).toThrow(/do not compile/);
 	});
 });
 
