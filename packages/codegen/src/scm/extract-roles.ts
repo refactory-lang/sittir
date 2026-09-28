@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseSCMQuery, parseInheritsDirective } from './parse.ts';
 import type { SCMCapture } from './parse.ts';
-import { grammarRequire, packageRequire, upstreamPackage, type GrammarPackage } from '../grammars.ts';
+import { packageRequire, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 
 export type Role =
 	| 'root'
@@ -159,12 +159,12 @@ function collectCaptures(grammarName: string, visited: Set<string>, queryFile: Q
 
 	const inheritsLang = parseInheritsDirective(source);
 	if (inheritsLang) {
-		captures.push(...collectCaptures(inheritsLang, visited, queryFile, grammarRequire(inheritsLang)));
+		captures.push(...collectCaptures(inheritsLang, visited, queryFile, require));
 	}
 
 	const parentGrammars = resolveParentGrammarsFromConfig(grammarRoot, queryFile);
 	for (const parent of parentGrammars) {
-		captures.push(...collectCaptures(parent, visited, queryFile, grammarRequire(parent)));
+		captures.push(...collectCaptures(parent, visited, queryFile, require));
 	}
 
 	return captures;

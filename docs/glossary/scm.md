@@ -64,8 +64,9 @@ Resolve the root directory of a grammar's upstream tree-sitter package through t
  */
 ```
 
-The root grammar's queries resolve through its package's `require` (`packageRequire`); an inherited or parent
-grammar resolves through its own name (`grammarRequire`).
+Every grammar reached from one package, the root and each inherited or `tree-sitter.json`
+parent, resolves through that package's `require` (`packageRequire`), so a package outside the
+repo reads its parents from its own dependency tree.
 
 #### body
 
