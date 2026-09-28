@@ -94,7 +94,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
   readonly is: API['is'];
   readonly kinds: API['kinds'];
   readonly trivia: TriviaFacts;    // today's methodsEngine.trivia; the stamp engine's facts
-  createNative(options?: EngineOptions<API['options']>): NativeLanguageEngine<API>;
+  createNative(options?: EngineOptions<API>): NativeLanguageEngine<API>;
   wrap(root: unknown, tree: unknown): API['root'];
 }
 
@@ -127,7 +127,7 @@ export interface Engine<API extends LanguageAPI> {
   readonly types: API['types'];
   parse(source: string, options?: ParseOptions): API['root'];
   read(path: string, options?: ParseOptions): Promise<API['root']>;
-  render(node: API['node'] | ((build: API['build']) => API['node']), options?: RenderOptions<API['options']>): Rendered;
+  render(node: API['node'] | ((build: API['build']) => API['node']), options?: API['options'] & { ignoreFormat?: boolean }): Rendered;
   create(path: string, fn: (build: API['build']) => API['root']): Pending;
   edit(path: string, fn: (root: API['root']) => API['root']): Pending;
   write(path: string, node: API['root']): Pending;
@@ -135,9 +135,23 @@ export interface Engine<API extends LanguageAPI> {
   dispose(): void;
 }
 
+export interface EngineOptions<API extends LanguageAPI> {
+  render?: API['options'];
+  format?: FormatRecord;
+  intercept?: readonly Interceptor<API>[];
+}
+
+export interface Interceptor<API extends LanguageAPI> {
+  build?(call: { path: readonly string[]; args: readonly unknown[] }, next: () => API['node']): API['node'];
+  render?(call: { node: API['node']; options: API['options'] }, next: () => string): string;
+  parse?(call: { source: string }, next: () => API['root']): API['root'];
+  file?(change: { verb: 'create' | 'edit' | 'write'; path: string; before: string | undefined; after: string },
+        next: () => Promise<void>): Promise<void>;
+}
+
 export interface Project extends AsyncDisposable {
   readonly directory: string | null;
-  engine<API extends LanguageAPI>(language: Language<API>, options?: EngineOptions<API['options']>): Promise<Engine<API>>;
+  engine<API extends LanguageAPI>(language: Language<API>, options?: EngineOptions<API>): Promise<Engine<API>>;
   staged(): readonly string[];
   diff(): readonly { path: string; before: string | undefined; after: string }[];
   files(): ReadonlyMap<string, string>;
@@ -316,7 +330,7 @@ git commit -m "feat(common): nodes carry the engine that built or read them" -- 
 
 **Interfaces:**
 - Consumes: Task 1's types; Task 2's `runWithEngine`, `stamp`, `engineOf`.
-- Produces: `createEngine<API>(language: Language<API>, options?: EngineOptions<API['options']>): Promise<Engine<API>>`, and the internal `assembleEngine(hooks, options, files)` that Task 5 reuses with a project's file set.
+- Produces: `createEngine<API>(language: Language<API>, options?: EngineOptions<API>): Promise<Engine<API>>`, and the internal `assembleEngine(hooks, options, files)` that Task 5 reuses with a project's file set.
 
 Behaviour:
 - `load()` is cached per descriptor object in a `WeakMap<Language, Promise<LanguageHooks>>`. A rejected load is not cached. `createEngine` rejects with `failed to load language "<name>"` and the original error as `cause`.
@@ -327,6 +341,9 @@ Behaviour:
   - A node with no stamp, or one from another language, throws `node belongs to language "<x>", not "<y>"` (checked from `engineOf(node).language`).
   - If the node is from a different engine of the same language and its coordinates name that engine's tree (`!native.holdsTree(tree)`), it's rendered by that owning engine with this engine's options merged under the call's. Otherwise it's rendered here.
   - The result is a disposable `Rendered`.
+- **Options:** `createNative` receives `{ render, format }`. Per-call render options are flat and merged over `options.render` key by key.
+- **Interceptors:** `composeInterceptors(list)` builds one chain per operation (first is outermost) when the engine is created. The `build` proxy's per-function wrapper, `render`, `parse` and (Task 4) the file commit call through the chain. With an empty list the chain is the identity, and no extra wrapper is allocated.
+- **`timing()`** (`packages/common/src/interceptors.ts`) is the built-in timing interceptor. It records through `metrics.ts`'s existing recorder, and the `SITTIR_METRICS` environment check is removed. Its callers go in Task 6 with `boundary.ts`.
 - `RenderHandle` gains `[Symbol.dispose]()`, which drops the cached text; `toString`, `save` and `print` after disposal throw `rendered text disposed`.
 
 - [ ] **Step 1: Write the failing tests** against the real `@sittir/rust` descriptor. It doesn't exist until Task 6, so this task's tests use a hand-built `Language<FakeAPI>` over a fake native engine:
@@ -346,8 +363,8 @@ function fakeLanguage(label: string) {
     },
     is: {}, kinds: { Leaf: 1 },
     trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
-    createNative: (opts?: { options?: { indent?: string } }) => ({
-      render: (n: { text?: string }) => ({ toString: () => `${opts?.options?.indent ?? ''}${n.text ?? ''}` }),
+    createNative: (opts?: { render?: { indent?: string } }) => ({
+      render: (n: { text?: string }, call?: { indent?: string }) => ({ toString: () => `${call?.indent ?? opts?.render?.indent ?? ''}${n.text ?? ''}` }),
       applyEdits: (s: string) => s,
       parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: {} }),
       holdsTree: () => true,
@@ -373,7 +390,7 @@ describe('createEngine', () => {
   });
 
   it('renders a build callback', async () => {
-    const e = await createEngine(fakeLanguage('x').language as never, { options: { indent: '>' } }) as any;
+    const e = await createEngine(fakeLanguage('x').language as never, { render: { indent: '>' } }) as any;
     expect(String(e.render((b: any) => b.leaf('a')))).toBe('>a');
   });
 
@@ -392,10 +409,27 @@ describe('createEngine', () => {
 
   it('two engines share no state', async () => {
     const f = fakeLanguage('x');
-    const a = await createEngine(f.language as never, { options: { indent: 'A' } }) as any;
-    const b = await createEngine(f.language as never, { options: { indent: 'B' } }) as any;
+    const a = await createEngine(f.language as never, { render: { indent: 'A' } }) as any;
+    const b = await createEngine(f.language as never, { render: { indent: 'B' } }) as any;
     expect(String(a.render(a.build.leaf('n')))).toBe('An');
     expect(String(b.render(b.build.leaf('n')))).toBe('Bn');
+  });
+
+  it('composes interceptors first-outermost, including nested variant builders', async () => {
+    const seen: string[] = [];
+    const e = await createEngine(fakeLanguage('x').language as never, {
+      intercept: [
+        { build: (c: any, next: any) => { seen.push('outer:' + c.path.join('.')); return next(); } },
+        { build: (c: any, next: any) => { seen.push('inner:' + c.path.join('.')); return next(); } },
+      ],
+    } as never) as any;
+    e.build.number.bigint(1n);
+    expect(seen).toEqual(['outer:number.bigint', 'inner:number.bigint']);
+  });
+
+  it('merges flat per-call render options over the engine options', async () => {
+    const e = await createEngine(fakeLanguage('x').language as never, { render: { indent: '>' } }) as any;
+    expect(String(e.render(e.build.leaf('a'), { indent: '#' }))).toBe('#a');
   });
 
   it('disposes a rendered handle', async () => {
@@ -656,8 +690,8 @@ describe('rust through createEngine', () => {
   });
 
   it('two engines render with their own indent', async () => {
-    const tabs = await createEngine(rust, { options: { indent: '\t' } });
-    const spaces = await createEngine(rust, { options: { indent: '  ' } });
+    const tabs = await createEngine(rust, { render: { indent: '\t' } });
+    const spaces = await createEngine(rust, { render: { indent: '  ' } });
     const src = 'fn f() {\n    a;\n}\n';
     expect(tabs.parse(src).$render()).toBe(src);                       // untouched: byte-exact
     const fn = (e: typeof tabs) => e.build.functionItem({ name: 'f', parameters: e.build.parameters([]), body: e.build.block([e.build.expressionStatement(e.build.identifier('a'))]) });
@@ -742,7 +776,7 @@ git commit -m "refactor(tests): grammar tests use the language engine" -- packag
 
 ### Task 9: Migrate examples and the factory-source emitter
 
-**Files:** `examples/*.ts` (the hand-written ones), `packages/tools/src/emit/factory-source.ts` (the printer: it emits `const rs = await createEngine(rust)` and `rs.build.*` in place of `ir.*`, and `rs.kinds.X` in place of `TSKindId.X`), `packages/tools/tests/emit/dogfood-render-bytes.test.ts` (it creates engines through `createEngine(descriptor, { options: renderOptions })`), and the regenerated `examples/*.generated.ts` (`pnpm run gen:examples`).
+**Files:** `examples/*.ts` (the hand-written ones), `packages/tools/src/emit/factory-source.ts` (the printer: it emits `const rs = await createEngine(rust)` and `rs.build.*` in place of `ir.*`, and `rs.kinds.X` in place of `TSKindId.X`), `packages/tools/tests/emit/dogfood-render-bytes.test.ts` (it creates engines through `createEngine(descriptor, { render: renderOptions })`), and the regenerated `examples/*.generated.ts` (`pnpm run gen:examples`).
 
 - [ ] **Step 1: Change the printer and regenerate the examples.**
 - [ ] **Step 2: Gates:**

@@ -28,7 +28,7 @@ import { createEngine } from '@sittir/common';
 import rust, { type FunctionItem } from '@sittir/rust';
 import typescript from '@sittir/typescript';
 
-const rs = await createEngine(rust, { options: { indent: '\t' } });
+const rs = await createEngine(rust, { render: { indent: '\t' } });
 const ts = await createEngine(typescript);
 
 const fn = rs.build.functionItem({ name: 'f', body: rs.build.block([]) });
@@ -60,7 +60,7 @@ type F = typeof rs.types.functionItem;         // = FunctionItem
 ```ts
 export async function createEngine<API extends LanguageAPI>(
   language: Language<API>,
-  options?: EngineOptions<API['options']>,
+  options?: EngineOptions<API>,
 ): Promise<Engine<API>>
 ```
 
@@ -68,6 +68,37 @@ export async function createEngine<API extends LanguageAPI>(
   `LanguageAPI`, `Engine` and `Types` live in `@sittir/types`.
 - It is async only. `load()` runs once per descriptor and is cached, so later engines
   for the same language resolve immediately.
+- **Engine options** group by concern:
+
+  ```ts
+  interface EngineOptions<API extends LanguageAPI> {
+    render?: API['options'];                     // the render options (site preferences, indent)
+    format?: FormatRecord;
+    intercept?: readonly Interceptor<API>[];
+  }
+  ```
+
+- **Interceptors** wrap the engine's operations like middleware, for logging,
+  instrumentation and tooling:
+
+  ```ts
+  interface Interceptor<API extends LanguageAPI> {
+    build?(call: { path: readonly string[]; args: readonly unknown[] }, next: () => API['node']): API['node'];
+    render?(call: { node: API['node']; options: API['options'] }, next: () => string): string;
+    parse?(call: { source: string }, next: () => API['root']): API['root'];
+    file?(change: { verb: 'create' | 'edit' | 'write'; path: string; before: string | undefined; after: string },
+          next: () => Promise<void>): Promise<void>;
+  }
+  ```
+
+  The engine composes them once, when it is created, in array order (the first is
+  outermost), and adorns its builders, `render`, `parse` and the file commit with the
+  composed chain. With no interceptors nothing is wrapped. An interceptor may observe,
+  time, change the result, or refuse by throwing. A `file` interceptor that doesn't call
+  `next` blocks the write, which is how a dry-run tool works.
+- Built-in interceptors ship beside `createEngine`: `timing()` replaces today's
+  `SITTIR_METRICS` environment check and `recordFfi` path, so metrics are an explicit
+  option, not an environment flag.
 - `API['options']` carries the language's derived `Options`, including the indent
   unit's typing (`IndentChar`), which today threads through the per-grammar
   `createEngine<const I>`.
@@ -86,7 +117,7 @@ interface Engine<API extends LanguageAPI> {
   read(path: string, options?: ParseOptions): Promise<API['root']>;
   render(
     node: API['node'] | ((build: API['build']) => API['node']),
-    options?: RenderOptions<API['options']>,
+    options?: API['options'] & { ignoreFormat?: boolean },
   ): Rendered;
 
   create(path: string, fn: (build: API['build']) => API['root']): Pending;
@@ -104,7 +135,10 @@ interface Engine<API extends LanguageAPI> {
 - **`types`** is type-only: a phantom member mapping each kind to its node type, for
   generic code (`typeof rs.types.functionItem`, `Types<typeof rs>`). It is derived
   from the same kind map as the static type exports, and has no runtime value.
-- **`render`** takes a node or a callback that receives `build`, and returns a
+- **`render`** takes a node or a callback that receives `build`, plus the render options
+  flat (not nested under `render:`), which override the engine's key by key;
+  `ignoreFormat` is the one reserved key beside them (option keys are kind names, so it
+  cannot collide). It returns a
   `Rendered` handle: today's lazy `RenderHandle` (`toString()`, `save`, `print`; the
   text is rendered on first use and cached), made `Disposable`. Disposing drops the
   cached text, and using the handle after that throws. `using out = rs.render(node)`
@@ -157,7 +191,7 @@ interface Project {
   readonly directory: string | null;
   engine<API extends LanguageAPI>(
     language: Language<API>,
-    options?: EngineOptions<API['options']>,
+    options?: EngineOptions<API>,
   ): Promise<Engine<API>>;
   staged(): readonly string[];
   diff(): readonly { path: string; before: string | undefined; after: string }[];
@@ -269,6 +303,9 @@ engine surface.
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
 - Two languages in one program share no state.
+- Interceptors: the order is first-outermost; a `build` interceptor sees nested variant
+  builders; a `file` interceptor that skips `next` blocks the write; with none, no
+  function is wrapped; `timing()` records what `SITTIR_METRICS` recorded.
 - Projects:
   - staged verbs touch no file until `commit()`;
   - an `edit` after a `create` in the same project sees the created file;
