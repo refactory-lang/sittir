@@ -1,6 +1,11 @@
 import type { AnyRule } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { isTokenWrapperType } from '../types/runtime-shapes.ts';
+
+export function isLexedBoundary(rule: { readonly type: string }): boolean {
+	return isTokenWrapperType(rule.type);
+}
 
 export class RuleWalker<R extends AnyRule = AnyRule> {
 	readonly #rules?: Readonly<Record<string, R>>;
@@ -11,7 +16,12 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		this.diagnostics = diagnostics;
 	}
 
+	protected descends(_rule: R): boolean {
+		return true;
+	}
+
 	childEdgesOf(rule: R): readonly { readonly segment: readonly (string | number)[]; readonly child: R }[] {
+		if (!this.descends(rule)) return [];
 		const out: { readonly segment: readonly (string | number)[]; readonly child: R }[] = [];
 		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
 		if (Array.isArray(bag.members)) {
@@ -29,6 +39,7 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	}
 
 	map(rule: R, visit: (r: R) => R): R {
+		if (!this.descends(rule)) return rule;
 		const bag = rule as {
 			members?: readonly R[];
 			content?: R;
@@ -118,5 +129,11 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 			return undefined;
 		};
 		return go(rule);
+	}
+}
+
+export class SyntacticRuleWalker<R extends AnyRule = AnyRule> extends RuleWalker<R> {
+	protected override descends(rule: R): boolean {
+		return !isLexedBoundary(rule);
 	}
 }

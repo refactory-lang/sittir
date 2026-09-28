@@ -11,10 +11,10 @@ export function rebuildSpliceLoose() {
 				}),
 				name: "Edit",
 			}),
-		}).$trivia.leading("//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"), ir.attributeItem(ir.attribute.input({
+		}).$trivia.leading(ir.lineComment.docInner(" Byte-level `apply_edits` on a source string.\n"), ir.lineComment.docInner("\n"), ir.lineComment.docInner(" Sorts edits by `start_pos` descending, applies each as a raw byte\n"), ir.lineComment.docInner(" splice on a `String`. Descending order guarantees earlier edits\n"), ir.lineComment.docInner(" aren't shifted by later ones, so consumers can produce edits in any\n"), ir.lineComment.docInner(" order and let us canonicalize.\n"), ir.lineComment.docInner("\n"), ir.lineComment.docInner(" # Overlap handling\n"), ir.lineComment.docInner("\n"), ir.lineComment.docInner(" Overlap detection is **explicitly** the consumer's responsibility —\n"), ir.lineComment.docInner(" see contracts/napi-api.md `applyEdits` contract. This function does\n"), ir.lineComment.docInner(" NOT validate that edits are disjoint; overlapping edits fall through\n"), ir.lineComment.docInner(" to last-wins behavior (after sort-descending, the edit with the\n"), ir.lineComment.docInner(" greatest `start_pos` applies first, and subsequent edits whose\n"), ir.lineComment.docInner(" ranges still reference valid offsets within the intermediate string\n"), ir.lineComment.docInner(" apply afterward).\n"), ir.lineComment.docInner("\n"), ir.lineComment.docInner(" # Validation\n"), ir.lineComment.docInner("\n"), ir.lineComment.docInner(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n"), ir.lineComment.docInner(" Violations return `Err` rather than panic so the napi wrapper can\n"), ir.lineComment.docInner(" surface a typed error to JS. UTF-8 boundary correctness is also\n"), ir.lineComment.docInner(" checked on the splice (via `String::replace_range`) — non-char-\n"), ir.lineComment.docInner(" boundary ranges produce a `Result::Err` instead of panicking.\n")), ir.attributeItem(ir.attribute.input({
 			path: "derive",
 			arguments: ir.delimTokenTree.paren(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
-		})).$trivia.leading("/// Error returned from [`apply_edits`] when an edit is invalid.\n"), ir.enumItem({
+		})).$trivia.leading(ir.lineComment.docOuter(" Error returned from [`apply_edits`] when an edit is invalid.\n")), ir.enumItem({
 			visibilityModifier: ir.visibilityModifier.pub(),
 			name: "SpliceError",
 			body: ir.enumVariantListElements(ir.enumVariant({
@@ -35,7 +35,7 @@ export function rebuildSpliceLoose() {
 					name: "source_len",
 					type: TSKindId.UsizeKeyword,
 				})),
-			}).$trivia.leading("/// `end_pos > source.len()` — edit reaches past end of source.\n"), ir.enumVariant({
+			}).$trivia.leading(ir.lineComment.docOuter(" `end_pos > source.len()` — edit reaches past end of source.\n")), ir.enumVariant({
 				name: "NonCharBoundary",
 				body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, ir.fieldDeclaration({
 					name: "start",
@@ -44,7 +44,7 @@ export function rebuildSpliceLoose() {
 					name: "end",
 					type: TSKindId.U32Keyword,
 				})),
-			}).$trivia.leading("/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n")).$trivia.leading("/// `end_pos < start_pos` — the edit range is reversed.\n"),
+			}).$trivia.leading(ir.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))).$trivia.leading(ir.lineComment.docOuter(" `end_pos < start_pos` — the edit range is reversed.\n")),
 		}), ir.implItem.body.positiveClause({
 			traitClause: ir.scopedTypeIdentifier({
 				path: ir.scopedIdentifier({
@@ -191,7 +191,7 @@ export function rebuildSpliceLoose() {
 						}),
 						arguments: ir.arguments(),
 					}),
-				}).$trivia.leading("// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."), ir.forExpression({
+				}).$trivia.leading(ir.lineComment(" Pre-validate every edit up-front so we fail atomically (no"), ir.lineComment(" partial application).")), ir.forExpression({
 					pattern: "e",
 					value: ir.referenceExpression.bare("edits"),
 					body: ir.block({
@@ -369,7 +369,7 @@ export function rebuildSpliceLoose() {
 							}),
 						}),
 					}),
-				})).$trivia.leading("// Sort descending by start_pos. Ties broken by end_pos descending —", "// with identical start positions, the longer replacement applies", "// first so the shorter doesn't overwrite its tail. (Tie-breaking is", "// documented consumer-visible behavior; overlap detection is still", "// theirs.)"), ir.letDeclaration({
+				})).$trivia.leading(ir.lineComment(" Sort descending by start_pos. Ties broken by end_pos descending —"), ir.lineComment(" with identical start positions, the longer replacement applies"), ir.lineComment(" first so the shorter doesn't overwrite its tail. (Tie-breaking is"), ir.lineComment(" documented consumer-visible behavior; overlap detection is still"), ir.lineComment(" theirs.)")), ir.letDeclaration({
 					mutableSpecifier: true,
 					pattern: "buf",
 					value: ir.callExpression({
@@ -422,6 +422,6 @@ export function rebuildSpliceLoose() {
 					arguments: "buf",
 				}),
 			}),
-		}).$trivia.leading("/// Apply a batch of edits to a source string, returning the modified\n", "/// source. See module docs for the sort-descending strategy and the\n", "/// consumer-owned overlap contract.\n", "///\n", "/// # Errors\n", "///\n", "/// - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n", "/// - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n", "///   `source.len()` (bytes).\n", "/// - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n", "///   not a UTF-8 character boundary of the source.\n")],
+		}).$trivia.leading(ir.lineComment.docOuter(" Apply a batch of edits to a source string, returning the modified\n"), ir.lineComment.docOuter(" source. See module docs for the sort-descending strategy and the\n"), ir.lineComment.docOuter(" consumer-owned overlap contract.\n"), ir.lineComment.docOuter("\n"), ir.lineComment.docOuter(" # Errors\n"), ir.lineComment.docOuter("\n"), ir.lineComment.docOuter(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n"), ir.lineComment.docOuter(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n"), ir.lineComment.docOuter("   `source.len()` (bytes).\n"), ir.lineComment.docOuter(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n"), ir.lineComment.docOuter("   not a UTF-8 character boundary of the source.\n"))],
 	});
 }

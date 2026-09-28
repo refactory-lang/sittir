@@ -1495,3 +1495,11 @@ export interface LeafNs<
 }
 
 export type { DerivedOptions, OptionsHintOf } from './options.ts';
+export type {
+	Interior,
+	LeadCheck,
+	MatchedAlternative,
+	SiblingLeadRefusal,
+	SpelledAffix,
+	WithSpelling
+} from './full-form.ts';

@@ -1,7 +1,7 @@
 import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
@@ -52,7 +52,7 @@ import type {
 	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
-import { loadRawEntries } from '../validate/node-types-loader.ts';
+import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -91,15 +91,16 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
+import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
 export interface EmitTypesConfig {
 	grammar: string;
+	nodeTypes: readonly RawNodeEntry[];
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	sites?: readonly SitePreference[];
@@ -114,7 +115,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	referencedBitflagConsts.clear();
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
-	const grammarKeys = buildGrammarKeySet(grammar);
+	const grammarKeys = grammarKeySetOf(config.nodeTypes);
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
 	const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1);
@@ -356,6 +357,18 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
+	const keyed = innerGapsKeyed(nodeMap);
+	for (const [kind, empty] of emptyForms(nodeMap)) {
+		const node = nodeMap.nodes.get(kind)!;
+		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
+		lines.push(
+			`export interface ${empty.typeName} extends ${node.typeName}.Built {`,
+			`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
+			'}'
+		);
+	}
+	lines.push('');
+
 	if (referencedBitflagConsts.size > 0) {
 		const sortedNames = [...referencedBitflagConsts].sort();
 		const importLine = `import { ${sortedNames.join(', ')} } from './consts.js';`;
@@ -366,8 +379,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
-	if (/\bNodeMethodsOf\b/.test(body)) {
-		lines.splice(sittirImportIndex + 1, 0, `import type { NodeMethodsOf } from './utils.js';`);
+	const utilsTypes = ['NodeMethodsOf', 'TriviaSetterOf', 'InnerTrivia'].filter((name) => new RegExp(`\\b${name}\\b`).test(body));
+	if (utilsTypes.length > 0) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { ${utilsTypes.join(', ')} } from './utils.js';`);
 	}
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
@@ -398,15 +412,8 @@ const VOCABULARY_IMPORTS = [
 	'OmitEach'
 ];
 
-function buildGrammarKeySet(grammar: string): Set<string> {
-	const grammarKeys = new Set<string>();
-	try {
-		for (const entry of loadRawEntries(grammar)) {
-			const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
-			grammarKeys.add(key);
-		}
-	} catch {}
-	return grammarKeys;
+function grammarKeySetOf(nodeTypes: readonly RawNodeEntry[]): Set<string> {
+	return new Set(nodeTypes.map((entry) => (entry.named ? entry.type : `_anonymous_${entry.type}`)));
 }
 
 interface NodeCategories {
@@ -443,7 +450,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) {
+				if (isWordOrBuilderTextLeaf(node)) {
 					leafKinds.push(kind);
 					keywordKinds.set(kind, node.text);
 				}
@@ -515,7 +522,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	const literalTextById = new Map<number, string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
-		for (const candidate of collectSeparatorCandidateKindNames(node.separatorRule)) {
+		for (const candidate of node.separatorCandidateKindNames) {
 			const entry = findKindEntry(entries, candidate);
 			if (entry === undefined) continue;
 			literalTextById.set(entry.id, candidate);
@@ -707,7 +714,7 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName, token: isHiddenPunctuationLeaf(n) };
+			return { sub, typeName: n.typeName, token: isBuilderlessPunctuationLeaf(n) };
 		});
 		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
@@ -741,12 +748,12 @@ function collectAndEmitTokenTypeAliases(
 	const referencedTokenTypeNames = new Set<string>();
 	for (const t of referenced) {
 		const ref = nodeMap.nodes.get(t);
-		if (ref !== undefined && isHiddenPunctuationLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
+		if (ref !== undefined && isBuilderlessPunctuationLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
 	}
 
 	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!isHiddenPunctuationLeaf(node)) continue;
+		if (!isBuilderlessPunctuationLeaf(node)) continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;

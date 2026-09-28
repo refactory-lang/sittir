@@ -8182,7 +8182,8 @@
           "name": "line_comment",
           "annotations": {
             "variant": "line_comment",
-            "variantOf": "comment"
+            "variantOf": "comment",
+            "default": true
           }
         },
         {
@@ -11585,6 +11586,15 @@
           },
           "named": true,
           "value": "blankline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_double_blankline"
+          },
+          "named": true,
+          "value": "double_blankline"
         },
         {
           "type": "ALIAS",
@@ -16302,6 +16312,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_double_blankline"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_indent"
     },
     {
@@ -16346,6 +16360,7 @@
     "char_literal",
     "escape_sequence",
     "_whitespace",
+    "comment",
     "reference_expression",
     "impl_item",
     "array_expression",

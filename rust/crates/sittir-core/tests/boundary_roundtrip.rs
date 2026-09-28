@@ -31,6 +31,8 @@ fn sample_leaf() -> NodeData {
         child_index: None,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 
@@ -63,6 +65,8 @@ fn sample_branch() -> NodeData {
         child_index: None,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 
@@ -242,6 +246,8 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
             child_index: None,
             trivia_data: None,
             slot_order: None,
+            same_line: false,
+            tokens_between: 0,
         }]),
         text: None,
         span: None,
@@ -249,6 +255,8 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
         child_index: None,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     };
     let json = serde_json::to_string(&node).unwrap();
     let v = wire(&json);

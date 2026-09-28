@@ -25,9 +25,11 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
+import { extrasClosure } from '../extras.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
@@ -69,6 +71,7 @@ export interface WireContext {
 	readonly groups?: GroupsConfig;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
+	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly options?: OptionsConfig;
@@ -377,7 +380,6 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
 	readonly options?: OptionsConfig;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -385,7 +387,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 };
 
 export interface WiredOpts {
-	readonly name?: string;
+	readonly name: string;
 	readonly rules: Record<string, RuleFn>;
 	readonly conflicts?: ConflictsFn;
 	readonly externals?: DollarFn<unknown[]>;
@@ -396,7 +398,6 @@ export interface WiredOpts {
 	readonly word?: DollarFn<unknown>;
 	readonly precedences?: DollarFn<unknown[][]>;
 	readonly reserved?: Record<string, DollarFn<unknown[]>>;
-	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly __wireContext__?: WireContext;
 }
 
@@ -410,8 +411,16 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	base: B,
 	source: unknown = base
 ): WiredOpts {
-	const cfg = config as unknown as WireConfig<any>;
-	const baseArg = base as unknown as BaseArg | undefined;
+	return wireImpl(config as unknown as WireConfig<any>, base, source);
+}
+
+export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
+	return wireImpl({ name }, base, base);
+}
+
+function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
+	const baseArg = base as BaseArg | undefined;
+	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
 	const context: WireContext = {
@@ -425,7 +434,8 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		refineForms: new Map(),
 		groups: cfg.groups,
 		renderAs: cfg.renderAs,
-		visibleExternals: cfg.visibleExternals,
+		visibleExternals,
+		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
 		options: cfg.options,
@@ -450,7 +460,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
-	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || visibleExternals)) {
 		const baseRules = baseRulesOf<RuleFn>(baseArg) ?? {};
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
@@ -463,7 +473,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	}
 	wrapAllRuleFns(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
-	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
+	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
 		for (const name of getEnrichClauseGroups(base)) {
@@ -679,11 +689,18 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 }
 
 interface BaseArg {
-	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown; extras?: unknown; precedences?: unknown };
+	grammar?: {
+		rules?: Record<string, RuleFn>;
+		externals?: unknown;
+		extras?: unknown;
+		precedences?: unknown;
+		supertypes?: unknown;
+	};
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
 	extras?: unknown;
 	precedences?: unknown;
+	supertypes?: unknown;
 }
 
 function symbolNamesOf(entries: unknown): Set<string> {
@@ -701,54 +718,59 @@ function symbolNamesOf(entries: unknown): Set<string> {
 	return names;
 }
 
-function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const basePrecedences = base?.grammar?.precedences ?? base?.precedences;
+function overriddenList(baseValue: unknown, own: unknown): unknown {
 	const previous = withStringGlobalShim(() =>
-		typeof basePrecedences === 'function'
-			? (basePrecedences as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
-			: basePrecedences
+		typeof baseValue === 'function'
+			? (baseValue as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
+			: baseValue
 	);
-	const own = (cfg as { precedences?: unknown }).precedences;
-	const groups =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? []))
-			: (own ?? previous);
+	return typeof own === 'function'
+		? withStringGlobalShim(() =>
+				(own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? [])
+			)
+		: (own ?? previous);
+}
+
+function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const groups = overriddenList(
+		base?.grammar?.precedences ?? base?.precedences,
+		(cfg as { precedences?: unknown }).precedences
+	);
 	const names = new Set<string>();
 	for (const group of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group)) names.add(name);
 	return names;
 }
 
 function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const baseExtras = base?.grammar?.extras ?? base?.extras;
-	const previous = withStringGlobalShim(() =>
-		typeof baseExtras === 'function' ? (baseExtras as (dollar: unknown) => unknown)(makeSimpleDollarProxy()) : baseExtras
+	const extras = symbolNamesOf(
+		overriddenList(base?.grammar?.extras ?? base?.extras, (cfg as { extras?: unknown }).extras)
 	);
-	const own = (cfg as { extras?: unknown }).extras;
-	const entries =
-		typeof own === 'function'
-			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous))
-			: (own ?? previous);
-	return symbolNamesOf(entries);
+	const supertypes = symbolNamesOf(
+		overriddenList(base?.grammar?.supertypes ?? base?.supertypes, (cfg as { supertypes?: unknown }).supertypes)
+	);
+	return extrasClosure(extras, supertypes, (name) => {
+		if (!supertypes.has(name)) return undefined;
+		const baseRule: unknown = base?.grammar?.rules?.[name] ?? base?.rules?.[name];
+		const own: unknown = cfg.rules?.[name];
+		const body = own ?? baseRule;
+		const rule = (
+			typeof body === 'function'
+				? withStringGlobalShim(() =>
+						(body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), baseRule)
+					)
+				: body
+		) as { type?: unknown; members?: unknown } | undefined;
+		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
+	});
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
 	const externals = base?.grammar?.externals ?? base?.externals;
-	const entries =
+	return symbolNamesOf(
 		typeof externals === 'function'
 			? withStringGlobalShim(() => (externals as (dollar: unknown) => unknown)(makeSimpleDollarProxy()))
-			: externals;
-	const names = new Set<string>();
-	for (const external of Array.isArray(entries) ? entries : []) {
-		if (typeof external === 'string') {
-			names.add(external);
-			continue;
-		}
-		const symbol = external as { type?: unknown; name?: unknown } | null;
-		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
-			names.add(symbol.name);
-		}
-	}
-	return names;
+			: externals
+	);
 }
 
 function injectPlaceholderHiddenRules(
@@ -1144,6 +1166,20 @@ function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyM
 		const result = fn($, previous);
 		return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
 	};
+}
+
+function withEnrichedWhitespace(
+	config: VisibleExternalsConfig | undefined,
+	base: unknown
+): { readonly visibleExternals: VisibleExternalsConfig | undefined; readonly whitespaceCollisions: readonly WhitespaceCollision[] } {
+	const { bodies, collisions } = getEnrichWhitespace(base);
+	const declared = config === undefined ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
+	const whitespaceCollisions = [
+		...collisions,
+		...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: 'visibleExternals' as const }))
+	];
+	if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
+	return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
 }
 
 function applyWireVisibleExternalsRewrite(

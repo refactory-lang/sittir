@@ -7,9 +7,10 @@ export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.t
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertRenderableNodeData, isRenderableNodeData } from './native-boundary.ts';
 export { normalizeNativeReadNode } from './native-read.ts';
-export { toTransportData, stripStructuralProvenance, markEdited } from './transport-data.ts';
-export { projectInterior, lexedConfig } from './interior.ts';
+export { toTransportData, stripStructuralProvenance, markEdited, detachCoordinate } from './transport-data.ts';
+export { projectInterior, lexedConfig, spelledForm, spelledInterior, refuseSiblingLead } from './interior.ts';
 export { numberText } from './number.ts';
 export type { NumberBase } from './number.ts';
 export type { TokenInterior, InteriorSlot, ProjectedInterior } from './interior.ts';
 export { sliceSpan, spanSlicer, type ByteSpan } from './span.ts';
+export { mapTriviaEntries, type TriviaSides } from './trivia.ts';

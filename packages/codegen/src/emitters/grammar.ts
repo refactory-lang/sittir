@@ -1,4 +1,4 @@
-import { loadRawEntries } from '../validate/node-types-loader.ts';
+import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import { snakeToCamel } from '../compiler/model/node-map.ts';
 
 function toGrammarTypeName(grammar: string): string {
@@ -8,23 +8,14 @@ function toGrammarTypeName(grammar: string): string {
 
 export interface EmitGrammarConfig {
 	grammar: string;
-}
-
-interface RawNodeEntry {
-	type: string;
-	named: boolean;
-	fields?: Record<string, unknown>;
-	children?: unknown;
-	subtypes?: unknown[];
+	nodeTypes: readonly RawNodeEntry[];
 }
 
 export function emitGrammar(config: EmitGrammarConfig): string {
-	const { grammar } = config;
+	const { grammar, nodeTypes: entries } = config;
 	const grammarTypeName = toGrammarTypeName(grammar);
 	const grammarPrefix = grammarTypeName.slice(0, -5);
 	const grammarAlias = `${grammarPrefix}Grammar`;
-
-	const entries: RawNodeEntry[] = loadRawEntries(grammar);
 
 	const lines: string[] = [];
 

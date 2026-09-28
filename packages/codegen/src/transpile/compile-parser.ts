@@ -1,7 +1,7 @@
 import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { pruneOrphanedPlaceholderRules } from './prune-grammar-json.ts';
+import { runTreeSitterCli } from './tree-sitter-cli.ts';
 import { upstreamPackage } from '../grammars.ts';
 
 export interface CompileOptions {
@@ -28,18 +28,12 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 		}
 	}
 
-	execFileSync('npx', ['tree-sitter', 'generate'], {
-		cwd: sittirDir,
-		stdio: 'pipe'
-	});
+	runTreeSitterCli(['generate'], sittirDir, 'pipe');
 	pruneOrphanedPlaceholderRules(sittirDir);
 
 	syncExternalScanner(grammarDir, sittirDir);
 
-	execFileSync('npx', ['tree-sitter', 'build', '--wasm', '-o', 'parser.wasm'], {
-		cwd: sittirDir,
-		stdio: 'pipe'
-	});
+	runTreeSitterCli(['build', '--wasm', '-o', 'parser.wasm'], sittirDir, 'pipe');
 
 	return wasmPath;
 }

@@ -17,6 +17,10 @@ use crate::types::Span;
 pub struct NodeCoordinate {
     pub handle: u64,
     pub span: Span,
+    /// The kind the reader stamped on the node, when the wire carries it. A
+    /// handle names a tree position, which for trivia is its owner's, so the
+    /// stamp is the kind's source whenever it is present.
+    pub kind: Option<crate::types::KindId>,
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
@@ -41,8 +45,15 @@ impl NodeCoordinate {
         Self {
             handle,
             span,
+            kind: None,
             edges: None,
         }
+    }
+
+    /// The kind this coordinate names: the reader's stamp when it carries one,
+    /// else the node its handle resolves to in `sources`.
+    pub fn kind_in(&self, sources: &dyn crate::render::SourceTable) -> Option<crate::types::KindId> {
+        self.kind.or_else(|| sources.kind_of(self))
     }
 
     /// Write this coordinate's bytes between its kind's edge seams, the seams a
@@ -198,7 +209,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
                         "coordinate with $nodeHandle {handle} carries no $span"
                     ))
                 })?;
-                return Ok(Self::Coord(NodeCoordinate::new(handle, span)));
+                let kind = obj.get::<u32>("$type")?.map(|id| crate::types::KindId(id as u16));
+                return Ok(Self::Coord(NodeCoordinate { kind, ..NodeCoordinate::new(handle, span) }));
             }
         }
         Ok(Self::Transport(unsafe {

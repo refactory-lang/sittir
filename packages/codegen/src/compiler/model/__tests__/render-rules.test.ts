@@ -86,6 +86,13 @@ describe('spaceRenderRules', () => {
 		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', arm: 'space', default: true });
 	});
 
+	it('defaults a gap to tight when the whitespace supertype has no space member', () => {
+		const nodeMap = nodeMapOf({ list: commaList() }, { r1: 'items' }, { supertypes: { _whitespace: ['_tight', '_newline', '_blankline'] } });
+		const spaced = spacedSeparatorOf(spaceRenderRules({ nodeMap, kindEntries }).rules.list!)!;
+		expect(spaced.before?.defaultArm).toBe('tight');
+		expect(spaced.before?.arms).toEqual(['tight', 'newline', 'blankline']);
+	});
+
 	it('gives an unseparated repeat the empty gap choice as its separator', () => {
 		const block = sym('statement', { id: 'r2', multiplicity: 'array', fieldName: 'statements' });
 		const out = spaceRenderRules({ nodeMap: nodeMapOf({ block }, { r2: 'statements' }), kindEntries });

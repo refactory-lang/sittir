@@ -6769,10 +6769,6 @@
 			"text": "/"
 		},
 		{
-			"kind": "seam",
-			"field": "slash_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{

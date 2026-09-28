@@ -12,8 +12,8 @@ import {
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
-import { RuleWalker } from './rule-walker.ts';
-import { withId } from './rule-attrs.ts';
+import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
+import { absorbIds, withId } from './rule-attrs.ts';
 import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
@@ -38,7 +38,7 @@ export interface DistributeAliasCtx {
 }
 
 export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: DistributeAliasCtx): R {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const distributed = new WeakSet<object>();
 	const inlineChoiceOf = (content: R): R | undefined => {
 		if (content.type !== SYMBOL) return undefined;
@@ -70,7 +70,7 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 }
 
 export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
 		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value)) return undefined;
@@ -123,7 +123,7 @@ export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<str
 		const name = r.type === SYMBOL ? (r as unknown as { name: string }).name : undefined;
 		return name !== undefined && displayByRule.has(name) ? name : undefined;
 	};
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const visit = (r: R): R => {
 		const name = lifted(r);
 		if (name !== undefined) return { ...displayByRule.get(name)!, content: r } as unknown as R;
@@ -150,7 +150,7 @@ type AliasSite<R> = NamedAliasShape<R> & { readonly value: string };
 type StorageOf = { readonly key: string; readonly symbol?: string; readonly terminal: boolean };
 
 export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<string, R>, ctx: OverloadedDisplayCtx): Record<string, R> {
-	const walker = new RuleWalker<R>();
+	const walker = new SyntacticRuleWalker<R>();
 	const siteOf = (r: R): AliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
 		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;
@@ -400,7 +400,7 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
 const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray';
 function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
-	if (a.type !== b.type) return false;
+	if (a.type !== b.type || (a as { fieldName?: string }).fieldName !== (b as { fieldName?: string }).fieldName) return false;
 	switch (a.type) {
 		case SYMBOL:
 			return a.name === (b as typeof a).name && a.aliasedTo === (b as typeof a).aliasedTo;
@@ -426,7 +426,7 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 
 	const nextMult = (next as { multiplicity?: Mult }).multiplicity;
 	if (isArrayMult(nextMult) && sameSlotShape(head, next)) {
-		return next;
+		return absorbIds(next, head);
 	}
 
 	if (next.type === CHOICE && next.members.length === 2) {
@@ -436,28 +436,16 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 		);
 		if (sepArm && repArm) {
 			const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-			if (repSep !== undefined) return repArm;
+			if (repSep !== undefined) return absorbIds(repArm, head, next);
 			const sepStr = (sepArm as { value: string }).value;
-			return {
-				...(repArm as object),
-				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: 'mandatory' as const }
-			} as AnyRule;
-		}
-	}
-
-	if (next.type === CHOICE && next.members.length === 2) {
-		const sepArm = next.members.find((m) => m.type === STRING);
-		const repArm = next.members.find(
-			(m) => isArrayMult((m as { multiplicity?: Mult }).multiplicity) && sameSlotShape(head, m)
-		);
-		if (sepArm && repArm) {
-			const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-			if (repSep !== undefined) return repArm;
-			const sepStr = (sepArm as { value: string }).value;
-			return {
-				...repArm,
-				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: 'optional' }
-			} as AnyRule;
+			return absorbIds(
+				{
+					...(repArm as object),
+					separator: { value: { type: STRING, value: sepStr } as Rule, trailing: 'mandatory' as const }
+				} as AnyRule,
+				head,
+				next
+			);
 		}
 	}
 

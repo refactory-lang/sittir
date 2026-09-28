@@ -378,9 +378,29 @@ and a literal member is a terminal by its own stamp
 A member that is neither a rule, an external nor a literal is reported
 rather than defaulted, since defaulting would make the guard guess.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
+
+One blocking `field-optional-delimiter` record per authored-compound slot
+with an optional leading or trailing delimiter (`optionalFlankSlots`),
+owned by the kind and naming the slot and its optional flanks. The
+resolving form makes the delimited list its own kind; floored, the flank
+is off the factory surface and render keeps it as authored.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::undeclaredSeparatorDiagnostics`
+
+One blocking `separator-default-undeclared` record per list separator site
+no `options:` entry gives a default (`undeclaredSeparatorSites`, the
+resolution the emitter reads), owned by the list kind and naming its arms.
+The resolving form is an `options:` entry at the site's address; floored,
+the separator is a required construction input.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::reservedMemberDiagnostics`
 
 One `reserved-member-not-literal` warning per reserved-wordset member that `reservedWordset` cannot read as literal text. The word builder's reserved guard cannot reject a word it cannot spell, so the member is named for the author to rewrite as a string or a single-literal symbol.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::triviaLineEndDiagnostics`
+
+One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTerminated` is undetermined: an arm ends in an external token with no render rule. The remedy is to author the external's render-only rule in `grammar.sittir.ts` (the text it scans), which `lineTerminated` then reads like any token body. No grammar has one today.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
@@ -405,7 +425,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), and a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), and a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -512,7 +532,9 @@ patch resolves them, so they are patch-site provocations, not rule causes.
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
 
 Judges a grammar's hand-authored departures against its enriched stage's records. They are evaluate-time
-records, so the gate checks them before link.
+records, so the gate checks them before link. A grammar that departs from its
+upstream in no rule or patch has no stages; it is judged only for whitespace
+collisions, which need none.
 Both sides are compared by authored names: `compileGrammar` passes the
 evaluated grammar, not the one `collectGrammarDiagnosticsForGrammar` returns,
 because with generated id tables that one has hidden rules and `renderAs:`
@@ -520,6 +542,13 @@ keys collapsed to their display names, while the enriched stage (no id
 tables) never collapses. Every code it emits blocks, and every message names
 the declaration or deletion that resolves it:
 
+- `whitespace-mint-collision`: a name enrich mints for the whitespace
+  vocabulary that the grammar also defines, stamped where it is found
+  (`WhitespaceCollision`): a `visibleExternals:` key naming a minted member
+  (delete the entry), or an upstream rule named `_whitespace` or a member
+  whose definition differs from the minted one. The minted definition wins in
+  both, so the tree-sitter build still completes; this record stops the
+  compile. Judged without the enriched stage.
 - `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
   enriched stage.
 - `render-only-not-external`: a `renderAs:` key that is not an upstream
@@ -537,7 +566,11 @@ the declaration or deletion that resolves it:
 `vocabulary-replaces-upstream` for a `vocabulary` entry upstream also
 declares, else nothing.
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::WHITESPACE_COLLISION_MESSAGES`
+
+The `whitespace-mint-collision` message for each collision site: a `visibleExternals` key is deleted by its author, while an upstream definition is replaced by the minted one.
+
+## `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
 
 The `reauthored` judgement: the declared cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
 `PROVOKING_CODES` code must fire on it upstream, and one of those codes must

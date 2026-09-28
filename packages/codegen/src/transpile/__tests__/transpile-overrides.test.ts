@@ -14,6 +14,7 @@ import { describe, it, expect, afterAll } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { transpileOverrides } from '../transpile-overrides.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 // __tests__ is 4 levels down from the `packages/` directory:
 // packages/codegen/src/transpile/__tests__/ → up 4 → packages/
@@ -33,7 +34,7 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('produces .sittir/grammar.js, package.json, tree-sitter.json', async () => {
-		const result = await transpileOverrides({ grammar: GRAMMAR });
+		const result = await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		expect(result.outputPath).toBe(join(outputDir, 'grammar.js'));
 		expect(existsSync(result.outputPath)).toBe(true);
 		expect(existsSync(join(outputDir, 'package.json'))).toBe(true);
@@ -43,7 +44,7 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('writes package.json with CommonJS type + tree-sitter metadata', async () => {
-		await transpileOverrides({ grammar: GRAMMAR });
+		await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		const pkg = JSON.parse(readFileSync(join(outputDir, 'package.json'), 'utf8'));
 		expect(pkg.name).toBe(`tree-sitter-${GRAMMAR}`);
 		expect(pkg.type).toBe('commonjs');
@@ -52,7 +53,7 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('writes tree-sitter.json with ABI-15 schema', async () => {
-		await transpileOverrides({ grammar: GRAMMAR });
+		await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		const cfg = JSON.parse(readFileSync(join(outputDir, 'tree-sitter.json'), 'utf8'));
 		expect(cfg.$schema).toMatch(/tree-sitter\.github\.io.*config\.schema\.json/);
 		expect(cfg.grammars[0].name).toBe(GRAMMAR);
@@ -61,14 +62,14 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('copies the base scanner.c for grammars with external scanners', async () => {
-		await transpileOverrides({ grammar: GRAMMAR });
+		await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		// python ships an external scanner; the transpile step should
 		// have copied it into .sittir/src/scanner.c.
 		expect(existsSync(join(outputDir, 'src', 'scanner.c'))).toBe(true);
 	});
 
 	it('externalizes tree-sitter base packages (including transitive deps)', async () => {
-		await transpileOverrides({ grammar: GRAMMAR });
+		await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		const bundled = readFileSync(join(outputDir, 'grammar.js'), 'utf8');
 		// The bundle should `require()` the base grammar package by
 		// name, NOT inline its whole rules object. If the externalize
@@ -82,7 +83,7 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('flattens module.exports.default so tree-sitter sees the grammar at top level', async () => {
-		await transpileOverrides({ grammar: GRAMMAR });
+		await transpileOverrides({ package: grammarPackage(GRAMMAR) });
 		const bundled = readFileSync(join(outputDir, 'grammar.js'), 'utf8');
 		// The footer must be present — tree-sitter CLI expects
 		// `module.exports` to be the grammar itself, not wrapped in
@@ -91,6 +92,6 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('throws when grammar.sittir.ts does not exist', async () => {
-		await expect(transpileOverrides({ grammar: 'nonexistent-grammar-xyz' })).rejects.toThrow(/no grammar\.sittir\.ts/);
+		await expect(transpileOverrides({ package: grammarPackage('nonexistent-grammar-xyz') })).rejects.toThrow(/no grammar\.sittir\.ts/);
 	});
 });

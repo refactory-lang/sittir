@@ -293,6 +293,8 @@ would otherwise report a passing 0/0 run.
  */
 ```
 
+Every trivia side is walked (leading, trailing and inner), and a node found in a trivia entry or anywhere inside one is returned as `embeddedData`: an entry is read whole and has no handle and child index of its own. When the caller passes a `span` (the from validator passes its CST node's), a node inside trivia matches only at that `$span`, a stamped read fact, so no text is compared.
+
 #### body
 
 ```text
@@ -1666,3 +1668,35 @@ and is read with `readFileSync` on the path.
  * when no factory is registered for `kind`.
  */
 ```
+
+### `packages/tools/src/validate/trivia-placement.ts::module`
+
+The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the reader itself. For every extra in a source's tree-sitter parse, the census finds the `$_trivia` entry with the extra's span in the native deep read. It records the owner's kind and the position (`leading`, `trailing` or `inner:<gap key>`), or `lost` when no entry holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
+
+### `packages/tools/src/validate/trivia-placement.ts::readPlacements`
+
+Every trivia entry in a deep read, keyed by its `$span`, with the owning node's kind id and the entry's position. Entries are found wherever a node carries `$_trivia`: fields, arrays and `$other` alike.
+
+### `packages/tools/src/validate/trivia-placement.ts::parsedExtras`
+
+The outermost extras of a tree-sitter tree, in document order. An extra's own children are part of its entry, never separate extras.
+
+### `packages/tools/src/validate/trivia-placement.ts::placementReader`
+
+One grammar's parser and native engine, paired so that each source is parsed once for its extras and read once for its placements. Spans match across the two because both count from the start of the same source text, the convention the other validators use to find a native node by a tree-sitter span.
+
+### `packages/tools/src/validate/trivia-placement.ts::runTriviaPlacement`
+
+The placement rows for one source text, for probes and tests.
+
+### `packages/tools/src/validate/trivia-placement.ts::computeTriviaPlacementCensus`
+
+The rows and summary for one grammar's whole corpus. Entries that parse with errors are skipped.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
+
+Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
+
+Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.

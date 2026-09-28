@@ -123,8 +123,8 @@ var isSymbolType = (t) => typeEq(t, "SYMBOL");
 var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
-function compileAnchoredPattern(source) {
-  const anchored = `^(?:${source})$`;
+function compileAnchoredPattern(source, anchor = "whole") {
+  const anchored = anchor === "whole" ? `^(?:${source})$` : `^(?:${source})`;
   try {
     return { regex: new RegExp(anchored, "u") };
   } catch {
@@ -139,8 +139,17 @@ function patternAcceptsEmpty(source) {
   const compiled = compileAnchoredPattern(source);
   return "regex" in compiled && compiled.regex.test("");
 }
+function realizesEmpty(rule, ctx) {
+  const settled = ctx.settled(rule);
+  if (settled !== void 0) return settled;
+  const children = ctx.children(rule);
+  return ctx.isChoice(rule) ? children.some((child) => realizesEmpty(child, ctx)) : children.every((child) => realizesEmpty(child, ctx));
+}
 
 // packages/codegen/src/dsl/rule-walker.ts
+function isLexedBoundary(rule) {
+  return isTokenWrapperType(rule.type);
+}
 var RuleWalker = class {
   #rules;
   diagnostics;
@@ -148,7 +157,11 @@ var RuleWalker = class {
     this.#rules = rules;
     this.diagnostics = diagnostics;
   }
+  descends(_rule) {
+    return true;
+  }
   childEdgesOf(rule) {
+    if (!this.descends(rule)) return [];
     const out = [];
     const bag = rule;
     if (Array.isArray(bag.members)) {
@@ -164,6 +177,7 @@ var RuleWalker = class {
     return this.childEdgesOf(rule).map((e) => e.child);
   }
   map(rule, visit) {
+    if (!this.descends(rule)) return rule;
     const bag = rule;
     const patch = {};
     if (Array.isArray(bag.members)) {
@@ -237,6 +251,11 @@ var RuleWalker = class {
       return void 0;
     };
     return go(rule);
+  }
+};
+var SyntacticRuleWalker = class extends RuleWalker {
+  descends(rule) {
+    return !isLexedBoundary(rule);
   }
 };
 
@@ -823,6 +842,9 @@ function optionalContentOf(rule) {
   if (isBlank(first) === isBlank(second)) return void 0;
   return isBlank(second) ? first : second;
 }
+function isArmChoice(rule) {
+  return rule.type === CHOICE && optionalContentOf(rule) === void 0;
+}
 function isImmediateToken(rule) {
   return rule.type === IMMEDIATE_TOKEN || rule.type === TOKEN && rule.immediate === true;
 }
@@ -874,23 +896,31 @@ function separatorOf(resolved, symbols) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.isTerminal);
+  const isToken = (r) => isArmChoice(r) && terminalContentOf(r, symbols.isTerminal);
   if (isToken(first) && !secondIsStr) return { content: second, separator: first };
   if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
+var ruleEmptiness = {
+  settled(rule) {
+    if (!rule || typeof rule !== "object") return false;
+    const r = rule;
+    const t = r.type;
+    if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+    if (t === STRING) return r.value === "";
+    if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+    if (t === SEQ || t === CHOICE || t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return void 0;
+    return false;
+  },
+  children(rule) {
+    const r = rule;
+    if (r.type === SEQ || r.type === CHOICE) return Array.isArray(r.members) ? r.members : [];
+    return [r.content];
+  },
+  isChoice: (rule) => rule.type === CHOICE
+};
 function matchesEmpty(rule) {
-  if (!rule || typeof rule !== "object") return false;
-  const r = rule;
-  const t = r.type;
-  if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
-  if (t === STRING) return r.value === "";
-  if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
-  const members = Array.isArray(r.members) ? r.members : [];
-  if (t === SEQ) return members.every(matchesEmpty);
-  if (t === CHOICE) return members.some(matchesEmpty);
-  if (t === REPEAT1 || t === FIELD || isPrecWrapper(r)) return matchesEmpty(r.content);
-  return false;
+  return realizesEmpty(rule, ruleEmptiness);
 }
 function collectSlots(members, rulesBag) {
   const slots = [];
@@ -1196,6 +1226,19 @@ function ruleListParts(rules) {
   }
   return parts;
 }
+function nodelessExtrasRun(extras, rules) {
+  const { names, literals, patterns } = ruleListParts(extras);
+  const symbolSources = names.filter(isParserHiddenName).flatMap((name) => {
+    const rule = rules[name];
+    const source = rule === void 0 ? null : ruleToRegexSource(rule);
+    return source === null ? [] : [source];
+  });
+  const sources = [...patterns, ...literals.map(escapeRegexLiteral), ...symbolSources];
+  if (sources.length === 0) return void 0;
+  const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join("|")})+`);
+  if ("error" in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
+  return compiled.regex;
+}
 function symbolFactsOf(grammar2) {
   return {
     rules: grammar2.rules,
@@ -1452,6 +1495,8 @@ function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) 
   seen.add(rule);
   const t = rule.type;
   if (typeof t !== "string") return void 0;
+  const optional2 = optionalContentOf(rule);
+  if (optional2 !== void 0) return armLeadingSymbolName(optional2, rulesBag, seen);
   if (isSymbolType(t)) {
     const name = rule.name;
     if (typeof name !== "string") return void 0;
@@ -1720,6 +1765,15 @@ function supertypeMemberName(memberKind, supertypeKind) {
 }
 function armNameOf(owner, display, ownerIsSupertype) {
   return ownerIsSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
+}
+
+// packages/codegen/src/util/reachable-rules.ts
+function rootRuleName(rules) {
+  return Object.keys(rules)[0];
+}
+function grammarRootNames(grammar2) {
+  const start = rootRuleName(grammar2.rules);
+  return [...start === void 0 ? [] : [start], ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)];
 }
 
 // packages/codegen/src/dsl/symbol-table.ts
@@ -2369,10 +2423,7 @@ function referencedNames(rule, into) {
 }
 function liveRuleNames(grammar2) {
   const live = /* @__PURE__ */ new Set();
-  const pending = [
-    ...Object.keys(grammar2.rules).slice(0, 1),
-    ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)
-  ];
+  const pending = grammarRootNames(grammar2);
   while (pending.length > 0) {
     const name = pending.pop();
     if (live.has(name) || !(name in grammar2.rules)) continue;
@@ -2720,7 +2771,7 @@ function innermostNamedAliasContent(rule) {
   return current;
 }
 function distributeInlineAliasChoices(rule, ctx) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const distributed = /* @__PURE__ */ new WeakSet();
   const inlineChoiceOf = (content) => {
     if (content.type !== SYMBOL) return void 0;
@@ -2750,7 +2801,7 @@ function distributeInlineAliasChoices(rule, ctx) {
   return visit(walker.map(rule, visit));
 }
 function mintInlineLiteralAliasStorage(rules) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const literalAliasOf = (r) => {
     const alias3 = r;
     if (alias3.type !== ALIAS || alias3.named !== true || !alias3.value || Object.hasOwn(rules, alias3.value)) return void 0;
@@ -2802,7 +2853,7 @@ function liftAliasedHiddenRuleBodies(rules) {
     const name = r.type === SYMBOL ? r.name : void 0;
     return name !== void 0 && displayByRule.has(name) ? name : void 0;
   };
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const visit = (r) => {
     const name = lifted(r);
     if (name !== void 0) return { ...displayByRule.get(name), content: r };
@@ -2820,7 +2871,7 @@ function liftAliasedHiddenRuleBodies(rules) {
   return out;
 }
 function unaliasOverloadedDisplays(rules, ctx) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const siteOf = (r) => {
     const alias3 = r;
     return alias3.type === ALIAS && alias3.named === true && alias3.value ? alias3 : void 0;
@@ -2906,6 +2957,77 @@ function baseRulesOf(base2) {
   const grammar2 = "grammar" in base2 ? base2.grammar : base2;
   if (!grammar2 || typeof grammar2 !== "object") return void 0;
   return grammar2.rules;
+}
+
+// packages/codegen/src/dsl/primitives/spacing.ts
+var WHITESPACE_SUPERTYPE = "_whitespace";
+var INDENT_TEXT = "\uFDD0\n";
+var DEDENT_TEXT = "\uFDD1\n";
+function isDepthText(text) {
+  return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var LABEL_TOKEN = "[A-Za-z][A-Za-z0-9_]*?";
+var SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
+function parseSpacingLabel(name) {
+  const m = SPACING_LABEL.exec(name);
+  if (!m) return void 0;
+  const token2 = m[1];
+  const side = m[2];
+  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
+  return side === void 0 ? void 0 : { token: token2, side };
+}
+var SEAM_LABEL = new RegExp(`^(${LABEL_TOKEN})_(before|after)$`);
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
+}
+var FLANK_ADDRESS = new RegExp(`^(_*${LABEL_TOKEN})_(start|end)$`);
+function parseFlankAddress(key) {
+  const m = FLANK_ADDRESS.exec(key);
+  return m ? { kind: m[1], side: m[2] } : void 0;
+}
+
+// packages/codegen/src/dsl/whitespace.ts
+var TIGHT_MEMBER = "_tight";
+var SPACE_MEMBER = "_space";
+var NEWLINE_MEMBER = "_newline";
+var HORIZONTAL_SPACE = " ";
+var WHITESPACE_MEMBERS = [
+  { name: TIGHT_MEMBER, body: { type: STRING, value: "" }, alwaysAdmitted: true },
+  { name: SPACE_MEMBER, body: { type: STRING, value: " " } },
+  { name: NEWLINE_MEMBER, body: { type: STRING, value: "\n" } },
+  { name: "_blankline", body: { type: STRING, value: "\n\n" } },
+  { name: "_double_blankline", body: { type: STRING, value: "\n\n\n" } },
+  { name: "_indent", body: { type: STRING, value: INDENT_TEXT } },
+  { name: "_dedent", body: { type: STRING, value: DEDENT_TEXT } }
+];
+function admittedTextOf(text) {
+  return isDepthText(text) ? HORIZONTAL_SPACE : text;
+}
+function admitsWhitespaceMember(run, name, text) {
+  const alwaysAdmitted = WHITESPACE_MEMBERS.find((member) => member.name === name)?.alwaysAdmitted === true;
+  return alwaysAdmitted || (run?.test(admittedTextOf(text)) ?? false);
+}
+function enrichWhitespace(externals, extras, rules) {
+  const run = nodelessExtrasRun(extras, rules);
+  const upstream = new Set(ruleListParts(externals).names);
+  const members = WHITESPACE_MEMBERS.filter(
+    (member) => admitsWhitespaceMember(run, member.name, member.body.value) && !(isDepthText(member.body.value) && upstream.has(member.name))
+  );
+  const rule = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
+  const minted = [
+    [WHITESPACE_SUPERTYPE, rule],
+    ...members.filter((member) => !upstream.has(member.name)).map((member) => [member.name, member.body])
+  ];
+  return {
+    members: members.map((member) => member.name),
+    addedExternals: members.filter((member) => !upstream.has(member.name)).map((member) => member.name),
+    bodies: Object.fromEntries(members.map((member) => [member.name, member.body])),
+    rule,
+    collisions: minted.filter(([name, body]) => rules[name] !== void 0 && !rulesEqual(rules[name], body)).map(([name]) => ({ name, site: "upstream" }))
+  };
 }
 
 // packages/codegen/src/dsl/automatic-variants.ts
@@ -3087,7 +3209,7 @@ function enrich(baseInput, authored = {}) {
     supertypeNames,
     externals: extractGrammarRuleList(base2, hasWrapper, "externals"),
     inline: inlineNames,
-    extras: extractGrammarRuleList(base2, hasWrapper, "extras"),
+    extras: effectiveExtras(base2, hasWrapper, authored.extras),
     word: extractWordName(grammarMeta?.word),
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
@@ -3158,10 +3280,21 @@ function enrich(baseInput, authored = {}) {
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+  const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
+  for (const { name } of whitespace.collisions) delete mergedRules[name];
+  mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
-  addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
-  replaceExtras(hasWrapper ? result.grammar : result, tokenFormArms(mergedRules, tokenFormParents));
+  const resultGrammar = hasWrapper ? result.grammar : result;
+  appendGrammarNames(resultGrammar, "supertypes", [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
+  appendGrammarNames(resultGrammar, "externals", whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
+  replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
+  Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
+    value: { bodies: whitespace.bodies, collisions: whitespace.collisions },
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
@@ -3195,6 +3328,10 @@ function enrich(baseInput, authored = {}) {
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
+var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
+function getEnrichWhitespace(grammar2) {
+  return grammar2?.[ENRICH_WHITESPACE_KEY] ?? { bodies: {}, collisions: [] };
+}
 function getEnrichClauseGroups(grammar2) {
   if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
   const names = grammar2[ENRICH_CLAUSE_GROUPS_KEY];
@@ -3335,12 +3472,12 @@ function defaultTokenFormArm(members, rules) {
   });
   return best < 0 ? 0 : best;
 }
-function addSupertypes(result, names) {
+function appendGrammarNames(result, key, names, entryOf) {
   if (names.length === 0) return;
-  const current = result.supertypes;
+  const current = result[key];
   if (typeof current === "function") {
     const fn = current;
-    result.supertypes = (dollar, previous) => {
+    result[key] = (dollar, previous) => {
       const base3 = fn(dollar, previous);
       const listed2 = harvestSupertypeNames(base3);
       return [...base3, ...names.filter((n) => !listed2.has(n)).map((n) => dollar[n])];
@@ -3349,14 +3486,18 @@ function addSupertypes(result, names) {
   }
   const base2 = Array.isArray(current) ? current : [];
   const listed = harvestSupertypeNames(base2);
-  result.supertypes = [...base2, ...names.filter((n) => !listed.has(n))];
+  result[key] = [...base2, ...names.filter((n) => !listed.has(n)).map(entryOf)];
 }
 function grammarListOf(base2, hasWrapper, key) {
   const root = hasWrapper ? base2.grammar : base2;
   const list = root?.[key];
   if (Array.isArray(list)) return list;
   if (typeof list !== "function") return [];
-  const dollar = new Proxy(
+  const result = list(symbolDollar());
+  return Array.isArray(result) ? result : [];
+}
+function symbolDollar() {
+  return new Proxy(
     {},
     {
       get(_t, prop) {
@@ -3364,14 +3505,21 @@ function grammarListOf(base2, hasWrapper, key) {
       }
     }
   );
-  const result = list(dollar);
-  return Array.isArray(result) ? result : [];
+}
+function effectiveExtras(base2, hasWrapper, authored) {
+  const upstream = extractGrammarRuleList(base2, hasWrapper, "extras");
+  if (authored === void 0) return upstream;
+  const result = authored(symbolDollar(), upstream);
+  return ruleListEntries(Array.isArray(result) ? result : [], "extras");
 }
 function extractGrammarSymbolNames(base2, hasWrapper, key) {
   return harvestSupertypeNames(grammarListOf(base2, hasWrapper, key));
 }
 function extractGrammarRuleList(base2, hasWrapper, key) {
-  return grammarListOf(base2, hasWrapper, key).map((value) => {
+  return ruleListEntries(grammarListOf(base2, hasWrapper, key), key);
+}
+function ruleListEntries(values, key) {
+  return values.map((value) => {
     const entry = ruleListEntryOf(value);
     if (entry === void 0) throw new Error(`enrich: an entry of ${key} is not a SYMBOL, STRING or PATTERN rule`);
     return entry;
@@ -3418,7 +3566,8 @@ function applyChoiceArmFieldWrap(ruleName, rule, ctx) {
     const seqMembers = armCursor.members;
     const existing = collectFieldNamesRuntime(armCursor);
     let armChanged = false;
-    const newSeqMembers = seqMembers.map((m) => {
+    const newSeqMembers = seqMembers.map((m, i) => {
+      if (separatedListTail(seqMembers, i, ctx.sourceSymbols)) return m;
       const t = detectSymbolTarget(m);
       if (!t) return m;
       if (!isBareShapeTarget(m, t)) return m;
@@ -3452,16 +3601,13 @@ function applyChoiceArmFieldWrap(ruleName, rule, ctx) {
   }
   return result;
 }
+var syntacticWalker = new SyntacticRuleWalker();
 function collectAllFieldNamesDeep(rule, into) {
-  if (isFieldType(rule.type) && typeof rule.name === "string") {
-    into.add(rule.name);
-  }
-  const bag = rule;
-  if (Array.isArray(bag.members)) {
-    for (const m of bag.members) collectAllFieldNamesDeep(m, into);
-  } else if (bag.content && typeof bag.content === "object") {
-    collectAllFieldNamesDeep(bag.content, into);
-  }
+  syntacticWalker.fold(rule, into, (names, r) => {
+    const name = r.name;
+    if (isFieldType(r.type) && typeof name === "string") names.add(name);
+    return names;
+  });
 }
 function isAllArmsNodeShaped(choiceRule) {
   const members = choiceRule.members;
@@ -3545,7 +3691,7 @@ function sameElementShape(a, b) {
 function hasFieldedArm(rule) {
   const cursor = peelTransparentElementWrappers(rule);
   const members = cursor.members;
-  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+  return isArmChoice(cursor) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
 }
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
@@ -3569,31 +3715,39 @@ function deriveElementFieldName(elementRule) {
   }
   return "element";
 }
+function separatedListTail(members, i, symbols) {
+  const leading = members[i];
+  let repeatCursor = members[i + 1];
+  if (leading === void 0 || repeatCursor === void 0) return null;
+  const outerPrecStack = [];
+  while (isPrecWrapper(repeatCursor)) {
+    outerPrecStack.push(repeatCursor);
+    repeatCursor = repeatCursor.content;
+  }
+  if (!isRepeatType(repeatCursor.type)) return null;
+  let inner = repeatCursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  const detected = separatorOf(inner, symbols);
+  if (!detected || detected.trailing) return null;
+  const innerElement = detected.content;
+  if (!sameElementShape(leading, innerElement)) return null;
+  if (hasFieldedArm(leading)) return null;
+  if (matchesEmpty(leading)) return null;
+  return { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack };
+}
 function fieldSeparatedListElements(seqRule, reserve, symbols) {
   const members = seqRule.members;
   if (!Array.isArray(members)) return null;
   for (let i = 0; i < members.length - 1; i++) {
     const leading = members[i];
     if (isFieldType(leading.type)) continue;
-    let repeatCursor = members[i + 1];
-    const outerPrecStack = [];
-    while (isPrecWrapper(repeatCursor)) {
-      outerPrecStack.push(repeatCursor);
-      repeatCursor = repeatCursor.content;
-    }
-    if (!isRepeatType(repeatCursor.type)) continue;
-    let inner = repeatCursor.content;
-    const innerPrecStack = [];
-    while (isPrecWrapper(inner)) {
-      innerPrecStack.push(inner);
-      inner = inner.content;
-    }
-    const detected = separatorOf(inner, symbols);
-    if (!detected || detected.trailing) continue;
-    const innerElement = detected.content;
-    if (!sameElementShape(leading, innerElement)) continue;
-    if (hasFieldedArm(leading)) continue;
-    if (matchesEmpty(leading)) continue;
+    const tail = separatedListTail(members, i, symbols);
+    if (!tail) continue;
+    const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();
@@ -3635,7 +3789,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, ctx) {
   };
   const refCounts = /* @__PURE__ */ new Map();
   const countEligibleRefs = (r) => {
-    if (isFieldType(r.type)) return;
+    if (isFieldType(r.type) || isLexedBoundary(r)) return;
     if (isSymbolType(r.type)) {
       const name = r.name;
       if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
@@ -3652,7 +3806,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, ctx) {
   };
   countEligibleRefs(rule);
   const visit = (r, suppressed, scope) => {
-    if (isFieldType(r.type)) return r;
+    if (isFieldType(r.type) || isLexedBoundary(r)) return r;
     if (!suppressed && isRepeatType(r.type)) {
       const content = r.content;
       const precStack = [];
@@ -3781,7 +3935,7 @@ function distributeExclusiveFieldChoices(rule, rulesBag) {
   const choiceFn = nativeRuleFn("choice");
   const collapse = (alts) => alts.length === 1 ? alts[0] : choiceFn(...alts);
   const expand = (node) => {
-    if (!node || typeof node !== "object") return [node];
+    if (!node || typeof node !== "object" || isLexedBoundary(node)) return [node];
     let out = node;
     const members = node.members;
     const content = node.content;
@@ -3811,21 +3965,16 @@ function distributeExclusiveFieldChoices(rule, rulesBag) {
 }
 function applyRepeatUnionFieldPromotion(ruleName, rule, ctx) {
   const { rulesBag } = ctx;
-  const preExistingFieldNames = /* @__PURE__ */ new Set();
-  const collectNames = (node) => {
+  const preExistingFieldNames = syntacticWalker.fold(rule, /* @__PURE__ */ new Set(), (names, node) => {
     const n = node;
-    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") {
-      preExistingFieldNames.add(n.name);
-    }
-    if (n.members) for (const m of n.members) collectNames(m);
-    else if (n.content) collectNames(n.content);
-  };
-  collectNames(rule);
+    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") names.add(n.name);
+    return names;
+  });
   const mintedBySymbol = /* @__PURE__ */ new Map();
   const mintedNames = /* @__PURE__ */ new Set();
   const rebuild = (node) => {
     const n = node;
-    if (isFieldType(n.type)) return node;
+    if (isFieldType(n.type) || isLexedBoundary(n)) return node;
     if (isRepeatType(n.type) && n.content) {
       let inner = n.content;
       while (isPrecWrapper(inner)) inner = inner.content;
@@ -3988,7 +4137,7 @@ function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
   }
 }
 function applySymbolToField(ruleName, rule, ctx) {
-  const { supertypeNames } = ctx;
+  const { supertypeNames, sourceSymbols: symbols } = ctx;
   if (ruleName.startsWith("_")) return rule;
   const precStack = [];
   let cursor = rule;
@@ -3997,7 +4146,7 @@ function applySymbolToField(ruleName, rule, ctx) {
     cursor = cursor.content;
   }
   if (!isSeqType(cursor.type)) {
-    return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
+    return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols);
   }
   const members = cursor.members;
   const directKindCounts = /* @__PURE__ */ new Map();
@@ -4020,6 +4169,7 @@ function applySymbolToField(ruleName, rule, ctx) {
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
+    if (separatedListTail(members, i, symbols)) return m;
     let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
@@ -4046,7 +4196,7 @@ function applySymbolToField(ruleName, rule, ctx) {
   for (const [k, v] of nestedRepeatCounts) {
     combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
   }
-  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
+  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, symbols, existing, combinedKindCounts);
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
@@ -4054,10 +4204,10 @@ function applySymbolToField(ruleName, rule, ctx) {
   }
   return result;
 }
-function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, symbols, existing, outerKindCounts) {
   let anyRepeatChanged = false;
   const result = members.map((m) => {
-    const rebuilt2 = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
+    const rebuilt2 = tryPromoteInRepeatMember(ruleName, m, supertypeNames, symbols, existing, outerKindCounts);
     if (rebuilt2 === null) return m;
     anyRepeatChanged = true;
     return rebuilt2;
@@ -4065,7 +4215,7 @@ function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing,
   if (!anyRepeatChanged) return members;
   return result;
 }
-function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, outerKindCounts) {
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, symbols, existing, outerKindCounts) {
   let cursor = member;
   const memberPrecStack = [];
   while (isPrecWrapper(cursor)) {
@@ -4101,6 +4251,7 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   const newInnerMembers = innerMembers.map((im, i) => {
     const t = innerTargets[i];
     if (!t) return im;
+    if (separatedListTail(innerMembers, i, symbols)) return im;
     let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return im;
@@ -4136,7 +4287,7 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   }
   return rebuilt2;
 }
-function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
+function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames, symbols) {
   if (!isRepeatType(cursor.type)) return rule;
   let inner = cursor.content;
   const innerPrecStack = [];
@@ -4166,6 +4317,7 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
+    if (separatedListTail(members, i, symbols)) return m;
     let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
@@ -4833,7 +4985,6 @@ function walkFieldEnums(rule, rules, parentKind, out) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "TOKEN":
       walkFieldEnums(rule.content, rules, parentKind, out);
       return;
     default:
@@ -4985,8 +5136,7 @@ function rewriteFieldEnums(rule, parentKind, sweep) {
     }
     case "OPTIONAL":
     case "REPEAT":
-    case "REPEAT1":
-    case "TOKEN": {
+    case "REPEAT1": {
       const content = rule.content;
       const newContent = recurse(content);
       if (newContent === content) return rule;
@@ -5417,6 +5567,8 @@ function deField(rule) {
   const inner = isFieldLike(rule) ? contentOf3(rule) : rule;
   const stripPropagated = (r) => {
     const { fieldName: _drop, ...rest } = r;
+    const optional2 = optionalContentOf(rest);
+    if (optional2 !== void 0) return withOptionalContent(rest, stripPropagated(optional2));
     const content = rest.content;
     if (content && typeof content === "object" && !isSeqType(rest.type) && !isChoiceType(rest.type)) {
       return { ...rest, content: stripPropagated(content) };
@@ -5564,7 +5716,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
 }
 function unifyChoiceArmFieldNames(content, unifiedName) {
   const r = content;
-  if (!r || typeof r !== "object" || !isChoiceType(r.type)) return content;
+  if (!r || typeof r !== "object" || !isArmChoice(r)) return content;
   const members = r.members;
   if (!Array.isArray(members)) return content;
   let anyChanged = false;
@@ -5771,30 +5923,6 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/primitives/spacing.ts
-var EMPTY_SEPARATOR_TOKEN = "empty";
-var LABEL_TOKEN = "[A-Za-z][A-Za-z0-9_]*?";
-var SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
-function parseSpacingLabel(name) {
-  const m = SPACING_LABEL.exec(name);
-  if (!m) return void 0;
-  const token2 = m[1];
-  const side = m[2];
-  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
-  return side === void 0 ? void 0 : { token: token2, side };
-}
-var SEAM_LABEL = new RegExp(`^(${LABEL_TOKEN})_(before|after)$`);
-function parseSeamLabel(name) {
-  if (parseSpacingLabel(name) !== void 0) return void 0;
-  const m = SEAM_LABEL.exec(name);
-  return m ? { token: m[1], side: m[2] } : void 0;
-}
-var FLANK_ADDRESS = new RegExp(`^(_*${LABEL_TOKEN})_(start|end)$`);
-function parseFlankAddress(key) {
-  const m = FLANK_ADDRESS.exec(key);
-  return m ? { kind: m[1], side: m[2] } : void 0;
-}
-
 // packages/codegen/src/dsl/wire/symbol-renames.ts
 function resolveName(name, renames) {
   let current = name;
@@ -5832,6 +5960,29 @@ function renameNameList(value, renames) {
   if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
   if (typeof value === "string") return resolveName(value, renames);
   return renameRule(value, renames);
+}
+
+// packages/codegen/src/dsl/extras.ts
+function extrasClosure(extras, supertypes, subtypesOf) {
+  const names = /* @__PURE__ */ new Set();
+  const add = (name) => {
+    if (names.has(name)) return;
+    names.add(name);
+    for (const subtype of subtypesOf(name) ?? []) add(subtype);
+  };
+  for (const name of extras) add(name);
+  const pending = new Set([...supertypes].filter((name) => !names.has(name)));
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const name of pending) {
+      const members = [...subtypesOf(name) ?? []];
+      if (members.length === 0 || !members.every((member) => names.has(member))) continue;
+      pending.delete(name);
+      add(name);
+      grew = true;
+    }
+  }
+  return names;
 }
 
 // packages/codegen/src/dsl/primitives/rule-cause.ts
@@ -5954,8 +6105,11 @@ function baseRuleBodiesOf(base2) {
   return baseRulesOf(base2) ?? {};
 }
 function wire(config, base2, source = base2) {
-  const cfg = config;
+  return wireImpl(config, base2, source);
+}
+function wireImpl(cfg, base2, source) {
   const baseArg = base2;
+  const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base2);
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
   const context = {
@@ -5969,7 +6123,8 @@ function wire(config, base2, source = base2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     renderAs: cfg.renderAs,
-    visibleExternals: cfg.visibleExternals,
+    visibleExternals,
+    whitespaceCollisions,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
@@ -5992,7 +6147,7 @@ function wire(config, base2, source = base2) {
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
-  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || visibleExternals)) {
     const baseRules = baseRulesOf(baseArg) ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -6005,7 +6160,7 @@ function wire(config, base2, source = base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
-  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
+  applyWireVisibleExternalsRewrite(outRules, visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
@@ -6185,41 +6340,46 @@ function symbolNamesOf(entries) {
   }
   return names;
 }
-function precedenceRankedNames(cfg, base2) {
-  const basePrecedences = base2?.grammar?.precedences ?? base2?.precedences;
+function overriddenList(baseValue, own) {
   const previous = withStringGlobalShim(
-    () => typeof basePrecedences === "function" ? basePrecedences(makeSimpleDollarProxy(), []) : basePrecedences
+    () => typeof baseValue === "function" ? baseValue(makeSimpleDollarProxy(), []) : baseValue
   );
-  const own = cfg.precedences;
-  const groups = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous ?? [])) : own ?? previous;
+  return typeof own === "function" ? withStringGlobalShim(
+    () => own(makeSimpleDollarProxy(), previous ?? [])
+  ) : own ?? previous;
+}
+function precedenceRankedNames(cfg, base2) {
+  const groups = overriddenList(
+    base2?.grammar?.precedences ?? base2?.precedences,
+    cfg.precedences
+  );
   const names = /* @__PURE__ */ new Set();
   for (const group2 of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group2)) names.add(name);
   return names;
 }
 function extraRuleNames(cfg, base2) {
-  const baseExtras = base2?.grammar?.extras ?? base2?.extras;
-  const previous = withStringGlobalShim(
-    () => typeof baseExtras === "function" ? baseExtras(makeSimpleDollarProxy()) : baseExtras
+  const extras = symbolNamesOf(
+    overriddenList(base2?.grammar?.extras ?? base2?.extras, cfg.extras)
   );
-  const own = cfg.extras;
-  const entries = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous)) : own ?? previous;
-  return symbolNamesOf(entries);
+  const supertypes = symbolNamesOf(
+    overriddenList(base2?.grammar?.supertypes ?? base2?.supertypes, cfg.supertypes)
+  );
+  return extrasClosure(extras, supertypes, (name) => {
+    if (!supertypes.has(name)) return void 0;
+    const baseRule = base2?.grammar?.rules?.[name] ?? base2?.rules?.[name];
+    const own = cfg.rules?.[name];
+    const body = own ?? baseRule;
+    const rule = typeof body === "function" ? withStringGlobalShim(
+      () => body(makeSimpleDollarProxy(), baseRule)
+    ) : body;
+    return rule?.type === "CHOICE" ? symbolNamesOf(rule.members) : void 0;
+  });
 }
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
-  const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
-  const names = /* @__PURE__ */ new Set();
-  for (const external of Array.isArray(entries) ? entries : []) {
-    if (typeof external === "string") {
-      names.add(external);
-      continue;
-    }
-    const symbol = external;
-    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
-      names.add(symbol.name);
-    }
-  }
-  return names;
+  return symbolNamesOf(
+    typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals
+  );
 }
 function injectPlaceholderHiddenRules(rules, patches, context, externals, known) {
   const declared = /* @__PURE__ */ new Set();
@@ -6530,6 +6690,16 @@ function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
     return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
   };
 }
+function withEnrichedWhitespace(config, base2) {
+  const { bodies, collisions } = getEnrichWhitespace(base2);
+  const declared = config === void 0 ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
+  const whitespaceCollisions = [
+    ...collisions,
+    ...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: "visibleExternals" }))
+  ];
+  if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
+  return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
+}
 function applyWireVisibleExternalsRewrite(rules, config) {
   if (!config) return;
   const $ = makeSimpleDollarProxy();
@@ -6641,7 +6811,7 @@ function buildTwoArgFieldResult(native, name, content) {
 
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups) });
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
   const grammar2 = globalThis.grammar;
   return grammar2(enriched, wire(config, enriched, base2));
 }
@@ -6669,24 +6839,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     [$._attributed_type_parameter, $._type],
     [$._attributed_argument]
   ],
-  externals: ($, previous) => [
-    ...previous ?? [],
-    $._tight,
-    $._space,
-    $._newline,
-    $._blankline,
-    $._indent,
-    $._dedent
-  ],
-  supertypes: ($, previous) => [...previous ?? [], $._whitespace],
-  visibleExternals: (_$) => ({
-    _tight: string(""),
-    _space: string(" "),
-    _newline: string("\n"),
-    _blankline: string("\n\n"),
-    _indent: indent(),
-    _dedent: dedent()
-  }),
+  supertypes: ($, previous) => [...previous ?? [], $.comment],
   groups: {
     visibility_modifier_in_path: ($) => seq("in", $._path),
     attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
@@ -6825,6 +6978,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     }
   },
   patches: {
+    comment: { 0: arm.default },
     bracketed_type: { 1: field2("type") },
     else_clause: { 1: field2("body") },
     generic_pattern: { 0: field2("name") },
@@ -7117,7 +7271,6 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     ]
   },
   rules: {
-    _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
     // tuple_type's separated list realized as its own kind — the
     // delimiter is a fact of the list, so the list is a top-level
     // rule carrying it (hidden rule + visible alias, matching the
@@ -7294,7 +7447,7 @@ var grammar_sittir_default = sittirGrammar(base_default, {
     _inner_block_doc_comment_marker: token.immediate("!"),
     _raw_string_literal_start: /[bc]?r#*"/,
     _raw_string_literal_end: token.immediate(/"#*/),
-    _line_doc_content: token.immediate(/.*/),
+    _line_doc_content: token.immediate(/.*\n?/),
     _block_comment_content: token.immediate(/[^]*/)
   })
 });

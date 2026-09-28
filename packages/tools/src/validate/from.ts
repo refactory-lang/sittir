@@ -324,7 +324,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				// Resolve via the native data tree; if the kind is an alias target
 				// the native engine emits under a different rule name, skip rather
 				// than fall back to a mismatched WASM ID.
-				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId, {
+					start: node1.startIndex,
+					end: node1.endIndex
+				});
 				if (nativeCoords === null && handle.read) {
 					// The native read stores most leaf kinds SCALARIZED — collapsed
 					// to text inside parent storage, no node to locate — and alias

@@ -24,9 +24,6 @@ import {
 	sittirGrammar
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-declare const string: (value: string) => unknown;
-
-
 export default sittirGrammar(base, {
 	name: 'rust',
 	conflicts: ($, previous) => [
@@ -42,24 +39,7 @@ export default sittirGrammar(base, {
 		[$._attributed_type_parameter, $._type],
 		[$._attributed_argument]
 	],
-	externals: ($, previous) => [
-		...(previous ?? []),
-		$._tight,
-		$._space,
-		$._newline,
-		$._blankline,
-		$._indent,
-		$._dedent
-	],
-	supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-	visibleExternals: (_$) => ({
-		_tight: string(''),
-		_space: string(' '),
-		_newline: string('\n'),
-		_blankline: string('\n\n'),
-		_indent: indent(),
-		_dedent: dedent()
-	}),
+	supertypes: ($, previous) => [...(previous ?? []), $.comment],
 
 	groups: {
 		visibility_modifier_in_path: ($) => seq('in', $._path),
@@ -218,6 +198,7 @@ export default sittirGrammar(base, {
 	},
 
 	patches: {
+		comment: { 0: arm.default },
 		bracketed_type: { 1: field('type') },
 		else_clause: { 1: field('body') },
 		generic_pattern: { 0: field('name') },
@@ -560,7 +541,6 @@ export default sittirGrammar(base, {
 		]
 	},
 	rules: {
-		_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
 		// tuple_type's separated list realized as its own kind — the
 		// delimiter is a fact of the list, so the list is a top-level
 		// rule carrying it (hidden rule + visible alias, matching the
@@ -740,7 +720,7 @@ export default sittirGrammar(base, {
 		_inner_block_doc_comment_marker: token.immediate('!'),
 		_raw_string_literal_start: /[bc]?r#*"/,
 		_raw_string_literal_end: token.immediate(/"#*/),
-		_line_doc_content: token.immediate(/.*/),
+		_line_doc_content: token.immediate(/.*\n?/),
 		_block_comment_content: token.immediate(/[^]*/)
 	})
 });

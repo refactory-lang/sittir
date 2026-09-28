@@ -28,8 +28,8 @@ describe('typescript text-leaf factories always run their guard', () => {
 		expect(() => ir.comment.block(' unterminated */ ')).toThrow(/comment_block.content: text does not match/);
 	});
 
-	it('takes the content of a structured token and never its affixes', () => {
-		expect(() => ir.privatePropertyIdentifier('#x')).toThrow(/private_property_identifier.content: text does not match/);
+	it('takes a structured token as its content or spelled in full', () => {
+		expect(ir.privatePropertyIdentifier('#x').$render!()).toBe('#x');
 		expect(ir.escapeSequence('n').$render!()).toBe('\\n');
 	});
 });

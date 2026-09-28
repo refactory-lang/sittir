@@ -1,12 +1,12 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan } from '@sittir/common';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan, mapTriviaEntries } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
-import type { TreeHandle } from '@sittir/common';
+import type { TreeHandle, TriviaSides } from '@sittir/common';
 import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
@@ -292,18 +292,18 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 		}
 	}
 	pushNativeCandidates(d.$other, out);
+	return out;
+}
+
+function nativeTriviaEntries(d: AnyNodeData): AnyNodeData[] {
+	const out: AnyNodeData[] = [];
 	const trivia = d.$_trivia;
 	if (trivia) {
 		pushNativeCandidates(trivia.leading, out);
 		pushNativeCandidates(trivia.trailing, out);
+		for (const entries of Object.values(trivia.inner ?? {})) pushNativeCandidates(entries, out);
 	}
 	return out;
-}
-
-function isTriviaEntry(parent: AnyNodeData, child: AnyNodeData): boolean {
-	const trivia = parent.$_trivia;
-	if (!trivia) return false;
-	return (trivia.leading?.includes(child) ?? false) || (trivia.trailing?.includes(child) ?? false);
 }
 
 function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
@@ -322,7 +322,8 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	span?: { readonly start: number; readonly end: number }
 ): NativeNodeCoords | null {
 	if (!handle.read) return null;
 	const read = handle.read;
@@ -336,11 +337,25 @@ export function findNativeNodeId(
 		return {};
 	}
 
-	function walk(d: AnyNodeData): NativeNodeCoords | null {
+	function spanMatches(d: AnyNodeData): boolean {
+		return span === undefined || (d.$span?.start === span.start && d.$span?.end === span.end);
+	}
+
+	function findEmbedded(d: AnyNodeData): NativeNodeCoords | null {
+		if (kindOf(d) === kind && spanMatches(d)) return { embeddedData: d };
 		for (const child of collectNativeChildNodes(d)) {
-			if (kindOf(child) === kind && isTriviaEntry(d, child)) {
-				return { embeddedData: child };
-			}
+			const found = findEmbedded(child);
+			if (found !== null) return found;
+		}
+		return null;
+	}
+
+	function walk(d: AnyNodeData): NativeNodeCoords | null {
+		for (const entry of nativeTriviaEntries(d)) {
+			const found = findEmbedded(entry);
+			if (found !== null) return found;
+		}
+		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
 			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
@@ -661,6 +676,13 @@ export interface LoadedNodeModel {
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
+	readonly fullForms: Record<string, ModelFullForm>;
+	readonly innerGapsKeyed: boolean;
+}
+
+export interface ModelFullForm {
+	readonly open: { readonly texts: readonly string[] };
+	readonly close: { readonly texts: readonly string[] };
 }
 
 interface ParsedNodeModel {
@@ -688,7 +710,9 @@ interface ParsedNodeModel {
 		forwardsTo?: string;
 		defaultDelimiter?: string;
 		leafPattern?: string;
+		fullForm?: ModelFullForm;
 	}>;
+	innerGapsKeyed?: boolean;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
@@ -717,7 +741,9 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	textLeavesThrough: {},
 	forwardsTo: {},
 	listDefaults: {},
-	listElementKinds: {}
+	listElementKinds: {},
+	fullForms: {},
+	innerGapsKeyed: false
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
@@ -760,6 +786,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
+	const fullForms: Record<string, ModelFullForm> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
@@ -794,6 +821,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
+		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
 	}
 	return {
 		irKeys,
@@ -817,7 +845,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		textLeavesThrough,
 		forwardsTo,
 		listDefaults,
-		listElementKinds
+		listElementKinds,
+		fullForms,
+		innerGapsKeyed: model.innerGapsKeyed === true
 	};
 }
 
@@ -876,6 +906,12 @@ function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: Accesso
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
+		if (key === '$_trivia' && raw != null) {
+			materialized.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, (entries) =>
+				entries.map((entry) => materializeWrappedValue(entry, onAccessorThrow))
+			);
+			continue;
+		}
 		if (key === '$other') {
 			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;
@@ -1257,14 +1293,18 @@ function projectElements(
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = drillReadNode(item as ReadNodeLike, opts);
-		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)));
+		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
 	});
 }
 
-function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknown>): Record<string, unknown> {
+function carryElementTrivia(
+	element: ReadNodeLike,
+	config: Record<string, unknown>,
+	opts: NodeToConfigOpts
+): Record<string, unknown> {
 	if (element.$_trivia === undefined) return config;
 	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
-	if (built.length === 1) carryTrivia(element, built[0]);
+	if (built.length === 1) carryTrivia(element, built[0], opts);
 	return config;
 }
 
@@ -1449,19 +1489,21 @@ function buildWithFactory(
 	if (shape === 'text') {
 		return carryTrivia(
 			referenceData,
-			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts))
+			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)),
+			opts
 		);
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
-	return carryTrivia(referenceData, built);
+	return carryTrivia(referenceData, built, opts);
 }
 
-function carryTrivia(source: ReadNodeLike, built: unknown): unknown {
+function carryTrivia(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
 	const trivia = source.$_trivia;
 	if (trivia === undefined || built === null || typeof built !== 'object') return built;
-	if (trivia.leading === undefined && trivia.trailing === undefined) return built;
-	(built as Record<string, unknown>).$_trivia = trivia;
+	(built as Record<string, unknown>).$_trivia = mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) =>
+		entries.map((entry) => resolveChild(entry, childOpts(opts)))
+	);
 	return built;
 }
 

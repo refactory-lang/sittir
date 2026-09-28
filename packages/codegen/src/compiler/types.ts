@@ -1,4 +1,5 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import type { WhitespaceCollision } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
@@ -119,6 +120,7 @@ export interface RawGrammar {
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
@@ -204,12 +206,14 @@ export interface PromotedRuleEntry {
 
 export interface LinkedGrammar {
 	readonly name: string;
+	readonly root?: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
@@ -236,6 +240,7 @@ export interface IncludeFilter {
 
 export interface NormalizedGrammar {
 	readonly name: string;
+	readonly root?: string;
 	readonly rules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
@@ -243,6 +248,7 @@ export interface NormalizedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -256,6 +262,7 @@ export interface NormalizedGrammar {
 
 export interface SimplifiedGrammar {
 	readonly name: string;
+	readonly root?: string;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
@@ -272,6 +279,7 @@ export interface SimplifiedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly derivations: DerivationLog;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
@@ -296,6 +304,7 @@ export interface SignaturePool {
 
 export interface NodeMap {
 	readonly name: string;
+	readonly root?: string;
 	readonly nodes: Map<string, AssembledNode>;
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
@@ -310,6 +319,7 @@ export interface NodeMap {
 	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
+	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 }

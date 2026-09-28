@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { stripUselessEscapes } from '../shared.ts';
+import { stripUselessEscapes } from '../../compiler/model/leaf-pattern.ts';
 
 const accepts = (source: string, text: string): boolean => new RegExp(`^(?:${source})$`, 'u').test(text);
 

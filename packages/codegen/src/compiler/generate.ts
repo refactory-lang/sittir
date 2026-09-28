@@ -5,26 +5,27 @@ import { compileGrammar, assertCompilation, type Compilation } from './compile.t
 import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
-import { isStableGrammar } from '../grammars.ts';
+import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { loadGeneratedIdTables } from './generated-metadata.ts';
+import { loadPackageIdTables } from './generated-metadata.ts';
+import { loadPackageNodeTypes } from '../validate/node-types-loader.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
+import { triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -77,14 +78,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	});
 
 	try {
-		const compilation =
-			cfg.compilation ??
-			(await compileGrammar({
-				grammar: cfg.grammar,
-				include: cfg.include,
-				generatedIdTables: await loadGeneratedIdTables(cfg.grammar),
-				allowDiagnostics: cfg.allowDiagnostics
-			}));
+		const compilation = cfg.compilation ?? (await compileFromPackage(grammarPackage(cfg.grammar), cfg));
+		const pkg = compilation.package;
 		const { generatedIdTables } = compilation;
 		const { raw, linked, normalized, nodeMap } = compilation;
 		tracePhaseRules('evaluate', raw.rules);
@@ -92,7 +87,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		tracePhaseRules('normalize', normalized.rules);
 		traceAssembleNodes('assemble', nodeMap.nodes);
 
-		assertGrammarJsonInlineIntegrity(cfg.grammar);
+		assertGrammarJsonInlineIntegrity(pkg);
 		const inlineKinds = new Set(raw.inline);
 
 		assertCompilation(compilation);
@@ -109,9 +104,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			process.stderr.write(formatNamingEvents(nodeMap.namingEvents) + '\n');
 		}
 
-		const rootKind = rootRuleName(normalized.rules)!;
-		const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
-		const triviaKinds = grammarRoles.get('trivia');
+		const rootKind = normalized.root!;
+		const grammarRoles = withRootRole(extractGrammarRoles(pkg), rootKind);
+		const nodeTypes = loadPackageNodeTypes(pkg);
+		const triviaKindNames = [...triviaKinds(nodeMap)];
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
@@ -124,12 +120,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			inlineKinds: [...inlineKinds],
 			synthesizedKinds: evaluateSynthesizedKinds,
 			strict: cfg.strict,
-			triviaKinds,
+			triviaKinds: triviaKindNames,
 			grammarRoles,
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,
 			options: raw.options,
 			visibleExternals: raw.visibleExternals,
+			nodeTypes,
 			diagnostics: compilation.diagnostics
 		});
 
@@ -151,7 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}
 
 		const result: GeneratedFiles = {
-			grammar: emitGrammar({ grammar: cfg.grammar }),
+			grammar: emitGrammar({ grammar: cfg.grammar, nodeTypes }),
 			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			backend: emitBackend({ grammar: cfg.grammar }),
@@ -192,4 +189,13 @@ function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
 		if (entry?.provenance === 'evaluate-synthesized') result.add(kind);
 	}
 	return result;
+}
+
+async function compileFromPackage(pkg: GrammarPackage, cfg: GenerateConfig): Promise<Compilation> {
+	return compileGrammar({
+		package: pkg,
+		include: cfg.include,
+		generatedIdTables: await loadPackageIdTables(pkg),
+		allowDiagnostics: cfg.allowDiagnostics
+	});
 }

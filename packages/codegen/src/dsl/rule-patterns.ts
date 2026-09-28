@@ -3,15 +3,18 @@ import {
 	isFieldType,
 	isPrecWrapper,
 	patternAcceptsEmpty,
+	realizesEmpty,
 	isRepeatType,
 	isSeqType,
 	isStringType,
 	isSymbolType,
 	isTokenWrapperType,
 	typeEq,
+	type EmptinessCtx,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
-import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
+import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -157,6 +160,10 @@ export function optionalContentOf<R extends RuleLike>(rule: R): R | undefined {
 	return isBlank(second) ? first : second;
 }
 
+export function isArmChoice(rule: RuleLike): boolean {
+	return rule.type === CHOICE && optionalContentOf(rule) === undefined;
+}
+
 export function isImmediateToken(rule: RuleLike): boolean {
 	return rule.type === IMMEDIATE_TOKEN || (rule.type === TOKEN && (rule as { immediate?: unknown }).immediate === true);
 }
@@ -225,25 +232,34 @@ export function separatorOf<R extends RuntimeRule>(
 	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
 	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	const isToken = (r: RuntimeRule): boolean => typeEq(r.type, 'CHOICE') && terminalContentOf(r as AnyRule, symbols.isTerminal);
+	const isToken = (r: RuntimeRule): boolean => isArmChoice(r) && terminalContentOf(r as AnyRule, symbols.isTerminal);
 	if (isToken(first) && !secondIsStr) return { content: second, separator: first };
 	if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
 
 	return null;
 }
 
+const ruleEmptiness: EmptinessCtx<unknown> = {
+	settled(rule) {
+		if (!rule || typeof rule !== 'object') return false;
+		const r = rule as Record<string, unknown>;
+		const t = r.type;
+		if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
+		if (t === STRING) return r.value === '';
+		if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
+		if (t === SEQ || t === CHOICE || t === REPEAT1 || t === FIELD || isPrecWrapper(r as RuleLike)) return undefined;
+		return false;
+	},
+	children(rule) {
+		const r = rule as Record<string, unknown>;
+		if (r.type === SEQ || r.type === CHOICE) return Array.isArray(r.members) ? (r.members as readonly unknown[]) : [];
+		return [r.content];
+	},
+	isChoice: (rule) => (rule as { type?: unknown }).type === CHOICE
+};
+
 export function matchesEmpty(rule: unknown): boolean {
-	if (!rule || typeof rule !== 'object') return false;
-	const r = rule as Record<string, unknown>;
-	const t = r.type;
-	if (isBlank(r) || t === OPTIONAL || t === REPEAT) return true;
-	if (t === STRING) return r.value === '';
-	if (t === PATTERN) return patternAcceptsEmpty(String(r.value));
-	const members = Array.isArray(r.members) ? (r.members as readonly unknown[]) : [];
-	if (t === SEQ) return members.every(matchesEmpty);
-	if (t === CHOICE) return members.some(matchesEmpty);
-	if (t === REPEAT1 || t === FIELD || isPrecWrapper(r as RuleLike)) return matchesEmpty(r.content);
-	return false;
+	return realizesEmpty(rule, ruleEmptiness);
 }
 
 function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
@@ -659,6 +675,20 @@ export function ruleListParts(rules: readonly RuleListEntry[]): RuleListParts {
 	return parts;
 }
 
+export function nodelessExtrasRun(extras: readonly RuleListEntry[], rules: Readonly<Record<string, AnyRule>>): RegExp | undefined {
+	const { names, literals, patterns } = ruleListParts(extras);
+	const symbolSources = names.filter(isParserHiddenName).flatMap((name) => {
+		const rule = rules[name];
+		const source = rule === undefined ? null : ruleToRegexSource(rule);
+		return source === null ? [] : [source];
+	});
+	const sources = [...patterns, ...literals.map(escapeRegexLiteral), ...symbolSources];
+	if (sources.length === 0) return undefined;
+	const compiled = compileAnchoredPattern(`(?:${sources.map((source) => `(?:${source})`).join('|')})+`);
+	if ('error' in compiled) throw new Error(`extras: the lexical extras do not compile as a JavaScript RegExp: ${compiled.error.message}`);
+	return compiled.regex;
+}
+
 export function symbolFactsOf(grammar: {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly externals: readonly RuleListEntry[];
@@ -1011,6 +1041,8 @@ export function armLeadingSymbolName<P extends PhaseName>(
 	seen.add(rule);
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return undefined;
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) return armLeadingSymbolName(optional, rulesBag, seen);
 	if (isSymbolType(t)) {
 		const name = (rule as { name?: string }).name;
 		if (typeof name !== 'string') return undefined;
@@ -1291,3 +1323,4 @@ export function composeTokenText(
 			return undefined;
 	}
 }
+

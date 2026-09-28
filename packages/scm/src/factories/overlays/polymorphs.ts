@@ -60,20 +60,11 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
 
-const namedNode$underscore =
+const namedNodePlain$underscore =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedNode$arm =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'namedNodeArm'> & { namedNodeArm: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { namedNodeArm: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeArm: _c(child)(seated) } as never, options as never);
-	};
-const namedNode$children =
+const namedNodePlain$children =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & { namedNodeGroup: ArgsOf<CF> },
@@ -82,7 +73,7 @@ const namedNode$children =
 		const { namedNodeGroup: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(...seated) } as never, options as never);
 	};
-const namedNode$anchoredLast =
+const namedNodePlain$anchoredLast =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -93,24 +84,18 @@ const namedNode$anchoredLast =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(inner) } as never, options as never);
 	};
-const namedNode$underscore$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'name'>,
-	options?: OptionsArg<typeof F.buildNamedNode>
-) => ReturnType<typeof F.buildNamedNode> = namedNode$underscore(F.buildNamedNode, TSKindId.Underscore);
-const namedNode$underscore$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'name'>,
-	options?: OptionsArg<typeof C.coerceToNamedNode>
-) => ReturnType<typeof C.coerceToNamedNode> = namedNode$underscore(C.coerceToNamedNode, TSKindId.Underscore);
-const namedNode$underscore$arm =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'namedNodeArm'> & { namedNodeArm: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { namedNodeArm: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeArm: _c(child)(seated) } as never, options as never);
-	};
-const namedNode$underscore$children =
+const namedNodePlain$underscore$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>,
+	options?: OptionsArg<typeof F.buildNamedNodePlain>
+) => ReturnType<typeof F.buildNamedNodePlain> = namedNodePlain$underscore(F.buildNamedNodePlain, TSKindId.Underscore);
+const namedNodePlain$underscore$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>,
+	options?: OptionsArg<typeof C.coerceToNamedNodePlain>
+) => ReturnType<typeof C.coerceToNamedNodePlain> = namedNodePlain$underscore(
+	C.coerceToNamedNodePlain,
+	TSKindId.Underscore
+);
+const namedNodePlain$underscore$children =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & { namedNodeGroup: ArgsOf<CF> },
@@ -119,7 +104,7 @@ const namedNode$underscore$children =
 		const { namedNodeGroup: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(...seated) } as never, options as never);
 	};
-const namedNode$underscore$anchoredLast =
+const namedNodePlain$underscore$anchoredLast =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -130,198 +115,182 @@ const namedNode$underscore$anchoredLast =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(inner) } as never, options as never);
 	};
-const namedNode$arm$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'namedNodeArm'> & {
-		namedNodeArm: ArgsOf<typeof F.buildNamedNodeArm>[0];
-	},
-	options?: OptionsArg<typeof F.buildNamedNode>
-) => ReturnType<typeof F.buildNamedNode> = namedNode$arm(F.buildNamedNode, F.buildNamedNodeArm);
-const namedNode$arm$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'namedNodeArm'> & {
-		namedNodeArm: ArgsOf<typeof C.coerceToNamedNodeArm>[0];
-	},
-	options?: OptionsArg<typeof C.coerceToNamedNode>
-) => ReturnType<typeof C.coerceToNamedNode> = namedNode$arm(C.coerceToNamedNode, C.coerceToNamedNodeArm);
-const namedNode$arm$children =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & { namedNodeGroup: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { namedNodeGroup: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(...seated) } as never, options as never);
-	};
-const namedNode$arm$anchoredLast =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'namedNodeExpressions' || key === 'last') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(inner) } as never, options as never);
-	};
-export const namedNode: typeof B.namedNode & {
+const namedNodePlain: {
 	underscore: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedNode>
-		) => ReturnType<typeof F.buildNamedNode>;
+			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>,
+			options?: OptionsArg<typeof F.buildNamedNodePlain>
+		) => ReturnType<typeof F.buildNamedNodePlain>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedNode>
-		) => ReturnType<typeof C.coerceToNamedNode>;
-		arm: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$applied>[0], 'namedNodeArm'> & {
-					namedNodeArm: ArgsOf<typeof F.buildNamedNodeArm>[0];
-				},
-				options?: OptionsArg<typeof namedNode$underscore$applied>
-			) => ReturnType<typeof namedNode$underscore$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$appliedCoerce>[0], 'namedNodeArm'> & {
-					namedNodeArm: ArgsOf<typeof C.coerceToNamedNodeArm>[0];
-				},
-				options?: OptionsArg<typeof namedNode$underscore$appliedCoerce>
-			) => ReturnType<typeof namedNode$underscore$appliedCoerce>;
-		};
+			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>,
+			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
+		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 		children: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$applied>[0], 'namedNodeGroup'> & {
+				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> & {
 					namedNodeGroup: ArgsOf<typeof F.buildNamedNodeGroupChildren>;
 				},
-				options?: OptionsArg<typeof namedNode$underscore$applied>
-			) => ReturnType<typeof namedNode$underscore$applied>;
+				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
+			) => ReturnType<typeof namedNodePlain$underscore$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$appliedCoerce>[0], 'namedNodeGroup'> & {
+				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> & {
 					namedNodeGroup: ArgsOf<typeof C.coerceToNamedNodeGroupChildren>;
 				},
-				options?: OptionsArg<typeof namedNode$underscore$appliedCoerce>
-			) => ReturnType<typeof namedNode$underscore$appliedCoerce>;
+				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
+			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
 		};
 		anchoredLast: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$applied>[0], 'namedNodeGroup'> &
+				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
 					ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
-				options?: OptionsArg<typeof namedNode$underscore$applied>
-			) => ReturnType<typeof namedNode$underscore$applied>;
+				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
+			) => ReturnType<typeof namedNodePlain$underscore$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNode$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
+				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
 					ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
-				options?: OptionsArg<typeof namedNode$underscore$appliedCoerce>
-			) => ReturnType<typeof namedNode$underscore$appliedCoerce>;
-		};
-	};
-	arm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'namedNodeArm'> & {
-				namedNodeArm: ArgsOf<typeof F.buildNamedNodeArm>[0];
-			},
-			options?: OptionsArg<typeof F.buildNamedNode>
-		) => ReturnType<typeof F.buildNamedNode>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'namedNodeArm'> & {
-				namedNodeArm: ArgsOf<typeof C.coerceToNamedNodeArm>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToNamedNode>
-		) => ReturnType<typeof C.coerceToNamedNode>;
-		children: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof namedNode$arm$applied>[0], 'namedNodeGroup'> & {
-					namedNodeGroup: ArgsOf<typeof F.buildNamedNodeGroupChildren>;
-				},
-				options?: OptionsArg<typeof namedNode$arm$applied>
-			) => ReturnType<typeof namedNode$arm$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNode$arm$appliedCoerce>[0], 'namedNodeGroup'> & {
-					namedNodeGroup: ArgsOf<typeof C.coerceToNamedNodeGroupChildren>;
-				},
-				options?: OptionsArg<typeof namedNode$arm$appliedCoerce>
-			) => ReturnType<typeof namedNode$arm$appliedCoerce>;
-		};
-		anchoredLast: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof namedNode$arm$applied>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
-				options?: OptionsArg<typeof namedNode$arm$applied>
-			) => ReturnType<typeof namedNode$arm$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNode$arm$appliedCoerce>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
-				options?: OptionsArg<typeof namedNode$arm$appliedCoerce>
-			) => ReturnType<typeof namedNode$arm$appliedCoerce>;
+				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
+			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
 		};
 	};
 	children: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'namedNodeGroup'> & {
+			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> & {
 				namedNodeGroup: ArgsOf<typeof F.buildNamedNodeGroupChildren>;
 			},
-			options?: OptionsArg<typeof F.buildNamedNode>
-		) => ReturnType<typeof F.buildNamedNode>;
+			options?: OptionsArg<typeof F.buildNamedNodePlain>
+		) => ReturnType<typeof F.buildNamedNodePlain>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'namedNodeGroup'> & {
+			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> & {
 				namedNodeGroup: ArgsOf<typeof C.coerceToNamedNodeGroupChildren>;
 			},
-			options?: OptionsArg<typeof C.coerceToNamedNode>
-		) => ReturnType<typeof C.coerceToNamedNode>;
+			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
+		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
 	anchoredLast: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNode>[0], 'namedNodeGroup'> &
+			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
 				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
-			options?: OptionsArg<typeof F.buildNamedNode>
-		) => ReturnType<typeof F.buildNamedNode>;
+			options?: OptionsArg<typeof F.buildNamedNodePlain>
+		) => ReturnType<typeof F.buildNamedNodePlain>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNode>[0], 'namedNodeGroup'> &
+			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
 				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
-			options?: OptionsArg<typeof C.coerceToNamedNode>
-		) => ReturnType<typeof C.coerceToNamedNode>;
+			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
+		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
-	capture: typeof B.capture;
 } = {
-	...B.namedNode,
 	underscore: {
-		strict: namedNode$underscore(F.buildNamedNode, TSKindId.Underscore),
-		coerce: namedNode$underscore(C.coerceToNamedNode, TSKindId.Underscore),
-		arm: {
-			strict: namedNode$underscore$arm(namedNode$underscore$applied, F.buildNamedNodeArm),
-			coerce: namedNode$underscore$arm(namedNode$underscore$appliedCoerce, C.coerceToNamedNodeArm)
-		},
+		strict: namedNodePlain$underscore(F.buildNamedNodePlain, TSKindId.Underscore),
+		coerce: namedNodePlain$underscore(C.coerceToNamedNodePlain, TSKindId.Underscore),
 		children: {
-			strict: namedNode$underscore$children(namedNode$underscore$applied, F.buildNamedNodeGroupChildren),
-			coerce: namedNode$underscore$children(namedNode$underscore$appliedCoerce, C.coerceToNamedNodeGroupChildren)
+			strict: namedNodePlain$underscore$children(namedNodePlain$underscore$applied, F.buildNamedNodeGroupChildren),
+			coerce: namedNodePlain$underscore$children(
+				namedNodePlain$underscore$appliedCoerce,
+				C.coerceToNamedNodeGroupChildren
+			)
 		},
 		anchoredLast: {
-			strict: namedNode$underscore$anchoredLast(namedNode$underscore$applied, F.buildNamedNodeGroupAnchoredLast),
-			coerce: namedNode$underscore$anchoredLast(
-				namedNode$underscore$appliedCoerce,
+			strict: namedNodePlain$underscore$anchoredLast(
+				namedNodePlain$underscore$applied,
+				F.buildNamedNodeGroupAnchoredLast
+			),
+			coerce: namedNodePlain$underscore$anchoredLast(
+				namedNodePlain$underscore$appliedCoerce,
 				C.coerceToNamedNodeGroupAnchoredLast
 			)
 		}
 	},
-	arm: {
-		strict: namedNode$arm(F.buildNamedNode, F.buildNamedNodeArm),
-		coerce: namedNode$arm(C.coerceToNamedNode, C.coerceToNamedNodeArm),
-		children: {
-			strict: namedNode$arm$children(namedNode$arm$applied, F.buildNamedNodeGroupChildren),
-			coerce: namedNode$arm$children(namedNode$arm$appliedCoerce, C.coerceToNamedNodeGroupChildren)
-		},
-		anchoredLast: {
-			strict: namedNode$arm$anchoredLast(namedNode$arm$applied, F.buildNamedNodeGroupAnchoredLast),
-			coerce: namedNode$arm$anchoredLast(namedNode$arm$appliedCoerce, C.coerceToNamedNodeGroupAnchoredLast)
-		}
-	},
 	children: {
-		strict: namedNode$children(F.buildNamedNode, F.buildNamedNodeGroupChildren),
-		coerce: namedNode$children(C.coerceToNamedNode, C.coerceToNamedNodeGroupChildren)
+		strict: namedNodePlain$children(F.buildNamedNodePlain, F.buildNamedNodeGroupChildren),
+		coerce: namedNodePlain$children(C.coerceToNamedNodePlain, C.coerceToNamedNodeGroupChildren)
 	},
 	anchoredLast: {
-		strict: namedNode$anchoredLast(F.buildNamedNode, F.buildNamedNodeGroupAnchoredLast),
-		coerce: namedNode$anchoredLast(C.coerceToNamedNode, C.coerceToNamedNodeGroupAnchoredLast)
+		strict: namedNodePlain$anchoredLast(F.buildNamedNodePlain, F.buildNamedNodeGroupAnchoredLast),
+		coerce: namedNodePlain$anchoredLast(C.coerceToNamedNodePlain, C.coerceToNamedNodeGroupAnchoredLast)
+	}
+};
+
+const namedNodeSupertyped$children =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & { namedNodeGroup: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { namedNodeGroup: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(...seated) } as never, options as never);
+	};
+const namedNodeSupertyped$anchoredLast =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'namedNodeExpressions' || key === 'last') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(inner) } as never, options as never);
+	};
+const namedNodeSupertyped: {
+	children: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> & {
+				namedNodeGroup: ArgsOf<typeof F.buildNamedNodeGroupChildren>;
+			},
+			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
+		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> & {
+				namedNodeGroup: ArgsOf<typeof C.coerceToNamedNodeGroupChildren>;
+			},
+			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
+		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
+	};
+	anchoredLast: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
+			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
+		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
+			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
+		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
+	};
+} = {
+	children: {
+		strict: namedNodeSupertyped$children(F.buildNamedNodeSupertyped, F.buildNamedNodeGroupChildren),
+		coerce: namedNodeSupertyped$children(C.coerceToNamedNodeSupertyped, C.coerceToNamedNodeGroupChildren)
 	},
-	capture: B.capture
+	anchoredLast: {
+		strict: namedNodeSupertyped$anchoredLast(F.buildNamedNodeSupertyped, F.buildNamedNodeGroupAnchoredLast),
+		coerce: namedNodeSupertyped$anchoredLast(C.coerceToNamedNodeSupertyped, C.coerceToNamedNodeGroupAnchoredLast)
+	}
+};
+
+export const namedNode: {
+	readonly plain: {
+		strict: typeof F.buildNamedNodePlain;
+		coerce: typeof C.coerceToNamedNodePlain;
+	} & typeof namedNodePlain;
+	readonly supertyped: {
+		strict: typeof F.buildNamedNodeSupertyped;
+		coerce: typeof C.coerceToNamedNodeSupertyped;
+	} & typeof namedNodeSupertyped;
+} = {
+	plain: { strict: F.buildNamedNodePlain, coerce: C.coerceToNamedNodePlain, ...namedNodePlain },
+	supertyped: { strict: F.buildNamedNodeSupertyped, coerce: C.coerceToNamedNodeSupertyped, ...namedNodeSupertyped }
+};
+
+export const namedNodeGroup: {
+	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
+	readonly anchoredLast: {
+		strict: typeof F.buildNamedNodeGroupAnchoredLast;
+		coerce: typeof C.coerceToNamedNodeGroupAnchoredLast;
+	};
+} = {
+	children: { strict: F.buildNamedNodeGroupChildren, coerce: C.coerceToNamedNodeGroupChildren },
+	anchoredLast: { strict: F.buildNamedNodeGroupAnchoredLast, coerce: C.coerceToNamedNodeGroupAnchoredLast }
 };
 
 export const definition: {
@@ -358,15 +327,4 @@ export const namedNodeExpression: {
 	definition: definition,
 	negatedField: B.negatedField,
 	arm: B.namedNodeExpressionArm
-};
-
-export const namedNodeGroup: {
-	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
-	readonly anchoredLast: {
-		strict: typeof F.buildNamedNodeGroupAnchoredLast;
-		coerce: typeof C.coerceToNamedNodeGroupAnchoredLast;
-	};
-} = {
-	children: { strict: F.buildNamedNodeGroupChildren, coerce: C.coerceToNamedNodeGroupChildren },
-	anchoredLast: { strict: F.buildNamedNodeGroupAnchoredLast, coerce: C.coerceToNamedNodeGroupAnchoredLast }
 };

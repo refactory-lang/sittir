@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar, type Compilation } from '../compile.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const compiled = new Map<string, Promise<Compilation>>();
 const compilationOf = (grammar: string): Promise<Compilation> => {
 	const known = compiled.get(grammar);
 	if (known !== undefined) return known;
-	const compilation = loadGeneratedIdTables(grammar).then((generatedIdTables) => compileGrammar({ grammar, generatedIdTables }));
+	const compilation = loadGeneratedIdTables(grammar).then((generatedIdTables) => compileGrammar({ package: grammarPackage(grammar), generatedIdTables }));
 	compiled.set(grammar, compilation);
 	return compilation;
 };

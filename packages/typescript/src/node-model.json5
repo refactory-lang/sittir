@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 433,
+  "nodeCount": 434,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -90,6 +90,10 @@
     {
       "type": "SYMBOL",
       "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
     },
     {
       "type": "SYMBOL",
@@ -4219,6 +4223,7 @@
       }
     }
   },
+  "innerGapsKeyed": false,
   "nodes": [
     {
       "kind": "__error_recovery",
@@ -4294,21 +4299,25 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
+      "factoryName": "blankline",
       "irKey": "blankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "text": "\n\n"
+      "text": "\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
+      "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
-      "text": "﷑\n"
+      "text": "﷑\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_destructuring_pattern",
@@ -4321,6 +4330,18 @@
         "array_pattern",
         "object_pattern"
       ]
+    },
+    {
+      "kind": "_double_blankline",
+      "modelType": "punctuation",
+      "typeName": "DoubleBlankline",
+      "factoryName": "doubleBlankline",
+      "irKey": "doubleBlankline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "text": "\n\n\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_expressions",
@@ -4399,11 +4420,13 @@
       "kind": "_indent",
       "modelType": "punctuation",
       "typeName": "Indent",
+      "factoryName": "indent",
       "irKey": "indent",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
-      "text": "﷐\n"
+      "text": "﷐\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_kind",
@@ -4819,11 +4842,13 @@
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
+      "factoryName": "newline",
       "irKey": "newline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_property_name",
@@ -4844,11 +4869,13 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
+      "factoryName": "space",
       "irKey": "space",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "text": " "
+      "text": " ",
+      "factoryShape": "text"
     },
     {
       "kind": "_template_chars",
@@ -4873,11 +4900,13 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
+      "factoryName": "tight",
       "irKey": "tight",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "text": ""
+      "text": "",
+      "factoryShape": "text"
     },
     {
       "kind": "_tuple_type_member",
@@ -4904,6 +4933,7 @@
       "subtypes": [
         "_blankline",
         "_dedent",
+        "_double_blankline",
         "_indent",
         "_newline",
         "_space",
@@ -8800,6 +8830,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "/*"
+          ]
+        },
+        "close": {
+          "texts": [
+            "*/"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -8852,6 +8894,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "//"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -10843,6 +10897,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "\\"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -14218,6 +14284,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#!"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -18438,6 +18516,18 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            ""
+          ]
+        },
+        "close": {
+          "texts": [
+            "n"
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -18521,6 +18611,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0b",
+            "0B"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -19093,6 +19197,20 @@
           }
         ]
       },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0x",
+            "0X"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
+      },
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -19187,6 +19305,20 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "0o",
+            "0O"
+          ],
+          "slot": "prefix"
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [
@@ -21460,6 +21592,18 @@
             "configKey": "content"
           }
         ]
+      },
+      "fullForm": {
+        "open": {
+          "texts": [
+            "#"
+          ]
+        },
+        "close": {
+          "texts": [
+            ""
+          ]
+        }
       },
       "factoryShape": "direct",
       "factoryFields": [

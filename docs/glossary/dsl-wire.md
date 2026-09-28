@@ -247,7 +247,11 @@ Whether `name` is a rule the grammar's `precedences` table ranks by symbol (tree
 
 ### `packages/codegen/src/dsl/wire/wire.ts::precedenceRankedNames`
 
-The symbol names in the grammar's `precedences` groups: the base grammar's table, or the override's `precedences` callback applied to it, evaluated through the simple `$` proxy like `extraRuleNames`. Named (string) precedences carry no symbol and are skipped.
+The symbol names in the grammar's `precedences` groups, read through `overriddenList`. Named (string) precedences carry no symbol and are skipped.
+
+### `packages/codegen/src/dsl/wire/wire.ts::overriddenList`
+
+One grammar list as the override sees it: the base grammar's list (its callback evaluated through the simple `$` proxy), or the override's callback applied to that list, or the override's literal list. The one reader of `extras`, `precedences` and `supertypes`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsExtraRule`
 
@@ -255,7 +259,7 @@ Whether `name` is one of the grammar's `extras` rules in the active wire context
 
 ### `packages/codegen/src/dsl/wire/wire.ts::extraRuleNames`
 
-The symbol names of the grammar's `extras`: the base grammar's list, or the override's `extras` callback applied to it, evaluated through the simple `$` proxy the way `baseExternalNames` evaluates externals. Patterns in the list carry no name and are skipped.
+The names of the grammar's extra rules: the `extras` list read through `overriddenList`, closed over supertypes by `extrasClosure` — a supertype listed in `extras` contributes each member of its choice body, and a supertype whose members are all extras is one. A supertype's body is the override's rule (called with the base rule as its original) or the base grammar's evaluated rule. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
@@ -683,6 +687,10 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::withEnrichedWhitespace`
+
+The `visibleExternals:` config `wire()` runs with, and the whitespace collisions it stamps on the wire context. The whitespace-member bodies enrich minted (`getEnrichWhitespace`) merge over the grammar's own entries, so every consumer (the wire context sittir's `evaluate()` drains, the base-rule passthrough, the visible-name rewrite) sees one record. Enrich owns the whitespace vocabulary and a grammar's `visibleExternals:` holds only its own scanned externals (typescript's automatic semicolons), so a key that redeclares a minted member is a `visibleExternals` collision: the minted body wins and the collision, with enrich's upstream ones, reaches the gate as `whitespace-mint-collision`. With no minted bodies the config is unchanged.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
 ```text
@@ -845,7 +853,7 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`automaticVariants` is the context's one automatic-variant record, made when
+`whitespaceCollisions` holds the whitespace names the grammar also defines (`withEnrichedWhitespace`), which evaluate carries to the gate. `automaticVariants` is the context's one automatic-variant record, made when
 the context is built and never at a read site (`seedAutomaticVariants`): a
 copy of the base's record when the base went through `enrich`, otherwise an
 empty record, because without an enrich pass no label is automatic. A
@@ -1325,12 +1333,6 @@ are what the shape-free half of the load-time check can promise.
 	 */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::__enrichOverrides__`
-
-```text
-/** Side-channel from `enrich()` — preserved unchanged. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
@@ -1558,6 +1560,16 @@ are what the shape-free half of the load-time check can promise.
 ### `packages/codegen/src/dsl/wire/wire.ts::baseDeclares`
 
 Whether the base grammar (the enriched base, with or without its `grammar` wrapper) declares a property. `wire()` wraps a callback for `extras`, `externals` or `precedences` when the config defines it or the base declares it, so a rename registered while the rules evaluated reaches the base's own entries even when the config never mentions the property.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithoutConfig`
+
+`wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
+evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
+
+The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
+generic base type only checks the authored config's keys; `wireWithoutConfig` calls it directly.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 

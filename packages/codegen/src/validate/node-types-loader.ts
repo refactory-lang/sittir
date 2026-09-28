@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { grammarPackageDir, grammarRequire, upstreamPackage } from '../grammars.ts';
+import { grammarPackage, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 
 
 function loadJson(filePath: string): RawNodeEntry[] {
@@ -25,13 +25,15 @@ const NODE_TYPES_SUBPATHS: Readonly<Record<string, string>> = {
 	typescript: 'typescript/src/node-types.json'
 };
 
-export function loadRawEntries(grammar: string, explicitPath?: string): RawNodeEntry[] {
-	if (explicitPath) return loadJson(explicitPath);
-
-	const overridePath = join(grammarPackageDir(grammar), '.sittir', 'src', 'node-types.json');
+export function loadPackageNodeTypes(pkg: GrammarPackage): RawNodeEntry[] {
+	const overridePath = join(sittirDirOf(pkg), 'src', 'node-types.json');
 	if (existsSync(overridePath)) return loadJson(overridePath);
 
 	return loadJson(
-		grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/${NODE_TYPES_SUBPATHS[grammar] ?? 'src/node-types.json'}`)
+		packageRequire(pkg).resolve(`${upstreamPackage(pkg.name)}/${NODE_TYPES_SUBPATHS[pkg.name] ?? 'src/node-types.json'}`)
 	);
+}
+
+export function loadRawEntries(grammar: string, explicitPath?: string): RawNodeEntry[] {
+	return explicitPath ? loadJson(explicitPath) : loadPackageNodeTypes(grammarPackage(grammar));
 }

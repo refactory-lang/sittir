@@ -163,6 +163,7 @@ describe('post-evaluate invariant', () => {
 				// bare bodies — read by the rule-cause diagnostics.
 				'ruleCauses',
 				'undeclaredRules',
+				'whitespaceCollisions',
 				// Every patches: entry by owner, path and placeholder form — read by the
 				// patch-site labelling and the override census.
 				'patchSites',

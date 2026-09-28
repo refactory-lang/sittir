@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledList, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -8,8 +8,10 @@ import {
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
 	classifyFactoryShape,
-	listRestParamType
+	listRestParamType,
+	withEmptyOverload
 } from '../shared.ts';
+import { emptyForms } from '../../compiler/model/trivia.ts';
 import { listHasOptions, spellingTypeOf, valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
@@ -368,8 +370,18 @@ function composeSeats(
 			: undefined;
 	const withOptions = (params: string): string =>
 		optionsType === undefined ? params : `${params.slice(0, -1)}, options?: ${optionsType})`;
+	const seated = (name: string, params: string, returnType: string, expr: string): string[] =>
+		emptyForms(nodeMap).has(wireSet.node.kind)
+			? withEmptyOverload(
+					nodeMap,
+					wireSet.node.kind,
+					`function ${name}`,
+					[`function ${name}(...args: [${params.slice(1, -1).replace(/^(\w+):/, '$1?:')}]): ${returnType} {`, `	return ${expr}(...args);`, '}'],
+					`function ${name}${params}: ${returnType};`
+				)
+			: [`const ${name}: ${params} => ${returnType} = ${expr};`];
 	const strictName = `${wireSet.parentKey}$seated`;
-	methods.push(`const ${strictName}: ${withOptions(strictParams)} => ReturnType<typeof ${p.strict}> = ${strictExpr};`);
+	methods.push(...seated(strictName, withOptions(strictParams), `ReturnType<typeof ${p.strict}>`, strictExpr));
 	if (coerceExpr === undefined || p.coerce === undefined) {
 		return {
 			refs: { strict: strictName, coerce: undefined },
@@ -378,7 +390,7 @@ function composeSeats(
 		};
 	}
 	const coerceName = `${wireSet.parentKey}$seatedCoerce`;
-	methods.push(`const ${coerceName}: ${withOptions(coerceParams)} => ReturnType<typeof ${p.coerce}> = ${coerceExpr};`);
+	methods.push(...seated(coerceName, withOptions(coerceParams), `ReturnType<typeof ${p.coerce}>`, coerceExpr));
 	return {
 		refs: { strict: strictName, coerce: coerceName },
 		wireLine: `	strict: ${strictName}, coerce: ${coerceName},`,
@@ -676,7 +688,7 @@ function elementsShape(
 	groupKeys: readonly string[],
 	m: string,
 	spread: boolean,
-	list: { readonly nonEmpty: boolean; readonly options: boolean } | undefined
+	list: { readonly nonEmpty: boolean; readonly options: boolean; readonly optionsRequired: boolean } | undefined
 ): SeatShape {
 	if (spread) {
 		return {
@@ -691,7 +703,7 @@ function elementsShape(
 				const child = `ArgsOf<typeof ${c}>[0]`;
 				if (list === undefined) return `(...args: ReadonlyArray<${p} | ${child}>)`;
 				const element = list.options ? `(ListElement<${p}> | ${child})` : `(${p} | ${child})`;
-				return `(...args: ${listRestParamType(list.nonEmpty, element, list.options ? `ListOptionsOf<${p}>` : undefined)})`;
+				return `(...args: ${listRestParamType(list.nonEmpty, element, list.options ? `ListOptionsOf<${p}>` : undefined, list.optionsRequired)})`;
 			},
 			spread: true
 		};
@@ -770,7 +782,9 @@ function seatEmission(
 					configKeysOf(seat.group),
 					m,
 					parent instanceof AssembledList || classifyFactoryShape(parent, nodeMap) === 'spread',
-					parent instanceof AssembledList ? { nonEmpty: parent.nonEmpty, options: listHasOptions(parent) } : undefined
+					parent instanceof AssembledList
+						? { nonEmpty: parent.nonEmpty, options: listHasOptions(parent), optionsRequired: separatorRequired(parent) }
+						: undefined
 				);
 	return {
 		method: s.method,
@@ -1015,7 +1029,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as C from '../coerce.js';",
 		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '../../utils.js';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
-		...(blocks.some((b) => b.includes('?: T.')) ? ["import type * as T from '../../types.js';"] : [])
+		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])
 	];
 	const start = blocks.indexOf(ERASED_HELPERS[0]!);
 	const end = start + ERASED_HELPERS.length - 1;

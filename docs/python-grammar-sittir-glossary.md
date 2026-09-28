@@ -62,34 +62,6 @@ LR(1) state.
 			// needed — the `as` is inline in `_except_clause_as` at parse time).
 ```
 
-### `_whitespace` (`packages/python/grammar.sittir.ts:304`)
-
-The grammar's whitespace supertype, listed under `supertypes:` and declared
-as a choice over its whitespace externals. Codegen reads the vocabulary of
-every spacing site from it (`whitespaceArmsOf`): a separator gap admits the
-members other than `_indent`/`_dedent`, a flank or seam all of them, and the
-generated `options.ts` unions and the writer's whitespace text are derived
-from the same list. Each member is written as the visible alias
-`visibleExternals` registers for it. Python's list adds `_double_blankline`,
-the external that renders `'\n\n\n'` (two blank lines): the `module` rule's
-options put it after every top-level `function_definition`,
-`class_definition` and `decorated_definition`, and the writer ranks it
-above `blankline` by newline count when whitespace runs coalesce. A hidden
-supertype nothing references survives every reachability prune because a
-declared supertype is a root.
-
-### `visibleExternals` (`packages/python/grammar.sittir.ts:75`)
-
-```text
-			// _newline is python's statement-terminator EXTERNAL (the scanner
-			// consumes the newline character and drives indent tracking).
-			// visibleExternals materializes it as a real `newline` CST node —
-			// aliases don't touch the LR tables, so the parser behavior is
-			// identical — and renders emit a real '\n' terminator that
-			// re-parses to the SAME node type (round-trip-stable): the ts
-			// automatic_semicolon pattern applied to newline-as-syntax.
-```
-
 ### `expression_statement` (`packages/python/grammar.sittir.ts:88`)
 
 ```text

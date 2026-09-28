@@ -161,9 +161,9 @@ describe('loose surface printing', () => {
 	});
 	it('keeps the call of a node that carries trivia', () => {
 		const leaf = map.identifier!('main') as Printed;
-		leaf.$_trivia = { leading: [{ $text: '// a' }] } as never;
+		leaf.$_trivia = { leading: [new Printed(3, 'ir.lineComment(" a")', 'line_comment')] } as never;
 		expect(map.function_item!({ name: leaf }).source).toBe(
-			'ir.functionItem({\n\tname: ir.identifier("main").$trivia.leading("// a"),\n})'
+			'ir.functionItem({\n\tname: ir.identifier("main").$trivia.leading(ir.lineComment(" a")),\n})'
 		);
 	});
 	it('keeps a wrapper whose inner kind an alias of the slot already admits by id', () => {

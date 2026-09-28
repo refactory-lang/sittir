@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { RawGrammar } from '../types.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const evaluated = vi.hoisted(() => ({ current: undefined as unknown }));
 
@@ -63,7 +64,7 @@ describe('compileGrammar gates link', () => {
 		} as unknown as RawGrammar;
 		const { compileGrammar } = await import('../compile.ts');
 		const { link } = await import('../link.ts');
-		await expect(compileGrammar({ grammar: 'rust' })).rejects.toThrow(/dangling-internal-ref/);
+		await expect(compileGrammar({ package: grammarPackage('rust') })).rejects.toThrow(/dangling-internal-ref/);
 		expect(link).not.toHaveBeenCalled();
 	});
 
@@ -75,7 +76,7 @@ describe('compileGrammar gates link', () => {
 		} as unknown as RawGrammar;
 		const { compileGrammar } = await import('../compile.ts');
 		const { link } = await import('../link.ts');
-		await expect(compileGrammar({ grammar: 'rust' })).rejects.toThrow(/expect-diagnostics-invalid/);
+		await expect(compileGrammar({ package: grammarPackage('rust') })).rejects.toThrow(/expect-diagnostics-invalid/);
 		expect(link).not.toHaveBeenCalled();
 	});
 });

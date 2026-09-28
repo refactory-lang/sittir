@@ -16026,6 +16026,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_double_blankline"
+          },
+          "named": true,
+          "value": "double_blankline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_indent"
           },
           "named": true,
@@ -20939,6 +20948,10 @@
     {
       "type": "SYMBOL",
       "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_blankline"
     },
     {
       "type": "SYMBOL",

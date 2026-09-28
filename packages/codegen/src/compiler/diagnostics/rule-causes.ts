@@ -2,6 +2,7 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import type { RuleCause } from '../../dsl/primitives/rule-cause.ts';
 import type { RawGrammar } from '../types.ts';
 import type { StageDiagnosis } from '../stage.ts';
+import type { WhitespaceCollision } from '../../dsl/whitespace.ts';
 
 export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	'alias-shape': [
@@ -17,22 +18,36 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 
 const ANY_PROVOKING: ReadonlySet<string> = new Set(Object.values(PROVOKING_CODES).flat());
 
+const WHITESPACE_COLLISION_MESSAGES: Readonly<Record<WhitespaceCollision['site'], (name: string) => string>> = {
+	visibleExternals: (name) =>
+		`visibleExternals: '${name}' is a whitespace member enrich mints from the grammar's extras. Delete the entry`,
+	upstream: (name) =>
+		`upstream: the grammar defines '${name}', which enrich mints from the grammar's extras with a different definition. The minted one replaces it`
+};
+
 export interface RuleCausesInput {
 	readonly grammar: string;
-	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs'>;
-	readonly enriched: StageDiagnosis;
+	readonly raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'renderAs' | 'whitespaceCollisions'>;
+	readonly enriched?: StageDiagnosis;
 }
 
 export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] {
 	const { grammar, raw, enriched } = input;
-	const out: GrammarDiagnostic[] = (raw.undeclaredRules ?? []).map((name) =>
-		blocking(
-			grammar,
-			'rule-cause-missing',
-			name,
-			`rules: '${name}' has a bare body. Declare it with reauthored(cause, body) when it replaces the upstream rule of that name, or vocabulary(body) when sittir adds it`
-		)
+	const collisions = (raw.whitespaceCollisions ?? []).map(({ name, site }) =>
+		blocking(grammar, 'whitespace-mint-collision', name, WHITESPACE_COLLISION_MESSAGES[site](name))
 	);
+	if (enriched === undefined) return collisions;
+	const out: GrammarDiagnostic[] = [
+		...collisions,
+		...(raw.undeclaredRules ?? []).map((name) =>
+			blocking(
+				grammar,
+				'rule-cause-missing',
+				name,
+				`rules: '${name}' has a bare body. Declare it with reauthored(cause, body) when it replaces the upstream rule of that name, or vocabulary(body) when sittir adds it`
+			)
+		)
+	];
 	for (const name of Object.keys(raw.renderAs ?? {})) {
 		if (enriched.externalNames.has(name)) continue;
 		out.push(
@@ -46,7 +61,7 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 	}
 	for (const [name, declaration] of Object.entries(raw.ruleCauses ?? {})) {
 		const diagnostic =
-			declaration.kind === 'vocabulary' ? judgeVocabulary(grammar, name, enriched) : judgeReauthored(input, name, declaration.cause);
+			declaration.kind === 'vocabulary' ? judgeVocabulary(grammar, name, enriched) : judgeReauthored(grammar, enriched, name, declaration.cause);
 		if (diagnostic !== undefined) out.push(diagnostic);
 	}
 	return out;
@@ -62,8 +77,7 @@ function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis
 	);
 }
 
-function judgeReauthored(input: RuleCausesInput, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
-	const { grammar, enriched } = input;
+function judgeReauthored(grammar: string, enriched: StageDiagnosis, name: string, cause: RuleCause): GrammarDiagnostic | undefined {
 	if (!Object.hasOwn(PROVOKING_CODES, cause)) {
 		return blocking(
 			grammar,

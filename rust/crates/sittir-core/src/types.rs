@@ -34,7 +34,7 @@ use serde::{
     ser::{SerializeMap, SerializeSeq},
     Deserialize, Deserializer, Serialize, Serializer,
 };
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 
 /// Numeric runtime kind discriminant. The wire shape (`$type` on
@@ -78,7 +78,7 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Leading / trailing trivia (comments) for a `NodeData`. A read computes
+/// Leading, trailing and inner trivia (comments) for a `NodeData`. A read computes
 /// it from the node's siblings; `$trivia()` attaches it on the TS side.
 /// Carried across the wire for native render support. Mirrors
 /// `NodeTrivia` in `@sittir/types`.
@@ -93,6 +93,11 @@ pub struct NodeTrivia {
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub trailing: Option<Vec<NodeData>>,
+
+    /// Extras inside a node with no named child to own them, keyed by the
+    /// gap they sit in: the model slot whose position the gap holds.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub inner: Option<BTreeMap<String, Vec<NodeData>>>,
 }
 
 /// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
@@ -150,13 +155,12 @@ pub struct NodeData {
     /// `None` on root nodes and factory-constructed nodes.
     pub child_index: Option<u16>,
 
-    /// Leading / trailing trivia: comments and the other tree-sitter extras
-    /// `read_children` skips because they carry no field name. A read fills
-    /// this from the node's siblings — see `read_node::compute_trivia` for
-    /// which run of extras attaches to which side, and for the one shape
-    /// that has nowhere to attach. A factory-constructed node gets it from
-    /// `$trivia()`, and both a `$with` rebuild and construction from a read
-    /// carry it onto the node they return, since trivia is not config.
+    /// Trivia this node owns: comments and the other tree-sitter extras
+    /// `read_children` skips because they carry no field name. A read gives
+    /// every extra exactly one owner -- see `read_node::node_trivia` for the
+    /// placement rules. A factory-constructed node gets it from `$trivia()`,
+    /// and both a `$with` rebuild and construction from a read carry it onto
+    /// the node they return, since trivia is not config.
     ///
     /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment`) that
     /// renders independently via its own template. Mirrors `NodeTrivia` in
@@ -174,6 +178,16 @@ pub struct NodeData {
     /// factory-constructed nodes (factories populate the canonical merged
     /// slot directly).
     pub slot_order: Option<Vec<String>>,
+
+    /// Set on a trivia entry that shares a row with the node it attaches
+    /// to: a trailing entry on its owner's last row, or a leading entry
+    /// ending on the row its owner starts. `false` everywhere else.
+    pub same_line: bool,
+
+    /// On a same-line trailing entry, the anonymous tokens between its owner
+    /// and the entry, all on that row: the render seats the entry after them.
+    /// `0` everywhere else.
+    pub tokens_between: u16,
 }
 
 #[derive(Serialize)]
@@ -223,6 +237,10 @@ struct NodeDataSer<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     slot_order: &'a Option<Vec<String>>,
+    #[serde(rename = "$sameLine", default, skip_serializing_if = "is_false")]
+    same_line: bool,
+    #[serde(rename = "$tokensBetween", default, skip_serializing_if = "is_zero")]
+    tokens_between: u16,
 }
 
 #[derive(Deserialize)]
@@ -253,6 +271,10 @@ struct NodeDataDe {
     trivia_data: Option<NodeTrivia>,
     #[serde(rename = "$slotOrder", default)]
     slot_order: Option<Vec<String>>,
+    #[serde(rename = "$sameLine", default)]
+    same_line: bool,
+    #[serde(rename = "$tokensBetween", default)]
+    tokens_between: u16,
 }
 
 fn serialize_slot_fields<S>(
@@ -269,6 +291,14 @@ where
         }
     }
     map.end()
+}
+
+fn is_false(value: &bool) -> bool {
+    !*value
+}
+
+fn is_zero(value: &u16) -> bool {
+    *value == 0
 }
 
 fn deserialize_slot_fields<'de, D>(
@@ -348,6 +378,8 @@ impl Serialize for NodeData {
             child_index: &self.child_index,
             trivia_data: &self.trivia_data,
             slot_order: &self.slot_order,
+            same_line: self.same_line,
+            tokens_between: self.tokens_between,
         }
         .serialize(serializer)
     }
@@ -382,6 +414,8 @@ impl<'de> Deserialize<'de> for NodeData {
             child_index: wire.child_index,
             trivia_data: wire.trivia_data,
             slot_order: wire.slot_order,
+            same_line: wire.same_line,
+            tokens_between: wire.tokens_between,
         })
     }
 }
@@ -626,6 +660,8 @@ fn scalar_text_leaf(text: String) -> NodeData {
         child_index: None,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 
@@ -643,6 +679,8 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
         child_index: None,
         trivia_data: None,
         slot_order: None,
+        same_line: false,
+        tokens_between: 0,
     }
 }
 

@@ -16,10 +16,9 @@ const realGrammarJs = join(realPythonSittir, 'grammar.js');
 // re-arms a regeneration on the next validator run.
 //
 // The copy lives under the repo's node_modules/.cache — NOT the OS tmpdir —
-// because compileParser shells out to `npx tree-sitter` with the copy as
-// cwd and grammar.js `require()`s the external base grammar
-// (`tree-sitter-python/grammar.js`); both resolve by walking up to the
-// repo's node_modules, which an OS-tmpdir copy can't reach.
+// because grammar.js `require()`s the external base grammar
+// (`tree-sitter-python/grammar.js`), which resolves by walking up from the
+// copy to the repo's node_modules — an OS-tmpdir copy can't reach it.
 const cacheRoot = join(packagesRoot, '..', 'node_modules', '.cache');
 let tmpRoot: string;
 let pythonDir: string;

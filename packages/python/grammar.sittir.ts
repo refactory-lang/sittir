@@ -30,9 +30,8 @@ export default sittirGrammar(base, {
 		role($._indent, 'indent');
 		role($._dedent, 'dedent');
 		role($._newline, 'newline');
-		return [...(prev ?? []), $._tight, $._space, $._blankline, $._double_blankline];
+		return prev ?? [];
 	},
-	supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 	conflicts: ($, previous) => [
 		...(previous ?? []),
 		[$.expression_statement, $.expression_statement_tuple],
@@ -41,13 +40,6 @@ export default sittirGrammar(base, {
 		[$._expressions, $.expression_list]
 	],
 	inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
-	visibleExternals: (_$) => ({
-		_newline: string('\n'),
-		_blankline: string('\n\n'),
-		_double_blankline: string('\n\n\n'),
-		_tight: string(''),
-		_space: string(' ')
-	}),
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
 	renderAs: (_$) => ({
@@ -378,9 +370,6 @@ export default sittirGrammar(base, {
 		]
 	},
 	rules: {
-		_whitespace: vocabulary(($) =>
-			choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent)
-		),
 		// See docs/python-grammar-sittir-glossary.md::primary_expression
 		primary_expression: reauthored('ambiguity', ($: any, original: ChoiceRule) => {
 			let base = original.members;

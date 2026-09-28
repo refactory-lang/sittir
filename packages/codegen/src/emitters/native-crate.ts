@@ -59,7 +59,8 @@ cc = { workspace = true }
     build
         .std("c11")
         .include(&grammar_src)
-        .flag_if_supported("-Wno-unused-value");
+        .flag_if_supported("-Wno-unused-value")
+        .flag_if_supported("-Wno-unused-parameter");
 
     if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
         build.flag("-utf-8");
@@ -69,10 +70,11 @@ cc = { workspace = true }
     build.file(&parser_path);
     println!("cargo:rerun-if-changed={}", parser_path.display());
 
+    let mut watched = std::collections::HashSet::new();
     let scanner_path = grammar_src.join("scanner.c");
     if scanner_path.exists() {
         build.file(&scanner_path);
-        println!("cargo:rerun-if-changed={}", scanner_path.display());
+        rerun_if_changed_with_includes(&scanner_path, &mut watched);
     }
 
     let cpp_scanner_path = grammar_src.join("scanner.cc");
@@ -82,10 +84,36 @@ cc = { workspace = true }
             .include(&grammar_src)
             .file(&cpp_scanner_path)
             .compile("sittir-tree-sitter-${v.name}-scanner");
-        println!("cargo:rerun-if-changed={}", cpp_scanner_path.display());
+        rerun_if_changed_with_includes(&cpp_scanner_path, &mut watched);
     }
 
     build.compile("sittir-tree-sitter-${v.name}");
+}
+
+/// Rebuild when a scanner source, or any file it quotes in an \`#include\`,
+/// changes: a scanner may share a header outside the generated sources.
+fn rerun_if_changed_with_includes(
+    path: &std::path::Path,
+    watched: &mut std::collections::HashSet<std::path::PathBuf>,
+) {
+    if !watched.insert(path.to_path_buf()) {
+        return;
+    }
+    println!("cargo:rerun-if-changed={}", path.display());
+    let source = std::fs::read_to_string(path).expect("scanner source");
+    let dir = path.parent().expect("scanner directory");
+    for line in source.lines() {
+        let Some(rest) = line.trim_start().strip_prefix("#include \\"") else {
+            continue;
+        };
+        let Some(include) = rest.split('"').next() else {
+            continue;
+        };
+        let header = dir.join(include);
+        if header.exists() {
+            rerun_if_changed_with_includes(&header, watched);
+        }
+    }
 }
 `
 		},
@@ -95,7 +123,7 @@ cc = { workspace = true }
 				name: `sittir-${v.name}`,
 				version: '0.1.0',
 				description: `Grammar-local Rust / napi-rs engine for @sittir/${v.name}.`,
-				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'],
+				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'].sort(),
 				homepage: 'https://github.com/refactory-lang/sittir#readme',
 				license: 'MIT',
 				author: 'Pradeep Mouli',
@@ -211,6 +239,19 @@ impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
         child: &str,
     ) -> Option<&'static str> {
         render::kind_ids::wire_slot(parent, field, child)
+    }
+
+    fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
+        render::kind_ids::inner_gap_key(kind, preceding_tokens)
+    }
+
+    fn stores_scalar(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: Option<&str>,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::stores_scalar(parent, field, child)
     }
 }
 

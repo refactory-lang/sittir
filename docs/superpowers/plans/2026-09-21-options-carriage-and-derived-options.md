@@ -72,7 +72,7 @@
   pub enum Side { Before, After }
   ```
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 In `rust/crates/sittir-core/tests/prepare.rs` add, using the existing test helpers in that file for a `ResolvedOptions` and a sink:
 
@@ -113,12 +113,12 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
 
 Read `EdgeSlot`'s actual field names in `options.rs` before writing the third test and use them.
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cargo test -p sittir-core --test prepare`
 Expected: compile errors, `SiteSpec`, `site_arm`, `Edges`, `Edged`, `prepare_edges`, `RenderSink::site` do not exist.
 
-- [ ] **Step 3: Implement in core**
+- [x] **Step 3: Implement in core**
 
 `options.rs`:
 
@@ -191,12 +191,12 @@ fn edge(&mut self, kind: KindId, side: Side, stamped: Option<u16>) {
 
 `engine.rs`: pass the engine's resolved options where the writer is constructed. `NodeCoordinate::write_between_edges` keeps its shape; `CoordinateEdges` stays for coordinates.
 
-- [ ] **Step 4: Run the core tests**
+- [x] **Step 4: Run the core tests**
 
 Run: `cargo test -p sittir-core`
 Expected: PASS. The generated crates do not compile yet (no `sites` field in their `ResolvedOptions` constructor); that is Task 2's first step.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(core): the sink owns the resolved options; transports carry base edges filled from the edge rows" -- rust/crates/sittir-core
@@ -216,7 +216,7 @@ git commit -m "feat(core): the sink owns the resolved options; transports carry 
 - Consumes: Task 1's `Edges`, `Edged`, `prepare_edges`, `RenderSink::edge`, `Side`, `SiteSpec`.
 - Produces: every transport struct has `pub edges: ::sittir_core::options::Edges` with napi names `$_before`/`$_after` through a manual `FromNapiValue`/`ToNapiValue` pair on `Edges` in core (both optional numbers); `impl Edged for XTransport`; kind-edge fields (`<kind>_before`, `<kind>_after`) are no longer emitted; the body prints `w.edge(KindId(N), Side::Before, node.edges.before)` where it printed `w.site_with(node.<kind>_before...)`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 In `render-module-emit.test.ts`, with the fixture node map that file already builds for a compound kind:
 
@@ -242,12 +242,12 @@ it('emits a SiteSpec per spacing site in vector order and wires it into the reso
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/render-options-rs.test.ts`
 Expected: FAIL on every new assertion.
 
-- [ ] **Step 3: Emit the base field, the `Edged` impl, and the edge fill**
+- [x] **Step 3: Emit the base field, the `Edged` impl, and the edge fill**
 
 `render-module.ts`:
 
@@ -290,7 +290,7 @@ L.push('];');
 
 and `sites: SITE_SPECS,` wherever the `ResolvedOptions` literal is built (`edges: EDGE_SITES,` is beside it).
 
-- [ ] **Step 4: Run the emitter tests, regenerate typescript, build, and gate**
+- [x] **Step 4: Run the emitter tests, regenerate typescript, build, and gate**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters`
 Expected: PASS after updating any test that pinned a `<kind>_before` field.
@@ -299,7 +299,7 @@ Run: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --out
 Expected: builds. Then `pnpm run gen:examples` and, as its own call, `pnpm exec vitest run packages/tools/tests/emit/ packages/typescript/tests/nodes.test.ts`.
 Expected: PASS, render-bytes fixtures byte-identical.
 
-- [ ] **Step 5: Regenerate rust and python, validate, commit**
+- [x] **Step 5: Regenerate rust and python, validate, commit**
 
 Regenerate both, rebuild, `pnpm run validate:native`, `pnpm run validate:history | tail -4`: every row identical to the previous run.
 
@@ -320,7 +320,7 @@ git commit -m "feat(render): every transport carries base edges; kind-edge field
 - Consumes: `RenderSink::site(site)` from Task 1.
 - Produces: no `Option<u16>` field for a `seam` site whose token is not the kind, nor for a `start`/`end` flank; the body prints `w.site(options::SITE_X)`; `Seamed<T>` is gone and a literal arm prints `w.site(before)`, the literal, `w.site(after)`; `ListView.head`/`tail` take the flank arms from `ctx`-free sink calls: the list view's `render_into` receives them as `Option<usize>` site indices and calls `w.site`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 it('a token seam and a flank have no transport field and print as a sink site', () => {
@@ -335,12 +335,12 @@ it('a token seam and a flank have no transport field and print as a sink site', 
 
 Use the kind names the fixture actually has; `arguments` is illustrative.
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`
 Expected: FAIL.
 
-- [ ] **Step 3: Stop emitting the carriers**
+- [x] **Step 3: Stop emitting the carriers**
 
 In the field emission loop, keep a spacing site's field only when `site.role === 'separator'` or the site is one of the list's two separator gap sites (`site.address` ends with `_separator_space_before`/`_after`); emit nothing for `site.side === 'seam'` and for `start`/`end`. Apply the same predicate in `prepareStructImpl` so the fills disappear with the fields. Name the predicate once, `carriesPerNodeValue(site)`, in `render-options-rs.ts` beside `isKindEdge`, and use it in both places.
 
@@ -360,11 +360,11 @@ with each `w.site` line present only when that side has a site.
 
 `ListView` (in core `view.rs`): `head`/`tail` become `Option<usize>` site indices; `render_into` calls `w.site(head)` before the first item and `w.site(tail)` after the last when set. The generated list construction passes `Some(options::SITE_X_START)` instead of `node.x_start.unwrap_or(0)`.
 
-- [ ] **Step 4: Emitter tests, regenerate all three, build, full gates**
+- [x] **Step 4: Emitter tests, regenerate all three, build, full gates**
 
 Same commands as Task 2 Step 4 and 5. Expected: byte-identical fixtures, identical validation rows; `transport.rs` for typescript loses roughly 435 fields, 435 fills and 435 napi attributes.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(render): token seams and flanks read the resolved vector; no per-node carrier, no Seamed wrapper" -- packages/codegen/src rust/crates packages/typescript packages/rust packages/python examples
@@ -392,7 +392,7 @@ git commit -m "feat(render): token seams and flanks read the resolved vector; no
   ```
   `fill_seated_gaps` skips the last item, skips coordinates, and for each transport element with `seat_site(table, item.kind_id())` sets `edges_mut().after.get_or_insert(ctx.options.spacing[site])`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Core:
 
@@ -420,11 +420,11 @@ it('a list slot with seats gets a kind-to-site table and one fill call, no match
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `cargo test -p sittir-core --test prepare` and the vitest file. Expected: FAIL.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Core:
 
@@ -455,7 +455,7 @@ lines.push(isRequired(field)
 
 with the table emitted in `render-options-rs.ts` from `seatedSitesOf(plan, kind, field)` rows as `(kindId, siteIndex)` sorted by kind id. A list whose elements are required (no `Option` around them) uses a second helper `fill_seated_gaps_required` over `&mut [SlotValue<T>]`, or the generated code wraps; keep one core function by having both list shapes call through `iter_mut().map(Option::as_mut)`; pick whichever the existing element type forces and note it in the glossary entry.
 
-- [ ] **Step 4: Tests, regenerate, gates, commit**
+- [x] **Step 4: Tests, regenerate, gates, commit**
 
 Core and emitter tests pass; regenerate three grammars; byte-identical fixtures and validation rows.
 
@@ -485,7 +485,7 @@ git commit -m "feat(render): seated sibling gaps fill through a per-slot kind ta
   ```
   No `XOptions` struct is generated; the napi entry that took `Options` takes a JS object and calls `resolve`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Emitter:
 
@@ -502,17 +502,17 @@ it('emits a static address trie and no per-address structs', () => {
 
 Core (`tests/options_trie.rs`, napi feature gated the way `boundary_roundtrip.rs` is): a trie of two levels, an object `{ a: { x: 9 } }` resolves site 0 to 9; `{ a: { y: 1 } }` errors naming `a/y`; `{ a: { x: 4 } }` where 4 is not allowed errors with the path string.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: the vitest file and `cargo test -p sittir-core --features napi-bindings --test options_trie`. Expected: FAIL.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Core `resolve_object` walks the object recursively: for each key present in the node's children, a `Branch` recurses, a `Spacing` reads `u16` and calls `set_spacing(&mut table, site, allowed_of(site), value, path)`, a `Delimiter` reads `u8` and sets `table.delimiter[site]`; unknown keys go through `reject_unknown_keys(&obj, &children_keys, at)` exactly as the generated structs do today; `indent` is read at the root.
 
 Emitter: `emitOptionsStructs` and `resolverBody` are replaced by `emitAddressTrie(addresses, siteIndex, kindEntries)`, which prints `ADDRESSES` from `addresses.roots`/`branches`/`leaves` with the same `nestedKey` spelling the TypeScript side uses (so a key in the trie is the key the derived `Options` type admits), and the `path` string from `formatPreferencePath(leaf.canonical[0])`. The napi engine entry that accepted `Options` accepts `::napi::bindgen_prelude::Object` and calls `resolve`. `resolveTests` (the generated resolve tests in `options.rs`) are regenerated to call `resolve` with a JSON object literal built through napi's test env, or dropped in favour of the core trie test plus one generated smoke test per grammar; do the latter and say so in the glossary.
 
-- [ ] **Step 4: Tests, regenerate, gates, commit**
+- [x] **Step 4: Tests, regenerate, gates, commit**
 
 `options.rs` for typescript drops from ~37k lines to the site tables, `SITE_SPECS`, `SEATS_*`, `EDGE_SITES`, `DEPTH_SITES`, `ADDRESSES` and `resolve`. Byte-identical fixtures and validation rows.
 
@@ -554,7 +554,7 @@ git commit -m "feat(render): options resolve through a static address trie; per-
   ```
   nested exactly as the address trie is nested and camel-cased on every key (`spreadElement`, `asExpression`, `automaticSemicolon`), as the config keys and `__inputHints__` are, so a seated element site is `arguments.elements.asExpression.after`. The rust addresses keep snake case; both emitters read the same table and case their own keys. A kind with no sites emits no member.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `emitter-options.test.ts`:
 
@@ -583,15 +583,15 @@ expectTypeOf(ok).toMatchTypeOf<Options>();
 const bad: Options = { arguments: { lbrace: { after: TSKindId.Space } } };
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: the emitter test file; `pnpm exec vitest --typecheck run packages/typescript/tests/options.test-d.ts`. Expected: FAIL.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `packages/types/src/options.ts` as in Interfaces. In `emitters/types.ts`, where `__inputHints__` is written for a kind, also write `__optionsHint__` from that kind's subtree of the address tables: a literal segment becomes a token key with its sides; a field segment whose slot repeats becomes the slot key holding `separator` with one key per separator arm carrying its sides (`separator.comma.after`, as the trie spells it) and one key per element kind with its seated sides; sides are typed by the arm alias the site admits. In `emitters/options.ts`, `renderOptionsModule` prints the two arm aliases, `T.NodeMap` if needed, the virtual-kind intersection for labels, and `export type Options = …`; `AddressRoot`/`AddressBranch`/`AddressLeaf`/`AddressNodeN` are no longer printed; `deriveAddressTables` stays, since `render-options-rs.ts` builds the trie from it, and the hint emitter reads the same output, so the two surfaces cannot drift.
 
-- [ ] **Step 4: Tests, regenerate, measure, gates, commit**
+- [x] **Step 4: Tests, regenerate, measure, gates, commit**
 
 Run the emitter suite, regenerate all three, `pnpm run type-check`, and `pnpm exec tsc -p packages/typescript/tsconfig.json --extendedDiagnostics | tail -12`; instantiations at or below the template spike's 3,058,924 (recorded in the spec). The generated `options.ts` is under 300 lines per grammar.
 
@@ -603,9 +603,9 @@ git commit -m "feat(options): Options is derived from an options hint on each no
 
 ### Task 7: Glossary, spec status, PR
 
-- [ ] **Step 1: Glossary entries** in `docs/glossary/emitters.md` for `isKindEdge`, `carriesPerNodeValue`, the changed `seatLoops`, `emitAddressTrie`, the changed `renderOptionsModule`; in a new `docs/glossary/packages-types.md` for `DerivedOptions` and its helpers; core doc comments in `sittir-core` stay in source (Rust docs are not covered by the glossary rule).
-- [ ] **Step 2: Spec status.** In the amendment section add one line: "Implemented 2026-…; the render context is the sink, which holds the resolved options."
-- [ ] **Step 3: Full gates and PR** against `feat/bindings-vocabulary`: type-check, lint, `cargo test -p sittir-core`, full vitest, validation rows for three grammars, render-bytes fixtures. Never `--delete-branch`.
+- [x] **Step 1: Glossary entries** in `docs/glossary/emitters.md` for `isKindEdge`, `carriesPerNodeValue`, the changed `seatLoops`, `emitAddressTrie`, the changed `renderOptionsModule`; in a new `docs/glossary/packages-types.md` for `DerivedOptions` and its helpers; core doc comments in `sittir-core` stay in source (Rust docs are not covered by the glossary rule).
+- [x] **Step 2: Spec status.** In the amendment section add one line: "Implemented 2026-…; the render context is the sink, which holds the resolved options."
+- [x] **Step 3: Full gates and PR** against `feat/bindings-vocabulary`: type-check, lint, `cargo test -p sittir-core`, full vitest, validation rows for three grammars, render-bytes fixtures. Never `--delete-branch`.
 
 ---
 

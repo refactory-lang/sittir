@@ -34,6 +34,20 @@
     ]
   },
   {
+    "type": "named_node",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "named_node_plain",
+        "named": true
+      },
+      {
+        "type": "named_node_supertyped",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "named_node_group",
     "named": true,
     "subtypes": [
@@ -308,84 +322,6 @@
     }
   },
   {
-    "type": "named_node",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_",
-            "named": false
-          },
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "quantifier": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "quantifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "capture",
-          "named": true
-        },
-        {
-          "type": "named_node_arm",
-          "named": true
-        },
-        {
-          "type": "named_node_group",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "named_node_arm",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "immediate_string",
-            "named": true
-          }
-        ]
-      },
-      "supertype": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "named_node_expression_arm",
     "named": true,
     "fields": {
@@ -491,6 +427,104 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "named_node_plain",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "quantifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "quantifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "capture",
+          "named": true
+        },
+        {
+          "type": "named_node_group",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "named_node_supertyped",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "immediate_string",
+            "named": true
+          }
+        ]
+      },
+      "quantifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "quantifier",
+            "named": true
+          }
+        ]
+      },
+      "supertype": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "capture",
+          "named": true
+        },
+        {
+          "type": "named_node_group",
+          "named": true
+        }
+      ]
     }
   },
   {

@@ -21,7 +21,6 @@ import type { GrammarRule } from '../grammar-shapes/grammar-json.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	isParserHiddenName,
-	ruleListParts,
 	terminalContentOf,
 	type RuleListEntry,
 	type SymbolFacts,
@@ -29,6 +28,7 @@ import {
 	type SymbolSource
 } from './rule-patterns.ts';
 import type { KindParserMetadata, ReservedWordsets } from '../compiler/types.ts';
+import { grammarRootNames } from '../util/reachable-rules.ts';
 
 export interface ParserSymbolTable {
 	readonly symbols: ReadonlyMap<string, CEnumEntry>;
@@ -998,10 +998,7 @@ function referencedNames(rule: PredictorRule, into: string[]): void {
 
 function liveRuleNames(grammar: PredictedGrammar): ReadonlySet<string> {
 	const live = new Set<string>();
-	const pending = [
-		...Object.keys(grammar.rules).slice(0, 1),
-		...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)
-	];
+	const pending = grammarRootNames(grammar);
 	while (pending.length > 0) {
 		const name = pending.pop()!;
 		if (live.has(name) || !(name in grammar.rules)) continue;

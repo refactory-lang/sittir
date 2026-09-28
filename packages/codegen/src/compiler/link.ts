@@ -73,6 +73,7 @@ import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
+	nodelessExtrasRun,
 	isBlank,
 	isEnumChoiceRule,
 	hiddenChoiceClass,
@@ -109,6 +110,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly root: string | undefined;
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -129,6 +131,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries ?? [];
+		this.root = rootRuleName(init.grammar.rules);
 	}
 
 	get rules(): Record<string, Rule<'evaluate'>> {
@@ -265,7 +268,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		[rules, raw.rules as unknown as Record<string, Rule<'link'>>],
 		stampCtx
 	);
-	const rootName = rootRuleName(raw.rules);
+	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline), reachableFromRoot);
 
@@ -299,12 +302,14 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	return {
 		name: raw.name,
+		root: linkCtx.root,
 		rules,
 		supertypes,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
 		extras: raw.extras,
+		nodelessExtrasRun: nodelessExtrasRun(raw.extras, raw.rules),
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
@@ -416,7 +421,7 @@ export function canonicalizeRuleLiterals(
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean,
 	misses: KindIdStampMisses,
-	stampable = true,
+	syntactic = true,
 	aliasBodies?: ReadonlyMap<string, AliasRule<'link'>>
 ): Rule<'link'> {
 	switch (rule.type) {
@@ -424,14 +429,14 @@ export function canonicalizeRuleLiterals(
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, false, misses, syntactic, aliasBodies)
 				)
 			};
 		case CHOICE:
 			return {
 				...rule,
 				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable, aliasBodies)
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, syntactic, aliasBodies)
 				)
 			};
 		case OPTIONAL:
@@ -444,7 +449,7 @@ export function canonicalizeRuleLiterals(
 					kindEntries,
 					allowLiteralRewrite,
 					misses,
-					stampable,
+					syntactic,
 					aliasBodies
 				)
 			};
@@ -456,7 +461,7 @@ export function canonicalizeRuleLiterals(
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable, aliasBodies)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, syntactic, aliasBodies)
 			};
 		case ALIAS: {
 			const content = canonicalizeRuleLiterals(
@@ -464,10 +469,10 @@ export function canonicalizeRuleLiterals(
 				kindEntries,
 				allowLiteralRewrite,
 				misses,
-				stampable,
+				syntactic,
 				aliasBodies
 			);
-			if (!stampable || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
+			if (!syntactic || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
 			const entry = findEntryForKindName(kindEntries, rule.value);
@@ -478,11 +483,11 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, content, kindId: entry.parseId ?? entry.id };
 		}
 		case SYMBOL:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodies });
 		case SUPERTYPE:
-			return !stampable || kindEntries.length === 0
+			return !syntactic || kindEntries.length === 0
 				? rule
 				: {
 						...rule,
@@ -491,7 +496,7 @@ export function canonicalizeRuleLiterals(
 		case STRING: {
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
-				if (entry) {
+				if (entry && (syntactic || entry.anon === true)) {
 					return {
 						type: SYMBOL,
 						name: entry.kind,
@@ -503,7 +508,7 @@ export function canonicalizeRuleLiterals(
 					};
 				}
 			}
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
 			if (literalEntry === undefined) {
 				misses.literals.add(rule.value);
@@ -512,7 +517,7 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
-			if (!stampable || kindEntries.length === 0) return rule;
+			if (!syntactic || kindEntries.length === 0) return rule;
 			const patternEntry = findEntryForPatternValue(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
@@ -908,7 +913,7 @@ function pruneInlinedAliasBodies(rules: Record<string, Rule<'link'>>, ctx: Stamp
 }
 
 function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
-	const rootName = rootRuleName(rules);
+	const rootName = ctx.root;
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
 	const externals = ruleListParts(ctx.grammar.externals);
