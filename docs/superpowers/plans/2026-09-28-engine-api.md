@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Branch: `feat/engine-api`, stacked on `feat/leaf-literal-types` (#379), which carries the indent-unit typing this plan moves into `API['options']`. Rebase onto master once #379 merges.
+- Branches: the five stacked PR branches below, starting from `feat/leaf-literal-types` (#379), which carries the indent-unit typing this plan moves into `API['options']`. Rebase onto master once #379 merges.
 - Worktree under `~/GitHub.nosync/refactory-lang/sittir-worktrees/`, never `/tmp`.
 - Generated outputs (`packages/{rust,python,typescript,scm,regex}/src/*`, `.sittir/*`, `rust/crates/sittir-*/src/*`) are never hand-edited: change the emitter and regenerate (`pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src`, or `pnpm run validate:native`, which regenerates all).
 - No comments in `packages/codegen/src/`: every new declaration gets a `###` entry in the matching `docs/glossary/` file. No planning or task numbers in comments or glossary text.
@@ -30,6 +30,21 @@
 4. **An `edit` whose callback returns a structurally equal but new root**, as opposed to the same object, is a real change and writes; only the identical root skips the write. Pinned in Task 4.
 5. **A path that normalises outside the project directory** (`../x`, an absolute path, `a/../../x`) is rejected before anything is staged. Pinned in Task 5.
 
+
+## Delivery: five stacked PRs
+
+Each PR is a branch stacked on the previous one (`feat/engine-api-1-surface` on `feat/leaf-literal-types`, then `-2-bound-nodes`, `-3-surfaces`, `-4-files`, `-5-projects`). Each passes the full gates on its own and updates the READMEs for its own part. A task's steps below say which PR owns each part when a task spans several.
+
+| PR | Tasks (parts) | Behaviour change | Gate |
+|---|---|---|---|
+| **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
+| **2. Bound nodes** | 2; 3 (**cross-engine rendering, disposable `Rendered`**); 6 (**retire `boundary.ts`, `defaultEngine`, and `methodsEngine`'s `render`/`toEdit`**) | Engine render options reach `$render()` | Rows and fixtures identical under default options; the Task 2 and Task 6 stamp tests |
+| **3. Surfaces + interceptors** | 3 (**`api` option with the derived strict surface; interceptors; `timing()` replacing `SITTIR_METRICS`**), plus the `StrictSurface` tsc-cost check from Task 10 | Opt-in only | Rows and fixtures identical; the interceptor and surface tests; tsc cost within 10% |
+| **4. File verbs** | 4 | New API | The files and engine file-verb tests |
+| **5. Projects** | 5; 10 (final docs and the complete gate list) | New API | The project tests; full final gates |
+
+PR 1 is deliberately mechanical: the new shape over today's behaviour. Nothing a user renders changes, which makes its review a pure API review.
+
 ---
 
 ### Task 0: Branch and worktree
@@ -39,7 +54,7 @@
 ```bash
 cd ~/GitHub.nosync/refactory-lang/sittir
 git fetch origin
-git worktree add -b feat/engine-api ../sittir-worktrees/engine-api origin/feat/leaf-literal-types
+git worktree add -b feat/engine-api-1-surface ../sittir-worktrees/engine-api origin/feat/leaf-literal-types
 cd ../sittir-worktrees/engine-api && pnpm install
 ```
 
@@ -828,9 +843,9 @@ git commit -m "refactor(examples): examples and generated rebuilds use the langu
   - `pnpm run type-check`, then both examples type-checks;
   - `cargo test --workspace --no-default-features`;
   - `tsc --noEmit --extendedDiagnostics` per grammar: report the check time and instantiations against Task 0, and separately the cost of a file that names `Engine<RustAPI, 'strict'>['build']` (the recursive `StrictSurface`). If that alone adds more than 10% check time on any grammar, stop and report: the fallback is to emit the strict surface's type, types only, keeping the runtime glue.
-- [ ] **Step 3: Commit, push, and open the PR** against `feat/leaf-literal-types`, with "Closes #388" and the gate numbers in the body.
+- [ ] **Step 3: Commit and push PR 5**, against PR 4's branch, with the gate numbers in the body. "Closes #388" goes on PR 5, the last of the stack.
 
 ```bash
 git commit -m "docs: the language engine in the READMEs" -- README.md packages/*/README.md DEVELOPMENT.md docs
-git push -u origin feat/engine-api
+git push -u origin feat/engine-api-5-projects
 ```
