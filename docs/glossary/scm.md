@@ -12,7 +12,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/scm/extract-roles.ts::resolveGrammarRoot`
 
-Resolve the root directory of the grammar's upstream tree-sitter package, from the grammar package's own dependencies (`grammarRequire`). Returns `undefined` when the package is not installed.
+Resolve the root directory of a grammar's upstream tree-sitter package through the given `require`. Returns `undefined` when the package is not installed.
 
 ### `packages/codegen/src/scm/extract-roles.ts::readIfExists`
 
@@ -64,6 +64,9 @@ Resolve the root directory of the grammar's upstream tree-sitter package, from t
  */
 ```
 
+The root grammar's queries resolve through its package's `require` (`packageRequire`); an inherited or parent
+grammar resolves through its own name (`grammarRequire`).
+
 #### body
 
 ```text
@@ -114,7 +117,7 @@ Resolve the root directory of the grammar's upstream tree-sitter package, from t
 
 ```text
 /**
- * Extract all semantic roles from a grammar's SCM query files.
+ * Extract all semantic roles from a grammar package's SCM query files.
  *
  * Reads both `highlights.scm` and `tags.scm`, follows inheritance chains
  * (both `; inherits:` directives and `tree-sitter.json` arrays), and maps

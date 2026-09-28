@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseSCMQuery, parseInheritsDirective } from './parse.ts';
 import type { SCMCapture } from './parse.ts';
-import { grammarRequire, upstreamPackage } from '../grammars.ts';
+import { grammarRequire, packageRequire, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 
 export type Role =
 	| 'root'
@@ -88,9 +88,9 @@ const CAPTURE_TO_ROLE: readonly CaptureRoleMapping[] = [
 	{ captureBase: 'reference.call', role: 'reference.call', source: 'tags' }
 ];
 
-function resolveGrammarRoot(grammarName: string): string | undefined {
+function resolveGrammarRoot(grammarName: string, require: NodeJS.Require): string | undefined {
 	try {
-		const pkgPath = grammarRequire(grammarName).resolve(`${upstreamPackage(grammarName)}/package.json`);
+		const pkgPath = require.resolve(`${upstreamPackage(grammarName)}/package.json`);
 		return dirname(pkgPath);
 	} catch {
 		return undefined;
@@ -136,11 +136,11 @@ function resolveParentGrammarsFromConfig(grammarRoot: string, queryFile: QueryFi
 	}
 }
 
-function collectCaptures(grammarName: string, visited: Set<string>, queryFile: QueryFile): SCMCapture[] {
+function collectCaptures(grammarName: string, visited: Set<string>, queryFile: QueryFile, require: NodeJS.Require): SCMCapture[] {
 	if (visited.has(grammarName)) return [];
 	visited.add(grammarName);
 
-	const grammarRoot = resolveGrammarRoot(grammarName);
+	const grammarRoot = resolveGrammarRoot(grammarName, require);
 	if (!grammarRoot) {
 		console.warn(`[sittir] ${queryFile}.scm not found: tree-sitter-${grammarName} is not installed`);
 		return [];
@@ -159,12 +159,12 @@ function collectCaptures(grammarName: string, visited: Set<string>, queryFile: Q
 
 	const inheritsLang = parseInheritsDirective(source);
 	if (inheritsLang) {
-		captures.push(...collectCaptures(inheritsLang, visited, queryFile));
+		captures.push(...collectCaptures(inheritsLang, visited, queryFile, grammarRequire(inheritsLang)));
 	}
 
 	const parentGrammars = resolveParentGrammarsFromConfig(grammarRoot, queryFile);
 	for (const parent of parentGrammars) {
-		captures.push(...collectCaptures(parent, visited, queryFile));
+		captures.push(...collectCaptures(parent, visited, queryFile, grammarRequire(parent)));
 	}
 
 	return captures;
@@ -220,12 +220,14 @@ function assignCapturesToRoles(
 	}
 }
 
-export function extractGrammarRoles(grammar: string): GrammarRoles {
+export function extractGrammarRoles(pkg: GrammarPackage): GrammarRoles {
+	const grammar = pkg.name;
+	const require = packageRequire(pkg);
 	const highlightsVisited = new Set<string>();
-	const highlightsCaptures = collectCaptures(grammar, highlightsVisited, 'highlights');
+	const highlightsCaptures = collectCaptures(grammar, highlightsVisited, 'highlights', require);
 
 	const tagsVisited = new Set<string>();
-	const tagsCaptures = collectCaptures(grammar, tagsVisited, 'tags');
+	const tagsCaptures = collectCaptures(grammar, tagsVisited, 'tags', require);
 
 	const roleKinds = new Map<Role, Set<string>>();
 

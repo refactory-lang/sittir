@@ -52,7 +52,7 @@ import type {
 	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
-import { loadRawEntries } from '../validate/node-types-loader.ts';
+import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -99,6 +99,7 @@ type StructuralNode = SlotBearingCompound;
 
 export interface EmitTypesConfig {
 	grammar: string;
+	nodeTypes: readonly RawNodeEntry[];
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	sites?: readonly SitePreference[];
@@ -113,7 +114,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	referencedBitflagConsts.clear();
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
-	const grammarKeys = buildGrammarKeySet(grammar);
+	const grammarKeys = grammarKeySetOf(config.nodeTypes);
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
 	const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1);
@@ -397,15 +398,8 @@ const VOCABULARY_IMPORTS = [
 	'OmitEach'
 ];
 
-function buildGrammarKeySet(grammar: string): Set<string> {
-	const grammarKeys = new Set<string>();
-	try {
-		for (const entry of loadRawEntries(grammar)) {
-			const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
-			grammarKeys.add(key);
-		}
-	} catch {}
-	return grammarKeys;
+function grammarKeySetOf(nodeTypes: readonly RawNodeEntry[]): Set<string> {
+	return new Set(nodeTypes.map((entry) => (entry.named ? entry.type : `_anonymous_${entry.type}`)));
 }
 
 interface NodeCategories {

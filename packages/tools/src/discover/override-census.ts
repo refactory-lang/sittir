@@ -14,6 +14,7 @@
  */
 
 import { invoke } from '../codegen-surface.ts';
+import { grammarPackage } from '@sittir/codegen/grammars';
 
 export interface OverrideCensusOptions {
 	grammar: string;
@@ -23,7 +24,7 @@ export interface OverrideCensusOptions {
 export async function run(opts: OverrideCensusOptions): Promise<number> {
 	const { grammar } = opts;
 	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
-	const compilation = await invoke('compile', 'compileGrammar', { grammar, generatedIdTables });
+	const compilation = await invoke('compile', 'compileGrammar', { package: grammarPackage(grammar), generatedIdTables });
 	if (compilation.stages === undefined) {
 		process.stderr.write(`${grammar}: declares no rules: or patches:, so nothing departs from the upstream base\n`);
 		return 0;

@@ -6602,33 +6602,14 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // annotation stays as a string literal instead of a TSKindId reference.
 ```
 
-### `packages/codegen/src/emitters/types.ts::buildGrammarKeySet`
+### `packages/codegen/src/emitters/types.ts::grammarKeySetOf`
 
-```text
-/**
- * Build the set of kind keys known to grammar.ts (the PythonGrammar / RustGrammar
- * type literal). Tree type interfaces can only use `NodeKind<Grammar>` as their
- * discriminator, so kinds absent from grammar.ts — hidden rules, promoted
- * terminals, synthesised forms — must fall back to a generic `AnyTreeNode`.
- *
- * @param grammar - Grammar name (e.g. `"rust"`, `"python"`).
- * @returns Set of kind strings present in the node-types.json for this grammar.
- *   Anonymous tokens are stored under the `_anonymous_<token>` key convention.
- *   Returns an empty set when node-types.json is unavailable.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Grammar key helpers
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// No node-types.json available — emit all Tree interfaces as AnyTreeNode.
-```
+The kind keys grammar.ts declares (the PythonGrammar / RustGrammar type
+literal), from the node types `generate` loaded once: a named entry by its
+type, an anonymous token under `_anonymous_<token>`. Tree type interfaces
+can only use `NodeKind<Grammar>` as their discriminator, so a kind absent
+from this set — a hidden rule, a promoted terminal, a synthesised form —
+falls back to a generic `AnyTreeNode`.
 
 ### `packages/codegen/src/emitters/types.ts::collectNodesByCategory`
 
