@@ -5103,6 +5103,14 @@ and separator spacing sites are unchanged; typescript's
 `_enum_body_elements` (`choice(field('name', _property_name),
 enum_assignment)`) is the shape this covers.
 
+
+### `packages/codegen/src/dsl/enrich.ts::separatedListTail`
+
+The one list-element predicate: whether the member at `i` heads a separated list. That is, the next member (through prec wrappers) is a repeat whose content `separatorOf` reads as `seq(SEP, element)` with no trailing separator, the element has the head's shape (`sameElementShape`), and the head is neither fielded inside nor able to match empty. It returns the repeat, its content and the prec wrappers on each, which `fieldSeparatedListElements` rebuilds. A list's head and its tail elements are one slot, so they are fielded together or not at all. The per-member field passes (`applySymbolToField`, `tryPromoteInRepeatSeq`, `tryPromoteInRepeatMember`, `applyChoiceArmFieldWrap`) leave a member for which this holds to `fieldSeparatedListElements`, which fields the head and every tail element with one name. A pass that fielded the head alone would leave an unfielded tail that list fusion, which compares field names, cannot join to it (go `statements`).
+
+### `packages/codegen/src/dsl/enrich.ts::SeparatedListTail`
+
+The separated tail `separatedListTail` found after a list head: the repeat, its prec-peeled content, the tail element, and the prec wrappers outside and inside the repeat.
 ### `packages/codegen/src/dsl/enrich.ts::hasFieldedArm`
 
 Whether a list element, once its transparent wrappers are peeled, is an
