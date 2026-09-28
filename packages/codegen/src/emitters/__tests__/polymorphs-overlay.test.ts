@@ -1,9 +1,10 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -414,6 +415,36 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 	});
 });
 
+function typeChecks(lines: readonly string[]): void {
+	const tscPackage = createRequire(import.meta.url).resolve('typescript/package.json');
+	const dir = mkdtempSync(join(tmpdir(), 'sittir-rest-param-'));
+	try {
+		const file = join(dir, 'check.ts');
+		writeFileSync(file, `${lines.join('\n')}\n`);
+		execFileSync(
+			process.execPath,
+			[
+				join(dirname(tscPackage), 'bin', 'tsc'),
+				'--ignoreConfig',
+				'--noEmit',
+				'--strict',
+				'--skipLibCheck',
+				'--allowImportingTsExtensions',
+				'--module',
+				'nodenext',
+				'--moduleResolution',
+				'nodenext',
+				'--target',
+				'esnext',
+				file
+			],
+			{ stdio: 'pipe' }
+		);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+}
+
 describe('a list takes its rest parameter by cardinality and options', () => {
 	it('requires an element from a non-empty list and puts the options object first', () => {
 		expect(listRestParamType(true, 'E', undefined)).toBe('[first: E, ...rest: E[]]');
@@ -431,31 +462,54 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	});
 
 	it('rejects an elements-only call at the type level when the options are required', () => {
-		const tscPackage = createRequire(import.meta.url).resolve('typescript/package.json');
-		const dir = mkdtempSync(join(tmpdir(), 'sittir-rest-param-'));
-		try {
-			const file = join(dir, 'required-options.ts');
-			const lines = [
+		const lines = ['type E = { readonly element: true };', 'type O = { readonly separator: 1 | 2 };', 'const element: E = { element: true };'];
+		for (const nonEmpty of [true, false]) {
+			const fn = nonEmpty ? 'nonEmpty' : 'emptyCapable';
+			lines.push(`declare function ${fn}(...input: ${listRestParamType(nonEmpty, 'E', 'O', true)}): void;`);
+			lines.push('// @ts-expect-error a required-separator list has no elements-only call');
+			lines.push(`${fn}(element);`);
+			lines.push(`${fn}({ separator: 1 }, element);`);
+		}
+		expect(() => typeChecks(lines)).not.toThrow();
+	});
+
+	it('seats a list with an undeclared separator on its options-first form, at the type level', () => {
+		const element: Rule<'evaluate'> = { type: CHOICE, members: [{ type: SYMBOL, name: 'negative' }, { type: SYMBOL, name: 'literal' }] };
+		const separator: Rule<'evaluate'> = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: STRING, value: ';' }] };
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'items' }] },
+			items: { type: SEQ, members: [element, { type: REPEAT, content: { type: SEQ, members: [separator, element] } }] },
+			negative: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'sign', content: { type: CHOICE, members: [{ type: STRING, value: '-' }, { type: STRING, value: '+' }] } },
+					{ type: FIELD, name: 'content', content: { type: SYMBOL, name: 'literal' } }
+				],
+				annotations: { hoisted: true }
+			},
+			literal: { type: PATTERN, value: '[0-9]+' }
+		});
+		const out = emitPolymorphsOverlay({ nodeMap }).split('\n');
+		const seat = out.find((line) => line.startsWith('const items$seatedCoerce: '));
+		expect(seat).toBeDefined();
+		expect(seat).toContain('(...args: [options: ListOptionsOf<');
+		expect(() =>
+			typeChecks([
+				`import type { ArgsOf, ElementsOf } from ${JSON.stringify(fileURLToPath(new URL('../../../../types/src/index.ts', import.meta.url)))};`,
+				...out.filter((line) => /^type List(Options|Element|OptionsOf)\b/.test(line)),
 				'type E = { readonly element: true };',
 				'type O = { readonly separator: 1 | 2 };',
-				'const element: E = { element: true };'
-			];
-			for (const nonEmpty of [true, false]) {
-				const fn = nonEmpty ? 'nonEmpty' : 'emptyCapable';
-				lines.push(`declare function ${fn}(...input: ${listRestParamType(nonEmpty, 'E', 'O', true)}): void;`);
-				lines.push('// @ts-expect-error a required-separator list has no elements-only call');
-				lines.push(`${fn}(element);`);
-				lines.push(`${fn}({ separator: 1 }, element);`);
-			}
-			writeFileSync(file, `${lines.join('\n')}\n`);
-			expect(() =>
-				execFileSync(process.execPath, [join(dirname(tscPackage), 'bin', 'tsc'), '--ignoreConfig', '--noEmit', '--strict', file], {
-					stdio: 'pipe'
-				})
-			).not.toThrow();
-		} finally {
-			rmSync(dir, { recursive: true, force: true });
-		}
+				'const element: E = { element: true };',
+				'declare const C: {',
+				`\tcoerceToItems(...input: ${listRestParamType(true, 'E', 'O', true)}): unknown;`,
+				"\tcoerceToNegative(config: { readonly sign: '-' | '+' }): E;",
+				'};',
+				`declare ${seat!.slice(0, seat!.lastIndexOf(' = '))};`,
+				'// @ts-expect-error a required-separator seat has no elements-only call',
+				'items$seatedCoerce(element);',
+				"items$seatedCoerce({ separator: 1 }, element, { sign: '-' });"
+			])
+		).not.toThrow();
 	});
 });
 
