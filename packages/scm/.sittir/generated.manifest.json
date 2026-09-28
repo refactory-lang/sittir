@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "998ee70d6d504c756f8534d8a033cca5273241d3502f2a44c76044fbd1bc4bd7",
+  "source_hash": "26fc18a10468eb5555a64b381facd5b53a868885032ba4b87feb0441f335c61a",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "4d32baa6f9deba088b9f50a61eb59bcf84b8994509a9467ba6964d791ac516cf",
@@ -27,7 +27,7 @@
     "packages/scm/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/scm/src/factories/raw.ts": "99398c2d084ec85967a4d02f04f0422e90ee9a3b0c0fd6b7a28ab8376f25c2eb",
     "packages/scm/src/grammar.ts": "e7231c8d555241ac9091b20e7e9e4f60ecf4d56607f0f44e5bab280548f34bad",
-    "packages/scm/src/hash.ts": "4ecba5fe55a7b06ea12e73a9b42b34cbf4044e95b8ce136f5963d4fc61c45b8c",
+    "packages/scm/src/hash.ts": "5fe43307211c1a70a99564ba3badffba336c384d2f4c090237c72cdb7bcce7f3",
     "packages/scm/src/index.ts": "b64e8a3b63d5b7295deac3c09b44804da2d354a622256984256e8a45eb600a88",
     "packages/scm/src/ir.ts": "5326c33df7cadbaa58ddf265329126283683cb679e3b7485ebe674ad0d68cc1e",
     "packages/scm/src/is.ts": "df7f11327eefc3f82fd0d0e3550bcea2775f139fbbc492d3a36521fcca18f5b6",
@@ -40,10 +40,10 @@
     "rust/crates/sittir-scm/index.d.ts": "1a7c621f7da9e3108a04c23cd0b51e45ac6b6d646fdc29b7424bae0b3c4165c3",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",
     "rust/crates/sittir-scm/src/lib.rs": "8b339d9a88bddf03fc2f0d8cf488c1020922c85fa7b77d18bfd65cc232455bd1",
-    "rust/crates/sittir-scm/src/render/hash.rs": "ffc553c79b88a4408943e2fc158e62e9b31b0208e93bd164dd2405d1bca97649",
+    "rust/crates/sittir-scm/src/render/hash.rs": "a3fb736f9f90a8ad790310d587b5bc9cb35b27c2bd1bf7ca467ff875c5950f32",
     "rust/crates/sittir-scm/src/render/kind_ids.rs": "e9adf4c735a128563d7a138df8f49469fbfb12f1f5ba32359cd74cfd704ac0b0",
     "rust/crates/sittir-scm/src/render/mod.rs": "36803e5721be1df2edd7839bd72b043bb04fa66adfade5e6993cd1ad546584cf",
-    "rust/crates/sittir-scm/src/render/options.rs": "fb0c47f241a2145a8964c7e7628a8c97644ac18ab731840496cd09923e011dba",
+    "rust/crates/sittir-scm/src/render/options.rs": "721922e18a2a136a953c321d18333e0ef9f4472f1a30d7da5494b6948eed9e49",
     "rust/crates/sittir-scm/src/render/transport.rs": "844fb05a8956f8c81edcf1549840e9497e46964af8d079e449b899789bb51d2a"
   },
   "host_files": {

@@ -185,7 +185,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			strength: isFlank ? SEAM_DECLARED : seamStrength(site.origin),
+			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })

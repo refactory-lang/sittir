@@ -15759,10 +15759,12 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 A row's strength is what the sink writes the site's default arm at:
 `SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`
 use it when the arm is the default and `SEAM_DECLARED` otherwise, so a value
-set on the node counts as declared. A separator row and a list flank row
-(`start`/`end`) carry `SEAM_DECLARED` regardless of origin: the list view
-writes both at declared strength, so the row states the strength render
-uses. A value set explicitly to the default of a cascaded site is
+set on the node counts as declared. A separator row carries
+`SEAM_DECLARED` regardless of origin: the list view writes it at declared
+strength, so the row states the strength render uses. A list flank row
+(`start`/`end`) takes its origin's strength like any other site: only a
+flank a grammar row or a node value declares holds its gap at declared
+strength, and an undeclared flank yields to any declared token face there. A value set explicitly to the default of a cascaded site is
 indistinguishable from the default and takes the cascade tier; the
 read-side inference that will set such values records explicitness when it
 lands.
