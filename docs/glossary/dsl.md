@@ -4494,7 +4494,9 @@ The one composition of a sittir grammar: `enrich(base, { groupBodies, extras })`
 with the config's authored group patterns and `extras:` callback, then `wire(config, enriched, base)`, which keeps the pre-enrich
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
-sittir's `grammarFn` under evaluate) over the enriched base and wired options.
+sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+and last `blankDeadEnrichMints` on that result, which blanks the rules enrich
+added that the wired grammar never reaches.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 

@@ -478,7 +478,7 @@ The evaluation stages (`stage.ts::diagnoseEvaluationStage`) use it, and through 
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::withoutOrphanedGroups`
 
-Drops records owned by a kind the grammar's own override provably orphaned (`RawGrammar.orphanedSyntheticGroups`):
+Drops records owned by a dead enrich mint (`RawGrammar.orphanedSyntheticGroups`, the rules enrich added that the wired grammar never reaches):
 it never occurs in a parse, so a record about it is phantom whatever its code.
 
 ### `packages/codegen/src/compiler/diagnostics/slot-grouping.ts::module`

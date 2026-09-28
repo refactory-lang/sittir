@@ -1281,6 +1281,16 @@ function grammarRootNames(grammar) {
   const start = rootRuleName(grammar.rules);
   return [...start === void 0 ? [] : [start], ...ruleListParts(grammar.extras).names.filter((name) => name in grammar.rules)];
 }
+function collectSymbolRefs(node, into) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectSymbolRefs(item, into);
+    return;
+  }
+  if (!node || typeof node !== "object") return;
+  const obj = node;
+  if (obj.type === "SYMBOL" && typeof obj.name === "string") into.add(obj.name);
+  for (const value of Object.values(obj)) collectSymbolRefs(value, into);
+}
 
 // packages/codegen/src/dsl/symbol-table.ts
 function kindTableOfSymbolTable(table, grammarJson) {
@@ -2948,6 +2958,9 @@ function getEnrichRuleOrigins(grammar) {
 }
 function enrichRuleNamesOf(grammar, keep) {
   return new Set([...getEnrichRuleOrigins(grammar)].filter(([, origin]) => keep(origin)).map(([name]) => name));
+}
+function getEnrichMints(grammar) {
+  return enrichRuleNamesOf(grammar, (origin) => origin.kind !== "promoted-group");
 }
 var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
 function getEnrichWhitespace(grammar) {
@@ -4978,7 +4991,6 @@ function wireImpl(cfg, base2, source) {
     ruleBodies: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
-    orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
     conflictGroups: [],
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
@@ -5031,9 +5043,6 @@ function wireImpl(cfg, base2, source) {
     }
     const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
-      if (context.authoredRuleNames.has(ownerKind)) {
-        context.orphanedSyntheticGroups.add(syntheticName);
-      }
       if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
         const pairKey = [ownerKind, syntheticName].join("\0");
         if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {
@@ -5069,6 +5078,13 @@ function wireImpl(cfg, base2, source) {
     configurable: true
   });
   return wired;
+}
+function protectedWireRuleNames(opts) {
+  const context = opts.__wireContext__;
+  if (context === void 0) return [];
+  const $ = makeSimpleDollarProxy();
+  const keysOf = (config) => config === void 0 ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
+  return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
 }
 function declaredRuleCauses(rules) {
   const ruleCauses = /* @__PURE__ */ new Map();
@@ -5366,7 +5382,6 @@ function buildWiredInlineFn(userInline, context) {
     for (const name of context.syntheticInline) {
       if (existingNames.has(name)) continue;
       if (context.inlineRemovals.has(name)) continue;
-      if (context.orphanedSyntheticGroups.has(name)) continue;
       appended.push(nativeInlineRef($, name));
     }
     return appended.length === 0 ? base2 : [...base2, ...appended];
@@ -6824,11 +6839,61 @@ function refine(original, forms) {
   return original;
 }
 
+// packages/codegen/src/dsl/wire/dead-mints.ts
+var DEAD_ENRICH_MINTS_KEY = "__deadEnrichMints__";
+function ruleListEntries2(entries) {
+  return (Array.isArray(entries) ? entries : []).flatMap((entry) => ruleListEntryOf(entry) ?? []);
+}
+function reachableRuleNames(grammar, opts) {
+  const roots = [
+    ...grammarRootNames({ rules: grammar.rules, extras: ruleListEntries2(grammar.extras) }),
+    ...symbolNamesOf(grammar.supertypes),
+    ...symbolNamesOf(grammar.externals),
+    ...typeof grammar.word === "string" ? [grammar.word] : [],
+    ...protectedWireRuleNames(opts)
+  ];
+  const reachable = /* @__PURE__ */ new Set();
+  const pending = roots.filter((name) => name in grammar.rules);
+  while (pending.length > 0) {
+    const name = pending.pop();
+    if (reachable.has(name)) continue;
+    reachable.add(name);
+    const refs = /* @__PURE__ */ new Set();
+    collectSymbolRefs(grammar.rules[name], refs);
+    for (const ref of refs) if (ref in grammar.rules && !reachable.has(ref)) pending.push(ref);
+  }
+  return reachable;
+}
+function withoutDeadNames(list, dead) {
+  if (!Array.isArray(list)) return list;
+  return list.filter((entry) => ![...symbolNamesOf([entry])].some((name) => dead.has(name)));
+}
+function withoutDeadConflicts(conflicts, dead) {
+  if (!Array.isArray(conflicts)) return conflicts;
+  return conflicts.filter((group2) => ![...symbolNamesOf(group2)].some((name) => dead.has(name)));
+}
+function blankDeadEnrichMints(grammar, enriched, opts) {
+  const reachable = reachableRuleNames(grammar, opts);
+  const dead = new Set([...getEnrichMints(enriched)].filter((name) => name in grammar.rules && !reachable.has(name)));
+  Object.defineProperty(grammar, DEAD_ENRICH_MINTS_KEY, { value: dead, enumerable: false, writable: false, configurable: true });
+  if (dead.size === 0) return;
+  const ruleOrder = Object.keys(grammar.rules).join("\n");
+  const blank = nativeRuleFn("blank");
+  for (const name of dead) grammar.rules[name] = blank();
+  if (Object.keys(grammar.rules).join("\n") !== ruleOrder) throw new Error("blankDeadEnrichMints: blanking changed the rule order");
+  grammar.inline = withoutDeadNames(grammar.inline, dead);
+  grammar.supertypes = withoutDeadNames(grammar.supertypes, dead);
+  grammar.conflicts = withoutDeadConflicts(grammar.conflicts, dead);
+}
+
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
   const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
   const grammar = globalThis.grammar;
-  return grammar(enriched, wire(config, enriched, base2));
+  const opts = wire(config, enriched, base2);
+  const result = grammar(enriched, opts);
+  blankDeadEnrichMints(result.grammar, enriched, opts);
+  return result;
 }
 
 // packages/typescript/grammar.sittir.ts

@@ -32,7 +32,8 @@ import { canonicalGrammar } from './canonical-rules.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
-import { wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
+import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
+import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -252,7 +253,6 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	const groups = drainGroupsMetadata(opts);
 	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
 	const expectTestFailures = drainExpectTestFailuresMetadata(opts);
-	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
@@ -264,7 +264,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		name: opts.name,
 		rules,
 		provenanceByKind,
-		protectedRuleNames: wireCtx ? [...wireCtx.deposits.keys(), ...supertypes, ...Object.keys(renderAs ?? {}), ...Object.keys(visibleExternals ?? {})] : undefined,
+		protectedRuleNames: wireCtx ? [...protectedWireRuleNames(opts), ...supertypes] : undefined,
 		extras,
 		externals,
 		supertypes,
@@ -287,7 +287,6 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		undeclaredRules,
 		patchSites,
 		stages,
-		orphanedSyntheticGroups,
 		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
@@ -384,12 +383,6 @@ function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, s
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;
-}
-
-function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly string[] | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || wireCtx.orphanedSyntheticGroups.size === 0) return undefined;
-	return [...wireCtx.orphanedSyntheticGroups];
 }
 
 function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
@@ -968,8 +961,9 @@ async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGram
 		grammar?: unknown;
 	};
 	const result = (mod.default ?? mod) as { grammar?: unknown };
-	const grammarObj = result.grammar ?? result;
-	return grammarObj as EvaluatedGrammar;
+	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
+	const deadMints = getDeadEnrichMints(grammarObj);
+	return deadMints.size === 0 ? grammarObj : { ...grammarObj, orphanedSyntheticGroups: [...deadMints] };
 }
 
 function restoreSavedGlobals(g: Record<string, unknown>, savedGlobals: Record<string, unknown>): void {

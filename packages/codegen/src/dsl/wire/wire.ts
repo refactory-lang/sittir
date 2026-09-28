@@ -64,7 +64,6 @@ export interface WireContext {
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
-	readonly orphanedSyntheticGroups: Set<string>;
 	readonly conflictGroups: string[][];
 	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
@@ -240,7 +239,6 @@ export function withWireContext<T>(
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
@@ -428,7 +426,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
@@ -484,9 +481,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		}
 		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
-			if (context.authoredRuleNames.has(ownerKind)) {
-				context.orphanedSyntheticGroups.add(syntheticName);
-			}
 			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
 				const pairKey = [ownerKind, syntheticName].join('\u0000');
 				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
@@ -527,6 +521,15 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		configurable: true
 	});
 	return wired;
+}
+
+export function protectedWireRuleNames(opts: WiredOpts): string[] {
+	const context = opts.__wireContext__;
+	if (context === undefined) return [];
+	const $ = makeSimpleDollarProxy();
+	const keysOf = (config: RenderAsConfig | VisibleExternalsConfig | undefined): string[] =>
+		config === undefined ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
+	return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
 }
 
 function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
@@ -703,7 +706,7 @@ interface BaseArg {
 	supertypes?: unknown;
 }
 
-function symbolNamesOf(entries: unknown): Set<string> {
+export function symbolNamesOf(entries: unknown): Set<string> {
 	const names = new Set<string>();
 	for (const entry of Array.isArray(entries) ? entries : []) {
 		if (typeof entry === 'string') {
@@ -929,7 +932,6 @@ function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
 			if (context.inlineRemovals.has(name)) continue;
-			if (context.orphanedSyntheticGroups.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];
