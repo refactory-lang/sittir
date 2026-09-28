@@ -87,7 +87,7 @@ function rebaseTriviaItems(trivia: readonly FormatTrivia[] | undefined, editStar
 /** Recursively rebase all sub-records in `kinds`. */
 function rebaseKinds(kinds: Record<string, FormatRecord> | undefined, editStart: number, delta: number): Record<string, FormatRecord> | undefined {
 	if (!kinds) return undefined;
-	const result: Record<string, FormatRecord> = { };
+	const result: Record<string, FormatRecord> = {};
 	for (const [key, sub] of Object.entries(kinds)) {
 		result[key] = rebaseTrivia(sub, editStart, delta);
 	}

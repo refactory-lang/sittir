@@ -15764,7 +15764,12 @@ set on the node counts as declared. A separator row carries
 strength, so the row states the strength render uses. A list flank row
 (`start`/`end`) takes its origin's strength like any other site: only a
 flank a grammar row or a node value declares holds its gap at declared
-strength, and an undeclared flank yields to any declared token face there. A value set explicitly to the default of a cascaded site is
+strength, and an undeclared flank yields to any declared token face there.
+A declared flank that meets a declared token face at one gap wins it
+whatever their widths (core's `RenderSink::flank_at`, which the list view
+writes its flanks through): the flank is written only inside a list that
+has members, so it is the more specific fact about that gap, and an empty
+list leaves the gap to the face alone (`{}`). A value set explicitly to the default of a cascaded site is
 indistinguishable from the default and takes the cascade tier; the
 read-side inference that will set such values records explicitness when it
 lands.

@@ -155,6 +155,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_strength: u8,
     seam_text: String,
     seam_is_token: bool,
+    seam_is_flank: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
@@ -182,6 +183,7 @@ struct HeldContext {
     seam_strength: u8,
     seam_text: String,
     seam_is_token: bool,
+    seam_is_flank: bool,
     line_end_held: bool,
 }
 
@@ -201,6 +203,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_strength: SEAM_FALLBACK,
             seam_text: String::new(),
             seam_is_token: false,
+            seam_is_flank: false,
             sources: None,
             options: None,
             deferring: None,
@@ -288,6 +291,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
             seam_text: std::mem::take(&mut self.seam_text),
             seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
+            seam_is_flank: std::mem::replace(&mut self.seam_is_flank, false),
             line_end_held: std::mem::replace(&mut self.line_end_held, false),
         }
     }
@@ -301,6 +305,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_strength = held.seam_strength;
         self.seam_text = held.seam_text;
         self.seam_is_token = held.seam_is_token;
+        self.seam_is_flank = held.seam_is_flank;
         self.line_end_held = held.line_end_held;
     }
 
@@ -377,6 +382,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         };
         let token = std::mem::replace(&mut self.seam_is_token, false);
+        self.seam_is_flank = false;
         // A synthesized (non-token) space is redundant at the very start of
         // output and right after a literal newline the prior text already
         // wrote: either way the line already starts bare, so a plain space
@@ -395,21 +401,69 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Merges a mark's payload into the held one: a stronger mark replaces a
-    /// weaker one whatever their widths; between marks of one strength the
-    /// wider wins and a tie keeps the one already held.
+    /// weaker one whatever their widths; between marks of one strength a list
+    /// flank beats any other mark, since it is written only inside a list
+    /// that has members; otherwise the wider wins and a tie keeps the one
+    /// already held.
     fn merge_seam(&mut self, text: &str) {
         self.merge_seam_with(text, SEAM_DECLARED);
     }
 
     fn merge_seam_with(&mut self, text: &str, strength: u8) {
+        self.merge_mark(text, strength, false);
+    }
+
+    /// A spacing site's arm read from the resolved options, written as a
+    /// flank mark when `flank` is set.
+    fn option_site(&mut self, site: usize, flank: bool) {
+        debug_assert!(self.options.is_some(), "a render that writes option sites must attach the resolved options");
+        let Some(options) = self.options else {
+            return;
+        };
+        let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
+        self.site_mark(arm, strength, flank);
+    }
+
+    /// Writes a whitespace kind's arm: a depth move plus its line break for
+    /// the depth arms, otherwise the arm's text as a seam of `strength`.
+    fn site_mark(&mut self, kind: u16, strength: u8, flank: bool) {
+        if kind == 0 {
+            return;
+        }
+        debug_assert!(
+            self.table.is_some(),
+            "a render that resolves sites must attach a whitespace table"
+        );
+        let Some(table) = self.table else {
+            return;
+        };
+        let text = (table.text_of)(kind);
+        if kind == table.dedent {
+            crate::render::RenderSink::dedent(self, text);
+            return;
+        }
+        if kind == table.indent {
+            crate::render::RenderSink::indent(self);
+        }
+        self.merge_mark(text, strength, flank);
+    }
+
+    fn merge_mark(&mut self, text: &str, strength: u8, flank: bool) {
         let rank = seam_rank(text);
         if let Some(current) = self.seam {
-            if strength < self.seam_strength || (strength == self.seam_strength && current >= rank) {
+            let keeps = match strength.cmp(&self.seam_strength) {
+                std::cmp::Ordering::Less => true,
+                std::cmp::Ordering::Greater => false,
+                std::cmp::Ordering::Equal if flank != self.seam_is_flank => self.seam_is_flank,
+                std::cmp::Ordering::Equal => current >= rank,
+            };
+            if keeps {
                 return;
             }
         }
         self.seam = Some(rank);
         self.seam_strength = strength;
+        self.seam_is_flank = flank;
         self.seam_text.clear();
         self.seam_text.push_str(text);
     }
@@ -470,12 +524,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn site_at(&mut self, site: usize) {
-        debug_assert!(self.options.is_some(), "a render that writes option sites must attach the resolved options");
-        let Some(options) = self.options else {
-            return;
-        };
-        let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
-        self.site_with(arm, strength);
+        self.option_site(site, false);
     }
 
     fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
@@ -489,25 +538,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn site_with(&mut self, kind: u16, strength: u8) {
-        if kind == 0 {
-            return;
-        }
-        debug_assert!(
-            self.table.is_some(),
-            "a render that resolves sites must attach a whitespace table"
-        );
-        let Some(table) = self.table else {
-            return;
-        };
-        let text = (table.text_of)(kind);
-        if kind == table.dedent {
-            self.dedent(text);
-            return;
-        }
-        if kind == table.indent {
-            self.indent();
-        }
-        self.merge_seam_with(text, strength);
+        self.site_mark(kind, strength, false);
+    }
+
+    fn flank_at(&mut self, site: usize) {
+        self.option_site(site, true);
     }
 
     fn seam(&mut self, text: &str) {
@@ -606,6 +641,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             text: std::mem::take(&mut self.seam_text),
             strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
             token: std::mem::replace(&mut self.seam_is_token, false),
+            flank: std::mem::replace(&mut self.seam_is_flank, false),
         })
     }
 
@@ -621,12 +657,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             if self.seam.is_some_and(|current| rank > current) {
                 self.seam = Some(rank);
                 self.seam_text = held.text;
+                self.seam_is_flank = held.flank;
             }
             self.seam_strength = self.seam_strength.max(held.strength);
             return;
         }
         let was = (self.seam, self.seam_strength);
-        self.merge_seam_with(&held.text, held.strength);
+        self.merge_mark(&held.text, held.strength, held.flank);
         if held.token && (self.seam, self.seam_strength) != was {
             self.seam_is_token = true;
         }
@@ -1202,5 +1239,70 @@ mod strength_tests {
             w.text(";").unwrap();
         });
         assert_eq!(tight, "x;");
+    }
+
+    #[test]
+    fn an_equal_strength_flank_replaces_a_held_face() {
+        // `{ a }`: the brace's declared tight face meets the list's declared
+        // space flank; the flank wins though it is narrower.
+        let out = render(|w| {
+            w.text("{").unwrap();
+            w.site_with(1, SEAM_DECLARED);
+            w.site_mark(2, SEAM_DECLARED, true);
+            w.text("a").unwrap();
+        });
+        assert_eq!(out, "{ a");
+    }
+
+    #[test]
+    fn an_equal_strength_face_does_not_replace_a_held_flank() {
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.site_mark(2, SEAM_DECLARED, true);
+            w.site_with(1, SEAM_DECLARED);
+            w.text("}").unwrap();
+        });
+        assert_eq!(out, "a }");
+    }
+
+    #[test]
+    fn strength_still_decides_before_the_flank_tie_break() {
+        // `use a::{b}`: a cascaded flank space loses to the brace's declared
+        // tight face in either order, and a declared flank beats a cascaded face.
+        let held_face = render(|w| {
+            w.text("{").unwrap();
+            w.site_with(1, SEAM_DECLARED);
+            w.site_mark(2, SEAM_CASCADE, true);
+            w.text("b").unwrap();
+        });
+        assert_eq!(held_face, "{b");
+        let held_flank = render(|w| {
+            w.text("b").unwrap();
+            w.site_mark(2, SEAM_CASCADE, true);
+            w.site_with(1, SEAM_DECLARED);
+            w.text("}").unwrap();
+        });
+        assert_eq!(held_flank, "b}");
+        let declared_flank = render(|w| {
+            w.text("{").unwrap();
+            w.site_with(1, SEAM_CASCADE);
+            w.site_mark(2, SEAM_DECLARED, true);
+            w.text("b").unwrap();
+        });
+        assert_eq!(declared_flank, "{ b");
+    }
+
+    #[test]
+    fn a_held_flank_survives_a_take_and_restore() {
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.site_mark(2, SEAM_DECLARED, true);
+            let held = w.take_seam().unwrap();
+            assert!(held.flank);
+            w.restore_seam(held);
+            w.site_with(1, SEAM_DECLARED);
+            w.text("}").unwrap();
+        });
+        assert_eq!(out, "a }");
     }
 }

@@ -7064,20 +7064,12 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
     statement_block: { before: preference("space") },
     class_body: { before: preference("space") },
     switch_body: { before: preference("space") },
-    named_imports: {
-      before: preference("space"),
-      after: preference("space"),
-      '"{"/after': preference("space"),
-      '"}"/before': preference("space")
-    },
-    export_clause: {
-      before: preference("space"),
-      after: preference("space"),
-      '"{"/after': preference("space"),
-      '"}"/before': preference("space")
-    },
-    object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
-    object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
+    named_imports: { before: preference("space"), after: preference("space") },
+    import_specifiers: { "import_specifier:/start": preference("space"), "import_specifier:/end": preference("space") },
+    export_clause: { before: preference("space"), after: preference("space") },
+    export_specifiers: { "export_specifier:/start": preference("space"), "export_specifier:/end": preference("space") },
+    object: { "properties:/start": preference("space"), "properties:/end": preference("space") },
+    object_pattern: { "properties:/start": preference("space"), "properties:/end": preference("space") },
     ternary_expression: { '":"/before': preference("space") },
     for_statement: { '"("/before': preference("space"), '";"/after': preference("space") },
     lexical_declaration: { after: preference("space") },

@@ -22113,7 +22113,7 @@
         }
       ]
     },
-    "expectedOutput": "export = Linter;\n\nexport = { };"
+    "expectedOutput": "export = Linter;\n\nexport = {};"
   },
   {
     "kind": "roundtrip",
@@ -22121,9 +22121,9 @@
     "sourceIn": "\nexport = Linter;\nexport = {};\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export = Linter;\n\nexport = { };",
+    "expectedSourceOut": "export = Linter;\n\nexport = {};",
     "expectedReparseTree": "(program statements: (export_statement_equals_export expression: (identifier)) statements: (export_statement_equals_export expression: (object)))",
-    "wrappedText": "export = Linter;\n\nexport = { };",
+    "wrappedText": "export = Linter;\n\nexport = {};",
     "wrappedOffset": 0
   },
   {
@@ -22227,7 +22227,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "export = { };"
+    "expectedOutput": "export = {};"
   },
   {
     "kind": "roundtrip",
@@ -22235,9 +22235,9 @@
     "sourceIn": "export = {};",
     "pattern": "export_statement_equals_export",
     "edits": [],
-    "expectedSourceOut": "export = { };",
+    "expectedSourceOut": "export = {};",
     "expectedReparseTree": "(export_statement_equals_export expression: (object))",
-    "wrappedText": "export = { };",
+    "wrappedText": "export = {};",
     "wrappedOffset": 0
   },
   {
@@ -22250,7 +22250,7 @@
       "$named": true,
       "_properties": []
     },
-    "expectedOutput": "{ }"
+    "expectedOutput": "{}"
   },
   {
     "kind": "roundtrip",
@@ -22258,9 +22258,9 @@
     "sourceIn": "{}",
     "pattern": "object",
     "edits": [],
-    "expectedSourceOut": "{ }",
+    "expectedSourceOut": "{}",
     "expectedReparseTree": "(object)",
-    "wrappedText": "let _ = { };",
+    "wrappedText": "let _ = {};",
     "wrappedOffset": 8
   },
   {

@@ -264,7 +264,7 @@ impl<E: Slot> Render for ListView<'_, E> {
         let (prefix, suffix) = split_template(self.template);
         write_literal(prefix, w)?;
         if let Some(head) = self.head {
-            w.site_at(head);
+            w.flank_at(head);
         }
         if self.leading {
             w.text(self.token)?;
@@ -283,7 +283,7 @@ impl<E: Slot> Render for ListView<'_, E> {
             w.text(self.token)?;
         }
         if let Some(tail) = self.tail {
-            w.site_at(tail);
+            w.flank_at(tail);
         }
         write_literal(suffix, w)
     }

@@ -107,6 +107,12 @@ pub trait RenderSink {
     /// with the site's default strength when the arm is its default. Unlike
     /// `site`, which writes a given arm, this names a site and looks it up.
     fn site_at(&mut self, site: usize);
+    /// A list's start or end flank site, looked up as `site_at` does. At one
+    /// gap, a flank mark beats any other mark of equal strength; a sink that
+    /// knows no strengths writes it as a plain site.
+    fn flank_at(&mut self, site: usize) {
+        self.site_at(site);
+    }
     /// One side of a kind's edge: the node's stamp when it carries one, else
     /// the kind's edge row (`ResolvedOptions::edge_arm`). A kind with no edge
     /// site on that side writes nothing.
@@ -203,13 +209,14 @@ pub trait RenderSink {
     fn seat_trailing(&mut self) -> RenderResult;
 }
 
-/// A seam set aside from the sink: its text, the strength it holds, and
-/// whether a whitespace token wrote it.
+/// A seam set aside from the sink: its text, the strength it holds, whether
+/// a whitespace token wrote it, and whether a list flank wrote it.
 #[derive(Debug, Clone)]
 pub struct HeldSeam {
     pub text: String,
     pub strength: u8,
     pub token: bool,
+    pub flank: bool,
 }
 
 pub trait Render {
