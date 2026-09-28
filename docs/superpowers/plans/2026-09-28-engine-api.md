@@ -548,7 +548,7 @@ Also write a rename-failure test by making the target a directory (a rename onto
 
 - [ ] **Step 2: Run them and see them fail.**
 - [ ] **Step 3: Implement `files.ts`**, and wire `create`, `edit`, `write` and `read` into `assembleEngine` over `diskFileSet(process.cwd())` for a standalone engine. For a standalone engine each `Pending`'s commit is `commitChanges(dir, [change])`, which is the one code path the project reuses.
-- [ ] **Step 4: Add engine-level tests** to `create-engine.test.ts` with the fake language: create on an existing path throws; edit on a missing path throws; an edit returning the same root leaves the modification time unchanged; an edit returning a new equal root writes (Review Focus 4); and a callback that throws leaves no file.
+- [ ] **Step 4: Add engine-level tests** to `create-engine.test.ts` with the fake language: a `file` interceptor that doesn't call `next` blocks the write (the file doesn't exist afterwards); create on an existing path throws; edit on a missing path throws; an edit returning the same root leaves the modification time unchanged; an edit returning a new equal root writes (Review Focus 4); and a callback that throws leaves no file.
 - [ ] **Step 5: Run the common suite.** Expected: all pass.
 - [ ] **Step 6: Glossary entries and commit**
 
