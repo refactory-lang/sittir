@@ -184,7 +184,7 @@ export type PolicyChoice = { readonly kind: 'chosen'; readonly resolution: Deriv
 export function chooseResolution(report: ConflictReport, upstream: UpstreamContext): PolicyChoice;
 export type DerivationResult =
 	| { readonly kind: 'converged'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: number }
-	| { readonly kind: 'unresolvable'; readonly reason: 'repeated' | 'no-usable-offer' | 'cap'; readonly report?: ConflictReport; readonly resolutions: readonly DerivedResolution[] };
+	| { readonly kind: 'unresolvable'; readonly reason: 'repeated' | 'no-usable-offer' | 'cap'; readonly report: ConflictReport; readonly resolutions: readonly DerivedResolution[] };
 export function deriveConflictResolutions(input: {
 	readonly ruleCount: number;
 	readonly upstream: UpstreamContext;

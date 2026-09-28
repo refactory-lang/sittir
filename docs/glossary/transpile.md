@@ -370,3 +370,88 @@ sequence, the lookahead, and each interpretation's rule, production and step.
 The offered resolutions are excluded — the same conflict can list its offers
 in any order.
 ```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyStep`
+
+```text
+Which step of the resolution policy chose a resolution: `upstream-declared`
+(the conflict's rules, mapped back to their upstream sources, are a set
+upstream listed in its own `conflicts`), `upstream-precedence` (a direction
+copied from the upstream source rule's precedence), or `default`
+(AddConflict).
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::DerivedResolution`
+
+```text
+One entry of `resolutions.json`: the resolution applied, the policy step that
+chose it, and the conflict it resolved (symbol sequence, lookahead, and the
+rules of each interpretation), so a diagnostic record can show what was
+resolved and why.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::ConflictResolutionsFile`
+
+```text
+The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the
+evaluated grammar the resolutions were derived from, computed without the
+resolutions; a mismatch means the grammar changed and the set is re-derived
+from empty.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::UpstreamContext`
+
+```text
+What the policy knows about upstream: the conflict sets upstream declared, and
+the upstream source of each final rule name, read from the reshaping records
+(identity for a rule reshaping never renamed).
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyChoice`
+
+```text
+The policy's answer for one report: a resolution to record, or `unusable` when
+no resolution the policy can apply was offered.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationResult`
+
+```text
+How a derivation ended: `converged` with the resolutions and the number of
+`generate` runs, or `unresolvable` with the reason, the report that stopped it,
+and the resolutions gathered so far.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::sameSet`
+
+```text
+Set equality of two rule-name lists, order and duplicates ignored.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::declaredUpstream`
+
+```text
+Whether a conflict's rules, each mapped to its upstream source, are exactly a
+set upstream declared. A subset or superset of a declared set is not
+upstream's choice.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::chooseResolution`
+
+```text
+Applies the resolution policy to one report. The resolution is always the
+offered AddConflict: a set upstream declared is recorded as upstream's
+choice, anything else as the default. No AddConflict offered is `unusable`.
+```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::deriveConflictResolutions`
+
+```text
+The derivation loop: run `generate` with the current resolutions, and on each
+reported conflict add the policy's resolution and run again, until `generate`
+is clean. It stops unresolvable when a conflict is reported a second time
+(the resolution did not resolve it), when no usable resolution is offered, or
+when the resolutions already number the grammar's rules (the cap: each
+resolution names at least one rule). A `generate` error throws — a grammar
+that fails to build for any other reason is broken, not conflicted.
+```
