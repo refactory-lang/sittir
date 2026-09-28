@@ -2209,7 +2209,7 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 	 * THE canonical child-edge relation — single source of truth for "what
 	 * are this rule's children" (see `childEdgesOf` for the edge/path detail).
 	 * map, fold, find, foldDeep, and findDeep all use this relation
-	 * identically — no narrower traversal exists.
+	 * identically; a subclass narrows it only through `descends`.
 	 */
 ```
 
@@ -2266,6 +2266,40 @@ more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 	 * keyed on node identity); symbol refs are followed through the bound
 	 * rules map.
 	 */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::isLexedBoundary`
+
+```text
+/**
+ * True for a TOKEN or IMMEDIATE_TOKEN node: the boundary of a lexed
+ * interior. Everything under it is lexed as one token, so it holds no parser
+ * nodes, no fields and no kind references of the syntactic grammar. Every
+ * enrich pass that mints fields, labels or lifts stops here, through
+ * SyntacticRuleWalker or by checking this predicate in its own descent. The
+ * boundary node itself is still visited; only its interior is not.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker.descends`
+
+```text
+/**
+ * Whether the walker enters this node's children. childEdgesOf (and so
+ * childrenOf, fold, find, foldDeep, findDeep) and map all consult it, so a
+ * subclass narrows every traversal at one place. The base walker descends
+ * everywhere.
+ */
+```
+
+### `packages/codegen/src/dsl/rule-walker.ts::SyntacticRuleWalker`
+
+```text
+/**
+ * A RuleWalker that walks the syntactic layer only: it never descends past
+ * isLexedBoundary. Enrich's rewriting passes use it so nothing they mint
+ * lands inside a token's lexed interior.
+ */
 ```
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringField`

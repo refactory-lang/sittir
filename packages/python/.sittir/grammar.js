@@ -155,6 +155,9 @@ function withHoistedAnnotation(rule2) {
 }
 
 // packages/codegen/src/dsl/rule-walker.ts
+function isLexedBoundary(rule2) {
+  return isTokenWrapperType(rule2.type);
+}
 var RuleWalker = class {
   #rules;
   diagnostics;
@@ -162,7 +165,11 @@ var RuleWalker = class {
     this.#rules = rules;
     this.diagnostics = diagnostics;
   }
+  descends(_rule) {
+    return true;
+  }
   childEdgesOf(rule2) {
+    if (!this.descends(rule2)) return [];
     const out = [];
     const bag = rule2;
     if (Array.isArray(bag.members)) {
@@ -178,6 +185,7 @@ var RuleWalker = class {
     return this.childEdgesOf(rule2).map((e) => e.child);
   }
   map(rule2, visit) {
+    if (!this.descends(rule2)) return rule2;
     const bag = rule2;
     const patch = {};
     if (Array.isArray(bag.members)) {
@@ -251,6 +259,11 @@ var RuleWalker = class {
       return void 0;
     };
     return go(rule2);
+  }
+};
+var SyntacticRuleWalker = class extends RuleWalker {
+  descends(rule2) {
+    return !isLexedBoundary(rule2);
   }
 };
 
@@ -2248,7 +2261,7 @@ function innermostNamedAliasContent(rule2) {
   return current;
 }
 function distributeInlineAliasChoices(rule2, ctx) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const distributed = /* @__PURE__ */ new WeakSet();
   const inlineChoiceOf = (content) => {
     if (content.type !== SYMBOL) return void 0;
@@ -2278,7 +2291,7 @@ function distributeInlineAliasChoices(rule2, ctx) {
   return visit(walker.map(rule2, visit));
 }
 function mintInlineLiteralAliasStorage(rules) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const literalAliasOf = (r) => {
     const alias2 = r;
     if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || Object.hasOwn(rules, alias2.value)) return void 0;
@@ -2330,7 +2343,7 @@ function liftAliasedHiddenRuleBodies(rules) {
     const name = r.type === SYMBOL ? r.name : void 0;
     return name !== void 0 && displayByRule.has(name) ? name : void 0;
   };
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const visit = (r) => {
     const name = lifted(r);
     if (name !== void 0) return { ...displayByRule.get(name), content: r };
@@ -2348,7 +2361,7 @@ function liftAliasedHiddenRuleBodies(rules) {
   return out;
 }
 function unaliasOverloadedDisplays(rules, ctx) {
-  const walker = new RuleWalker();
+  const walker = new SyntacticRuleWalker();
   const siteOf = (r) => {
     const alias2 = r;
     return alias2.type === ALIAS && alias2.named === true && alias2.value ? alias2 : void 0;
@@ -3186,16 +3199,13 @@ function applyChoiceArmFieldWrap(ruleName, rule2, ctx) {
   }
   return result;
 }
+var syntacticWalker = new SyntacticRuleWalker();
 function collectAllFieldNamesDeep(rule2, into) {
-  if (isFieldType(rule2.type) && typeof rule2.name === "string") {
-    into.add(rule2.name);
-  }
-  const bag = rule2;
-  if (Array.isArray(bag.members)) {
-    for (const m of bag.members) collectAllFieldNamesDeep(m, into);
-  } else if (bag.content && typeof bag.content === "object") {
-    collectAllFieldNamesDeep(bag.content, into);
-  }
+  syntacticWalker.fold(rule2, into, (names, r) => {
+    const name = r.name;
+    if (isFieldType(r.type) && typeof name === "string") names.add(name);
+    return names;
+  });
 }
 function isAllArmsNodeShaped(choiceRule) {
   const members = choiceRule.members;
@@ -3369,7 +3379,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule2, mergedRules, ctx) {
   };
   const refCounts = /* @__PURE__ */ new Map();
   const countEligibleRefs = (r) => {
-    if (isFieldType(r.type)) return;
+    if (isFieldType(r.type) || isLexedBoundary(r)) return;
     if (isSymbolType(r.type)) {
       const name = r.name;
       if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
@@ -3386,7 +3396,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule2, mergedRules, ctx) {
   };
   countEligibleRefs(rule2);
   const visit = (r, suppressed, scope) => {
-    if (isFieldType(r.type)) return r;
+    if (isFieldType(r.type) || isLexedBoundary(r)) return r;
     if (!suppressed && isRepeatType(r.type)) {
       const content = r.content;
       const precStack = [];
@@ -3515,7 +3525,7 @@ function distributeExclusiveFieldChoices(rule2, rulesBag) {
   const choiceFn = nativeRuleFn("choice");
   const collapse = (alts) => alts.length === 1 ? alts[0] : choiceFn(...alts);
   const expand = (node) => {
-    if (!node || typeof node !== "object") return [node];
+    if (!node || typeof node !== "object" || isLexedBoundary(node)) return [node];
     let out = node;
     const members = node.members;
     const content = node.content;
@@ -3545,21 +3555,16 @@ function distributeExclusiveFieldChoices(rule2, rulesBag) {
 }
 function applyRepeatUnionFieldPromotion(ruleName, rule2, ctx) {
   const { rulesBag } = ctx;
-  const preExistingFieldNames = /* @__PURE__ */ new Set();
-  const collectNames = (node) => {
+  const preExistingFieldNames = syntacticWalker.fold(rule2, /* @__PURE__ */ new Set(), (names, node) => {
     const n = node;
-    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") {
-      preExistingFieldNames.add(n.name);
-    }
-    if (n.members) for (const m of n.members) collectNames(m);
-    else if (n.content) collectNames(n.content);
-  };
-  collectNames(rule2);
+    if (isFieldType(n.type) && typeof n.name === "string" && n.metadata?.fieldSource !== "enriched") names.add(n.name);
+    return names;
+  });
   const mintedBySymbol = /* @__PURE__ */ new Map();
   const mintedNames = /* @__PURE__ */ new Set();
   const rebuild = (node) => {
     const n = node;
-    if (isFieldType(n.type)) return node;
+    if (isFieldType(n.type) || isLexedBoundary(n)) return node;
     if (isRepeatType(n.type) && n.content) {
       let inner = n.content;
       while (isPrecWrapper(inner)) inner = inner.content;
@@ -4567,7 +4572,6 @@ function walkFieldEnums(rule2, rules, parentKind, out) {
     case "OPTIONAL":
     case "REPEAT":
     case "REPEAT1":
-    case "TOKEN":
       walkFieldEnums(rule2.content, rules, parentKind, out);
       return;
     default:
@@ -4719,8 +4723,7 @@ function rewriteFieldEnums(rule2, parentKind, sweep) {
     }
     case "OPTIONAL":
     case "REPEAT":
-    case "REPEAT1":
-    case "TOKEN": {
+    case "REPEAT1": {
       const content = rule2.content;
       const newContent = recurse(content);
       if (newContent === content) return rule2;

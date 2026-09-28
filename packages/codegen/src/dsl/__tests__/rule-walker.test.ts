@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { RuleWalker } from '../rule-walker.ts';
-import { CHOICE, FIELD, OPTIONAL, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { RuleWalker, SyntacticRuleWalker } from '../rule-walker.ts';
+import { CHOICE, FIELD, IMMEDIATE_TOKEN, OPTIONAL, REPEAT, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../../types/rule.ts';
 
 const str = (value: string): AnyRule => ({ type: STRING, value });
@@ -216,5 +216,22 @@ describe('RuleWalker deref wing', () => {
 			r.type === STRING ? (acc.push(r.value), acc) : acc
 		);
 		expect(values).toEqual(['once']);
+	});
+});
+
+describe('SyntacticRuleWalker', () => {
+	const w = new SyntacticRuleWalker();
+	const interior = { type: FIELD, name: 'f', content: str('x') } as AnyRule;
+	const rule = { type: SEQ, members: [sym('a'), { type: TOKEN, content: interior }, { type: IMMEDIATE_TOKEN, content: interior }] } as AnyRule;
+
+	it('visits a token but none of its lexed interior', () => {
+		const seen = w.fold(rule, [] as string[], (acc, r) => (acc.push(r.type), acc));
+		expect(seen).toEqual([SEQ, SYMBOL, TOKEN, IMMEDIATE_TOKEN]);
+		expect(new RuleWalker().fold(rule, 0, (n, r) => (r.type === FIELD ? n + 1 : n))).toBe(2);
+	});
+
+	it('map leaves a lexed interior untouched', () => {
+		const out = w.map(rule, (r) => (r.type === FIELD ? str('rewritten') : r));
+		expect(out).toBe(rule);
 	});
 });
