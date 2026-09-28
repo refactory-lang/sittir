@@ -7286,9 +7286,14 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
  * facts instead of re-resolving names/texts per site. Leaves that resolve
  * nothing are collected into `misses` — the link-time phantom-kind
- * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
- * strings are lexeme fragments of the token, not separate anon tokens, so
- * a miss there is meaningless by construction.
+ * diagnostic. `syntactic` is false inside a lexed interior (below a
+ * TOKEN): stamping is suppressed there, since its inner strings are lexeme
+ * fragments of the token, not separate anon tokens, so a miss there is
+ * meaningless by construction. A FIELD inside the interior (a structured
+ * token-interior slot) still rewrites its literals, but only to an
+ * anonymous token kind, never to a named rule: a named rule is a parser
+ * node, and a lexed interior holds none (Go's `_` digit separator stays
+ * text rather than becoming `blank_identifier`).
  *
  * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
  * in `aliasBodies` is not stamped in place — its alias body is spliced in
