@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
@@ -9,9 +9,20 @@ import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-d
 import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 
-async function nodeMapOf(grammar: string): Promise<NodeMap> {
-	return (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap;
+const nodeMaps = new Map<string, Promise<NodeMap>>();
+
+function nodeMapOf(grammar: string): Promise<NodeMap> {
+	let nodeMap = nodeMaps.get(grammar);
+	if (nodeMap === undefined) {
+		nodeMap = loadGeneratedIdTables(grammar).then(
+			async (generatedIdTables) => (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables })).nodeMap
+		);
+		nodeMaps.set(grammar, nodeMap);
+	}
+	return nodeMap;
 }
+
+beforeAll(() => Promise.all(['rust', 'python', 'typescript', 'scm'].map(nodeMapOf)), 120_000);
 
 function innerGapsOf(nodeMap: NodeMap, kind: string): unknown {
 	const node = nodeMap.nodes.get(kind);
