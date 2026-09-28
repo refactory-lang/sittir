@@ -177,6 +177,14 @@
         "block_comment_doc_inner": "doc_inner",
         "_block_comment_content": "regular"
       }
+    },
+    "visibility_modifier_pub_scope": {
+      "definedBy": "override",
+      "childKind": {
+        "self": "self",
+        "super": "super",
+        "crate": "crate"
+      }
     }
   },
   "variantRoutes": {

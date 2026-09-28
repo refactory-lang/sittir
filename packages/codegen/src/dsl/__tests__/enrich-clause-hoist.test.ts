@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { enrich, getEnrichVisibleGroupSources, type EnrichAuthoredConfig } from '../enrich.ts';
+import { enrich, getEnrichVisibleSubsequenceSources, type EnrichAuthoredConfig } from '../enrich.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
 
@@ -657,7 +657,7 @@ describe('enrich clause-hoist pass — repeat over a multi-slot seq', () => {
 		const enriched = runEnrich(mkGrammar({ term: repeatOf(atom, quantifier) }), { groupBodies: [pair] });
 		expect((enriched.grammar.rules.term as { content: unknown }).content).toEqual(pair);
 		expect(enriched.grammar.rules).not.toHaveProperty('term_group');
-		expect(getEnrichVisibleGroupSources(enriched).has('term_group')).toBe(false);
+		expect(getEnrichVisibleSubsequenceSources(enriched).has('term_group')).toBe(false);
 	});
 
 	it('declines through the ambient prec enrich registers on the lifted body', () => {

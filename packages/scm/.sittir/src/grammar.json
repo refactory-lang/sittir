@@ -862,56 +862,6 @@
         "hoisted": true
       }
     },
-    "named_node_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "supertype",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          }
-        },
-        {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "/"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_immediate_identifier"
-                },
-                "named": true,
-                "value": "identifier"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_immediate_string"
-                },
-                "named": true,
-                "value": "immediate_string"
-              }
-            ]
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "named_node_group": {
       "type": "CHOICE",
       "members": [

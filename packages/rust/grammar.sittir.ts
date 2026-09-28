@@ -42,8 +42,6 @@ export default sittirGrammar(base, {
 	supertypes: ($, previous) => [...(previous ?? []), $.comment],
 
 	groups: {
-		visibility_modifier_in_path: ($) => seq('in', $._path),
-
 		attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
 
 		attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
