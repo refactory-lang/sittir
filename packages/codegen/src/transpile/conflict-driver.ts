@@ -23,6 +23,11 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			return parseGenerateOutcome(run.status, run.stderr);
 		}
 	});
+	if (result.kind === 'stale') {
+		throw new Error(
+			`conflict-resolutions-stale: ${pkg.name}: the saved resolutions carry the current grammar hash but no longer generate cleanly; tree-sitter reports:\n${JSON.stringify(result.report, null, 2)}`
+		);
+	}
 	if (result.kind === 'unresolvable') {
 		throw new Error(
 			`${pkg.name}: conflicts could not be derived (${result.reason}) after ${result.resolutions.length} resolution(s):\n${JSON.stringify(result.report, null, 2)}`

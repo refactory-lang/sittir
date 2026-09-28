@@ -5,10 +5,25 @@ import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 
+interface TreeSitterCliManifest {
+	readonly path: string;
+	readonly version: string;
+	readonly bin: Readonly<Record<string, string>>;
+}
+
+function treeSitterCliManifest(): TreeSitterCliManifest {
+	const path = require.resolve('tree-sitter-cli/package.json');
+	const manifest: Omit<TreeSitterCliManifest, 'path'> = JSON.parse(readFileSync(path, 'utf8'));
+	return { ...manifest, path };
+}
+
 function treeSitterCliPath(): string {
-	const manifestPath = require.resolve('tree-sitter-cli/package.json');
-	const manifest: { bin: Record<string, string> } = JSON.parse(readFileSync(manifestPath, 'utf8'));
-	return join(dirname(manifestPath), manifest.bin['tree-sitter']!);
+	const manifest = treeSitterCliManifest();
+	return join(dirname(manifest.path), manifest.bin['tree-sitter']!);
+}
+
+export function treeSitterCliVersion(): string {
+	return treeSitterCliManifest().version;
 }
 
 export function runTreeSitterCli(args: readonly string[], cwd: string, stdio: StdioOptions): void {

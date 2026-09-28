@@ -184,19 +184,10 @@ describe('reuseOrDeriveConflictResolutions', () => {
 		expect(calls[0]).toEqual([]);
 	});
 
-	it('re-derives from an empty list when the saved resolutions no longer generate cleanly under an unchanged hash', async () => {
-		const calls: (readonly (readonly string[])[])[] = [];
-		const result = await reuseOrDeriveConflictResolutions({
-			saved,
-			grammarHash: 'h1',
-			ruleCount: 10,
-			upstream: identity,
-			generate: async (resolutions): Promise<GenerateOutcome> => {
-				calls.push(resolutions.map((entry) => entry.resolution.symbols));
-				return calls.length === 1 ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean' };
-			}
-		});
-		expect(result).toMatchObject({ kind: 'converged', resolutions: [], iterations: 1 });
-		expect(calls).toEqual([[['stale', 'x']], []]);
+	it('reports the saved resolutions stale when they fail to generate under an unchanged hash', async () => {
+		const { calls, generate } = recordingGenerate([reportFor('a', 'b'), reportFor('c', 'd')]);
+		const result = await reuseOrDeriveConflictResolutions({ saved, grammarHash: 'h1', ruleCount: 10, upstream: identity, generate });
+		expect(result).toEqual({ kind: 'stale', report: reportFor('c', 'd'), resolutions: saved.resolutions });
+		expect(calls).toEqual([[['stale', 'x']]]);
 	});
 });

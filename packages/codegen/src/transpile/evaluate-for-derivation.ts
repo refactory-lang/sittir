@@ -6,6 +6,7 @@ import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
+import { treeSitterCliVersion } from './tree-sitter-cli.ts';
 
 export interface DerivationInputs extends UpstreamContext {
 	readonly grammarHash: string;
@@ -34,16 +35,16 @@ function byJson(left: unknown, right: unknown): number {
 	return a < b ? -1 : a > b ? 1 : 0;
 }
 
-export function grammarHash(evaluated: object): string {
+export function grammarHash(evaluated: object, treeSitterVersion: string): string {
 	const grammar = { ...evaluated, conflicts: undefined, derivationRecords: undefined };
-	return createHash('sha256').update(JSON.stringify(canonical(grammar))).digest('hex');
+	return createHash('sha256').update(JSON.stringify(canonical({ grammar, treeSitterVersion }))).digest('hex');
 }
 
 export function derivationInputsOf(evaluated: EvaluatedGrammar): DerivationInputs {
 	const records = evaluated.derivationRecords;
 	if (records === undefined) throw new Error('evaluated grammar carries no derivation records: it was not built by sittirGrammar');
 	return {
-		grammarHash: grammarHash(evaluated),
+		grammarHash: grammarHash(evaluated, treeSitterCliVersion()),
 		ruleCount: Object.keys(evaluated.rules).length,
 		upstreamConflicts: records.upstreamConflicts,
 		sourceEdges: records.sourceEdges

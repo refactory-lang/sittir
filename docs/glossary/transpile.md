@@ -10,12 +10,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::TreeSitterCliManifest`
+
+```text
+The fields read from codegen's tree-sitter-cli `package.json`: where it is,
+its version, and its bins.
+```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliManifest`
+
+```text
+Reads codegen's own tree-sitter-cli manifest. Resolution is relative to
+codegen, never the working directory, so a grammar package anywhere on disk
+runs the same CLI version.
+```
+
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliPath`
 
 ```text
-The `tree-sitter` bin of codegen's own tree-sitter-cli dependency, read from
-that package's manifest. Resolution is relative to codegen, never the working
-directory, so a grammar package anywhere on disk runs the same CLI version.
+The `tree-sitter` bin of that manifest.
+```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliVersion`
+
+```text
+The version of the CLI that `runTreeSitterCli` runs, from the same manifest.
+It is part of the grammar hash: a different CLI can build different tables
+from the same grammar, so its conflicts must be derived again.
 ```
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
@@ -393,7 +414,8 @@ no resolution the policy can apply was offered.
 
 ```text
 How a derivation ended: `reused` when the saved resolutions generated cleanly
-in one run, `converged` with the resolutions and the number of `generate`
+in one run, `stale` when saved resolutions carrying the current hash reported
+a conflict, `converged` with the resolutions and the number of `generate`
 runs, or `unresolvable` with the reason, the report that stopped it,
 and the resolutions gathered so far.
 ```
@@ -455,9 +477,11 @@ resolution list.
 ```text
 Skips the derivation when nothing it depends on changed. When the saved
 resolutions carry the evaluated grammar's hash, they are tried in a single
-`generate`; a clean run is `reused`. A changed hash, or saved resolutions
-that no longer generate cleanly (the hash does not cover the tree-sitter
-version), derives again from an empty list, so no stale entry survives.
+`generate`; a clean run is `reused`. A conflict in that run is `stale`, not a
+cue to derive again: the hash covers every input of the derivation, so the
+saved file was edited by hand or the hash misses an input, and either has to
+be seen. A changed hash derives again from an empty list, so no stale entry
+survives.
 ```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
@@ -491,10 +515,11 @@ Orders two canonical values by their JSON text.
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::grammarHash`
 
 ```text
-sha256 of the evaluated grammar's canonical JSON, without `conflicts` and
-without the derivation records. While every resolution is an AddConflict,
-`conflicts` is the only field the resolutions change, so the hash identifies
-the grammar the resolutions were derived for.
+sha256 of the canonical JSON of the evaluated grammar, without `conflicts` and
+without the derivation records, together with the tree-sitter CLI version.
+While every resolution is an AddConflict, `conflicts` is the only field the
+resolutions change, so the hash identifies everything the resolutions were
+derived from: the grammar and the CLI that builds its tables.
 ```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
@@ -564,7 +589,9 @@ none.
 The conflict loop for one grammar package: read the saved resolutions
 (seeding them if missing), evaluate the grammar once in a fresh process for
 the hash, rule count and upstream context, then reuse the saved resolutions
-or derive new ones. Each run writes the candidate resolutions
+or derive new ones. Saved resolutions that turn out stale throw
+`conflict-resolutions-stale` with the grammar and the conflict tree-sitter
+reported. Each run writes the candidate resolutions
 (with the hash), re-bundles, and runs `tree-sitter generate --json-summary`;
 the last, clean run leaves the generate outputs in place. An unresolvable
 derivation throws with its reason and the stopping report.

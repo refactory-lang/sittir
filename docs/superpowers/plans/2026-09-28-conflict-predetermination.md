@@ -401,7 +401,8 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 - The driver reads the existing `resolutions.json`:
   - if `grammarHash` matches, it runs a single `generate`;
   - otherwise it re-derives from `[]`.
-  - Saved resolutions that no longer generate cleanly under a matching hash also re-derive from `[]`: the hash does not cover the tree-sitter version.
+  - The hash includes the tree-sitter CLI version, so a CLI bump re-derives through the changed-hash path.
+  - Saved resolutions that no longer generate cleanly under a matching hash throw `conflict-resolutions-stale`, naming the grammar and the failing conflict: with the version hashed, only a hand-edited file or a hash missing an input can cause it.
 
 - [x] **Step 1:** Write failing tests with an injected `DerivationInputs` and a `generate` counter:
   - unchanged hash → exactly 1 `generate` call, with the resolutions unchanged;

@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { grammarPackage, type GrammarName } from '../../grammars.ts';
 import { sourceChain } from '../derive-conflicts.ts';
 import { evaluateForDerivation, grammarHash, type DerivationInputs } from '../evaluate-for-derivation.ts';
+import { treeSitterCliVersion } from '../tree-sitter-cli.ts';
 
 interface UpstreamGrammarJson {
 	readonly rules: Record<string, unknown>;
@@ -21,18 +22,22 @@ describe('grammarHash', () => {
 	const grammar = { name: 'g', rules: { a: { type: 'STRING', value: 'a' } }, conflicts: [['a']] };
 
 	it('ignores conflicts', () => {
-		expect(grammarHash({ ...grammar, conflicts: [] })).toBe(grammarHash(grammar));
+		expect(grammarHash({ ...grammar, conflicts: [] }, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
 	});
 
 	it('ignores key order and Map insertion order', () => {
 		const reordered = { conflicts: [['a']], rules: { a: { value: 'a', type: 'STRING' } }, name: 'g' };
-		expect(grammarHash(reordered)).toBe(grammarHash(grammar));
+		expect(grammarHash(reordered, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
 		const mapped = { ...grammar, provenance: new Map([['x', 1], ['y', 2]]) };
-		expect(grammarHash({ ...grammar, provenance: new Map([['y', 2], ['x', 1]]) })).toBe(grammarHash(mapped));
+		expect(grammarHash({ ...grammar, provenance: new Map([['y', 2], ['x', 1]]) }, '0.26.9')).toBe(grammarHash(mapped, '0.26.9'));
+	});
+
+	it('changes when the tree-sitter CLI version changes', () => {
+		expect(grammarHash(grammar, '0.27.0')).not.toBe(grammarHash(grammar, '0.26.9'));
 	});
 
 	it('changes when a rule changes', () => {
-		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } })).not.toBe(grammarHash(grammar));
+		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } }, '0.26.9')).not.toBe(grammarHash(grammar, '0.26.9'));
 	});
 });
 
@@ -40,6 +45,10 @@ describe('evaluateForDerivation', () => {
 	let python: DerivationInputs;
 	beforeAll(() => {
 		python = evaluateForDerivation(grammarPackage('python'));
+	});
+
+	it('hashes with the version of the tree-sitter CLI that generates', () => {
+		expect(treeSitterCliVersion()).toMatch(/^\d+\.\d+\.\d+/);
 	});
 
 	it('hashes the same grammar identically in two fresh processes', () => {

@@ -10,6 +10,7 @@ export type PolicyChoice = { readonly kind: 'chosen'; readonly resolution: Deriv
 
 export type DerivationResult =
 	| { readonly kind: 'reused'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: 1 }
+	| { readonly kind: 'stale'; readonly report: ConflictReport; readonly resolutions: readonly DerivedResolution[] }
 	| { readonly kind: 'converged'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: number }
 	| {
 			readonly kind: 'unresolvable';
@@ -62,16 +63,20 @@ export interface DerivationInput {
 	readonly generate: (resolutions: readonly DerivedResolution[]) => Promise<GenerateOutcome>;
 }
 
+function conflictReportOf(outcome: Exclude<GenerateOutcome, { kind: 'clean' }>): ConflictReport {
+	if (outcome.kind === 'error') {
+		throw new Error(`tree-sitter generate failed without a conflict report:\n${JSON.stringify(outcome.summary, null, 2)}`);
+	}
+	return outcome.report;
+}
+
 export async function deriveConflictResolutions(input: DerivationInput): Promise<DerivationResult> {
 	const resolutions: DerivedResolution[] = [];
 	const reported = new Set<string>();
 	for (let iterations = 1; ; iterations++) {
 		const outcome = await input.generate(resolutions);
 		if (outcome.kind === 'clean') return { kind: 'converged', resolutions, iterations };
-		if (outcome.kind === 'error') {
-			throw new Error(`tree-sitter generate failed without a conflict report:\n${JSON.stringify(outcome.summary, null, 2)}`);
-		}
-		const { report } = outcome;
+		const report = conflictReportOf(outcome);
 		const key = conflictKey(report);
 		if (reported.has(key)) return { kind: 'unresolvable', reason: 'repeated', report, resolutions };
 		if (resolutions.length >= input.ruleCount) return { kind: 'unresolvable', reason: 'cap', report, resolutions };
@@ -88,6 +93,7 @@ export async function reuseOrDeriveConflictResolutions(
 	if (input.saved.grammarHash === input.grammarHash) {
 		const outcome = await input.generate(input.saved.resolutions);
 		if (outcome.kind === 'clean') return { kind: 'reused', resolutions: input.saved.resolutions, iterations: 1 };
+		return { kind: 'stale', report: conflictReportOf(outcome), resolutions: input.saved.resolutions };
 	}
 	return deriveConflictResolutions(input);
 }
