@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common';
+import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SiblingLeadRefusal } from '@sittir/types';

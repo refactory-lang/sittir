@@ -11407,108 +11407,16 @@ The grammar's `index.ts`: the language descriptor as the default export (its nam
 
 ### `packages/codegen/src/emitters/consts.ts::module`
 
-```text
-/**
- * Emits consts.ts — discoverable arrays and maps from the grammar.
- *
- * Consumes NodeMap directly. No imports from node-model.ts or naming.ts.
- */
-```
+Emits `consts.ts`: the runtime tables generated code reads from the grammar
+package itself. Consumes the NodeMap directly.
 
 ### `packages/codegen/src/emitters/consts.ts::emitConsts`
 
-```text
-// non-hoisted branch/envelope/polymorph + list
-```
-
-```text
-// leaf + keyword + enum
-```
-
-```text
-// AssembledKeyword (word-shaped literals — modelType 'keyword')
-```
-
-```text
-// AssembledPunctuation (non-word literals — modelType 'punctuation'; hidden delimiters and visible named literals)
-```
-
-#### body
-
-```text
-// 'list' shares 'branch's consts emission — see
-// isSlotBearingCompound's doc comment, shared.ts.
-```
-
-#### body
-
-```text
-// supertype, group — not in any public const array
-```
-
-#### body
-
-```text
-// NODE_KINDS / LEAF_KINDS are unexported locals: ALL_KINDS (their
-// union) and the derived type aliases are the public surface.
-```
-
-#### body
-
-```text
-// OPERATORS — JSON.stringify to safely handle quotes/backslashes/newlines
-```
-
-#### body
-
-```text
-// Note: `AnyOperator` (not `Operator`) to avoid collision with concrete
-// grammar terminal types named `_operator` that `types.ts` exports.
-```
-
-#### body
-
-```text
-// TSKindId's key universe MUST be the full parser-symbol catalog —
-// the same source `collectKindEntries` feeds every other runtime
-// dispatch surface from (see collectCatalogKinds' doc: TSKindId /
-// kindIdFromName / kind_ids.rs / AnyTransport "MUST share the same
-// kind universe"). The previous nodeMap-derived name list could
-// never contain suffix-renamed catalog keys (rust's
-// `block_keyword` — the fragment-specifier keyword, distinct from
-// the `block` rule), so emitters resolving those entries
-// (findKindEntryForLiteral) referenced TSKindId members that
-// were never emitted. Fall back to the old list only when no id
-// catalog exists (legacy callers).
-```
-
-#### body
-
-```text
-// Emit the type alias only once per unique name — hidden kinds like
-// `_accessibility_modifier` and their visible counterparts like
-// `accessibility_modifier` resolve to the same PascalCase type name.
-// Emitting both would produce a duplicate identifier TS2300 error.
-```
-
-### `packages/codegen/src/emitters/consts.ts::modelKindKeyOf`
-
-Maps a catalog key to the model kind its row names (`modelKindOfEntry`),
-so the `TREE_SITTER_KIND_ID_*` maps are keyed by the kind the model and
-`TSKindId` use: a renamed row (rust `_token_tree_punctuation`) appears
-under its tree name, not its grammar name. A key with no row maps to itself.
-
-### `packages/codegen/src/emitters/consts.ts::collectIdEntries`
-
-The id-table entries for a list of keys, each keyed through `keyOf`
-(identity for fields; `modelKindKeyOf` for kinds).
-
-### `packages/codegen/src/emitters/consts.ts::treeSitterPascalCase`
-
-The `enumName` column of the kind-id table, Pascal-cased from the parser.c symbol name with each word's tail
-lower-cased. It mirrors tree-sitter's own C symbol naming, which upper-cases anonymous names, so it is a
-different namespace from the kind keys by design: it may disagree with the `TSKindId` member where a key keeps
-a literal letter's case (regex `lparen_qmarkP_lt` → `AnonLparenQmarkpLt` beside `LparenQmarkPLt`).
+Prints `TOKEN_INTERIORS` (read by the generated `wrap.ts` and
+`factories/coerce.ts`), `INNER_GAPS` (read by the generated `utils.ts`) and,
+when a grammar has bitflag fields, their enums (read through the imports
+`types.ts` builds with `resolveBitflagConstName`). Kind names and ids are not
+repeated here: `KIND_NAMES` and `TSKindId` in `types.ts` are their one source.
 
 ### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 

@@ -253,7 +253,7 @@ falling back.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, the native boundary
-  invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
+  invariant (`assertRenderableNodeData`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
@@ -363,8 +363,8 @@ TreeNode + replacement NodeData ──▶ replace(target, replacement) ──▶
 
 Edits are byte-range patches keyed off the original tree's spans.
 Multiple edits on disjoint ranges are sorted and applied right-to-left so
-positions stay valid; overlapping edits throw. `replace`, `replaceField`,
-and `bindRange` live in `@sittir/common`; `engine.applyEdits` is the
+positions stay valid; overlapping edits throw. `replace` lives in
+`@sittir/common`; `engine.applyEdits` is the
 boundary used by codemods.
 
 ### Generated package layout

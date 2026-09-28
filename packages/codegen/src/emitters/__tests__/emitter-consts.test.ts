@@ -41,66 +41,21 @@ function field(
 }
 
 describe('emitConsts', () => {
-	it('emits NODE_KINDS for branch nodes', () => {
-		const node = new AssembledBranch(
-			'function_item',
-			{ type: SYMBOL, name: 'identifier' },
-			{ type: SYMBOL, name: 'identifier' },
-			{ slots: [] }
-		);
-		const nodeMap = makeNodeMap([['function_item', node]]);
-		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain("'function_item'");
-		expect(output).toContain('NODE_KINDS');
-	});
-
-	it('emits LEAF_KINDS for leaf and keyword nodes', () => {
+	it('emits no kind lists, value lists or id tables', () => {
 		const nodeMap = makeNodeMap([
+			['function_item', new AssembledBranch('function_item', { type: SYMBOL, name: 'x' }, { type: SYMBOL, name: 'x' }, { slots: [] })],
 			['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
-			['true', new AssembledKeyword('true', { type: STRING, value: 'true' })]
-		]);
-		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain('LEAF_KINDS');
-		expect(output).toContain("'identifier'");
-		expect(output).toContain("'true'");
-	});
-
-	it('emits KEYWORDS and OPERATORS from token nodes', () => {
-		const nodeMap = makeNodeMap([
 			['fn', new AssembledKeyword('fn', { type: STRING, value: 'fn' })],
-			['+', new AssembledPunctuation('+', { type: STRING, value: '+' })]
-		]);
-		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain('KEYWORDS');
-		expect(output).toContain("'fn'");
-		expect(output).toContain('OPERATORS');
-		// Operators are JSON-stringified to safely escape special chars,
-		// so single chars use double quotes.
-		expect(output).toContain('"+"');
-	});
-
-	it('emits enum values', () => {
-		const nodeMap = makeNodeMap([
+			['+', new AssembledPunctuation('+', { type: STRING, value: '+' })],
 			[
 				'visibility',
-				new AssembledEnum('visibility', {
-					type: CHOICE,
-					members: [
-						{ type: STRING, value: 'pub' },
-						{ type: STRING, value: 'crate' }
-					]
-				})
+				new AssembledEnum('visibility', { type: CHOICE, members: [{ type: STRING, value: 'pub' }, { type: STRING, value: 'crate' }] })
 			]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
-		// escForSource (not a bare `'/g` replace) — a bare replace only
-		// escaped single quotes, breaking on values containing a literal
-		// newline (the automatic-semicolon marker).
-		expect(output).toContain("'pub'");
-		expect(output).toContain("'crate'");
+		expect(output).not.toMatch(/KINDS|KEYWORDS|OPERATORS|VISIBILITYS|TREE_SITTER_|TSFieldId/);
 	});
 
-	// ADR-0012 — bitflag const enum emission
 	it('emits an enum for a bitflag field (repeat1 of choice-of-literals)', () => {
 		const modifiers = field('modifiers', [
 			{ value: 'async', multiplicity: 'nonEmptyArray' },
@@ -194,91 +149,4 @@ describe('emitConsts', () => {
 		expect(output).toContain('PubCrate = 1 << 1,');
 	});
 
-	it('emits tree-sitter numeric kind and field ID maps from generated metadata', () => {
-		const sourceFile = new AssembledBranch(
-			'source_file',
-			{ type: SYMBOL, name: 'x' },
-			{ type: SYMBOL, name: 'x' },
-			{ slots: [field('item')] }
-		);
-		const nodeMap = makeNodeMap([
-			['source_file', sourceFile],
-			[';', new AssembledPunctuation(';', { type: STRING, value: ';' })]
-		]);
-
-		const output = emitConsts({
-			grammar: 'test',
-			nodeMap,
-			generatedIdTables: {
-				kindIds: {
-					source_file: {
-						id: 1,
-						parser: {
-							cSymbol: 'sym_source_file',
-							parserName: 'source_file',
-							anon: false,
-							aux: false,
-							alias: false,
-							hidden: false
-						}
-					},
-					';': {
-						id: 2,
-						parser: {
-							cSymbol: 'anon_sym_SEMI',
-							parserName: 'SEMI',
-							anon: true,
-							aux: false,
-							alias: false,
-							hidden: false
-						}
-					},
-					missing: {
-						id: 99,
-						parser: {
-							cSymbol: 'sym_missing',
-							parserName: 'missing',
-							anon: false,
-							aux: false,
-							alias: false,
-							hidden: false
-						}
-					}
-				},
-				fieldIds: {
-					item: {
-						id: 7,
-						parser: { cSymbol: 'field_item', parserName: 'item', anon: false, aux: false, alias: false, hidden: false }
-					},
-					missing: {
-						id: 99,
-						parser: {
-							cSymbol: 'field_missing',
-							parserName: 'missing',
-							anon: false,
-							aux: false,
-							alias: false,
-							hidden: false
-						}
-					}
-				},
-				sourceArtifact: 'parser.wasm'
-			}
-		});
-
-		expect(output).toContain('export const TREE_SITTER_ID_SOURCE = "parser.wasm";');
-		expect(output).toContain('export const TREE_SITTER_KIND_ID_BY_KIND = {');
-		expect(output).toContain('"source_file": 1,');
-		expect(output).toContain('";": 2,');
-		expect(output).not.toContain('export enum TSKindId {');
-		expect(output).toContain('"missing": 99,');
-		expect(output).not.toContain('FieldMissing');
-		expect(output).toContain('export enum TSFieldId {');
-		expect(output).toContain('FieldItem = 7,');
-		expect(output).toContain('"item": TSFieldId.FieldItem,');
-		expect(output).toContain('export const TREE_SITTER_KIND_ID_JSON = [');
-		expect(output).toContain('{ name: "source_file", id: 1, enumName: "SourceFile", cName: "sym_source_file" },');
-		expect(output).toContain('export const TREE_SITTER_FIELD_ID_JSON = [');
-		expect(output).toContain('{ name: "item", id: 7, enumName: "FieldItem", cName: "field_item" },');
-	});
 });

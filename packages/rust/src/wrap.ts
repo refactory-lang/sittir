@@ -8,8 +8,8 @@ import {
 	markEdited as $edited,
 	mapTriviaEntries,
 	projectInterior
-} from '@sittir/common';
-import type { TreeHandle, TokenInterior } from '@sittir/common';
+} from '@sittir/common/utils';
+import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types

@@ -1948,7 +1948,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 					return [
 						l,
 						...(usesInterior ? [`import { TOKEN_INTERIORS } from '../consts.js';`] : []),
-						`import { ${common.join(', ')} } from '@sittir/common';`
+						`import { ${common.join(', ')} } from '@sittir/common/utils';`
 					];
 				}
 			}

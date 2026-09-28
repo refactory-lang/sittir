@@ -2,21 +2,19 @@ import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEnt
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 
-export type { TriviaFacts };
-
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * runtime shape backing the `$with` update namespace. Not yet wired into
  * generated output; scaffolding only.
  */
-export interface WithMethodsRuntime<T extends object = AnyNodeData> {
+interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
 	$trivia: TriviaSetterRuntime<T & WithMethodsRuntime<T>>;
 }
 
-export interface TriviaSetterRuntime<Self> {
+interface TriviaSetterRuntime<Self> {
 	(...args: unknown[]): Self;
 	leading(): readonly TriviaEntry[];
 	leading(...items: unknown[]): Self;
@@ -263,4 +261,19 @@ function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts): void {
 	}
 }
 
-export { numberText } from './number.ts';
+export { numberText, type NumberBase } from './number.ts';
+export { readNode, type TreeHandle } from './readNode.ts';
+export { toEditAt } from './edit.ts';
+export { metricsEnabled, recordFfi } from './metrics.ts';
+export { toTransportData, markEdited } from './transport-data.ts';
+export {
+	projectInterior,
+	lexedConfig,
+	spelledForm,
+	spelledInterior,
+	refuseSiblingLead,
+	type TokenInterior,
+	type InteriorSlot,
+	type ProjectedInterior
+} from './interior.ts';
+export { mapTriviaEntries };

@@ -386,11 +386,6 @@ export interface NativeParseResult {
 // Engine API surfaces
 // ---------------------------------------------------------------------------
 
-/** Options for creating an engine instance. */
-export interface EngineOptions {
-	readonly format?: FormatRecord;
-}
-
 export interface RenderCallOptions {
 	readonly ignoreFormat?: boolean;
 }

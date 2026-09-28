@@ -137,30 +137,6 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 }
 
 /**
- * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
- * napi-direct native boundary validation. Not yet wired into generated
- * output; scaffolding only.
- *
- * Type guard — returns `true` iff `node` passes all runtime invariants
- * required by the native (napi) render boundary.
- *
- * @remarks
- * Returns `true` unconditionally when `NODE_ENV === 'production'` — the
- * O(n) tree walk is skipped in production builds for performance.
- *
- * @see {@link assertRenderableNodeData} for the throwing variant.
- */
-export function isRenderableNodeData(node: AnyNodeData): boolean {
-	if (!ASSERT_ENABLED) return true;
-	try {
-		assertRenderableNodeData(node);
-		return true;
-	} catch {
-		return false;
-	}
-}
-
-/**
  * Assertion — throws `TypeError` if `node` violates any runtime invariant
  * required by the native (napi) render boundary.
  *
@@ -171,8 +147,6 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *  - `$format` is absent
  *  - no function-valued properties
  *  - `_<name>` storage keys and `$other` satisfy the same constraints recursively
- *
- * @see {@link isRenderableNodeData} for the non-throwing predicate.
  */
 export function assertRenderableNodeData(node: AnyNodeData): asserts node is AnyNodeData {
 	if (!ASSERT_ENABLED) return;

@@ -182,7 +182,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: config.nodeTypes, sites: sitePreferences, addresses: addressTables });
-	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
+	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
