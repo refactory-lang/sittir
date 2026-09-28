@@ -58,26 +58,16 @@ exists only for the agreement check.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterConflict`
-
-```text
-/**
- * Register a conflict group against the active wire context. Dedupes
- * by exact group membership (same names in same order).
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSymbolRename`
 
 ```text
 /**
  * Record that a rule symbol was renamed during transform resolution
  * (a variant() rename of an existing SYMBOL member, or a group-lift
- * deposit replacing an alias's content symbol). Conflict entries and
- * registered conflict groups that cite the old name are rewritten to
- * the new one by `buildWiredConflictsFn` — a rename-only variant
- * changes no structure, so the grammar's LR resolutions must follow
- * the symbol.
+ * deposit replacing an alias's content symbol). Wire's list callbacks
+ * (`extras`, `externals`, `precedences`, `inline`, `supertypes`) rewrite
+ * the old name to the new one, and the conflict-derivation records map
+ * the new name back to the old (`derivation-records.ts`).
  */
 ```
 
@@ -135,7 +125,7 @@ only ever stripped, restamped or claimed inside `wire()` or
 /**
  * Install a fresh `WireContext` for the duration of `fn` and return
  * both the callback result and the context so tests can assert on
- * deposits / conflictGroups that were registered during the call.
+ * deposits that were registered during the call.
  *
  * Intended for unit tests of DSL helpers (variant/alias/transform/
  * hoist) that need a wire context without going through full wire()
@@ -265,6 +255,14 @@ The names of the grammar's extra rules: the `extras` list read through `overridd
 
 The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs` and `visibleExternals` names, read off each callback's keys with a symbol proxy. `evaluate` joins them with the supertypes as `protectedRuleNames`, and `reachableRuleNames` counts them as roots, so the canonical prune and the dead-mint pass keep the same rules.
 
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamSymbolNames`
+
+The names the upstream grammar defines: its rules and its externals, read the way wire reads every upstream list (the grammar object or its `grammar` field; an `externals` callback run over a symbol proxy).
+
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamConflictSets`
+
+The upstream grammar's own `conflicts`, as rule-name sets. The upstream `grammar()` has already run the conflicts callback, so each entry is names or symbols.
+
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::DEAD_ENRICH_MINTS_KEY`
 
 The non-enumerable key under which `blankDeadEnrichMints` attaches the dead set to `result.grammar`. tree-sitter's loader serializes the grammar with an object spread, which copies only enumerable properties, so the key never reaches grammar.json.
@@ -296,6 +294,39 @@ The dead set is attached to the grammar under `DEAD_ENRICH_MINTS_KEY` and become
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::getDeadEnrichMints`
 
 The dead set `blankDeadEnrichMints` attached to a grammar; empty when it attached none.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DERIVATION_RECORDS_KEY`
+
+The non-enumerable key under which `attachDerivationRecords` puts the conflict-derivation records on `result.grammar`. Like the dead-mint key, it never reaches grammar.json.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationRecords`
+
+What the conflict loop needs from the reshaping: `upstreamConflicts`, the conflict sets the upstream grammar declared itself (its own `conflicts`, never sittir's), and `sourceEdges`, one step from a reshaped rule's name toward the upstream rule it came from. `derive-conflicts.ts::sourceChain` follows the edges to a fixpoint. With them travel the facts the conflict diagnostics report (`ConflictConfig`), and `upstreamDynamicPrecedence` and `dynamicPrecedence`: for every rule of the upstream grammar and of the wired grammar that has any, its `prec.dynamic` values (`dynamicPrecedenceOf`).
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::dynamicPrecedenceOf`
+
+The `prec.dynamic` values in each rule's body, wherever the wrapper sits, for the rules that have any. Read before canonicalization, which peels the wrappers.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
+
+What the config says about conflicts: the resolutions the grammar imported, and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
+
+The variant records: every SYMBOL reference that carries `annotations.variantOf` names a variant of that owner (`transform.ts::withVariantAnnotation`). Read off the final rules, so every rename is already applied to both names.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
+
+Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so wire's rename map is complete. One edge per rule, set from two records in order, the later winning:
+
+1. a symbol rename (a lift renamed onto its hoisted name is recorded as a rename, `wireRenameLift`) maps the new name to the old one;
+2. a variant maps to its `variantOf` owner. It wins over a rename: a hoisted variant made from a lift is both renamed from the lift's mint name and a variant of its parent, and the parent is the upstream rule, while the lift name is a mint with no upstream source.
+
+A name the upstream grammar defines (a rule or an external) never gets an edge; it is its own source. Automatic arm labels put `variantOf` on references to existing upstream rules too, and an upstream rule is not reshaped by being labelled. A promoted group gets no edge: it is an upstream rule unchanged, and its visible name is an alias, which a conflict report never names. Any other enrich mint has no record here and so no source.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
+
+The records `attachDerivationRecords` put on a grammar; undefined for a grammar not built by `sittirGrammar`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
@@ -410,21 +441,6 @@ patched a reference to it in.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wrapConflictsCallback`
-
-```text
-/**
- * Wrap the user's `conflicts` callback so accumulated variant conflict
- * groups drain into its return list, each group's names symbolized
- * through the provided `$` proxy.
- *
- * If the user didn't supply a `conflicts`, return a fresh one that just
- * drains the accumulator. If the accumulator is empty when tree-sitter
- * invokes the callback, the wrapped fn still passes the user's list
- * through unchanged.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
 ```text
@@ -436,32 +452,6 @@ patched a reference to it in.
  * Tree-sitter evaluates metadata callbacks after rules, so the set is
  * complete by the time this runs. `_kw_*` helpers are leaf token rules,
  * which satisfies tree-sitter's inline restrictions.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::buildWiredConflictsFn`
-
-```text
-/**
- * Build the wired conflicts callback that drains accumulated variant
- * conflict groups into the returned conflict list.
- *
- * @remarks
- * Always returns a drainer, even when the user didn't supply a conflicts
- * callback and no groups have registered yet. We can't know at wire-time
- * whether variants will register later (they're registered lazily when
- * rule fns run), so we install the drainer unconditionally. The drainer
- * short-circuits at call-time when `conflictGroups` is still empty,
- * keeping the overhead minimal when no variants are declared.
- *
- * The drainer also applies `symbolRenames` to the base conflict list
- * (the author's entries plus tree-sitter's own) and to registered
- * groups: a SYMBOL entry whose name was renamed re-symbolizes under
- * the new name, so conflicts keep citing rules that still exist.
- *
- * @param userConflicts - The author's original conflicts callback, if any.
- * @param context - The active wire context whose `conflictGroups` are drained.
- * @returns A wrapped conflicts callback that appends symbolized group entries.
  */
 ```
 
@@ -1030,7 +1020,8 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ```text
 /** Old rule-symbol name → the name transform resolution renamed it to;
- *  consumed by the conflicts drainer to rewrite stale conflict entries. */
+ *  consumed by wire's list-callback renames and by the conflict-derivation
+ *  records, which follow it back to the upstream name. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
@@ -1051,14 +1042,6 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 	 *  (the phantom-kind divergence). Populated from
 	 *  `getEnrichVisibleSubsequenceSources(base)`; applied by the wired inline
 	 *  callback. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
-
-```text
-/** Conflict groups (rule-name arrays) registered by variant() for
-	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
-	 *  callback when tree-sitter invokes it. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::refineForms`
@@ -1329,6 +1312,8 @@ are what the shape-free half of the load-time check can promise.
 	 * no `undefined` leak). `previous` is the base grammar's conflict list.
 	 */
 ```
+
+Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and `sittirGrammar` sets the final list from the derived resolutions (`dsl/conflict-resolutions.ts::applyConflictResolutions`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
@@ -1800,10 +1785,9 @@ built it, the same object the upstream diagnostic stage reads.
 // Boundary casts to the internal loose (`unknown`-$, mutable-array)
 // callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
 // itself (see the block comment above `wire()`): the public config's
-// `conflicts`/`inline` callbacks are typed against the precise
-// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
-// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
-// that only ever calls them positionally, so the wider internal param
+// `inline` callback is typed against the precise `ShapedSymbols<B>` $ and
+// readonly-array shapes for author ergonomics; `wrapInlineCallback` is
+// internal machinery that only ever calls it positionally, so the wider internal param
 // types are a safe narrowing-away, not a behavior change.
 ```
 

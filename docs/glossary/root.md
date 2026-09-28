@@ -97,10 +97,12 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
  * Run 'tree-sitter generate' in a grammar package's .sittir/ directory
  * (`sittirDirOf`) — produces grammar.json + node-types.json from the
  * transpiled grammar.js. The directory comes from the package, never from
- * the working directory, and the CLI is codegen's own tree-sitter-cli
- * (`runTreeSitterCli`), so a package outside the repo needs no CLI of its own.
+ * the working directory, and the CLI is codegen's own tree-sitter-cli, so a
+ * package outside the repo needs no CLI of its own.
  */
 ```
+
+It generates through the conflict loop (`transpile/conflict-driver.ts::generateWithDerivedConflicts`): the grammar's conflicts are derived by generating until tree-sitter reports none, and the last, clean run is the generate whose outputs are kept. An unchanged grammar reuses its saved resolutions in a single run.
 
 ### `packages/codegen/src/run-codegen.ts::runStandaloneSteps`
 

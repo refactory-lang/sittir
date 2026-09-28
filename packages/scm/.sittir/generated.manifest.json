@@ -1,13 +1,14 @@
 {
   "grammar": "scm",
-  "source_hash": "705be8c8f8ef8314cfef79f3e049f4ca90365f6a1fb7f1293b681b56ef0c9132",
+  "source_hash": "d95687d7083d83ed3ba9904c100fcd195e1c90ca117dd1e76e603b869550d6d3",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
-    "packages/scm/.sittir/grammar.js": "6aa18e509c52b0e158c536ba762308136b8a9c5e5c3fd7cf0001983f47b299f3",
+    "packages/scm/.sittir/grammar.js": "96d03a8a65741edb0fe5168e87dccda0d5a2736a128caf73ca6d289190c30ed8",
     "packages/scm/.sittir/package.json": "3fc0d76ae4579344e2d04102d6746c98dabe8a6b248ea8278612613adc61bd11",
     "packages/scm/.sittir/parser.wasm": "51d5d18eabe4efa945e47c8d9d96d10511651c385e7a60a3f87df513f0c2f79d",
     "packages/scm/.sittir/render-bodies.json": "544b259b22c6d354171dd8785b4a1fabd452edfe32ed45148ab600a9134abc97",
-    "packages/scm/.sittir/src/grammar.json": "94fa782c955e82d867f833bbe98b5d74dc1f76abd0931b4dd9bddfaee894ff4d",
+    "packages/scm/.sittir/resolutions.json": "8d34227be934ad567c68f500047bd269d9830c40610b4e64e6ff1c40fa5f2949",
+    "packages/scm/.sittir/src/grammar.json": "35285e19abc5f4aa0a3d8d67ac257e13fd0ba035a86433be23bc88ef77d114f4",
     "packages/scm/.sittir/src/node-types.json": "826baba9a120a8b2694dcae972501f237dac607ca92b72c255bbeee732b2d5d3",
     "packages/scm/.sittir/src/parser.c": "133dab35f942e41855148f43362e874f6789acae2e1d3c39674892b6048863a5",
     "packages/scm/.sittir/src/scanner.c": "0a822c103b376768c818becabc76591eb12a53b8d1bc3d24fd3b5ffba66dca5c",

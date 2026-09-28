@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { allGrammars, grammarPackageDir, grammarRequire } from '@sittir/codegen/grammars';
 import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
+import { ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
 
 const python = grammarPackageFiles({
 	name: 'python',
@@ -56,6 +57,7 @@ describe('a bootstrapped grammar hand-writes no rule', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-bootstrap-template-'));
 		const entry = join(dir, 'grammar.sittir.ts');
 		writeFileSync(entry, source, 'utf8');
+		ensureConflictResolutions({ dir });
 		try {
 			const raw = await evaluate(entry);
 			expect(raw.stages).toBeUndefined();

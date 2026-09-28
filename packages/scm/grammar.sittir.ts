@@ -1,5 +1,6 @@
 // @ts-nocheck — grammar.js is untyped
 import base from 'tree-sitter-scm/grammar.js';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
 	variant,
@@ -7,6 +8,7 @@ import {
 } from '../codegen/src/dsl/index.ts';
 
 export default sittirGrammar(base, {
+	resolutions,
 	name: 'scm',
 	patches: {
 		_group_expression: { '1/0': field('left'), '1/2': field('right') },

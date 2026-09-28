@@ -35,6 +35,344 @@ __export(grammar_sittir_exports, {
 module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
+// packages/python/.sittir/resolutions.json
+var resolutions_default = {
+  grammarHash: "2a50bf77e30e0a09e955da21db54b3fe211219b2fe38b8b6bbb1b91dc4c279a5",
+  resolutions: [
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "pattern",
+          "primary_expression"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "pattern"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'match'"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "pattern",
+          "primary_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "match_statement",
+          "primary_expression"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "match_statement"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'match'"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "match_statement",
+          "primary_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "type_alias_statement",
+          "primary_expression"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "type_alias_statement"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'type'"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "type_alias_statement",
+          "primary_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "expression_statement",
+          "expression_statement_tuple"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "expression_statement"
+        ],
+        [
+          "expression_statement_tuple",
+          "expression_statement"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "expression"
+        ],
+        lookahead: "';'",
+        interpretations: [
+          "expression_statement",
+          "expression_statement_tuple"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "list_splat_pattern",
+          "primary_expression"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "list_splat_pattern"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'*'",
+          "'match'"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "primary_expression",
+          "list_splat_pattern"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "tuple_pattern",
+          "tuple"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "tuple_pattern"
+        ],
+        [
+          "tuple"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'('",
+          "')'"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "tuple_pattern",
+          "tuple"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "list_pattern",
+          "list"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "list_pattern"
+        ],
+        [
+          "list"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'['",
+          "']'"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "list_pattern",
+          "list"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "with_item",
+          "_collection_elements"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "with_item"
+        ],
+        [
+          "_collection_elements"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'with'",
+          "'('",
+          "expression"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "with_item",
+          "_collection_elements",
+          "_collection_elements",
+          "_collection_elements"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "named_expression",
+          "as_pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "named_expression"
+        ],
+        [
+          "as_pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "_named_expression_lhs",
+          "':='",
+          "expression"
+        ],
+        lookahead: "'as'",
+        interpretations: [
+          "as_pattern",
+          "named_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "except_clause_exception_as",
+          "except_clause_exception_list"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "except_clause_exception_as",
+          "except_clause"
+        ],
+        [
+          "except_clause_exception_list",
+          "except_clause"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'try'",
+          "':'",
+          "suite_inline",
+          "'except'",
+          "expression"
+        ],
+        lookahead: "':'",
+        interpretations: [
+          "except_clause_exception_as",
+          "except_clause_exception_list"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "as_pattern",
+          "except_clause_exception_as"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "as_pattern"
+        ],
+        [
+          "except_clause_exception_as",
+          "except_clause"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'try'",
+          "':'",
+          "suite_inline",
+          "'except'",
+          "expression",
+          "'as'",
+          "expression"
+        ],
+        lookahead: "':'",
+        interpretations: [
+          "as_pattern",
+          "except_clause_exception_as"
+        ]
+      }
+    }
+  ]
+};
+
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
 var OPTIONAL = "OPTIONAL";
@@ -2253,7 +2591,6 @@ var EnrichCtx = class _EnrichCtx {
   clauseDedupeMap;
   groupDedupeMap;
   ruleOrigins;
-  subsequenceOwners;
   hoist;
   constructor(fields) {
     this.rulesBag = fields.rulesBag;
@@ -2270,7 +2607,6 @@ var EnrichCtx = class _EnrichCtx {
     this.clauseDedupeMap = fields.clauseDedupeMap;
     this.groupDedupeMap = fields.groupDedupeMap;
     this.ruleOrigins = fields.ruleOrigins;
-    this.subsequenceOwners = fields.subsequenceOwners;
     this.hoist = fields.hoist;
   }
   static create(init) {
@@ -2282,7 +2618,6 @@ var EnrichCtx = class _EnrichCtx {
       clauseDedupeMap: {},
       groupDedupeMap: {},
       ruleOrigins: /* @__PURE__ */ new Map(),
-      subsequenceOwners: /* @__PURE__ */ new Map(),
       hoist: void 0
     });
   }
@@ -2857,7 +3192,7 @@ function enrich(baseInput, authored = {}) {
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
   });
-  const { kwRules, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
+  const { kwRules, clauseGroupRules, ruleOrigins } = ctx;
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule2 = rulesBag[name];
@@ -2917,7 +3252,7 @@ function enrich(baseInput, authored = {}) {
     if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins, subsequenceOwners);
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule2 = mergedRules[name];
@@ -2946,14 +3281,6 @@ function enrich(baseInput, authored = {}) {
     writable: false,
     configurable: true
   });
-  if (subsequenceOwners.size > 0) {
-    Object.defineProperty(result, ENRICH_SUBSEQUENCE_OWNERS_KEY, {
-      value: subsequenceOwners,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
   Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
     value: automaticVariants,
     enumerable: false,
@@ -2981,13 +3308,6 @@ function getEnrichWhitespace(grammar) {
 }
 function getEnrichHiddenSubsequences(grammar) {
   return enrichRuleNamesOf(grammar, (origin) => origin.kind === "hidden-subsequence");
-}
-var ENRICH_SUBSEQUENCE_OWNERS_KEY = "__enrichedSubsequenceOwners__";
-function getEnrichSubsequenceOwners(grammar) {
-  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar[ENRICH_SUBSEQUENCE_OWNERS_KEY];
-  if (owners instanceof Map) return owners;
-  return /* @__PURE__ */ new Map();
 }
 function getEnrichVisibleSubsequenceSources(grammar) {
   return enrichRuleNamesOf(grammar, (origin) => origin.kind === "visible-subsequence" || origin.kind === "promoted-group");
@@ -3035,7 +3355,6 @@ function hoistTokenForms(parentKind, rule2, ctx, counter, unhoistableNames) {
       "arm"
     );
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
-    if (!ctx.subsequenceOwners.has(minted)) ctx.subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   });
   let out = { ...core, members };
@@ -4196,7 +4515,7 @@ function absorbTrailingListSeparators(members, symbols) {
   return changed ? out : null;
 }
 function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosingFieldName) {
-  const { rulesBag, subsequenceOwners } = ctx;
+  const { rulesBag } = ctx;
   const seqBody = optionalSeqBodyOf(rule2);
   if (seqBody !== void 0) {
     const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
@@ -4207,7 +4526,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule2, name);
         return withOptionalContent(rule2, symbolRef2);
       }
@@ -4216,7 +4534,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
       counter.opt += 1;
       const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule2, name);
         return withOptionalContent(rule2, groupRef);
       }
@@ -4269,7 +4586,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
         ) : seqFn(...run.info.flatMembers);
         const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
         if (name === null) continue;
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(body, name);
         const replacement = isTail ? optionalFn(groupRef) : groupRef;
         newMembers.splice(run.start, run.size, replacement);
@@ -4315,7 +4631,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
     if (isRepeatType(rule2.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
       const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         return withContent(rule2, makeGroupLiftSymbol(newContent, name));
       }
     }
@@ -4363,7 +4678,7 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   ruleOrigins.set(name, { kind: "hidden-subsequence" });
   return name;
 }
-function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, subsequenceOwners) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins) {
   const byParentFlavor = /* @__PURE__ */ new Map();
   for (const hidden of Object.keys(mintedRules)) {
     const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
@@ -4397,11 +4712,6 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, su
     if (origin !== void 0) {
       ruleOrigins.delete(oldName);
       ruleOrigins.set(newName, origin);
-    }
-    const owner = subsequenceOwners.get(oldName);
-    if (owner !== void 0) {
-      subsequenceOwners.delete(oldName);
-      subsequenceOwners.set(newName, owner);
     }
   }
   const rewrite = (node) => {
@@ -4523,7 +4833,7 @@ function promotePermutationArmKeywords(choiceRule, ctx) {
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
 function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const { rulesBag, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
+  const { rulesBag, clauseGroupRules, ruleOrigins } = ctx;
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -4554,7 +4864,6 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
     ruleOrigins.set(name, { kind: "promoted-group", visibleName: promoted.visibleName });
-    if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
@@ -4563,7 +4872,6 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
     if (minted === null) return null;
-    if (!subsequenceOwners.has(minted)) subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
@@ -4909,16 +5217,6 @@ function wireRegisterSyntheticInline(name) {
   currentContext.syntheticInline.add(name);
   return true;
 }
-function wireRegisterConflict(names) {
-  if (!currentContext) return false;
-  if (names.length === 0) return true;
-  const key = names.join("\0");
-  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
-  if (!exists) {
-    currentContext.conflictGroups.push([...names]);
-  }
-  return true;
-}
 function wireRegisterFlattenedParent(name) {
   if (!currentContext) return false;
   currentContext.flattenedParents.add(name);
@@ -4999,7 +5297,6 @@ function wireImpl(cfg, base2, source) {
     ruleBodies: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
-    conflictGroups: [],
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
@@ -5049,23 +5346,9 @@ function wireImpl(cfg, base2, source) {
     for (const name of getEnrichVisibleSubsequenceSources(base2)) {
       context.inlineRemovals.add(name);
     }
-    const inlineSafeNames = getEnrichHiddenSubsequences(base2);
-    for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base2)) {
-      if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
-        const pairKey = [ownerKind, syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {
-          context.conflictGroups.push([ownerKind, syntheticName]);
-        }
-        const selfKey = [syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === selfKey)) {
-          context.conflictGroups.push([syntheticName]);
-        }
-      }
-    }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
   recordAliasTargets(outRules, context);
-  const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
   const renamedCallbacks = Object.fromEntries(
@@ -5076,7 +5359,7 @@ function wireImpl(cfg, base2, source) {
     rules: outRules,
     ...renamedCallbacks,
     ...cfg.reserved === void 0 ? {} : { reserved: renamingReserved(cfg.reserved, context) },
-    conflicts: renamingCallback(conflicts, renameNameList, context),
+    conflicts: void 0,
     inline: renamingCallback(inline, renameNameList, context),
     supertypes: renamingCallback(supertypes, renameNameList, context)
   };
@@ -5260,6 +5543,15 @@ function extraRuleNames(cfg, base2) {
     return rule2?.type === "CHOICE" ? symbolNamesOf(rule2.members) : void 0;
   });
 }
+function upstreamSymbolNames(base2) {
+  const arg = base2;
+  return /* @__PURE__ */ new Set([...Object.keys(baseRulesOf(arg) ?? {}), ...baseExternalNames(arg)]);
+}
+function upstreamConflictSets(base2) {
+  const arg = base2;
+  const conflicts = arg?.grammar?.conflicts ?? arg?.conflicts;
+  return (Array.isArray(conflicts) ? conflicts : []).map((set) => [...symbolNamesOf(set)]);
+}
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
   return symbolNamesOf(
@@ -5352,28 +5644,8 @@ function recordAliasTargets(rules, context) {
     };
   }
 }
-function wrapConflictsCallback(userConflicts, context) {
-  return buildWiredConflictsFn(userConflicts, context);
-}
 function wrapInlineCallback(userInline, context) {
   return buildWiredInlineFn(userInline, context);
-}
-function buildWiredConflictsFn(userConflicts, context) {
-  return function wiredConflicts($, previous) {
-    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
-    const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group2) => group2.map((entry) => {
-        const symbol = entry;
-        const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
-        return next === void 0 ? entry : symbolizeRef($, next);
-      })
-    );
-    if (context.conflictGroups.length === 0) return renamed;
-    const symbolized = context.conflictGroups.map(
-      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
-    );
-    return [...renamed, ...symbolized];
-  };
 }
 function buildWiredInlineFn(userInline, context) {
   return function wiredInline($, previous) {
@@ -6403,22 +6675,11 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
   }
   refs.sort((a, b) => a.altIdx - b.altIdx);
-  registerHoistedVariantConflicts(refs.map((r) => r.name));
   const newChoice = reconstructContainer(
     choice2,
     refs.map((r) => r.ref)
   );
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
-}
-function registerHoistedVariantConflicts(variantNames) {
-  if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
-    throw new Error(`registerConflict: no active wire() context`);
-  }
-  for (const n of variantNames) {
-    if (!wireRegisterConflict([n])) {
-      throw new Error(`registerConflict: no active wire() context`);
-    }
-  }
 }
 var membersOf3 = (r) => r.members;
 var contentOf3 = (r) => r.content;
@@ -6894,13 +7155,65 @@ function blankDeadEnrichMints(grammar, enriched, opts) {
   grammar.conflicts = withoutDeadConflicts(grammar.conflicts, dead);
 }
 
+// packages/codegen/src/dsl/wire/derivation-records.ts
+var DERIVATION_RECORDS_KEY = "__derivationRecords__";
+function variantEdgesOf(rules) {
+  const walker = new RuleWalker(rules);
+  const edges = /* @__PURE__ */ new Map();
+  for (const rule2 of Object.values(rules)) {
+    walker.fold(rule2, edges, (acc, node) => {
+      if (node.type === "SYMBOL" && typeof node.annotations?.variantOf === "string") acc.set(node.name, node.annotations.variantOf);
+      return acc;
+    });
+  }
+  return edges;
+}
+function dynamicPrecedenceOf(rules) {
+  const walker = new RuleWalker(rules);
+  const values = {};
+  for (const [name, rule2] of Object.entries(rules)) {
+    const found = walker.fold(rule2, [], (acc, node) => node.type === "PREC_DYNAMIC" ? [...acc, node.value] : acc);
+    if (found.length > 0) values[name] = found;
+  }
+  return values;
+}
+function attachDerivationRecords(grammar, base2, opts, conflicts) {
+  const upstreamSymbols = upstreamSymbolNames(base2);
+  const edges = /* @__PURE__ */ new Map();
+  for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
+    if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
+  }
+  for (const [name, owner] of variantEdgesOf(grammar.rules)) {
+    if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
+  }
+  const records = {
+    upstreamConflicts: upstreamConflictSets(base2),
+    sourceEdges: Object.fromEntries(edges),
+    ...conflicts,
+    upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf(base2) ?? {}),
+    dynamicPrecedence: dynamicPrecedenceOf(grammar.rules)
+  };
+  Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
+}
+
+// packages/codegen/src/dsl/conflict-resolutions.ts
+function applyConflictResolutions(grammar, input) {
+  grammar.conflicts = input.resolutions.map((entry) => [...entry.resolution.symbols]);
+}
+
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
+  const { resolutions, ...wireConfig } = config;
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(wireConfig.groups), extras: wireConfig.extras });
   const grammar = globalThis.grammar;
-  const opts = wire(config, enriched, base2);
+  const opts = wire(wireConfig, enriched, base2);
   const result = grammar(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
+  attachDerivationRecords(result.grammar, base2, opts, {
+    resolutions: resolutions.resolutions,
+    conflictsAuthored: wireConfig.conflicts !== void 0
+  });
+  applyConflictResolutions(result.grammar, resolutions);
   return result;
 }
 
@@ -6910,6 +7223,7 @@ var comprehensionClauses = rule(
   ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause)))
 );
 var grammar_sittir_default = sittirGrammar(import_grammar.default, {
+  resolutions: resolutions_default,
   name: "python",
   externals: ($, prev) => {
     role($._indent, "indent");
@@ -6917,13 +7231,6 @@ var grammar_sittir_default = sittirGrammar(import_grammar.default, {
     role($._newline, "newline");
     return prev ?? [];
   },
-  conflicts: ($, previous) => [
-    ...previous ?? [],
-    [$.expression_statement, $.expression_statement_tuple],
-    [$.except_clause_exception_as, $.except_clause_exception_list],
-    [$.as_pattern, $.except_clause_exception_as],
-    [$._expressions, $.expression_list]
-  ],
   inline: ($, previous) => [...previous ?? [], $._except_clause_exception_as_optional1],
   // See docs/python-grammar-sittir-glossary.md::renderAs
   renderAs: (_$) => ({

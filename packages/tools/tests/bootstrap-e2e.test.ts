@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -6,8 +6,11 @@ import { describe, expect, it } from 'vitest';
 import { grammarPackage, type GrammarPackage } from '@sittir/codegen/grammars';
 import { transpileOverrides } from '../../codegen/src/transpile/transpile-overrides.ts';
 import { runTreeSitterGenerate } from '../../codegen/src/run-codegen.ts';
+import { conflictResolutionsPath, ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
+import type { ConflictResolutionsFile } from '../../codegen/src/dsl/conflict-resolutions.ts';
 import { loadPackageIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
+import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
 import { packageEntryPath } from '../../codegen/src/compiler/resolve-grammar.ts';
 import { GrammarDiagnosticError } from '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
@@ -40,6 +43,7 @@ function writePackage(dir: string, name: string): GrammarPackage {
 	symlinkSync(dirname(codegenRequire.resolve(`tree-sitter-${name}/package.json`)), join(dir, 'node_modules', `tree-sitter-${name}`), 'dir');
 	const pkg = grammarPackage(name, dir);
 	writeFileSync(packageEntryPath(pkg), entrySource(name, {}));
+	ensureConflictResolutions(pkg);
 	return pkg;
 }
 
@@ -68,7 +72,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 		writeFileSync(join(root, 'tsconfig.json'), JSON.stringify({ extends: resolve(__dirname, '../../../tsconfig.json') }));
 		const pkg = writePackage(join(root, 'packages', name), name);
 		await transpileOverrides({ package: pkg });
-		runTreeSitterGenerate(pkg);
+		await runTreeSitterGenerate(pkg);
 		const generatedIdTables = await loadPackageIdTables(pkg);
 		expect(generatedIdTables).toBeDefined();
 
@@ -77,6 +81,9 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 		writeFileSync(packageEntryPath(pkg), entrySource(name, floors));
 
 		const compilation = await compileGrammar({ package: pkg, generatedIdTables });
+		const derived = JSON.parse(readFileSync(conflictResolutionsPath(pkg), 'utf8')) as ConflictResolutionsFile;
+		expect(derived.resolutions.length).toBeGreaterThan(0);
+		expect((await evaluate(packageEntryPath(pkg))).conflicts).toEqual(derived.resolutions.map((entry) => entry.resolution.symbols));
 		const files = await generate({ grammar: name, outputDir: join(root, 'out'), compilation });
 		return { floors, typesSource: files.types };
 	} finally {

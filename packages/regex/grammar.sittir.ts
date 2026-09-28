@@ -1,5 +1,6 @@
 // @ts-nocheck — grammar.js is untyped
 import base from 'tree-sitter-regex/grammar.js';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
 	variant,
@@ -7,6 +8,7 @@ import {
 } from '../codegen/src/dsl/index.ts';
 
 export default sittirGrammar(base, {
+	resolutions,
 	name: 'regex',
 	patches: {
 		class_range: { 0: field('start'), 2: field('end') },

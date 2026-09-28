@@ -755,25 +755,6 @@ Each hoisted body is stamped `annotations.hoisted` BEFORE
 wrapper is dropped, so the stamp must sit on the seq itself.
 
 
-### `packages/codegen/src/dsl/transform/transform.ts::registerHoistedVariantConflicts`
-
-```text
-/**
- * Register the GLR conflict groups required for hoisted sibling variants.
- *
- * @remarks
- * Hoisted variants share a token prefix from their parent seq's scaffolding,
- * defeating tree-sitter's LR(1) lookahead. A cross-variant conflict group
- * causes the parser-generator to emit a GLR state that forks on the shared
- * prefix. Each variant is also registered as a self-conflict because
- * tree-sitter deduplicates identical repeat shapes across rules into a
- * single `*_repeat1` helper; without the self-entry, multiple reduction
- * paths through the shared helper produce an unresolved state.
- *
- * @param variantNames - Fully-qualified names of all hoisted variants.
- */
-```
-
 ### `packages/codegen/src/dsl/transform/transform.ts::countBodyAnchors`
 
 ```text
@@ -1405,9 +1386,7 @@ as one arm fact, not two derivations of the same declaration.
 // Label-only rename: we can't safely delete a rule from the base
 // grammar's rules map (tree-sitter tolerates dead/unreferenced
 // entries, but relocating-then-deleting risks stranding OTHER
-// consumers keyed by the old name — e.g. enrich's own
-// getEnrichSubsequenceOwners snapshot, taken before this rename
-// runs). Just relabel the outer alias's visible identity to what
+// consumers keyed by the old name). Just relabel the outer alias's visible identity to what
 // variant()/polymorphs intends; the underlying enrich-minted
 // hidden rule keeps its own name. Double-mint collisions this
 // could otherwise cause are prevented upstream now — enrich's

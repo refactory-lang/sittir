@@ -1701,7 +1701,9 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 The one gate over a grammar's final diagnostics, shared by `compileGrammar` and the `grammar-diagnostics` tool so
 the tool reports exactly what generation rejects. It stamps the id tables (`stampVisibleExternals`), then gates
 twice, each time with the floors its records are named against. Before link it checks the evaluate-time records
-(`evaluateRecords`, and when the grammar departs from its base, `diagnoseRuleCauses` over the enriched stage),
+(`evaluateRecords`, the conflict records `diagnostics/conflicts.ts::conflictRecords` and
+`diagnostics/dynamic-precedence.ts::dynamicPrecedenceRecords`, and when the grammar departs
+from its base, `diagnoseRuleCauses` over the enriched stage),
 with the evaluated grammar's `expectDiagnostics`; a grammar tree-sitter rejects therefore never reaches link, and
 the diagnosis stops there. Otherwise it collects the front half (`collectGrammarDiagnosticsForGrammar`), folds the
 stages into `diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so
@@ -2262,6 +2264,15 @@ not depart from its base (`departsFromBase`).
 
 `{ grammar, ruleNames }`: one evaluated stage. The grammar is an `EvaluatedGrammar` until the compile boundary
 canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
+
+### `packages/codegen/src/compiler/types.ts::derivationRecords`
+
+The conflict-derivation records `sittirGrammar` attached
+(`dsl/wire/derivation-records.ts::DerivationRecords`), carried from evaluation
+to the diagnostics: the conflict loop's fresh-process evaluate reads the
+upstream context from them, and `diagnoseGrammar` reports the resolutions,
+the upstream sets no resolution needs, and authored conflicts. Absent for a
+grammar not built by `sittirGrammar`.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
@@ -2857,7 +2868,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
  */
 ```
 
-The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result.
+The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
