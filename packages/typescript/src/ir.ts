@@ -12,7 +12,6 @@
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
-import { attachProps } from './utils.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -266,7 +265,7 @@ export const formalParameter: typeof F.formalParameter = F.formalParameter;
 
 export const destructuringPattern: typeof F.destructuringPattern = F.destructuringPattern;
 
-export const identifier: typeof F.buildIdentifier & typeof F.identifier = attachProps(F.buildIdentifier, F.identifier);
+export const identifier: typeof F.identifier = F.identifier;
 
 export const pattern: typeof F.pattern = F.pattern;
 

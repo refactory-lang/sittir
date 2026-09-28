@@ -5,8 +5,10 @@ import {
 	AssembledAlias,
 	AssembledEnum,
 	AssembledList,
+	AssembledPattern,
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
+	isBuilderTextLeaf,
 	isKindIdStored,
 	isNodeRef,
 	storageKindOfRef,
@@ -129,6 +131,38 @@ function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>>
 	return out;
 }
 
+export function isFlatLeafOrKeyword(
+	kind: string,
+	node: AssembledNode,
+	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+): boolean {
+	if (!node.userFacing || node.factoryInline) return false;
+	if (isBuilderTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
+	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
+	return !kindEntries || hasCatalogEntry(kindEntries, kind);
+}
+
+function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): ReadonlyMap<string, string> {
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
+	const out = new Map<string, string>();
+	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) out.set(node.irKey!, kind);
+	return out;
+}
+
+function withLeafDefault(kind: string, key: string, leafKind: string, routes: FlattenedVariantRoute[]): FlattenedVariantRoute[] {
+	const arm = routes.find((route) => route.child.kind === leafKind);
+	if (arm === undefined) {
+		throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}', and the leaf is not one of its arms`);
+	}
+	const declared = routes.find((route) => route.default && route !== arm);
+	if (declared !== undefined) {
+		throw new Error(`ir: '${kind}' shares the key '${key}' with its arm '${leafKind}', which makes that arm its default, but '${declared.name}' is declared the default`);
+	}
+	return routes.map((route) => (route === arm ? { ...route, default: true as const } : route));
+}
+
 export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
 	const referrers = referrersOf(nodeMap);
 	const mintedBy = (parent: string, child: string, variant: string): boolean => {
@@ -136,6 +170,7 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 		return child === polymorphVisibleName(parent, variant) && refs !== undefined && refs.size === 1 && refs.has(parent);
 	};
 	const taken = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
+	const leafKinds = flatLeafKindByKey(nodeMap, generatedIdTables);
 	const out: FlattenedVariantParent[] = [];
 	const keyByParent = new Map<string, string>();
 	const pending = [...nodeMap.nodes].filter(
@@ -182,9 +217,10 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			if (routes === null) continue;
 			const key = node.irKey ?? lowerCamelCase(kind.replace(/^_+/, ''));
 			if (!isValidIdent(key) || taken.has(key)) continue;
+			const leafKind = leafKinds.get(key);
 			taken.add(key);
 			keyByParent.set(kind, key);
-			out.push({ key, node, variants: routes });
+			out.push({ key, node, variants: leafKind === undefined ? routes : withLeafDefault(kind, key, leafKind, routes) });
 		}
 	}
 	return out;

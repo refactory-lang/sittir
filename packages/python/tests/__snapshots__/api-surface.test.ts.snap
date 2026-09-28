@@ -48,7 +48,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "admitAliasContent": "function",
   "applyEdits": "function",
   "assert": "object",
-  "attachProps": "function",
   "bundle": "function",
   "coerceBitflagStorage": "function",
   "coerceBooleanKeywordStorage": "function",

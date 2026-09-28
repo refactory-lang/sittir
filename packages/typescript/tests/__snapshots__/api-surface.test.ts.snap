@@ -59,7 +59,6 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "admitAliasContent": "function",
   "applyEdits": "function",
   "assert": "object",
-  "attachProps": "function",
   "augmentedAssignmentLhs": "object",
   "bundle": "function",
   "coerceBitflagStorage": "function",

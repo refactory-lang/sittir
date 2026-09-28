@@ -56,19 +56,12 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 	lines.push(...emitTransportHelpers());
 	lines.push('');
-	lines.push(...emitAttachProps());
+	lines.push(...emitBundleHelpers());
 	return lines.join('\n');
 }
 
-function emitAttachProps(): string[] {
+function emitBundleHelpers(): string[] {
 	return [
-		'export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {',
-		'  for (const key of Object.keys(props)) {',
-		'    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });',
-		'  }',
-		'  return fn as T & P;',
-		'}',
-		'',
 		'export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {',
 		'  return { strict, coerce };',
 		'}',

@@ -636,16 +636,6 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 #### body
 
 ```text
-// A namespaced factory is exported as a const carrying its constructors
-// (`export const buildX = attachProps(buildX$impl, {...})`); the
-// implementation below is then the private `buildX$impl`, and every
-// self-reference (setters, the forwarding tail) stays on the impl so
-// the const's type never depends on its own initializer.
-```
-
-#### body
-
-```text
 // A field with an optional delimiter flank has no control on this
 // factory's surface: only a list kind stores a delimiter. Such a field
 // is a blocking `field-optional-delimiter` record, so it reaches this
@@ -1275,13 +1265,6 @@ so no kind-to-text table is needed here.
 ```text
 // TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 // never appear at runtime; no from() was emitted for them.
-```
-
-#### body
-
-```text
-// Namespaced coercers are exported as consts (attachProps) — this
-// top-of-module literal must reference the hoisted $impl declaration.
 ```
 
 ### `packages/codegen/src/emitters/from.ts::emitInternedKindTable`
@@ -11119,9 +11102,9 @@ The union of the grammar's trivia kind types, `AnyNodeData` when it has none: wh
  */
 ```
 
-### `packages/codegen/src/emitters/client-utils.ts::emitAttachProps`
+### `packages/codegen/src/emitters/client-utils.ts::emitBundleHelpers`
 
-Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
+Emits `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
 `hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
 
@@ -12588,7 +12571,7 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 
 The flat namespace holds each builder once, under its own `irKey`; a supertype-stripped name exists only as a member of its group namespace (`ir.expression.binary`, never a flat `ir.binary`).
 
-### `packages/codegen/src/emitters/ir.ts::isFlatLeafOrKeyword`
+### `packages/codegen/src/emitters/overlays/module.ts::isFlatLeafOrKeyword`
 
 ```text
 /** Does this keyword / pattern kind get a flat `ir.<irKey>` entry —
@@ -12601,19 +12584,18 @@ The flat namespace holds each builder once, under its own `irKey`; a supertype-s
  *  a slot stores needs a builder on `ir`. A hidden keyword gets no entry: its value is its kind
  *  id, so a slot takes `TSKindId.<Kind>` and there is nothing to build;
  *  an enum of literals gets none for the same reason, per member. One
- *  predicate for the pre-pass that maps flat keys to their factory
- *  references and for the two emission loops. */
+ *  predicate for ir's flat-key set, its two emission loops, and the flat
+ *  leaf keys `flattenedVariantParents` checks its parent keys against. */
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-A supertype group whose name is also a kind's flat key (typescript's
-`identifier` supertype over `identifier | undefined`) is emitted as that
-kind's callable with the group members attached — `attachProps(F.buildIdentifier,
-{ … })` typed `typeof F.buildIdentifier & { … }` — so `ir.identifier('x')` and
-`ir.identifier.identifier('x')` both work. `attachProps`
-mutating the factory export is the same pattern the coercing bundles use
-for `.strict`.
+No emitted code attaches properties to a factory: a factory is shared under
+every key that reaches it, so a mutation made for one key shows under all
+of them. A flattened parent whose key is also a flat leaf's key reaches that
+leaf as its default arm (`flattenedVariantParents`), so `ir.<key>` is the
+parent's own route object, not the leaf's builder. A supertype group whose
+name is a flat key throws.
 
 A group lists a surface-hidden member only when it is a punctuation leaf
 with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its
@@ -14758,6 +14740,26 @@ for its route to be the child's only public address. `variantRoutePaths`
 nests one parent's routes under another parent's path only through a
 `minted` relationship, never through a parent that merely happens to route
 to the same kind elsewhere.
+
+
+A parent key that is also a flat leaf's key is decided here, in one place.
+When the leaf is one of the parent's arms, that arm becomes the parent's
+default, so `ir.<key>` calls through the leaf's `{ strict, coerce }` pair
+and keeps the other arms as members. Typescript `_identifier` over
+`undefined | identifier` makes `ir.identifier('x')` coerce while
+`ir.identifier.undefined` stays reachable, and the leaf's builder that
+`ir.primaryExpression.identifier` shares is untouched. A leaf that is not an
+arm, or an arm that conflicts with a declared default, throws.
+
+### `packages/codegen/src/emitters/overlays/module.ts::withLeafDefault`
+
+Marks the route to the leaf that shares its parent's key as the parent's
+default, throwing when the leaf is not an arm or another route is declared
+the default.
+
+### `packages/codegen/src/emitters/overlays/module.ts::flatLeafKindByKey`
+
+Each flat leaf's ir key mapped to its kind, by `isFlatLeafOrKeyword`.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::variantRoutePaths`
 

@@ -4545,9 +4545,13 @@ export const comment: {
 };
 
 export const identifier: {
+	readonly strict: typeof F.buildIdentifier;
+	readonly coerce: typeof C.coerceToIdentifier;
 	readonly undefined: { strict: typeof F.buildUndefined; coerce: typeof C.coerceToUndefined };
 	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
 } = {
+	strict: F.buildIdentifier,
+	coerce: C.coerceToIdentifier,
 	undefined: { strict: F.buildUndefined, coerce: C.coerceToUndefined },
 	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier }
 };
