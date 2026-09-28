@@ -190,8 +190,8 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
-	if (typeof v === 'number') {
+function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
+	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
 		for (const kind of ['decimal_digits']) {
 			const e = _leafRegistry[kind];
@@ -258,7 +258,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -369,7 +369,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -1236,7 +1236,7 @@ export function coerceToGroupName(input: T.GroupName.Loose): ReturnType<typeof F
 }
 
 export function coerceToDecimalDigits(input: T.DecimalDigits.Loose): ReturnType<typeof F.buildDecimalDigits> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildDecimalDigits>;
 	return F.buildDecimalDigits(input as Parameters<typeof F.buildDecimalDigits>[0]);
 }

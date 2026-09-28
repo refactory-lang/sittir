@@ -32,7 +32,7 @@ export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGra
 export type LeafScalarMap = {
 	[TSKindId.True]: boolean;
 	[TSKindId.False]: boolean;
-	[TSKindId.IntegerDecimal]: number;
+	[TSKindId.IntegerDecimal]: number | bigint;
 	[TSKindId.FloatPoint]: number;
 	[TSKindId.FloatLeadingPoint]: number;
 	[TSKindId.FloatScientific]: number;
@@ -9262,7 +9262,7 @@ export interface TypeConversionNs extends LeafNs<
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
 export interface IntegerDecimalNs extends LeafNs<
 	IntegerDecimal,
-	string | number,
+	string | number | bigint,
 	IntegerDecimal.Built,
 	IntegerDecimalTree,
 	'integer_decimal'
@@ -12250,102 +12250,131 @@ export namespace ComprehensionClauses {
 	export type Kind = 'comprehension_clauses';
 }
 export namespace IntegerHex {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerHex>, 'prefix'>, 'content'>;
+	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0x' | '0X' };
 	export interface Built extends T.IntegerHex, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerHex.Built;
+			content(value: string | number | bigint): T.IntegerHex.Built;
 			prefix(value: '0x' | '0X'): T.IntegerHex.Built;
 		};
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.IntegerHex.Options];
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<
+		OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: string | number | bigint, options?: T.IntegerHex.Options];
 	export type LooseArgs = [
-		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.IntegerHex.Options
 	];
 	export type Tree = TreeFor<TSKindId.IntegerHex>;
 	export type Kind = 'integer_hex';
 }
 export namespace IntegerOctal {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'prefix'>, 'content'>;
+	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0o' | '0O' };
 	export interface Built extends T.IntegerOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerOctal.Built;
+			content(value: string | number | bigint): T.IntegerOctal.Built;
 			prefix(value: '0o' | '0O'): T.IntegerOctal.Built;
 		};
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.IntegerOctal.Options];
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<
+		OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: string | number | bigint, options?: T.IntegerOctal.Options];
 	export type LooseArgs = [
-		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.IntegerOctal.Options
 	];
 	export type Tree = TreeFor<TSKindId.IntegerOctal>;
 	export type Kind = 'integer_octal';
 }
 export namespace IntegerBinary {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'prefix'>, 'content'>;
+	export type Config = WidenNumeric<
+		OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'prefix'>,
+		{ content: number | bigint }
+	>;
 	export type Options = { readonly prefix?: '0b' | '0B' };
 	export interface Built extends T.IntegerBinary, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerBinary.Built;
+			content(value: string | number | bigint): T.IntegerBinary.Built;
 			prefix(value: '0b' | '0B'): T.IntegerBinary.Built;
 		};
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.IntegerBinary.Options];
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<
+		OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>,
+		{ content: number | bigint }
+	>;
+	export type BuildArgs = [value: string | number | bigint, options?: T.IntegerBinary.Options];
 	export type LooseArgs = [
-		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.IntegerBinary.Options
 	];
 	export type Tree = TreeFor<TSKindId.IntegerBinary>;
 	export type Kind = 'integer_binary';
 }
 export namespace FloatPoint {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export type Config = WidenNumeric<
+		ConfigFor<TSKindId.FloatPoint>,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>;
 	export interface Built extends T.FloatPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			integer(value: string | number): T.FloatPoint.Built;
-			fraction(value?: string | number): T.FloatPoint.Built;
+			integer(value: string | number | bigint): T.FloatPoint.Built;
+			fraction(value?: string | number | bigint): T.FloatPoint.Built;
 			marker(value?: string): T.FloatPoint.Built;
-			exponent(value?: string | number): T.FloatPoint.Built;
+			exponent(value?: string | number | bigint): T.FloatPoint.Built;
 			imaginary(value?: string): T.FloatPoint.Built;
 		};
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>
+		| WidenNumeric<
+				LooseConfigFor<TSKindId.FloatPoint>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatPoint>, 'integer' | 'fraction' | 'exponent'>];
+	export type LooseConfig = WidenNumeric<
+		LooseConfigFor<TSKindId.FloatPoint>,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>;
+	export type BuildArgs = [
+		config: WidenNumeric<
+			ConfigOf<T.FloatPoint>,
+			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+		>
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.FloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'integer' | 'fraction' | 'exponent'
+					{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			  >
 			| T.FloatPoint
 	];
@@ -12353,33 +12382,44 @@ export namespace FloatPoint {
 	export type Kind = 'float_point';
 }
 export namespace FloatLeadingPoint {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export type Config = WidenNumeric<
+		ConfigFor<TSKindId.FloatLeadingPoint>,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>;
 	export interface Built extends T.FloatLeadingPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			integer(value?: string | number): T.FloatLeadingPoint.Built;
-			fraction(value: string | number): T.FloatLeadingPoint.Built;
+			integer(value?: string | number | bigint): T.FloatLeadingPoint.Built;
+			fraction(value: string | number | bigint): T.FloatLeadingPoint.Built;
 			marker(value?: string): T.FloatLeadingPoint.Built;
-			exponent(value?: string | number): T.FloatLeadingPoint.Built;
+			exponent(value?: string | number | bigint): T.FloatLeadingPoint.Built;
 			imaginary(value?: string): T.FloatLeadingPoint.Built;
 		};
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatLeadingPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>
+		| WidenNumeric<
+				LooseConfigFor<TSKindId.FloatLeadingPoint>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+		  >
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
 		LooseConfigFor<TSKindId.FloatLeadingPoint>,
-		'integer' | 'fraction' | 'exponent'
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>];
+	export type BuildArgs = [
+		config: WidenNumeric<
+			ConfigOf<T.FloatLeadingPoint>,
+			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+		>
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.FloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'integer' | 'fraction' | 'exponent'
+					{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			  >
 			| T.FloatLeadingPoint
 	];
@@ -12387,29 +12427,37 @@ export namespace FloatLeadingPoint {
 	export type Kind = 'float_leading_point';
 }
 export namespace FloatScientific {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>;
+	export type Config = WidenNumeric<
+		ConfigFor<TSKindId.FloatScientific>,
+		{ integer: number | bigint; exponent: number | bigint }
+	>;
 	export interface Built extends T.FloatScientific, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			integer(value: string | number): T.FloatScientific.Built;
+			integer(value: string | number | bigint): T.FloatScientific.Built;
 			marker(value: string): T.FloatScientific.Built;
-			exponent(value: string | number): T.FloatScientific.Built;
+			exponent(value: string | number | bigint): T.FloatScientific.Built;
 			imaginary(value?: string): T.FloatScientific.Built;
 		};
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatScientific>
-		| WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>
+		| WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, { integer: number | bigint; exponent: number | bigint }>
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatScientific>, 'integer' | 'exponent'>];
+	export type LooseConfig = WidenNumeric<
+		LooseConfigFor<TSKindId.FloatScientific>,
+		{ integer: number | bigint; exponent: number | bigint }
+	>;
+	export type BuildArgs = [
+		config: WidenNumeric<ConfigOf<T.FloatScientific>, { integer: number | bigint; exponent: number | bigint }>
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.FloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'integer' | 'exponent'
+					{ integer: number | bigint; exponent: number | bigint }
 			  >
 			| T.FloatScientific
 	];
@@ -12465,21 +12513,24 @@ export namespace EscapeSequenceHex {
 	export type Kind = 'escape_sequence_hex';
 }
 export namespace EscapeSequenceOctal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.EscapeSequenceOctal>, 'content'>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
 	export interface Built extends T.EscapeSequenceOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.EscapeSequenceOctal.Built;
+			content(value: string | number | bigint): T.EscapeSequenceOctal.Built;
 		};
 	}
 	export type Loose =
 		| LooseFor<TSKindId.EscapeSequenceOctal>
-		| WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, 'content'>;
-	export type BuildArgs = [value: string | number];
-	export type LooseArgs = [value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+		| WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
+	export type BuildArgs = [value: string | number | bigint];
+	export type LooseArgs = [
+		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.EscapeSequenceOctal>;
 	export type Kind = 'escape_sequence_octal';
 }

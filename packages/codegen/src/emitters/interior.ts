@@ -178,10 +178,12 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 	return out;
 }
 
-export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly prefix: '' };
+export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string };
 export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
 
 const FLOAT_PROBES = ['1.5', '.5', '1e5', '1.5e5'] as const;
+
+const FLOAT_WHOLE_SPELLINGS = ['.0', '.', 'e0'] as const;
 
 const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts: string; readonly rejects: string; readonly prefixes: readonly string[] }[] = [
 	{ base: 16, accepts: 'ff', rejects: 'g', prefixes: ['0x', '0X', ''] },
@@ -199,8 +201,8 @@ export function numberShape(pattern: RegExp): NumberShape | undefined {
 			}
 		}
 	}
-	if (!pattern.test('a') && FLOAT_PROBES.some((text) => pattern.test(text))) return { base: 'float', prefix: '' };
-	return undefined;
+	if (pattern.test('a') || !FLOAT_PROBES.some((text) => pattern.test(text))) return undefined;
+	return { base: 'float', whole: FLOAT_WHOLE_SPELLINGS.find((spelling) => pattern.test(`1${spelling}`)) ?? '' };
 }
 
 const SIGNATURE_OF_BASE = { 2: 'binary', 8: 'octal', 10: 'decimal', 16: 'hex', float: 'float' } as const;
@@ -275,5 +277,25 @@ export function bareInteriorText(kind: string, node: AssembledNode): BareInterio
 }
 
 export function numberTextArgs(shape: NumberShape): string {
-	return `${JSON.stringify(shape.base)}, ${JSON.stringify(shape.prefix)}`;
+	return `${JSON.stringify(shape.base)}, ${JSON.stringify(shape.base === 'float' ? shape.whole : shape.prefix)}`;
+}
+
+export function numberInputType(shape: NumberShape): string {
+	return shape.base === 'float' ? 'number' : 'number | bigint';
+}
+
+export function numberInputTest(shape: NumberShape, value: string): string {
+	return shape.base === 'float' ? `(typeof ${value} === 'number')` : `(typeof ${value} === 'number' || typeof ${value} === 'bigint')`;
+}
+
+export function widenNumericSlots(type: string, node: AssembledNode): string {
+	const widened = node.slots.flatMap((slot) => {
+		const shape = numericSlotShape(slot);
+		return shape === undefined ? [] : [`${JSON.stringify(slot.configKey)}: ${numberInputType(shape)}`];
+	});
+	return widened.length === 0 ? type : `WidenNumeric<${type}, { ${widened.join('; ')} }>`;
+}
+
+export function numericLeafInputTypes(nodeMap: NodeMap): ReadonlyMap<string, string> {
+	return new Map(numericLeafKinds(nodeMap).map((kind) => [kind, numberInputType(numberShape(leafGuard(kind, nodeMap.nodes.get(kind)!)!)!)]));
 }

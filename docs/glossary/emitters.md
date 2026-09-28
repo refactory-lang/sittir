@@ -5209,7 +5209,7 @@ projects it through the token interior.
 
 ### `packages/codegen/src/emitters/interior.ts::numberShape`
 
-The numeric shape of a guard pattern: an integer written in base 2, 8, 10 or 16 with the prefix the pattern requires (`0x`, `0o`, `0b`, or none), or a float, or nothing. It is found by probing the anchored pattern, never by reading its source: a base is taken when the pattern accepts digits of that base (with the prefix, when it needs one) and rejects a digit outside it, so `0x[0-9a-f]+` is hex with prefix `0x`, a bare `[\da-fA-F]+` is hex with no prefix, `\d+` is decimal, and a pattern that accepts a letter outside the base, or the empty string, has no shape. A float is a pattern that accepts a float numeral and no letter. The one classifier behind bare-number coercion, the number acceptance of builders and the widened config types.
+The numeric shape of a guard pattern: an integer written in base 2, 8, 10 or 16 with the prefix the pattern requires (`0x`, `0o`, `0b`, or none), or a float, or nothing. It is found by probing the anchored pattern, never by reading its source: a base is taken when the pattern accepts digits of that base (with the prefix, when it needs one) and rejects a digit outside it, so `0x[0-9a-f]+` is hex with prefix `0x`, a bare `[\da-fA-F]+` is hex with no prefix, `\d+` is decimal, and a pattern that accepts a letter outside the base, or the empty string, has no shape. A float is a pattern that accepts a float numeral and no letter; its shape also carries the spelling a whole number takes in it, probed as `1.0`, `1.` then `1e0` (rust's `float_literal` takes `.0`, so `1` writes `1.0`), or none when the pattern spells no whole number (a leading-point float), leaving a whole number to its plain text for the guard to reject. The one classifier behind bare-number coercion, the number acceptance of builders and the widened config types.
 
 ### `packages/codegen/src/emitters/interior.ts::numberSignature`
 
@@ -5225,7 +5225,7 @@ The shape of a text slot whose values are one pattern; a slot of any other kind 
 
 ### `packages/codegen/src/emitters/interior.ts::numericSlotKeys`
 
-The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
+The config keys of a node's numeric text slots.
 
 ### `packages/codegen/src/emitters/interior.ts::numericLeafShape`
 
@@ -5266,7 +5266,19 @@ Whether a lexed kind with no single content slot takes a bare string as its whol
 
 ### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
 
-The base and prefix arguments of the `numberText` call an emitter writes for a shape.
+The base and affix arguments of the `numberText` call an emitter writes for a shape: an integer's prefix, or a float's whole-number spelling.
+
+### `packages/codegen/src/emitters/interior.ts::numberInputType`
+
+The JavaScript values a numeric text slot of this shape accepts: `number | bigint` for an integer in any base, `number` for a float (a bigint has no float spelling). The one source for every emitted numeric input type: leaf text parameters, slot element types, `WidenNumeric` keys, bare loose inputs and `LeafScalarMap`.
+
+### `packages/codegen/src/emitters/interior.ts::numberInputTest`
+
+The runtime test, over the named value, that matches `numberInputType`: the guard a coercer uses to send a JavaScript value through `numberText` rather than treat it as a node or config.
+
+### `packages/codegen/src/emitters/interior.ts::numericLeafInputTypes`
+
+The `numberInputType` of each leaf a bare JavaScript number can resolve to (`numericLeafKinds`), keyed by kind: the entries `LeafScalarMap` types those leaves with.
 
 ### `packages/codegen/src/emitters/interior.ts::numericLeafKinds`
 
@@ -16451,9 +16463,9 @@ text fold of `projectMixedEnumStorage` so an identifier that happens to be spell
 
 The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
 
-### `packages/codegen/src/emitters/types.ts::widenNumericSlots`
+### `packages/codegen/src/emitters/interior.ts::widenNumericSlots`
 
-Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so the namespace `Config` and `LooseConfig` accept a number where the builder converts one.
+Wraps a config type in `WidenNumeric` for the numeric text slots of a node, each key widened by its own `numberInputType`, so the namespace `Config` and `LooseConfig` and the builder's config parameter accept the JavaScript values the builder converts. The one widening both the types and the factories emitters write.
 
 ### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.registered`
 

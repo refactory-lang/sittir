@@ -5,11 +5,13 @@ import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorReq
 import {
 	interiorEnumArms,
 	interiorOf,
+	numberInputType,
 	numberTextArgs,
 	numericLeafShape,
 	numericSlotKeys,
 	numericSlotShape,
-	optionalGroupPeers
+	optionalGroupPeers,
+	widenNumericSlots
 } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -388,7 +390,8 @@ export namespace factory {
 }
 
 function leafTextParams(node: AssembledNode): string {
-	return numericLeafShape(node.kind, node) === undefined ? 'text: string' : 'text: string | number';
+	const shape = numericLeafShape(node.kind, node);
+	return shape === undefined ? 'text: string' : `text: string | ${numberInputType(shape)}`;
 }
 
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
@@ -811,8 +814,8 @@ export function constructionFieldElementType(
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
-	if (numericSlotShape(f) !== undefined) return `${type} | number`;
-	return type;
+	const shape = numericSlotShape(f);
+	return shape === undefined ? type : `${type} | ${numberInputType(shape)}`;
 }
 
 export function fieldElementType(
@@ -1014,7 +1017,8 @@ function resolveConfigFactorySurface(
 	}
 	if (singleField) {
 		const baseType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
-		const elemType = numericSlotShape(singleField) === undefined ? baseType : `${baseType} | number`;
+		const singleShape = numericSlotShape(singleField);
+		const elemType = singleShape === undefined ? baseType : `${baseType} | ${numberInputType(singleShape)}`;
 		const param: FactoryParam = {
 			label: 'value',
 			optional: !isRequired(singleField),
@@ -1038,9 +1042,7 @@ function resolveConfigFactorySurface(
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
-	const numericKeys = numericSlotKeys(node);
-	const widen = (type: string): string =>
-		numericKeys.length === 0 ? type : `WidenNumeric<${type}, ${numericKeys.map((key) => JSON.stringify(key)).join(' | ')}>`;
+	const widen = (type: string): string => widenNumericSlots(type, node);
 	const param: FactoryParam = {
 		label: 'config',
 		optional: opt === '?',

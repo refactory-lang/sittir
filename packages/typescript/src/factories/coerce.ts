@@ -510,9 +510,9 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
+function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
-	if (typeof v === 'number') {
+	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
 		for (const kind of [
 			'number_decimal',
@@ -832,7 +832,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -943,7 +943,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -10507,7 +10507,9 @@ export function coerceToLiteralTypeNegativeNumber(
 }
 
 export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): T.NumberHex['_content'] {
-	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(16, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O extends T.NumberHex.Options = {}>(
@@ -10532,7 +10534,11 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 				? input
 				: _spelled.interior;
 	return F.buildNumberHex(
-		_requireField('number_hex', 'content', typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)),
+		_requireField(
+			'number_hex',
+			'content',
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2)
+		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
 		ReturnType<typeof F.buildNumberHex>,
@@ -10544,13 +10550,17 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 export function resolveNumberFloatPoint_integer(
 	value: T.NumberFloatPoint.LooseConfig['integer']
 ): T.NumberFloatPoint['_integer'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatPoint_fraction(
 	value: T.NumberFloatPoint.LooseConfig['fraction']
 ): T.NumberFloatPoint['_fraction'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatPoint_sign(
@@ -10562,7 +10572,9 @@ export function resolveNumberFloatPoint_sign(
 export function resolveNumberFloatPoint_exponent(
 	value: T.NumberFloatPoint.LooseConfig['exponent']
 ): T.NumberFloatPoint['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatPoint(
@@ -10573,7 +10585,7 @@ export function coerceToNumberFloatPoint(
 		return input as unknown as ReturnType<typeof F.buildNumberFloatPoint>;
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number'
-			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['number_float_point'], 'number_float_point')
+			? lexedConfig(numberText('float', '.0', input), TOKEN_INTERIORS['number_float_point'], 'number_float_point')
 			: input
 	) as T.NumberFloatPoint.LooseConfig;
 	return F.buildNumberFloatPoint(
@@ -10590,7 +10602,9 @@ export function coerceToNumberFloatPoint(
 export function resolveNumberFloatLeadingPoint_fraction(
 	value: T.NumberFloatLeadingPoint.LooseConfig['fraction']
 ): T.NumberFloatLeadingPoint['_fraction'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatLeadingPoint_sign(
@@ -10602,7 +10616,9 @@ export function resolveNumberFloatLeadingPoint_sign(
 export function resolveNumberFloatLeadingPoint_exponent(
 	value: T.NumberFloatLeadingPoint.LooseConfig['exponent']
 ): T.NumberFloatLeadingPoint['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatLeadingPoint(
@@ -10637,7 +10653,9 @@ export function coerceToNumberFloatLeadingPoint(
 export function resolveNumberFloatScientific_integer(
 	value: T.NumberFloatScientific.LooseConfig['integer']
 ): T.NumberFloatScientific['_integer'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatScientific_sign(
@@ -10649,7 +10667,9 @@ export function resolveNumberFloatScientific_sign(
 export function resolveNumberFloatScientific_exponent(
 	value: T.NumberFloatScientific.LooseConfig['exponent']
 ): T.NumberFloatScientific['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatScientific(
@@ -10661,7 +10681,7 @@ export function coerceToNumberFloatScientific(
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number'
 			? lexedConfig(
-					numberText('float', '', input),
+					numberText('float', 'e0', input),
 					TOKEN_INTERIORS['number_float_scientific'],
 					'number_float_scientific'
 				)
@@ -10682,13 +10702,15 @@ export function coerceToNumberFloatScientific(
 }
 
 export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildNumberDecimal>;
 	return F.buildNumberDecimal(input as Parameters<typeof F.buildNumberDecimal>[0]);
 }
 
 export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['content']): T.NumberBinary['_content'] {
-	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(2, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const O extends T.NumberBinary.Options = {}>(
@@ -10716,7 +10738,7 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 		_requireField(
 			'number_binary',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
@@ -10727,7 +10749,9 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 }
 
 export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['content']): T.NumberOctal['_content'] {
-	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(8, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O extends T.NumberOctal.Options = {}>(
@@ -10755,7 +10779,7 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 		_requireField(
 			'number_octal',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
@@ -10766,7 +10790,9 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 }
 
 export function resolveNumberBigint_content(value: T.NumberBigint.LooseConfig['content']): T.NumberBigint['_content'] {
-	return typeof value === 'number' ? numberText(16, '0x', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(16, '0x', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<typeof F.buildNumberBigint> {
@@ -10782,7 +10808,7 @@ export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<ty
 		_requireField(
 			'number_bigint',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		)
 	);
 }

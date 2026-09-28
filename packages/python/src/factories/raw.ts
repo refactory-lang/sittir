@@ -4880,7 +4880,7 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 	);
 }
 
-export function buildIntegerHex(value: string | number, options?: T.IntegerHex.Options): T.IntegerHex.Built {
+export function buildIntegerHex(value: string | number | bigint, options?: T.IntegerHex.Options): T.IntegerHex.Built {
 	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
@@ -4896,7 +4896,7 @@ export function buildIntegerHex(value: string | number, options?: T.IntegerHex.O
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildIntegerHex(value, options),
+					content: (value: string | number | bigint) => buildIntegerHex(value, options),
 					prefix: (spelling: '0x' | '0X') => buildIntegerHex(value, { ...options, prefix: spelling })
 				}
 			},
@@ -4909,7 +4909,10 @@ export function buildIntegerHex(value: string | number, options?: T.IntegerHex.O
 	);
 }
 
-export function buildIntegerOctal(value: string | number, options?: T.IntegerOctal.Options): T.IntegerOctal.Built {
+export function buildIntegerOctal(
+	value: string | number | bigint,
+	options?: T.IntegerOctal.Options
+): T.IntegerOctal.Built {
 	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
@@ -4925,7 +4928,7 @@ export function buildIntegerOctal(value: string | number, options?: T.IntegerOct
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildIntegerOctal(value, options),
+					content: (value: string | number | bigint) => buildIntegerOctal(value, options),
 					prefix: (spelling: '0o' | '0O') => buildIntegerOctal(value, { ...options, prefix: spelling })
 				}
 			},
@@ -4938,7 +4941,10 @@ export function buildIntegerOctal(value: string | number, options?: T.IntegerOct
 	);
 }
 
-export function buildIntegerBinary(value: string | number, options?: T.IntegerBinary.Options): T.IntegerBinary.Built {
+export function buildIntegerBinary(
+	value: string | number | bigint,
+	options?: T.IntegerBinary.Options
+): T.IntegerBinary.Built {
 	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
@@ -4954,7 +4960,7 @@ export function buildIntegerBinary(value: string | number, options?: T.IntegerBi
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildIntegerBinary(value, options),
+					content: (value: string | number | bigint) => buildIntegerBinary(value, options),
 					prefix: (spelling: '0b' | '0B') => buildIntegerBinary(value, { ...options, prefix: spelling })
 				}
 			},
@@ -4967,7 +4973,7 @@ export function buildIntegerBinary(value: string | number, options?: T.IntegerBi
 	);
 }
 
-export function buildIntegerDecimal(text: string | number): T.IntegerDecimal.Built {
+export function buildIntegerDecimal(text: string | number | bigint): T.IntegerDecimal.Built {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`integer_decimal: text must be non-empty`);
 	if (!_leafRe_buildIntegerDecimal.test(text)) throw new Error(`integer_decimal: text does not match pattern: ${text}`);
@@ -4983,7 +4989,10 @@ export function buildIntegerDecimal(text: string | number): T.IntegerDecimal.Bui
 }
 
 export function buildFloatPoint(
-	config: WidenNumeric<T.FloatPoint.Config, 'integer' | 'fraction' | 'exponent'>
+	config: WidenNumeric<
+		T.FloatPoint.Config,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>
 ): T.FloatPoint.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildFloatPoint_integer.test(_integer))
@@ -5012,10 +5021,10 @@ export function buildFloatPoint(
 				_exponent,
 				_imaginary,
 				$with: {
-					integer: (value: string | number) => buildFloatPoint({ ...config, integer: value }),
-					fraction: (value?: string | number) => buildFloatPoint({ ...config, fraction: value }),
+					integer: (value: string | number | bigint) => buildFloatPoint({ ...config, integer: value }),
+					fraction: (value?: string | number | bigint) => buildFloatPoint({ ...config, fraction: value }),
 					marker: (value?: string) => buildFloatPoint({ ...config, marker: value }),
-					exponent: (value?: string | number) => buildFloatPoint({ ...config, exponent: value }),
+					exponent: (value?: string | number | bigint) => buildFloatPoint({ ...config, exponent: value }),
 					imaginary: (value?: string) => buildFloatPoint({ ...config, imaginary: value })
 				}
 			},
@@ -5032,7 +5041,10 @@ export function buildFloatPoint(
 }
 
 export function buildFloatLeadingPoint(
-	config: WidenNumeric<T.FloatLeadingPoint.Config, 'integer' | 'fraction' | 'exponent'>
+	config: WidenNumeric<
+		T.FloatLeadingPoint.Config,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>
 ): T.FloatLeadingPoint.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
@@ -5061,10 +5073,10 @@ export function buildFloatLeadingPoint(
 				_exponent,
 				_imaginary,
 				$with: {
-					integer: (value?: string | number) => buildFloatLeadingPoint({ ...config, integer: value }),
-					fraction: (value: string | number) => buildFloatLeadingPoint({ ...config, fraction: value }),
+					integer: (value?: string | number | bigint) => buildFloatLeadingPoint({ ...config, integer: value }),
+					fraction: (value: string | number | bigint) => buildFloatLeadingPoint({ ...config, fraction: value }),
 					marker: (value?: string) => buildFloatLeadingPoint({ ...config, marker: value }),
-					exponent: (value?: string | number) => buildFloatLeadingPoint({ ...config, exponent: value }),
+					exponent: (value?: string | number | bigint) => buildFloatLeadingPoint({ ...config, exponent: value }),
 					imaginary: (value?: string) => buildFloatLeadingPoint({ ...config, imaginary: value })
 				}
 			},
@@ -5081,7 +5093,7 @@ export function buildFloatLeadingPoint(
 }
 
 export function buildFloatScientific(
-	config: WidenNumeric<T.FloatScientific.Config, 'integer' | 'exponent'>
+	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 ): T.FloatScientific.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildFloatScientific_integer.test(_integer))
@@ -5106,9 +5118,9 @@ export function buildFloatScientific(
 				_exponent,
 				_imaginary,
 				$with: {
-					integer: (value: string | number) => buildFloatScientific({ ...config, integer: value }),
+					integer: (value: string | number | bigint) => buildFloatScientific({ ...config, integer: value }),
 					marker: (value: string) => buildFloatScientific({ ...config, marker: value }),
-					exponent: (value: string | number) => buildFloatScientific({ ...config, exponent: value }),
+					exponent: (value: string | number | bigint) => buildFloatScientific({ ...config, exponent: value }),
 					imaginary: (value?: string) => buildFloatScientific({ ...config, imaginary: value })
 				}
 			},
@@ -5192,7 +5204,7 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 	);
 }
 
-export function buildEscapeSequenceOctal(value: string | number): T.EscapeSequenceOctal.Built {
+export function buildEscapeSequenceOctal(value: string | number | bigint): T.EscapeSequenceOctal.Built {
 	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${_content}`);
@@ -5204,7 +5216,7 @@ export function buildEscapeSequenceOctal(value: string | number): T.EscapeSequen
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: string | number) => buildEscapeSequenceOctal(value)
+					content: (value: string | number | bigint) => buildEscapeSequenceOctal(value)
 				}
 			},
 			{

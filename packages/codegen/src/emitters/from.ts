@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
+import { bareInteriorText, interiorOf, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -219,7 +219,7 @@ export namespace from {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
-			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node) !== undefined);
+			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node));
 		} else if (isBuilderTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
@@ -275,9 +275,9 @@ function emitBranchNodeDataPassthrough(
 	inputOptional: boolean,
 	returnType: string,
 	typeName: string,
-	bare: false | 'text' | 'number' = false
+	bare: false | 'text' | NumberShape = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${bare === 'number' ? ' | number' : ''}${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${typeof bare === 'object' ? ` | ${numberInputType(bare)}` : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -395,7 +395,7 @@ function emitBranchFrom(
 			);
 		} else {
 			const shape = numericSlotShape(f);
-			const numeric = shape === undefined ? body : `typeof value === 'number' ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
+			const numeric = shape === undefined ? body : `${numberInputTest(shape, 'value')} ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
 			lines.push(signature, `  return ${numeric};`, '}', '');
 		}
 	}
@@ -430,26 +430,23 @@ function emitBranchFrom(
 		} else {
 			const bareKind =
 				bareInterior !== undefined
-					? bareInterior.number === undefined
-						? 'text'
-						: 'number'
+					? (bareInterior.number ?? 'text')
 					: bareContent === undefined
 						? false
-						: numericSlotShape(bareContent) === undefined
-							? 'text'
-							: 'number';
+						: (numericSlotShape(bareContent) ?? 'text');
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
 		}
 		if (bareInterior !== undefined) {
 			const shape = bareInterior.number;
 			const text = shape === undefined ? 'input' : `numberText(${numberTextArgs(shape)}, input)`;
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : " || typeof input === 'number'"} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : ` || ${numberInputTest(shape, 'input')}`} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		if (bareContent !== undefined) {
+			const bareShape = numericSlotShape(bareContent);
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${numericSlotShape(bareContent) === undefined ? '' : " || typeof input === 'number'"} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
@@ -479,7 +476,8 @@ function emitBranchFrom(
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
-			const numeric = numericSlotShape(soleField) !== undefined;
+			const soleShape = numericSlotShape(soleField);
+			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
 			const resolved = resolveFieldCall(
 				numeric ? '_value' : inputExpr,
@@ -491,7 +489,7 @@ function emitBranchFrom(
 				undefined,
 				kindEntries
 			);
-			const call = numeric ? `(typeof _value === 'number' ? _value : ${resolved})` : resolved;
+			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefaultFactory = canDefaultToEmpty(soleField, nodeMap);
 			const guardedCall = directDefaultFactory
 				? `${call} ?? F.${directDefaultFactory}()`
@@ -827,12 +825,12 @@ interface LeafFromNode {
 	readonly fromFunctionName?: string;
 }
 
-function emitStringLikeFrom(node: LeafFromNode, numeric: boolean): string {
+function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (typeof input !== 'string'${numeric ? " && typeof input !== 'number'" : ''}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
+		`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'
 	].join('\n');
@@ -1319,7 +1317,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	);
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
+	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
@@ -1636,7 +1634,7 @@ function emitResolverHelpers(
 		scalars.boolean !== undefined && kindEntries !== undefined,
 		numeric.length > 0
 	);
-	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
+	lines.push(`function _resolveScalar(${scalarParam}: boolean | number | bigint): AnyNodeData | number | undefined {`);
 	const booleanMember = (kind: string): string | undefined =>
 		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
@@ -1645,7 +1643,7 @@ function emitResolverHelpers(
 		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
 	}
 	if (numeric.length > 0) {
-		lines.push('  if (typeof v === "number") {');
+		lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
 		lines.push('    const text = String(v);');
 		lines.push(`    for (const kind of ${JSON.stringify(numeric)}) {`);
 		lines.push('      const e = _leafRegistry[kind];');
@@ -1730,7 +1728,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (isNodeData(v)) return v as T;');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
+	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');

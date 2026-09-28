@@ -7074,7 +7074,7 @@ export function buildRangeExpressionBare(): TSKindId.RangeExpressionBare {
 }
 
 export function buildIntegerLiteralDecimal(
-	config: WidenNumeric<T.IntegerLiteralDecimal.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Built {
 	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
@@ -7091,7 +7091,7 @@ export function buildIntegerLiteralDecimal(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralDecimal({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralDecimal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7121,7 +7121,7 @@ export function buildIntegerLiteralDecimal(
 }
 
 export function buildIntegerLiteralHex(
-	config: WidenNumeric<T.IntegerLiteralHex.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Built {
 	const _content = numberText(16, '0x', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
@@ -7138,7 +7138,7 @@ export function buildIntegerLiteralHex(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralHex({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralHex({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7168,7 +7168,7 @@ export function buildIntegerLiteralHex(
 }
 
 export function buildIntegerLiteralBinary(
-	config: WidenNumeric<T.IntegerLiteralBinary.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Built {
 	const _content = numberText(2, '0b', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
@@ -7185,7 +7185,7 @@ export function buildIntegerLiteralBinary(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralBinary({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralBinary({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7215,7 +7215,7 @@ export function buildIntegerLiteralBinary(
 }
 
 export function buildIntegerLiteralOctal(
-	config: WidenNumeric<T.IntegerLiteralOctal.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Built {
 	const _content = numberText(8, '0o', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
@@ -7232,7 +7232,7 @@ export function buildIntegerLiteralOctal(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralOctal({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralOctal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -10113,7 +10113,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 }
 
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
-	text = numberText('float', '', text);
+	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
 	return withMethods(

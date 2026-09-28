@@ -487,9 +487,9 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
+function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;
-	if (typeof v === 'number') {
+	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
 		for (const kind of ['integer_literal_decimal', 'float_literal']) {
 			const e = _leafRegistry[kind];
@@ -949,7 +949,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -1060,7 +1060,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -9047,7 +9047,9 @@ export function coerceToRangeExpressionBare(
 export function resolveIntegerLiteralDecimal_content(
 	value: T.IntegerLiteralDecimal.LooseConfig['content']
 ): T.IntegerLiteralDecimal['_content'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralDecimal_suffix(
@@ -9061,10 +9063,10 @@ export function resolveIntegerLiteralDecimal_suffix(
 export function coerceToIntegerLiteralDecimal(
 	input: T.IntegerLiteralDecimal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralDecimal> {
-	if (!_isLooseConfig<T.IntegerLiteralDecimal.LooseConfig | string | number>(input))
+	if (!_isLooseConfig<T.IntegerLiteralDecimal.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralDecimal>;
 	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralDecimal.LooseConfig;
 	return F.buildIntegerLiteralDecimal({
 		content: _requireField('integer_literal_decimal', 'content', resolveIntegerLiteralDecimal_content(_cfg.content)),
@@ -9075,7 +9077,9 @@ export function coerceToIntegerLiteralDecimal(
 export function resolveIntegerLiteralHex_content(
 	value: T.IntegerLiteralHex.LooseConfig['content']
 ): T.IntegerLiteralHex['_content'] {
-	return typeof value === 'number' ? numberText(16, '0x', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(16, '0x', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralHex_suffix(
@@ -9089,10 +9093,10 @@ export function resolveIntegerLiteralHex_suffix(
 export function coerceToIntegerLiteralHex(
 	input: T.IntegerLiteralHex.Loose
 ): ReturnType<typeof F.buildIntegerLiteralHex> {
-	if (!_isLooseConfig<T.IntegerLiteralHex.LooseConfig | string | number>(input))
+	if (!_isLooseConfig<T.IntegerLiteralHex.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralHex>;
 	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralHex.LooseConfig;
 	return F.buildIntegerLiteralHex({
 		content: _requireField('integer_literal_hex', 'content', resolveIntegerLiteralHex_content(_cfg.content)),
@@ -9103,7 +9107,9 @@ export function coerceToIntegerLiteralHex(
 export function resolveIntegerLiteralBinary_content(
 	value: T.IntegerLiteralBinary.LooseConfig['content']
 ): T.IntegerLiteralBinary['_content'] {
-	return typeof value === 'number' ? numberText(2, '0b', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(2, '0b', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralBinary_suffix(
@@ -9117,10 +9123,10 @@ export function resolveIntegerLiteralBinary_suffix(
 export function coerceToIntegerLiteralBinary(
 	input: T.IntegerLiteralBinary.Loose
 ): ReturnType<typeof F.buildIntegerLiteralBinary> {
-	if (!_isLooseConfig<T.IntegerLiteralBinary.LooseConfig | string | number>(input))
+	if (!_isLooseConfig<T.IntegerLiteralBinary.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralBinary>;
 	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralBinary.LooseConfig;
 	return F.buildIntegerLiteralBinary({
 		content: _requireField('integer_literal_binary', 'content', resolveIntegerLiteralBinary_content(_cfg.content)),
@@ -9131,7 +9137,9 @@ export function coerceToIntegerLiteralBinary(
 export function resolveIntegerLiteralOctal_content(
 	value: T.IntegerLiteralOctal.LooseConfig['content']
 ): T.IntegerLiteralOctal['_content'] {
-	return typeof value === 'number' ? numberText(8, '0o', value) : _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(8, '0o', value)
+		: _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralOctal_suffix(
@@ -9145,10 +9153,10 @@ export function resolveIntegerLiteralOctal_suffix(
 export function coerceToIntegerLiteralOctal(
 	input: T.IntegerLiteralOctal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralOctal> {
-	if (!_isLooseConfig<T.IntegerLiteralOctal.LooseConfig | string | number>(input))
+	if (!_isLooseConfig<T.IntegerLiteralOctal.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralOctal>;
 	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralOctal.LooseConfig;
 	return F.buildIntegerLiteralOctal({
 		content: _requireField('integer_literal_octal', 'content', resolveIntegerLiteralOctal_content(_cfg.content)),
@@ -11940,7 +11948,7 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 }
 
 export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (typeof input !== 'string' && !(typeof input === 'number'))
 		return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
 	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
 }

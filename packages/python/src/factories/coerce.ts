@@ -405,9 +405,9 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
+function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
-	if (typeof v === 'number') {
+	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
 		for (const kind of ['integer_decimal', 'float_point', 'float_leading_point', 'float_scientific']) {
 			const e = _leafRegistry[kind];
@@ -750,7 +750,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -861,7 +861,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -6367,7 +6367,9 @@ export function coerceToComprehensionClauses(
 }
 
 export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): T.IntegerHex['_content'] {
-	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(16, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O extends T.IntegerHex.Options = {}>(
@@ -6395,7 +6397,7 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 		_requireField(
 			'integer_hex',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
@@ -6406,7 +6408,9 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
-	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(8, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const O extends T.IntegerOctal.Options = {}>(
@@ -6434,7 +6438,7 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 		_requireField(
 			'integer_octal',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
@@ -6447,7 +6451,9 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 export function resolveIntegerBinary_content(
 	value: T.IntegerBinary.LooseConfig['content']
 ): T.IntegerBinary['_content'] {
-	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(2, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerBinary<
@@ -6478,7 +6484,7 @@ export function coerceToIntegerBinary<
 		_requireField(
 			'integer_binary',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		),
 		_spelled === undefined ? options : { prefix: _spelled.open, ...options }
 	) as WithSpelling<
@@ -6489,17 +6495,21 @@ export function coerceToIntegerBinary<
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntegerDecimal>;
 	return F.buildIntegerDecimal(input as Parameters<typeof F.buildIntegerDecimal>[0]);
 }
 
 export function resolveFloatPoint_integer(value: T.FloatPoint.LooseConfig['integer']): T.FloatPoint['_integer'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatPoint_fraction(value: T.FloatPoint.LooseConfig['fraction']): T.FloatPoint['_fraction'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker']): T.FloatPoint['_marker'] {
@@ -6507,7 +6517,9 @@ export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker
 }
 
 export function resolveFloatPoint_exponent(value: T.FloatPoint.LooseConfig['exponent']): T.FloatPoint['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatPoint_imaginary(value: T.FloatPoint.LooseConfig['imaginary']): T.FloatPoint['_imaginary'] {
@@ -6519,7 +6531,7 @@ export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof
 		return input as unknown as ReturnType<typeof F.buildFloatPoint>;
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number'
-			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_point'], 'float_point')
+			? lexedConfig(numberText('float', '.0', input), TOKEN_INTERIORS['float_point'], 'float_point')
 			: input
 	) as T.FloatPoint.LooseConfig;
 	return F.buildFloatPoint({
@@ -6534,13 +6546,17 @@ export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof
 export function resolveFloatLeadingPoint_integer(
 	value: T.FloatLeadingPoint.LooseConfig['integer']
 ): T.FloatLeadingPoint['_integer'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatLeadingPoint_fraction(
 	value: T.FloatLeadingPoint.LooseConfig['fraction']
 ): T.FloatLeadingPoint['_fraction'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatLeadingPoint_marker(
@@ -6552,7 +6568,9 @@ export function resolveFloatLeadingPoint_marker(
 export function resolveFloatLeadingPoint_exponent(
 	value: T.FloatLeadingPoint.LooseConfig['exponent']
 ): T.FloatLeadingPoint['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatLeadingPoint_imaginary(
@@ -6568,7 +6586,7 @@ export function coerceToFloatLeadingPoint(
 		return input as unknown as ReturnType<typeof F.buildFloatLeadingPoint>;
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number'
-			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_leading_point'], 'float_leading_point')
+			? lexedConfig(numberText('float', '.0', input), TOKEN_INTERIORS['float_leading_point'], 'float_leading_point')
 			: input
 	) as T.FloatLeadingPoint.LooseConfig;
 	return F.buildFloatLeadingPoint({
@@ -6583,7 +6601,9 @@ export function coerceToFloatLeadingPoint(
 export function resolveFloatScientific_integer(
 	value: T.FloatScientific.LooseConfig['integer']
 ): T.FloatScientific['_integer'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatScientific_marker(
@@ -6595,7 +6615,9 @@ export function resolveFloatScientific_marker(
 export function resolveFloatScientific_exponent(
 	value: T.FloatScientific.LooseConfig['exponent']
 ): T.FloatScientific['_exponent'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function resolveFloatScientific_imaginary(
@@ -6609,7 +6631,7 @@ export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildFloatScientific>;
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number'
-			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_scientific'], 'float_scientific')
+			? lexedConfig(numberText('float', 'e0', input), TOKEN_INTERIORS['float_scientific'], 'float_scientific')
 			: input
 	) as T.FloatScientific.LooseConfig;
 	return F.buildFloatScientific({
@@ -6707,7 +6729,9 @@ export function coerceToEscapeSequenceHex(
 export function resolveEscapeSequenceOctal_content(
 	value: T.EscapeSequenceOctal.LooseConfig['content']
 ): T.EscapeSequenceOctal['_content'] {
-	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' || typeof value === 'bigint'
+		? numberText(10, '', value)
+		: _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToEscapeSequenceOctal(
@@ -6725,7 +6749,7 @@ export function coerceToEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
 			'content',
-			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+			typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		)
 	);
 }

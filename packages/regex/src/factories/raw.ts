@@ -801,7 +801,7 @@ export function buildGroupName(text: string): T.GroupName.Built {
 	);
 }
 
-export function buildDecimalDigits(text: string | number): T.DecimalDigits.Built {
+export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Built {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);
 	if (!_leafRe_buildDecimalDigits.test(text)) throw new Error(`decimal_digits: text does not match pattern: ${text}`);
@@ -857,7 +857,9 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Built {
 }
 
 export function buildCountQuantifierGroup(value?: T.DecimalDigits): ReturnType<typeof _buildCountQuantifierGroup>;
-export function buildCountQuantifierGroup(text: string | number): ReturnType<typeof _buildCountQuantifierGroup>;
+export function buildCountQuantifierGroup(
+	text: string | number | bigint
+): ReturnType<typeof _buildCountQuantifierGroup>;
 export function buildCountQuantifierGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildCountQuantifierGroup(args[0] as T.DecimalDigits);

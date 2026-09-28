@@ -5,7 +5,7 @@ import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compil
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
+import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -150,7 +150,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		scalarEntries.set(scalars.boolean.trueKind, 'boolean');
 		scalarEntries.set(scalars.boolean.falseKind, 'boolean');
 	}
-	for (const kind of numericLeafKinds(nodeMap)) scalarEntries.set(kind, 'number');
+	for (const [kind, input] of numericLeafInputTypes(nodeMap)) scalarEntries.set(kind, input);
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind);
 		if (node?.modelType === 'enum' && node.values.every((v) => /^\d+$/.test(v))) scalarEntries.set(kind, 'number');
@@ -599,7 +599,8 @@ function leafTextType(node: AssembledNode): string {
 }
 
 function leafConstructionTextType(node: AssembledNode): string {
-	return numericLeafShape(node.kind, node) === undefined ? leafTextType(node) : 'string | number';
+	const shape = numericLeafShape(node.kind, node);
+	return shape === undefined ? leafTextType(node) : `string | ${numberInputType(shape)}`;
 }
 
 function emitTreeInterfaceDeclarations(
@@ -1165,11 +1166,6 @@ function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly Refine
 	lines.push('');
 }
 
-function widenNumericSlots(type: string, node: AssembledNode): string {
-	const keys = numericSlotKeys(node);
-	return keys.length === 0 ? type : `WidenNumeric<${type}, ${keys.map((key) => JSON.stringify(key)).join(' | ')}>`;
-}
-
 function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
@@ -1198,16 +1194,15 @@ function emitNamespaceSugarBlock(
 		: undefined;
 	if (surface !== undefined) emitBuiltInterface(lines, surface, '  ');
 	else lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
-	const bareNumeric = ((): boolean => {
-		const bare = lexedContentSlot(node);
-		return (bare !== undefined && numericSlotShape(bare) !== undefined) || numericLeafShape(kind, node) !== undefined;
-	})();
-	const looseWidened = numericSlotKeys(node).length > 0 ? ` | ${widenNumericSlots(omitRegistered(`LooseConfigFor<${nsKey}>`, node), node)}` : '';
+	const looseConfig = omitRegistered(`LooseConfigFor<${nsKey}>`, node);
+	const widenedLooseConfig = widenNumericSlots(looseConfig, node);
+	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
-	const bareAnyNumber = bareNumeric || bareInterior?.number !== undefined;
-	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareAnyNumber ? ' | number' : ''};`);
-	lines.push(`  export type LooseConfig = ${widenNumericSlots(omitRegistered(`LooseConfigFor<${nsKey}>`, node), node)};`);
+	const bareContent = lexedContentSlot(node);
+	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
+	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`};`);
+	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
 	if (surface !== undefined) {
 		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
 		lines.push(`  export type LooseArgs = ${surface.looseArgs};`);
