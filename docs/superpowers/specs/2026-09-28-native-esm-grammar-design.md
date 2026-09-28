@@ -74,12 +74,6 @@ nothing needs to re-bundle before `generate`. The conflict derivation store keep
 writing `resolutions.json`, which the grammar imports with `{ type: 'json' }`, and its
 bundle step disappears.
 
-### One evaluation path
-
-`compileGrammar`'s fallback to the package `.sittir/grammar.js` is removed. That file
-is now only the source under another name, so evaluating the entry directly is the
-single path.
-
 ### Runtime floor
 
 - `engines.node` becomes `>=22.18.0`. Every CI job moves to a matching Node: the one
@@ -90,9 +84,17 @@ single path.
 
 ### Erasable syntax only
 
-tsconfig gets `erasableSyntaxOnly: true`, so the type-checker refuses any syntax
-Node cannot strip, in every file the grammar imports and everywhere else. This makes
-"tree-sitter can load the grammar" a type error rather than a regen failure.
+Each grammar package gets a grammar tsconfig with `erasableSyntaxOnly: true` whose
+`include` is only its `grammar.sittir.ts`. The program then follows that file's import
+graph, so the flag covers exactly the code Node must strip to load the grammar, and "tree-sitter can
+load the grammar" becomes a type error rather than a regen failure. The type-check gate
+runs these configs.
+
+The flag is not enabled workspace-wide yet. The generated packages emit enums
+(`<G>KindId`, `<G>FieldId`, `Delimiter`), and a few hand-written codegen and tools
+files use parameter properties, value namespaces or a `const enum`. None of these is
+reachable from a grammar entry. Converting them changes the generated public API, so
+it is a separate change with its own issue.
 
 ### tree-sitter 0.27.0
 
@@ -117,10 +119,15 @@ through the CLI itself, and adds the `eof` global.
   step reflects the edit.
 - The Node-floor check refuses a version below 22.18 with its message. It is tested by
   injecting the version string, not by spawning an old Node.
-- A fixture entry with an enum fails the type-check under `erasableSyntaxOnly`.
+- A fixture grammar entry that imports a module with an enum fails its grammar
+  tsconfig's type-check.
 
 ## Out of scope
 
+- Workspace-wide `erasableSyntaxOnly` and the emitted enums (above).
+- `compileGrammar`'s fallback, which compiles the upstream grammar when a package has
+  no `grammar.sittir.ts`. It never reads `.sittir/grammar.js`, so this change does not
+  touch it.
 - tree-sitter 0.27.0 (above).
 - Evaluating in-process versus in a child process for conflict derivation. The child
   exists for tsx module isolation, which this change does not touch.
