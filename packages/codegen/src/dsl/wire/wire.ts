@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichHiddenSubsequences, getEnrichClauseGroupOwners, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -473,13 +473,13 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
-		for (const name of getEnrichClauseGroups(base)) {
+		for (const name of getEnrichHiddenSubsequences(base)) {
 			context.syntheticInline.add(name);
 		}
-		for (const name of getEnrichVisibleGroupSources(base)) {
+		for (const name of getEnrichVisibleSubsequenceSources(base)) {
 			context.inlineRemovals.add(name);
 		}
-		const inlineSafeNames = getEnrichClauseGroups(base);
+		const inlineSafeNames = getEnrichHiddenSubsequences(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
 			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
 				const pairKey = [ownerKind, syntheticName].join('\u0000');
@@ -973,7 +973,7 @@ const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, p
 };
 
 function enrichLiftNames(base: unknown): Set<string> {
-	return new Set([...getEnrichClauseGroups(base), ...getEnrichVisibleGroupSources(base)]);
+	return new Set([...getEnrichHiddenSubsequences(base), ...getEnrichVisibleSubsequenceSources(base)]);
 }
 
 interface WirePatternCandidate {

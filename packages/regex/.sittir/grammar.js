@@ -2945,8 +2945,8 @@ var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
 function getEnrichWhitespace(grammar) {
   return grammar?.[ENRICH_WHITESPACE_KEY] ?? { bodies: {}, collisions: [] };
 }
-function getEnrichClauseGroups(grammar) {
-  return enrichRuleNamesOf(grammar, (origin) => origin.kind === "clause-group");
+function getEnrichHiddenSubsequences(grammar) {
+  return enrichRuleNamesOf(grammar, (origin) => origin.kind === "hidden-subsequence");
 }
 var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
 function getEnrichClauseGroupOwners(grammar) {
@@ -2955,8 +2955,8 @@ function getEnrichClauseGroupOwners(grammar) {
   if (owners instanceof Map) return owners;
   return /* @__PURE__ */ new Map();
 }
-function getEnrichVisibleGroupSources(grammar) {
-  return enrichRuleNamesOf(grammar, (origin) => origin.kind === "visible-group" || origin.kind === "promoted-group");
+function getEnrichVisibleSubsequenceSources(grammar) {
+  return enrichRuleNamesOf(grammar, (origin) => origin.kind === "visible-subsequence" || origin.kind === "promoted-group");
 }
 function applyFieldWrapPasses(ruleName, rule2, ctx) {
   const MAX_ITERATIONS = 8;
@@ -4311,7 +4311,7 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   if (existing !== void 0) {
     if (!(existing in clauseGroupRules)) {
       clauseGroupRules[existing] = seqBody;
-      ruleOrigins.set(existing, { kind: "clause-group" });
+      ruleOrigins.set(existing, { kind: "hidden-subsequence" });
     }
     return existing;
   }
@@ -4326,7 +4326,7 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   }
   dedupeMap[key] = name;
   clauseGroupRules[name] = seqBody;
-  ruleOrigins.set(name, { kind: "clause-group" });
+  ruleOrigins.set(name, { kind: "hidden-subsequence" });
   return name;
 }
 function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, clauseGroupOwners) {
@@ -4400,7 +4400,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
   if (existing !== void 0) {
     if (!(existing in clauseGroupRules)) {
       clauseGroupRules[existing] = registeredBody;
-      ruleOrigins.set(existing, { kind: "visible-group" });
+      ruleOrigins.set(existing, { kind: "visible-subsequence" });
     }
     return existing;
   }
@@ -4408,7 +4408,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
   const register = (name, body = registeredBody) => {
     groupDedupeMap[key] = name;
     clauseGroupRules[name] = body;
-    ruleOrigins.set(name, { kind: "visible-group" });
+    ruleOrigins.set(name, { kind: "visible-subsequence" });
     return name;
   };
   const listInfo = separatedListNameCounts !== void 0 ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;
@@ -4999,13 +4999,13 @@ function wireImpl(cfg, base2, source) {
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   applyWireVisibleExternalsRewrite(outRules, visibleExternals);
   if (baseArg) {
-    for (const name of getEnrichClauseGroups(base2)) {
+    for (const name of getEnrichHiddenSubsequences(base2)) {
       context.syntheticInline.add(name);
     }
-    for (const name of getEnrichVisibleGroupSources(base2)) {
+    for (const name of getEnrichVisibleSubsequenceSources(base2)) {
       context.inlineRemovals.add(name);
     }
-    const inlineSafeNames = getEnrichClauseGroups(base2);
+    const inlineSafeNames = getEnrichHiddenSubsequences(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
       if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
         const pairKey = [ownerKind, syntheticName].join("\0");
@@ -5381,7 +5381,7 @@ var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
   return (name === null || name === void 0 ? void 0 : currentContext?.liftBodies.get(name)) ?? previous;
 };
 function enrichLiftNames(base2) {
-  return /* @__PURE__ */ new Set([...getEnrichClauseGroups(base2), ...getEnrichVisibleGroupSources(base2)]);
+  return /* @__PURE__ */ new Set([...getEnrichHiddenSubsequences(base2), ...getEnrichVisibleSubsequenceSources(base2)]);
 }
 function declaredPatterns(groups, injects) {
   const $ = makeSimpleDollarProxy();

@@ -27,9 +27,9 @@ The names in an enriched grammar's origin map whose origin passes `keep`; the on
 
 The extras of a grammar closed over supertypes, in both directions: each listed name; every member of a supertype in the set, transitively; and every supertype whose members are all in the set, to a fixpoint. The upward direction is what makes a supertype over extras an extra itself (rust's `comment` over `line_comment`/`block_comment`), since tree-sitter refuses a non-terminal supertype in the `extras` list. `subtypesOf` answers a name's members, or `undefined` when the name is not a supertype. The one rule both readings of "is this an extra" use: wire's `extraRuleNames` over the DSL rules and the compiler's `triviaKinds` over the node map.
 
-### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroups`
+### `packages/codegen/src/dsl/enrich.ts::getEnrichHiddenSubsequences`
 
-The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `clause-group`. Wire adds them to the grammar's `inline:` list.
+The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `hidden-subsequence`. Wire adds them to the grammar's `inline:` list.
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroupOwners`
 
@@ -41,9 +41,9 @@ The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose o
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleGroupSources`
+### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleSubsequenceSources`
 
-The names whose origin is `visible-group` or `promoted-group`: the source rules behind visible-group mints, both the synthesized bodies and the promoted upstream hidden rules.
+The names whose origin is `visible-subsequence` or `promoted-group`: the source rules behind visible-group mints, both the synthesized bodies and the promoted upstream hidden rules.
 
 ```text
 /**
@@ -2506,8 +2506,8 @@ The non-enumerable key under which `enrich()` attaches its rule-origin map to th
 /**
  * Well-known non-enumerable key attached by `enrich()` to the grammar result:
  * synthesized clause-hoist name → the parent kind whose (pre-override) body
- * it was hoisted from. Covers both the `clause-group` origins (inline-safe)
- * AND the `visible-group` ones (`_<parent>_group<N>`) — wire() needs both, since an override
+ * it was hoisted from. Covers both the `hidden-subsequence` origins (inline-safe)
+ * AND the `visible-subsequence` ones (`_<parent>_group<N>`) — wire() needs both, since an override
  * redeclaring the recorded owner orphans the synthesized rule regardless of
  * which category it's in.
  */
@@ -4725,7 +4725,7 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // real (non-inlined) rule — tree-sitter's inline processing erases inlined
 // rules before table construction, taking the alias (and the minted kind's
 // entire parser identity) with it, while the IR still models the kind —
-// the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
+// the "VAPORIZED" phantom divergence. See getEnrichVisibleSubsequenceSources.
 ```
 
 Each clause group is stamped `annotations.hoisted` (`withHoistedAnnotation`)
@@ -6171,8 +6171,8 @@ The content under a chain of named aliases.
 
 What kind of rule enrich added:
 - `keyword`: a `_kw_<name>` rule from `registerKwRule`;
-- `clause-group`: an inline-safe clause hoist;
-- `visible-group`: a visible group, list, structured-arm or token-form lift;
+- `hidden-subsequence`: an inline-safe clause hoist;
+- `visible-subsequence`: a visible group, list, structured-arm or token-form lift;
 - `literal-alias-storage`: `mintInlineLiteralAliasStorage`;
 - `field-enum`: `synthesizeFieldEnumRules`;
 - `whitespace`: the `_whitespace` supertype.

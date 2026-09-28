@@ -16,7 +16,7 @@ const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
 const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;
 
 function enrichedWithMints(names: readonly string[]): unknown {
-	const origins = new Map<string, EnrichRuleOrigin>(names.map((name) => [name, { kind: 'visible-group' }]));
+	const origins = new Map<string, EnrichRuleOrigin>(names.map((name) => [name, { kind: 'visible-subsequence' }]));
 	return Object.defineProperty({}, ENRICH_RULE_ORIGINS_KEY, { value: origins, enumerable: false });
 }
 

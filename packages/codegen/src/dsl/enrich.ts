@@ -245,8 +245,8 @@ export function getEnrichWhitespace(grammar: unknown): EnrichWhitespaceSidecar {
 	return ((grammar as Record<string, unknown> | null)?.[ENRICH_WHITESPACE_KEY] as EnrichWhitespaceSidecar | undefined) ?? { bodies: {}, collisions: [] };
 }
 
-export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
-	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'clause-group');
+export function getEnrichHiddenSubsequences(grammar: unknown): ReadonlySet<string> {
+	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'hidden-subsequence');
 }
 
 export const ENRICH_CLAUSE_GROUP_OWNERS_KEY = '__enrichedClauseGroupOwners__' as const;
@@ -258,8 +258,8 @@ export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string
 	return new Map();
 }
 
-export function getEnrichVisibleGroupSources(grammar: unknown): ReadonlySet<string> {
-	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'visible-group' || origin.kind === 'promoted-group');
+export function getEnrichVisibleSubsequenceSources(grammar: unknown): ReadonlySet<string> {
+	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'visible-subsequence' || origin.kind === 'promoted-group');
 }
 
 function applyFieldWrapPasses(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
@@ -1834,7 +1834,7 @@ function clauseHoistSynthName(
 	if (existing !== undefined) {
 		if (!(existing in clauseGroupRules)) {
 			clauseGroupRules[existing] = seqBody;
-			ruleOrigins.set(existing, { kind: 'clause-group' });
+			ruleOrigins.set(existing, { kind: 'hidden-subsequence' });
 		}
 		return existing;
 	}
@@ -1848,7 +1848,7 @@ function clauseHoistSynthName(
 	}
 	dedupeMap[key] = name;
 	clauseGroupRules[name] = seqBody;
-	ruleOrigins.set(name, { kind: 'clause-group' });
+	ruleOrigins.set(name, { kind: 'hidden-subsequence' });
 	return name;
 }
 
@@ -1937,7 +1937,7 @@ function visibleGroupSynthName(
 	if (existing !== undefined) {
 		if (!(existing in clauseGroupRules)) {
 			clauseGroupRules[existing] = registeredBody;
-			ruleOrigins.set(existing, { kind: 'visible-group' });
+			ruleOrigins.set(existing, { kind: 'visible-subsequence' });
 		}
 		return existing;
 	}
@@ -1945,7 +1945,7 @@ function visibleGroupSynthName(
 	const register = (name: string, body: Rule = registeredBody): string => {
 		groupDedupeMap[key] = name;
 		clauseGroupRules[name] = body;
-		ruleOrigins.set(name, { kind: 'visible-group' });
+		ruleOrigins.set(name, { kind: 'visible-subsequence' });
 		return name;
 	};
 	const listInfo = separatedListNameCounts !== undefined ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;

@@ -1049,7 +1049,7 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 	 *  before table construction, vaporizing the alias — and the minted
 	 *  kind's entire parser identity — while the IR still models the kind
 	 *  (the phantom-kind divergence). Populated from
-	 *  `getEnrichVisibleGroupSources(base)`; applied by the wired inline
+	 *  `getEnrichVisibleSubsequenceSources(base)`; applied by the wired inline
 	 *  callback. */
 ```
 
@@ -1725,7 +1725,7 @@ built it, the same object the upstream diagnostic stage reads.
 // appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
 // rules directly into base.grammar.rules before wire runs; without
 // inlining, tree-sitter creates LR conflicts for those hidden rules.
-// getEnrichClauseGroups reads the clause-group origins from the rule-origin
+// getEnrichHiddenSubsequences reads the hidden-subsequence origins from the rule-origin
 // map that enrich() attaches to the grammar result.
 //
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
@@ -1745,7 +1745,7 @@ built it, the same object the upstream diagnostic stage reads.
 
 ```text
 // Visible-group mint SOURCES must not be inlined away — see
-// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+// `WireContext.inlineRemovals` / `getEnrichVisibleSubsequenceSources`.
 ```
 
 #### body
