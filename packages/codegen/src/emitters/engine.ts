@@ -142,6 +142,7 @@ export interface ${api} extends LanguageAPI {
 	readonly root: ${rootTreeTypeName};
 	readonly node: ${grammarTypePrefix(grammar)}Node;
 	readonly options: Options & IndentOption<string, IndentChar>;
+	readonly indentChar: IndentChar;
 }
 
 export const hooks: LanguageHooks<${api}> = {

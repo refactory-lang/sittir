@@ -40,13 +40,17 @@ The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit
 
 The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
 
+### `packages/types/src/core-types.ts::RenderCallOptions`
+
+The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
+
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
 How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
-The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, and its render options (including the indent unit). Every engine type is derived from it.
+The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
 
 ### `packages/types/src/engine-api.ts::Language`
 
@@ -95,6 +99,10 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 ### `packages/types/src/engine-api.ts::Engine`
 
 A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+
+### `packages/types/src/engine-api.ts::RenderOptionsCheck`
+
+The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `indent` unit must be made only of the language's indent characters, and every key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render). A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the second half restores it: a misspelled key, or `indent` for a language with no indent unit, is a type error where it is written.
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 

@@ -19,6 +19,7 @@ export interface ScmAPI extends LanguageAPI {
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
 	readonly options: Options & IndentOption<string, IndentChar>;
+	readonly indentChar: IndentChar;
 }
 
 export const hooks: LanguageHooks<ScmAPI> = {

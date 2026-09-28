@@ -391,10 +391,14 @@ export interface EngineOptions {
 	readonly format?: FormatRecord;
 }
 
+export interface RenderCallOptions {
+	readonly ignoreFormat?: boolean;
+}
+
 /** A handle to a parsed tree returned by the engine. */
 export interface EngineTreeHandle {
 	readonly format?: FormatRecord;
-	readonly render: (options?: { ignoreFormat?: boolean }) => string;
+	readonly render: (options?: RenderCallOptions) => string;
 }
 
 /** Return value of engine parseAndRead — carries both NodeData and inferred format. */

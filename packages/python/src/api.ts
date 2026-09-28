@@ -19,6 +19,7 @@ export interface PythonAPI extends LanguageAPI {
 	readonly root: ModuleTree;
 	readonly node: PythonNode;
 	readonly options: Options & IndentOption<string, IndentChar>;
+	readonly indentChar: IndentChar;
 }
 
 export const hooks: LanguageHooks<PythonAPI> = {

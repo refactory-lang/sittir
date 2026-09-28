@@ -1,4 +1,5 @@
-import type { AnyNodeData, Edit, FormatRecord } from './core-types.ts';
+import type { AnyNodeData, Edit, FormatRecord, RenderCallOptions } from './core-types.ts';
+import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
 	kindName(type: AnyNodeData['$type']): string | undefined;
@@ -21,6 +22,7 @@ export interface LanguageAPI {
 	readonly root: AnyNodeData;
 	readonly node: AnyNodeData;
 	readonly options: object;
+	readonly indentChar: string;
 }
 
 export interface Language<API extends LanguageAPI> {
@@ -45,7 +47,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyNodeData, options?: API['options'] & { ignoreFormat?: boolean }): Rendered;
+	render(node: AnyNodeData, options?: API['options'] & RenderCallOptions): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: unknown };
 	holdsTree(tree: unknown): boolean;
@@ -96,9 +98,9 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly types: API['types'];
 	parse(source: string, options?: ParseOptions): API['root'];
 	read(path: string, options?: ParseOptions): Promise<API['root']>;
-	render(
+	render<const R extends API['options'] = API['options']>(
 		node: API['node'] | ((build: API['build']) => API['node']),
-		options?: API['options'] & { ignoreFormat?: boolean }
+		options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
 	): Rendered;
 	create(path: string, fn: (build: API['build']) => API['root']): Pending;
 	edit(path: string, fn: (root: API['root']) => API['root']): Pending;
@@ -106,6 +108,11 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
+
+export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> = IndentOption<
+	R extends { readonly indent?: infer I extends string } ? I : string,
+	API['indentChar']
+> & { readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never };
 
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;

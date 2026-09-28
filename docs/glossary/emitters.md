@@ -143,7 +143,7 @@ The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `Typescript
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union and the render options with the indent unit) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
 
 
 ```text

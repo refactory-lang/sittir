@@ -6,7 +6,8 @@ import type {
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,
-	Pending
+	Pending,
+	RenderOptionsCheck
 } from '@sittir/types';
 
 const loaded = new WeakMap<Language<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
@@ -80,9 +81,9 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 }
 
-export async function createEngine<API extends LanguageAPI>(
+export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(
 	language: Language<API>,
-	options?: EngineOptions<API>
+	options?: EngineOptions<API> & { readonly render?: R & RenderOptionsCheck<API, R> }
 ): Promise<Engine<API>> {
 	refuseUnimplemented(options);
 	return assembleEngine(await loadLanguage(language), options);

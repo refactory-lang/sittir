@@ -22,7 +22,7 @@ Builds one engine from a language's loaded hooks: it creates the native engine f
 
 ### `packages/common/src/create-engine.ts::createEngine`
 
-The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options.
+The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
 
 ### `packages/common/src/engine.ts::createRenderHandle`
 

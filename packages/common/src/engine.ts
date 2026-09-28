@@ -8,6 +8,7 @@ import type {
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	ParseOptions,
+	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
@@ -16,8 +17,7 @@ import { toTransportData } from './transport-data.ts';
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
-export interface RenderOptions<O extends object = RenderOptionValues> {
-	readonly ignoreFormat?: boolean;
+export interface RenderOptions<O extends object = RenderOptionValues> extends RenderCallOptions {
 	/** Per-call options, resolved over the engine's own. */
 	readonly options?: O;
 }

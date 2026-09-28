@@ -19,6 +19,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly options: Options & IndentOption<string, IndentChar>;
+	readonly indentChar: IndentChar;
 }
 
 export const hooks: LanguageHooks<RegexAPI> = {

@@ -19,6 +19,7 @@ export interface RustAPI extends LanguageAPI {
 	readonly root: SourceFileTree;
 	readonly node: RustNode;
 	readonly options: Options & IndentOption<string, IndentChar>;
+	readonly indentChar: IndentChar;
 }
 
 export const hooks: LanguageHooks<RustAPI> = {
