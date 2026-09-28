@@ -58,26 +58,16 @@ exists only for the agreement check.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterConflict`
-
-```text
-/**
- * Register a conflict group against the active wire context. Dedupes
- * by exact group membership (same names in same order).
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSymbolRename`
 
 ```text
 /**
  * Record that a rule symbol was renamed during transform resolution
  * (a variant() rename of an existing SYMBOL member, or a group-lift
- * deposit replacing an alias's content symbol). Conflict entries and
- * registered conflict groups that cite the old name are rewritten to
- * the new one by `buildWiredConflictsFn` — a rename-only variant
- * changes no structure, so the grammar's LR resolutions must follow
- * the symbol.
+ * deposit replacing an alias's content symbol). Wire's list callbacks
+ * (`extras`, `externals`, `precedences`, `inline`, `supertypes`) rewrite
+ * the old name to the new one, and the conflict-derivation records map
+ * the new name back to the old (`derivation-records.ts`).
  */
 ```
 
@@ -135,7 +125,7 @@ only ever stripped, restamped or claimed inside `wire()` or
 /**
  * Install a fresh `WireContext` for the duration of `fn` and return
  * both the callback result and the context so tests can assert on
- * deposits / conflictGroups that were registered during the call.
+ * deposits that were registered during the call.
  *
  * Intended for unit tests of DSL helpers (variant/alias/transform/
  * hoist) that need a wire context without going through full wire()
@@ -443,21 +433,6 @@ patched a reference to it in.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wrapConflictsCallback`
-
-```text
-/**
- * Wrap the user's `conflicts` callback so accumulated variant conflict
- * groups drain into its return list, each group's names symbolized
- * through the provided `$` proxy.
- *
- * If the user didn't supply a `conflicts`, return a fresh one that just
- * drains the accumulator. If the accumulator is empty when tree-sitter
- * invokes the callback, the wrapped fn still passes the user's list
- * through unchanged.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
 ```text
@@ -469,32 +444,6 @@ patched a reference to it in.
  * Tree-sitter evaluates metadata callbacks after rules, so the set is
  * complete by the time this runs. `_kw_*` helpers are leaf token rules,
  * which satisfies tree-sitter's inline restrictions.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::buildWiredConflictsFn`
-
-```text
-/**
- * Build the wired conflicts callback that drains accumulated variant
- * conflict groups into the returned conflict list.
- *
- * @remarks
- * Always returns a drainer, even when the user didn't supply a conflicts
- * callback and no groups have registered yet. We can't know at wire-time
- * whether variants will register later (they're registered lazily when
- * rule fns run), so we install the drainer unconditionally. The drainer
- * short-circuits at call-time when `conflictGroups` is still empty,
- * keeping the overhead minimal when no variants are declared.
- *
- * The drainer also applies `symbolRenames` to the base conflict list
- * (the author's entries plus tree-sitter's own) and to registered
- * groups: a SYMBOL entry whose name was renamed re-symbolizes under
- * the new name, so conflicts keep citing rules that still exist.
- *
- * @param userConflicts - The author's original conflicts callback, if any.
- * @param context - The active wire context whose `conflictGroups` are drained.
- * @returns A wrapped conflicts callback that appends symbolized group entries.
  */
 ```
 
@@ -1063,7 +1012,8 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ```text
 /** Old rule-symbol name → the name transform resolution renamed it to;
- *  consumed by the conflicts drainer to rewrite stale conflict entries. */
+ *  consumed by wire's list-callback renames and by the conflict-derivation
+ *  records, which follow it back to the upstream name. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
@@ -1084,14 +1034,6 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 	 *  (the phantom-kind divergence). Populated from
 	 *  `getEnrichVisibleSubsequenceSources(base)`; applied by the wired inline
 	 *  callback. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
-
-```text
-/** Conflict groups (rule-name arrays) registered by variant() for
-	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
-	 *  callback when tree-sitter invokes it. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::refineForms`
@@ -1362,6 +1304,8 @@ are what the shape-free half of the load-time check can promise.
 	 * no `undefined` leak). `previous` is the base grammar's conflict list.
 	 */
 ```
+
+Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and `sittirGrammar` sets the final list from the derived resolutions (`dsl/conflict-resolutions.ts::applyConflictResolutions`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
@@ -1833,10 +1777,9 @@ built it, the same object the upstream diagnostic stage reads.
 // Boundary casts to the internal loose (`unknown`-$, mutable-array)
 // callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
 // itself (see the block comment above `wire()`): the public config's
-// `conflicts`/`inline` callbacks are typed against the precise
-// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
-// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
-// that only ever calls them positionally, so the wider internal param
+// `inline` callback is typed against the precise `ShapedSymbols<B>` $ and
+// readonly-array shapes for author ergonomics; `wrapInlineCallback` is
+// internal machinery that only ever calls it positionally, so the wider internal param
 // types are a safe narrowing-away, not a behavior change.
 ```
 

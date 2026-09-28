@@ -9,6 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
 	alias,
@@ -23,6 +24,7 @@ import {
 
 
 export default sittirGrammar(base, {
+	resolutions,
 	name: 'typescript',
 	conflicts: ($, previous) => [
 		...(previous ?? []),

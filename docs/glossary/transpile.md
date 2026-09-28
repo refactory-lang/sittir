@@ -21,8 +21,9 @@ directory, so a grammar package anywhere on disk runs the same CLI version.
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
 
 ```text
-Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary.
-Every tree-sitter invocation (generate, wasm build) goes through here.
+Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary,
+with the given stdio. It and `runTreeSitterCliCapturing` are the only ways to
+run the CLI, and both resolve it through `treeSitterCliPath`.
 ```
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
@@ -47,6 +48,8 @@ Every tree-sitter invocation (generate, wasm build) goes through here.
  * messages attached.
  */
 ```
+
+Writes the bundle's other inputs first, including an empty `resolutions.json` when the package has none yet (`ensureConflictResolutions`): `grammar.sittir.ts` imports it, so a new package's first bundle needs it to exist.
 
 #### body
 
@@ -371,36 +374,6 @@ The offered resolutions are excluded — the same conflict can list its offers
 in any order.
 ```
 
-### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyStep`
-
-```text
-Which step of the resolution policy chose a resolution: `upstream-declared`
-(the conflict's rules, mapped back to their upstream sources, are a set
-upstream listed in its own `conflicts`), `upstream-precedence` (a direction
-copied from the upstream source rule's precedence), or `default`
-(AddConflict).
-```
-
-### `packages/codegen/src/transpile/derive-conflicts.ts::DerivedResolution`
-
-```text
-One entry of `resolutions.json`: the resolution applied, the policy step that
-chose it, and the conflict it resolved (symbol sequence, lookahead, and the
-rules of each interpretation), so a diagnostic record can show what was
-resolved and why. `sourceChains` holds, for each rule of the resolution, the
-chain from its name to its upstream source (`sourceChain`), so a reviewer can
-see why a set counted as declared upstream.
-```
-
-### `packages/codegen/src/transpile/derive-conflicts.ts::ConflictResolutionsFile`
-
-```text
-The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the
-evaluated grammar the resolutions were derived from, computed without the
-resolutions; a mismatch means the grammar changed and the set is re-derived
-from empty.
-```
-
 ### `packages/codegen/src/transpile/derive-conflicts.ts::UpstreamContext`
 
 ```text
@@ -465,6 +438,7 @@ is clean. It stops unresolvable when a conflict is reported a second time
 when the resolutions already number the grammar's rules (the cap: each
 resolution names at least one rule). A `generate` error throws — a grammar
 that fails to build for any other reason is broken, not conflicted.
+`generate` is awaited: the driver re-bundles the grammar between runs.
 ```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
@@ -536,3 +510,44 @@ The child entry of `evaluateForDerivation`: evaluates the entry path given as
 its argument and writes the marker and the derivation inputs as JSON to
 stdout.
 ```
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
+
+```text
+Where a package's derived resolutions live: `.sittir/resolutions.json`.
+```
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::writeConflictResolutions`
+
+```text
+Writes the resolutions as tab-indented JSON, leaving the file untouched when
+its content is already the same, so an unchanged derivation does not touch the
+bundle input.
+```
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
+
+```text
+Seeds a package that has no resolutions yet with the empty set, so its
+`grammar.sittir.ts` import resolves before anything has been derived.
+```
+
+### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
+
+```text
+The conflict loop for one grammar package: seed the resolutions if missing,
+evaluate the grammar once in a fresh process for the hash, rule count and
+upstream context, then derive. Each run writes the candidate resolutions
+(with the hash), re-bundles, and runs `tree-sitter generate --json-summary`;
+the last, clean run leaves the generate outputs in place. An unresolvable
+derivation throws with its reason and the stopping report.
+```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`
+
+```text
+Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through
+and stderr captured, and returns the exit status with stderr: the
+`--json-summary` report is written to stderr.
+```
+

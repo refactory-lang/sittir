@@ -57,7 +57,7 @@ I appended `module.exports.grammar.conflicts = [...]` to scratch copies of each 
 - **Auto conflict producers:** retired in Task 3. These are enrich's subsequence-owner pairs and self entries, their relabel in wire, transform's `registerHoistedVariantConflicts`, and wire's `conflictGroups` drain, together with their glossary entries.
 - **Grammar hash:** sha256 of canonical JSON of the `evaluate` result with its `conflicts` removed. While every resolution is an `AddConflict`, `conflicts` is the only field the resolutions touch. `grammar.json` would need a generate run to produce, and the bundle bytes carry non-grammar reorder churn. The evaluate runs in the fresh child process above.
 - **Reshaping records:** a non-enumerable sidecar on the `sittirGrammar` result, the same pattern as the dead-mint sidecar. The driver reads it once per derivation from the one child-process `evaluate` that also yields the hash and the rule count, with no name matching.
-- **Open, with the user:** how a Precedence or Associativity resolution is applied, and whether policy step 2 fires at all, given that `AddConflict` alone reproduces every master parser. Task 7 waits on this.
+- **Policy (user ruling):** every conflict is resolved with `AddConflict`; the loop never applies a static precedence or associativity. `PolicyStep` only records whether a conflict was declared upstream. Step 2 is now preserving upstream **dynamic** precedence (Task 7).
 
 ---
 
@@ -174,7 +174,7 @@ describe('parseGenerateOutcome', () => {
 - Produces:
 
 ```ts
-export type PolicyStep = 'upstream-declared' | 'upstream-precedence' | 'default';
+export type PolicyStep = 'upstream-declared' | 'default';
 export interface DerivedResolution {
 	readonly resolution: { readonly kind: 'AddConflict'; readonly symbols: readonly string[] };
 	readonly step: PolicyStep;
@@ -433,22 +433,21 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 - [ ] **Step 2:** Run, implement, run. Mutation check: register `conflict-authored` as floorable and confirm the blocking test fails.
 - [ ] **Step 3:** Regenerate all five grammars. rust and typescript now block on `conflict-authored`, which is expected until Task 8; run Task 8 before the gates. Commit Tasks 6 and 8 together if the executor prefers a green commit.
 
-### Task 7: Policy step 2, copying upstream precedence (waits on the user's ruling)
+### Task 7: Upstream dynamic precedence survives reshaping
+
+Every conflict is resolved with `AddConflict`. A declared conflict is settled at parse time by `prec.dynamic`, which is upstream's own tie-breaker, so it must survive reshaping.
 
 **Files:**
-- Modify: `derive-conflicts.ts` (widen `DerivedResolution.resolution`); `dsl/conflict-resolutions.ts` (apply a Precedence/Associativity resolution per the user's ruling)
-- Test: the CLI fixture from Task 4, extended with the spec's case
+- Create: `packages/codegen/src/transpile/dynamic-precedence.ts` (the census and the check)
+- Modify: `packages/codegen/src/transpile/evaluate-for-derivation.ts`. `DerivationInputs` gains the dynamic precedence of every rule, upstream and evaluated.
+- Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`. Add `conflict-dynamic-precedence-lost`, blocking and not floorable.
+- Test: `packages/codegen/src/transpile/__tests__/dynamic-precedence.test.ts`
 
-**Interfaces:**
-- `DerivedResolution.resolution` gains `{ kind: 'Precedence' | 'Associativity'; symbols; direction: 'left' | 'right' | number }`.
-- `UpstreamContext` gains `upstreamPrecedenceOf(finalName): { kind: 'left' | 'right' | 'plain'; value: number } | undefined`, read from the reshaping-records sidecar.
-
-- [ ] **Step 1:** Write the failing fixture test.
-  - Upstream `binary: $ => prec.left(seq($._expr, '+', $._expr))`, and a reshaped copy without the prec, converges to `Associativity` with direction `left`, step `upstream-precedence`.
-  - Without the upstream prec, it converges to `AddConflict`.
-- [ ] **Step 2:** Implement per the user's ruling.
-- [ ] **Step 3:** Regenerate all five grammars. Every parser.c that changes is a place step 2 fired where master used `AddConflict`. Report each one to brainstorm before committing.
-- [ ] **Step 4:** Commit by pathspec after brainstorm's review.
+- [ ] **Step 1: Census, reported to brainstorm before any code acts on it.** For every rule in every derived conflict of the five grammars, compare the `prec.dynamic` of its upstream source (through `sourceChain`) with the one the reshaped rule carries. Report the carried and lost rows per grammar.
+- [ ] **Step 2 (none lost):** the check becomes the blocking diagnostic `conflict-dynamic-precedence-lost`. Parsers stay identical.
+- [ ] **Step 2 (some lost):** the loop copies the source's `prec.dynamic` onto the reshaped rule, with each copy recorded and reviewed. The mechanism is settled with brainstorm after the census.
+- [ ] **Step 3:** Add a fixture where the upstream rule carries `prec.dynamic` and a reshaped variant lost it; it raises the diagnostic (or gets the copy).
+- [ ] **Step 4:** Regenerate all five grammars, run the gates, and commit by pathspec.
 
 ### Task 8: Retire the remaining hand-written conflicts
 
@@ -470,6 +469,8 @@ The final file is written with `grammarHash` set to the hash from `evaluateForDe
 - [ ] **Step 5:** Commit by pathspec.
 
 ### Task 9: Generated-output hygiene
+
+Landed with Tasks 3+4: the manifest's pre-commit check requires every tracked `.sittir` output to be listed, so `resolutions.json` is tracked (`.gitignore`) and recorded in each manifest in the same commit. `conflict-resolutions-file.test.ts` pins the manifest hash for every grammar.
 
 **Files:**
 - Modify: whatever lists `.sittir/` generated files for the manifest and hygiene checks. Find it with `search "generated.manifest"` and `search "grammar-diagnostics.json" regex=true`, and add `resolutions.json` there.

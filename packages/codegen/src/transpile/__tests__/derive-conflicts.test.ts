@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { chooseResolution, deriveConflictResolutions, sourceChain, type DerivedResolution, type UpstreamContext } from '../derive-conflicts.ts';
+import type { DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import { chooseResolution, deriveConflictResolutions, sourceChain, type UpstreamContext } from '../derive-conflicts.ts';
 import type { ConflictReport, GenerateOutcome } from '../conflict-summary.ts';
 
 function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
@@ -88,13 +89,13 @@ describe('sourceChain', () => {
 describe('deriveConflictResolutions', () => {
 	const symbolsOf = (resolutions: readonly DerivedResolution[]) => resolutions.map((r) => r.resolution.symbols);
 
-	it('adds one resolution per reported conflict until generate is clean', () => {
+	it('adds one resolution per reported conflict until generate is clean', async () => {
 		const queue = [reportFor('a', 'b'), reportFor('c', 'd')];
 		const seen: (readonly (readonly string[])[])[] = [];
-		const result = deriveConflictResolutions({
+		const result = await deriveConflictResolutions({
 			ruleCount: 10,
 			upstream: identity,
-			generate: (resolutions): GenerateOutcome => {
+			generate: async (resolutions): Promise<GenerateOutcome> => {
 				seen.push(symbolsOf(resolutions));
 				const next = queue[resolutions.length];
 				return next ? { kind: 'conflict', report: next } : { kind: 'clean' };
@@ -105,44 +106,44 @@ describe('deriveConflictResolutions', () => {
 		expect(seen).toEqual([[], [['a', 'b']], [['a', 'b'], ['c', 'd']]]);
 	});
 
-	it('converges in one generate when nothing conflicts', () => {
-		expect(deriveConflictResolutions({ ruleCount: 1, upstream: identity, generate: () => ({ kind: 'clean' }) })).toEqual({
+	it('converges in one generate when nothing conflicts', async () => {
+		expect(await deriveConflictResolutions({ ruleCount: 1, upstream: identity, generate: async () => ({ kind: 'clean' }) })).toEqual({
 			kind: 'converged',
 			resolutions: [],
 			iterations: 1
 		});
 	});
 
-	it('stops when the same conflict is reported twice', () => {
-		const result = deriveConflictResolutions({
+	it('stops when the same conflict is reported twice', async () => {
+		const result = await deriveConflictResolutions({
 			ruleCount: 10,
 			upstream: identity,
-			generate: () => ({ kind: 'conflict', report: reportFor('a', 'b') })
+			generate: async () => ({ kind: 'conflict', report: reportFor('a', 'b') })
 		});
 		expect(result).toMatchObject({ kind: 'unresolvable', reason: 'repeated', report: reportFor('a', 'b') });
 		expect(symbolsOf(result.resolutions)).toEqual([['a', 'b']]);
 	});
 
-	it('stops when no usable resolution is offered', () => {
+	it('stops when no usable resolution is offered', async () => {
 		const report: ConflictReport = { ...reportFor('x', 'y'), possible_resolutions: [{ Precedence: { symbols: ['x'] } }] };
-		const result = deriveConflictResolutions({ ruleCount: 10, upstream: identity, generate: () => ({ kind: 'conflict', report }) });
+		const result = await deriveConflictResolutions({ ruleCount: 10, upstream: identity, generate: async () => ({ kind: 'conflict', report }) });
 		expect(result).toMatchObject({ kind: 'unresolvable', reason: 'no-usable-offer', report });
 	});
 
-	it('stops at the rule-count cap', () => {
+	it('stops at the rule-count cap', async () => {
 		let n = 0;
-		const result = deriveConflictResolutions({
+		const result = await deriveConflictResolutions({
 			ruleCount: 2,
 			upstream: identity,
-			generate: (): GenerateOutcome => ({ kind: 'conflict', report: reportFor(`r${n}`, `s${n++}`) })
+			generate: async (): Promise<GenerateOutcome> => ({ kind: 'conflict', report: reportFor(`r${n}`, `s${n++}`) })
 		});
 		expect(result).toMatchObject({ kind: 'unresolvable', reason: 'cap' });
 		expect(result.resolutions).toHaveLength(2);
 	});
 
-	it('throws on a generate error rather than resolving it', () => {
-		expect(() =>
-			deriveConflictResolutions({ ruleCount: 2, upstream: identity, generate: () => ({ kind: 'error', summary: { LoadGrammarFile: {} } }) })
-		).toThrow(/LoadGrammarFile/);
+	it('throws on a generate error rather than resolving it', async () => {
+		await expect(
+			deriveConflictResolutions({ ruleCount: 2, upstream: identity, generate: async () => ({ kind: 'error', summary: { LoadGrammarFile: {} } }) })
+		).rejects.toThrow(/LoadGrammarFile/);
 	});
 });

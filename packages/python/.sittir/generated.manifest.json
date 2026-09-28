@@ -1,13 +1,14 @@
 {
   "grammar": "python",
-  "source_hash": "74ead3d756e953abedc6deed4f50e1f32c83a56095247f2a8dba2fcd4b9c4770",
+  "source_hash": "f5d21c0d2550900856f803d96d876d0c7562b5bdc43ca99845a4e0da41389177",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "90099c4de350f036729c8fda9f39deda11e60bf882eaa4e933ec98ce42646029",
-    "packages/python/.sittir/grammar.js": "db5a514694616f090c5bbd62716dd78c3a264caa71d35fca0f3c76b32763faff",
+    "packages/python/.sittir/grammar.js": "c015b4ac1b3617acf253b8a4270ced86537e8f926432202295c8f0b47c68a78c",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "06ef1cdb1d624a85768a1975a0da2c969fdce110ca8336e4e8c985385f430c5b",
     "packages/python/.sittir/render-bodies.json": "4cddc31f0dccf7483fd2caae24b8d8a6467f511efba0bd13dc4ad3b7c0e2f950",
-    "packages/python/.sittir/src/grammar.json": "66b80b5e2ea02d80f424fd4ca537d01f5e0c6be55d69c2645db385ee7e1cf4a5",
+    "packages/python/.sittir/resolutions.json": "7a0eb6f301894cefdab503e79e83b6dac170b031b023009064bf46e6347bfb46",
+    "packages/python/.sittir/src/grammar.json": "ddeee664fbddc47bb44ed005511088f842ab746f87309ae533db2d5a4c1c790b",
     "packages/python/.sittir/src/node-types.json": "1250e2166fb014d0a56edd2f6a0c95d9d44b1ab2b6047feb88f5c2d5590cee17",
     "packages/python/.sittir/src/parser.c": "332e17903dee8468b6a2df7f2fae8d5e5df31741b514df8b3d40807f5dd9d06f",
     "packages/python/.sittir/src/scanner.c": "6db82134ac2d4c90a1a1475487a625cface02662ebda9b7478cad9c7147e9afe",

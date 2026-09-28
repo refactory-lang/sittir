@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichHiddenSubsequences, getEnrichSubsequenceOwners, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -64,7 +64,6 @@ export interface WireContext {
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
-	readonly conflictGroups: string[][];
 	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
@@ -126,17 +125,6 @@ export function wireRegisterSyntheticInline(name: string): boolean {
 	if (!currentContext) return false;
 	if (currentContext.authoredRuleNames.has(name)) return false;
 	currentContext.syntheticInline.add(name);
-	return true;
-}
-
-export function wireRegisterConflict(names: readonly string[]): boolean {
-	if (!currentContext) return false;
-	if (names.length === 0) return true;
-	const key = names.join('\u0000');
-	const exists = currentContext.conflictGroups.some((g) => g.join('\u0000') === key);
-	if (!exists) {
-		currentContext.conflictGroups.push([...names]);
-	}
 	return true;
 }
 
@@ -239,7 +227,6 @@ export function withWireContext<T>(
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: undefined,
@@ -384,6 +371,8 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 };
 
+type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
+
 export interface WiredOpts {
 	readonly name: string;
 	readonly rules: Record<string, RuleFn>;
@@ -401,7 +390,6 @@ export interface WiredOpts {
 
 type SittirRuleFn = ($: any, previous?: any) => unknown;
 type RuleFn = SittirRuleFn;
-type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
@@ -426,7 +414,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
@@ -479,24 +466,10 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		for (const name of getEnrichVisibleSubsequenceSources(base)) {
 			context.inlineRemovals.add(name);
 		}
-		const inlineSafeNames = getEnrichHiddenSubsequences(base);
-		for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base)) {
-			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
-				const pairKey = [ownerKind, syntheticName].join('\u0000');
-				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
-					context.conflictGroups.push([ownerKind, syntheticName]);
-				}
-				const selfKey = [syntheticName].join('\u0000');
-				if (!context.conflictGroups.some((g) => g.join('\u0000') === selfKey)) {
-					context.conflictGroups.push([syntheticName]);
-				}
-			}
-		}
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 	recordAliasTargets(outRules, context);
 
-	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
@@ -511,7 +484,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		rules: outRules,
 		...renamedCallbacks,
 		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
-		conflicts: renamingCallback(conflicts, renameNameList, context),
+		conflicts: undefined,
 		inline: renamingCallback(inline, renameNameList, context),
 		supertypes: renamingCallback(supertypes, renameNameList, context)
 	} as unknown as WiredOpts;
@@ -892,36 +865,8 @@ function recordAliasTargets(rules: Record<string, RuleFn>, context: WireContext)
 	}
 }
 
-function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
-	return buildWiredConflictsFn(userConflicts, context);
-}
-
 function wrapInlineCallback(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
 	return buildWiredInlineFn(userInline, context);
-}
-
-function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn {
-	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
-		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
-		const renamed =
-			context.symbolRenames.size === 0
-				? (base as unknown[][])
-				: (base as unknown[][]).map((group) =>
-						group.map((entry) => {
-							const symbol = entry as { type?: string; name?: string } | null;
-							const next =
-								symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string'
-									? context.symbolRenames.get(symbol.name)
-									: undefined;
-							return next === undefined ? entry : symbolizeRef($, next);
-						})
-					);
-		if (context.conflictGroups.length === 0) return renamed;
-		const symbolized = context.conflictGroups.map((group) =>
-			group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
-		);
-		return [...renamed, ...symbolized];
-	};
 }
 
 function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {

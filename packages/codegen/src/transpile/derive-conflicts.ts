@@ -1,22 +1,5 @@
+import type { DerivedResolution } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
-
-export type PolicyStep = 'upstream-declared' | 'upstream-precedence' | 'default';
-
-export interface DerivedResolution {
-	readonly resolution: { readonly kind: 'AddConflict'; readonly symbols: readonly string[] };
-	readonly step: PolicyStep;
-	readonly sourceChains: readonly (readonly string[])[];
-	readonly conflict: {
-		readonly symbolSequence: readonly string[];
-		readonly lookahead: string;
-		readonly interpretations: readonly string[];
-	};
-}
-
-export interface ConflictResolutionsFile {
-	readonly grammarHash: string;
-	readonly resolutions: readonly DerivedResolution[];
-}
 
 export interface UpstreamContext {
 	readonly upstreamConflicts: readonly (readonly string[])[];
@@ -72,15 +55,15 @@ export function chooseResolution(report: ConflictReport, upstream: UpstreamConte
 	};
 }
 
-export function deriveConflictResolutions(input: {
+export async function deriveConflictResolutions(input: {
 	readonly ruleCount: number;
 	readonly upstream: UpstreamContext;
-	readonly generate: (resolutions: readonly DerivedResolution[]) => GenerateOutcome;
-}): DerivationResult {
+	readonly generate: (resolutions: readonly DerivedResolution[]) => Promise<GenerateOutcome>;
+}): Promise<DerivationResult> {
 	const resolutions: DerivedResolution[] = [];
 	const reported = new Set<string>();
 	for (let iterations = 1; ; iterations++) {
-		const outcome = input.generate(resolutions);
+		const outcome = await input.generate(resolutions);
 		if (outcome.kind === 'clean') return { kind: 'converged', resolutions, iterations };
 		if (outcome.kind === 'error') {
 			throw new Error(`tree-sitter generate failed without a conflict report:\n${JSON.stringify(outcome.summary, null, 2)}`);

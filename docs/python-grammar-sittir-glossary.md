@@ -33,25 +33,6 @@ The callback returns `prev` directly rather than spreading it alongside the
 list, so a spread would emit every token twice and the generated `parser.c`
 would fail to compile.
 
-### `conflicts` (`packages/python/grammar.sittir.ts:26`)
-
-Every entry declares a GLR fork that only became necessary because a variant
-arm was lifted out of a rule tree-sitter had previously merged into a single
-LR(1) state.
-
-- `[expression_statement, _expression_statement_tuple]` — both arms start with
-  `expression`, and only the tuple form accepts the trailing `,`.
-- `[_except_clause_as, _except_clause_list]` — both begin with
-  `field('value', expression)` and diverge only on the `as` / `,`
-  continuation.
-- `[as_pattern, _except_clause_as]` — `except E as e:` overlaps `E as e` after
-  the shared `expression 'as'` prefix.
-- `[_expressions, expression_list]` — `_expressions` is a minted visible-group
-  arm source, filtered out of `inline:` so its mint survives to the parser.
-  Keeping it un-inlined leaves it sharing the `expression ,` prefix with
-  `expression_list`; this is the fork tree-sitter itself suggests for the
-  yield/tuple overlap.
-
 ### `inline` (`packages/python/grammar.sittir.ts:69`)
 
 ```text
@@ -71,11 +52,11 @@ LR(1) state.
 				// classifier treats the all-symbol shape as canonical, so they
 				// need no adoption. Arm 1 is the structural seq (tuple form);
 				// adopting it wraps the seq in an alias so the rule becomes an
-				// all-symbol choice from the walker's perspective. The
-				// `conflicts` entry above tells tree-sitter to fork between
-				// `expression` and `_expression_statement_tuple` when the LR
-				// table sees `expression • …` and needs to decide on the `,`
-				// continuation only the tuple form accepts.
+				// all-symbol choice from the walker's perspective. The derived
+				// conflicts (`.sittir/resolutions.json`) declare the fork between
+				// `expression_statement` and `expression_statement_tuple` that the
+				// LR table needs at `expression • …`, where only the tuple form
+				// accepts the `,` continuation.
 ```
 
 ### `with_clause` (`packages/python/grammar.sittir.ts:103`)
@@ -177,9 +158,8 @@ LR(1) state.
 				// Split per variant so each form owns its template. Path: seq pos 2
 				// = the optional, `/0` = its choice content, `/0`,`/1` = the arms.
 				// `except_clause` is visible, but the arms share the `expression`
-				// prefix; if tree-sitter reports an unresolved conflict between the
-				// aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
-				// `conflicts`.
+				// prefix; the derived conflicts (`.sittir/resolutions.json`) declare
+				// the fork between the aliased forms.
 ```
 
 ### `comparison_operator_comparator` (`packages/python/grammar.sittir.ts:188`)

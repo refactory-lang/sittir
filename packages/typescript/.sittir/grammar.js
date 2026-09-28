@@ -35,6 +35,1942 @@ __export(grammar_sittir_exports, {
 module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
+// packages/typescript/.sittir/resolutions.json
+var resolutions_default = {
+  grammarHash: "f997a332694d58dc4af416a00c7c22af1d5976783d007ff4d038fd7ececb8598",
+  resolutions: [
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "import",
+          "meta_property_import_meta"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "import"
+        ],
+        [
+          "meta_property_import_meta",
+          "meta_property"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'import'"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "import",
+          "meta_property_import_meta"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "export_statement_default_from"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "export_statement_default_from",
+          "export_statement_default",
+          "export_statement"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'export'"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "primary_expression",
+          "export_statement_default_from",
+          "export_statement_default_from"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "export_statement_namespace_export"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "export_statement_namespace_export",
+          "export_statement"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'export'"
+        ],
+        lookahead: "'as'",
+        interpretations: [
+          "primary_expression",
+          "export_statement_namespace_export"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_lhs_expression",
+          "export_statement_equals_export"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "export_statement_equals_export",
+          "export_statement"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'export'"
+        ],
+        lookahead: "'='",
+        interpretations: [
+          "_lhs_expression",
+          "export_statement_equals_export"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "meta_property_new_target"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "meta_property_new_target",
+          "meta_property"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'new'"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "primary_expression",
+          "meta_property_new_target"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_kw_async_marker"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_kw_async_marker"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'async'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "primary_expression",
+          "_kw_async_marker"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_property_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_property_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'type'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "primary_expression",
+          "_property_name"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "labeled_statement",
+          "_property_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "labeled_statement"
+        ],
+        [
+          "_property_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'type'"
+        ],
+        lookahead: "':'",
+        interpretations: [
+          "labeled_statement",
+          "_property_name"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object_assignment_pattern",
+          "_lhs_expression"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "object_assignment_pattern"
+        ],
+        [
+          "_lhs_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'type'"
+        ],
+        lookahead: "'='",
+        interpretations: [
+          "object_assignment_pattern",
+          "_lhs_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object",
+          "object_pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "object"
+        ],
+        [
+          "object_pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "','"
+        ],
+        lookahead: "'}'",
+        interpretations: [
+          "object_repeat1",
+          "object_pattern_repeat1"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "method_definition"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "method_definition"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'readonly'"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "primary_expression",
+          "method_definition",
+          "method_definition"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object_assignment_pattern",
+          "_lhs_expression",
+          "export_statement_equals_export"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "object_assignment_pattern"
+        ],
+        [
+          "_lhs_expression"
+        ],
+        [
+          "export_statement_equals_export",
+          "export_statement"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'export'"
+        ],
+        lookahead: "'='",
+        interpretations: [
+          "object_assignment_pattern",
+          "_lhs_expression",
+          "export_statement_equals_export"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_property_name",
+          "_kw_async_marker"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_property_name"
+        ],
+        [
+          "_kw_async_marker"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'async'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "primary_expression",
+          "_property_name",
+          "_kw_async_marker"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_kw_static_marker"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_kw_static_marker"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'static'"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "primary_expression",
+          "_kw_static_marker"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "binary_expression",
+          "unary_expression",
+          "instantiation_expression",
+          "call_expression_call"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "binary_expression"
+        ],
+        [
+          "unary_expression"
+        ],
+        [
+          "instantiation_expression"
+        ],
+        [
+          "call_expression_call",
+          "call_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'typeof'",
+          "expression"
+        ],
+        lookahead: "'<'",
+        interpretations: [
+          "binary_expression",
+          "instantiation_expression",
+          "call_expression_call",
+          "unary_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_lhs_expression"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_lhs_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'('",
+          "'type'"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "primary_expression",
+          "_lhs_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_parameter_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'('",
+          "'readonly'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "primary_expression",
+          "_parameter_name"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "assignment_expression",
+          "pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "assignment_expression"
+        ],
+        [
+          "pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'('",
+          "_lhs_expression"
+        ],
+        lookahead: "'='",
+        interpretations: [
+          "assignment_expression",
+          "pattern"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "array",
+          "array_pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "array"
+        ],
+        [
+          "array_pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'['",
+          "','"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "array_repeat1",
+          "array_pattern_repeat1"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "await_expression",
+          "binary_expression",
+          "instantiation_expression",
+          "call_expression_call"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "await_expression"
+        ],
+        [
+          "binary_expression"
+        ],
+        [
+          "instantiation_expression"
+        ],
+        [
+          "call_expression_call",
+          "call_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'await'",
+          "expression"
+        ],
+        lookahead: "'<'",
+        interpretations: [
+          "binary_expression",
+          "instantiation_expression",
+          "call_expression_call",
+          "await_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "await_expression",
+          "update_expression_postfix"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "await_expression"
+        ],
+        [
+          "update_expression_postfix",
+          "update_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'await'",
+          "expression"
+        ],
+        lookahead: "'++'",
+        interpretations: [
+          "update_expression_postfix",
+          "await_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_type",
+          "type_parameter"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_type"
+        ],
+        [
+          "type_parameter"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "identifier"
+        ],
+        lookahead: "','",
+        interpretations: [
+          "primary_type",
+          "type_parameter"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "for_header_lhs"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_lhs",
+          "_for_header"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'for'",
+          "'('",
+          "parenthesized_expression"
+        ],
+        lookahead: "'in'",
+        interpretations: [
+          "primary_expression",
+          "for_header_lhs"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "class"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "class"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'('",
+          "class_repeat1",
+          "class_repeat1"
+        ],
+        lookahead: "'class'",
+        interpretations: [
+          "class",
+          "class",
+          "class",
+          "class",
+          "class",
+          "class",
+          "class",
+          "class",
+          "class_repeat1"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "class_static_block",
+          "_property_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "class_static_block"
+        ],
+        [
+          "_property_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'class'",
+          "'{'",
+          "'static'"
+        ],
+        lookahead: "_automatic_semicolon",
+        interpretations: [
+          "class_static_block",
+          "_property_name"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "abstract_method_signature",
+          "_kw_abstract_marker"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "abstract_method_signature"
+        ],
+        [
+          "_kw_abstract_marker"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'class'",
+          "'{'",
+          "'abstract'"
+        ],
+        lookahead: "'type'",
+        interpretations: [
+          "abstract_method_signature",
+          "abstract_method_signature",
+          "_kw_abstract_marker"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "class_body_method"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "class_body_method",
+          "class_body"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'class'",
+          "'{'",
+          "method_definition"
+        ],
+        lookahead: "';'",
+        interpretations: [
+          "class_body_method",
+          "class_body_method"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_lhs_expression",
+          "readonly_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "readonly_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'readonly'"
+        ],
+        lookahead: "'?'",
+        interpretations: [
+          "_lhs_expression",
+          "readonly_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_lhs_expression",
+          "predefined_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "predefined_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'any'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "_lhs_expression",
+          "predefined_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "predefined_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "predefined_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'any'"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "primary_expression",
+          "predefined_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_lhs_expression",
+          "primary_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "_lhs_expression",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "primary_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "primary_expression",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "nested_identifier",
+          "nested_type_identifier"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "nested_identifier"
+        ],
+        [
+          "nested_type_identifier"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "primary_expression",
+          "nested_identifier",
+          "nested_type_identifier"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "generic_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "generic_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "'<'",
+        interpretations: [
+          "primary_expression",
+          "generic_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_parameter_name",
+          "primary_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "_parameter_name"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "this"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "_parameter_name",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "literal_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "literal_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "true"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "primary_expression",
+          "literal_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_lhs_expression",
+          "literal_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "literal_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "undefined"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "_lhs_expression",
+          "literal_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_call_signature",
+          "function_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "_call_signature"
+        ],
+        [
+          "function_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "formal_parameters"
+        ],
+        lookahead: "'=>'",
+        interpretations: [
+          "_call_signature",
+          "function_type",
+          "function_type",
+          "function_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "optional_tuple_parameter",
+          "primary_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "optional_tuple_parameter"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'['",
+          "identifier"
+        ],
+        lookahead: "'?'",
+        interpretations: [
+          "optional_tuple_parameter",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "binary_expression",
+          "instantiation_expression",
+          "call_expression_call"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "binary_expression"
+        ],
+        [
+          "instantiation_expression"
+        ],
+        [
+          "call_expression_call",
+          "call_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "expression",
+          "'*'",
+          "expression"
+        ],
+        lookahead: "'<'",
+        interpretations: [
+          "binary_expression",
+          "instantiation_expression",
+          "call_expression_call",
+          "binary_expression"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "arrow_function",
+          "update_expression_postfix"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "arrow_function"
+        ],
+        [
+          "update_expression_postfix",
+          "update_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "call_signature",
+          "'=>'",
+          "expression"
+        ],
+        lookahead: "'++'",
+        interpretations: [
+          "update_expression_postfix",
+          "arrow_function"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "array",
+          "computed_property_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "array"
+        ],
+        [
+          "computed_property_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'{'",
+          "'['",
+          "expression",
+          "']'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "array",
+          "computed_property_name"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "variable_declarator_plain",
+          "for_header_let_const_kind"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "variable_declarator_plain",
+          "variable_declarator"
+        ],
+        [
+          "for_header_let_const_kind",
+          "_for_header"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'for'",
+          "'('",
+          "_kind",
+          "identifier"
+        ],
+        lookahead: "_automatic_semicolon",
+        interpretations: [
+          "variable_declarator_plain",
+          "for_header_let_const_kind"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "class_body_method_sig",
+          "class_body_member"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "class_body_method_sig",
+          "class_body"
+        ],
+        [
+          "class_body_member",
+          "class_body"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'class'",
+          "'{'",
+          "method_signature",
+          "','"
+        ],
+        lookahead: "'*'",
+        interpretations: [
+          "class_body_method_sig",
+          "class_body_member"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object_pattern",
+          "object_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "object_pattern"
+        ],
+        [
+          "object_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'{'",
+          "'}'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "object_pattern",
+          "object_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object",
+          "object_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "object"
+        ],
+        [
+          "object_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'{'",
+          "'}'"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "object",
+          "object_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object",
+          "object_pattern",
+          "_property_name"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "object"
+        ],
+        [
+          "object_pattern"
+        ],
+        [
+          "_property_name"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'{'",
+          "'type'"
+        ],
+        lookahead: "'}'",
+        interpretations: [
+          "_property_name",
+          "object",
+          "object_pattern"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_lhs_expression",
+          "predefined_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_lhs_expression"
+        ],
+        [
+          "predefined_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "'any'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "primary_expression",
+          "_lhs_expression",
+          "predefined_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_lhs_expression",
+          "primary_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_lhs_expression"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "primary_expression",
+          "_lhs_expression",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_parameter_name",
+          "primary_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "this"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "primary_expression",
+          "_parameter_name",
+          "primary_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "primary_expression",
+          "_lhs_expression",
+          "literal_type"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "primary_expression"
+        ],
+        [
+          "_lhs_expression"
+        ],
+        [
+          "literal_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "undefined"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "primary_expression",
+          "_lhs_expression",
+          "literal_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_call_signature",
+          "constructor_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "_call_signature"
+        ],
+        [
+          "constructor_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'new'",
+          "formal_parameters"
+        ],
+        lookahead: "'=>'",
+        interpretations: [
+          "_call_signature",
+          "constructor_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "array_pattern",
+          "tuple_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "array_pattern"
+        ],
+        [
+          "tuple_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'['",
+          "']'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "array_pattern",
+          "tuple_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "array",
+          "tuple_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "array"
+        ],
+        [
+          "tuple_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'['",
+          "']'"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "array",
+          "tuple_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "template_string",
+          "template_literal_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "template_string"
+        ],
+        [
+          "template_literal_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'`'",
+          "_template_chars"
+        ],
+        lookahead: "'`'",
+        interpretations: [
+          "template_string_repeat1",
+          "template_literal_type_repeat1"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_type_query_call_expression_in_type_annotation",
+          "call_expression_call"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_type_query_call_expression_in_type_annotation"
+        ],
+        [
+          "call_expression_call",
+          "call_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "import",
+          "arguments"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "_type_query_call_expression_in_type_annotation",
+          "call_expression_call"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_type_query_call_expression",
+          "call_expression_call"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_type_query_call_expression"
+        ],
+        [
+          "call_expression_call",
+          "call_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'typeof'",
+          "import",
+          "arguments"
+        ],
+        lookahead: "'['",
+        interpretations: [
+          "_type_query_call_expression",
+          "call_expression_call"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "object",
+          "object_pattern",
+          "object_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "object"
+        ],
+        [
+          "object_pattern"
+        ],
+        [
+          "object_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "'{'",
+          "'}'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "object",
+          "object_pattern",
+          "object_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "array",
+          "array_pattern",
+          "tuple_type"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "array"
+        ],
+        [
+          "array_pattern"
+        ],
+        [
+          "tuple_type"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'<'",
+          "'('",
+          "'('",
+          "'['",
+          "']'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "array",
+          "array_pattern",
+          "tuple_type"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "nested_identifier",
+          "nested_type_identifier"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "nested_identifier"
+        ],
+        [
+          "nested_type_identifier"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "expression",
+          "'as'",
+          "identifier",
+          "'.'",
+          "identifier"
+        ],
+        lookahead: "'.'",
+        interpretations: [
+          "nested_identifier",
+          "nested_type_identifier"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_initializer",
+          "binary_expression_in"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "_initializer"
+        ],
+        [
+          "binary_expression_in",
+          "binary_expression"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'for'",
+          "'('",
+          "'var'",
+          "identifier",
+          "'='",
+          "expression"
+        ],
+        lookahead: "'in'",
+        interpretations: [
+          "binary_expression_in",
+          "_initializer"
+        ]
+      }
+    }
+  ]
+};
+
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
 var OPTIONAL = "OPTIONAL";
@@ -2244,7 +4180,6 @@ var EnrichCtx = class _EnrichCtx {
   clauseDedupeMap;
   groupDedupeMap;
   ruleOrigins;
-  subsequenceOwners;
   hoist;
   constructor(fields) {
     this.rulesBag = fields.rulesBag;
@@ -2261,7 +4196,6 @@ var EnrichCtx = class _EnrichCtx {
     this.clauseDedupeMap = fields.clauseDedupeMap;
     this.groupDedupeMap = fields.groupDedupeMap;
     this.ruleOrigins = fields.ruleOrigins;
-    this.subsequenceOwners = fields.subsequenceOwners;
     this.hoist = fields.hoist;
   }
   static create(init) {
@@ -2273,7 +4207,6 @@ var EnrichCtx = class _EnrichCtx {
       clauseDedupeMap: {},
       groupDedupeMap: {},
       ruleOrigins: /* @__PURE__ */ new Map(),
-      subsequenceOwners: /* @__PURE__ */ new Map(),
       hoist: void 0
     });
   }
@@ -2848,7 +4781,7 @@ function enrich(baseInput, authored = {}) {
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
   });
-  const { kwRules, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
+  const { kwRules, clauseGroupRules, ruleOrigins } = ctx;
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule2 = rulesBag[name];
@@ -2908,7 +4841,7 @@ function enrich(baseInput, authored = {}) {
     if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins, subsequenceOwners);
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule2 = mergedRules[name];
@@ -2937,14 +4870,6 @@ function enrich(baseInput, authored = {}) {
     writable: false,
     configurable: true
   });
-  if (subsequenceOwners.size > 0) {
-    Object.defineProperty(result, ENRICH_SUBSEQUENCE_OWNERS_KEY, {
-      value: subsequenceOwners,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
   Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
     value: automaticVariants,
     enumerable: false,
@@ -2972,13 +4897,6 @@ function getEnrichWhitespace(grammar) {
 }
 function getEnrichHiddenSubsequences(grammar) {
   return enrichRuleNamesOf(grammar, (origin) => origin.kind === "hidden-subsequence");
-}
-var ENRICH_SUBSEQUENCE_OWNERS_KEY = "__enrichedSubsequenceOwners__";
-function getEnrichSubsequenceOwners(grammar) {
-  if (!grammar || typeof grammar !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar[ENRICH_SUBSEQUENCE_OWNERS_KEY];
-  if (owners instanceof Map) return owners;
-  return /* @__PURE__ */ new Map();
 }
 function getEnrichVisibleSubsequenceSources(grammar) {
   return enrichRuleNamesOf(grammar, (origin) => origin.kind === "visible-subsequence" || origin.kind === "promoted-group");
@@ -3026,7 +4944,6 @@ function hoistTokenForms(parentKind, rule2, ctx, counter, unhoistableNames) {
       "arm"
     );
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
-    if (!ctx.subsequenceOwners.has(minted)) ctx.subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   });
   let out = { ...core, members };
@@ -4187,7 +6104,7 @@ function absorbTrailingListSeparators(members, symbols) {
   return changed ? out : null;
 }
 function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosingFieldName) {
-  const { rulesBag, subsequenceOwners } = ctx;
+  const { rulesBag } = ctx;
   const seqBody = optionalSeqBodyOf(rule2);
   if (seqBody !== void 0) {
     const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
@@ -4198,7 +6115,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule2, name);
         return withOptionalContent(rule2, symbolRef2);
       }
@@ -4207,7 +6123,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
       counter.opt += 1;
       const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule2, name);
         return withOptionalContent(rule2, groupRef);
       }
@@ -4260,7 +6175,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
         ) : seqFn(...run.info.flatMembers);
         const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
         if (name === null) continue;
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(body, name);
         const replacement = isTail ? optionalFn(groupRef) : groupRef;
         newMembers.splice(run.start, run.size, replacement);
@@ -4306,7 +6220,6 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
     if (isRepeatType(rule2.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
       const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
         return withContent(rule2, makeGroupLiftSymbol(newContent, name));
       }
     }
@@ -4354,7 +6267,7 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   ruleOrigins.set(name, { kind: "hidden-subsequence" });
   return name;
 }
-function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, subsequenceOwners) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins) {
   const byParentFlavor = /* @__PURE__ */ new Map();
   for (const hidden of Object.keys(mintedRules)) {
     const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
@@ -4388,11 +6301,6 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins, su
     if (origin !== void 0) {
       ruleOrigins.delete(oldName);
       ruleOrigins.set(newName, origin);
-    }
-    const owner = subsequenceOwners.get(oldName);
-    if (owner !== void 0) {
-      subsequenceOwners.delete(oldName);
-      subsequenceOwners.set(newName, owner);
     }
   }
   const rewrite = (node) => {
@@ -4514,7 +6422,7 @@ function promotePermutationArmKeywords(choiceRule, ctx) {
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
 function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const { rulesBag, clauseGroupRules, ruleOrigins, subsequenceOwners } = ctx;
+  const { rulesBag, clauseGroupRules, ruleOrigins } = ctx;
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -4545,7 +6453,6 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
     ruleOrigins.set(name, { kind: "promoted-group", visibleName: promoted.visibleName });
-    if (!subsequenceOwners.has(name)) subsequenceOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
@@ -4554,7 +6461,6 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
     if (minted === null) return null;
-    if (!subsequenceOwners.has(minted)) subsequenceOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
@@ -4900,16 +6806,6 @@ function wireRegisterSyntheticInline(name) {
   currentContext.syntheticInline.add(name);
   return true;
 }
-function wireRegisterConflict(names) {
-  if (!currentContext) return false;
-  if (names.length === 0) return true;
-  const key = names.join("\0");
-  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
-  if (!exists) {
-    currentContext.conflictGroups.push([...names]);
-  }
-  return true;
-}
 function wireRegisterFlattenedParent(name) {
   if (!currentContext) return false;
   currentContext.flattenedParents.add(name);
@@ -4995,7 +6891,6 @@ function wireImpl(cfg, base2, source) {
     ruleBodies: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
-    conflictGroups: [],
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
@@ -5045,23 +6940,9 @@ function wireImpl(cfg, base2, source) {
     for (const name of getEnrichVisibleSubsequenceSources(base2)) {
       context.inlineRemovals.add(name);
     }
-    const inlineSafeNames = getEnrichHiddenSubsequences(base2);
-    for (const [syntheticName, ownerKind] of getEnrichSubsequenceOwners(base2)) {
-      if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
-        const pairKey = [ownerKind, syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {
-          context.conflictGroups.push([ownerKind, syntheticName]);
-        }
-        const selfKey = [syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === selfKey)) {
-          context.conflictGroups.push([syntheticName]);
-        }
-      }
-    }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
   recordAliasTargets(outRules, context);
-  const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
   const renamedCallbacks = Object.fromEntries(
@@ -5072,7 +6953,7 @@ function wireImpl(cfg, base2, source) {
     rules: outRules,
     ...renamedCallbacks,
     ...cfg.reserved === void 0 ? {} : { reserved: renamingReserved(cfg.reserved, context) },
-    conflicts: renamingCallback(conflicts, renameNameList, context),
+    conflicts: void 0,
     inline: renamingCallback(inline, renameNameList, context),
     supertypes: renamingCallback(supertypes, renameNameList, context)
   };
@@ -5357,28 +7238,8 @@ function recordAliasTargets(rules, context) {
     };
   }
 }
-function wrapConflictsCallback(userConflicts, context) {
-  return buildWiredConflictsFn(userConflicts, context);
-}
 function wrapInlineCallback(userInline, context) {
   return buildWiredInlineFn(userInline, context);
-}
-function buildWiredConflictsFn(userConflicts, context) {
-  return function wiredConflicts($, previous) {
-    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
-    const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group2) => group2.map((entry) => {
-        const symbol = entry;
-        const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
-        return next === void 0 ? entry : symbolizeRef($, next);
-      })
-    );
-    if (context.conflictGroups.length === 0) return renamed;
-    const symbolized = context.conflictGroups.map(
-      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
-    );
-    return [...renamed, ...symbolized];
-  };
 }
 function buildWiredInlineFn(userInline, context) {
   return function wiredInline($, previous) {
@@ -6411,22 +8272,11 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
   }
   refs.sort((a, b) => a.altIdx - b.altIdx);
-  registerHoistedVariantConflicts(refs.map((r) => r.name));
   const newChoice = reconstructContainer(
     choice2,
     refs.map((r) => r.ref)
   );
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
-}
-function registerHoistedVariantConflicts(variantNames) {
-  if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
-    throw new Error(`registerConflict: no active wire() context`);
-  }
-  for (const n of variantNames) {
-    if (!wireRegisterConflict([n])) {
-      throw new Error(`registerConflict: no active wire() context`);
-    }
-  }
 }
 var membersOf3 = (r) => r.members;
 var contentOf3 = (r) => r.content;
@@ -6930,19 +8780,27 @@ function attachDerivationRecords(grammar, base2, opts) {
   Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }
 
+// packages/codegen/src/dsl/conflict-resolutions.ts
+function applyConflictResolutions(grammar, input) {
+  grammar.conflicts = input.resolutions.map((entry) => [...entry.resolution.symbols]);
+}
+
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras });
+  const { resolutions, ...wireConfig } = config;
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(wireConfig.groups), extras: wireConfig.extras });
   const grammar = globalThis.grammar;
-  const opts = wire(config, enriched, base2);
+  const opts = wire(wireConfig, enriched, base2);
   const result = grammar(enriched, opts);
   blankDeadEnrichMints(result.grammar, enriched, opts);
   attachDerivationRecords(result.grammar, base2, opts);
+  applyConflictResolutions(result.grammar, resolutions);
   return result;
 }
 
 // packages/typescript/grammar.sittir.ts
 var grammar_sittir_default = sittirGrammar(import_grammar.default, {
+  resolutions: resolutions_default,
   name: "typescript",
   conflicts: ($, previous) => [
     ...previous ?? [],

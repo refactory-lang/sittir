@@ -8,6 +8,7 @@
  */
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 
 import {
 	field,
@@ -25,6 +26,7 @@ import {
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default sittirGrammar(base, {
+	resolutions,
 	name: 'rust',
 	conflicts: ($, previous) => [
 		...(previous ?? []),

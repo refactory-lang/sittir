@@ -20,7 +20,7 @@ import {
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
-import { runTreeSitterCli } from './transpile/tree-sitter-cli.ts';
+import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
@@ -67,10 +67,10 @@ export async function writeFile(path: string, content: string): Promise<void> {
 	writeFileSync(path, finalContent, 'utf8');
 }
 
-export function runTreeSitterGenerate(pkg: GrammarPackage): void {
+export async function runTreeSitterGenerate(pkg: GrammarPackage): Promise<void> {
 	const sittirDir = sittirDirOf(pkg);
-	console.log(`Running 'tree-sitter generate' in ${sittirDir}...`);
-	runTreeSitterCli(['generate'], sittirDir, 'inherit');
+	console.log(`Running 'tree-sitter generate' in ${sittirDir}, deriving conflicts...`);
+	await generateWithDerivedConflicts(pkg);
 	pruneOrphanedPlaceholderRules(sittirDir);
 }
 
@@ -83,7 +83,7 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
 	}
 	if (opts.tsGenerate) {
-		runTreeSitterGenerate(pkg);
+		await runTreeSitterGenerate(pkg);
 	}
 	if (opts.compileParser) {
 		console.log(`Compiling ${grammar} parser to WASM...`);
@@ -423,7 +423,7 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`Transpiling ${grammar} overrides...`);
 		const tr = await transpileOverrides({ package: pkg });
 		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
-		runTreeSitterGenerate(pkg);
+		await runTreeSitterGenerate(pkg);
 		console.log(`Compiling ${grammar} parser to WASM...`);
 		const { compileParser } = await import('./transpile/compile-parser.ts');
 		const wasmPath = await compileParser(pkg.dir);

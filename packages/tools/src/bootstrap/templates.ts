@@ -88,9 +88,11 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 			path: 'grammar.sittir.ts',
 			contents: `// @ts-nocheck — grammar.js is untyped
 import base from '${v.upstreamDependency}/grammar.js';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import { sittirGrammar } from '../codegen/src/dsl/index.ts';
 
 export default sittirGrammar(base, {
+	resolutions,
 	name: '${v.name}'
 });
 `
