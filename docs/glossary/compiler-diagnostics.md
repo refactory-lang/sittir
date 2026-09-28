@@ -426,7 +426,7 @@ not floor-listed for that code (`isExpectedDiagnostic`). The one place a floor o
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::assertGatePasses`
 
-Throws `GrammarDiagnosticError` when `blockedRecords` is non-empty. `compile.ts::compileGrammar` calls it twice:
+Throws `GrammarDiagnosticError` when `blockedRecords` is non-empty. `compile.ts::diagnoseGrammar` applies it twice:
 before link over the evaluate-time records, and after assemble over the shape records. `allow` is the caller's
 override (`--allow-diagnostic`, or a confirmed interactive run).
 
@@ -451,7 +451,7 @@ The records answerable from the evaluated grammar alone, before link: the predic
 
 Every grammar diagnostic of one evaluated stage, ungated: `evaluateRecords`, then the front half's records when
 the prediction built, with the collapsed grammar's rule catalog so a record's owner resolves to its root rule id.
-The evaluation stages (`stage.ts::diagnoseEvaluationStage`) and the `grammar-diagnostics` tool use it.
+The evaluation stages (`stage.ts::diagnoseEvaluationStage`) use it, and through them the `grammar-diagnostics` tool's `--stage` inspection. It is not the final gate: that is `compile.ts::diagnoseGrammar`.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::withoutOrphanedGroups`
 

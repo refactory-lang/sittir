@@ -1681,14 +1681,33 @@ vocabularies stay separate: a grammar diagnostic blocks through `canProceed: fal
 
 ### `packages/codegen/src/compiler/compile.ts::compileGrammar`
 
-Evaluates the grammar and gates it twice through `assertGatePasses`, each call with the floors its records are
-named against. Before link it checks the evaluate-time records (`evaluateRecords`, and when the grammar departs
-from its base, `diagnoseRuleCauses` over the enriched stage), with the evaluated grammar's `expectDiagnostics`. A
-grammar tree-sitter rejects therefore never reaches link. After assemble it folds the stages into
-`diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so it cannot
-run before link), and checks those and the front half's records with the collapsed grammar's
-`expectDiagnostics`. `allowDiagnostics` is the
-caller's override at both. Hydrate then runs with `droppedKinds` as the names whose absence is already reported.
+Evaluates the grammar and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
+records and every record the gate saw when it does not pass. Hydrate then runs on the collected grammar with
+`droppedKinds` as the names whose absence is already reported.
+
+### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
+
+The one gate over a grammar's final diagnostics, shared by `compileGrammar` and the `grammar-diagnostics` tool so
+the tool reports exactly what generation rejects. It stamps the id tables (`stampVisibleExternals`), then gates
+twice, each time with the floors its records are named against. Before link it checks the evaluate-time records
+(`evaluateRecords`, and when the grammar departs from its base, `diagnoseRuleCauses` over the enriched stage),
+with the evaluated grammar's `expectDiagnostics`; a grammar tree-sitter rejects therefore never reaches link, and
+the diagnosis stops there. Otherwise it collects the front half (`collectGrammarDiagnosticsForGrammar`), folds the
+stages into `diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so
+it cannot run before link), and checks those and the front half's records with the collapsed grammar's
+`expectDiagnostics`. `allowDiagnostics` is the caller's override at both. It never throws for a blocked gate; it
+returns the records and the blocked subset.
+
+### `packages/codegen/src/compiler/compile.ts::DiagnoseGrammarConfig`
+
+What `diagnoseGrammar` needs: the grammar's name, its evaluated form, the include filter, the unstamped
+generated id tables and the allow set.
+
+### `packages/codegen/src/compiler/compile.ts::GrammarDiagnosis`
+
+A gate's outcome: the stamped id tables, the stage diagnoses, every record the gate saw (`grammarDiagnostics`)
+and the blocked subset. When it `passed`, it also carries the collected front half and the `diagnosticRecords`;
+when it did not, the collection may never have run.
 
 ### `packages/codegen/src/compiler/compile.ts::assertCompilation`
 

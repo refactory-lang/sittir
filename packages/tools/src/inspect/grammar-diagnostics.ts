@@ -10,13 +10,16 @@
  *              `raw` is the upstream base, `enriched` is that base after
  *              enrich, both with no wire config
  *
+ * Without --stage it runs the gate generation runs (`diagnoseGrammar`), with
+ * the grammar's generated id tables.
+ *
  * Exit codes:
- *   0  no diagnostics
- *   1  diagnostics present
+ *   0  the gate passes (--stage: no diagnostics)
+ *   1  the gate blocks generation (--stage: diagnostics present)
  *   2  --stage and no stages were evaluated
  */
 
-import { invoke, resolveEntryPath, type GrammarDiagnostic } from '../codegen-surface.ts';
+import { invoke, resolveEntryPath, type GeneratedIdTables, type GrammarDiagnostic } from '../codegen-surface.ts';
 
 export type DiagnosedStage = 'raw' | 'enriched';
 
@@ -28,13 +31,24 @@ export interface GrammarDiagnosticsOptions {
 export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	const { grammar, stage } = opts;
 	const entryPath = await resolveEntryPath(grammar);
+	if (stage === undefined) {
+		return diagnoseEntry(grammar, entryPath, await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
+	}
 	const rawGrammar = await invoke('evaluate', 'evaluate', entryPath);
-	if (stage === undefined) return report(await invoke('grammarDiagnostics', 'diagnoseStage', rawGrammar));
 	if (rawGrammar.stages === undefined) {
 		process.stderr.write(`${grammar}: no stages were evaluated (the grammar declares no rules: or patches:)\n`);
 		return 2;
 	}
 	return report(await invoke('stage', 'diagnoseEvaluationStage', rawGrammar.stages[stage]));
+}
+
+export async function diagnoseEntry(grammar: string, entryPath: string, generatedIdTables?: GeneratedIdTables): Promise<number> {
+	const evaluated = await invoke('evaluate', 'evaluate', entryPath);
+	const diagnosis = await invoke('compile', 'diagnoseGrammar', { grammar, evaluated, generatedIdTables });
+	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnosis.grammarDiagnostics)) + '\n');
+	if (diagnosis.passed) return 0;
+	process.stderr.write(`${grammar}: generation is blocked by ${diagnosis.blocked.length} diagnostic(s): ${[...new Set(diagnosis.blocked.map((d) => d.code))].join(', ')}\n`);
+	return 1;
 }
 
 async function report({ diagnostics }: { readonly diagnostics: readonly GrammarDiagnostic[] }): Promise<number> {
