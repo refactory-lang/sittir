@@ -1503,3 +1503,26 @@ export type {
 	SpelledAffix,
 	WithSpelling
 } from './full-form.ts';
+
+export type {
+	ApiOf,
+	ApiSurface,
+	BuildSurface,
+	Engine,
+	EngineOptions,
+	FileChange,
+	Interceptor,
+	Language,
+	LanguageAPI,
+	LanguageHooks,
+	NativeEngineOptions,
+	NativeLanguageEngine,
+	ParseOptions,
+	Pending,
+	Project,
+	Rendered,
+	StrictMembers,
+	StrictSurface,
+	TriviaFacts,
+	Types
+} from './engine-api.ts';

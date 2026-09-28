@@ -1,6 +1,8 @@
-import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
+
+export type { TriviaFacts };
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
@@ -24,20 +26,6 @@ export interface TriviaSetterRuntime<Self> {
 	inner(...items: unknown[]): Self;
 	innerAt(gap: string): readonly TriviaEntry[];
 	innerAt(gap: string, ...items: unknown[]): Self;
-}
-
-/**
- * The grammar facts `$trivia` checks against: each kind's name, the gaps an
- * empty node of each kind holds inner trivia in, and `ir.comment`, which
- * builds a loose string into its default arm (taking either the full
- * spelling or the interior).
- */
-export interface TriviaFacts {
-	kindName(type: AnyNodeData['$type']): string | undefined;
-	readonly kinds: ReadonlySet<string>;
-	readonly innerGaps: { readonly [kind: string]: readonly string[] };
-	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
-	comment?: ((text: string) => AnyNodeData) | undefined;
 }
 
 export interface WithMethodsEngine {

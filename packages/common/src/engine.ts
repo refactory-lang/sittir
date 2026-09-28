@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import type { AnyNodeData, Edit, FormatRecord, IndentOption } from '@sittir/types';
+import type { AnyNodeData, Edit, FormatRecord, IndentOption, ParseOptions } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
 import { toTransportData } from './transport-data.ts';
 
@@ -93,17 +93,7 @@ export interface GrammarEngineConfig<
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
-/**
- * How far one read expands.
- *
- * The default is lazy: a read returns one level, and a child with
- * substructure comes back as a stub the accessors expand on demand.
- * `deep` expands the whole subtree in one pass instead — one crossing
- * instead of one per level, at the cost of reading what you may not touch.
- */
-export interface ParseOptions {
-	readonly deep?: boolean;
-}
+export type { ParseOptions };
 
 /**
  * Raw reader access — the un-wrapped node data behind the product API.
