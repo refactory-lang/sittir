@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "e57219117eaaa71ba32d196030bfb5f42ab2b74b8094eef33e5bb0b88f557de1",
+  "source_hash": "e4e6b763745bacfaa4b3dea97b91cf63be78a981cb6987dde40d5c65cb2c860b",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -22,7 +22,7 @@
     "packages/python/src/boundary.ts": "4f41fcdcb85da3bd2cead3f942d9718a18564862284bf6e793aedc980fbcdfdc",
     "packages/python/src/consts.ts": "262ad8aadf511ae828097b3b9a3431fe32494b8991623c6cd56f929b3dc2c5d3",
     "packages/python/src/factories/bundle.ts": "7c717e61dd15227cf7c25b958c4dc09266a9ef3bebe6fff8e4db4f66f130e51d",
-    "packages/python/src/factories/coerce.ts": "09a10f3cff5479c9b253b5f1b251188b599e5cf6d8bd3718611b95ed74c87335",
+    "packages/python/src/factories/coerce.ts": "3f9f8328e78d8ed350532b41776c430df7075f576e91c3f1f5051b734803da3e",
     "packages/python/src/factories/index.ts": "63e193dd0701ddc237813869e816820e61ed6ef44efe0b8a26b2470fd47df030",
     "packages/python/src/factories/overlays/polymorphs.ts": "37f62e6ffa5943094710188465ac7d85b5090628f8cd1ea637dee0fb32beb619",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
@@ -30,7 +30,7 @@
     "packages/python/src/factories/raw.ts": "560f88fdd844ba41688a91bca6844af29f2929c2b77e464affd0f8536643cd66",
     "packages/python/src/hash.ts": "c4d8f11e37b49cee804f2ab60e158980a66bfb5b27905273f2a006241d99e766",
     "packages/python/src/index.ts": "4f66ccfcc0d1441b0adf5659d29126437e0795261fac51204830b7e3e2381126",
-    "packages/python/src/ir.ts": "639ac74e2c54b42623dec1cbe2e4d90ef3d8ef85d586938701b081dc781587de",
+    "packages/python/src/ir.ts": "e73d95046a6e22b51012bd23c6d0ec4ed2181df32b2da9cf90bcf33249b39011",
     "packages/python/src/is.ts": "5b5e818ad70aae0a0278f402426c40d1503a425f33d224ddbb14cdf946f69b33",
     "packages/python/src/node-model.json5": "e793c951d7a88f379e145a5279c3990fbac60d2ea297b2aa0b1febf06c074165",
     "packages/python/src/options.ts": "623cd2eb223bbf9c1cedbf47776494114ffe42251498ade12fdeb9e3a0b3b354",

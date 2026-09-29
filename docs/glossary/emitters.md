@@ -2193,6 +2193,11 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  */
 ```
 
+`_SUPERTYPE_KIND_TAGS` lists declared supertypes only, so a loose
+`{ kind: '<supertype>' }` tag resolves through a declared supertype's
+default arm and an undeclared hidden choice's kind names no factory. The
+wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
+
 #### body
 
 ```text
@@ -12313,6 +12318,8 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 
 The flat namespace holds each builder once, under its own `irKey`; a supertype-stripped name exists only as a member of its group namespace (`ir.expression.binary`, never a flat `ir.binary`).
 
+A supertype gets an ir namespace if and only if the grammar declares it (`AssembledSupertype.declared`). An undeclared hidden choice gets no ir namespace however it would be emitted, neither a supertype group here nor flattened-parent routes (`flattenedVariantParents`); each of its arms keeps its own flat builder. Declare it in `grammar.sittir.ts` (`supertypes`) to give it one. The kind's type union is unaffected.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::isFlatLeafOrKeyword`
 
 ```text
@@ -12334,7 +12341,7 @@ The flat namespace holds each builder once, under its own `irKey`; a supertype-s
 
 No emitted code attaches properties to a factory: a factory is shared under
 every key that reaches it, so a mutation made for one key shows under all
-of them. A flattened parent whose key is also a flat leaf's key reaches that
+of them. Only a declared supertype gets a group. A flattened parent whose key is also a flat leaf's key reaches that
 leaf as its default arm (`flattenedVariantParents`), so `ir.<key>` is the
 parent's own route object, not the leaf's builder. A supertype group whose
 name is a flat key throws.
@@ -14458,7 +14465,7 @@ is reachable ONLY through one parent's variant arm.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
 
-The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
+The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when the grammar declares it (an undeclared hidden choice gets no ir namespace; see `ir.ts::module`), it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
 
 A route also carries `minted` when the child kind is exactly the name
 `polymorphVisibleName(parent, variant)` would mint for this variant AND
@@ -14474,11 +14481,8 @@ to the same kind elsewhere.
 A parent key that is also a flat leaf's key is decided here, in one place.
 When the leaf is one of the parent's arms, that arm becomes the parent's
 default, so `ir.<key>` calls through the leaf's `{ strict, coerce }` pair
-and keeps the other arms as members. Typescript `_identifier` over
-`undefined | identifier` makes `ir.identifier('x')` coerce while
-`ir.identifier.undefined` stays reachable, and the leaf's builder that
-`ir.primaryExpression.identifier` shares is untouched. A leaf that is not an
-arm, or an arm that conflicts with a declared default, throws.
+and keeps the other arms as members. A leaf that is not an arm, or an arm
+that conflicts with a declared default, throws.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::withLeafDefault`
 

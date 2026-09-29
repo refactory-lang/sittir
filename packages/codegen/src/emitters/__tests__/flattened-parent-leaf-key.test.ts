@@ -17,6 +17,7 @@ function nodeMapWith(parent: string, leafKinds: readonly string[]) {
 	const rule = {
 		type: SUPERTYPE,
 		name: parent,
+		declared: true,
 		subtypes: arms.map((name) => ({ type: SYMBOL, name, annotations: { variant: name, variantOf: parent } }))
 	} as unknown as SupertypeRule;
 	const nodes = new Map<string, AssembledNode>();

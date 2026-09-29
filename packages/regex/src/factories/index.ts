@@ -26,4 +26,3 @@ export const unicodePropertyValueExpression: Hoisted<typeof O.unicodePropertyVal
 export const identityEscape: Hoisted<typeof O.identityEscape> = hoist(O.identityEscape);
 export const termGroup: Hoisted<typeof O.termGroup> = hoist(O.termGroup);
 export const inlineFlagsGroup: Hoisted<typeof O.inlineFlagsGroup> = hoistRoutes(O.inlineFlagsGroup);
-export const characterEscape: Hoisted<typeof O.characterEscape> = hoistRoutes(O.characterEscape);

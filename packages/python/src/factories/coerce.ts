@@ -416,16 +416,6 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'exec_statement',
 		'type_alias_statement'
 	],
-	_named_expression_lhs: [
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword'
-	],
-	_expressions: ['expression', 'expression_list'],
 	_compound_statement: [
 		'if_statement',
 		'for_statement',
@@ -464,7 +454,6 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'tuple_pattern',
 		'list_pattern'
 	],
-	_expression_within_for_in_clause: ['expression', 'lambda_within_for_in_clause'],
 	expression: [
 		'comparison_operator',
 		'not_operator',
@@ -509,20 +498,9 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'list_splat_pattern'
 	],
 	assignment: ['assignment_eq', 'assignment_type', 'assignment_typed'],
-	_left_hand_side: ['pattern', 'pattern_list'],
-	_right_hand_side: ['expression', 'expression_list', 'assignment', 'augmented_assignment', 'pattern_list', 'yield'],
-	_f_expression: ['expression', 'expression_list', 'pattern_list', 'yield'],
 	escape_sequence: 'escape_sequence_simple',
 	integer: 'integer_decimal_plain',
 	float: 'float_point',
-	keyword_identifier: [
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword'
-	],
 	line_continuation: 'line_continuation_newline',
 	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline'],
 	integer_decimal: 'integer_decimal_plain'

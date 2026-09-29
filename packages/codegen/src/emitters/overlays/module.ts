@@ -174,7 +174,8 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 	const out: FlattenedVariantParent[] = [];
 	const keyByParent = new Map<string, string>();
 	const pending = [...nodeMap.nodes].filter(
-		(entry): entry is [string, AssembledSupertype] => entry[1] instanceof AssembledSupertype && entry[1].subtypes.filter(isNodeRef).length >= 2
+		(entry): entry is [string, AssembledSupertype] =>
+			entry[1] instanceof AssembledSupertype && entry[1].declared && entry[1].subtypes.filter(isNodeRef).length >= 2
 	);
 	const routesOf = (kind: string, node: AssembledSupertype): FlattenedVariantRoute[] | 'wait' | null => {
 		const routes: FlattenedVariantRoute[] = [];

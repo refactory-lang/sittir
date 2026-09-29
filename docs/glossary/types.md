@@ -1443,6 +1443,13 @@ narrowing guard.
 /** See RuleBase.separator — comma-terminated list family. */
 ```
 
+### `packages/codegen/src/types/rule.ts::SupertypeRule.declared`
+
+`true` when the grammar's `supertypes` names this kind: upstream,
+enrich-minted, or added in `grammar.sittir.ts`. Link stamps it where it
+builds the rule (`classifyHiddenChoiceRule`); a hidden choice that is a
+supertype only by shape has none.
+
 ### `packages/codegen/src/types/rule.ts::SupertypeRule.subtypes`
 
 ```text

@@ -2174,6 +2174,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return this.#subtypes;
 	}
 
+	get declared(): boolean {
+		return this.rule.type === SUPERTYPE && this.rule.declared === true;
+	}
+
 	get subtypeNames(): readonly string[] {
 		return this.#subtypes.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
 	}

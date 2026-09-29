@@ -2863,6 +2863,13 @@ The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the o
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.declared`
+
+Whether the grammar declares this supertype, read from the rule's
+link-stamped `declared`. A declared supertype gets an ir namespace; an
+undeclared hidden choice that assembles as a supertype does not (see
+`emitters/ir.ts::module`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.variantSubtypes`
 
 The subtype refs when this supertype is a flattened polymorph parent — at

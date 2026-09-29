@@ -371,10 +371,10 @@ The `kind-shape-mismatch` record for a kind whose rule is not the shape its mode
  *   A supertype does NOT pre-claim a name that a concrete kind owns outright
  *   (its short key is its own factory name — typescript's `identifier`
  *   supertype over the `identifier` leaf). The kind keeps the key, and the ir
- *   emitter attaches the group's members to that kind's callable, so
- *   `ir.identifier('x')` and `ir.identifier.identifier('x')` are both live.
- *   Pre-claiming there demoted the kind to `identifier2` and left the group
- *   uncallable.
+ *   emitter decides what a declared supertype sharing that key gets
+ *   (`flattenedVariantParents`); typescript's `_identifier` is undeclared,
+ *   so `ir.identifier` is the leaf's builder. Pre-claiming there demoted the
+ *   kind to `identifier2`.
  */
 ```
 
@@ -3672,7 +3672,8 @@ declared-supertype override:
 - `'named-arms'` and not a declared supertype: the rule unchanged.
 - `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
   subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
-  members `isAliasMintedRef` marks as mints. A `'supertype'` over aliased hidden
+  members `isAliasMintedRef` marks as mints, and `declared: true` when the
+  grammar's `supertypes` names it. A `'supertype'` over aliased hidden
   storage (`isAliasedHiddenStorage`) that the grammar does not declare a
   supertype is not one: the parser shows it as a node, so it stays a choice
   rule and assemble makes it an envelope (`compoundModelTypeFor`).

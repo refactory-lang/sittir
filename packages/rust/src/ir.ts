@@ -99,30 +99,6 @@ export const statement: {
 	static: F.staticItem
 };
 
-export const useClause: {
-	readonly self: typeof F.buildSelf;
-	readonly metavariable: typeof F.metavariable;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly scopedIdentifier: typeof F.scopedIdentifier;
-	readonly as: typeof F.useAsClause;
-	readonly list: typeof F.useList;
-	readonly scopedList: typeof F.scopedUseList;
-	readonly wildcard: typeof F.useWildcard;
-} = {
-	self: F.buildSelf,
-	metavariable: F.metavariable,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	identifier: F.buildIdentifier,
-	scopedIdentifier: F.scopedIdentifier,
-	as: F.useAsClause,
-	list: F.useList,
-	scopedList: F.scopedUseList,
-	wildcard: F.useWildcard
-};
-
 export const type: {
 	readonly abstract: typeof F.abstractType;
 	readonly reference: typeof F.referenceType;
@@ -155,86 +131,6 @@ export const type: {
 	dynamic: F.dynamicType,
 	bounded: F.boundedType,
 	removedTraitBound: F.removedTraitBound
-};
-
-export const expressionExceptRange: {
-	readonly unary: typeof F.unaryExpression;
-	readonly reference: typeof F.referenceExpression;
-	readonly try: typeof F.tryExpression;
-	readonly binary: typeof F.binaryExpression;
-	readonly assignment: typeof F.assignmentExpression;
-	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
-	readonly typeCast: typeof F.typeCastExpression;
-	readonly call: typeof F.callExpression;
-	readonly return: typeof F.returnExpression;
-	readonly yield: typeof F.yieldExpression;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly self: typeof F.buildSelf;
-	readonly scopedIdentifier: typeof F.scopedIdentifier;
-	readonly genericFunction: typeof F.genericFunction;
-	readonly await: typeof F.awaitExpression;
-	readonly field: typeof F.fieldExpression;
-	readonly array: typeof F.arrayExpression;
-	readonly tuple: typeof F.tupleExpression;
-	readonly macroInvocation: typeof F.macroInvocation;
-	readonly unit: typeof F.buildUnitExpression;
-	readonly break: typeof F.breakExpression;
-	readonly continue: typeof F.continueExpression;
-	readonly index: typeof F.indexExpression;
-	readonly metavariable: typeof F.metavariable;
-	readonly closure: typeof F.closureExpression;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly struct: typeof F.structExpression;
-	readonly unsafeBlock: typeof F.unsafeBlock;
-	readonly asyncBlock: typeof F.asyncBlock;
-	readonly genBlock: typeof F.genBlock;
-	readonly tryBlock: typeof F.tryBlock;
-	readonly block: typeof F.block;
-	readonly if: typeof F.ifExpression;
-	readonly match: typeof F.matchExpression;
-	readonly while: typeof F.whileExpression;
-	readonly loop: typeof F.loopExpression;
-	readonly for: typeof F.forExpression;
-	readonly constBlock: typeof F.constBlock;
-} = {
-	unary: F.unaryExpression,
-	reference: F.referenceExpression,
-	try: F.tryExpression,
-	binary: F.binaryExpression,
-	assignment: F.assignmentExpression,
-	compoundAssignment: F.compoundAssignmentExpr,
-	typeCast: F.typeCastExpression,
-	call: F.callExpression,
-	return: F.returnExpression,
-	yield: F.yieldExpression,
-	identifier: F.buildIdentifier,
-	self: F.buildSelf,
-	scopedIdentifier: F.scopedIdentifier,
-	genericFunction: F.genericFunction,
-	await: F.awaitExpression,
-	field: F.fieldExpression,
-	array: F.arrayExpression,
-	tuple: F.tupleExpression,
-	macroInvocation: F.macroInvocation,
-	unit: F.buildUnitExpression,
-	break: F.breakExpression,
-	continue: F.continueExpression,
-	index: F.indexExpression,
-	metavariable: F.metavariable,
-	closure: F.closureExpression,
-	parenthesized: F.parenthesizedExpression,
-	struct: F.structExpression,
-	unsafeBlock: F.unsafeBlock,
-	asyncBlock: F.asyncBlock,
-	genBlock: F.genBlock,
-	tryBlock: F.tryBlock,
-	block: F.block,
-	if: F.ifExpression,
-	match: F.matchExpression,
-	while: F.whileExpression,
-	loop: F.loopExpression,
-	for: F.forExpression,
-	constBlock: F.constBlock
 };
 
 export const expression: {
@@ -319,26 +215,6 @@ export const expression: {
 	range: F.rangeExpression
 };
 
-export const delimTokens: {
-	readonly nonSpecialToken: typeof F.nonSpecialToken;
-	readonly tokenTree: typeof F.delimTokenTree;
-} = {
-	nonSpecialToken: F.nonSpecialToken,
-	tokenTree: F.delimTokenTree
-};
-
-export const nonDelimToken: {
-	readonly special: typeof F.nonSpecialToken;
-} = {
-	special: F.nonSpecialToken
-};
-
-export const condition: {
-	readonly let: typeof F.letCondition;
-} = {
-	let: F.letCondition
-};
-
 export const pattern: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
@@ -407,22 +283,6 @@ export const literalPattern: {
 	negative: F.negativeLiteral
 };
 
-export const path: {
-	readonly self: typeof F.buildSelf;
-	readonly metavariable: typeof F.metavariable;
-	readonly super: typeof F.buildSuper;
-	readonly crate: typeof F.buildCrate;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly scopedIdentifier: typeof F.scopedIdentifier;
-} = {
-	self: F.buildSelf,
-	metavariable: F.metavariable,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	identifier: F.buildIdentifier,
-	scopedIdentifier: F.scopedIdentifier
-};
-
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
@@ -443,15 +303,9 @@ export const whitespace: {
 	dedent: F.buildDedent
 };
 
-export const expressionEndingWithBlock: typeof F.expressionEndingWithBlock = F.expressionEndingWithBlock;
-
 export const comment: typeof F.comment = F.comment;
 
 export const declarationStatement: typeof F.declarationStatement = F.declarationStatement;
-
-export const tokenPattern: typeof F.tokenPattern = F.tokenPattern;
-
-export const tokens: typeof F.tokens = F.tokens;
 
 export const ir: {
 	readonly sourceFile: typeof F.sourceFile;
@@ -648,23 +502,14 @@ export const ir: {
 	readonly docComment: typeof F.buildDocComment;
 	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly statement: typeof statement;
-	readonly useClause: typeof useClause;
 	readonly type: typeof type;
-	readonly expressionExceptRange: typeof expressionExceptRange;
 	readonly expression: typeof expression;
-	readonly delimTokens: typeof delimTokens;
-	readonly nonDelimToken: typeof nonDelimToken;
-	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
-	readonly path: typeof path;
 	readonly whitespace: typeof whitespace;
-	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
 	readonly comment: typeof comment;
 	readonly declarationStatement: typeof declarationStatement;
-	readonly tokenPattern: typeof tokenPattern;
-	readonly tokens: typeof tokens;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -868,22 +713,13 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	useClause,
 	type,
-	expressionExceptRange,
 	expression,
-	delimTokens,
-	nonDelimToken,
-	condition,
 	pattern,
 	literal,
 	literalPattern,
-	path,
 	whitespace,
-	expressionEndingWithBlock,
 	comment,
 	declarationStatement,
-	tokenPattern,
-	tokens,
 	synonym
 };

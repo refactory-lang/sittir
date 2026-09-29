@@ -189,6 +189,7 @@ export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: SymbolRule<T>[];
+	readonly declared?: true;
 };
 
 export function subtypeParseNamesOf<T extends PhaseName>(rule: SupertypeRule<T>): Readonly<Record<string, string>> {

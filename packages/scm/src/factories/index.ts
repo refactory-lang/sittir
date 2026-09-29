@@ -26,7 +26,5 @@ export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = 
 export const namedNode: Hoisted<typeof O.namedNode> = hoistRoutes(O.namedNode);
 export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistRoutes(O.namedNodeGroup);
 export const definition: Hoisted<typeof O.definition> = hoistRoutes(O.definition);
-export const groupExpression: Hoisted<typeof O.groupExpression> = hoistRoutes(O.groupExpression);
-export const namedNodeExpression: Hoisted<typeof O.namedNodeExpression> = hoistRoutes(O.namedNodeExpression);
 
 methodsEngine.trivia.comment = coerceToComment;

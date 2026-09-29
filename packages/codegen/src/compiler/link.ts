@@ -1761,6 +1761,7 @@ function classifyHiddenChoiceRule(
 					type: SUPERTYPE,
 					name,
 					subtypes,
+					...(supertypes.has(name) ? { declared: true as const } : {}),
 					...(variantArms.length > 0 ? { variantArms } : {})
 				} satisfies SupertypeRule<'link'>,
 				classification: 'supertype'

@@ -115,9 +115,6 @@ function _isFromKind(k: string): k is keyof _FromMap {
 
 const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
 	definition: ['named_node', 'anonymous_node', 'missing_node', 'grouping', 'predicate', 'list', 'field_definition'],
-	_group_expression: ['definition', 'group_expression_arm'],
-	_named_node_expression: ['definition', 'negated_field', 'named_node_expression_arm'],
-	_node_identifier: ['identifier'],
 	named_node: ['named_node_plain', 'named_node_supertyped'],
 	named_node_group: ['named_node_group_children', 'named_node_group_anchored_last'],
 	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent']
