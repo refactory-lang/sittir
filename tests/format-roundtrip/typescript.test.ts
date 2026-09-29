@@ -1,19 +1,13 @@
 /**
- * T021 — Format roundtrip test for TypeScript grammar fixtures.
- *
- * Spec 017 US1: parse via native reader, then render through engine surfaces
- * on both paths so parity comes from engine-owned format state rather than
- * helper-level post-processing.
- *
- * Phase 1 status: native reader populates inferred format via extract_format
- * (Rust). The JS render engine still replays only boundary.leading/trailing;
- * per-line indentation restoration remains Phase 2 (slots/separators).
+ * Format roundtrip for the TypeScript fixtures: the native reader records each
+ * fixture's inferred format, and a text edit changes only its own byte range.
  */
 
 import { describe, it, expect } from 'vitest';
 import { applyEdits } from '@sittir/common';
 import type { Edit } from '@sittir/types';
 import {
+	diffPositions,
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
@@ -40,19 +34,6 @@ describe('format-roundtrip typescript fixtures', () => {
 		});
 	}
 });
-
-function diffPositions(a: string, b: string): { start: number; end: number } | null {
-	let start = 0;
-	while (start < Math.min(a.length, b.length) && a[start] === b[start]) start++;
-	if (start === Math.min(a.length, b.length) && a.length === b.length) return null;
-	let endA = a.length - 1,
-		endB = b.length - 1;
-	while (endA > start && endB > start && a[endA] === b[endB]) {
-		endA--;
-		endB--;
-	}
-	return { start, end: Math.max(endA, endB) };
-}
 
 describe('US2 — edit isolation (typescript)', () => {
 	it('typescript-4space.ts: rename createUser → buildUser is isolated to the edited byte range', () => {
