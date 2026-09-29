@@ -16,11 +16,17 @@ The one mapping from an engine's options to its native engine's: `format` passes
 
 The error a file verb (`read`, `create`, `edit`, `write`) raises while file changes are not implemented.
 
+### `packages/common/src/create-engine.ts::languageGuards`
+
+Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
 Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' `is` guards and kind ids and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with inner gaps and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and finds which engine holds the node's parsed parts, so the node's own engine renders a node built throughout, the one engine that parsed its parsed descendants renders it with the calling engine's options over the call's, and a node whose parsed descendants come from several engines, or from a disposed one, is refused. A node stamped with another language is refused, naming both. `dispose` swaps the handle's engine for the identity before releasing the native engine. `types` is type-only and has no run-time value. An engine that renders another engine's parsed part applies its own options key by key over that engine's: a key the caller leaves unset keeps the reading engine's value.
 
 The engine object and its `EngineIdentity` are frozen, so no member can be reassigned; the identity holds the caller's `options` as given, and that object stays the caller's. The serial in a diagnostic label is recorded for the live engine and for its identity, so a disposed reader is still named `<language>#<n>`.
+
+`is` on the engine is the language's table through `languageGuards`, so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
 
 ### `packages/common/src/create-engine.ts::scopedBuild`
 
