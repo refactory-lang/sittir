@@ -3,85 +3,85 @@ import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(python);
+const { build, kinds } = await createEngine(python);
 
 export function rebuildPython4spaceGenerated() {
-	return engine.build.module.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.string.strict({
-		stringStart: engine.build.stringStart("\"\"\""),
-		content: [engine.build.stringContent.strict(engine.build.stringFragment("Simple user management module."))],
-		stringEnd: engine.build.stringEnd("\"\"\""),
-	}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.importFromStatement.strict({
-		moduleName: engine.build.dottedName.strict(engine.build.identifier("typing")),
-		content: engine.build.importList.strict({ delimiter: Delimiter.None }, engine.build.dottedName.strict(engine.build.identifier("Optional"))),
-	})), engine.build.classDefinition.strict({
-		name: engine.build.identifier("User"),
-		body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.functionDefinition.strict({
-			name: engine.build.identifier("__init__"),
-			parameters: engine.build.parameters.strict(engine.build.parametersElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("self"), engine.build.typedParameter.strict({
-				name: engine.build.identifier("user_id"),
-				type: engine.build.type.strict(engine.build.identifier("int")),
-			}), engine.build.typedParameter.strict({
-				name: engine.build.identifier("name"),
-				type: engine.build.type.strict(engine.build.identifier("str")),
+	return build.module.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.string.strict({
+		stringStart: build.stringStart("\"\"\""),
+		content: [build.stringContent.strict(build.stringFragment("Simple user management module."))],
+		stringEnd: build.stringEnd("\"\"\""),
+	}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.importFromStatement.strict({
+		moduleName: build.dottedName.strict(build.identifier("typing")),
+		content: build.importList.strict({ delimiter: Delimiter.None }, build.dottedName.strict(build.identifier("Optional"))),
+	})), build.classDefinition.strict({
+		name: build.identifier("User"),
+		body: build.suite.block.strict(build.block.strict(build.functionDefinition.strict({
+			name: build.identifier("__init__"),
+			parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, build.identifier("self"), build.typedParameter.strict({
+				name: build.identifier("user_id"),
+				type: build.type.strict(build.identifier("int")),
+			}), build.typedParameter.strict({
+				name: build.identifier("name"),
+				type: build.type.strict(build.identifier("str")),
 			}))),
-			returnType: engine.build.type.strict(engine.kinds.None),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-				left: engine.build.attribute.strict({
-					object: engine.build.identifier("self"),
-					attribute: engine.build.identifier("user_id"),
+			returnType: build.type.strict(kinds.None),
+			body: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+				left: build.attribute.strict({
+					object: build.identifier("self"),
+					attribute: build.identifier("user_id"),
 				}),
-				right: engine.build.identifier("user_id"),
-			}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-				left: engine.build.attribute.strict({
-					object: engine.build.identifier("self"),
-					attribute: engine.build.identifier("name"),
+				right: build.identifier("user_id"),
+			}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+				left: build.attribute.strict({
+					object: build.identifier("self"),
+					attribute: build.identifier("name"),
 				}),
-				right: engine.build.identifier("name"),
+				right: build.identifier("name"),
 			}))))),
-		}), engine.build.functionDefinition.strict({
-			name: engine.build.identifier("greet"),
-			parameters: engine.build.parameters.strict(engine.build.parametersElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("self"))),
-			returnType: engine.build.type.strict(engine.build.identifier("str")),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.returnStatement.strict(engine.build.string.strict({
-				stringStart: engine.build.stringStart("f\""),
-				content: [engine.build.stringContent.strict(engine.build.stringFragment("Hello, ")), engine.build.interpolation.strict({
-					expression: engine.build.attribute.strict({
-						object: engine.build.identifier("self"),
-						attribute: engine.build.identifier("name"),
+		}), build.functionDefinition.strict({
+			name: build.identifier("greet"),
+			parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, build.identifier("self"))),
+			returnType: build.type.strict(build.identifier("str")),
+			body: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.returnStatement.strict(build.string.strict({
+				stringStart: build.stringStart("f\""),
+				content: [build.stringContent.strict(build.stringFragment("Hello, ")), build.interpolation.strict({
+					expression: build.attribute.strict({
+						object: build.identifier("self"),
+						attribute: build.identifier("name"),
 					}),
-				}), engine.build.stringContent.strict(engine.build.stringFragment("!"))],
-				stringEnd: engine.build.stringEnd("\""),
+				}), build.stringContent.strict(build.stringFragment("!"))],
+				stringEnd: build.stringEnd("\""),
 			}))))),
 		}))),
-	}), engine.build.functionDefinition.strict({
-		name: engine.build.identifier("find_user"),
-		parameters: engine.build.parameters.strict(engine.build.parametersElements.strict({ delimiter: Delimiter.None }, engine.build.typedParameter.strict({
-			name: engine.build.identifier("users"),
-			type: engine.build.type.strict(engine.build.identifier("list")),
-		}), engine.build.typedParameter.strict({
-			name: engine.build.identifier("user_id"),
-			type: engine.build.type.strict(engine.build.identifier("int")),
+	}), build.functionDefinition.strict({
+		name: build.identifier("find_user"),
+		parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, build.typedParameter.strict({
+			name: build.identifier("users"),
+			type: build.type.strict(build.identifier("list")),
+		}), build.typedParameter.strict({
+			name: build.identifier("user_id"),
+			type: build.type.strict(build.identifier("int")),
 		}))),
-		returnType: engine.build.type.strict(engine.build.genericType.strict({
-			name: engine.build.identifier("Optional"),
-			typeParameter: engine.build.typeParameter.strict({ delimiter: Delimiter.None }, engine.build.type.strict(engine.build.identifier("User"))),
+		returnType: build.type.strict(build.genericType.strict({
+			name: build.identifier("Optional"),
+			typeParameter: build.typeParameter.strict({ delimiter: Delimiter.None }, build.type.strict(build.identifier("User"))),
 		})),
-		body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.forStatement.strict({
-			left: engine.build.identifier("user"),
-			right: engine.build.identifier("users"),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.ifStatement.strict({
-				condition: engine.build.comparisonOperator.strict({
-					left: engine.build.attribute.strict({
-						object: engine.build.identifier("user"),
-						attribute: engine.build.identifier("user_id"),
+		body: build.suite.block.strict(build.block.strict(build.forStatement.strict({
+			left: build.identifier("user"),
+			right: build.identifier("users"),
+			body: build.suite.block.strict(build.block.strict(build.ifStatement.strict({
+				condition: build.comparisonOperator.strict({
+					left: build.attribute.strict({
+						object: build.identifier("user"),
+						attribute: build.identifier("user_id"),
 					}),
 					comparators: [{
-						operators: engine.kinds.EqEq,
-						primaryExpression: engine.build.identifier("user_id"),
+						operators: kinds.EqEq,
+						primaryExpression: build.identifier("user_id"),
 					}],
 				}),
-				consequence: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.returnStatement.strict(engine.build.identifier("user"))))),
+				consequence: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.returnStatement.strict(build.identifier("user"))))),
 			}))),
-		}), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.returnStatement.strict(engine.kinds.None)))),
+		}), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.returnStatement.strict(kinds.None)))),
 	}));
 }

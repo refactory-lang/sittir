@@ -3,203 +3,203 @@ import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(rust);
+const { build, kinds } = await createEngine(rust);
 
 export function rebuildKeywordOpenersRustGenerated() {
-	return engine.build.sourceFile.strict({
-		statements: [engine.build.functionItem.strict({
-			name: engine.build.identifier("f"),
-			typeParameters: engine.build.typeParameters.strict(engine.build.typeParametersElements.strict({ delimiter: Delimiter.None }, {
-				content: engine.build.typeParameter.strict({
-					name: engine.build.identifier("T"),
+	return build.sourceFile.strict({
+		statements: [build.functionItem.strict({
+			name: build.identifier("f"),
+			typeParameters: build.typeParameters.strict(build.typeParametersElements.strict({ delimiter: Delimiter.None }, {
+				content: build.typeParameter.strict({
+					name: build.identifier("T"),
 				}),
 			})),
-			parameters: engine.build.parameters.strict(engine.build.parametersElements.strict({ delimiter: Delimiter.None }, {
-				content: engine.build.parameter.strict({
-					name: engine.build.identifier("a"),
-					type: engine.build.genericType.strict({
-						type: engine.build.identifier("Vec"),
-						typeArguments: engine.build.typeArguments.strict(engine.build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-							content: engine.build.identifier("T"),
+			parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, {
+				content: build.parameter.strict({
+					name: build.identifier("a"),
+					type: build.genericType.strict({
+						type: build.identifier("Vec"),
+						typeArguments: build.typeArguments.strict(build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
+							content: build.identifier("T"),
 						})),
 					}),
 				}),
 			}, {
-				content: engine.build.parameter.strict({
-					name: engine.build.identifier("b"),
-					type: engine.build.referenceType.strict({
-						type: engine.build.arrayType.strict({
-							element: engine.build.identifier("Foo"),
+				content: build.parameter.strict({
+					name: build.identifier("b"),
+					type: build.referenceType.strict({
+						type: build.arrayType.strict({
+							element: build.identifier("Foo"),
 						}),
 					}),
 				}),
 			})),
-			returnType: engine.build.genericType.strict({
-				type: engine.build.identifier("Option"),
-				typeArguments: engine.build.typeArguments.strict(engine.build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-					content: engine.build.tupleType.strict(engine.build.tupleTypeElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("Foo"), engine.build.identifier("Foo"))),
+			returnType: build.genericType.strict({
+				type: build.identifier("Option"),
+				typeArguments: build.typeArguments.strict(build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
+					content: build.tupleType.strict(build.tupleTypeElements.strict({ delimiter: Delimiter.None }, build.identifier("Foo"), build.identifier("Foo"))),
 				})),
 			}),
-			body: engine.build.block.strict({
-				statements: [engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("x"),
-					value: engine.build.tupleExpression.strict({
-						tupleExpressionElements: engine.build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, engine.build.integerLiteral.decimal.strict({
+			body: build.block.strict({
+				statements: [build.letDeclaration.strict({
+					pattern: build.identifier("x"),
+					value: build.tupleExpression.strict({
+						tupleExpressionElements: build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, build.integerLiteral.decimal.strict({
 							content: "1",
-						}), engine.build.integerLiteral.decimal.strict({
+						}), build.integerLiteral.decimal.strict({
 							content: "2",
 						})),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("y"),
-					value: engine.build.arrayExpression.list.strict({
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("y"),
+					value: build.arrayExpression.list.strict({
 						argumentsElements: [{ delimiter: Delimiter.None }, {
-							expression: engine.build.integerLiteral.decimal.strict({
+							expression: build.integerLiteral.decimal.strict({
 								content: "1",
 							}),
 						}, {
-							expression: engine.build.integerLiteral.decimal.strict({
+							expression: build.integerLiteral.decimal.strict({
 								content: "2",
 							}),
 						}, {
-							expression: engine.build.integerLiteral.decimal.strict({
+							expression: build.integerLiteral.decimal.strict({
 								content: "3",
 							}),
 						}],
 					}),
-				}), engine.build.expressionStatement.strict(engine.build.ifExpression.strict({
-					condition: engine.build.parenthesizedExpression.strict(engine.build.binaryExpression.strict({
-						left: engine.build.callExpression.strict({
-							function: engine.build.fieldExpression.strict({
-								value: engine.build.identifier("a"),
-								field: engine.build.identifier("len"),
+				}), build.expressionStatement.strict(build.ifExpression.strict({
+					condition: build.parenthesizedExpression.strict(build.binaryExpression.strict({
+						left: build.callExpression.strict({
+							function: build.fieldExpression.strict({
+								value: build.identifier("a"),
+								field: build.identifier("len"),
 							}),
-							arguments: engine.build.arguments.strict(),
+							arguments: build.arguments.strict(),
 						}),
-						operator: engine.kinds.Gt,
-						right: engine.build.integerLiteral.decimal.strict({
+						operator: kinds.Gt,
+						right: build.integerLiteral.decimal.strict({
 							content: "1",
 						}),
 					})),
-					consequence: engine.build.block.strict({
-						statements: [engine.build.expressionStatement.withSemi.strict(engine.build.returnExpression.strict(engine.build.tupleExpression.strict({
-							tupleExpressionElements: engine.build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, engine.build.integerLiteral.decimal.strict({
+					consequence: build.block.strict({
+						statements: [build.expressionStatement.withSemi.strict(build.returnExpression.strict(build.tupleExpression.strict({
+							tupleExpressionElements: build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, build.integerLiteral.decimal.strict({
 								content: "1",
-							}), engine.build.integerLiteral.decimal.strict({
+							}), build.integerLiteral.decimal.strict({
 								content: "2",
 							})),
 						})))],
 					}),
-				})), engine.build.expressionStatement.strict(engine.build.forExpression.strict({
-					pattern: engine.build.tuplePattern.strict({ delimiter: Delimiter.None }, engine.build.identifier("i"), engine.build.identifier("v")),
-					value: engine.build.parenthesizedExpression.strict(engine.build.rangeExpression.binary.strict({
-						start: engine.build.integerLiteral.decimal.strict({
+				})), build.expressionStatement.strict(build.forExpression.strict({
+					pattern: build.tuplePattern.strict({ delimiter: Delimiter.None }, build.identifier("i"), build.identifier("v")),
+					value: build.parenthesizedExpression.strict(build.rangeExpression.binary.strict({
+						start: build.integerLiteral.decimal.strict({
 							content: "0",
 						}),
-						operator: engine.kinds.DotDot,
-						end: engine.build.integerLiteral.decimal.strict({
+						operator: kinds.DotDot,
+						end: build.integerLiteral.decimal.strict({
 							content: "3",
 						}),
 					})),
-					body: engine.build.block.strict({
-						statements: [engine.build.letDeclaration.strict({
-							pattern: engine.build.identifier("q"),
-							value: engine.build.parenthesizedExpression.strict(engine.build.identifier("i")),
+					body: build.block.strict({
+						statements: [build.letDeclaration.strict({
+							pattern: build.identifier("q"),
+							value: build.parenthesizedExpression.strict(build.identifier("i")),
 						})],
 					}),
-				})), engine.build.expressionStatement.strict(engine.build.whileExpression.strict({
-					condition: engine.build.parenthesizedExpression.strict(engine.kinds.TrueKeyword),
-					body: engine.build.block.strict({
-						statements: [engine.build.expressionStatement.withSemi.strict(engine.build.callExpression.strict({
-							function: engine.build.breakExpression.strict({}),
-							arguments: engine.build.arguments.strict(engine.build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-								expression: engine.build.integerLiteral.decimal.strict({
+				})), build.expressionStatement.strict(build.whileExpression.strict({
+					condition: build.parenthesizedExpression.strict(kinds.TrueKeyword),
+					body: build.block.strict({
+						statements: [build.expressionStatement.withSemi.strict(build.callExpression.strict({
+							function: build.breakExpression.strict({}),
+							arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
+								expression: build.integerLiteral.decimal.strict({
 									content: "1",
 								}),
 							})),
 						}))],
 					}),
-				})), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("z"),
-					value: engine.build.typeCastExpression.strict({
-						value: engine.build.identifier("a"),
-						type: engine.build.tupleType.strict(engine.build.tupleTypeElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("Foo"))),
+				})), build.letDeclaration.strict({
+					pattern: build.identifier("z"),
+					value: build.typeCastExpression.strict({
+						value: build.identifier("a"),
+						type: build.tupleType.strict(build.tupleTypeElements.strict({ delimiter: Delimiter.None }, build.identifier("Foo"))),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("m"),
-					value: engine.build.macroInvocation.strict({
-						macro: engine.build.identifier("vec"),
-						arguments: engine.build.delimTokenTree.bracket.strict(engine.build.nonSpecialToken.strict(engine.build.integerLiteral.decimal.strict({
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("m"),
+					value: build.macroInvocation.strict({
+						macro: build.identifier("vec"),
+						arguments: build.delimTokenTree.bracket.strict(build.nonSpecialToken.strict(build.integerLiteral.decimal.strict({
 							content: "1",
-						})), engine.build.nonSpecialToken.strict(engine.kinds.Comma), engine.build.nonSpecialToken.strict(engine.build.integerLiteral.decimal.strict({
+						})), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.integerLiteral.decimal.strict({
 							content: "2",
 						}))),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("c"),
-					value: engine.build.closureExpression.expr.strict({
-						parameters: engine.build.closureParameters.strict(engine.build.identifier("p")),
-						body: engine.build.parenthesizedExpression.strict(engine.build.identifier("p")),
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("c"),
+					value: build.closureExpression.expr.strict({
+						parameters: build.closureParameters.strict(build.identifier("p")),
+						body: build.parenthesizedExpression.strict(build.identifier("p")),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("t"),
-					type: engine.build.tupleType.strict(engine.build.tupleTypeElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("Foo"), engine.build.identifier("Foo"))),
-					value: engine.build.tupleExpression.strict({
-						tupleExpressionElements: engine.build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, engine.build.integerLiteral.decimal.strict({
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("t"),
+					type: build.tupleType.strict(build.tupleTypeElements.strict({ delimiter: Delimiter.None }, build.identifier("Foo"), build.identifier("Foo"))),
+					value: build.tupleExpression.strict({
+						tupleExpressionElements: build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, build.integerLiteral.decimal.strict({
 							content: "1",
-						}), engine.build.integerLiteral.decimal.strict({
+						}), build.integerLiteral.decimal.strict({
 							content: "2",
 						})),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("u"),
-					value: engine.build.referenceExpression.bare.strict(engine.build.parenthesizedExpression.strict(engine.build.integerLiteral.decimal.strict({
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("u"),
+					value: build.referenceExpression.bare.strict(build.parenthesizedExpression.strict(build.integerLiteral.decimal.strict({
 						content: "1",
 					}))),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("v"),
-					value: engine.build.unaryExpression.strict({
-						operator: engine.kinds.Dash,
-						operand: engine.build.parenthesizedExpression.strict(engine.build.integerLiteral.decimal.strict({
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("v"),
+					value: build.unaryExpression.strict({
+						operator: kinds.Dash,
+						operand: build.parenthesizedExpression.strict(build.integerLiteral.decimal.strict({
 							content: "1",
 						})),
 					}),
-				}), engine.build.letDeclaration.strict({
-					pattern: engine.build.identifier("n"),
-					value: engine.build.unaryExpression.strict({
-						operator: engine.kinds.Bang,
-						operand: engine.build.parenthesizedExpression.strict(engine.kinds.TrueKeyword),
+				}), build.letDeclaration.strict({
+					pattern: build.identifier("n"),
+					value: build.unaryExpression.strict({
+						operator: kinds.Bang,
+						operand: build.parenthesizedExpression.strict(kinds.TrueKeyword),
 					}),
 				})],
-				trailingExpression: engine.build.callExpression.strict({
-					function: engine.build.identifier("Some"),
-					arguments: engine.build.arguments.strict(engine.build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						expression: engine.build.tupleExpression.strict({
-							tupleExpressionElements: engine.build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, engine.build.integerLiteral.decimal.strict({
+				trailingExpression: build.callExpression.strict({
+					function: build.identifier("Some"),
+					arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
+						expression: build.tupleExpression.strict({
+							tupleExpressionElements: build.tupleExpressionElements.strict({ delimiter: Delimiter.None }, build.integerLiteral.decimal.strict({
 								content: "1",
-							}), engine.build.integerLiteral.decimal.strict({
+							}), build.integerLiteral.decimal.strict({
 								content: "2",
 							})),
 						}),
 					})),
 				}),
 			}),
-		}), engine.build.functionItem.strict({
-			visibilityModifier: engine.build.visibilityModifier.pub.scope.strict(engine.kinds.Crate),
-			name: engine.build.identifier("g"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict({}),
-		}), engine.build.functionItem.strict({
-			visibilityModifier: engine.build.visibilityModifier.pub.strict(),
-			name: engine.build.identifier("h"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict({}),
-		}), engine.build.structItem.unit.strict({
-			visibilityModifier: engine.build.visibilityModifier.pub.scope.inPath.strict(engine.build.scopedIdentifier.strict({
-				path: engine.kinds.Crate,
-				name: engine.build.identifier("x"),
+		}), build.functionItem.strict({
+			visibilityModifier: build.visibilityModifier.pub.scope.strict(kinds.Crate),
+			name: build.identifier("g"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict({}),
+		}), build.functionItem.strict({
+			visibilityModifier: build.visibilityModifier.pub.strict(),
+			name: build.identifier("h"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict({}),
+		}), build.structItem.unit.strict({
+			visibilityModifier: build.visibilityModifier.pub.scope.inPath.strict(build.scopedIdentifier.strict({
+				path: kinds.Crate,
+				name: build.identifier("x"),
 			})),
-			name: engine.build.identifier("S"),
+			name: build.identifier("S"),
 		})],
 	});
 }
