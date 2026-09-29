@@ -3,8 +3,7 @@ import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
 import {
-	interiorEnumArms,
-	interiorOf,
+	interiorSlotGuards,
 	numberInputType,
 	numberTextArgs,
 	numericLeafShape,
@@ -200,17 +199,9 @@ function buildLeafReConsts(
 		lines.push(`const ${declaration.constName} = ${declaration.literal};`);
 	}
 	for (const [kind, node] of nodeMap.nodes) {
-		const interior = interiorOf(node);
-		if (interior === undefined) continue;
-		for (const entry of interior.entries) {
-			const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
-			if (guarded === undefined) continue;
-			const { slot, pattern } = guarded;
-			const literal = anchoredLeafRegexLiteral(kind, pattern);
-			if (literal === undefined) continue;
-			const constName = `_slotRe_${node.rawFactoryName!}_${slot}`;
+		for (const { slot, literal, constName } of interiorSlotGuards(kind, node)) {
 			leafReConsts.set(slotGuardKey(kind, slot), constName);
-			lines.push(`const ${constName} = ${literal};`);
+			lines.push(`export const ${constName} = ${literal};`);
 		}
 	}
 	return leafReConsts;

@@ -13,7 +13,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, slotLiteralValues } from './shared.ts';
-import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -31,6 +31,17 @@ export interface NodeInterior {
 
 export function interiorEnumArms(values: readonly string[]): string {
 	return [...values].sort((a, b) => b.length - a.length).map(escapeRegexLiteral).join('|');
+}
+
+export function interiorSlotGuards(
+	kind: string,
+	node: AssembledNode
+): readonly { readonly slot: string; readonly literal: string; readonly constName: string }[] {
+	return (interiorOf(node)?.entries ?? []).flatMap((entry) => {
+		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+		const literal = guarded === undefined ? undefined : anchoredLeafRegexLiteral(kind, guarded.pattern);
+		return guarded === undefined || literal === undefined ? [] : [{ slot: guarded.slot, literal, constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
+	});
 }
 
 export function interiorEntryPattern(entry: InteriorEntry): string {

@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "06838daa541851c0bcfe098c169157d96e38d933478f01e90bbf692f5bedc223",
+  "source_hash": "75229cf9a488dacbba60da6a69f2878ffddbeafcdceef5bea77fb54e75d07cbe",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "packages/regex/.sittir/grammar.js": "109d2c2e610679888e759a0fa984af750df295d01dae67672e1371d1dba2b670",
@@ -20,12 +20,12 @@
     "packages/regex/src/consts.ts": "f372ce66b9ee8234a165e4c29502d04316f7eb5a1a0270769180f1d66f5a43b9",
     "packages/regex/src/engine.ts": "2455de0d3bb008ef8eb5755139f861ca875d3e016e7150c46e67a43dcf786048",
     "packages/regex/src/factories/bundle.ts": "1de92d3eb9077485fb53d29664ba2ff0b098c9970acbd8d578cf9baddecc4a0b",
-    "packages/regex/src/factories/coerce.ts": "c3c27b42ce7ba77223098edb29c62a3f7945dec215803ee72c7de745f3a6c1c9",
+    "packages/regex/src/factories/coerce.ts": "879f4296b544f103ea042bf1bb5b89ad5725166327f3b9e9a498a00507d178e6",
     "packages/regex/src/factories/index.ts": "e0d88cd5e2d6e5b1eaeeffd46960d673f8fb25d269ce680ee65eb41b28878996",
     "packages/regex/src/factories/overlays/polymorphs.ts": "9dac578c996d161b39e90166460bb60969f29e00b928b1f5551af465c479581e",
     "packages/regex/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/regex/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/regex/src/factories/raw.ts": "8a9217dbd11778976ff275d5af38d17d1df7bdb0bf479fedcc566072272b2a64",
+    "packages/regex/src/factories/raw.ts": "e712a55d2369067808b910ca9a3ca326e51cc5ab63c97d8871d27ab25cda1d6d",
     "packages/regex/src/grammar.ts": "b8befaa29609e0b7e987d5930314e19ef8b566224d17fca7ae6086e87ba95e24",
     "packages/regex/src/hash.ts": "071776b1feec97867df20a2239ca129b82b85a4a2e6a752ed50652ab95e5b44b",
     "packages/regex/src/index.ts": "b64e8a3b63d5b7295deac3c09b44804da2d354a622256984256e8a45eb600a88",

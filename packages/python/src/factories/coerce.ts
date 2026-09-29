@@ -5690,7 +5690,7 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '#', '')
+						? spelledInterior(input, '#', '', F._slotRe_buildComment_content)
 						: input,
 				_K0,
 				_K0
@@ -6846,7 +6846,7 @@ export function coerceToEscapeSequenceUnicodeFixed(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeFixed_content)
 						: input,
 				_K0,
 				_K0
@@ -6874,7 +6874,7 @@ export function coerceToEscapeSequenceUnicodeWide(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeWide_content)
 						: input,
 				_K0,
 				_K0
@@ -6902,7 +6902,7 @@ export function coerceToEscapeSequenceHex(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content)
 						: input,
 				_K0,
 				_K0
@@ -6928,7 +6928,7 @@ export function coerceToEscapeSequenceOctal(
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 			? input.content
 			: typeof input === 'string'
-				? spelledInterior(input, '\\', '')
+				? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceOctal_content)
 				: input;
 	return F.buildEscapeSequenceOctal(
 		_requireField(
@@ -6958,7 +6958,7 @@ export function coerceToEscapeSequenceLineBreak(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceLineBreak_content)
 						: input,
 				_K0,
 				_K0
@@ -6986,7 +6986,7 @@ export function coerceToEscapeSequenceSimple(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceSimple_content)
 						: input,
 				_K0,
 				_K0
@@ -7014,7 +7014,7 @@ export function coerceToEscapeSequenceNamed(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceNamed_content)
 						: input,
 				_K0,
 				_K0

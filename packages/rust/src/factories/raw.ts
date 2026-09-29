@@ -37,25 +37,29 @@ const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
 const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
 const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
-const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
-const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
-const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
-const _slotRe_buildIntegerLiteralDecimal_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
-const _slotRe_buildIntegerLiteralHex_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
-const _slotRe_buildIntegerLiteralBinary_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
-const _slotRe_buildIntegerLiteralOctal_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
-const _slotRe_buildCharLiteralEscapedSimple_content = /^(?:\\(?:[^xu]))$/u;
-const _slotRe_buildCharLiteralEscapedUnicodeFixed_content = /^(?:\\(?:u[0-9a-fA-F]{4}))$/u;
-const _slotRe_buildCharLiteralEscapedUnicodeBraced_content = /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u;
-const _slotRe_buildCharLiteralEscapedHex_content = /^(?:\\(?:x[0-9a-fA-F]{2}))$/u;
-const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
-const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
-const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
-const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
+export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
+export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
+export const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
+export const _slotRe_buildIntegerLiteralDecimal_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
+export const _slotRe_buildIntegerLiteralHex_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
+export const _slotRe_buildIntegerLiteralBinary_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
+export const _slotRe_buildIntegerLiteralOctal_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
+export const _slotRe_buildCharLiteralEscapedSimple_content = /^(?:\\(?:[^xu]))$/u;
+export const _slotRe_buildCharLiteralEscapedUnicodeFixed_content = /^(?:\\(?:u[0-9a-fA-F]{4}))$/u;
+export const _slotRe_buildCharLiteralEscapedUnicodeBraced_content = /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u;
+export const _slotRe_buildCharLiteralEscapedHex_content = /^(?:\\(?:x[0-9a-fA-F]{2}))$/u;
+export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
+export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 
 export function buildSourceFile(): T.EmptySourceFile;
 export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Built;

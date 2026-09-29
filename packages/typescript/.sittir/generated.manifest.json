@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "216da85585830b5f39d50bfa39e052ece66d47faef88d2dfcac246e90de3937a",
+  "source_hash": "c3f2fcaeaa293a6c2b2e59a961979df674b6b858e145973925404f1deb8cd46a",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "0f7d8c11a04065fd10039ce0b011ff0ac5c4fb44f02b992af25605480d8a0831",
     "packages/typescript/.sittir/grammar.js": "db89b5becee8a44adf2388c430f1d7010450a6151f00016c3f181990a7ff9039",
@@ -21,12 +21,12 @@
     "packages/typescript/src/consts.ts": "ee7c9d4a89331c20b8794e9022c540731ce854fc93262599740c886e3f738fd1",
     "packages/typescript/src/engine.ts": "94e4ec384494dded9e226e2067bb81ac894c0e8109105e06eaf7a24d4a50cf62",
     "packages/typescript/src/factories/bundle.ts": "ce39decb97e9e73b3c2d997fff0393e23a9faba8dafc129c831524b3c6aa7966",
-    "packages/typescript/src/factories/coerce.ts": "654f2e438ba4340b848bcb0a5f1499c6e38bca086b20040178950290c16b1cfe",
+    "packages/typescript/src/factories/coerce.ts": "dd19c2bf049aaac0792f5e28b4aad5bde6a1f5e2d8c38452153a5fa73ae2eefd",
     "packages/typescript/src/factories/index.ts": "134f90b8c27046c0b5da97d2af42a698984ead3949c9c809d306ddb6c4cc6eb7",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "3dd5f26b32be77f4921a7cb1f5b9e19893544577f62f6884f0d97278be2f6b6f",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/typescript/src/factories/raw.ts": "2c5d677a04c1a73238375dced43cca16ecaf8c4d1bb9cc2df03b44abecdc431b",
+    "packages/typescript/src/factories/raw.ts": "0f24aacd12ba3baeea1b07986380a58a9873b58d1f8f29e5dbfddf117325178f",
     "packages/typescript/src/grammar.ts": "f65e9a3858708218915f7595ba378fd827d89673a68c15400b1aa154a07cf309",
     "packages/typescript/src/hash.ts": "7ac2a87ae0fa553c5f27b33336bfcb1b07a89d86c49f6531a435c28a53ceaad0",
     "packages/typescript/src/index.ts": "b64e8a3b63d5b7295deac3c09b44804da2d354a622256984256e8a45eb600a88",

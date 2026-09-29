@@ -2717,7 +2717,7 @@ export function coerceToHashBangLine(input: T.HashBangLine.Loose): ReturnType<ty
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '#!', '')
+						? spelledInterior(input, '#!', '', F._slotRe_buildHashBangLine_content)
 						: input,
 				_K2,
 				_K2
@@ -5660,7 +5660,7 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content)
 						: input,
 				_K2,
 				_K2
@@ -5796,7 +5796,7 @@ export function coerceToPrivatePropertyIdentifier(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '#', '')
+						? spelledInterior(input, '#', '', F._slotRe_buildPrivatePropertyIdentifier_content)
 						: input,
 				_K2,
 				_K2
@@ -10698,7 +10698,7 @@ export function coerceToCommentLine(input: T.CommentLine.Loose): ReturnType<type
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '//', '')
+						? spelledInterior(input, '//', '', F._slotRe_buildCommentLine_content)
 						: input,
 				_K2,
 				_K2
@@ -10722,7 +10722,7 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '/*', '*/')
+						? spelledInterior(input, '/*', '*/', F._slotRe_buildCommentBlock_content)
 						: input,
 				_K2,
 				_K2
@@ -11063,7 +11063,7 @@ export function coerceToNumberBigintHex(input: T.NumberBigintHex.Loose): ReturnT
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 			? input.content
 			: typeof input === 'string'
-				? spelledInterior(input, '', 'n')
+				? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintHex_content)
 				: input;
 	return F.buildNumberBigintHex(
 		_requireField(
@@ -11091,7 +11091,7 @@ export function coerceToNumberBigintBinary(
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 			? input.content
 			: typeof input === 'string'
-				? spelledInterior(input, '', 'n')
+				? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintBinary_content)
 				: input;
 	return F.buildNumberBigintBinary(
 		_requireField(
@@ -11119,7 +11119,7 @@ export function coerceToNumberBigintOctal(
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 			? input.content
 			: typeof input === 'string'
-				? spelledInterior(input, '', 'n')
+				? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintOctal_content)
 				: input;
 	return F.buildNumberBigintOctal(
 		_requireField(
@@ -11147,7 +11147,7 @@ export function coerceToNumberBigintDecimal(
 		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 			? input.content
 			: typeof input === 'string'
-				? spelledInterior(input, '', 'n')
+				? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintDecimal_content)
 				: input;
 	return F.buildNumberBigintDecimal(
 		_requireField(

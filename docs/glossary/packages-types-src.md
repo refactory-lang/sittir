@@ -14,7 +14,7 @@ A built node whose spelling slot `K` is narrowed to `P`, on both its stored fiel
 
 ### `packages/types/src/full-form.ts::Interior`
 
-The text between a full form's delimiters, or the text itself when it does not carry both: the type mirror of `spelledInterior`.
+The text between a full form's delimiters, or the text itself when it does not carry both: the type mirror of `spelledInterior`'s delimiter strip. A type cannot test the interior pattern, so the runtime's fallback to the whole input (a lone `\` escape) has no mirror here; its only reader is the sibling-lead check, so the gap shows only for a polymorph arm whose interior accepts its own delimiter.
 
 ### `packages/types/src/full-form.ts::LeadCheck`
 

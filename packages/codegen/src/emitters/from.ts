@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { defaultConcreteKindOf, isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -450,6 +450,7 @@ function emitBranchFrom(
 			}
 		}
 		if (canDirectFactoryCall) {
+			const soleGuard = interiorSlotGuards(node.kind, node).find((guard) => guard.slot === soleField.name);
 			if (fullForm !== undefined && spelled.length > 0) {
 				const alternatives = (texts: readonly string[]) =>
 					`[${texts.map((text) => JSON.stringify(text)).join(', ')}] as const`;
@@ -462,7 +463,7 @@ function emitBranchFrom(
 					? 'input'
 					: spelled.length > 0
 						? `(_spelled === undefined ? input : ${refuseSiblingLeadExpr('_spelled.interior', siblings)})`
-						: `(typeof input === 'string' ? ${refuseSiblingLeadExpr(`spelledInterior(input, ${JSON.stringify(fullForm.open.texts[0])}, ${JSON.stringify(fullForm.close.texts[0])})`, siblings)} : input)`;
+						: `(typeof input === 'string' ? ${refuseSiblingLeadExpr(`spelledInterior(input, ${JSON.stringify(fullForm.open.texts[0])}, ${JSON.stringify(fullForm.close.texts[0])}${soleGuard === undefined ? '' : `, F.${soleGuard.constName}`})`, siblings)} : input)`;
 			const callOptions =
 				spelled.length === 0
 					? optionsArg

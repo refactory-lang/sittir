@@ -1246,7 +1246,7 @@ export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content)
 						: input,
 				_K0,
 				_K0

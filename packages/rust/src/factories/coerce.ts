@@ -8047,7 +8047,7 @@ export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.bui
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '#!', '\n')
+						? spelledInterior(input, '#!', '\n', F._slotRe_buildShebang_content)
 						: input,
 				_K2,
 				_K2
@@ -8083,7 +8083,7 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input
 					? input.name
 					: typeof input === 'string'
-						? spelledInterior(input, '$', '')
+						? spelledInterior(input, '$', '', F._slotRe_buildMetavariable_name)
 						: input,
 				_K2,
 				_K2
@@ -9737,7 +9737,7 @@ export function coerceToEscapeSequenceSimple(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceSimple_content)
 						: input,
 				_K2,
 				_K2
@@ -9765,7 +9765,7 @@ export function coerceToEscapeSequenceUnicodeFixed(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeFixed_content)
 						: input,
 				_K2,
 				_K2
@@ -9793,7 +9793,7 @@ export function coerceToEscapeSequenceUnicodeBraced(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeBraced_content)
 						: input,
 				_K2,
 				_K2
@@ -9821,7 +9821,7 @@ export function coerceToEscapeSequenceHex(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content)
 						: input,
 				_K2,
 				_K2

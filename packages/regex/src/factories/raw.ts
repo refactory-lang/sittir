@@ -33,7 +33,7 @@ const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})
 const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
 const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
-const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
+export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern(value: T.Alternation | T.Term): T.Pattern.Built {
 	const _content = rejectBareText(value, 'Pattern.content', 'a built Alternation / Term');

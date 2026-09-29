@@ -20,8 +20,8 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
 const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
-const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
-const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
+export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(...children: T.Definition[]): T.Program.Built;

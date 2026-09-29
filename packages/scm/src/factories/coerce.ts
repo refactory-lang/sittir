@@ -583,7 +583,7 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content)
 						: input,
 				_K0,
 				_K0
@@ -744,7 +744,7 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, ';', '')
+						? spelledInterior(input, ';', '', F._slotRe_buildComment_content)
 						: input,
 				_K0,
 				_K0

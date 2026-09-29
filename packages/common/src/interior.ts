@@ -64,11 +64,15 @@ export function spelledForm<Open extends string, Close extends string>(
 
 /**
  * The interior of a token spelled out in full, or `text` itself when it does
- * not carry both delimiters. A builder that takes its kind's interior uses
- * this to accept the full spelling as well (`'// note'` as much as `' note'`).
+ * not carry both delimiters, or when `accepts` (the interior's anchored
+ * pattern) rejects what stripping leaves but takes `text` whole. A builder
+ * that takes its kind's interior uses this to accept the full spelling as well
+ * (`'// note'` as much as `' note'`).
  */
-export function spelledInterior(text: string, open: string, close: string): string {
-	return spelledForm(text, [open], [close])?.interior ?? text;
+export function spelledInterior(text: string, open: string, close: string, accepts?: RegExp): string {
+	const interior = spelledForm(text, [open], [close])?.interior;
+	if (interior === undefined) return text;
+	return accepts !== undefined && !accepts.test(interior) && accepts.test(text) ? text : interior;
 }
 
 export function refuseSiblingLead(interior: string, siblings: readonly (readonly [lead: RegExp, builder: string])[]): string {

@@ -222,7 +222,7 @@ With the type present, the word builder is generic, `<const W extends string>(te
 
 ```text
 Besides one anchored regex per pattern leaf, every text slot of a lexed kind gets its own anchored regex keyed
-by kind and slot; the raw builder tests a slot value against that constant.
+by kind and slot (interiorSlotGuards); the raw builder tests a slot value against that constant.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
@@ -1513,7 +1513,7 @@ A lexed kind's coercer accepts a bare string for its content slot: the string is
 
 #### loose trivia
 
-The coercer of every kind with a full form (`fullForm`), `ir.comment`'s default arm among them, passes a bare string through `spelledInterior`: text spelled with the kind's literal delimiters sheds them, and any other text is the content as it stands, checked by the content's leaf guard. The full form is tried first, so `'// TODO'` and `' TODO'` both build rust `// TODO`, and python `comment('# x')` is `# x`, never `## x`. When the kind is a polymorph, `refuseSiblingLead` then refuses an interior that starts the way another arm can, naming that arm's builder (`refuseSiblingLeadExpr`).
+The coercer of every kind with a full form (`fullForm`), `ir.comment`'s default arm among them, passes a bare string through `spelledInterior`: text spelled with the kind's literal delimiters sheds them, and any other text is the content as it stands, checked by the content's leaf guard. The full form is tried first, so `'// TODO'` and `' TODO'` both build rust `// TODO`, and python `comment('# x')` is `# x`, never `## x`. The coercer passes the content slot's guard, the raw module's exported `_slotRe_<factory>_<slot>` (`interiorSlotGuards`), as the fourth argument: when what stripping leaves is text the pattern rejects and the input whole is text it accepts, the input is the interior. So a lone `\` is the escape `\\` in ts `escapeSequence`, rust and python `escapeSequence.simple`, regex `identityEscape` and scm `escapeSequence`, while `'\\'` still sheds its delimiter and builds the same escape. When the kind is a polymorph, `refuseSiblingLead` then refuses an interior that starts the way another arm can, naming that arm's builder (`refuseSiblingLeadExpr`).
 
 A delimiter that is a spelling choice goes through `spelledForm` instead, and the alternative typed becomes that slot's option: python `integer.hex('0XFF')` renders `0XFF`, `integer.hex('FF')` the default `0xFF`, and an explicit option wins over the typed text (`spelledOptionKeys`).
 
@@ -16413,6 +16413,10 @@ recursively: the regex wraps it in an optional non-capturing group, while `entri
 literal, flag, enum and slot entries every consumer reads, so a slot inside a group is guarded, typed and
 projected like any other, and an optional pattern slot is an optional named group.
 ```
+
+### `packages/codegen/src/emitters/interior.ts::interiorSlotGuards`
+
+The anchored regex literal of each pattern and enum slot in a lexed kind's interior, by slot name, with the name of the constant that holds it (`_slotRe_<factory>_<slot>`): a pattern slot's own pattern, an enum slot's arms longest first (`interiorEnumArms`), each through `anchoredLeafRegexLiteral`. A slot whose pattern yields no literal is left out. `buildLeafReConsts` exports one constant per entry from the raw factories module, and the raw builder's per-slot guard reads it there; the loose coercer imports the content slot's constant as `spelledInterior`'s `accepts`, so the strip and the guard test the same object.
 
 ### `packages/codegen/src/emitters/interior.ts::walkInterior`
 
