@@ -1,33 +1,36 @@
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
 
 export function attachDocComment() {
-	const fn = ir.statement
+	const fn = engine.build.statement
 		.function({
 			visibilityModifier: 'pub',
 			name: 'main',
-			parameters: ir.parameters.strict(),
-			body: ir.block.strict(),
+			parameters: engine.build.parameters.strict(),
+			body: engine.build.block.strict(),
 		})
-		.$trivia.leading(ir.lineComment.docOuter('Entry point.'));
+		.$trivia.leading(engine.build.lineComment.docOuter('Entry point.'));
 
 	return fn.$render();
 }
 
 export function attachLeadingTrivia() {
-	return ir.statement.function({
+	return engine.build.statement.function({
 		visibilityModifier: 'crate',
 		name: 'main',
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
-	}).$trivia.leading(ir.lineComment.docOuter('Main entry point.'));
+		parameters: engine.build.parameters.strict(),
+		body: engine.build.block.strict(),
+	}).$trivia.leading(engine.build.lineComment.docOuter('Main entry point.'));
 }
 
 export function commentAnEmptyBody() {
-	return ir.statement
+	return engine.build.statement
 		.function({
 			name: 'todo',
-			parameters: ir.parameters.strict(),
-			body: ir.block.strict().$trivia.inner(ir.lineComment(' TODO')),
+			parameters: engine.build.parameters.strict(),
+			body: engine.build.block.strict().$trivia.inner(engine.build.lineComment(' TODO')),
 		})
 		.$render();
 }

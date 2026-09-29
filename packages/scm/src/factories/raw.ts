@@ -3,14 +3,8 @@
 import type * as T from '../types.js';
 import { TSKindId } from '../types.js';
 import type { NonEmptyArray } from '@sittir/types';
-import {
-	withMethods,
-	withAccessors,
-	methodsEngine,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
-	rejectBareText
-} from '../utils.js';
+import { withAccessors, coerceKindEnumStorage, coerceMixedEnumStorage, rejectBareText } from '@sittir/common/utils';
+import { withMethods, methodsEngine } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {

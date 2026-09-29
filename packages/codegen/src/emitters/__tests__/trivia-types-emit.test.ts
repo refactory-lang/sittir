@@ -2,29 +2,26 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { loadPackageNodeTypes } from '../../validate/node-types-loader.ts';
 import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 import { emptyForms, triviaKinds } from '../../compiler/model/trivia.ts';
-import { emitClientUtils } from '../client-utils.ts';
 import { emitTypes } from '../types.ts';
 
 async function rust() {
 	const generatedIdTables = await loadGeneratedIdTables('rust');
 	const pkg = grammarPackage('rust');
 	const { nodeMap } = await compileGrammar({ package: pkg, generatedIdTables });
-	return { nodeMap, generatedIdTables, nodeTypes: loadPackageNodeTypes(pkg) };
+	return { nodeMap, generatedIdTables };
 }
 
 describe('empty forms in the emitted types', () => {
-	it('gives a kind that realizes empty its Empty form and isEmpty overload, and a kind that cannot none', async () => {
-		const { nodeMap, generatedIdTables, nodeTypes } = await rust();
-		const types = emitTypes({ grammar: 'rust', nodeTypes, nodeMap, generatedIdTables });
-		const utils = emitClientUtils({ nodeMap, triviaKinds: [...triviaKinds(nodeMap)] });
+	it('gives a kind that realizes empty its Empty form and type-map entry, and a kind that cannot none', async () => {
+		const { nodeMap, generatedIdTables } = await rust();
+		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables });
 		expect(types).toContain('export interface EmptyBlock extends Block.Built {');
 		expect(types).toContain('InnerTrivia<this>;');
-		expect(utils).toContain('export function isEmpty(node: T.Block): node is T.EmptyBlock;');
+		expect(types).toContain('{ readonly node: Block; readonly empty: EmptyBlock }');
 		expect(types).not.toContain('EmptyFunctionItem');
-		expect(utils).not.toContain('T.FunctionItem)');
+		expect(types).not.toContain('readonly node: FunctionItem;');
 	});
 
 	it('emits an empty form only for a kind with an inner gap', async () => {
@@ -36,10 +33,10 @@ describe('empty forms in the emitted types', () => {
 	});
 
 	it('keys inner trivia by gap only when some kind has more than one gap', async () => {
-		const { nodeMap } = await rust();
+		const { nodeMap, generatedIdTables } = await rust();
 		expect([...emptyForms(nodeMap).values()].every((form) => form.gaps.length === 1)).toBe(true);
-		const utils = emitClientUtils({ nodeMap, triviaKinds: [...triviaKinds(nodeMap)] });
-		expect(utils).not.toContain('innerAt(');
-		expect(utils).toContain('export interface InnerTrivia<N> {');
+		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [...triviaKinds(nodeMap)] });
+		expect(types).not.toContain('GrammarInnerTriviaAt<');
+		expect(types).toContain("export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;");
 	});
 });

@@ -1,16 +1,17 @@
-import { createEngine, is } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 import { nodeText } from './helpers.ts';
 
+const engine = await createEngine(rust);
+
 export function readSource(source: string) {
-	const engine = createEngine();
 	return engine.parse(source);
 }
 
 export function readFirstFunction(source: string) {
-	const engine = createEngine();
 	const file = engine.parse(source);
 	const first = file.statements()[0];
-	if (first === undefined || !is.functionItem(first)) return undefined;
+	if (first === undefined || !engine.is.functionItem(first)) return undefined;
 
 	return {
 		name: nodeText(first.name()),
@@ -19,10 +20,9 @@ export function readFirstFunction(source: string) {
 }
 
 export function wrappedLazyAccess(source: string) {
-	const engine = createEngine();
 	const file = engine.parse(source);
 	const first = file.statements()[0];
-	if (first === undefined || !is.functionItem(first)) return undefined;
+	if (first === undefined || !engine.is.functionItem(first)) return undefined;
 
 	return {
 		name: nodeText(first.name()),

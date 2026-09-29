@@ -27,19 +27,12 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./utils": {
-			"types": "./dist/utils.d.ts",
-			"import": "./dist/utils.js"
-		},
-		"./tsx": {
-			"types": "./dist/tsx/index.d.ts",
-			"import": "./dist/tsx/index.js"
+		"./api": {
+			"types": "./dist/api.d.ts",
+			"import": "./dist/api.js"
 		}
 	},
 	"scripts": {
-		"generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar typescript --all --output src/",
-		"generate:tsx": "node ../codegen/dist/cli.js --grammar tsx --all --output src/tsx/ --tests-dir tests/tsx --tests-import-path '../../src/tsx/builder.js'",
-		"regenerate": "pnpm generate && pnpm build && pnpm test",
 		"build": "tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"dev": "tsc -p tsconfig.build.json --watch",

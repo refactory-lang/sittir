@@ -27,14 +27,12 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./utils": {
-			"types": "./dist/utils.d.ts",
-			"import": "./dist/utils.js"
+		"./api": {
+			"types": "./dist/api.d.ts",
+			"import": "./dist/api.js"
 		}
 	},
 	"scripts": {
-		"generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar rust --all --output src/",
-		"regenerate": "pnpm generate && pnpm build && pnpm test",
 		"build": "tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"dev": "tsc -p tsconfig.build.json --watch",

@@ -36,7 +36,7 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');
-			expect(content).toMatch(/isNodeData\(v\).*\$type.*_wrapWithChildren/s);
+			expect(content).toMatch(/isNode\(v\).*\$type.*_wrapWithChildren/s);
 		});
 	});
 

@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../../languages.ts';
 import { loadLanguageForGrammar } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
 
 async function sourceRenderer(grammar: string): Promise<(source: string, deep: boolean) => string> {
-	const { createEngine } = (await import(`@sittir/${grammar}`)) as {
-		createEngine: () => { parse(source: string, options?: { deep?: boolean }): { $render(): string } };
-	};
-	const engine = createEngine();
-	return (source, deep) => engine.parse(source, { deep }).$render();
+	const engine = await createEngine(await languageByName(grammar));
+	return (source, deep) => (engine.parse(source, { deep }) as unknown as { $render(): string }).$render();
 }
 
 describe('trivia probes', () => {

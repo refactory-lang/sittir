@@ -6,7 +6,7 @@
  * 20-file `fixtures/codemod-sample/` corpus and asserts the output is
  * byte-identical to the JS-baseline captured by `capture-baseline.ts`
  * (one-shot, run with `SITTIR_BACKEND=js`). The codemod goes
- * through `@sittir/rust`'s exported `applyEdits` boundary shim, so on
+ * through the rust language engine's `applyEdits`, so on
  * a machine where the napi `.node` artifact has been built the active
  * backend is `native`; without it, the test still validates the JS
  * fallback against its own baseline (it'll just not exercise the
@@ -31,7 +31,7 @@ const BASELINE_DIR = join(CORPUS_DIR, 'baseline');
 
 describe('US1 acceptance — native-backend codemod (T050)', () => {
 	it('getActiveBackend reports a known backend with consistent hashMatch', async () => {
-		const { getActiveBackend } = await import('@sittir/rust');
+		const { getActiveBackend } = await import('../../packages/rust/src/backend.ts');
 		const backend = getActiveBackend();
 		expect(['native', 'js']).toContain(backend.name);
 		if (backend.name === 'native') {

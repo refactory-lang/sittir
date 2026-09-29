@@ -7,18 +7,19 @@ import {
 	toEditAt,
 	markEdited as $edited,
 	mapTriviaEntries,
-	projectInterior
-} from '@sittir/common';
-import type { TreeHandle, TokenInterior } from '@sittir/common';
+	projectInterior,
+	coerceBooleanKeywordStorage
+} from '@sittir/common/utils';
+import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
-import { Delimiter } from './types.js';
+import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
-import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
+import { withMethods, methodsEngine } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the

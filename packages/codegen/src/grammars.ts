@@ -79,6 +79,10 @@ export function grammarDisplayName(name: GrammarName): string {
 		.join('');
 }
 
+export function grammarTypePrefix(name: string): string {
+	return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 export function upstreamPackage(name: GrammarName): string {
 	return `tree-sitter-${name}`;
 }

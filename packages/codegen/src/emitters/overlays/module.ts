@@ -231,7 +231,7 @@ export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?:
 		HEADER,
 		"import * as F from './raw.js';",
 		"import * as C from './coerce.js';",
-		"import { bundle } from '../utils.js';",
+		"import { bundle } from '@sittir/common/utils';",
 		"export * from './raw.js';",
 		"export * from './coerce.js';",
 		''
@@ -252,7 +252,9 @@ export function emitFactoriesIndex(
 	const lines: string[] = [
 		HEADER,
 		`import * as O from '${source}';`,
-		`import { hoist, hoistRoutes, ${form === undefined ? '' : 'methodsEngine, '}type Hoisted } from '../utils.js';`,
+		"import type { Hoisted } from '@sittir/types';",
+		"import { hoist, hoistRoutes } from '@sittir/common/utils';",
+		...(form === undefined ? [] : ["import { methodsEngine } from '../utils.js';"]),
 		...(form === undefined ? [] : [`import { ${form.coercer} } from './coerce.js';`]),
 		`export * from '${source}';`,
 		''

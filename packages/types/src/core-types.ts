@@ -66,7 +66,7 @@ export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
  * class of field-name-vs-discriminant collisions (e.g. Python's
  * `type_alias_statement` has a field literally named `type`). The `$source`
  * provenance tag lets `.from()` dispatch with a clean equality check
- * instead of structural `isNodeData` probing.
+ * instead of structural `isNode` probing.
  */
 export interface AnyNodeData {
 	/**
@@ -138,11 +138,19 @@ export interface AnyNodeData {
 	$trivia?: TriviaSetter;
 }
 
-/** `$trivia`: a callable (rest args are leading, or one `{ leading, trailing }` object) that also has `leading(...items)` and `trailing(...items)`, each setting one side from a spread. */
-export interface TriviaSetter {
-	(...args: any[]): AnyNodeData;
-	leading(...items: any[]): AnyNodeData;
-	trailing(...items: any[]): AnyNodeData;
+export type GrammarTriviaEntry<Trivia> = Trivia | string;
+
+export interface TriviaSetter<Self = AnyNodeData, Trivia = any> {
+	(
+		...args: (
+			| GrammarTriviaEntry<Trivia>
+			| { leading?: GrammarTriviaEntry<Trivia>[]; trailing?: GrammarTriviaEntry<Trivia>[] }
+		)[]
+	): Self;
+	leading(): readonly Trivia[];
+	leading(...items: GrammarTriviaEntry<Trivia>[]): Self;
+	trailing(): readonly Trivia[];
+	trailing(...items: GrammarTriviaEntry<Trivia>[]): Self;
 }
 
 // ---------------------------------------------------------------------------
@@ -386,15 +394,14 @@ export interface NativeParseResult {
 // Engine API surfaces
 // ---------------------------------------------------------------------------
 
-/** Options for creating an engine instance. */
-export interface EngineOptions {
-	readonly format?: FormatRecord;
+export interface RenderCallOptions {
+	readonly ignoreFormat?: boolean;
 }
 
 /** A handle to a parsed tree returned by the engine. */
 export interface EngineTreeHandle {
 	readonly format?: FormatRecord;
-	readonly render: (options?: { ignoreFormat?: boolean }) => string;
+	readonly render: (options?: RenderCallOptions) => string;
 }
 
 /** Return value of engine parseAndRead — carries both NodeData and inferred format. */

@@ -4,8 +4,8 @@
 // Nothing was rebuilt under either, so both fold back to the root's
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/engine.js';
-import { is } from '../src/is.js';
+import { createEngine } from '@sittir/common';
+import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
 
@@ -29,20 +29,20 @@ function countStubs(value: unknown): number {
 }
 
 describe('read depth', () => {
-	it('leaves children unexpanded by default', () => {
-		const engine = createEngine();
-		const { root } = engine.diagnostics.parseAndRead(SOURCE);
+	it('leaves children unexpanded by default', async () => {
+		const native = (await rust.load()).createNative();
+		const { root } = native.parseAndRead(SOURCE);
 		expect(countStubs(root)).toBeGreaterThan(0);
 	});
 
-	it('expands every child under { deep: true }', () => {
-		const engine = createEngine();
-		const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
+	it('expands every child under { deep: true }', async () => {
+		const native = (await rust.load()).createNative();
+		const { root } = native.parseAndRead(SOURCE, { deep: true });
 		expect(countStubs(root)).toBe(0);
 	});
 
-	it('gives a deep-parsed root the same accessor surface as a shallow one', () => {
-		const engine = createEngine();
+	it('gives a deep-parsed root the same accessor surface as a shallow one', async () => {
+		const engine = await createEngine(rust);
 		const shallow = engine.parse(SOURCE).statements();
 		const deep = engine.parse(SOURCE, { deep: true }).statements();
 
@@ -52,20 +52,20 @@ describe('read depth', () => {
 
 		// Accessors return wrapped nodes at every level, deep data included.
 		const first = deep[0];
-		if (first === undefined || typeof first === 'number' || !is.functionItem(first))
+		if (first === undefined || typeof first === 'number' || !engine.is.functionItem(first))
 			throw new Error('expected a function item');
 		expect(typeof (first as unknown as { $render?: unknown }).$render).toBe('function');
 		expect(first.body().statements().length).toBe(1);
 	});
 
-	it('renders a deep-parsed root byte for byte, like a shallow one', () => {
-		const engine = createEngine();
+	it('renders a deep-parsed root byte for byte, like a shallow one', async () => {
+		const engine = await createEngine(rust);
 		expect(engine.parse(SOURCE).$render()).toBe(SOURCE);
 		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe(SOURCE);
 	});
 
-	it('re-parses both renders to the same statement kinds', () => {
-		const engine = createEngine();
+	it('re-parses both renders to the same statement kinds', async () => {
+		const engine = await createEngine(rust);
 		const kinds = (text: string) => engine.parse(text).statements().map(kindOf);
 		expect(kinds(engine.parse(SOURCE, { deep: true }).$render())).toEqual(kinds(SOURCE));
 		expect(kinds(engine.parse(SOURCE).$render())).toEqual(kinds(SOURCE));

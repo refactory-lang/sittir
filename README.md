@@ -253,12 +253,12 @@ falling back.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, the native boundary
-  invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
+  invariant (`assertRenderableNodeData`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
   one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
-  constructors, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  constructors, `wrapNode`, `readTreeNode`, the `is.*` guards, kind
   constants, and the native template-bundle hash.
 
 #### NodeData shape
@@ -363,8 +363,8 @@ TreeNode + replacement NodeData ──▶ replace(target, replacement) ──▶
 
 Edits are byte-range patches keyed off the original tree's spans.
 Multiple edits on disjoint ranges are sorted and applied right-to-left so
-positions stay valid; overlapping edits throw. `replace`, `replaceField`,
-and `bindRange` live in `@sittir/common`; `engine.applyEdits` is the
+positions stay valid; overlapping edits throw. `replace` lives in
+`@sittir/common`; `engine.applyEdits` is the
 boundary used by codemods.
 
 ### Generated package layout
@@ -380,7 +380,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
 | `wrap.ts`                                     | `wrapNode(node, tree)` / `readTreeNode(node)` — typed accessors with lazy drill-in             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
-| `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
+| `is.ts`                                       | Kind guards (`is.*`)                                                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
 | `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |

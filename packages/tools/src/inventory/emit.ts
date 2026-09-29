@@ -1,4 +1,6 @@
-import { ir, TSKindId, Delimiter, createEngine } from '@sittir/typescript';
+import typescript from '@sittir/typescript';
+import { createEngine } from '@sittir/common';
+import { Delimiter } from '@sittir/common/utils';
 import type {
 	PrimaryType,
 	TypeIdentifier,
@@ -11,6 +13,9 @@ import type {
 	PropertySignature
 } from '@sittir/typescript';
 import { type Derivation, type MemberFacts, camel, childrenOf, commonPrefix, levelMembers, tsname } from './derive.ts';
+
+const engine = await createEngine(typescript);
+const { build: ir, kinds: TSKindId } = engine;
 
 export type TypeExpr =
 	| { readonly k: 'ident'; readonly name: string }
@@ -630,14 +635,13 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 	return withTrivia(built, leading, []);
 }
 
-export function renderVocabularyFile(file: VocabularyFile): string {
+export async function renderVocabularyFile(file: VocabularyFile): Promise<string> {
 	const base = file.name === 'context';
 	const statements: TsStatement[] = [
 		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
 		...file.statements.map((s) => statementIr(s, base))
 	];
 	const program = ir.program.strict({ statements });
-	const engine = createEngine();
 	return engine.render(program).toString();
 }
 

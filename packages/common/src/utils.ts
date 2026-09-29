@@ -1,20 +1,24 @@
-import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry } from '@sittir/types';
+import type { AnyNodeData, ByteRange, Edit, GrammarFacts, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
+import { Source } from './source.ts';
+
+export { Delimiter } from './delimiter.ts';
+export { Source };
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * runtime shape backing the `$with` update namespace. Not yet wired into
  * generated output; scaffolding only.
  */
-export interface WithMethodsRuntime<T extends object = AnyNodeData> {
+interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
 	$trivia: TriviaSetterRuntime<T & WithMethodsRuntime<T>>;
 }
 
-export interface TriviaSetterRuntime<Self> {
+interface TriviaSetterRuntime<Self> {
 	(...args: unknown[]): Self;
 	leading(): readonly TriviaEntry[];
 	leading(...items: unknown[]): Self;
@@ -26,27 +30,7 @@ export interface TriviaSetterRuntime<Self> {
 	innerAt(gap: string, ...items: unknown[]): Self;
 }
 
-/**
- * The grammar facts `$trivia` checks against: each kind's name, the gaps an
- * empty node of each kind holds inner trivia in, and `ir.comment`, which
- * builds a loose string into its default arm (taking either the full
- * spelling or the interior).
- */
-export interface TriviaFacts {
-	kindName(type: AnyNodeData['$type']): string | undefined;
-	readonly kinds: ReadonlySet<string>;
-	readonly innerGaps: { readonly [kind: string]: readonly string[] };
-	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
-	comment?: ((text: string) => AnyNodeData) | undefined;
-}
-
-export interface WithMethodsEngine {
-	render(node: AnyNodeData): string;
-	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
-	readonly trivia: TriviaFacts;
-}
-
-export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+export function withMethods<T extends AnyNodeData>(node: T, engine: GrammarFacts): T & WithMethodsRuntime<T> {
 	carryTriviaThroughWith(node, engine.trivia);
 	Object.assign(node, {
 		$render(this: AnyNodeData): string {
@@ -140,7 +124,7 @@ function triviaSetterOf<Self extends AnyNodeData>(node: Self, facts: TriviaFacts
 /** One trivia item as its entry: a trivia node or whitespace kind id as it is, a string by `textEntryOf`. */
 function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
 	if (typeof item === 'string') return textEntryOf(item, facts);
-	if (typeof item !== 'number' && !isNodeData(item)) {
+	if (typeof item !== 'number' && !isNode(item)) {
 		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
 	const type = typeof item === 'number' ? item : item.$type;
@@ -175,7 +159,7 @@ export function withAccessors<T extends object, A extends Record<string, unknown
 	return node as T & A;
 }
 
-export function isNodeData(v: unknown): v is AnyNodeData {
+export function isNode(v: unknown): v is AnyNodeData {
 	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
 	if (typeof o.$type !== 'number') return false;
@@ -184,16 +168,18 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 		hasStoredFields ||
 		typeof o.$text === 'string' ||
 		o.$other !== undefined ||
-		o.$source === 0 ||
-		o.$source === 1 ||
-		o.$source === 2
+		o.$source === Source.Ts ||
+		o.$source === Source.Sg ||
+		o.$source === Source.Factory
 	);
 }
 
-export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
-	if (v === null || typeof v !== 'object') return false;
-	const o = v as Record<string, unknown>;
-	return typeof o.type === 'string' && typeof o.field === 'function' && typeof o.text === 'function';
+export function isParsedNode(v: unknown): v is AnyNodeData {
+	return isNode(v) && (v.$source === Source.Ts || v.$source === Source.Sg);
+}
+
+export function isFactoryNode(v: unknown): v is AnyNodeData {
+	return isNode(v) && !isParsedNode(v);
 }
 
 export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {
@@ -226,7 +212,7 @@ export function coerceBitflagStorage(value: unknown, texts: readonly string[]): 
 
 function extractNodeText(value: unknown): string | undefined {
 	if (typeof value === 'string') return value;
-	if (isNodeData(value)) {
+	if (isNode(value)) {
 		return typeof value.$text === 'string' ? value.$text : undefined;
 	}
 	if (isRecord(value) && typeof value.$text === 'string') return value.$text;
@@ -238,7 +224,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isTriviaObject(value: unknown): value is TriviaSides<unknown> {
-	return isRecord(value) && !isNodeData(value) && ('leading' in value || 'trailing' in value || 'inner' in value);
+	return isRecord(value) && !isNode(value) && ('leading' in value || 'trailing' in value || 'inner' in value);
 }
 
 function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
@@ -264,7 +250,7 @@ function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts): void {
 		setters[key] = (...args: unknown[]): unknown => {
 			const rebuilt = rebuild(...args);
 			const trivia = node.$_trivia;
-			if (trivia === undefined || !isNodeData(rebuilt)) return rebuilt;
+			if (trivia === undefined || !isNode(rebuilt)) return rebuilt;
 			if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(rebuilt)) {
 				const kind = facts.kindName(node.$type) ?? String(node.$type);
 				throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
@@ -275,4 +261,20 @@ function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts): void {
 	}
 }
 
-export { numberText } from './number.ts';
+export { numberText, type NumberBase } from './number.ts';
+export { readNode, type TreeHandle } from './readNode.ts';
+export { toEditAt } from './edit.ts';
+export { metricsEnabled, recordFfi } from './metrics.ts';
+export { toTransportData, markEdited } from './transport-data.ts';
+export {
+	projectInterior,
+	lexedConfig,
+	spelledForm,
+	spelledInterior,
+	refuseSiblingLead,
+	type TokenInterior,
+	type InteriorSlot,
+	type ProjectedInterior
+} from './interior.ts';
+export { mapTriviaEntries };
+export * from './runtime.ts';

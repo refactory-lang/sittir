@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TSKindId } from '../src/types.ts';
+import { createEngine } from '@sittir/common';
+
+const descriptor = async () => (await import('../src/index.ts')).default;
 
 describe('engine', () => {
 	afterEach(() => {
@@ -14,11 +17,9 @@ describe('engine', () => {
 			getActiveBackend: () => ({ name: 'js-fallback' })
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-
 		// createEngine is native-only: it throws instead of silently
 		// falling back to a JS renderer-only engine.
-		expect(() => createEngine()).toThrow('native engine unavailable');
+		await expect(createEngine(await descriptor())).rejects.toThrow('native engine unavailable');
 	});
 
 	it('native engine exposes parse plus the diagnostics surface', async () => {
@@ -67,20 +68,19 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine(await descriptor());
 
-		// Native engine exposes the product parse surface plus render/edit/diagnostics
+		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.applyEdits).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		expect(engine.diagnostics).toBeDefined();
-		expect(typeof engine.diagnostics.parseAndRead).toBe('function');
-		expect(typeof engine.diagnostics.readNode).toBe('function');
+		const native = (await (await descriptor()).load()).createNative();
+		expect(typeof native.parseAndRead).toBe('function');
+		expect(typeof native.holdsTree).toBe('function');
 	});
 
-	it('native engine rejects ignoreFormat option (Task 4 requirement)', async () => {
+	it('native engine rejects the ignoreFormat option', async () => {
 		// Mock a native backend
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
@@ -107,8 +107,7 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine(await descriptor());
 
 		const node = {
 			$type: 1 as const, // TSKindId.Identifier = 1 (see packages/python/src/types.ts)

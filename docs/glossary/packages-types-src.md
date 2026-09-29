@@ -35,3 +35,135 @@ Whether every character of `S` is one of `C`, walking `S` one leading character 
 ### `packages/types/src/options.ts::IndentOption`
 
 The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit as the caller spelled it and checked whole, for a grammar that admits an indent character. `unknown` (no key) when `IndentChar` is `never`. `DerivedOptions` includes it at `I = string`, so a standalone `Options` value types `indent` as `string`; `createEngine`, `createRenderEngine` and `render` include it at their inferred `I`.
+
+### `packages/types/src/engine-api.ts::TriviaFacts`
+
+The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
+
+### `packages/types/src/core-types.ts::RenderCallOptions`
+
+The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
+
+### `packages/types/src/engine-api.ts::ParseOptions`
+
+How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
+
+### `packages/types/src/engine-api.ts::GrammarFacts`
+
+The facts a grammar's runtime reads: `render` and `toEdit` from its native engine, and its `TriviaFacts`. Generated `utils.ts` declares them once as `methodsEngine`.
+
+### `packages/types/src/engine-api.ts::GrammarTypeMap`
+
+The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`), `empty` (a union of `{ node, empty }` pairs, one per kind that realizes empty), and `trivia` (the union of its trivia kind types). A trivia kind may be stored as a kind id, so the members are constrained only to `unknown`.
+
+### `packages/types/src/core-types.ts::GrammarTriviaEntry`
+
+A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
+
+### `packages/types/src/core-types.ts::TriviaSetter`
+
+`$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyNodeData`, `Trivia = any`) it is the loose `$trivia` every `AnyNodeData` may carry, so a grammar's narrower setter is assignable to it.
+
+### `packages/types/src/engine-api.ts::NodeMethods`
+
+The methods the runtime attaches to every node (`withMethods`): `$render`, `$toEdit`, `$replace` and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because `$trivia` rebuilds the node and hands back the same kind. NodeNs' default `Built` is the node with these methods.
+
+### `packages/types/src/engine-api.ts::GrammarInnerTrivia`
+
+The inner trivia of a node that realizes empty: `inner()` reads its inner entries and `inner(...items)` rebuilds the node with them.
+
+### `packages/types/src/engine-api.ts::GrammarInnerTriviaAt`
+
+`GrammarInnerTrivia` for a grammar where some kind has more than one gap: `innerAt(gap, ...)` reads or rebuilds one named gap.
+
+### `packages/types/src/engine-api.ts::LanguageAPI`
+
+The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
+
+### `packages/types/src/engine-api.ts::Language`
+
+A language descriptor: the light default export of a grammar package. `load()` imports the implementation and resolves its hooks. `__api` is a type-only brand carrying the `LanguageAPI` and is never set at run time.
+
+### `packages/types/src/engine-api.ts::NativeEngineOptions`
+
+The options a language's native engine is created with: the format record and the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+
+### `packages/types/src/engine-api.ts::LanguageHooks`
+
+What a language's `load()` resolves to: the builder table, guards, kind ids and trivia facts as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+
+### `packages/types/src/engine-api.ts::NativeLanguageEngine`
+
+One native engine instance: renders a node lazily, resolving the call's render options over the ones it was created with; applies edits to source text; parses and reads a source; reports whether a tree handle belongs to it; and releases its native state on `dispose`.
+
+### `packages/types/src/engine-api.ts::Rendered`
+
+A rendered node's text: rendered on first use and cached. Disposing it drops the cached text, and any use after that throws.
+
+### `packages/types/src/engine-api.ts::Pending`
+
+One staged change to one file. Awaiting it commits the change once; `await using` commits it at scope exit; one neither awaited nor disposed writes nothing.
+
+### `packages/types/src/engine-api.ts::FileChange`
+
+A file's text before and after a change, by path. `before` is `undefined` for a file the change creates.
+
+### `packages/types/src/engine-api.ts::ApiSurface`
+
+Which builder surface an engine's `build` exposes: the coercing default, the strict flavour, or the portable surface, which is reserved and not implemented.
+
+### `packages/types/src/engine-api.ts::StrictMembers`
+
+An object's members under the strict surface, with the `strict` and `coerce` flavours hidden.
+
+### `packages/types/src/engine-api.ts::StrictSurface`
+
+The strict builder surface, derived from the default one. A builder carrying a `strict` flavour becomes that flavour plus its members' strict surfaces (its variants). A callable without a `strict` flavour has no loose form and stays whole, which keeps its generic and overloaded signatures. A namespace object is only its members' strict surfaces, so none of its raw members survive beside the strict ones.
+
+### `packages/types/src/engine-api.ts::BuildSurface`
+
+The type of an engine's `build` for a surface: the builder table, its strict surface, or `never` for the unimplemented portable surface.
+
+### `packages/types/src/engine-api.ts::Engine`
+
+A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+
+### `packages/types/src/engine-api.ts::RenderInput`
+
+What `render` accepts: any of the language's nodes, or the kind id of a kind whose text the kind determines, which renders as that text. A kind id with no fixed text (an identifier, a depth sentinel) is a type error, and throws at run time naming the kind.
+
+### `packages/types/src/engine-api.ts::RenderOptionsCheck`
+
+The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `indent` unit must be made only of the language's indent characters, and every key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render). A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the second half restores it: a misspelled key, or `indent` for a language with no indent unit, is a type error where it is written.
+
+### `packages/types/src/engine-api.ts::EngineOptions`
+
+An engine's options, grouped by concern: the builder surface, the render options, the format record, and the interceptors.
+
+### `packages/types/src/engine-api.ts::Interceptor`
+
+Middleware around an engine's operations. Each hook receives the call and a `next` that runs the rest of the chain; it may observe, change the result, or refuse by throwing. A `file` hook that doesn't call `next` blocks that write.
+
+### `packages/types/src/engine-api.ts::Project`
+
+A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `commit`. Disposal discards what was not committed and disposes the engines.
+
+### `packages/types/src/engine-api.ts::KindTypes`
+
+A language's kind-to-node-type map, derived from two emitted type maps: `Keys` names each kind id's ir key, and `NsMap` holds each kind id's namespace, whose `Node` is the kind's node type. The key is the stamped ir key, the same fact the builder table is keyed by.
+
+### `packages/types/src/engine-api.ts::NodeOfNamespaces`
+
+Every node a language builds or reads, derived from its namespace map: each kind's `Node` and `Built`, kept only where they are objects. A keyword's namespace gives its kind id (a number) for both, so keywords drop out: a kind id is not a node. A grammar's `<Prefix>Node` (`RustNode`) is this union over its `NamespaceMap`, and it is the language API's `node`, so everything `build` returns and everything `parse` reads is accepted by `render`, with no second list of kinds.
+
+### `packages/types/src/engine-api.ts::Types`
+
+The kind-to-node-type map of an engine, for generic code over any engine.
+
+### `packages/types/src/engine-api.ts::ApiOf`
+
+The `LanguageAPI` a descriptor carries.
+
+### `packages/types/src/index.ts::ArgsOf`
+
+The union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on. A forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime. The overlay wire types and any future consumer use this, never bare `Parameters`, for factory references.

@@ -1,144 +1,22 @@
-/**
- * is / assert / isTree / isNode guard composition on typescript grammar.
- * Mirrors the rust counterpart.
- *
- * Phase D (2026-04-30): guards compare numeric TSKindId only.
- * String $type values are no longer accepted by per-kind or is.kind() guards.
- */
-
 import { describe, it, expect } from 'vitest';
-import { is, isNode, isTree, assert } from '../src/index.ts';
-import { TSKindId } from '../src/types.ts';
+import { createEngine } from '@sittir/common';
+import typescript from '../src/index.ts';
 
-describe('typescript is / isTree / isNode composition', () => {
-	it('is.classDeclaration narrows on matching numeric kind', () => {
-		const v = { $type: TSKindId.ClassDeclaration };
-		expect(is.classDeclaration(v)).toBe(true);
-		expect(is.classDeclaration({ $type: TSKindId.FunctionDeclaration })).toBe(false);
+const ts = await createEngine(typescript);
+const { is, kinds } = ts;
+
+describe('typescript kind guards', () => {
+	it('a kind guard matches its own numeric kind only', () => {
+		expect(is.classDeclaration({ $type: kinds.ClassDeclaration })).toBe(true);
+		expect(is.classDeclaration({ $type: kinds.FunctionDeclaration })).toBe(false);
 	});
 
-	it('is.kind generic form accepts numeric kinds', () => {
-		expect(is.kind({ $type: TSKindId.FunctionDeclaration }, TSKindId.FunctionDeclaration)).toBe(true);
-		expect(is.kind({ $type: TSKindId.FunctionDeclaration }, TSKindId.ClassDeclaration)).toBe(false);
+	it('is.kind compares against the kind it is given', () => {
+		expect(is.kind({ $type: kinds.ClassDeclaration }, kinds.ClassDeclaration)).toBe(true);
+		expect(is.kind({ $type: kinds.FunctionDeclaration }, kinds.ClassDeclaration)).toBe(false);
 	});
 
-	it('isNode returns true for NodeData shapes', () => {
-		expect(isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })).toBe(true);
-		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
-		expect(isNode({ $type: TSKindId.ClassDeclaration, _name: {} } as { readonly $type: number })).toBe(true);
-		expect(isNode({ $type: TSKindId.FunctionDeclaration })).toBe(false);
-	});
-
-	it('isTree returns true only when a range() method is present', () => {
-		const withRange = {
-			$type: TSKindId.ClassDeclaration,
-			range: () => ({ start: { index: 0 }, end: { index: 1 } })
-		};
-		// ADR-0018 Phase 2: $fields removed from interface; use simple object without range().
-		const withoutRange = { $type: TSKindId.ClassDeclaration };
-		expect(isTree(withRange)).toBe(true);
-		expect(isTree(withoutRange)).toBe(false);
-	});
-
-	it('assert.kind throws on mismatch', () => {
-		expect(() => assert.functionDeclaration({ $type: TSKindId.ClassDeclaration })).toThrow(TypeError);
-	});
-});
-
-/**
- * Phase D: all producers emit numeric $type. String-based guards are removed.
- * Guards compare numeric TSKindId only. String $type returns false.
- */
-describe('typescript Phase D: numeric-only $type guards', () => {
-	it('per-kind guard accepts numeric $type from factory output', () => {
-		const node = {
-			$type: TSKindId.ClassDeclaration,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(is.classDeclaration(node)).toBe(true);
-	});
-
-	it('per-kind guard rejects string $type (Phase D — string arm removed)', () => {
-		const node = {
-			$type: 'class_declaration',
-			$source: 0,
-			$named: true,
-			$fields: {}
-		} as unknown as { readonly $type: string | number };
-		expect(is.classDeclaration(node as { readonly $type: number })).toBe(false);
-	});
-
-	it('per-kind guard rejects mismatched numeric $type', () => {
-		const node = {
-			$type: TSKindId.FunctionDeclaration,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(is.classDeclaration(node)).toBe(false);
-	});
-
-	it('is.kind() accepts numeric $type from factory output', () => {
-		const node = {
-			$type: TSKindId.ClassDeclaration,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(is.kind(node, TSKindId.ClassDeclaration)).toBe(true);
-	});
-
-	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
-		const node = {
-			$type: 'class_declaration',
-			$source: 0,
-			$named: true,
-			$fields: {}
-		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node as { readonly $type: number }, TSKindId.ClassDeclaration)).toBe(false);
-	});
-
-	it('is.kind() rejects mismatched numeric $type', () => {
-		const node = {
-			$type: TSKindId.FunctionDeclaration,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(is.kind(node, TSKindId.ClassDeclaration)).toBe(false);
-	});
-
-	it('supertype guard accepts numeric $type member from factory', () => {
-		const node = {
-			$type: TSKindId.BinaryExpression,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(is.expression(node)).toBe(true);
-	});
-
-	it('supertype guard rejects string $type (Phase D — numeric-only set)', () => {
-		const node = {
-			$type: 'binary_expression',
-			$source: 0,
-			$named: true,
-			$fields: {}
-		} as const;
-		// Supertype guards accept string | number parameter, but the runtime
-		// set is numeric-only in Phase D — string values return false.
-		expect(is.expression(node)).toBe(false);
-	});
-
-	it('assert.classDeclaration passes on numeric $type from factory', () => {
-		const node = {
-			$type: TSKindId.ClassDeclaration,
-			$source: 2,
-			$named: true,
-			$fields: {}
-		} as const;
-		expect(() => assert.classDeclaration(node)).not.toThrow();
+	it('a supertype guard matches its members', () => {
+		expect(is.declaration({ $type: kinds.ClassDeclaration })).toBe(true);
 	});
 });

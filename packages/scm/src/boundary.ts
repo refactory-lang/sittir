@@ -13,7 +13,7 @@
 import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
 import { createRenderEngine } from './render-engine.js';
 import type { SittirEngine } from '@sittir/common/engine';
-import { metricsEnabled, recordFfi, toEditAt } from '@sittir/common';
+import { metricsEnabled, recordFfi, toEditAt } from '@sittir/common/utils';
 import { KIND_NAMES } from './types.js';
 
 let shared: SittirEngine | null = null;

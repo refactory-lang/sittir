@@ -788,6 +788,10 @@ diagnostics.
 
 Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir/<pkg>` and `@sittir/<pkg>/<subpath>`) to the matching `src/` file, derived by rewriting the `import` target's `./dist/…js` to `src/…ts`. Entries whose source file does not exist are dropped. Sorted longest-first because a string alias also matches `find + '/'` prefixes.
 
+### `packages/codegen/src/grammars.ts::grammarTypePrefix`
+
+The prefix generated TypeScript type names take from a grammar's name: its first letter capitalized (`rust` → `Rust`, `typescript` → `Typescript`), as in `RustNode`, `RustAPI` and the upstream tree-sitter config's `camelcase`. Unlike `grammarDisplayName` it reads no manifest, so every type name stays stable whatever display name a package declares.
+
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
 The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.

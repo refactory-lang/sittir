@@ -3,17 +3,16 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, ByteRange } from '@sittir/types';
-import type { WithMethodsEngine } from '@sittir/common/utils';
+import type { AnyNodeData, ByteRange, GrammarFacts } from '@sittir/types';
 import { TSKindId } from '../src/types.ts';
 import { withMethods, methodsEngine } from '../src/utils.ts';
 
 describe('utils facade surface', () => {
-	it('exports methodsEngine satisfying WithMethodsEngine', () => {
+	it('exports methodsEngine satisfying GrammarFacts', () => {
 		expect(typeof methodsEngine.render).toBe('function');
 		expect(typeof methodsEngine.toEdit).toBe('function');
 		// shape satisfies the interface
-		const _typed: WithMethodsEngine = methodsEngine;
+		const _typed: GrammarFacts = methodsEngine;
 		expect(_typed).toBeDefined();
 	});
 
@@ -37,14 +36,14 @@ describe('utils facade surface', () => {
 				n: AnyNodeData,
 				startOrRange: number | ByteRange,
 				endPos?: number
-			): ReturnType<WithMethodsEngine['toEdit']> {
+			): ReturnType<GrammarFacts['toEdit']> {
 				const text = n.$text ?? '';
 				const start = typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index;
 				const end = typeof startOrRange === 'number' ? (endPos ?? start) : startOrRange.end.index;
 				return { startPos: start, endPos: end, insertedText: text };
 			},
 			trivia: methodsEngine.trivia
-		} satisfies WithMethodsEngine;
+		} satisfies GrammarFacts;
 		const node = withMethods(
 			{ $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' },
 			mockEngine

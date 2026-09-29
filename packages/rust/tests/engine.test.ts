@@ -1,5 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TSKindId } from '../src/types.ts';
+import { createEngine } from '@sittir/common';
+
+const descriptor = async () => (await import('../src/index.ts')).default;
 
 describe('engine', () => {
 	afterEach(() => {
@@ -14,11 +17,9 @@ describe('engine', () => {
 			getActiveBackend: () => ({ name: 'js-fallback' })
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-
 		// createEngine is native-only: it throws instead of silently
 		// falling back to a JS renderer-only engine.
-		expect(() => createEngine()).toThrow('native engine unavailable');
+		await expect(createEngine(await descriptor())).rejects.toThrow('native engine unavailable');
 	});
 
 	it('native engine exposes parse plus the diagnostics surface', async () => {
@@ -43,7 +44,7 @@ describe('engine', () => {
 							return source;
 						}
 						parseAndRead(_source: string): string {
-							// Phase D: $type must be numeric (TSKindId).
+							// $type is numeric (TSKindId).
 							return JSON.stringify({
 								nodeData: {
 									$type: TSKindId.Identifier,
@@ -55,7 +56,7 @@ describe('engine', () => {
 							});
 						}
 						readNode(_nodeId: number): string {
-							// Phase D: $type must be numeric (TSKindId).
+							// $type is numeric (TSKindId).
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
 								$source: 0,
@@ -69,17 +70,16 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine(await descriptor());
 
-		// Native engine exposes the product parse surface plus render/edit/diagnostics
+		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.applyEdits).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		expect(engine.diagnostics).toBeDefined();
-		expect(typeof engine.diagnostics.parseAndRead).toBe('function');
-		expect(typeof engine.diagnostics.readNode).toBe('function');
+		const native = (await (await descriptor()).load()).createNative();
+		expect(typeof native.parseAndRead).toBe('function');
+		expect(typeof native.holdsTree).toBe('function');
 	});
 
 	it('passes through native read payloads already in JS readNode shape', async () => {
@@ -157,9 +157,8 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
-		const parsed = engine.diagnostics.parseAndRead('pub fn main');
+		const native = (await (await descriptor()).load()).createNative();
+		const parsed = native.parseAndRead('pub fn main') as { root: unknown; tree: { read?(handle: number, childIndex: number): unknown } };
 		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
@@ -182,10 +181,9 @@ describe('engine', () => {
 			$nodeHandle: 7,
 			$childIndex: 1
 		});
-		expect(engine.diagnostics.readNode(0, 1)).toEqual(child);
 	});
 
-	it('native engine rejects ignoreFormat option (Task 4 requirement)', async () => {
+	it('native engine rejects the ignoreFormat option', async () => {
 		// Mock a native backend
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
@@ -212,16 +210,9 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine(await descriptor());
 
-		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
-		const node = {
-			$type: TSKindId.Identifier,
-			$source: 2 as const,
-			$named: true,
-			$text: 'x'
-		};
+		const node = engine.build.identifier('x');
 
 		// ignoreFormat: false or undefined should work
 		expect(() => engine.render(node)).not.toThrow();
@@ -264,14 +255,8 @@ describe('engine', () => {
 			})
 		}));
 
-		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
-		const rendered = engine.render({
-			$type: TSKindId.Identifier,
-			$source: 2 as const,
-			$named: true,
-			$text: 'x'
-		});
+		const engine = await createEngine(await descriptor());
+		const rendered = engine.render(engine.build.identifier('x'));
 
 		rendered.save('/tmp/sittir-rust-render.txt');
 		expect(renderToFile).toHaveBeenCalledOnce();

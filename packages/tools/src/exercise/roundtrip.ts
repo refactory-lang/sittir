@@ -184,7 +184,7 @@ function normalize(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
 }
 
-function isAnyNodeData(value: unknown): value is AnyNodeData {
+function hasKindTag(value: unknown): value is AnyNodeData {
 	return value !== null && typeof value === 'object' && '$type' in value;
 }
 
@@ -365,7 +365,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 				kindNameFromId
 			);
 			const renderable = toRenderableNode(factoryNode);
-			if (!isAnyNodeData(renderable)) {
+			if (!hasKindTag(renderable)) {
 				throw new Error('factory result did not materialize to NodeData');
 			}
 			rendered = render(renderable);

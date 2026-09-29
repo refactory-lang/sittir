@@ -1,54 +1,52 @@
 import { describe, expect, it } from 'vitest';
+import { compileGrammar } from '../compiler/compile.ts';
+import { loadPackageIdTables } from '../compiler/generated-metadata.ts';
+import { AssembledSupertype } from '../compiler/model/node-map.ts';
+import type { AssembledNodeMap } from '../compiler/assemble.ts';
+import { grammarPackage } from '../grammars.ts';
 
 /**
- * Phantom-kind ratchet — every kind name the generated model exposes should
- * have a parser-issued kindId row. Names without one ("phantom kinds") break
- * name-keyed id resolution and violate the every-kind-has-a-kindId
- * invariant.
+ * Phantom-kind ratchet — every non-supertype kind in the compiled model
+ * should carry a parser-issued kindId stamp. Kinds without one ("phantom
+ * kinds") break id-keyed resolution and violate the every-kind-has-a-kindId
+ * invariant. Supertypes are excluded: the inlined ones and the sittir-side
+ * trivia supertypes have no parser symbol.
  *
- * Each ceiling is a shrink-only upper bound, not an audited target: every
- * remaining phantom classifies as the grammar's `inline:`-array class,
- * genuinely unreachable dead surface, or a reachable-but-unclassified
- * genuine gap, per the kindid-inline-excluded-* / kindid-vaporized-* /
- * kindid-unclassified-* diagnostics in grammar-diagnostics.json — the last
- * bucket is NOT an accepted exclusion, just not yet root-caused. Migrating a
- * synthesis source pre-generate, fixing anonymous-node naming, or pruning
- * dead kinds lowers a grammar's count — ratchet the ceiling down with it. A
- * count above the ceiling means a change minted NEW parser-invisible kinds;
- * fix the minting site rather than raising the ceiling.
- *
- * Counting imports the generated consts modules directly — no text parsing
- * (regex scans of consts.ts overcount; id rows span lines and OPERATORS
- * quoting differs).
+ * Each ceiling is a shrink-only upper bound. A count above the ceiling means
+ * a change minted NEW parser-invisible kinds; fix the minting site rather
+ * than raising the ceiling.
  */
 const CEILINGS: Record<string, number> = {
-	rust: 1,
-	typescript: 4,
-	python: 2
+	rust: 0,
+	typescript: 0,
+	python: 0,
+	scm: 0,
+	regex: 0
 };
 
-interface ConstsModule {
-	readonly ALL_KINDS: readonly string[];
-	readonly KEYWORDS: readonly string[];
-	readonly OPERATORS: readonly string[];
-	readonly TREE_SITTER_KIND_ID_JSON: readonly { readonly name: string }[];
-}
+const FULL_PIPELINE_TIMEOUT = 180_000;
 
-function phantomKinds(consts: ConstsModule): string[] {
-	const withIds = new Set(consts.TREE_SITTER_KIND_ID_JSON.map((entry) => entry.name));
-	const allNames = new Set([...consts.ALL_KINDS, ...consts.KEYWORDS, ...consts.OPERATORS]);
-	return [...allNames].filter((name) => !withIds.has(name)).sort();
+function phantomKinds(nodeMap: AssembledNodeMap): string[] {
+	return [...nodeMap.nodes]
+		.filter(([, node]) => !(node instanceof AssembledSupertype) && node.kindId === undefined)
+		.map(([kind]) => kind)
+		.sort();
 }
 
 describe('phantom-kind ratchet', () => {
 	for (const [grammar, ceiling] of Object.entries(CEILINGS)) {
-		it(`${grammar}: kind names without an id row stay at or below ${ceiling}`, async () => {
-			const consts = (await import(`../../../${grammar}/src/consts.ts`)) as ConstsModule;
-			const phantoms = phantomKinds(consts);
-			expect(
-				phantoms.length,
-				`${grammar} phantom kinds (${phantoms.length} > ${ceiling}):\n${phantoms.join('\n')}`
-			).toBeLessThanOrEqual(ceiling);
-		});
+		it(
+			`${grammar}: non-supertype kinds without a kindId stay at or below ${ceiling}`,
+			async () => {
+				const pkg = grammarPackage(grammar);
+				const { nodeMap } = await compileGrammar({ package: pkg, generatedIdTables: await loadPackageIdTables(pkg) });
+				const phantoms = phantomKinds(nodeMap);
+				expect(
+					phantoms.length,
+					`${grammar} phantom kinds (${phantoms.length} > ${ceiling}):\n${phantoms.join('\n')}`
+				).toBeLessThanOrEqual(ceiling);
+			},
+			FULL_PIPELINE_TIMEOUT
+		);
 	}
 });

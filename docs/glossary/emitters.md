@@ -133,9 +133,17 @@ read the third pass's rules.
 
 The grammar's `render-engine.ts`: `createRenderEngine`, generic in the indent unit `I` it is given (`const I extends string`), so a literal `indent` in its options is checked whole against the grammar's `IndentChar` (`IndentOption`). The engine it returns is a `SittirEngine<Root, Options, IndentChar>`, whose `render` checks a per-call unit the same way.
 
-### `packages/codegen/src/emitters/engine.ts::emitEngine`
+### `packages/codegen/src/emitters/engine.ts::languageApiName`
 
-The grammar's `engine.ts`: `createEngine`, generic in the indent unit like `createRenderEngine`, to which it passes `I` explicitly (inferring it again from an already-checked type does not resolve).
+The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`).
+
+### `packages/codegen/src/emitters/engine.ts::grammarTypeMapName`
+
+The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the same type prefix as `languageApiName`. `types.ts` declares it and `utils.ts` binds the runtime to it.
+
+### `packages/codegen/src/emitters/engine.ts::emitApi`
+
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
 
 
 ```text
@@ -446,7 +454,7 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
  * @param mapEntries - Factory map entry descriptors produced by `buildFactoryMapEntries`.
  * @returns Array of source lines for the type declaration.
  * @remarks
- *   Only branches / containers / polymorphs get a `FluentNode` entry; leaves /
+ *   Only branches / containers / polymorphs get a `<TypeName>.Built` entry; leaves /
  *   keywords / enums produce raw `NodeData` instead and are keyed to their own
  *   interface.
  */
@@ -1114,6 +1122,10 @@ as it always carries its delimiter.
 
 The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
+### `packages/codegen/src/emitters/shared.ts::DELIMITER_IMPORT`
+
+The import line every generated module that names `Delimiter` carries. `Delimiter` is one fact shared by every grammar, declared once in `@sittir/common/utils`; no grammar declares its own. Each emitter writes this line into its preamble and lets `pruneUnusedImports` drop it when the body never names `Delimiter`.
+
 ### `packages/codegen/src/emitters/shared.ts::importLocalName`
 
 The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X`.
@@ -1121,6 +1133,10 @@ The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X
 ### `packages/codegen/src/emitters/types.ts::VOCABULARY_IMPORTS`
 
 The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
+
+### `packages/codegen/src/emitters/types.ts::emitGrammarTypeMap`
+
+The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`, which takes a `Gap` parameter and becomes `GrammarInnerTriviaAt` when some kind has more than one gap (`innerGapsKeyed`).
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -1202,12 +1218,13 @@ The `@sittir/types` vocabulary a generated types module may import, in the order
 // kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
 // above) — no call site references it anymore, so importing it here is
 // dead weight that trips no-unused-vars.
-// Delimiter is emitted unconditionally and PRUNED in finalize() when the
-// body never references it — whether any coercer carries a delimiter
-// guard depends on per-kind emission decisions made after this preamble.
+// `DELIMITER_IMPORT` is emitted unconditionally and PRUNED in finalize() when
+// the body never references `Delimiter` — whether any coercer carries a
+// delimiter guard depends on per-kind emission decisions made after this
+// preamble.
 ```
 
-The value imports are fixed (`TSKindId`, `KIND_NAMES`, `Delimiter`): a
+The grammar value imports are fixed (`TSKindId`, `KIND_NAMES`): a
 read `_separator` is passed to the factory as the kind id it was read as,
 so no kind-to-text table is needed here.
 
@@ -1228,7 +1245,7 @@ so no kind-to-text table is needed here.
  *
  * `_FromFieldInput` is intentionally `unknown`. Generated field resolver
  * helpers immediately narrow with runtime guards (`typeof`, `Array.isArray`,
- * `isNodeData`, `'kind' in value`), and keeping the alias closed causes
+ * `isNode`, `'kind' in value`), and keeping the alias closed causes
  * recursive assignability failures once strict Config surfaces expose large
  * concrete node unions.
  *
@@ -1629,7 +1646,7 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 #### body
 
 ```text
-// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
 // requires numeric $type). Skip the node-data pass-through guard entirely
 // — the check would always be false at runtime anyway.
 ```
@@ -1731,7 +1748,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 #### body
 
 ```text
-// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
 // requires numeric $type). Skip the node-data pass-through guard entirely
 // — the check would always be false at runtime anyway.
 ```
@@ -2277,7 +2294,7 @@ A `kind:` config builds its named kind and then goes back through the same routi
 `_listElements(input, optionKeys, wrapperKind, resolve)`: the loose list
 call's argument split. When `optionKeys` is non-empty and the first argument
 is a plain object whose keys are all option keys (the strict factory's own
-test, minus the `$type` check, which `isNodeData` covers), it is the options
+test, minus the `$type` check, which `isNode` covers), it is the options
 object and is returned first, untouched, ahead of the resolved elements;
 otherwise every argument is an element. When the list's content is one
 transparent wrapper (`wrapperKind`), a kind-less plain object among the
@@ -4212,7 +4229,10 @@ struct. Two cfg-gated `FromNapiValue` variants are emitted:
   dispatches on `napi_typeof` (never probing `String::from_napi_value` on a
   non-string; see `sittir_core::slot::transport_value_type`): a bare
   string is the text; a number is a value-less leaf sent as its kind id and
-  takes `defaultTextLiteral`; a boolean-presence leaf takes
+  takes `defaultTextLiteral` (`kindIdText`), or, for a kind whose text the
+  kind id does not determine, fails naming the id it was sent and that id's
+  kind (`kind_name_from_id`) — a content-bearing leaf never renders a kind
+  id as empty text; a boolean-presence leaf takes
   `booleanLiteral`; anything else is read as an object carrying `$text`
   and `$_trivia`. The struct is built from `text` and the trivia capture.
 - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
@@ -6625,15 +6645,6 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // annotation stays as a string literal instead of a TSKindId reference.
 ```
 
-### `packages/codegen/src/emitters/types.ts::grammarKeySetOf`
-
-The kind keys grammar.ts declares (the PythonGrammar / RustGrammar type
-literal), from the node types `generate` loaded once: a named entry by its
-type, an anonymous token under `_anonymous_<token>`. Tree type interfaces
-can only use `NodeKind<Grammar>` as their discriminator, so a kind absent
-from this set — a hidden rule, a promoted terminal, a synthesised form —
-falls back to a generic `AnyTreeNode`.
-
 ### `packages/codegen/src/emitters/types.ts::collectNodesByCategory`
 
 ```text
@@ -6868,52 +6879,12 @@ falls back to a generic `AnyTreeNode`.
 // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
 ```
 
-### `packages/codegen/src/emitters/types.ts::emitTreeInterfaceDeclarations`
-
-```text
-/**
- * Emit `export interface <TypeName>Tree` declarations for every structural
- * and leaf kind, plus synthetic per-form Tree interfaces for polymorphs.
- *
- * @remarks
- * Tree interfaces are retained for every kind because tree-sitter's native
- * `field` / `children` typing lives here, grammar-key-anchored. These
- * shape-match `X.Tree` (= `TreeNodeOf<X>`) structurally, but reach the
- * grammar schema through the `TreeNode<'kind'>` computed type. `X.Tree`
- * (namespace sugar) is the preferred consumer path; the flat `XTree`
- * interface stays because factories emit `replace(target: T.XTree)` with an
- * interface reference — anonymous type projections from namespace sugar are
- * verbose.
- *
- * @param lines - Output line buffer to append to.
- * @param nodeKinds - Structural kind strings.
- * @param leafKinds - Leaf kind strings.
- * @param nodeMap - The assembled node map.
- * @param grammarKeys - Set of kind keys present in grammar.ts / node-types.json.
- * @returns The set of type names for which a Tree interface was emitted.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Tree interface declaration emission
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Hidden single-literal `_kw_*` keywords are inlined at every
-// field reference, so their Tree interfaces are dead exports.
-// Skip in lockstep with `emitLeafTerminalAliases`.
-```
-
 ### `packages/codegen/src/emitters/types.ts::emitSupertypeUnionDeclarations`
 
 ```text
 /**
  * Emit `export type <TypeName> = | A | B | …` union declarations for every
- * supertype, plus the corresponding `<TypeName>Tree` union.
+ * supertype.
  *
  * @remarks
  * Unions must be emitted under the `AssembledNode`'s `typeName` (e.g.
@@ -6969,21 +6940,6 @@ falls back to a generic `AnyTreeNode`.
 #### body
 
 ```text
-// Supertype Tree union — factories reference it from
-// `replace(target: T.SupertypeTree)` signatures. Filter to
-// subtypes whose data INTERFACE was actually emitted (the matching
-// `Tree` alias only exists when the data type itself does — for
-// example, hidden single-literal `_kw_*` keywords resolve their
-// literal inline and emit no Tree alias, and a supertype member's
-// own Tree union is emitted only when it has tree-bearing members
-// of its own). Without the filter the supertype Tree references
-// dangling identifiers like `WildcardPatternTree` for
-// `_wildcard_pattern`.
-```
-
-#### body
-
-```text
 // Supertype Config/Loose unions dropped (US7 landing):
 // consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
@@ -6991,8 +6947,8 @@ falls back to a generic `AnyTreeNode`.
 
 ### `packages/codegen/src/emitters/types.ts::EmittedSupertype`
 
-A supertype union `emitSupertypeUnionDeclarations` wrote: its kind, its type
-name, and whether a `Tree` union was written beside it.
+A supertype union `emitSupertypeUnionDeclarations` wrote: its kind and its
+type name.
 
 ### `packages/codegen/src/emitters/types.ts::supertypeTypeName`
 
@@ -7001,7 +6957,7 @@ The type name a supertype's union is declared under: the node's own
 
 ### `packages/codegen/src/emitters/types.ts::emitSupertypeNamespaces`
 
-`export namespace X { Kind; Tree }` for every emitted supertype, so a
+`export namespace X { Kind }` for every emitted supertype, so a
 supertype has the same kind of home a struct kind has. It merges with the
 union alias of the same name.
 
@@ -7014,7 +6970,7 @@ each namespace merging with the kind's interface or alias. A kind root that
 finds no declared type to carry its hint fails at codegen instead of
 dropping out of `Options` while the Rust trie still accepts it. The hint lives in the namespace, not on the node
 interface, because a member on the node interfaces is re-examined by every
-derived surface (`Built`, `Loose`, `Tree`, the namespace map) and cost about
+derived surface (`Built`, `Loose`, the namespace map) and cost about
 30k instantiations on the typescript grammar however its type was spelled;
 in the namespace it costs nothing until `Options` is read. Kinds that share
 a display share a root; the one that owns its display (`ownsItsDisplay`) is
@@ -7033,8 +6989,7 @@ kept, and any other pair fails at codegen.
 ```text
 /**
  * Collect all token type names that are actually referenced in field/child
- * content-type lists of structured nodes, then emit their type and Tree
- * interface declarations.
+ * content-type lists of structured nodes, then emit their type declarations.
  *
  * @remarks
  * Only tokens that ARE actually referenced in field/child content-type lists
@@ -7048,8 +7003,6 @@ kept, and any other pair fails at codegen.
  * @param lines - Output line buffer to append to.
  * @param nodeMap - The assembled node map.
  * @param generatedTypes - Mutable set of emitted type names; updated in place.
- * @param treeEmitted - Mutable set of type names for which a Tree interface was
- *   already emitted; updated in place as new token Tree interfaces are added.
  */
 ```
 
@@ -7280,35 +7233,13 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 /** Quote a type/object key if it is not a plain identifier. */
 ```
 
-### `packages/codegen/src/emitters/types.ts::emitRefineFormTreeAliases`
-
-```text
-/**
- * Emit per-form Tree aliases for every refined kind.
- *
- * @remarks
- * Refine narrows choice selections at the Config/factory surface, not
- * the parse shape — the tree produced by tree-sitter is identical
- * regardless of which form constructed the node. The per-form Tree
- * alias therefore points at the base kind's Tree type; it exists so
- * method return types (`curly().type(...)`) can name a form-
- * specific Tree type at compile time without a structural duplicate.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// refine() per-form type emission (phase 2)
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceSugarBlock`
 
 ```text
 /**
  * Emit the namespace sugar block for one structured kind — the
- * declaration-merged `namespace <TypeName> { Config; Fluent; Loose; Tree;
- * Kind; }` block, plus per-form sub-namespaces when refine() registered
+ * declaration-merged `namespace <TypeName> { Config; Fluent; Loose; Kind; }`
+ * block, plus per-form sub-namespaces when refine() registered
  * forms for this kind. Keyword kinds get the same merge under the same
  * convention (bare name = the built type, here the id alias) with the
  * full member set read off their `KeywordNs` row (`Config` / `LooseConfig`
@@ -7325,7 +7256,7 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
  * For refined kinds:
  *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
  *     exposing `Config` (base Config minus the form's auto-stamped
- *     fields) and `Tree` (alias to the base kind Tree).
+ *     fields).
  *   - The top-level `<TypeName>.Config` shadows the generic
  *     `ConfigFor<'kind'>` with the first-declared form's Config — so
  *     bare-call sugar `ir.<kind>({...})` routes to the default form's
@@ -7348,8 +7279,8 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 
 ```text
 /** Each refine form's sub-namespace carries its own `Built` / `BuildArgs` /
- *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config` and
- *  `Tree`, so a form factory annotates `T.<Kind>.<Form>.Built` exactly as
+ *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config`, so a
+ *  form factory annotates `T.<Kind>.<Form>.Built` exactly as
  *  a plain kind's factory annotates `T.<Kind>.Built`. */
 ```
 
@@ -7362,7 +7293,6 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  *     the form's narrowed fields (those selections map to a single
  *     string literal, so phase-1 auto-stamp would otherwise need to be
  *     reapplied on top of the main Config).
- *   - `Tree`   — alias to the base Tree type (same parse shape).
  */
 ```
 
@@ -8327,7 +8257,7 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
  *   - A polymorph form's fields / children (same, per form).
  *   - A supertype's `subtypes` list.
  *
- * Emitters that decide which terminal aliases / Tree interfaces to emit
+ * Emitters that decide which terminal aliases to emit
  * use this to skip unreferenced terminals whose only consumer is a missing
  * factory binding. Previously duplicated in `types.ts::computeReferencedKinds`,
  * `type-test.ts` (inline walker), and `types.ts::collectAndEmitTokenTypeAliases`
@@ -8638,7 +8568,7 @@ seat the child into a config or tuple take the value arguments only.
 ```text
 /**
 	 * Single-access camelCase read on the bag
-	 * branch. After the isNodeData identity quick-return at resolver entry,
+	 * branch. After the isNode identity quick-return at resolver entry,
 	 * the resolver body runs only for loose-bag input, which carries the
 	 * camelCase property directly. No cast — if the typed input union
 	 * doesn't expose the camelCase property at this position that is a
@@ -8661,7 +8591,7 @@ seat the child into a config or tuple take the value arguments only.
 ### `packages/codegen/src/emitters/is.ts::RESERVED_GUARD_NAMES`
 
 ```text
-/** Methods on the `is` / `assert` namespaces beyond per-kind entries. */
+/** Methods on the `is` namespace beyond per-kind entries. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RESERVED_SUPERTYPE_ENUM_NAMES`
@@ -8997,8 +8927,9 @@ pipeline — which falls back to string equality.
 
 ```text
 // Per-kind guards exist only for structural kinds (branch /
-// polymorph). Leaves / keywords / enums use shape guards
-// (isNode / isTree) instead; tokens, groups, multi, and
+// polymorph). Leaves, keywords and enums have none; the
+// common node guards (`isNode`, `isParsedNode`, `isFactoryNode`)
+// cover them. Tokens, groups, multi, and
 // supertypes have no per-kind guard surface. Supertypes
 // get their own guards in a separate pass below.
 ```
@@ -9089,29 +9020,6 @@ pipeline — which falls back to string equality.
 
 ```text
 // All member kinds are TSGrammar-only; emit with empty id set.
-```
-
-#### body
-
-```text
-// Kind-named asserts (e.g. `assert.functionItem`) use the method name
-// as the expected-type label. The generic `assert.kind(v, k)` uses the
-// second argument `k` as the expected-type label instead — otherwise
-// the error message would say `expected 'kind'`, which is useless.
-```
-
-#### body
-
-```text
-// Build assert entries by wrapping each is entry. Keys must match
-// is's exactly.
-```
-
-#### body
-
-```text
-// isNode accepts string | number $type: hidden/synthetic kinds (e.g. "_suite")
-// have no parser.c entry and emit string $type; AnyNodeData.$type: string | number.
 ```
 
 #### body
@@ -9267,7 +9175,7 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
 /**
  * Emits is.ts — per-grammar type guards.
  *
- * Three surfaces per grammar:
+ * One surface per grammar:
  *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
  *                (narrow the `type` discriminant). A slot or supertype
@@ -9275,23 +9183,11 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  *                ids, so every guard accepts `{ $type } | number`: a
  *                per-kind guard is false for a bare id (a keyword kind is
  *                never a node) and narrows the object arms only, `_sg`
- *                tests the id directly, and `isNode` is false for a bare
- *                id.
- *   - `isTree` / `isNode` — shape guards with overloaded signatures that
- *                narrow through NamespaceMap when the kind is known or
- *                fall back to AnyTreeNode / AnyNodeData when it isn't. A
- *                node is storage (`_` keys), text content (`$text`), or a
- *                coordinate into the tree it was read from (`$nodeHandle`).
- *   - `assert` — mirror of `is` with `asserts v is T` signatures, throws
- *                TypeError on mismatch. Runtime wraps `is` — no
- *                duplicated kind-check logic.
+ *                tests the id directly.
  *
- * Composition: `is.kind × shape = concrete type`. Inside
- * `if (is.functionItem(v) && isTree(v))`, `v` narrows to
- * `NamespaceMap['function_item']['Tree']` = `FunctionItem.Tree`.
- *
- * See `specs/008-factory-ergonomic-cleanup/contracts/is-guards.md`
- * for the full contract.
+ * Whether a value is a node, and where it came from, is the common
+ * guards' question (`isNode`, `isParsedNode`, `isFactoryNode` in
+ * `@sittir/common/utils`), not a per-grammar one.
  */
 ```
 
@@ -9718,7 +9614,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  *   1. const enum TSKindId + lookup helpers
  *   2. Scoped const enums per supertype
  *   3. Concrete node interfaces
- *   4. Per-form Config/Tree aliases (polymorph forms only — base-kind
+ *   4. Per-form Config aliases (polymorph forms only — base-kind
  *      aliases were dropped in spec 008 Phase 9)
  *   5. Supertype unions
  *   6. Discriminated grammar union + KindMap + VariantMap
@@ -9750,6 +9646,10 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
+
+`FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
+
+`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `irKey`, so the engine's kind-to-type map keys each kind as the builder table does, never by re-casing a kind-id name.
 
 #### body
 
@@ -9801,14 +9701,6 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 #### body
 
 ```text
-// 1b. Delimiter — separated-list optional-flank bitflag members. Values
-// serialize compiler/model DelimiterFlags (one source, one derivation);
-// factories/wrap/from reference the members instead of raw numbers.
-```
-
-#### body
-
-```text
 // 2. Scoped enums per supertype
 ```
 
@@ -9838,27 +9730,10 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 #### body
 
 ```text
-// 4. Per-form Config/Tree aliases (polymorph forms only)
+// 4. Per-form Config aliases (polymorph forms only)
 // Polymorph forms have no flat `${typeName}Config` alias — consumers
 // (factories + dispatchers) reference `ConfigOf<T.${typeName}>` directly,
 // which picks up the polymorph-variant hoist via the generic in
-```
-
-#### body
-
-```text
-// Tree interfaces
-```
-
-#### body
-
-```text
-// refine() per-form Tree aliases — one per form per refined kind.
-// Tree shape is identical across forms (refine narrows choice
-// selections at the Config/factory surface, not the parse shape),
-// so each alias just points at the base kind's Tree type. Emitting
-// the alias lets method return types (e.g. `curly().methodFoo()`)
-// name a form-specific Tree at compile time when needed.
 ```
 
 #### body
@@ -9905,12 +9780,12 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // For every structural kind with a data interface, emit:
 //   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap> {}
 //   2. an entry in NamespaceMap keyed by the kind string
-//   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }`
+//   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Kind; }`
 //      — declaration-merges with the data interface so consumers can
 //      write `<TypeName>.Config` alongside using `<TypeName>` as a type.
 //
-// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>` /
-// `TreeFor<K>` resolve via NamespaceMap for code parametric over kinds.
+// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>`
+// resolve via NamespaceMap for code parametric over kinds.
 // All three access paths (`<TypeName>.Config`, `ConfigFor<'kind'>`,
 // `NamespaceMap['kind']['Config']`) resolve to the same type.
 // ---------------------------------------------------------------------
@@ -9962,8 +9837,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 // Patch the @sittir/types import: include only names referenced in the
-// emitted body. Always-used: NodeData/NodeConfig/TreeNode/NodeKind/NodeNs/
-// AnyTreeNodeOf/Terminal/NonEmptyArray/BooleanKeyword. Optional: ConfigOf
+// emitted body. Always-used: NodeNs/Terminal/NonEmptyArray/BooleanKeyword.
+// Optional: ConfigOf
 // (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
 // bitflag-typed fields). Empty grammars don't pull any of these, so emitting
 // them unconditionally trips `no-unused-vars` on the generated package.
@@ -10019,10 +9894,10 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 #### body
 
 ```text
-// Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor function
+// Emit `_<name>: T` storage + `<name>(): T` accessor function
 // types at the top level instead of the old `$fields: { name: T }` nested
 // wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys and
-// strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
+// strips the underscore prefix for the ConfigOf derivation.
 ```
 
 #### body
@@ -11085,32 +10960,17 @@ that kind was left alone.
 // present slot).
 ```
 
-### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
-
-The parameter type of a grammar's `$trivia`: one of the grammar's trivia kinds (`triviaKinds`, e.g. `Comment`), or a string, or the `{ leading, trailing }` object of the same. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
-
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 
-The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. `buildTriviaEntryType` adds `string` for input.
+The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-```text
-/**
- * Emits utils.ts — typed facade over `@sittir/common/utils` with grammar-local narrowing.
- * Runtime behavior lives in `@sittir/common/utils`; this module only projects local types.
- */
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitBundleHelpers`
-
-Emits `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
-
-`hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
+Emits the grammar's `utils.ts`: its facts (`methodsEngine`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
 
-Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia`:
+Emits `methodsEngine`, the grammar's `GrammarFacts`, which `withMethods` and `isEmpty` read at runtime: `render` and `toEdit` from the native engine, and `trivia`:
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
@@ -11118,31 +10978,6 @@ Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render
 - `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
 
 `trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
-
-### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
-
-```text
-/** The kind-parameterised overload's predicate is `Extract<Node,
- *  AnyNodeData>`, not `Node`: `NamespaceMap` carries keyword kinds whose
- *  `Node` is the bare id, and an id is never NodeData — with the plain
- *  `Node` the overload's predicate union contained numbers and stopped
- *  narrowing ids away in every `coerceTo*` `isNodeData(input)` check. */
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
-
-#### body
-
-```text
-// `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
-// no runtime name lookup stands between the argument and the comparison.
-// The predicate intersects with AnyNodeData for the same reason as
-// `isNodeData`'s kinded overload: a keyword kind's `Node` is its id.
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitEmptyGuards`
-
-The grammar's `InnerTrivia<N>` interface and its `isEmpty` guard; nothing when no kind has an empty form. `inner()` reads a node's inner entries and `inner(...items)` rebuilds the node with them, typed by the same trivia unions as `TriviaSetterOf`. When some kind has more than one gap (`innerGapsKeyed`), the interface also takes a `Gap` parameter and gets `innerAt(gap, ...)`. `isEmpty` has one overload per empty form, narrowing that kind to `Empty<TypeName>`. At runtime a node is empty when its kind has inner gaps (`INNER_GAPS`) and it holds no children (`isEmptyNode`).
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -11339,23 +11174,9 @@ omits the key.
  */
 ```
 
-### `packages/codegen/src/emitters/grammar.ts::module`
+### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-```text
-/**
- * Emits a `grammar.ts` file containing a TypeScript type literal
- * derived from tree-sitter's node-types.json.
- */
-```
-
-### `packages/codegen/src/emitters/index-file.ts::module`
-
-```text
-/**
- * Emits index.ts — barrel re-exports.
- * Consumes NodeMap directly. Static output — doesn't depend on node list.
- */
-```
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; `isEmpty` is its one value export besides the descriptor. It depends on the grammar's name only, not on its node list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 
@@ -11402,108 +11223,16 @@ omits the key.
 
 ### `packages/codegen/src/emitters/consts.ts::module`
 
-```text
-/**
- * Emits consts.ts — discoverable arrays and maps from the grammar.
- *
- * Consumes NodeMap directly. No imports from node-model.ts or naming.ts.
- */
-```
+Emits `consts.ts`: the runtime tables generated code reads from the grammar
+package itself. Consumes the NodeMap directly.
 
 ### `packages/codegen/src/emitters/consts.ts::emitConsts`
 
-```text
-// non-hoisted branch/envelope/polymorph + list
-```
-
-```text
-// leaf + keyword + enum
-```
-
-```text
-// AssembledKeyword (word-shaped literals — modelType 'keyword')
-```
-
-```text
-// AssembledPunctuation (non-word literals — modelType 'punctuation'; hidden delimiters and visible named literals)
-```
-
-#### body
-
-```text
-// 'list' shares 'branch's consts emission — see
-// isSlotBearingCompound's doc comment, shared.ts.
-```
-
-#### body
-
-```text
-// supertype, group — not in any public const array
-```
-
-#### body
-
-```text
-// NODE_KINDS / LEAF_KINDS are unexported locals: ALL_KINDS (their
-// union) and the derived type aliases are the public surface.
-```
-
-#### body
-
-```text
-// OPERATORS — JSON.stringify to safely handle quotes/backslashes/newlines
-```
-
-#### body
-
-```text
-// Note: `AnyOperator` (not `Operator`) to avoid collision with concrete
-// grammar terminal types named `_operator` that `types.ts` exports.
-```
-
-#### body
-
-```text
-// TSKindId's key universe MUST be the full parser-symbol catalog —
-// the same source `collectKindEntries` feeds every other runtime
-// dispatch surface from (see collectCatalogKinds' doc: TSKindId /
-// kindIdFromName / kind_ids.rs / AnyTransport "MUST share the same
-// kind universe"). The previous nodeMap-derived name list could
-// never contain suffix-renamed catalog keys (rust's
-// `block_keyword` — the fragment-specifier keyword, distinct from
-// the `block` rule), so emitters resolving those entries
-// (findKindEntryForLiteral) referenced TSKindId members that
-// were never emitted. Fall back to the old list only when no id
-// catalog exists (legacy callers).
-```
-
-#### body
-
-```text
-// Emit the type alias only once per unique name — hidden kinds like
-// `_accessibility_modifier` and their visible counterparts like
-// `accessibility_modifier` resolve to the same PascalCase type name.
-// Emitting both would produce a duplicate identifier TS2300 error.
-```
-
-### `packages/codegen/src/emitters/consts.ts::modelKindKeyOf`
-
-Maps a catalog key to the model kind its row names (`modelKindOfEntry`),
-so the `TREE_SITTER_KIND_ID_*` maps are keyed by the kind the model and
-`TSKindId` use: a renamed row (rust `_token_tree_punctuation`) appears
-under its tree name, not its grammar name. A key with no row maps to itself.
-
-### `packages/codegen/src/emitters/consts.ts::collectIdEntries`
-
-The id-table entries for a list of keys, each keyed through `keyOf`
-(identity for fields; `modelKindKeyOf` for kinds).
-
-### `packages/codegen/src/emitters/consts.ts::treeSitterPascalCase`
-
-The `enumName` column of the kind-id table, Pascal-cased from the parser.c symbol name with each word's tail
-lower-cased. It mirrors tree-sitter's own C symbol naming, which upper-cases anonymous names, so it is a
-different namespace from the kind keys by design: it may disagree with the `TSKindId` member where a key keeps
-a literal letter's case (regex `lparen_qmarkP_lt` → `AnonLparenQmarkpLt` beside `LparenQmarkPLt`).
+Prints `TOKEN_INTERIORS` (read by the generated `wrap.ts` and
+`factories/coerce.ts`), `INNER_GAPS` (read by the generated `utils.ts`) and,
+when a grammar has bitflag fields, their enums (read through the imports
+`types.ts` builds with `resolveBitflagConstName`). Kind names and ids are not
+repeated here: `KIND_NAMES` and `TSKindId` in `types.ts` are their one source.
 
 ### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 
@@ -12867,9 +12596,9 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 #### body
 
 ```text
-// Phrased as a negated type predicate rather than `if (isNodeData(input))`
+// Phrased as a negated type predicate rather than `if (isNode(input))`
 // so the checker narrows the REMAINDER of the body to the config arm.
-// A plain `isNodeData` early-return does not: negative narrowing drops a
+// A plain `isNode` early-return does not: negative narrowing drops a
 // union constituent only when it is a strict subtype of the guard type,
 // and `AnyNodeData`'s optional members defeat that for every generated
 // kind interface — leaving the interface's accessor signatures in the
@@ -12956,7 +12685,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 #### body
 
 ```text
-// `isNodeData` does not negative-narrow `Terminal<K, V>` out of the
+// `isNode` does not negative-narrow `Terminal<K, V>` out of the
 // input union (TS structural-Exclude limitation), so the
 // `typeof === 'string'` test is what funnels the post-guard branch
 // to the factory's `string` parameter.
@@ -14574,19 +14303,6 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 ```
 
 Every struct passes its own kind id to `render_with_trivia!` (`None` only when no kind table is given), so the sink holds a line end after a line-terminated kind (`RenderSink::end_line_after`). A leaf whose kind entry is anonymous (`anon`, the parser's fact) renders with `render_with_trivia!(token …)`. The reader counts such a token among the tokens between an owner and its same-line trailing entries (`$tokensBetween`), never as an owner. So its transport leaves those entries held and doesn't seat them ahead of itself: `a + /* x */ b` keeps the comment after `+`.
-
-### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
-
-The text a value-less leaf takes when it arrives over napi as a bare kind
-id (`scalar_leaf_value` in sittir-core serialises anonymous single-leaf
-fields that way): a token's own text, or a pattern's single fixed literal
-(`_semicolon` → ";"). Content-bearing patterns (identifier, number, …)
-have no default — they come in on the string path and must stay there.
-
-A depth token (`isDepthText`) has no default either: its render never
-reads `text` — the depth fact is the kind id the sink dispatches on
-(`w.indent()` / `w.dedent(seam)` through `literalWrite`), so the sentinel
-would only be carried to be ignored.
 
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS.jsName`
 
@@ -16362,18 +16078,6 @@ A slot input's admissions in order: the bare-text rejection, the keyword-text re
 ### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
 
 `fieldElementType` for a construction parameter or setter: the read-side element union, widened by the slot's alias content types (`withAliasContentTypes`) and by `number` on a numeric slot (`numericSlotShape`).
-
-### `packages/codegen/src/emitters/client-utils.ts::emitTransportHelpers`
-
-Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it maps arrays element-wise, reads a value's id from its `$type` (or the value itself when it is a stored kind id), and builds the alias for the first row whose ids contain it.
-
-#### rejectBareText
-
-`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce`. Arrays are checked element-wise and every other value passes through unchanged. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id and passes any other through.
-
-#### rejectKeywordText
-
-`rejectKeywordText(value, where, word, keywords)` throws `<where>: '<text>' is this slot's keyword` when the value is a word-kind node (`$type === word`) whose `$text` is one of `keywords`. Arrays are checked element-wise and every other value, including another leaf kind with the same text, passes through unchanged. The loose surface never reaches it with a keyword spelling, because its keyword extraction stores the arm's kind id first.
 
 ### `packages/codegen/src/emitters/shared.ts::transparentContentKindNames`
 

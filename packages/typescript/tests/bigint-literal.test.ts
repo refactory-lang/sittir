@@ -3,9 +3,11 @@
 // and its `n` render with no space between them, and each arm reparses as its
 // own kind.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/engine.js';
-import { ir } from '../src/ir.js';
-import { TSKindId } from '../src/types.js';
+import typescript from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
+const tsNative = (await typescript.load()).createNative();
 
 function textsOf(kind: number, value: unknown, out: string[] = []): string[] {
 	if (Array.isArray(value)) for (const item of value) textsOf(kind, item, out);
@@ -18,10 +20,10 @@ function textsOf(kind: number, value: unknown, out: string[] = []): string[] {
 }
 
 const RADIX_ARMS = [
-	['decimal', ir.number.bigint.decimal, '42', '42n', TSKindId.NumberBigintDecimal],
-	['hex', ir.number.bigint.hex, '0x2A', '0x2An', TSKindId.NumberBigintHex],
-	['binary', ir.number.bigint.binary, '0b101010', '0b101010n', TSKindId.NumberBigintBinary],
-	['octal', ir.number.bigint.octal, '0o52', '0o52n', TSKindId.NumberBigintOctal]
+	['decimal', ts.build.number.bigint.decimal, '42', '42n', ts.kinds.NumberBigintDecimal],
+	['hex', ts.build.number.bigint.hex, '0x2A', '0x2An', ts.kinds.NumberBigintHex],
+	['binary', ts.build.number.bigint.binary, '0b101010', '0b101010n', ts.kinds.NumberBigintBinary],
+	['octal', ts.build.number.bigint.octal, '0o52', '0o52n', ts.kinds.NumberBigintOctal]
 ] as const;
 
 describe('a bigint literal', () => {
@@ -30,30 +32,29 @@ describe('a bigint literal', () => {
 	});
 
 	it('writes a bigint value in the radix its arm names', () => {
-		expect(ir.number.bigint.decimal(42n).$render()).toBe('42n');
-		expect(ir.number.bigint.hex(42n).$render()).toBe('0x2an');
-		expect(ir.number.bigint.binary(42n).$render()).toBe('0b101010n');
-		expect(ir.number.bigint.octal(42n).$render()).toBe('0o52n');
+		expect(ts.build.number.bigint.decimal(42n).$render()).toBe('42n');
+		expect(ts.build.number.bigint.hex(42n).$render()).toBe('0x2an');
+		expect(ts.build.number.bigint.binary(42n).$render()).toBe('0b101010n');
+		expect(ts.build.number.bigint.octal(42n).$render()).toBe('0o52n');
 	});
 
 	it('resolves an unnamed call through the decimal default, under every mount path', () => {
-		expect(ir.number.bigint(42n).$render()).toBe('42n');
-		expect(ir.number.bigint('42').$render()).toBe('42n');
-		expect(ir.numberBigint(42n).$render()).toBe('42n');
-		expect(ir.literalType.bigint(42n).$render()).toBe('42n');
-		expect(ir.primaryType.literal.bigint(42n).$render()).toBe('42n');
-		expect(ir.primaryExpression.number.bigint(42n).$render()).toBe('42n');
-		expect(ir.propertyName.number.bigint(42n).$render()).toBe('42n');
-		expect(ir.literalType.bigint.hex(42n).$render()).toBe('0x2an');
+		expect(ts.build.number.bigint(42n).$render()).toBe('42n');
+		expect(ts.build.number.bigint('42').$render()).toBe('42n');
+		expect(ts.build.numberBigint(42n).$render()).toBe('42n');
+		expect(ts.build.literalType.bigint(42n).$render()).toBe('42n');
+		expect(ts.build.primaryType.literal.bigint(42n).$render()).toBe('42n');
+		expect(ts.build.primaryExpression.number.bigint(42n).$render()).toBe('42n');
+		expect(ts.build.propertyName.number.bigint(42n).$render()).toBe('42n');
+		expect(ts.build.literalType.bigint.hex(42n).$render()).toBe('0x2an');
 	});
 
 	it('refuses prefixed text through the decimal default: the radix is chosen by arm, not read from the text', () => {
-		expect(() => ir.number.bigint('0x2A')).toThrow(/number_bigint_decimal\.content: text does not match pattern/);
+		expect(() => ts.build.number.bigint('0x2A')).toThrow(/number_bigint_decimal\.content: text does not match pattern/);
 	});
 
 	it.each(RADIX_ARMS)('the %s arm reparses as its own kind', (_, arm, digits, text, kind) => {
-		const engine = createEngine();
-		const root = engine.diagnostics.parseAndRead(`const x = ${arm(digits).$render()};`, { deep: true }).root;
+		const root = tsNative.parseAndRead(`const x = ${arm(digits).$render()};`, { deep: true }).root;
 		expect(textsOf(kind, root)).toEqual([text]);
 	});
 });

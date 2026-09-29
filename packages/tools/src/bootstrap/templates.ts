@@ -36,7 +36,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				types: './dist/index.d.ts',
 				exports: {
 					'.': { types: './dist/index.d.ts', import: './dist/index.js' },
-					'./utils': { types: './dist/utils.d.ts', import: './dist/utils.js' }
+					'./api': { types: './dist/api.d.ts', import: './dist/api.js' }
 				},
 				scripts: {
 					build: 'tsc -p tsconfig.build.json',

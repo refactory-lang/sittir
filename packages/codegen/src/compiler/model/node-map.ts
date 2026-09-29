@@ -25,6 +25,7 @@ import {
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
+import { isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
@@ -1083,10 +1084,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return `build${this.typeName}`;
 	}
 
-	get treeTypeName(): string {
-		return `${this.typeName}Tree`;
-	}
-
 	get configTypeName(): string {
 		return `${this.typeName}Config`;
 	}
@@ -1494,6 +1491,15 @@ export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | u
 	if (node === undefined) return undefined;
 	const assembled = node as AssembledNode;
 	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
+}
+
+export function kindIdText(node: AssembledNode): string | undefined {
+	if (isFixedTextLeaf(node)) {
+		const text = node.text || undefined;
+		return text !== undefined && isDepthText(text) ? undefined : text;
+	}
+	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
+	return undefined;
 }
 
 export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {
@@ -2691,13 +2697,6 @@ function ruleEdgeCharSet(
 			return undefined;
 	}
 }
-
-export const DelimiterFlags = {
-	none: 0,
-	leading: 1,
-	trailing: 2,
-	both: 3
-} as const;
 
 export function delimiterMembersFor(list: {
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';

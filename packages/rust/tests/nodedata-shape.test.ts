@@ -20,8 +20,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { ir } from '../src/ir.js';
-import { TSKindId } from '../src/types.js';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 // ---------- helpers ----------
 
@@ -32,7 +34,7 @@ function isNonEnumerable(obj: object, key: string): boolean {
 }
 
 // A minimal block with no statements.
-const minimalBlock = ir.block({ statements: [] });
+const minimalBlock = rs.build.block({ statements: [] });
 
 // ---------- factory shape ----------
 
@@ -40,7 +42,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	// functionItem requires typed Identifier | Metavariable for name, Parameters for
 	// parameters, and Block for body. Cast config to `any` — we are testing the runtime
 	// _-storage shape, not input type validation.
-	const node = ir.functionItem({
+	const node = rs.build.functionItem({
 		name: 'my_fn',
 		parameters: [],
 		body: minimalBlock
@@ -98,7 +100,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	});
 
 	it('$type holds numeric TSKindId, not string', () => {
-		expect(node.$type).toBe(TSKindId.FunctionItem);
+		expect(node.$type).toBe(rs.kinds.FunctionItem);
 		expect(typeof node.$type).toBe('number');
 	});
 
@@ -109,7 +111,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 
 describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 	// A leaf node is one that holds $text, e.g. identifier
-	const leaf = ir.identifier('x42');
+	const leaf = rs.build.identifier('x42');
 
 	it('leaf: $text is present and equals the input', () => {
 		expect((leaf as unknown as Record<string, unknown>)['$text']).toBe('x42');
@@ -138,7 +140,7 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 // pinned by the `it.fails` cases: $with non-enumerability (it currently
 // serializes), the frozen-result contract, and JSON/Object.keys exclusion.
 describe('ADR-0018 Phase 2 — $with namespace', () => {
-	const original = ir.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
+	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
 	it.fails('$with is non-enumerable on the node', () => {
 		expect(isNonEnumerable(original, '$with')).toBe(true);
@@ -150,7 +152,7 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 		const nameFn = withNs['name'] as (v: unknown) => unknown;
 		expect(typeof nameFn).toBe('function');
 		expect(() => nameFn('updated')).toThrow(/a strict factory takes a built node, not a string/);
-		const updated = nameFn(ir.identifier('updated')) as unknown as { $render(): string };
+		const updated = nameFn(rs.build.identifier('updated')) as unknown as { $render(): string };
 		expect(updated.$render()).toContain('updated');
 	});
 
@@ -177,13 +179,13 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 // ---------- JSON serialization (SC-007) ----------
 
 describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
-	const node = ir.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
+	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
 	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
 		// _name holds the coerced leaf NodeData object, not the raw config
 		// string — see the FR-001 note above (same current, consistent shape).
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
-		expect(parsed['$type']).toBe(TSKindId.FunctionItem);
+		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);
 		expect(parsed['$source']).toBe(2);
 		expect(parsed['_name']).toMatchObject({ $text: 'serialize_me' });
 	});
@@ -214,7 +216,7 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 
 describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	// declarationList() is a pure container with variadic children and no named fields.
-	const container = ir.declarationList();
+	const container = rs.build.declarationList();
 
 	it('container: variadic child slot uses its kind-derived storage key, even when empty', () => {
 		// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
@@ -235,7 +237,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	});
 
 	it('container: $type is correct', () => {
-		expect(container.$type).toBe(TSKindId.DeclarationList);
+		expect(container.$type).toBe(rs.kinds.DeclarationList);
 	});
 });
 
@@ -244,9 +246,9 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () => {
 	// Test a variety of node kinds to confirm $fields is never present
 	const nodes = [
-		ir.functionItem({ name: 'f', parameters: [], body: minimalBlock } as any),
-		ir.declarationList(),
-		ir.identifier('x1')
+		rs.build.functionItem({ name: 'f', parameters: [], body: minimalBlock } as any),
+		rs.build.declarationList(),
+		rs.build.identifier('x1')
 	];
 
 	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))('SC-001: %s has no $fields key', (_label, n) => {

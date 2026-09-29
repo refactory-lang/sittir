@@ -6,15 +6,15 @@
  * wrapper, which is what keeps the module graph acyclic: constructed nodes
  * carry `$render()`, so `factories -> utils -> boundary` reaches this
  * module, and a `parse()` surface here would pull `wrap.js` and close the
- * loop back onto `factories.js`. Parsing lives in `engine.ts` because
+ * loop back onto `factories.js`. Parsing lives in `api.ts` (the `wrap` hook) because
  * parsing is the half that needs the wrapper.
  *
  * Native-only — there is no JS-engine fallback.
  */
-import { createNativeEngine, type SittirEngine, type EngineOptions } from '@sittir/common/engine';
+import { createNativeEngine, type SittirEngine } from '@sittir/common/engine';
 import { KIND_NAMES, type Program } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import type { IndentOption, NodeDataOf } from '@sittir/types';
+import type { IndentOption, NativeEngineOptions, NodeDataOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,7 +32,7 @@ export type ProgramRoot = NodeDataOf<Program>;
  * back to a JS engine.
  */
 export function createRenderEngine<const I extends string = string>(
-	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+	options?: NativeEngineOptions<Options & IndentOption<I, IndentChar>>
 ): SittirEngine<ProgramRoot, Options, IndentChar> {
 	const result = createNativeEngine<ProgramRoot, Options, IndentChar>(
 		{

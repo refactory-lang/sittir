@@ -1,4 +1,7 @@
-import { ir } from '@sittir/typescript';
+import { createEngine } from '@sittir/common';
+import typescript from '@sittir/typescript';
+
+const engine = await createEngine(typescript);
 
 interface GrammarModel {
 	kinds: string[];
@@ -14,16 +17,16 @@ function pascalCase(value: string) {
 
 export function emitIsModule(grammar: GrammarModel): string {
 	const [first, ...rest] = grammar.kinds.map((kind) =>
-		ir.propertySignature({
+		engine.build.propertySignature({
 			name: `is${pascalCase(kind)}`,
 			type: { type: 'boolean' },
 		}),
 	);
-	return ir.program({
+	return engine.build.program({
 		statements: [
-			ir.interfaceDeclaration({
+			engine.build.interfaceDeclaration({
 				name: 'IsGuards',
-				body: ir.objectType.curly(first === undefined ? {} : { members: ir.objectTypeContent(first, ...rest) }),
+				body: engine.build.objectType.curly(first === undefined ? {} : { members: engine.build.objectTypeContent(first, ...rest) }),
 			}),
 		],
 	}).$render();

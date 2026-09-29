@@ -6,9 +6,11 @@
 // already is one.
 import { sliceSpan } from '@sittir/common';
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/engine.js';
-import { ir } from '../src/ir.js';
-import { TSKindId } from '../src/types.js';
+import typescript from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
+const tsNative = (await typescript.load()).createNative();
 
 const SOURCE = 'for (let i = 0; i < 3; i++) {}\n';
 
@@ -16,32 +18,31 @@ type Read = { readonly $type: number; readonly $span: { start: number; end: numb
 
 describe('for_statement.condition', () => {
 	it('holds the condition alone: the field-tagged `;` is punctuation', () => {
-		const engine = createEngine();
-		const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
+		const { root } = tsNative.parseAndRead(SOURCE, { deep: true });
 		const statement = (root as unknown as { _statements: { _condition: unknown } | { _condition: unknown }[] })
 			._statements;
 		const forStatement = Array.isArray(statement) ? statement[0]! : statement;
 		const condition = forStatement._condition;
 		expect(Array.isArray(condition)).toBe(false);
 		const node = condition as Read;
-		expect(node.$type).toBe(TSKindId.BinaryExpression);
+		expect(node.$type).toBe(ts.kinds.BinaryExpression);
 		expect(sliceSpan(SOURCE, node.$span)).toBe('i < 3');
 	});
 
 	it('builds `for (let i = 0; i < 3; i++) {}` with both terminators from the factory', () => {
-		const built = ir.program.strict({
+		const built = ts.build.program.strict({
 			statements: [
-				ir.forStatement.strict({
-					initializer: ir.lexicalDeclaration.strict(
+				ts.build.forStatement.strict({
+					initializer: ts.build.lexicalDeclaration.strict(
 						{
-							kind: TSKindId.LetKeyword,
-							declarators: [ir.variableDeclarator.plain.strict({ name: ir.identifier('i'), value: ir.number('0') })]
+							kind: ts.kinds.LetKeyword,
+							declarators: [ts.build.variableDeclarator.plain.strict({ name: ts.build.identifier('i'), value: ts.build.number('0') })]
 						},
-						{ terminator: TSKindId.Semi }
+						{ terminator: ts.kinds.Semi }
 					),
-					condition: ir.binaryExpression.strict({ left: ir.identifier('i'), operator: TSKindId.Lt, right: ir.number('3') }),
-					increment: ir.updateExpression.postfix.strict({ argument: ir.identifier('i'), operator: TSKindId.PlusPlus }),
-					body: ir.statementBlock.strict({ automaticSemicolon: true })
+					condition: ts.build.binaryExpression.strict({ left: ts.build.identifier('i'), operator: ts.kinds.Lt, right: ts.build.number('3') }),
+					increment: ts.build.updateExpression.postfix.strict({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus }),
+					body: ts.build.statementBlock.strict({ automaticSemicolon: true })
 				})
 			]
 		});
@@ -49,12 +50,12 @@ describe('for_statement.condition', () => {
 	});
 
 	it('keeps `for (;;) {}` at three semicolons: an empty statement is its own', () => {
-		const built = ir.program.strict({
+		const built = ts.build.program.strict({
 			statements: [
-				ir.forStatement.strict({
-					initializer: TSKindId.EmptyStatement,
-					condition: TSKindId.EmptyStatement,
-					body: ir.statementBlock.strict({ automaticSemicolon: true })
+				ts.build.forStatement.strict({
+					initializer: ts.kinds.EmptyStatement,
+					condition: ts.kinds.EmptyStatement,
+					body: ts.build.statementBlock.strict({ automaticSemicolon: true })
 				})
 			]
 		});

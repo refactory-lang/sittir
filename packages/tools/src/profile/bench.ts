@@ -26,7 +26,8 @@
 import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import type { AnyNodeData } from '@sittir/types';
-import type { SittirEngine } from '@sittir/common/engine';
+import type { LanguageAPI, NativeLanguageEngine } from '@sittir/types';
+import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
 import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
@@ -83,15 +84,15 @@ export interface BenchOptions {
 	// intentionally empty
 }
 
-async function loadEngine(grammar: GrammarName): Promise<SittirEngine> {
-	const { createEngine } = (await import(`@sittir/${grammar}`)) as { createEngine(): SittirEngine };
-	return createEngine();
+async function loadEngine(grammar: GrammarName): Promise<NativeLanguageEngine<LanguageAPI>> {
+	const hooks = await (await languageByName(grammar)).load();
+	return hooks.createNative();
 }
 
 /** The nodes a workload renders: one read root per corpus fixture, or every parity render fixture's input. */
-function collectNodeData(grammar: GrammarName, engine: SittirEngine, workload: Workload): AnyNodeData[] {
+function collectNodeData(grammar: GrammarName, engine: NativeLanguageEngine<LanguageAPI>, workload: Workload): AnyNodeData[] {
 	if (workload === 'coordinate') {
-		return loadCorpusEntries(grammar).map((entry) => engine.diagnostics.parseAndRead(entry.source).root);
+		return loadCorpusEntries(grammar).map((entry) => engine.parseAndRead(entry.source).root as AnyNodeData);
 	}
 	const fixtures = JSON.parse(readFileSync(fixturesOutputPath(grammar), 'utf8')) as ParityFixture[];
 	return fixtures.flatMap((fixture) => (fixture.kind === 'render' ? [fixture.input as AnyNodeData] : []));

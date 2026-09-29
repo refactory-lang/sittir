@@ -2,7 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
-import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '../../utils.js';
+import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import type * as T from '../../types.js';
 export * from './refines.js';

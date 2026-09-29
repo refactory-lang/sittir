@@ -1,18 +1,21 @@
 import { writeFileSync } from 'node:fs';
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
 
 export function generateCacheModule() {
-	const file = ir.sourceFile({
+	const file = engine.build.sourceFile({
 		statements: [
-			ir.statement.struct.unit({
+			engine.build.statement.struct.unit({
 				visibilityModifier: 'pub',
-				name: ir.synonym.type('Cache'),
+				name: engine.build.synonym.type('Cache'),
 			}),
-			ir.statement.function({
+			engine.build.statement.function({
 				visibilityModifier: 'pub',
 				name: 'new_cache',
-				parameters: ir.parameters.strict(),
-				body: ir.block.strict(),
+				parameters: engine.build.parameters.strict(),
+				body: engine.build.block.strict(),
 			}),
 		],
 	});

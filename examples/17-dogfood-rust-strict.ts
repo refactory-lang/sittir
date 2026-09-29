@@ -1,4 +1,8 @@
-import { Delimiter, ir, TSKindId } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+import { Delimiter } from '@sittir/common/utils';
+
+const engine = await createEngine(rust);
 
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
@@ -21,23 +25,23 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // `sort_by` comparator, both of which are constructible below.
 //
 // A match arm is built through its variant, which carries the whole arm:
-// `ir.matchArm.withComma({ pattern, value: expr })`. The parent kind is
+// `engine.build.matchArm.withComma({ pattern, value: expr })`. The parent kind is
 // the pure choice of its variants and seats one of them.
 // Open issues on this surface: docs/factory-surface-issues.md
 
-const id = (text: string) => ir.identifier(text);
-const tok = (content: Parameters<typeof ir.nonSpecialToken.strict>[0]) => ir.nonSpecialToken.strict(content);
-const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id(path), name: id(name) });
-const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
-	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
+const id = (text: string) => engine.build.identifier(text);
+const tok = (content: Parameters<typeof engine.build.nonSpecialToken.strict>[0]) => engine.build.nonSpecialToken.strict(content);
+const ns = (path: string, name: string) => engine.build.scopedIdentifier.strict({ path: id(path), name: id(name) });
+const scopedTy = (path: Parameters<typeof engine.build.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
+	engine.build.scopedTypeIdentifier.strict({ path, name: id(name) });
 const str = (text: string) =>
-	ir.stringLiteral.strict({ stringOpen: ir.stringOpen('"'), elements: [ir.stringContent(text)] });
+	engine.build.stringLiteral.strict({ stringOpen: engine.build.stringOpen('"'), elements: [engine.build.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
-	return ir.useDeclaration.strict({
-		argument: ir.scopedIdentifier.strict({
-			path: ir.scopedIdentifier.strict({ path: ir.crate(), name: id('types') }),
+	return engine.build.useDeclaration.strict({
+		argument: engine.build.scopedIdentifier.strict({
+			path: engine.build.scopedIdentifier.strict({ path: engine.build.crate(), name: id('types') }),
 			name: id('Edit'),
 		}),
 	});
@@ -49,16 +53,16 @@ export function useEditStrict() {
  * (`value`, `arguments`) sit directly on the config and come as a whole.
  */
 export function deriveStrict() {
-	return ir.attributeItem.strict(
-		ir.attribute.input.strict({
+	return engine.build.attributeItem.strict(
+		engine.build.attribute.input.strict({
 			path: id('derive'),
-			arguments: ir.delimTokenTree.paren.strict(
+			arguments: engine.build.delimTokenTree.paren.strict(
 				tok(id('Debug')),
-				tok(TSKindId.Comma),
+				tok(engine.kinds.Comma),
 				tok(id('Clone')),
-				tok(TSKindId.Comma),
+				tok(engine.kinds.Comma),
 				tok(id('PartialEq')),
-				tok(TSKindId.Comma),
+				tok(engine.kinds.Comma),
 				tok(id('Eq')),
 			),
 		})
@@ -68,21 +72,21 @@ export function deriveStrict() {
 /** `pub enum SpliceError { InvalidRange { … }, OutOfBounds { … }, NonCharBoundary { … } }` */
 function variantStrict(name: string, [first, second]: readonly [readonly [string, string], readonly [string, string]]) {
 	const decl = ([field, type]: readonly [string, string]) =>
-		ir.fieldDeclaration.strict({ name: id(field), type: id(type) });
+		engine.build.fieldDeclaration.strict({ name: id(field), type: id(type) });
 	// A `repeat1` list will not take a spread of a possibly-empty array, so its
 	// elements are named. That is the type doing its job: `<>` is not a legal node.
-	return ir.enumVariant.strict({
+	return engine.build.enumVariant.strict({
 		name: id(name),
-		body: ir.fieldDeclarationList.strict(decl(first), decl(second)),
+		body: engine.build.fieldDeclarationList.strict(decl(first), decl(second)),
 	});
 }
 
 export function spliceErrorEnumStrict() {
-	return ir.statement.enum.strict({
-		visibilityModifier: ir.visibilityModifier.pub(),
+	return engine.build.statement.enum.strict({
+		visibilityModifier: engine.build.visibilityModifier.pub(),
 		name: id('SpliceError'),
 		// The options object must be the first argument to a list factory.
-		body: ir.enumVariantList.strict(
+		body: engine.build.enumVariantList.strict(
 			{ delimiter: Delimiter.Trailing },
 			variantStrict('InvalidRange', [
 				['start', 'u32'],
@@ -102,62 +106,62 @@ export function spliceErrorEnumStrict() {
 
 /** `impl std::fmt::Display for SpliceError { fn fmt(…) { match self { … } } }` */
 function armPattern(variant: string, [first, second]: readonly [string, string]) {
-	return ir.matchPattern.strict({
-		pattern: ir.structPattern.strict({
+	return engine.build.matchPattern.strict({
+		pattern: engine.build.structPattern.strict({
 			type: scopedTy(id('SpliceError'), variant),
-			fields: ir.structPatternElements.strict(
-				ir.fieldPattern.shorthand.strict({ name: id(first) }),
-				ir.fieldPattern.shorthand.strict({ name: id(second) })
+			fields: engine.build.structPatternElements.strict(
+				engine.build.fieldPattern.shorthand.strict({ name: id(first) }),
+				engine.build.fieldPattern.shorthand.strict({ name: id(second) })
 			),
 		}),
 	});
 }
 
 function writeCall(format: string) {
-	return ir.macroInvocation.strict({
+	return engine.build.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren.strict(tok(id('f')), tok(TSKindId.Comma), tok(str(format))),
+		arguments: engine.build.delimTokenTree.paren.strict(tok(id('f')), tok(engine.kinds.Comma), tok(str(format))),
 	});
 }
 
 export function displayImplStrict() {
-	return ir.statement.impl.body.positiveClause.strict({
+	return engine.build.statement.impl.body.positiveClause.strict({
 		traitClause: scopedTy(ns('std', 'fmt'), 'Display'),
 		type: id('SpliceError'),
-		declarationList: ir.declarationList.strict(
-				ir.statement.function.strict({
+		declarationList: engine.build.declarationList.strict(
+				engine.build.statement.function.strict({
 					name: id('fmt'),
-					parameters: ir.parameters.strict(
-						ir.selfParameter.strict({ reference: true }),
-						ir.parameter.strict({
+					parameters: engine.build.parameters.strict(
+						engine.build.selfParameter.strict({ reference: true }),
+						engine.build.parameter.strict({
 							name: id('f'),
-							type: ir.referenceType.strict({
+							type: engine.build.referenceType.strict({
 								mutableSpecifier: true,
-								type: ir.genericType.strict({
+								type: engine.build.genericType.strict({
 									type: scopedTy(ns('std', 'fmt'), 'Formatter'),
-									typeArguments: ir.typeArguments.strict(ir.lifetime('_')),
+									typeArguments: engine.build.typeArguments.strict(engine.build.lifetime('_')),
 								}),
 							}),
 						})
 					),
 					returnType: scopedTy(ns('std', 'fmt'), 'Result'),
-					body: ir.block.strict({
-						trailingExpression: ir.matchExpression.strict({
-							value: ir.self(),
-							body: ir.matchBlock.strict({
+					body: engine.build.block.strict({
+						trailingExpression: engine.build.matchExpression.strict({
+							value: engine.build.self(),
+							body: engine.build.matchBlock.strict({
 								// A comma-terminated arm carrying a macro invocation: the arm
 								// variant holds the whole arm, its pattern and its value.
 								matchArm: [
-									ir.matchArm.withComma({
+									engine.build.matchArm.withComma({
 										pattern: armPattern('InvalidRange', ['start', 'end'] as const),
 										value: writeCall('invalid edit range: start={start}, end={end}'),
 									}),
-									ir.matchArm.withComma({
+									engine.build.matchArm.withComma({
 										pattern: armPattern('OutOfBounds', ['end', 'source_len'] as const),
 										value: writeCall('edit out of bounds: end={end} > source length={source_len}'),
 									}),
 								],
-								lastArm: ir.lastMatchArm.strict({
+								lastArm: engine.build.lastMatchArm.strict({
 									pattern: armPattern('NonCharBoundary', ['start', 'end'] as const),
 									value: writeCall('edit range not at UTF-8 char boundary: start={start}, end={end}'),
 								}),
@@ -171,48 +175,48 @@ export function displayImplStrict() {
 
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImplStrict() {
-	return ir.statement.impl.body.positiveClause.strict({
+	return engine.build.statement.impl.body.positiveClause.strict({
 		traitClause: scopedTy(ns('std', 'error'), 'Error'),
 		type: id('SpliceError'),
-		declarationList: ir.declarationList.strict(),
+		declarationList: engine.build.declarationList.strict(),
 	});
 }
 
 /** `pub fn apply_edits(source: &str, mut edits: Vec<Edit>) -> Result<String, SpliceError>` */
 export function applyEditsFnStrict() {
-	return ir.statement.function.strict({
-		visibilityModifier: ir.visibilityModifier.pub(),
+	return engine.build.statement.function.strict({
+		visibilityModifier: engine.build.visibilityModifier.pub(),
 		name: id('apply_edits'),
-		parameters: ir.parameters.strict(
-			ir.parameter.strict({ name: id('source'), type: ir.referenceType.strict({ type: id('str') }) }),
-			ir.parameter.strict({
+		parameters: engine.build.parameters.strict(
+			engine.build.parameter.strict({ name: id('source'), type: engine.build.referenceType.strict({ type: id('str') }) }),
+			engine.build.parameter.strict({
 				mutableSpecifier: true,
 				name: id('edits'),
-				type: ir.genericType.strict({ type: id('Vec'), typeArguments: ir.typeArguments.strict(id('Edit')) }),
+				type: engine.build.genericType.strict({ type: id('Vec'), typeArguments: engine.build.typeArguments.strict(id('Edit')) }),
 			})
 		),
-		returnType: ir.genericType.strict({
+		returnType: engine.build.genericType.strict({
 			type: id('Result'),
-			typeArguments: ir.typeArguments.strict(id('String'), id('SpliceError')),
+			typeArguments: engine.build.typeArguments.strict(id('String'), id('SpliceError')),
 		}),
-		body: ir.block.strict({
+		body: engine.build.block.strict({
 			statements: [
-				ir.statement.let.strict({
+				engine.build.statement.let.strict({
 					pattern: id('source_len'),
-					value: ir.callExpression.strict({
-						function: ir.fieldExpression.strict({ value: id('source'), field: id('len') }),
-						arguments: ir.arguments.strict(),
+					value: engine.build.callExpression.strict({
+						function: engine.build.fieldExpression.strict({ value: id('source'), field: id('len') }),
+						arguments: engine.build.arguments.strict(),
 					}),
 				}),
-				ir.statement.expression.withSemi(
-					ir.callExpression.strict({
-						function: ir.fieldExpression.strict({ value: id('edits'), field: id('sort_by') }),
-						arguments: ir.arguments.strict(
+				engine.build.statement.expression.withSemi(
+					engine.build.callExpression.strict({
+						function: engine.build.fieldExpression.strict({ value: id('edits'), field: id('sort_by') }),
+						arguments: engine.build.arguments.strict(
 							// A config-merge form: the child block's own `body` key merges
 							// into the closure's config rather than filling a `content` seat.
-							ir.closureExpression.block({
-								parameters: ir.closureParameters.strict(id('a'), id('b')),
-								body: ir.block.strict(),
+							engine.build.closureExpression.block({
+								parameters: engine.build.closureParameters.strict(id('a'), id('b')),
+								body: engine.build.block.strict(),
 							})
 						),
 					})
@@ -223,7 +227,7 @@ export function applyEditsFnStrict() {
 }
 
 export function rebuildSpliceStrict() {
-	return ir.sourceFile.strict({
+	return engine.build.sourceFile.strict({
 		statements: [
 			useEditStrict(),
 			deriveStrict(),

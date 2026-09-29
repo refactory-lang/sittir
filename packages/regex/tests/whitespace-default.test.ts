@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/engine.js';
+import type { AnyNodeData } from '@sittir/types';
+import regex from '../src/index.ts';
+
+const rxNative = (await regex.load()).createNative();
 
 describe('a grammar whose extras admit no space renders its seams tight', () => {
-	const engine = createEngine();
 	for (const source of ['^$', '^|$', '(a)|b', 'a{1,2}']) {
 		it(JSON.stringify(source), () => {
-			const { root } = engine.diagnostics.parseAndRead(source);
-			expect(String(engine.render(root))).toBe(source);
+			const { root } = rxNative.parseAndRead(source);
+			expect(String(rxNative.render(root as AnyNodeData))).toBe(source);
 		});
 	}
 });

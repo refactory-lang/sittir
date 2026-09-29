@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readTreeNode as readPythonTreeNode } from '@sittir/python';
-import { readTreeNode as readRustTreeNode } from '@sittir/rust';
-import { readTreeNode as readTypeScriptTreeNode } from '@sittir/typescript';
+import { readTreeNode as readPythonTreeNode } from '../../packages/python/src/wrap.ts';
+import { readTreeNode as readRustTreeNode } from '../../packages/rust/src/wrap.ts';
+import { readTreeNode as readTypeScriptTreeNode } from '../../packages/typescript/src/wrap.ts';
 import type { FormatRecord } from '@sittir/types';
 
 import { loadLanguageForGrammar, loadKindIdFromName, treeHandle } from '../../packages/tools/src/validate/common.ts';

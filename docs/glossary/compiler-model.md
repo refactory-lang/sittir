@@ -550,12 +550,6 @@ Distinct from `hidden`, which means "has no factory".
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::treeTypeName`
-
-```text
-/** Tree interface name: `${typeName}Tree`. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::configTypeName`
 
 ```text
@@ -2235,6 +2229,20 @@ a pass rebuilds.
  *  target is never fixed text: its render is its own template. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::kindIdText`
+
+The text a kind renders as when it is given only its kind id, or
+`undefined` when the id does not determine one: a fixed-text leaf's own
+text, or a pattern's single fixed literal (`_semicolon` → ";").
+Content-bearing patterns (identifier, number, …) have none. A depth token
+(`isDepthText`) has none either: its render never reads text — the sink
+dispatches on the kind id (`w.indent()` / `w.dedent(seam)` through
+`literalWrite`). A spacing sentinel (Tight) has no text at all. How the
+kind is stored does not enter into it. Both consumers of the fact read it
+here: the leaf transport's kind-id arm (`renderLeafTransportNapiImpls`) and
+the `FixedTextKindId` union (`emitTypes`), so the kinds the type admits
+are the kinds the runtime renders.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::NodesCtx`
 
 ```text
@@ -3302,21 +3310,6 @@ The single-char tokens `c` for which some direct follower begins with `cc`: writ
 ```text
 // PATTERN (not enumerable) and forms with no single terminal on
 // this side (nullable multiplicity already decided undefined above).
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFlags`
-
-```text
-// ---------------------------------------------------------------------------
-// Delimiter flags — the separated-list options struct's instance value
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** Bitflag encoding of a separated list's OPTIONAL flank state — the
- *  `delimiter` member of the list options struct. Mandatory flanks are
- *  template text and never encoded; a slot's permitted values are exactly
- *  the grammar's optional flanks (see `permittedDelimiters`). */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`

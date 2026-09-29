@@ -1,12 +1,14 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan, mapTriviaEntries } from '@sittir/common';
+import { dumpMetrics, sliceSpan } from '@sittir/common';
+import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
-import type { TreeHandle, TriviaSides } from '@sittir/common';
+import type { TriviaSides } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';

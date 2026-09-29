@@ -9,7 +9,6 @@ const EMITTER_ORDER = [
 	'wrap',
 	'types',
 	'consts',
-	'grammar',
 	'render',
 	'native',
 	'templates',
@@ -50,8 +49,6 @@ function emitterFor(rel: string): Emitter {
 			return 'types';
 		case 'consts.ts':
 			return 'consts';
-		case 'grammar.ts':
-			return 'grammar';
 		case 'render-module.ts':
 			return 'render';
 		default:

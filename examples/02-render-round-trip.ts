@@ -1,12 +1,15 @@
-import { createEngine, ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 import { structuralShape } from './helpers.ts';
 
+const engine = await createEngine(rust);
+
 export function renderMainFunction() {
-	const fn = ir.statement.function({
+	const fn = engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'main',
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
+		parameters: engine.build.parameters.strict(),
+		body: engine.build.block.strict(),
 	});
 	return fn.$render();
 }
@@ -22,7 +25,6 @@ export function renderMainFunction() {
  * renders canonically; everything you left alone still comes back verbatim.
  */
 export function renderUntouched(source: string) {
-	const engine = createEngine();
 	return engine.parse(source).$render();
 }
 
@@ -32,7 +34,6 @@ export function renderUntouched(source: string) {
  * whichever were rebuilt from templates.
  */
 export function roundTrip(source: string) {
-	const engine = createEngine();
 	const first = engine.parse(source);
 	const rendered = first.$render();
 	const second = engine.parse(rendered);

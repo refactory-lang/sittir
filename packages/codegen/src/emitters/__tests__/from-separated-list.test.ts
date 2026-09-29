@@ -107,7 +107,7 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
 		expect(emitted).toContain(
-			'separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator'
+			'separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator'
 		);
 		expect(emitted).not.toContain('KIND_LITERAL_TEXT');
 	});

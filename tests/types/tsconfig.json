@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"types": ["node"],
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"incremental": false
+	},
+	"include": ["./*.test-d.ts"],
+	"exclude": []
+}
