@@ -14478,17 +14478,9 @@ nests one parent's routes under another parent's path only through a
 to the same kind elsewhere.
 
 
-A parent key that is also a flat leaf's key is decided here, in one place.
-When the leaf is one of the parent's arms, that arm becomes the parent's
-default, so `ir.<key>` calls through the leaf's `{ strict, coerce }` pair
-and keeps the other arms as members. A leaf that is not an arm, or an arm
-that conflicts with a declared default, throws.
-
-### `packages/codegen/src/emitters/overlays/module.ts::withLeafDefault`
-
-Marks the route to the leaf that shares its parent's key as the parent's
-default, throwing when the leaf is not an arm or another route is declared
-the default.
+A parent key that is also a flat leaf's key throws, whether or not the
+leaf is one of the parent's arms: `ir.<key>` names one thing, and a
+parent's key never stands for one of its arms.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::flatLeafKindByKey`
 

@@ -27,18 +27,11 @@ function nodeMapWith(parent: string, leafKinds: readonly string[]) {
 }
 
 describe('a flattened parent whose key is also a flat leaf key', () => {
-	it('takes that leaf as its default arm when the leaf is one of its arms', () => {
-		const [parent] = flattenedVariantParents(nodeMapWith('_alpha', []));
-		expect(parent?.key).toBe('alpha');
-		expect(parent?.variants.map((route) => [route.name, route.default === true])).toEqual([
-			['alpha', true],
-			['beta', false]
-		]);
+	it('throws when the leaf is one of its arms', () => {
+		expect(() => flattenedVariantParents(nodeMapWith('_alpha', []))).toThrow("ir: '_alpha' and the leaf 'alpha' both take the key 'alpha'");
 	});
 
 	it('throws when the leaf is not one of its arms', () => {
-		expect(() => flattenedVariantParents(nodeMapWith('_word', ['word']))).toThrow(
-			"ir: '_word' and the leaf 'word' both take the key 'word', and the leaf is not one of its arms"
-		);
+		expect(() => flattenedVariantParents(nodeMapWith('_word', ['word']))).toThrow("ir: '_word' and the leaf 'word' both take the key 'word'");
 	});
 });
