@@ -92,28 +92,43 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
 
 - **Children:** each accessor returns the child's `.Parsed`.
 - **`$with`:** a draft stays tree-bound, so `$with.<slot>(v)` returns the
-  parent's `.Parsed` with that one slot's accessor retyped to the slot's
-  input type:
-  `$with.parameters(v: Parameters.Bound): WithSlot<FunctionItem.Parsed, 'parameters', Parameters.Bound>`.
-  - The replaced slot reads as `.Bound`, since it holds a factory node
-    until commit. The untouched slots stay `.Parsed`.
-  - The type is fixed per slot from its declared input type. It never
-    depends on `typeof v`: per-call inference is what made
-    type-checking unbounded.
-  - `WithSlot` key-remaps the slot's accessor out and adds the retyped
-    one. A plain intersection would make the accessor an overload pair
-    in which the `.Parsed` signature wins.
-  - Chaining keeps the last narrowing only: `WithSlot`'s own `$with` is
-    the parent's, so after `$with.a(x).$with.b(y)` slot `a` reads as
-    `.Parsed` again.
+  node's own type with that one slot's accessor retyped to the slot's
+  input type. `$with` is declared over the node's polymorphic `this` and
+  the slot inputs from `__slotHints__` (`H`):
+
+  ```ts
+  type Setters<Self, H> = { [K in keyof H]: (v: H[K]) => WithSlot<Self, K, H[K], H> };
+  type WithSlot<Self, K, V, H> =
+  	Remap<Self, K | '$with'> & { [P in K]: () => V } & { $with: Setters<WithSlot<Self, K, V, H>, H> };
+
+  // in FunctionItem.Parsed
+  $with: Setters<this, SlotInputsOf<FunctionItem>>;
+  ```
+
+  - **Replaced vs untouched slots:** the replaced slot reads as `.Bound`,
+    since it holds a factory node until commit. The untouched slots stay
+    `.Parsed`.
+  - **Chaining accumulates:** `WithSlot` re-points `$with` at itself.
+    After `$with.a(x).$with.b(y)`, both `a` and `b` read as `.Bound`.
+  - **Fixed per slot:** the retyped accessor comes from the slot's
+    declared input type, never from `typeof v`. Per-call inference of the
+    argument is what made type-checking unbounded.
+  - **Why `this` is passed in:** `this` is not allowed inside the nested
+    setter type literal, so it enters at the member (`Setters<this, …>`).
+  - **Remap, not intersect:** `Remap` (key-remapping) drops the slot's
+    accessor and `$with` before re-adding them. A plain intersection
+    would make each an overload pair in which the original signature
+    wins.
+  - **Probe:** a standalone check confirmed every case above, including
+    a five-step chain.
 - **Tree members:** `$commit()`, plus the tree association and span
   members.
 - **Run-time backstop:** `$commit` on a node that is not in the tree, or
-  is detached, throws. So any remaining overclaim (the chained case)
-  fails loudly.
-- **Fallback:** if the timing gate shows `WithSlot` costs type-check time
-  beyond noise, drop it and have `$with.<slot>` return plain `X.Parsed`.
-  The run-time backstop covers the overclaim that leaves.
+  is detached, throws.
+- **Fallback:** if the timing gate shows `Setters`/`WithSlot` costs
+  type-check time beyond noise, have `$with.<slot>` return plain
+  `X.Parsed`. The run-time backstop then covers the replaced slot, which
+  that type overclaims.
 
 ### Resolution stays lazy
 
@@ -153,7 +168,8 @@ for group-lift slots is a separate change.
   `root.statements()[0]` narrowed by `is.<kind>` has `$with`, its
   accessors return `.Parsed` children, and `$commit` type-checks.
   After `item.$with.parameters(build.parameters(p))`, `parameters()` is
-  `Parameters.Bound` and the other accessors are still `.Parsed`.
+  `Parameters.Bound` and the other accessors are still `.Parsed`. A
+  chained `$with` keeps every earlier narrowing.
 - **List-owner probe per grammar:**
   - `for (const p of fn.parameters())` yields the stored element type;
   - `fn.parameters().delimiter` and `.length`/`.at(0)` type-check;
