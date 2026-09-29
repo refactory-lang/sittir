@@ -74,9 +74,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('/// Whether the reader captures a named node of this kind as text: its');
 	lines.push("/// template renders from that text, so the text is the node's content —");
 	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
-	lines.push('pub fn is_text_kind(kind: KindId) -> bool {');
-	lines.push(`    matches!(kind.0, ${textKindIds.length > 0 ? textKindIds.join(' | ') : 'u16::MAX if false'})`);
-	lines.push('}');
+	lines.push(...kindIdSetFn('is_text_kind', textKindIds));
 
 	const aliasEnvelopeIds = [
 		...new Set(
@@ -89,9 +87,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('/// Whether this parse kind id is an alias envelope: the reader stamps the');
 	lines.push('/// grammar symbol beside it when the node is the storage node shown under');
 	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
-	lines.push('pub fn is_alias_envelope(kind: KindId) -> bool {');
-	lines.push(`    matches!(kind.0, ${aliasEnvelopeIds.length > 0 ? aliasEnvelopeIds.join(' | ') : 'u16::MAX if false'})`);
-	lines.push('}');
+	lines.push(...kindIdSetFn('is_alias_envelope', aliasEnvelopeIds));
 
 	const keepsAnonymousIds = [
 		...new Set(
@@ -105,9 +101,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('/// Whether a node of this kind keeps its anonymous children as `$other`');
 	lines.push('/// when it has no named child: an unnamed slot of the kind stores terminal');
 	lines.push("/// kinds, and the wrap layer reclaims that slot's value from `$other`.");
-	lines.push('pub fn keeps_anonymous_children(kind: KindId) -> bool {');
-	lines.push(`    matches!(kind.0, ${keepsAnonymousIds.length > 0 ? keepsAnonymousIds.join(' | ') : 'u16::MAX if false'})`);
-	lines.push('}');
+	lines.push(...kindIdSetFn('keeps_anonymous_children', keepsAnonymousIds));
 
 	lines.push('');
 	lines.push('/// The model slot a child is stored under where its name differs from the');
@@ -193,6 +187,12 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 
 	return lines.join('\n');
+}
+
+function kindIdSetFn(name: string, ids: readonly number[]): string[] {
+	return ids.length === 0
+		? [`pub fn ${name}(_kind: KindId) -> bool {`, '    false', '}']
+		: [`pub fn ${name}(kind: KindId) -> bool {`, `    matches!(kind.0, ${ids.join(' | ')})`, '}'];
 }
 
 interface InnerGapRow {

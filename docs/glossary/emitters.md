@@ -2921,6 +2921,10 @@ share one symbol and a repeated `matches!` arm is an error. A `token` kind
 is absent on purpose: its literal is on the model and the transport already
 defaults a missing `$text` to it.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdSetFn`
+
+The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind`, `is_alias_envelope` and `keeps_anonymous_children` are emitted through it.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::is_slot_separator`
 
 The generated table behind the reader's separator drop: `(parent kind id,
