@@ -88,25 +88,27 @@ included.
 
 ### Absolute positions
 
-An absolute position (for an editor, a diagnostic, a range edit) is derived:
-the sum of the node's and its ancestors' starts. Only a tree-bound node can
-answer it.
+Nothing in sittir holds an absolute position. Tree-sitter knows each live
+node's byte range, so a tree-bound node's absolute position is read through
+its handle; for an editor, a diagnostic or a range edit it can also be summed
+from its ancestors' starts. A detached or serialized node has none.
 
 ### The native side
 
 - **The wire and `NodeData` carry relative coordinates.** `read_node` emits
   each stored child's byte and row offsets from its parent, and its columns,
   with the root at 0 after `widen_to_whole_source`.
-- **The renderer keeps absolute coordinates internally.** The prepare walk is
-  top-down: it accumulates each node's base as it descends and builds each
-  `NodeCoordinate` with an absolute span. `NodeCoordinate::resolve` is the
-  only place that turns coordinates into bytes, and only for a node with a
-  handle or a buffer-backed id; `gap_between` and the list classifier are
-  unchanged for source-backed nodes.
-- **One lookup path for sources.** `resolve` finds a source through the id
-  the handle carries. A buffer-backed id maps to a serialized node's buffer
-  in the render's source table, the same way a tree id maps to a tree's
-  source.
+- **The renderer slices relatively.** The prepare walk is top-down, so it
+  holds each parent's bytes when it reaches a child. A child's bytes are
+  `parent_bytes[start..end]`, and the gap between two siblings is
+  `parent_bytes[a.end..b.start]`. `NodeCoordinate` carries a relative span,
+  and resolution composes down the walk instead of indexing a whole source.
+- **Anchors find their own bytes.** Only the node that starts a slicing chain
+  resolves on its own:
+  - the render root, from its tree's source or its buffer;
+  - a subtree seated into another tree, through its handle: tree-sitter's
+    node gives the byte range to slice from its tree's source;
+  - a serialized root, through its buffer-backed id.
 - **Detached gaps** are classified from geometry by the same classifier
   entry, with the gap's width, row difference and column in place of its
   bytes.
