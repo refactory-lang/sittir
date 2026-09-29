@@ -4,13 +4,15 @@ import { evaluate } from './evaluate.ts';
 import { packageEntryPath, packageGrammarJsPath } from './resolve-grammar.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
+import { conflictRecords } from './diagnostics/conflicts.ts';
+import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
 import { blockedRecords, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import { stampVisibleExternals, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { diagnoseEvaluationStages, type StageDiagnoses } from './stage.ts';
-import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
+import { authoredRuleNames, diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
 import { deriveDiagnosticRecords, type DiagnosticRecord } from './diagnostics/diagnostic-records.ts';
 
@@ -105,7 +107,9 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
 		...evaluatedRecords,
-		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched })
+		...diagnoseRuleCauses({ grammar, raw: evaluated, enriched: stages?.enriched }),
+		...conflictRecords(evaluated),
+		...dynamicPrecedenceRecords(evaluated)
 	];
 	const evaluateBlocked = blockedRecords(evaluateDiagnostics, evaluated.expectDiagnostics, allowDiagnostics);
 	if (evaluateBlocked.length > 0) return { passed: false, generatedIdTables, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };
@@ -121,7 +125,7 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 			: deriveDiagnosticRecords({
 					stages,
 					final: { diagnostics: [...evaluatedRecords, ...collected.diagnostics], ruleCatalog: collected.raw.ruleCatalog },
-					authoredRules: [...Object.keys(evaluated.ruleCauses ?? {}), ...(evaluated.undeclaredRules ?? [])],
+					authoredRules: authoredRuleNames(evaluated),
 					patchSites: evaluated.patchSites ?? []
 				});
 	const patchSiteDiagnostics =

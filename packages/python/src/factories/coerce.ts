@@ -349,15 +349,15 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'integer_decimal_long',
+	'integer_decimal_imaginary',
+	'integer_decimal_plain',
 	'float_point',
 	'float_leading_point',
 	'float_scientific',
 	'identifier',
 	'line_continuation_newline',
-	'line_continuation_nul',
-	'integer_decimal_long',
-	'integer_decimal_imaginary',
-	'integer_decimal_plain'
+	'line_continuation_nul'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {

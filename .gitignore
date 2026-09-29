@@ -32,6 +32,7 @@ Thumbs.db
 #   - generated.manifest.json (codegen output fingerprint — see
 #     packages/codegen/src/scripts/generated-manifest.ts)
 #   - render-bodies.json (one render body per emitted kind — the validators' catalog)
+#   - resolutions.json (the derived conflict resolutions; each grammar.sittir.ts imports it)
 #   - parser.wasm and src/ (the generated parser: parser.c, scanner.c, the
 #     tree_sitter headers, grammar.json, node-types.json), which the native
 #     crate's build.rs compiles — CI builds from these, it never regenerates
@@ -44,6 +45,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/generated.manifest.json
 !packages/*/.sittir/grammar-diagnostics.json
 !packages/*/.sittir/render-bodies.json
+!packages/*/.sittir/resolutions.json
 !packages/*/.sittir/parser.wasm
 !packages/*/.sittir/src/
 
@@ -55,6 +57,9 @@ packages/*/.sittir/*
 # oxlint/oxfmt too, so nothing here gates a commit. A probe worth keeping
 # belongs in packages/tools behind `sittir tool <name>`.
 scratch/
+# Worktrees (scratchpad/wt-<name>) and their scratch files live inside the
+# checkout, so tools resolve the shared toolchain from here; never tracked.
+/scratchpad/
 
 # Rust workspace (spec 012)
 /target/

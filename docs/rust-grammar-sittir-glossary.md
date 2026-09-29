@@ -38,7 +38,7 @@ compiles cannot drift apart.
 
 Type inference: `B` infers from `base` (typed by `./base.ts`), and the config
 literal is contextually typed against `WireConfig<EnrichedGrammar<B>>`, so
-every rule, transform, groups and conflicts callback's `$` is a typed
+every rule, transform and groups callback's `$` is a typed
 `ShapedSymbols` and each `previous`/`original` is the precise per-rule
 post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
 `reauthored()` callbacks get the same shaped `$`. The payload stays inline:
@@ -51,43 +51,6 @@ lets every written path key be judged against the rule shapes (`PatchesCheck`)
 and every option address and binding for syntax and resolution
 (`OptionsCheck`). An explicit type argument would disable inference for the
 parameters after it and check nothing.
-
-### `conflicts` (`packages/rust/grammar.sittir.ts:35`)
-
-`previous` is the base grammar's conflicts list — concat so the base entries
-(`$._type`, `$._pattern`, etc.) aren't dropped. The sittir-added entries:
-
-- `[_expression_except_range, _match_arm_block_ending]` — the match_arm split
-  into `seq(expr, ',')` vs block-ending variants exposes a shared-prefix
-  conflict with other expression contexts when the parser sees `… => if_expr (`.
-- `[generic_type_with_turbofish, generic_pattern, _path]` — `_path` is a minted
-  visible-group arm source, filtered out of `inline:` so its mint survives to
-  the parser. Un-inlined it re-exposes the `for identifier ::` prefix ambiguity
-  with generic_pattern / generic_type_with_turbofish that inlining previously
-  let the LR table merge; this is the fork tree-sitter itself suggests.
-- `[generic_type_with_turbofish, _path]` — the pair-only state of the turbofish
-  trio above (`impl identifier ::`, where no generic_pattern is in scope).
-- `[visibility_modifier, _path]` — `struct X ( crate :: …`: `pub(crate)`-style
-  visibility vs a crate-rooted path in tuple-struct field position.
-- `[_expression_except_range, _closure_expression_group1]` —
-  closure_expression's widened choice-arm mint shares the
-  `closure_parameters block ';'` prefix with `_expression_except_range`; same
-  class as the match_arm conflict.
-- `[scoped_identifier, scoped_type_identifier, _visibility_modifier_crate]` —
-  visibility_modifier variant extraction: `pub(crate)` and `crate::foo` share
-  the `crate` prefix.
-- `[_visibility_modifier_pub]` — variant extraction again: `pub` and `pub(x)`
-  share the `pub` prefix, so the parser needs lookahead.
-- `[_attributed_type_parameter, _type]` — the `_attributed_type_parameter`
-  body-pattern and `_type` can both begin with `metavariable`; declaring the
-  conflict makes tree-sitter use lookahead instead of failing parser
-  generation.
-- `[_attributed_argument]` — `_attributed_argument` is
-  `seq(repeat(attribute_item), _expression)`, and since the repeat can be zero
-  a bare `_expression` is a valid `_attributed_argument`. That creates an LR
-  ambiguity in array_expression's list-arm, where elements share the same
-  structural unit as call arguments; the declaration lets GLR disambiguate at
-  parse time.
 
 ### `patches` — `variant()` arms in the `identifier '::' …` position (`packages/rust/grammar.sittir.ts`)
 
@@ -194,7 +157,7 @@ Two positions are covered entirely by this mechanism and therefore have no
 `patches:` entry of their own: call arguments (synthesized as the visible
 `attributed_argument` kind, mirroring `attributed_parameter`) and
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
-overlap with `_type` is declared in `conflicts:`).
+overlap with `_type` is a derived conflict).
 
 ### `attributed_field_declaration` (`packages/rust/grammar.sittir.ts:253`)
 

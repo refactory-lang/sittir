@@ -49,6 +49,461 @@
   },
   {
     "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between pattern, primary_expression on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "pattern",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "pattern"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'match'"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "pattern",
+          "primary_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between match_statement, primary_expression on '*' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "match_statement",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "match_statement"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'match'"
+        ],
+        "lookahead": "'*'",
+        "interpretations": [
+          "match_statement",
+          "primary_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between type_alias_statement, primary_expression on '*' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_alias_statement",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_alias_statement"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'type'"
+        ],
+        "lookahead": "'*'",
+        "interpretations": [
+          "type_alias_statement",
+          "primary_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between expression_statement, expression_statement_tuple on ';' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "expression_statement",
+          "expression_statement_tuple"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "expression_statement"
+        ],
+        [
+          "expression_statement_tuple",
+          "expression_statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "expression"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "expression_statement",
+          "expression_statement_tuple"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between list_splat_pattern, primary_expression on '.' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "list_splat_pattern",
+          "primary_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "list_splat_pattern"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'*'",
+          "'match'"
+        ],
+        "lookahead": "'.'",
+        "interpretations": [
+          "primary_expression",
+          "list_splat_pattern"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between tuple_pattern, tuple on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "tuple_pattern",
+          "tuple"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "tuple_pattern"
+        ],
+        [
+          "tuple"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "')'"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "tuple_pattern",
+          "tuple"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between list_pattern, list on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "list_pattern",
+          "list"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "list_pattern"
+        ],
+        [
+          "list"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'['",
+          "']'"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "list_pattern",
+          "list"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between with_item, _collection_elements on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "with_item",
+          "_collection_elements"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "with_item"
+        ],
+        [
+          "_collection_elements"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'with'",
+          "'('",
+          "expression"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "with_item",
+          "_collection_elements",
+          "_collection_elements",
+          "_collection_elements"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between named_expression, as_pattern on 'as' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "named_expression",
+          "as_pattern"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "named_expression"
+        ],
+        [
+          "as_pattern"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_named_expression_lhs",
+          "':='",
+          "expression"
+        ],
+        "lookahead": "'as'",
+        "interpretations": [
+          "as_pattern",
+          "named_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between except_clause_exception_as, except_clause_exception_list on ':' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "except_clause_exception_as",
+          "except_clause_exception_list"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "except_clause_exception_as",
+          "except_clause_exception",
+          "except_clause"
+        ],
+        [
+          "except_clause_exception_list",
+          "except_clause_exception",
+          "except_clause"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'try'",
+          "':'",
+          "suite_inline",
+          "'except'",
+          "expression"
+        ],
+        "lookahead": "':'",
+        "interpretations": [
+          "except_clause_exception_as",
+          "except_clause_exception_list"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
+    "message": "conflict between as_pattern, except_clause_exception_as on ':' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "as_pattern",
+          "except_clause_exception_as"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "as_pattern"
+        ],
+        [
+          "except_clause_exception_as",
+          "except_clause_exception",
+          "except_clause"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'try'",
+          "':'",
+          "suite_inline",
+          "'except'",
+          "expression",
+          "'as'",
+          "expression"
+        ],
+        "lookahead": "':'",
+        "interpretations": [
+          "as_pattern",
+          "except_clause_exception_as"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
+    "grammar": "python",
+    "message": "upstream declares the conflict print_statement, primary_expression, which the reshaped grammar never reports",
+    "canProceed": true,
+    "details": {
+      "symbols": [
+        "print_statement",
+        "primary_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-dynamic-precedence-authored",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "primary_expression",
+    "message": "the authored 'primary_expression' changes its dynamic precedence from [] upstream to [-1]",
+    "canProceed": true,
+    "details": {
+      "rule": "primary_expression",
+      "upstream": [],
+      "landed": [
+        -1
+      ],
+      "landedIn": [
+        "primary_expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "grammar": "python",
     "code": "patch-without-cause",
     "severity": "error",

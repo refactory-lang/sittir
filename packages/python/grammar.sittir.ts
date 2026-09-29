@@ -9,6 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
+import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	role,
 	field,
@@ -25,6 +26,7 @@ const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
 );
 export default sittirGrammar(base, {
+	resolutions,
 	name: 'python',
 	externals: ($, prev) => {
 		role($._indent, 'indent');
@@ -32,13 +34,6 @@ export default sittirGrammar(base, {
 		role($._newline, 'newline');
 		return prev ?? [];
 	},
-	conflicts: ($, previous) => [
-		...(previous ?? []),
-		[$.expression_statement, $.expression_statement_tuple],
-		[$.except_clause_exception_as, $.except_clause_exception_list],
-		[$.as_pattern, $.except_clause_exception_as],
-		[$._expressions, $.expression_list]
-	],
 	inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs

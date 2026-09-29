@@ -58,26 +58,16 @@ exists only for the agreement check.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterConflict`
-
-```text
-/**
- * Register a conflict group against the active wire context. Dedupes
- * by exact group membership (same names in same order).
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSymbolRename`
 
 ```text
 /**
  * Record that a rule symbol was renamed during transform resolution
  * (a variant() rename of an existing SYMBOL member, or a group-lift
- * deposit replacing an alias's content symbol). Conflict entries and
- * registered conflict groups that cite the old name are rewritten to
- * the new one by `buildWiredConflictsFn` — a rename-only variant
- * changes no structure, so the grammar's LR resolutions must follow
- * the symbol.
+ * deposit replacing an alias's content symbol). Wire's list callbacks
+ * (`extras`, `externals`, `precedences`, `inline`, `supertypes`) rewrite
+ * the old name to the new one, and the conflict-derivation records map
+ * the new name back to the old (`derivation-records.ts`).
  */
 ```
 
@@ -135,7 +125,7 @@ only ever stripped, restamped or claimed inside `wire()` or
 /**
  * Install a fresh `WireContext` for the duration of `fn` and return
  * both the callback result and the context so tests can assert on
- * deposits / conflictGroups that were registered during the call.
+ * deposits that were registered during the call.
  *
  * Intended for unit tests of DSL helpers (variant/alias/transform/
  * hoist) that need a wire context without going through full wire()
@@ -261,6 +251,83 @@ Whether `name` is one of the grammar's `extras` rules in the active wire context
 
 The names of the grammar's extra rules: the `extras` list read through `overriddenList`, closed over supertypes by `extrasClosure` — a supertype listed in `extras` contributes each member of its choice body, and a supertype whose members are all extras is one. A supertype's body is the override's rule (called with the base rule as its original) or the base grammar's evaluated rule. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
 
+### `packages/codegen/src/dsl/wire/wire.ts::protectedWireRuleNames`
+
+The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs` and `visibleExternals` names, read off each callback's keys with a symbol proxy. `evaluate` joins them with the supertypes as `protectedRuleNames`, and `reachableRuleNames` counts them as roots, so the canonical prune and the dead-mint pass keep the same rules.
+
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamSymbolNames`
+
+The names the upstream grammar defines: its rules and its externals, read the way wire reads every upstream list (the grammar object or its `grammar` field; an `externals` callback run over a symbol proxy).
+
+### `packages/codegen/src/dsl/wire/wire.ts::upstreamConflictSets`
+
+The upstream grammar's own `conflicts`, as rule-name sets. The upstream `grammar()` has already run the conflicts callback, so each entry is names or symbols.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::DEAD_ENRICH_MINTS_KEY`
+
+The non-enumerable key under which `blankDeadEnrichMints` attaches the dead set to `result.grammar`. tree-sitter's loader serializes the grammar with an object spread, which copies only enumerable properties, so the key never reaches grammar.json.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::ruleListEntries`
+
+The rule-list entries of an `extras` value in either runtime's shape; an entry that is not a symbol, string or pattern contributes nothing.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::reachableRuleNames`
+
+The rules a wired grammar reaches, walking SYMBOL references from its roots: `grammarRootNames` (the start rule and the rules the extras name), the supertypes, the externals, the `word` rule and `protectedWireRuleNames`. It reads the grammar's final rules, so every wire rewrite, rename and pattern replacement is already in them.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadNames`
+
+A rule-name list (`inline`, `supertypes`) without the entries that name a dead rule. A value that is not a list is returned as is.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadConflicts`
+
+A `conflicts` list without the groups that name a dead rule.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::blankDeadEnrichMints`
+
+The dead-mint pass. It runs once, in `sittirGrammar`, on the `grammar()` result, and so runs in both runtimes. The dead set is the rules enrich adds (`getEnrichMints`) that the final grammar does not reach (`reachableRuleNames`). The pass covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite.
+
+Each dead rule's map entry is reassigned to the runtime's own `blank()`, and no rule object is changed, so a body another rule shares (a rename copies the body object) is untouched. Reassigning an existing key keeps the key order, which fixes parser symbol ids; the pass asserts the order is unchanged. The dead names are then dropped from `inline`, `supertypes` and `conflicts`, so tree-sitter never sees a list entry that names a blank rule. tree-sitter's generate drops the unreachable blank rule, `pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar.
+
+The dead set is attached to the grammar under `DEAD_ENRICH_MINTS_KEY` and becomes `orphanedSyntheticGroups`. It never reads `annotations.hoisted`.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::getDeadEnrichMints`
+
+The dead set `blankDeadEnrichMints` attached to a grammar; empty when it attached none.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DERIVATION_RECORDS_KEY`
+
+The non-enumerable key under which `attachDerivationRecords` puts the conflict-derivation records on `result.grammar`. Like the dead-mint key, it never reaches grammar.json.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationRecords`
+
+What the conflict loop needs from the reshaping: `upstreamConflicts`, the conflict sets the upstream grammar declared itself (its own `conflicts`, never sittir's), and `sourceEdges`, one step from a reshaped rule's name toward the upstream rule it came from. `derive-conflicts.ts::sourceChain` follows the edges to a fixpoint. With them travel the facts the conflict diagnostics report (`ConflictConfig`), and `upstreamDynamicPrecedence` and `dynamicPrecedence`: for every rule of the upstream grammar and of the wired grammar that has any, its `prec.dynamic` values (`dynamicPrecedenceOf`).
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::dynamicPrecedenceOf`
+
+The `prec.dynamic` values in each rule's body, wherever the wrapper sits, for the rules that have any. Read before canonicalization, which peels the wrappers.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
+
+What the config says about conflicts: the resolutions the grammar imported, and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
+
+The variant records: every SYMBOL reference that carries `annotations.variantOf` names a variant of that owner (`transform.ts::withVariantAnnotation`). Read off the final rules, so every rename is already applied to both names.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
+
+Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so wire's rename map is complete. One edge per rule, set from two records in order, the later winning:
+
+1. a symbol rename (a lift renamed onto its hoisted name is recorded as a rename, `wireRenameLift`) maps the new name to the old one;
+2. a variant maps to its `variantOf` owner. It wins over a rename: a hoisted variant made from a lift is both renamed from the lift's mint name and a variant of its parent, and the parent is the upstream rule, while the lift name is a mint with no upstream source.
+
+A name the upstream grammar defines (a rule or an external) never gets an edge; it is its own source. Automatic arm labels put `variantOf` on references to existing upstream rules too, and an upstream rule is not reshaped by being labelled. A promoted group gets no edge: it is an upstream rule unchanged, and its visible name is an alias, which a conflict report never names. Any other enrich mint has no record here and so no source.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
+
+The records `attachDerivationRecords` put on a grammar; undefined for a grammar not built by `sittirGrammar`.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
 The names in a list of rule references: bare strings and `SYMBOL` objects, anything else dropped. Shared by `baseExternalNames` and `extraRuleNames`.
@@ -374,21 +441,6 @@ patched a reference to it in.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wrapConflictsCallback`
-
-```text
-/**
- * Wrap the user's `conflicts` callback so accumulated variant conflict
- * groups drain into its return list, each group's names symbolized
- * through the provided `$` proxy.
- *
- * If the user didn't supply a `conflicts`, return a fresh one that just
- * drains the accumulator. If the accumulator is empty when tree-sitter
- * invokes the callback, the wrapped fn still passes the user's list
- * through unchanged.
- */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
 ```text
@@ -400,32 +452,6 @@ patched a reference to it in.
  * Tree-sitter evaluates metadata callbacks after rules, so the set is
  * complete by the time this runs. `_kw_*` helpers are leaf token rules,
  * which satisfies tree-sitter's inline restrictions.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::buildWiredConflictsFn`
-
-```text
-/**
- * Build the wired conflicts callback that drains accumulated variant
- * conflict groups into the returned conflict list.
- *
- * @remarks
- * Always returns a drainer, even when the user didn't supply a conflicts
- * callback and no groups have registered yet. We can't know at wire-time
- * whether variants will register later (they're registered lazily when
- * rule fns run), so we install the drainer unconditionally. The drainer
- * short-circuits at call-time when `conflictGroups` is still empty,
- * keeping the overhead minimal when no variants are declared.
- *
- * The drainer also applies `symbolRenames` to the base conflict list
- * (the author's entries plus tree-sitter's own) and to registered
- * groups: a SYMBOL entry whose name was renamed re-symbolizes under
- * the new name, so conflicts keep citing rules that still exist.
- *
- * @param userConflicts - The author's original conflicts callback, if any.
- * @param context - The active wire context whose `conflictGroups` are drained.
- * @returns A wrapped conflicts callback that appends symbolized group entries.
  */
 ```
 
@@ -1008,7 +1034,8 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ```text
 /** Old rule-symbol name → the name transform resolution renamed it to;
- *  consumed by the conflicts drainer to rewrite stale conflict entries. */
+ *  consumed by wire's list-callback renames and by the conflict-derivation
+ *  records, which follow it back to the upstream name. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
@@ -1027,31 +1054,8 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 	 *  before table construction, vaporizing the alias — and the minted
 	 *  kind's entire parser identity — while the IR still models the kind
 	 *  (the phantom-kind divergence). Populated from
-	 *  `getEnrichVisibleGroupSources(base)`; applied by the wired inline
+	 *  `getEnrichVisibleSubsequenceSources(base)`; applied by the wired inline
 	 *  callback. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::orphanedSyntheticGroups`
-
-```text
-/** Enrich-synthesized clause-hoist names (both inline-safe and
-	 *  visible-aliased categories — see `getEnrichClauseGroupOwners`) whose
-	 *  recorded owning parent is redeclared in THIS grammar's own
-	 *  `rules:` config. An override author can never reference a
-	 *  synthesized name by hand (it doesn't exist until enrich() mints it
-	 *  from the base grammar's pre-override shape), so redeclaring the
-	 *  owner unconditionally orphans it. Read by
-	 *  `collectGrammarDiagnosticsForGrammar` to suppress the phantom
-	 *  content-collision/storagename-collision diagnostic these orphans
-	 *  would otherwise raise for a kind that can never occur in a parse. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::conflictGroups`
-
-```text
-/** Conflict groups (rule-name arrays) registered by variant() for
-	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
-	 *  callback when tree-sitter invokes it. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::refineForms`
@@ -1322,6 +1326,8 @@ are what the shape-free half of the load-time check can promise.
 	 * no `undefined` leak). `previous` is the base grammar's conflict list.
 	 */
 ```
+
+Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and `sittirGrammar` sets the final list from the derived resolutions (`dsl/conflict-resolutions.ts::applyConflictResolutions`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
@@ -1718,8 +1724,8 @@ built it, the same object the upstream diagnostic stage reads.
 // appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
 // rules directly into base.grammar.rules before wire runs; without
 // inlining, tree-sitter creates LR conflicts for those hidden rules.
-// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
-// property that enrich() attaches to the grammar result.
+// getEnrichHiddenSubsequences reads the hidden-subsequence origins from the rule-origin
+// map that enrich() attaches to the grammar result.
 //
 // (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
 // auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
@@ -1738,19 +1744,12 @@ built it, the same object the upstream diagnostic stage reads.
 
 ```text
 // Visible-group mint SOURCES must not be inlined away — see
-// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+// `WireContext.inlineRemovals` / `getEnrichVisibleSubsequenceSources`.
 ```
 
 #### body
 
 ```text
-// A synthesized clause-hoist name (recorded owner = the parent kind
-// enrich() hoisted it FROM) is orphaned once THIS grammar's own
-// `rules:` config redeclares that owner — the override text could
-// never reference a name that didn't exist until this enrich() call
-// minted it from the base grammar's pre-override shape, so replacing
-// the owner's body necessarily drops the only reference. See
-// `WireContext.orphanedSyntheticGroups`.
 // PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
 // mint (the inline-UNSAFE category — excluded from `syntheticInline`
 // above precisely because we WANT it to stay a distinguishable kind,
@@ -1800,10 +1799,9 @@ built it, the same object the upstream diagnostic stage reads.
 // Boundary casts to the internal loose (`unknown`-$, mutable-array)
 // callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
 // itself (see the block comment above `wire()`): the public config's
-// `conflicts`/`inline` callbacks are typed against the precise
-// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
-// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
-// that only ever calls them positionally, so the wider internal param
+// `inline` callback is typed against the precise `ShapedSymbols<B>` $ and
+// readonly-array shapes for author ergonomics; `wrapInlineCallback` is
+// internal machinery that only ever calls it positionally, so the wider internal param
 // types are a safe narrowing-away, not a behavior change.
 ```
 

@@ -31,6 +31,10 @@ export interface RuleCausesInput {
 	readonly enriched?: StageDiagnosis;
 }
 
+export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'>): string[] {
+	return [...Object.keys(raw.ruleCauses ?? {}), ...(raw.undeclaredRules ?? [])];
+}
+
 export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] {
 	const { grammar, raw, enriched } = input;
 	const collisions = (raw.whitespaceCollisions ?? []).map(({ name, site }) =>

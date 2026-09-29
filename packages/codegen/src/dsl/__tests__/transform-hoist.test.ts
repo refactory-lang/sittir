@@ -42,9 +42,6 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(emptyBody.type).toBe('PREC_LEFT');
 		expect(emptyBody.value).toBe(2);
 
-		expect(ctx.conflictGroups).toContainEqual(['demo_empty', 'demo_list']);
-		expect(ctx.conflictGroups).toContainEqual(['demo_empty']);
-		expect(ctx.conflictGroups).toContainEqual(['demo_list']);
 	});
 
 	it('hoists non-empty sibling variants whole-arm too: each variant carries the scaffolding and the parent is a pure choice', () => {
@@ -65,7 +62,6 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(x.type).toBe('SEQ');
 		expect(x.members.map((m) => m.value ?? m.name)).toEqual(['(', 'X', ')']);
 		expect((result as { type: string }).type).toBe('CHOICE');
-		expect(ctx.conflictGroups).toEqual([['nonempty_x', 'nonempty_y'], ['nonempty_x'], ['nonempty_y']]);
 	});
 
 	it('carries an unnamed arm that enrich already lifted: the lift keeps its name and takes the scaffolding', () => {
@@ -97,7 +93,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 	});
 
 	it('keeps the per-arm form when an unnamed arm has no enrich lift to carry it', () => {
-		const { ctx } = withWireContext('bare', () => {
+		const { result } = withWireContext('bare', () => {
 			const g = globalThis as any;
 			const original = g.seq(
 				{ type: 'STRING', value: '[' } as any,
@@ -106,7 +102,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			);
 			return transform(original, { '1/0': variant('x') });
 		});
-		expect(ctx.conflictGroups).toEqual([]);
+		expect((result as { type: string }).type).toBe('SEQ');
 	});
 
 	describe('variants of a choice under optional()', () => {
@@ -213,7 +209,6 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 				'2/0': variant('right_c')
 			});
 		});
-		expect(ctx.conflictGroups).toEqual([]);
 		expect([...ctx.deposits.keys()].sort()).toEqual(['mixed_left_a', 'mixed_right_c']);
 	});
 });

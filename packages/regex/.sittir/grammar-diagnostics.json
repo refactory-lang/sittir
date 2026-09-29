@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "regex",
+    "message": "conflict between character_class, class_range on '-' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "character_class",
+          "class_range"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "character_class"
+        ],
+        [
+          "class_range"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'['",
+          "class_character"
+        ],
+        "lookahead": "'-'",
+        "interpretations": [
+          "class_range",
+          "class_range",
+          "class_range",
+          "class_range",
+          "character_class_repeat1"
+        ]
+      }
+    }
+  }
+]

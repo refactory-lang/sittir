@@ -1,13 +1,14 @@
 {
   "grammar": "rust",
-  "source_hash": "86c092ac922a0087dd64cfecd0a21e2ac29c2fc8803326c1202d60381dc0bbd4",
+  "source_hash": "6ee842489e8cab33492e63fa847ab4c189816bfb20059bef4fbb1a2ad04b907a",
   "files": {
-    "packages/rust/.sittir/grammar-diagnostics.json": "9ee779d4ec99c07f07e87f68cce523c615a2f05cfe1a5676462ad64fc326918a",
-    "packages/rust/.sittir/grammar.js": "8a17dfa358bb5ba23a31915cff94aa6ee32831c40d19ce365e42d6220b3d3a89",
+    "packages/rust/.sittir/grammar-diagnostics.json": "923a011eee9d92ea0897c59d5d06b398434d75b36944967f8645b25c073a731d",
+    "packages/rust/.sittir/grammar.js": "7281acce9f865de627da4229b55e1bf97fb4a9d5b19201be8b79db383455a975",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
     "packages/rust/.sittir/parser.wasm": "e283048f4504e0f46aa708a1fb34d903f751417257cb4779cdde7081ef230b11",
     "packages/rust/.sittir/render-bodies.json": "58c025817e866ac83bf3c242323121ee85b4d7b2fbddce70050d6a60fe2f3a0c",
-    "packages/rust/.sittir/src/grammar.json": "b7652c1247ccba36977785663d7ae3e1503d5ce18e73a48cb8b688aa7c9cc435",
+    "packages/rust/.sittir/resolutions.json": "c11c23e65cddc61087a017250819c78e6179933632c9e7f00dce52e670377a80",
+    "packages/rust/.sittir/src/grammar.json": "94800d19b40f781c33a7b5401d04d4561b0e68150675b2a9cf7e28b6cd162676",
     "packages/rust/.sittir/src/node-types.json": "d17c1fab5ffad98bf8de7e93206e7af040ea55be12214bbaf4052a2a914896ca",
     "packages/rust/.sittir/src/parser.c": "1429048901ac698843e0e14d124d3caeff71755c466d1e541df4fb44e3fe2afc",
     "packages/rust/.sittir/src/scanner.c": "77faa4943da96dcb17d9c2a735bdbf7702287b52a1d2971117b167e47e318620",

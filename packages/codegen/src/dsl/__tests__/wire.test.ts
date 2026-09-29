@@ -392,41 +392,19 @@ describe('wire()', () => {
 		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
 	});
 
-	it('wrapped conflicts callback appends variant-registered groups', () => {
-		// Force a conflict group via the variant machinery (hoist-sibling
-		// path registers conflicts on the parent). Easiest: call the
-		// user's conflicts cb and verify the drain appends.
-		const origSeq = {
-			type: 'SEQ',
-			members: [
-				{ type: 'SYMBOL', name: 'a' },
-				{ type: 'SYMBOL', name: 'b' }
-			]
-		};
-		const wired = wire<GrammarJson>({
-			name: 'test',
-			rules: {},
-			patches: { assignment: { '0': variant('eq'), '1': variant('type') } },
-			conflicts: ($, _prev) => {
-				const p = $ as Record<string, unknown>;
-				return [[p.user_conflict_a, p.user_conflict_b]] as readonly (readonly AuthoringRule[])[];
-			}
-		}, emptyBase);
-		// Drive assignment to populate deposits AND register hoist-conflicts.
-		wired.rules.assignment!.call({}, {}, origSeq);
-		// Drive conflicts via the $ proxy.
-		const $ = new Proxy(
-			{},
+	it('hands grammar() no conflicts, even when the config authors some: sittirGrammar sets the final list', () => {
+		const wired = wire<GrammarJson>(
 			{
-				get: (_, prop: string) => ({ type: 'SYMBOL', name: prop })
-			}
+				name: 'test',
+				rules: {},
+				conflicts: ($) => {
+					const p = $ as Record<string, unknown>;
+					return [[p.user_conflict_a, p.user_conflict_b]] as readonly (readonly AuthoringRule[])[];
+				}
+			},
+			emptyBase
 		);
-		const cb = wired.conflicts!;
-		const out = cb.call({}, $, []) as Array<Array<{ name: string }>>;
-		// First group is the user's; the tail is the symbolized drained groups.
-		expect(out.length).toBeGreaterThanOrEqual(1);
-		expect(out[0]![0]).toMatchObject({ name: 'user_conflict_a' });
-		expect(out[0]![1]).toMatchObject({ name: 'user_conflict_b' });
+		expect(wired.conflicts).toBeUndefined();
 	});
 
 	// --------------------------------------------------------------------

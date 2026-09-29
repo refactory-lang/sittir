@@ -1,13 +1,14 @@
 {
   "grammar": "regex",
-  "source_hash": "75229cf9a488dacbba60da6a69f2878ffddbeafcdceef5bea77fb54e75d07cbe",
+  "source_hash": "c1a3e6e28df41dc57a2cab78b2b0e08721176cffffd54c56d8d887a44ee529c4",
   "files": {
-    "packages/regex/.sittir/grammar-diagnostics.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "packages/regex/.sittir/grammar.js": "109d2c2e610679888e759a0fa984af750df295d01dae67672e1371d1dba2b670",
+    "packages/regex/.sittir/grammar-diagnostics.json": "d3b245116457aeb378ce22778a877561b7a128b64a30e32e0e6431f64e307aa3",
+    "packages/regex/.sittir/grammar.js": "e500bc6c266bc823417e43ceade94c9500b50a07580977f4e4b53b28e7efccab",
     "packages/regex/.sittir/package.json": "803cef73973099f3584ef39a78d7e7b7fbdaf77fb5e4feb3d9f4c66e5430021e",
     "packages/regex/.sittir/parser.wasm": "24773b14183a61db63e5394aedfaf067721c0ce3edb37259acce2caeea671048",
     "packages/regex/.sittir/render-bodies.json": "6b0ff124bbfadf6d50f7a32cd21b338cf44d8efd9ac76f8e91b45270fb9d192d",
-    "packages/regex/.sittir/src/grammar.json": "a9c1f9ca682995708b98e4080c9fd9bee93f1fa42df82ebf2c4354f759be8065",
+    "packages/regex/.sittir/resolutions.json": "66fa21bd53cab8a8881f8ac8676d574138956819aba1c30a640d4f53856841b3",
+    "packages/regex/.sittir/src/grammar.json": "eb14a9991a15e011b398932acb3b59d08ce58af5fee41cbaa3dc844d3a564f24",
     "packages/regex/.sittir/src/node-types.json": "6b4c8836d80e591e0dc269a78c11c77d4c8fd43387bf4a01fb5117407ccf0107",
     "packages/regex/.sittir/src/parser.c": "9c7643ac7d77797c8be4d0a0fac775fc27a6ec9c8feac00cca4b719a5079ec18",
     "packages/regex/.sittir/src/scanner.c": "60724a683a1557a8eba8b277f810dbeece2db2b07acbfb3249614a233bb20164",

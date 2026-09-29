@@ -44,6 +44,7 @@ export default defineConfig({
 	},
 	ignorePatterns: [
 		'scratch/**',
+		'scratchpad/**',
 		'**/tests/nodes.test.ts',
 		'**/.sittir/**',
 		'specs/**',

@@ -862,56 +862,6 @@
         "hoisted": true
       }
     },
-    "named_node_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "supertype",
-          "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
-          }
-        },
-        {
-          "type": "IMMEDIATE_TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "/"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_immediate_identifier"
-                },
-                "named": true,
-                "value": "identifier"
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_immediate_string"
-                },
-                "named": true,
-                "value": "immediate_string"
-              }
-            ]
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "named_node_group": {
       "type": "CHOICE",
       "members": [
@@ -1305,63 +1255,7 @@
       "value": "\\s+"
     }
   ],
-  "conflicts": [
-    [
-      "_group_expression",
-      "group_expression_arm"
-    ],
-    [
-      "group_expression_arm"
-    ],
-    [
-      "_named_node_expression",
-      "named_node_expression_arm"
-    ],
-    [
-      "named_node_expression_arm"
-    ],
-    [
-      "grouping",
-      "grouping_group"
-    ],
-    [
-      "grouping_group"
-    ],
-    [
-      "named_node",
-      "named_node_supertyped"
-    ],
-    [
-      "named_node_supertyped"
-    ],
-    [
-      "named_node",
-      "named_node_group"
-    ],
-    [
-      "named_node_group"
-    ],
-    [
-      "named_node_plain",
-      "named_node_supertyped"
-    ],
-    [
-      "named_node_plain"
-    ],
-    [
-      "named_node_supertyped"
-    ],
-    [
-      "named_node_group_children",
-      "named_node_group_anchored_last"
-    ],
-    [
-      "named_node_group_children"
-    ],
-    [
-      "named_node_group_anchored_last"
-    ]
-  ],
+  "conflicts": [],
   "precedences": [],
   "externals": [
     {

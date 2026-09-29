@@ -11,36 +11,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+### `packages/codegen/src/dsl/enrich.ts::getEnrichRuleOrigins`
+
+The rule-origin map `enrich()` attaches to its result under `ENRICH_RULE_ORIGINS_KEY`: every rule name enrich adds, keyed to its `EnrichMintKind`, plus each upstream hidden rule it exposes through an alias (`promoted-group`, carrying the visible name it is exposed as). Empty when the grammar was not enriched. Every other enrich-rule getter is a filtered view of this one map.
+
+### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
+
+The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
+
+### `packages/codegen/src/dsl/enrich.ts::enrichRuleNamesOf`
+
+The names in an enriched grammar's origin map whose origin passes `keep`; the one filter behind the enrich-rule getters.
+
 ### `packages/codegen/src/dsl/extras.ts::extrasClosure`
 
 The extras of a grammar closed over supertypes, in both directions: each listed name; every member of a supertype in the set, transitively; and every supertype whose members are all in the set, to a fixpoint. The upward direction is what makes a supertype over extras an extra itself (rust's `comment` over `line_comment`/`block_comment`), since tree-sitter refuses a non-terminal supertype in the `extras` list. `subtypesOf` answers a name's members, or `undefined` when the name is not a supertype. The one rule both readings of "is this an extra" use: wire's `extraRuleNames` over the DSL rules and the compiler's `triviaKinds` over the node map.
 
-### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroups`
+### `packages/codegen/src/dsl/enrich.ts::getEnrichHiddenSubsequences`
+
+The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose origin is `hidden-subsequence`. Wire adds them to the grammar's `inline:` list.
+
+### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleSubsequenceSources`
+
+The names whose origin is `visible-subsequence` or `promoted-group`: the source rules behind visible-group mints, both the synthesized bodies and the promoted upstream hidden rules.
 
 ```text
 /**
- * Extract the set of enrich-hoisted clause-group names from an enriched grammar
- * result. Returns an empty set when the grammar was not enriched or no clause
- * groups were synthesized.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::getEnrichClauseGroupOwners`
-
-```text
-/**
- * Extract the synthesized-name → owning-parent-kind map from an enriched
- * grammar result. Returns an empty map when the grammar was not enriched or
- * no clause groups were synthesized.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleGroupSources`
-
-```text
-/**
- * Extract the hidden source names behind visible-group mints from an
- * enriched grammar result. Wire filters these OUT of the grammar's final
+ * Wire filters these OUT of the grammar's final
  * `inline:` list before it reaches tree-sitter: an inlined source rule is
  * erased during tree-sitter's inline processing, which vaporizes the alias
  * (and the minted kind's parser identity) while sittir's IR still models
@@ -123,6 +120,8 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::registerKwRule`
+
+A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 ```text
 /**
@@ -581,13 +580,6 @@ not immediate.
 #### body
 
 ```text
-// Record which parent's body this hoist was minted from — see
-// `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs this.
-```
-
-#### body
-
-```text
 // CHOICE[seq, BLANK] form
 ```
 
@@ -629,16 +621,6 @@ not immediate.
 // Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
 // the `inline:` list (so tree-sitter aliases the symbol-node, not the
 // expanded seq). Classify ONCE here; read in enrich() at clauseGroupNames.
-```
-
-#### body
-
-```text
-// Record which parent's body this visible-group hoist was minted
-// from — see `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs
-// this (an override that redeclares `parentKind` orphans this hidden
-// rule, since the synthesized name could never appear in the
-// override author's own text).
 ```
 
 #### body
@@ -2487,41 +2469,9 @@ through the alias.
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUPS_KEY`
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_RULE_ORIGINS_KEY`
 
-```text
-/**
- * Well-known non-enumerable key attached by `enrich()` to the grammar result
- * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
- * register the hoisted names in `WireContext.syntheticInline` so they end up
- * in the grammar's `inline:` list (required to prevent tree-sitter LR
- * conflicts from the newly-injected hidden rules).
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_CLAUSE_GROUP_OWNERS_KEY`
-
-```text
-/**
- * Well-known non-enumerable key attached by `enrich()` to the grammar result:
- * synthesized clause-hoist name → the parent kind whose (pre-override) body
- * it was hoisted from. Covers BOTH categories `ENRICH_CLAUSE_GROUPS_KEY`
- * covers (inline-safe) AND the visible-aliased hidden names it deliberately
- * excludes (`_<parent>_group<N>`) — wire() needs both, since an override
- * redeclaring the recorded owner orphans the synthesized rule regardless of
- * which category it's in.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_VISIBLE_GROUP_SOURCES_KEY`
-
-```text
-/**
- * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
- * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
- * both the promote-existing-hidden-rule and synthesize-new-body categories.
- */
-```
+The non-enumerable key under which `enrich()` attaches its rule-origin map to the grammar result (see `getEnrichRuleOrigins`).
 
 ### `packages/codegen/src/dsl/arm-names.ts::polymorphVisibleName`
 
@@ -2930,8 +2880,7 @@ Runs once over the merged rule bag right after the clause-group mints merge,
 before the later passes and wire's override callbacks read names. Renames
 the hidden rule key (in the merged bag AND the minted-rule bag, whose keys
 later derive the `inline:` list), the visible alias value, every symbol
-reference, and the wire-facing tracking structures (`visibleGroupHiddenNames`,
-`clauseGroupOwners`). A name collision with any existing rule keeps the
+reference, and the rule-origin map (`ruleOrigins`). A name collision with any existing rule keeps the
 ordinal. Only the clause-group mint namespace is surveyed; a sibling that was
 registered but later unused still counts as a sibling.
 
@@ -4516,7 +4465,14 @@ The one composition of a sittir grammar: `enrich(base, { groupBodies, extras })`
 with the config's authored group patterns and `extras:` callback, then `wire(config, enriched, base)`, which keeps the pre-enrich
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
-sittir's `grammarFn` under evaluate) over the enriched base and wired options.
+sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+then `blankDeadEnrichMints` on that result, which blanks the rules enrich
+added that the wired grammar never reaches, `attachDerivationRecords`,
+which records the upstream conflicts and each reshaped rule's upstream source
+for the conflict loop, and the imported resolutions and whether the config
+authors `conflicts` for the diagnostics, and last `applyConflictResolutions`, which sets the
+grammar's conflicts to the derived resolutions the config passes as
+`resolutions` (each grammar imports its own `.sittir/resolutions.json`).
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 
@@ -4601,18 +4557,6 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // members — the exact bug this restructure fixes). Inline-safe clause groups
 // stay in `inline:`. Tagged ONCE at creation (visibleGroupSynthName) — read
 // here, never re-derived.
-```
-
-#### body
-
-```text
-// Synthesized clause-hoist name → the parent kind whose body it was
-// hoisted FROM (recorded once, at first mint — see the two record sites
-// inside `applyClauseHoist`). Exposed via `ENRICH_CLAUSE_GROUP_OWNERS_KEY`
-// so wire() can tell, once an override redeclares that owner, that the
-// synthesized name is now orphaned (the override author could never have
-// typed a reference to a name that doesn't exist until THIS enrich() call
-// mints it from the base grammar's own, pre-override shape).
 ```
 
 #### body
@@ -4729,15 +4673,6 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 #### body
 
 ```text
-// Attach the synthesized-name → owning-parent-kind map (BOTH categories —
-// inline-safe AND visible-aliased) so wire() can detect when an override
-// redeclares the owner and orphans the synthesized rule. See
-// `getEnrichClauseGroupOwners`.
-```
-
-#### body
-
-```text
 // Attach the hidden SOURCE names behind every visible-group mint (both the
 // promote-existing and synthesize-new categories). Wire reads this to
 // FILTER these names out of the grammar's final `inline:` list: a mint
@@ -4745,7 +4680,7 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // real (non-inlined) rule — tree-sitter's inline processing erases inlined
 // rules before table construction, taking the alias (and the minted kind's
 // entire parser identity) with it, while the IR still models the kind —
-// the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
+// the "VAPORIZED" phantom divergence. See getEnrichVisibleSubsequenceSources.
 ```
 
 Each clause group is stamped `annotations.hoisted` (`withHoistedAnnotation`)
@@ -5820,6 +5755,8 @@ promotion is a mint, and the seat it declares is what link collects.
 
 ### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 
+Each enum rule it adds is recorded in `ruleOrigins` as a `field-enum` mint.
+
 ```text
 // ---------------------------------------------------------------------------
 // Field-enum synthesis — promote inline field-enums to named hidden rules
@@ -6089,7 +6026,7 @@ Reads the sidecar enrich left under `ENRICH_WHITESPACE_KEY`; a grammar enrich di
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 
-Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
+Applies a rename map to every `SYMBOL` name and every `variantOf` arm owner in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
 
 A `variantOf` annotation names a rule as well, so it follows the same map: when a `variant()` renames an enrich-minted parent whose arms were already stamped with that parent as owner, the arms' `variantOf` moves with it. Without that, a renamed nested token-form parent would keep arms owned by its minted name, and the flattened-parent derivation would reject them.
 
@@ -6126,6 +6063,10 @@ tree-sitter's grammar and sittir's evaluate see the same arms. It is the only pl
 distributing earlier on one side only would hand the two enrich runs different shapes.
 ```
 
+### `packages/codegen/src/dsl/rule-transforms.ts::LiteralAliasStorage`
+
+The result of `mintInlineLiteralAliasStorage`: the rewritten rules and the storage rule names it minted.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::mintInlineLiteralAliasStorage`
 
 ```text
@@ -6134,7 +6075,9 @@ An inline named alias over a choice of literals whose display is not a rule
 tree-sitter reports every literal under one shared id the catalog cannot
 name. Mint the storage: one hidden rule `_<display>` holding the literal
 choice, shared by every site of that display, and each site becomes
-`alias($._<display>, $.<display>)`. A display whose sites disagree on the
+`alias($._<display>, $.<display>)`. Returns the rewritten rules together
+with the minted storage names, which enrich records as
+`literal-alias-storage` origins. A display whose sites disagree on the
 literal set is left to distribution rather than guessed. Runs in enrich
 before distribution, so both executions mint the same rule; a precedence
 the new reduction point needs is authored as an override on the minted
@@ -6185,9 +6128,25 @@ model see the same kinds.
 The content under a chain of named aliases.
 ```
 
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichMintKind`
+
+What kind of rule enrich added:
+- `keyword`: a `_kw_<name>` rule from `registerKwRule`;
+- `hidden-subsequence`: an inline-safe clause hoist;
+- `visible-subsequence`: a visible group, list, structured-arm or token-form lift;
+- `literal-alias-storage`: `mintInlineLiteralAliasStorage`;
+- `field-enum`: `synthesizeFieldEnumRules`;
+- `whitespace`: the `_whitespace` supertype.
+
+A mint is a rule enrich adds, so a name the base grammar already has is never one.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichRuleOrigin`
+
+Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint.
+
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
@@ -6812,3 +6771,54 @@ The `SymbolSource` of a grammar before any parser.c exists: its predicted kind c
 ### `packages/codegen/src/dsl/symbol-table.ts::kindCatalogOf`
 
 The one route to the kind catalog the front half reads: the parser's rows (with the declared visible externals stamped) when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::PolicyStep`
+
+Whether a derived conflict is one upstream declared: `upstream-declared` when the conflict's rules, each mapped to its upstream source and deduplicated, are exactly a set upstream listed in its own `conflicts`; otherwise `default`. Every conflict is resolved with AddConflict either way; the step is a record, not a choice between resolutions.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionRecord`
+
+One entry of `resolutions.json` as the JSON reads: `DerivedResolution` with the resolution kind and the policy step widened to strings, the type a grammar's import infers. The diagnostics read these.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::sameConflictSet`
+
+Set equality of two rule-name lists, order and duplicates ignored: how a conflict's sources are compared with a set upstream declared.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::sourceChain`
+
+The chain from a rule name to its upstream source: follow the reshaping edges
+until a name has none. A name with no edge is its own source. The records
+cannot legitimately form a cycle; one throws with the chain in the message. The conflict policy and the dynamic-precedence check both map names through it.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::upstreamSourcesOf`
+
+The distinct upstream sources of a resolution: the last name of each source chain, deduplicated, so two variants of one upstream rule count as that rule once. Both the policy's declared test and the unnecessary-upstream diagnostic compare these with the upstream sets.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::DerivedResolution`
+
+One entry of `resolutions.json` as the derivation writes it: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`dsl/conflict-resolutions.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
+
+The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evaluated grammar the resolutions were derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`). It is the verified stamp: written only once the set has generated cleanly, so a file with a matching hash always held a set that built.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
+
+The hash of a resolution set no clean `generate` has confirmed: the seed, and every candidate the derivation probes. No grammar hashes to it, so such a set is always derived again rather than reused.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
+
+The resolutions a grammar passes to `sittirGrammar`: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
+
+The file name under a package's `.sittir/` that holds the derived resolutions, and that every `grammar.sittir.ts` imports as `./.sittir/resolutions.json`.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
+
+The resolutions of a grammar nothing has been derived for, carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
+
+Sets the grammar's final `conflicts` to the resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs last in `sittirGrammar`, so both runtimes see the same list.
+

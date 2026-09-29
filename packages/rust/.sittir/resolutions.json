@@ -1,0 +1,251 @@
+{
+	"grammarHash": "764bb3afcf286e0f19d4ae1fff9c03d5ebe1f0a795ab1deff38577af498f5b96",
+	"resolutions": [
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"async_block",
+					"_kw_async_marker"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"async_block"
+				],
+				[
+					"_kw_async_marker"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'async'"
+				],
+				"lookahead": "'move'",
+				"interpretations": [
+					"async_block",
+					"_kw_async_marker"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"_attributed_argument"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"_attributed_argument"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'['",
+					"tuple_expression_repeat1",
+					"_expression"
+				],
+				"lookahead": "']'",
+				"interpretations": [
+					"_attributed_argument",
+					"_attributed_argument"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"_type",
+					"_attributed_type_parameter"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"_type"
+				],
+				[
+					"_attributed_type_parameter"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'impl'",
+					"'<'",
+					"metavariable"
+				],
+				"lookahead": "'>'",
+				"interpretations": [
+					"_type",
+					"_attributed_type_parameter"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"visibility_modifier",
+					"scoped_identifier",
+					"scoped_type_identifier"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"visibility_modifier"
+				],
+				[
+					"scoped_identifier"
+				],
+				[
+					"scoped_type_identifier"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'struct'",
+					"identifier",
+					"'('",
+					"crate"
+				],
+				"lookahead": "'::'",
+				"interpretations": [
+					"visibility_modifier",
+					"scoped_identifier",
+					"scoped_identifier",
+					"scoped_type_identifier"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"visibility_modifier_pub"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"visibility_modifier_pub",
+					"visibility_modifier"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'struct'",
+					"identifier",
+					"'('",
+					"'pub'"
+				],
+				"lookahead": "'('",
+				"interpretations": [
+					"visibility_modifier_pub",
+					"visibility_modifier_pub"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"_type",
+					"_pattern"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"_type"
+				],
+				[
+					"_pattern"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'fn'",
+					"identifier",
+					"'('",
+					"'('",
+					"identifier"
+				],
+				"lookahead": "')'",
+				"interpretations": [
+					"_type",
+					"_pattern"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"scoped_identifier",
+					"scoped_type_identifier"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"scoped_identifier"
+				],
+				[
+					"scoped_type_identifier"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'fn'",
+					"identifier",
+					"'('",
+					"'::'",
+					"identifier"
+				],
+				"lookahead": "'('",
+				"interpretations": [
+					"scoped_identifier",
+					"scoped_type_identifier"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"unit_type",
+					"tuple_pattern"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"unit_type"
+				],
+				[
+					"tuple_pattern"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'fn'",
+					"identifier",
+					"'('",
+					"'('",
+					"'('",
+					"')'"
+				],
+				"lookahead": "')'",
+				"interpretations": [
+					"unit_type",
+					"tuple_pattern"
+				]
+			}
+		}
+	]
+}

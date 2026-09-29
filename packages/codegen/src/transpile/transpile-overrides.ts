@@ -3,6 +3,7 @@ import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFi
 import { dirname, join } from 'node:path';
 import { packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
+import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
 function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 	if (existsSync(path)) {
@@ -37,6 +38,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	}
 
 	mkdirSync(outputDir, { recursive: true });
+	ensureConflictResolutions(opts.package);
 
 	copyExternalScannerSources(opts.package, outputDir);
 

@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -64,8 +64,6 @@ export interface WireContext {
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
-	readonly orphanedSyntheticGroups: Set<string>;
-	readonly conflictGroups: string[][];
 	readonly symbolRenames: Map<string, string>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
@@ -128,17 +126,6 @@ export function wireRegisterSyntheticInline(name: string): boolean {
 	if (!currentContext) return false;
 	if (currentContext.authoredRuleNames.has(name)) return false;
 	currentContext.syntheticInline.add(name);
-	return true;
-}
-
-export function wireRegisterConflict(names: readonly string[]): boolean {
-	if (!currentContext) return false;
-	if (names.length === 0) return true;
-	const key = names.join('\u0000');
-	const exists = currentContext.conflictGroups.some((g) => g.join('\u0000') === key);
-	if (!exists) {
-		currentContext.conflictGroups.push([...names]);
-	}
 	return true;
 }
 
@@ -249,8 +236,6 @@ export function withWireContext<T>(
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
-		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: undefined,
@@ -396,6 +381,8 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 };
 
+type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
+
 export interface WiredOpts {
 	readonly name: string;
 	readonly rules: Record<string, RuleFn>;
@@ -413,7 +400,6 @@ export interface WiredOpts {
 
 type SittirRuleFn = ($: any, previous?: any) => unknown;
 type RuleFn = SittirRuleFn;
-type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
@@ -438,8 +424,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		orphanedSyntheticGroups: new Set(),
-		conflictGroups: [],
 		symbolRenames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
@@ -487,33 +471,16 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
-		for (const name of getEnrichClauseGroups(base)) {
+		for (const name of getEnrichHiddenSubsequences(base)) {
 			context.syntheticInline.add(name);
 		}
-		for (const name of getEnrichVisibleGroupSources(base)) {
+		for (const name of getEnrichVisibleSubsequenceSources(base)) {
 			context.inlineRemovals.add(name);
-		}
-		const inlineSafeNames = getEnrichClauseGroups(base);
-		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
-			if (context.authoredRuleNames.has(ownerKind)) {
-				context.orphanedSyntheticGroups.add(syntheticName);
-			}
-			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
-				const pairKey = [ownerKind, syntheticName].join('\u0000');
-				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
-					context.conflictGroups.push([ownerKind, syntheticName]);
-				}
-				const selfKey = [syntheticName].join('\u0000');
-				if (!context.conflictGroups.some((g) => g.join('\u0000') === selfKey)) {
-					context.conflictGroups.push([syntheticName]);
-				}
-			}
 		}
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 	recordAliasTargets(outRules, context);
 
-	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
@@ -528,7 +495,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		rules: outRules,
 		...renamedCallbacks,
 		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
-		conflicts: renamingCallback(conflicts, renameNameList, context),
+		conflicts: undefined,
 		inline: renamingCallback(inline, renameNameList, context),
 		supertypes: renamingCallback(supertypes, renameNameList, context)
 	} as unknown as WiredOpts;
@@ -538,6 +505,15 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		configurable: true
 	});
 	return wired;
+}
+
+export function protectedWireRuleNames(opts: WiredOpts): string[] {
+	const context = opts.__wireContext__;
+	if (context === undefined) return [];
+	const $ = makeSimpleDollarProxy();
+	const keysOf = (config: RenderAsConfig | VisibleExternalsConfig | undefined): string[] =>
+		config === undefined ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
+	return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
 }
 
 function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
@@ -722,15 +698,17 @@ interface BaseArg {
 		extras?: unknown;
 		precedences?: unknown;
 		supertypes?: unknown;
+		conflicts?: unknown;
 	};
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
 	extras?: unknown;
 	precedences?: unknown;
 	supertypes?: unknown;
+	conflicts?: unknown;
 }
 
-function symbolNamesOf(entries: unknown): Set<string> {
+export function symbolNamesOf(entries: unknown): Set<string> {
 	const names = new Set<string>();
 	for (const entry of Array.isArray(entries) ? entries : []) {
 		if (typeof entry === 'string') {
@@ -789,6 +767,17 @@ function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 		) as { type?: unknown; members?: unknown } | undefined;
 		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
 	});
+}
+
+export function upstreamSymbolNames(base: unknown): ReadonlySet<string> {
+	const arg = base as BaseArg | undefined;
+	return new Set([...Object.keys(baseRulesOf<unknown>(arg) ?? {}), ...baseExternalNames(arg)]);
+}
+
+export function upstreamConflictSets(base: unknown): string[][] {
+	const arg = base as BaseArg | undefined;
+	const conflicts = arg?.grammar?.conflicts ?? arg?.conflicts;
+	return (Array.isArray(conflicts) ? conflicts : []).map((set) => [...symbolNamesOf(set)]);
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
@@ -903,36 +892,8 @@ function recordAliasTargets(rules: Record<string, RuleFn>, context: WireContext)
 	}
 }
 
-function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
-	return buildWiredConflictsFn(userConflicts, context);
-}
-
 function wrapInlineCallback(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
 	return buildWiredInlineFn(userInline, context);
-}
-
-function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn {
-	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
-		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
-		const renamed =
-			context.symbolRenames.size === 0
-				? (base as unknown[][])
-				: (base as unknown[][]).map((group) =>
-						group.map((entry) => {
-							const symbol = entry as { type?: string; name?: string } | null;
-							const next =
-								symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string'
-									? context.symbolRenames.get(symbol.name)
-									: undefined;
-							return next === undefined ? entry : symbolizeRef($, next);
-						})
-					);
-		if (context.conflictGroups.length === 0) return renamed;
-		const symbolized = context.conflictGroups.map((group) =>
-			group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
-		);
-		return [...renamed, ...symbolized];
-	};
 }
 
 function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
@@ -956,7 +917,6 @@ function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
 			if (context.inlineRemovals.has(name)) continue;
-			if (context.orphanedSyntheticGroups.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];
@@ -998,7 +958,7 @@ const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, p
 };
 
 function enrichLiftNames(base: unknown): Set<string> {
-	return new Set([...getEnrichClauseGroups(base), ...getEnrichVisibleGroupSources(base)]);
+	return new Set([...getEnrichHiddenSubsequences(base), ...getEnrichVisibleSubsequenceSources(base)]);
 }
 
 interface WirePatternCandidate {

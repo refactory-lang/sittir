@@ -39,6 +39,259 @@ var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
 var base = import_grammar.default;
 var base_default = base;
 
+// packages/rust/.sittir/resolutions.json
+var resolutions_default = {
+  grammarHash: "764bb3afcf286e0f19d4ae1fff9c03d5ebe1f0a795ab1deff38577af498f5b96",
+  resolutions: [
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "async_block",
+          "_kw_async_marker"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "async_block"
+        ],
+        [
+          "_kw_async_marker"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'async'"
+        ],
+        lookahead: "'move'",
+        interpretations: [
+          "async_block",
+          "_kw_async_marker"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_attributed_argument"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_attributed_argument"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'['",
+          "tuple_expression_repeat1",
+          "_expression"
+        ],
+        lookahead: "']'",
+        interpretations: [
+          "_attributed_argument",
+          "_attributed_argument"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_type",
+          "_attributed_type_parameter"
+        ]
+      },
+      step: "default",
+      sourceChains: [
+        [
+          "_type"
+        ],
+        [
+          "_attributed_type_parameter"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'impl'",
+          "'<'",
+          "metavariable"
+        ],
+        lookahead: "'>'",
+        interpretations: [
+          "_type",
+          "_attributed_type_parameter"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "visibility_modifier",
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "visibility_modifier"
+        ],
+        [
+          "scoped_identifier"
+        ],
+        [
+          "scoped_type_identifier"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'struct'",
+          "identifier",
+          "'('",
+          "crate"
+        ],
+        lookahead: "'::'",
+        interpretations: [
+          "visibility_modifier",
+          "scoped_identifier",
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "visibility_modifier_pub"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "visibility_modifier_pub",
+          "visibility_modifier"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'struct'",
+          "identifier",
+          "'('",
+          "'pub'"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "visibility_modifier_pub",
+          "visibility_modifier_pub"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "_type",
+          "_pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "_type"
+        ],
+        [
+          "_pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'fn'",
+          "identifier",
+          "'('",
+          "'('",
+          "identifier"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "_type",
+          "_pattern"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "scoped_identifier"
+        ],
+        [
+          "scoped_type_identifier"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'fn'",
+          "identifier",
+          "'('",
+          "'::'",
+          "identifier"
+        ],
+        lookahead: "'('",
+        interpretations: [
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      }
+    },
+    {
+      resolution: {
+        kind: "AddConflict",
+        symbols: [
+          "unit_type",
+          "tuple_pattern"
+        ]
+      },
+      step: "upstream-declared",
+      sourceChains: [
+        [
+          "unit_type"
+        ],
+        [
+          "tuple_pattern"
+        ]
+      ],
+      conflict: {
+        symbolSequence: [
+          "'fn'",
+          "identifier",
+          "'('",
+          "'('",
+          "'('",
+          "')'"
+        ],
+        lookahead: "')'",
+        interpretations: [
+          "unit_type",
+          "tuple_pattern"
+        ]
+      }
+    }
+  ]
+};
+
 // packages/codegen/src/dsl/annotations.ts
 function withAnnotations(rule, extra) {
   const node = rule;
@@ -1843,6 +2096,16 @@ function grammarRootNames(grammar2) {
   const start = rootRuleName(grammar2.rules);
   return [...start === void 0 ? [] : [start], ...ruleListParts(grammar2.extras).names.filter((name) => name in grammar2.rules)];
 }
+function collectSymbolRefs(node, into) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectSymbolRefs(item, into);
+    return;
+  }
+  if (!node || typeof node !== "object") return;
+  const obj = node;
+  if (obj.type === "SYMBOL" && typeof obj.name === "string") into.add(obj.name);
+  for (const value of Object.values(obj)) collectSymbolRefs(value, into);
+}
 
 // packages/codegen/src/dsl/symbol-table.ts
 function kindTableOfSymbolTable(table, grammarJson) {
@@ -2791,8 +3054,7 @@ var EnrichCtx = class _EnrichCtx {
   clauseGroupRules;
   clauseDedupeMap;
   groupDedupeMap;
-  visibleGroupSources;
-  clauseGroupOwners;
+  ruleOrigins;
   hoist;
   constructor(fields) {
     this.rulesBag = fields.rulesBag;
@@ -2808,8 +3070,7 @@ var EnrichCtx = class _EnrichCtx {
     this.clauseGroupRules = fields.clauseGroupRules;
     this.clauseDedupeMap = fields.clauseDedupeMap;
     this.groupDedupeMap = fields.groupDedupeMap;
-    this.visibleGroupSources = fields.visibleGroupSources;
-    this.clauseGroupOwners = fields.clauseGroupOwners;
+    this.ruleOrigins = fields.ruleOrigins;
     this.hoist = fields.hoist;
   }
   static create(init) {
@@ -2820,8 +3081,7 @@ var EnrichCtx = class _EnrichCtx {
       clauseGroupRules: {},
       clauseDedupeMap: {},
       groupDedupeMap: {},
-      visibleGroupSources: /* @__PURE__ */ new Set(),
-      clauseGroupOwners: /* @__PURE__ */ new Map(),
+      ruleOrigins: /* @__PURE__ */ new Map(),
       hoist: void 0
     });
   }
@@ -2896,7 +3156,7 @@ function mintInlineLiteralAliasStorage(rules) {
     const name = `_${display}`;
     if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
   }
-  if (storage.size === 0) return rules;
+  if (storage.size === 0) return { rules, storageNames: [] };
   const visit = (r) => {
     const site = literalAliasOf(r);
     const minted = site === void 0 ? void 0 : storage.get(site.display);
@@ -2906,7 +3166,7 @@ function mintInlineLiteralAliasStorage(rules) {
   const out = {};
   for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
   for (const { name, body } of storage.values()) out[name] = body;
-  return out;
+  return { rules: out, storageNames: [...storage.values()].map(({ name }) => name) };
 }
 function liftAliasedHiddenRuleBodies(rules) {
   const displayByRule = /* @__PURE__ */ new Map();
@@ -3284,7 +3544,7 @@ function enrich(baseInput, authored = {}) {
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
     authoredGroupBodies: authored.groupBodies ?? []
   });
-  const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
+  const { kwRules, clauseGroupRules, ruleOrigins } = ctx;
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
@@ -3300,7 +3560,9 @@ function enrich(baseInput, authored = {}) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
-  Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+  const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules);
+  Object.assign(enrichedRules, literalAliasStorage.rules);
+  for (const name of literalAliasStorage.storageNames) ruleOrigins.set(name, { kind: "literal-alias-storage" });
   Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
@@ -3346,18 +3608,18 @@ function enrich(baseInput, authored = {}) {
     if (groupBody && !tokenFormParents.includes(groupName)) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, ctx);
   }
-  synthesizeFieldEnumRules(mergedRules);
+  synthesizeFieldEnumRules(mergedRules, ruleOrigins);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
   const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
   for (const { name } of whitespace.collisions) delete mergedRules[name];
   mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
-  const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
+  ruleOrigins.set(WHITESPACE_SUPERTYPE, { kind: "whitespace" });
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   const resultGrammar = hasWrapper ? result.grammar : result;
   appendGrammarNames(resultGrammar, "supertypes", [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
@@ -3369,62 +3631,42 @@ function enrich(baseInput, authored = {}) {
     writable: false,
     configurable: true
   });
-  if (clauseGroupNames.size > 0) {
-    Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
-      value: clauseGroupNames,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
-  if (clauseGroupOwners.size > 0) {
-    Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
-      value: clauseGroupOwners,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
+  Object.defineProperty(result, ENRICH_RULE_ORIGINS_KEY, {
+    value: ruleOrigins,
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
   Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
     value: automaticVariants,
     enumerable: false,
     writable: false,
     configurable: true
   });
-  if (visibleGroupSources.size > 0) {
-    Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
-      value: visibleGroupSources,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
   return result;
 }
-var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
+var ENRICH_RULE_ORIGINS_KEY = "__enrichedRuleOrigins__";
+function getEnrichRuleOrigins(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
+  const origins = grammar2[ENRICH_RULE_ORIGINS_KEY];
+  if (origins instanceof Map) return origins;
+  return /* @__PURE__ */ new Map();
+}
+function enrichRuleNamesOf(grammar2, keep) {
+  return new Set([...getEnrichRuleOrigins(grammar2)].filter(([, origin]) => keep(origin)).map(([name]) => name));
+}
+function getEnrichMints(grammar2) {
+  return enrichRuleNamesOf(grammar2, (origin) => origin.kind !== "promoted-group");
+}
 var ENRICH_WHITESPACE_KEY = "__enrichedWhitespace__";
 function getEnrichWhitespace(grammar2) {
   return grammar2?.[ENRICH_WHITESPACE_KEY] ?? { bodies: {}, collisions: [] };
 }
-function getEnrichClauseGroups(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_CLAUSE_GROUPS_KEY];
-  if (names instanceof Set) return names;
-  return /* @__PURE__ */ new Set();
+function getEnrichHiddenSubsequences(grammar2) {
+  return enrichRuleNamesOf(grammar2, (origin) => origin.kind === "hidden-subsequence");
 }
-var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
-function getEnrichClauseGroupOwners(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
-  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
-  if (owners instanceof Map) return owners;
-  return /* @__PURE__ */ new Map();
-}
-var ENRICH_VISIBLE_GROUP_SOURCES_KEY = "__enrichedVisibleGroupSources__";
-function getEnrichVisibleGroupSources(grammar2) {
-  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
-  const names = grammar2[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
-  if (names instanceof Set) return names;
-  return /* @__PURE__ */ new Set();
+function getEnrichVisibleSubsequenceSources(grammar2) {
+  return enrichRuleNamesOf(grammar2, (origin) => origin.kind === "visible-subsequence" || origin.kind === "promoted-group");
 }
 function applyFieldWrapPasses(ruleName, rule, ctx) {
   const MAX_ITERATIONS = 8;
@@ -3470,8 +3712,6 @@ function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames, paren
       "arm"
     );
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
-    ctx.visibleGroupSources.add(minted);
-    if (!ctx.clauseGroupOwners.has(minted)) ctx.clauseGroupOwners.set(minted, parentKind);
     const armBody = ctx.clauseGroupRules[minted];
     const armFielded = fielded.flatMap((site) => site[0] === i ? [site.slice(1)] : []);
     const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armFielded);
@@ -3716,7 +3956,7 @@ var LITERAL_ARM_NAMES = {
 function literalArmNameHint(text) {
   return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, "");
 }
-function promoteLiteralChoiceArms(choiceRule, mergedRules) {
+function promoteLiteralChoiceArms(choiceRule, mergedRules, ruleOrigins) {
   const members = choiceRule.members;
   let changed = false;
   let declined = false;
@@ -3731,7 +3971,7 @@ function promoteLiteralChoiceArms(choiceRule, mergedRules) {
     if (!isStringType(t) && t !== "PATTERN") return arm2;
     const text = cursor.value;
     const nameHint = literalArmNameHint(text);
-    const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules) : null;
+    const symbol = nameHint ? registerKwRule(cursor, nameHint, mergedRules, mergedRules, ruleOrigins) : null;
     if (!symbol) {
       declined = true;
       return arm2;
@@ -3911,7 +4151,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, ctx) {
       }
       let visitedInner = visit(inner, true, scope);
       if (isChoiceType(visitedInner.type) && !isAllArmsNodeShaped(visitedInner) && isAllArmsNodeOrLiteralShaped(visitedInner)) {
-        const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules);
+        const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules, ctx.ruleOrigins);
         if (promoted) visitedInner = promoted;
       }
       if (isChoiceType(visitedInner.type) && isAllArmsNodeShaped(visitedInner)) {
@@ -4096,12 +4336,13 @@ function makeSymbol(name) {
   const symFn = nativeRuleFn("sym");
   return symFn(name);
 }
-function registerKwRule(stringLiteral, keyword, kwRules, rulesBag) {
+function registerKwRule(stringLiteral, keyword, kwRules, rulesBag, ruleOrigins) {
   const hiddenName = `_kw_${keyword}`;
   if (hiddenName in kwRules) return makeSymbol(hiddenName);
   const existing = rulesBag[hiddenName];
   if (existing === void 0) {
     kwRules[hiddenName] = stringLiteral;
+    ruleOrigins.set(hiddenName, { kind: "keyword" });
     return makeSymbol(hiddenName);
   }
   if (ruleKey(existing) === ruleKey(stringLiteral)) {
@@ -4505,7 +4746,7 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, ctx) {
     return null;
   }
   claimed.add(fieldName);
-  const symbolRef2 = registerKwRule(inner, fieldName, ctx.kwRules, ctx.rulesBag);
+  const symbolRef2 = registerKwRule(inner, fieldName, ctx.kwRules, ctx.rulesBag, ctx.ruleOrigins);
   if (symbolRef2 === null) {
     reportSkip(
       "optional-keyword-prefix",
@@ -4635,7 +4876,7 @@ function absorbTrailingListSeparators(members, symbols) {
   return changed ? out : null;
 }
 function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosingFieldName) {
-  const { rulesBag, visibleGroupSources, clauseGroupOwners } = ctx;
+  const { rulesBag } = ctx;
   const seqBody = optionalSeqBodyOf(rule);
   if (seqBody !== void 0) {
     const recursedSeqBody = applyClauseHoist(parentKind, seqBody, ctx, counter, ambientPrec, enclosingFieldName);
@@ -4646,7 +4887,6 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
     } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule, name);
         return withOptionalContent(rule, symbolRef2);
       }
@@ -4655,8 +4895,6 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
       counter.opt += 1;
       const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        visibleGroupSources.add(name);
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(rule, name);
         return withOptionalContent(rule, groupRef);
       }
@@ -4709,8 +4947,6 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
         ) : seqFn(...run.info.flatMembers);
         const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
         if (name === null) continue;
-        visibleGroupSources.add(name);
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const groupRef = makeGroupLiftSymbol(body, name);
         const replacement = isTail ? optionalFn(groupRef) : groupRef;
         newMembers.splice(run.start, run.size, replacement);
@@ -4756,8 +4992,6 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
     if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
       const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
-        visibleGroupSources.add(name);
-        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         return withContent(rule, makeGroupLiftSymbol(newContent, name));
       }
     }
@@ -4781,12 +5015,13 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
   return rule;
 }
 function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
-  const { clauseDedupeMap: dedupeMap, rulesBag, clauseGroupRules } = ctx;
+  const { clauseDedupeMap: dedupeMap, rulesBag, clauseGroupRules, ruleOrigins } = ctx;
   const key = ruleKey(seqBody);
   const existing = dedupeMap[key];
   if (existing !== void 0) {
     if (!(existing in clauseGroupRules)) {
       clauseGroupRules[existing] = seqBody;
+      ruleOrigins.set(existing, { kind: "hidden-subsequence" });
     }
     return existing;
   }
@@ -4801,9 +5036,10 @@ function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
   }
   dedupeMap[key] = name;
   clauseGroupRules[name] = seqBody;
+  ruleOrigins.set(name, { kind: "hidden-subsequence" });
   return name;
 }
-function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupSources, clauseGroupOwners) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, ruleOrigins) {
   const byParentFlavor = /* @__PURE__ */ new Map();
   for (const hidden of Object.keys(mintedRules)) {
     const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
@@ -4833,11 +5069,10 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupSou
       mintedRules[newName] = mintedRules[oldName];
       delete mintedRules[oldName];
     }
-    if (visibleGroupSources.delete(oldName)) visibleGroupSources.add(newName);
-    const owner = clauseGroupOwners.get(oldName);
-    if (owner !== void 0) {
-      clauseGroupOwners.delete(oldName);
-      clauseGroupOwners.set(newName, owner);
+    const origin = ruleOrigins.get(oldName);
+    if (origin !== void 0) {
+      ruleOrigins.delete(oldName);
+      ruleOrigins.set(newName, origin);
     }
   }
   const rewrite = (node) => {
@@ -4854,7 +5089,7 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupSou
   for (const name of Object.keys(mergedRules)) rewrite(mergedRules[name]);
 }
 function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, enclosingFieldName, flavor = "group") {
-  const { groupDedupeMap, rulesBag, clauseGroupRules } = ctx;
+  const { groupDedupeMap, rulesBag, clauseGroupRules, ruleOrigins } = ctx;
   const separatedListNameCounts = ctx.hoist?.separatedListNameCounts;
   if (process.env.SITTIR_DEBUG_LISTNAME) {
     const info = separatedListBodyInfo(content, ctx.sourceSymbols);
@@ -4868,13 +5103,17 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
-    if (!(existing in clauseGroupRules)) clauseGroupRules[existing] = registeredBody;
+    if (!(existing in clauseGroupRules)) {
+      clauseGroupRules[existing] = registeredBody;
+      ruleOrigins.set(existing, { kind: "visible-subsequence" });
+    }
     return existing;
   }
   const base2 = parentKind.replace(/^_+/, "");
   const register = (name, body = registeredBody) => {
     groupDedupeMap[key] = name;
     clauseGroupRules[name] = body;
+    ruleOrigins.set(name, { kind: "visible-subsequence" });
     return name;
   };
   const listInfo = separatedListNameCounts !== void 0 ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;
@@ -4943,7 +5182,7 @@ function promotePermutationArmKeywords(choiceRule, ctx) {
       if (!isStringType(norm.type) || typeof norm.value !== "string") return m;
       if (!matchesWordShape(norm.value, ctx.wordMatcher)) return m;
       const fieldName = `${norm.value}_marker`;
-      const symbolRef2 = registerKwRule(m, fieldName, ctx.kwRules, ctx.rulesBag);
+      const symbolRef2 = registerKwRule(m, fieldName, ctx.kwRules, ctx.rulesBag, ctx.ruleOrigins);
       if (symbolRef2 === null) return m;
       armChanged = true;
       return makeField(fieldName, symbolRef2);
@@ -4955,7 +5194,7 @@ function promotePermutationArmKeywords(choiceRule, ctx) {
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
 function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadingNames, ambientPrec, enclosingFieldName) {
-  const { rulesBag, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
+  const { rulesBag, clauseGroupRules, ruleOrigins } = ctx;
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -4985,8 +5224,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
-    visibleGroupSources.add(name);
-    if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+    ruleOrigins.set(name, { kind: "promoted-group", visibleName: promoted.visibleName });
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
@@ -4995,8 +5233,6 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
     if (minted === null) return null;
-    visibleGroupSources.add(minted);
-    if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
@@ -5017,7 +5253,7 @@ function makeVisibleGroupAlias(symbolRef2, name) {
   const symbol = nativeRuleFn("symbol", "sym");
   return { ...aliasFn(symbolRef2, symbol(name)), metadata: makeRuleMetadata({ aliasSource: "visible-group" }) };
 }
-function synthesizeFieldEnumRules(rules) {
+function synthesizeFieldEnumRules(rules, ruleOrigins) {
   const fieldOccurrences = collectFieldEnumOccurrences(rules);
   const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
   const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
@@ -5034,6 +5270,7 @@ function synthesizeFieldEnumRules(rules) {
   for (const [kindName, enumRule] of newRules) {
     if (!rules[kindName]) {
       rules[kindName] = enumRule;
+      ruleOrigins.set(kindName, { kind: "field-enum" });
     }
   }
 }
@@ -5580,22 +5817,11 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
   }
   refs.sort((a, b) => a.altIdx - b.altIdx);
-  registerHoistedVariantConflicts(refs.map((r) => r.name));
   const newChoice = reconstructContainer(
     choice2,
     refs.map((r) => r.ref)
   );
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
-}
-function registerHoistedVariantConflicts(variantNames) {
-  if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
-    throw new Error(`registerConflict: no active wire() context`);
-  }
-  for (const n of variantNames) {
-    if (!wireRegisterConflict([n])) {
-      throw new Error(`registerConflict: no active wire() context`);
-    }
-  }
 }
 var membersOf3 = (r) => r.members;
 var contentOf3 = (r) => r.content;
@@ -6070,16 +6296,6 @@ function wireRegisterSyntheticInline(name) {
   currentContext.syntheticInline.add(name);
   return true;
 }
-function wireRegisterConflict(names) {
-  if (!currentContext) return false;
-  if (names.length === 0) return true;
-  const key = names.join("\0");
-  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
-  if (!exists) {
-    currentContext.conflictGroups.push([...names]);
-  }
-  return true;
-}
 function wireRegisterFlattenedParent(name) {
   if (!currentContext) return false;
   currentContext.flattenedParents.add(name);
@@ -6166,8 +6382,6 @@ function wireImpl(cfg, base2, source) {
     ruleBodies: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
-    orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
-    conflictGroups: [],
     symbolRenames: /* @__PURE__ */ new Map(),
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
@@ -6212,32 +6426,15 @@ function wireImpl(cfg, base2, source) {
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   applyWireVisibleExternalsRewrite(outRules, visibleExternals);
   if (baseArg) {
-    for (const name of getEnrichClauseGroups(base2)) {
+    for (const name of getEnrichHiddenSubsequences(base2)) {
       context.syntheticInline.add(name);
     }
-    for (const name of getEnrichVisibleGroupSources(base2)) {
+    for (const name of getEnrichVisibleSubsequenceSources(base2)) {
       context.inlineRemovals.add(name);
-    }
-    const inlineSafeNames = getEnrichClauseGroups(base2);
-    for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
-      if (context.authoredRuleNames.has(ownerKind)) {
-        context.orphanedSyntheticGroups.add(syntheticName);
-      }
-      if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
-        const pairKey = [ownerKind, syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {
-          context.conflictGroups.push([ownerKind, syntheticName]);
-        }
-        const selfKey = [syntheticName].join("\0");
-        if (!context.conflictGroups.some((g) => g.join("\0") === selfKey)) {
-          context.conflictGroups.push([syntheticName]);
-        }
-      }
     }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
   recordAliasTargets(outRules, context);
-  const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
   const renamedCallbacks = Object.fromEntries(
@@ -6248,7 +6445,7 @@ function wireImpl(cfg, base2, source) {
     rules: outRules,
     ...renamedCallbacks,
     ...cfg.reserved === void 0 ? {} : { reserved: renamingReserved(cfg.reserved, context) },
-    conflicts: renamingCallback(conflicts, renameNameList, context),
+    conflicts: void 0,
     inline: renamingCallback(inline, renameNameList, context),
     supertypes: renamingCallback(supertypes, renameNameList, context)
   };
@@ -6258,6 +6455,13 @@ function wireImpl(cfg, base2, source) {
     configurable: true
   });
   return wired;
+}
+function protectedWireRuleNames(opts) {
+  const context = opts.__wireContext__;
+  if (context === void 0) return [];
+  const $ = makeSimpleDollarProxy();
+  const keysOf = (config) => config === void 0 ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
+  return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
 }
 function declaredRuleCauses(rules) {
   const ruleCauses = /* @__PURE__ */ new Map();
@@ -6440,6 +6644,15 @@ function extraRuleNames(cfg, base2) {
     return rule?.type === "CHOICE" ? symbolNamesOf(rule.members) : void 0;
   });
 }
+function upstreamSymbolNames(base2) {
+  const arg = base2;
+  return /* @__PURE__ */ new Set([...Object.keys(baseRulesOf(arg) ?? {}), ...baseExternalNames(arg)]);
+}
+function upstreamConflictSets(base2) {
+  const arg = base2;
+  const conflicts = arg?.grammar?.conflicts ?? arg?.conflicts;
+  return (Array.isArray(conflicts) ? conflicts : []).map((set) => [...symbolNamesOf(set)]);
+}
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
   return symbolNamesOf(
@@ -6532,28 +6745,8 @@ function recordAliasTargets(rules, context) {
     };
   }
 }
-function wrapConflictsCallback(userConflicts, context) {
-  return buildWiredConflictsFn(userConflicts, context);
-}
 function wrapInlineCallback(userInline, context) {
   return buildWiredInlineFn(userInline, context);
-}
-function buildWiredConflictsFn(userConflicts, context) {
-  return function wiredConflicts($, previous) {
-    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
-    const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group2) => group2.map((entry) => {
-        const symbol = entry;
-        const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
-        return next === void 0 ? entry : symbolizeRef($, next);
-      })
-    );
-    if (context.conflictGroups.length === 0) return renamed;
-    const symbolized = context.conflictGroups.map(
-      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
-    );
-    return [...renamed, ...symbolized];
-  };
 }
 function buildWiredInlineFn(userInline, context) {
   return function wiredInline($, previous) {
@@ -6570,7 +6763,6 @@ function buildWiredInlineFn(userInline, context) {
     for (const name of context.syntheticInline) {
       if (existingNames.has(name)) continue;
       if (context.inlineRemovals.has(name)) continue;
-      if (context.orphanedSyntheticGroups.has(name)) continue;
       appended.push(nativeInlineRef($, name));
     }
     return appended.length === 0 ? base2 : [...base2, ...appended];
@@ -6606,7 +6798,7 @@ var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
   return (name === null || name === void 0 ? void 0 : currentContext?.liftBodies.get(name)) ?? previous;
 };
 function enrichLiftNames(base2) {
-  return /* @__PURE__ */ new Set([...getEnrichClauseGroups(base2), ...getEnrichVisibleGroupSources(base2)]);
+  return /* @__PURE__ */ new Set([...getEnrichHiddenSubsequences(base2), ...getEnrichVisibleSubsequenceSources(base2)]);
 }
 function declaredPatterns(groups, injects) {
   const $ = makeSimpleDollarProxy();
@@ -6874,11 +7066,113 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, metadata };
 }
 
+// packages/codegen/src/dsl/wire/dead-mints.ts
+var DEAD_ENRICH_MINTS_KEY = "__deadEnrichMints__";
+function ruleListEntries2(entries) {
+  return (Array.isArray(entries) ? entries : []).flatMap((entry) => ruleListEntryOf(entry) ?? []);
+}
+function reachableRuleNames(grammar2, opts) {
+  const roots = [
+    ...grammarRootNames({ rules: grammar2.rules, extras: ruleListEntries2(grammar2.extras) }),
+    ...symbolNamesOf(grammar2.supertypes),
+    ...symbolNamesOf(grammar2.externals),
+    ...typeof grammar2.word === "string" ? [grammar2.word] : [],
+    ...protectedWireRuleNames(opts)
+  ];
+  const reachable = /* @__PURE__ */ new Set();
+  const pending = roots.filter((name) => name in grammar2.rules);
+  while (pending.length > 0) {
+    const name = pending.pop();
+    if (reachable.has(name)) continue;
+    reachable.add(name);
+    const refs = /* @__PURE__ */ new Set();
+    collectSymbolRefs(grammar2.rules[name], refs);
+    for (const ref of refs) if (ref in grammar2.rules && !reachable.has(ref)) pending.push(ref);
+  }
+  return reachable;
+}
+function withoutDeadNames(list, dead) {
+  if (!Array.isArray(list)) return list;
+  return list.filter((entry) => ![...symbolNamesOf([entry])].some((name) => dead.has(name)));
+}
+function withoutDeadConflicts(conflicts, dead) {
+  if (!Array.isArray(conflicts)) return conflicts;
+  return conflicts.filter((group2) => ![...symbolNamesOf(group2)].some((name) => dead.has(name)));
+}
+function blankDeadEnrichMints(grammar2, enriched, opts) {
+  const reachable = reachableRuleNames(grammar2, opts);
+  const dead = new Set([...getEnrichMints(enriched)].filter((name) => name in grammar2.rules && !reachable.has(name)));
+  Object.defineProperty(grammar2, DEAD_ENRICH_MINTS_KEY, { value: dead, enumerable: false, writable: false, configurable: true });
+  if (dead.size === 0) return;
+  const ruleOrder = Object.keys(grammar2.rules).join("\n");
+  const blank = nativeRuleFn("blank");
+  for (const name of dead) grammar2.rules[name] = blank();
+  if (Object.keys(grammar2.rules).join("\n") !== ruleOrder) throw new Error("blankDeadEnrichMints: blanking changed the rule order");
+  grammar2.inline = withoutDeadNames(grammar2.inline, dead);
+  grammar2.supertypes = withoutDeadNames(grammar2.supertypes, dead);
+  grammar2.conflicts = withoutDeadConflicts(grammar2.conflicts, dead);
+}
+
+// packages/codegen/src/dsl/wire/derivation-records.ts
+var DERIVATION_RECORDS_KEY = "__derivationRecords__";
+function variantEdgesOf(rules) {
+  const walker = new RuleWalker(rules);
+  const edges = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, edges, (acc, node) => {
+      if (node.type === "SYMBOL" && typeof node.annotations?.variantOf === "string") acc.set(node.name, node.annotations.variantOf);
+      return acc;
+    });
+  }
+  return edges;
+}
+function dynamicPrecedenceOf(rules) {
+  const walker = new RuleWalker(rules);
+  const values = {};
+  for (const [name, rule] of Object.entries(rules)) {
+    const found = walker.fold(rule, [], (acc, node) => node.type === "PREC_DYNAMIC" ? [...acc, node.value] : acc);
+    if (found.length > 0) values[name] = found;
+  }
+  return values;
+}
+function attachDerivationRecords(grammar2, base2, opts, conflicts) {
+  const upstreamSymbols = upstreamSymbolNames(base2);
+  const edges = /* @__PURE__ */ new Map();
+  for (const [oldName, newName] of opts.__wireContext__?.symbolRenames ?? []) {
+    if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
+  }
+  for (const [name, owner] of variantEdgesOf(grammar2.rules)) {
+    if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
+  }
+  const records = {
+    upstreamConflicts: upstreamConflictSets(base2),
+    sourceEdges: Object.fromEntries(edges),
+    ...conflicts,
+    upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf(base2) ?? {}),
+    dynamicPrecedence: dynamicPrecedenceOf(grammar2.rules)
+  };
+  Object.defineProperty(grammar2, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
+}
+
+// packages/codegen/src/dsl/conflict-resolutions.ts
+function applyConflictResolutions(grammar2, input) {
+  grammar2.conflicts = input.resolutions.map((entry) => [...entry.resolution.symbols]);
+}
+
 // packages/codegen/src/dsl/sittir-grammar.ts
 function sittirGrammar(base2, config) {
-  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(config.groups), extras: config.extras, fieldSites: authoredFieldSites(config.patches) });
+  const { resolutions, ...wireConfig } = config;
+  const enriched = enrich(base2, { groupBodies: authoredGroupBodies(wireConfig.groups), extras: wireConfig.extras, fieldSites: authoredFieldSites(wireConfig.patches) });
   const grammar2 = globalThis.grammar;
-  return grammar2(enriched, wire(config, enriched, base2));
+  const opts = wire(wireConfig, enriched, base2);
+  const result = grammar2(enriched, opts);
+  blankDeadEnrichMints(result.grammar, enriched, opts);
+  attachDerivationRecords(result.grammar, base2, opts, {
+    resolutions: resolutions.resolutions,
+    conflictsAuthored: wireConfig.conflicts !== void 0
+  });
+  applyConflictResolutions(result.grammar, resolutions);
+  return result;
 }
 
 // packages/codegen/src/dsl/dsl-authoring.ts
@@ -6890,23 +7184,10 @@ var grammar = globalThis.grammar;
 
 // packages/rust/grammar.sittir.ts
 var grammar_sittir_default = sittirGrammar(base_default, {
+  resolutions: resolutions_default,
   name: "rust",
-  conflicts: ($, previous) => [
-    ...previous ?? [],
-    [$._expression_except_range, $.match_arm_block_ending],
-    [$.generic_type_with_turbofish, $.generic_pattern, $._path],
-    [$.generic_type_with_turbofish, $._path],
-    [$.visibility_modifier, $._path],
-    [$._expression_except_range, $.closure_expression_arm],
-    [$.async_block, $._kw_async_marker],
-    [$.scoped_identifier, $.scoped_type_identifier, $.visibility_modifier_crate],
-    [$.visibility_modifier_pub],
-    [$._attributed_type_parameter, $._type],
-    [$._attributed_argument]
-  ],
   supertypes: ($, previous) => [...previous ?? [], $.comment],
   groups: {
-    visibility_modifier_in_path: ($) => seq("in", $._path),
     attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
     attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
     attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),

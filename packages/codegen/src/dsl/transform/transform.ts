@@ -32,7 +32,6 @@ import {
 	wireHasAuthoredRule,
 	wireIsBaseSupertype,
 	wireRegisterSyntheticRule,
-	wireRegisterConflict,
 	wireGetCurrentRuleKind,
 	wireIsExtraRule,
 	wireIsPrecedenceRankedRule,
@@ -46,8 +45,8 @@ import {
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
-import { polymorphVisibleName } from '../arm-names.ts';
 import { renameRule } from '../wire/symbol-renames.ts';
+import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
 	isEnrichShapedFieldWrapper,
@@ -452,23 +451,11 @@ function buildHoistedVariants(
 		refs.push({ altIdx, ref: choiceMembers[altIdx]!, name: lift.liftName });
 	}
 	refs.sort((a, b) => a.altIdx - b.altIdx);
-	registerHoistedVariantConflicts(refs.map((r) => r.name));
 	const newChoice = reconstructContainer(
 		choice,
 		refs.map((r) => r.ref)
 	);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
-}
-
-function registerHoistedVariantConflicts(variantNames: string[]): void {
-	if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
-		throw new Error(`registerConflict: no active wire() context`);
-	}
-	for (const n of variantNames) {
-		if (!wireRegisterConflict([n])) {
-			throw new Error(`registerConflict: no active wire() context`);
-		}
-	}
 }
 
 const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;

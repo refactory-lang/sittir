@@ -134,6 +134,7 @@ export interface RawGrammar {
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
+	readonly derivationRecords?: DerivationRecords;
 }
 
 export interface StageEvaluation<G = RawGrammar> {
@@ -158,6 +159,7 @@ export interface DesugarDivergenceEvent {
 }
 
 import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
+import type { DerivationRecords } from '../dsl/wire/derivation-records.ts';
 export type { RefineForm };
 
 export interface NarrowedField {
