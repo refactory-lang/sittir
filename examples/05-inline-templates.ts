@@ -1,11 +1,14 @@
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
 
 export function renderDirectlyWithoutInlineTemplates() {
-	return ir.statement.function({
+	return engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'render_config',
-		parameters: ir.parameters.strict(),
-		returnType: ir.synonym.type('String'),
-		body: ir.block.strict(),
+		parameters: engine.build.parameters.strict(),
+		returnType: engine.build.synonym.type('String'),
+		body: engine.build.block.strict(),
 	}).$render();
 }

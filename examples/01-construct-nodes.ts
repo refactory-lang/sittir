@@ -1,12 +1,15 @@
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 import { nodeText } from './helpers.ts';
 
+const engine = await createEngine(rust);
+
 export function explicitMainFunction() {
-	const fn = ir.statement.function.strict({
-		visibilityModifier: ir.visibilityModifier.pub(),
-		name: ir.identifier('main'),
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
+	const fn = engine.build.statement.function.strict({
+		visibilityModifier: engine.build.visibilityModifier.pub(),
+		name: engine.build.identifier('main'),
+		parameters: engine.build.parameters.strict(),
+		body: engine.build.block.strict(),
 	});
 
 	return {
@@ -17,66 +20,66 @@ export function explicitMainFunction() {
 }
 
 export function nestedGreetFunction() {
-	return ir.statement.function.strict({
+	return engine.build.statement.function.strict({
 		// Each arm nests under the arm that reaches it: `pub`, its
 		// parenthesized `scope`, then the `in <path>` form.
-		visibilityModifier: ir.visibilityModifier.pub.scope.inPath(
-			ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') }),
+		visibilityModifier: engine.build.visibilityModifier.pub.scope.inPath(
+			engine.build.scopedIdentifier({ path: engine.build.crate(), name: engine.build.identifier('x') }),
 		),
-		name: ir.identifier('greet'),
-		parameters: ir.parameters.strict(
-			ir.parameter({ name: 'name', type: 'String' }),
+		name: engine.build.identifier('greet'),
+		parameters: engine.build.parameters.strict(
+			engine.build.parameter({ name: 'name', type: 'String' }),
 		),
-		body: ir.block.strict(),
+		body: engine.build.block.strict(),
 	});
 }
 
 export function fromGreetFunction() {
-	return ir.statement.function({
+	return engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'greet',
-		parameters: ir.parameters(
-			ir.parameter({ name: 'name', type: 'String', mutableSpecifier: true }),
+		parameters: engine.build.parameters(
+			engine.build.parameter({ name: 'name', type: 'String', mutableSpecifier: true }),
 		),
-		body: ir.block({
-			statements: ir.statement.let({ pattern: 'a', mutableSpecifier: true, value: ir.integerLiteral('1') }),
+		body: engine.build.block({
+			statements: engine.build.statement.let({ pattern: 'a', mutableSpecifier: true, value: engine.build.integerLiteral('1') }),
 		}),
 	});
 }
 
 export function minimalMainFunction() {
-	return ir.statement.function({
+	return engine.build.statement.function({
 		name: 'main',
-		parameters: ir.parameters(),
-		body: ir.block({})
+		parameters: engine.build.parameters(),
+		body: engine.build.block({})
 	});
 }
 
 export function immutableFunctionUpdates() {
-	const fn = ir.statement.function({
+	const fn = engine.build.statement.function({
 		name: 'main',
-		parameters: ir.parameters(),
-		body: ir.block(),
+		parameters: engine.build.parameters(),
+		body: engine.build.block(),
 	});
 
 	return fn.$with
-		.name(ir.identifier('greet'))
-		.$with.body(ir.block.strict());
+		.name(engine.build.identifier('greet'))
+		.$with.body(engine.build.block.strict());
 }
 
 export function structSideBySide() {
-	const strictFn = ir.statement.function.strict({
-		visibilityModifier: ir.visibilityModifier.pub(),
-		name: ir.identifier('config'),
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
+	const strictFn = engine.build.statement.function.strict({
+		visibilityModifier: engine.build.visibilityModifier.pub(),
+		name: engine.build.identifier('config'),
+		parameters: engine.build.parameters.strict(),
+		body: engine.build.block.strict(),
 	});
 
-	const fromFn = ir.statement.function({
+	const fromFn = engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'config',
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
+		parameters: engine.build.parameters.strict(),
+		body: engine.build.block.strict(),
 	});
 
 	return { strictFn, fromFn };

@@ -1,20 +1,23 @@
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
 
 export function renderPublicStruct() {
-	return ir.statement.struct.unit({
+	return engine.build.statement.struct.unit({
 		visibilityModifier: 'pub',
-		name: ir.synonym.type('Config'),
+		name: engine.build.synonym.type('Config'),
 	}).$render();
 }
 
 export function renderSourceFile() {
-	return ir.sourceFile({
+	return engine.build.sourceFile({
 		statements: [
-			ir.statement.function({
+			engine.build.statement.function({
 				visibilityModifier: 'pub',
 				name: 'main',
-				parameters: ir.parameters.strict(),
-				body: ir.block.strict(),
+				parameters: engine.build.parameters.strict(),
+				body: engine.build.block.strict(),
 			}),
 		],
 	}).$render();
