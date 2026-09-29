@@ -1912,7 +1912,7 @@ The fresh-input path never spreads the caller's elements raw into the strict
 factory. Each element goes through the same slot resolver a repeated-children
 coercer uses (`resolveFieldCall` over the element slot, many), so a bare
 string is the leaf its pattern names, a bare number or boolean is the numeric
-or boolean leaf (`_resolveScalar`), and a `kind:` object is that kind's
+or boolean leaf (`_resolveScalar`), and a `$type:` object is that kind's
 config; at the strict layer a number is a kind id, which is how a bare `1`
 used to vanish from an argument list in silence. The element slot is the
 list's content slot, or, when the content is one transparent wrapper
@@ -1923,7 +1923,7 @@ leading options object off first, keyed on `listOptionKeys(surface)`, the
 same key list the strict factory accepts, so the options object passes
 through untouched and only the elements resolve.
 
-`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. A list that seats a wrapper passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
+`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. A list that seats a wrapper passes `bagKinds`, the wrapper and the element slot's branch kinds: a tag outside them throws naming them, an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
 
 ### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
@@ -2219,7 +2219,7 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  */
 ```
 
-A `kind:` tag is a kind id, never a name and never a supertype: the tag always names the kind that is built.
+A bag's `$type` tag is a kind id, never a name and never a supertype: the tag always names the kind that is built, and the key is the node's own discriminant, so a grammar slot named `kind` is always plain data.
 
 #### body
 
@@ -2228,7 +2228,7 @@ A `kind:` tag is a kind id, never a name and never a supertype: the tag always n
 // narrow the string parameter without an unchecked cast.
 ```
 
-It emits `_fromOfTag(tag, candidates)`, the one reading of a `kind:` tag: a numeric tag that is the id of a kind with a from() coercer names that kind. Any other tag throws `the kind tag <tag> is not a kind id of [<candidates>]` where more than one kind could take the bag, and elsewhere is not a tag: a grammar slot may itself be named `kind`, and a lone kind's bag is decided by its slot, so the value stays config data.
+It emits `_fromOfTag(tag, candidates, closed)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer names that kind. Any other tag throws `the $type tag <tag> is not a kind id` naming the candidates. A `closed` reading also throws for a kind outside the candidates; only a list's bags read closed, because a wrapper or list seat admits kinds a slot's own candidates do not name (a `field_declaration` at an enum variant's body). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
 
 `_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
 the leaf registry, a plain tag object hands its `text` to the leaf's
@@ -2307,11 +2307,11 @@ lifted into that arm.
 
 #### kind-tagged config
 
-A `kind:` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
+A `$type` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
 
 #### `_listElements`
 
-`_listElements(input, optionKeys, wrapperKind, resolve)`: the loose list
+`_listElements(input, optionKeys, wrapperKind, resolve, bagKinds?)`: the loose list
 call's argument split. When `optionKeys` is non-empty and the first argument
 is a plain object whose keys are all option keys (the strict factory's own
 test, minus the `$type` check, which `isNode` covers), it is the options

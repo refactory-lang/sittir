@@ -204,7 +204,7 @@ describe('loose surface printing', () => {
 	it("loosens the slots of a seat config that sets more than its required slot, and names its kind where the element slot also takes the hoisted value bare", () => {
 		expect(
 			expectPrinted(map.holder2!({ args: map.args!(attributed({ attrs: map.identifier!('a'), expression: map.identifier!('x') })) })).source
-		).toBe('ir.holder2({\n\targs: [{\n\t\tkind: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
+		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
 	});
 	it("names the seat's kind on a config that sits beside a hoisted bare element", () => {
 		expect(
@@ -213,7 +213,7 @@ describe('loose surface printing', () => {
 					args: map.args!(attributed({ attrs: map.identifier!('a'), expression: map.identifier!('x') }), attributed({ expression: map.identifier!('y') }))
 				})
 			).source
-		).toBe('ir.holder2({\n\targs: [{\n\t\tkind: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}, "y"],\n})');
+		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}, "y"],\n})');
 	});
 	it("leaves a seat config untagged where its seat has no required slot to hoist", () => {
 		const unhoisted = mapFor({ ...ctx, loose: { ...loose, slotRequired: { attributed: { attrs: false, expression: false } } } });
@@ -249,7 +249,7 @@ describe('loose surface printing', () => {
 		});
 		expect(expectPrinted(seated.arguments!(holder({ item: map.identifier!('x') }))).source).toBe('ir.arguments(ir.identifier("x"))');
 		expect(expectPrinted(seated.arguments!(holder({ item: map.identifier!('x'), other: true }))).source).toBe(
-			'ir.arguments({\n\tkind: kinds.Holder,\n\titem: "x",\n\tother: true,\n})'
+			'ir.arguments({\n\t$type: kinds.Holder,\n\titem: "x",\n\tother: true,\n})'
 		);
 	});
 	it("spells an absorbed spread child as the loose wrapper's array argument", () => {
@@ -276,7 +276,7 @@ describe('loose surface printing with nested configs', () => {
 			'ir.callExpression({\n\tfunction: {\n\t\tfunction: "f",\n\t},\n})'
 		);
 		expect(expectPrinted(map.block!({ statements: [map.call_expression!({ function: map.identifier!('f') })] })).source).toBe(
-			'ir.block({\n\tstatements: [{\n\t\tkind: kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
+			'ir.block({\n\tstatements: [{\n\t\t$type: kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
 		);
 		expect(expectPrinted(map.function_item!({ body: map.block!({}) })).source).toBe('ir.functionItem({\n\tbody: {},\n})');
 	});

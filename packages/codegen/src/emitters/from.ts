@@ -1164,11 +1164,16 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
 	lines.push('');
-	lines.push('function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap | undefined {');
+	lines.push('function _fromOfTag(tag: unknown, candidates: readonly string[], closed = false): keyof _FromMap {');
 	lines.push('  const name = typeof tag === "number" ? KIND_NAMES.get(tag) : undefined;');
-	lines.push('  if (name !== undefined && _isFromKind(name)) return name;');
-	lines.push('  if (candidates.length > 1) throw new Error(`the kind tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(", ")}]`);');
-	lines.push('  return undefined;');
+	lines.push('  if (name !== undefined && _isFromKind(name) && (!closed || candidates.includes(name))) return name;');
+	lines.push('  throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id${candidates.length > 0 ? ` of [${candidates.join(", ")}]` : ""}`);');
+	lines.push('}');
+	lines.push('');
+	lines.push('function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {');
+	lines.push('  if (typeof v !== "object" || v === null || Array.isArray(v) || isNode(v) || !("$type" in v)) return undefined;');
+	lines.push('  const { $type, ...rest } = v as Record<string, unknown>;');
+	lines.push('  return { tag: $type, rest };');
 	lines.push('}');
 	lines.push('');
 	lines.push('function _resolveByKind<K extends keyof _FromMap>(');
@@ -1178,7 +1183,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
 	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNode(rest)) return fn(rest);');
 	lines.push('  const text = (rest as { text?: unknown }).text;');
-	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);');
+	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);');
 	lines.push('  return fn(text);');
 	lines.push('}');
 	lines.push('');
@@ -1342,15 +1347,12 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('      if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;');
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
-	lines.push('    const { kind, ...rest } = v;');
-	lines.push('    const kindName = _fromOfTag(kind, [...leafKinds, ...branchKinds]);');
-	lines.push('    if (kindName !== undefined) {');
-	lines.push('      const built = _resolveByKind(kindName, rest) as _LooseFieldInput;');
+	lines.push('  const tagged = _splitTag(v);');
+	lines.push('  if (tagged !== undefined) {');
+	lines.push('    const built = _resolveByKind(_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]), tagged.rest) as _LooseFieldInput;');
 	lines.push(
-		'      return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;'
+		'    return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;'
 	);
-	lines.push('    }');
 	lines.push('  }');
 	lines.push('  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    const bk = branchKinds[0]!;');
@@ -1713,13 +1715,10 @@ function emitResolverHelpers(
 	);
 	lines.push('  const elements = (optionsFirst ? input.slice(1) : input).map((e) => {');
 	lines.push('    if (typeof e !== "object" || e === null || Array.isArray(e) || isNode(e)) return e;');
-	lines.push('    if ("kind" in e) {');
-	lines.push('      const { kind, ...rest } = e;');
-	lines.push('      const kindName = _fromOfTag(kind, []);');
-	lines.push('      return kindName === undefined ? e : _resolveByKind(kindName, rest);');
-	lines.push('    }');
+	lines.push('    const tagged = _splitTag(e);');
+	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, bagKinds ?? [], bagKinds !== undefined && bagKinds.length > 0), tagged.rest);');
 	lines.push('    if (bagKinds === undefined || bagKinds.length === 0) return e;');
-	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a kind tag naming one of [${bagKinds.join(", ")}]: ${JSON.stringify(e)}`);');
+	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a $type tag naming one of [${bagKinds.join(", ")}]: ${JSON.stringify(e)}`);');
 	lines.push('    return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;');
 	lines.push('  });');
 	lines.push(
@@ -1737,11 +1736,8 @@ function emitResolverHelpers(
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "string" && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;');
-	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
-	lines.push('    const { kind: k, ...rest } = v;');
-	lines.push('    const kn = _fromOfTag(k, [kind]);');
-	lines.push('    if (kn !== undefined) return _resolveByKind(kn, rest) as T;');
-	lines.push('  }');
+	lines.push('  const tagged = _splitTag(v);');
+	lines.push('  if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
 		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);"
@@ -1764,12 +1760,10 @@ function emitResolverHelpers(
 	// check below, rather than duplicating that check against a reassigned
 	// `v` (reassignment would widen every later narrowing of `v` in this
 	// function back to its declared type).
-	lines.push('  if (typeof v === "object" && !Array.isArray(v) && !isNode(v) && "kind" in v) {');
-	lines.push('    const { kind: k, ...rest } = v;');
-	lines.push('    const kn = _fromOfTag(k, [kind]);');
-	lines.push('    if (kn !== undefined && kn !== kind && kind in _wrapKindIds) {');
-	lines.push('      return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);');
-	lines.push('    }');
+	lines.push('  const tagged = _splitTag(v);');
+	lines.push('  if (tagged !== undefined) {');
+	lines.push('    const kn = _fromOfTag(tagged.tag, [kind]);');
+	lines.push('    if (kn !== kind && kind in _wrapKindIds) return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);');
 	lines.push('  }');
 	lines.push('  if (isNode(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
@@ -1788,11 +1782,8 @@ function emitResolverHelpers(
 	lines.push('    return _resolveByKind(kind, v) as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "object" && !Array.isArray(v)) {');
-	lines.push('    if ("kind" in v) {');
-	lines.push('      const { kind: k, ...rest } = v;');
-	lines.push('      const kn = _fromOfTag(k, [kind]);');
-	lines.push('      if (kn !== undefined) return _resolveByKind(kn, rest) as T;');
-	lines.push('    }');
+	lines.push('    const tagged = _splitTag(v);');
+	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;');
 	lines.push('    if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');

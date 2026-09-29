@@ -13,7 +13,7 @@ export function rebuildListSeatConfigsRustLoose() {
 				statements: [build.expressionStatement.withSemi(build.callExpression({
 					function: "call",
 					arguments: [{
-						kind: kinds.AttributedArgument,
+						$type: kinds.AttributedArgument,
 						attributeItem: [build.attribute.input({
 							path: "cfg",
 							arguments: build.delimTokenTree.paren(build.identifier("a")),

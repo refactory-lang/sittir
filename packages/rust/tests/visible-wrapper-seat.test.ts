@@ -5,7 +5,7 @@ import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
 
-const structPattern = { kind: rs.kinds.StructPattern, type: 'T' } as const;
+const structPattern = { $type: rs.kinds.StructPattern, type: 'T' } as const;
 
 describe('a visible wrapper seated on its parent', () => {
 	it('takes the wrapped pattern where the arm takes the wrapper', () => {

@@ -140,6 +140,10 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 	return undefined;
 }
 
+function isTagEntry(key: string, value: unknown): boolean {
+	return key === '$type' && value instanceof Printed;
+}
+
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
 		return reindent(printedSource(value), depth) + triviaSuffix(value.$_trivia, ctx);
@@ -164,7 +168,7 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 			if (raw !== undefined) return raw;
 		}
 		const entries = Object.entries(value).filter(
-			([k, v]) => v !== undefined && !k.startsWith('$') && !(Array.isArray(v) && v.length === 0)
+			([k, v]) => v !== undefined && (!k.startsWith('$') || isTagEntry(k, v)) && !(Array.isArray(v) && v.length === 0)
 		);
 		if (entries.length === 0) return '{}';
 		const body = entries.map(([k, v]) => `${pad(depth + 1)}${k}: ${printValue(v, ctx, depth + 1)},`).join('\n');
@@ -372,7 +376,7 @@ function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const wrapped = wrapTextLeaves(seatKind, item, ctx);
 	const id = ctx.loose?.kindIdOfName(seatKind);
 	const tagged = id !== undefined && ctx.loose !== undefined && seatHoistedSlot(seatKind, ctx.loose) !== undefined;
-	return tagged && isPlainObject(wrapped) ? { kind: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped } : wrapped;
+	return tagged && isPlainObject(wrapped) ? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped } : wrapped;
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -492,7 +496,7 @@ function loosenValue(
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
 		if (typeof value.$type === 'number' && ctx.memberNameOfId(value.$type) !== undefined) {
 			const tag = kindTagSource(value.$type, ctx);
-			const keyed = config === '{}' ? `{ kind: ${tag} }` : config.replace(/^\{\n/, `{\n\tkind: ${tag},\n`);
+			const keyed = config === '{}' ? `{ $type: ${tag} }` : config.replace(/^\{\n/, `{\n\t$type: ${tag},\n`);
 			return new Printed(value.$type, keyed, value.kind);
 		}
 	}

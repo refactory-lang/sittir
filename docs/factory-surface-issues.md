@@ -207,9 +207,9 @@ and is never re-interpreted.
 | --- | --- | --- | --- |
 | 1 | string | a text leaf | the slot admits leaf kinds; matched by the leaf's own pattern |
 | ~~2~~ | ~~string / number / boolean~~ | ~~a keyword or enum member~~ | **retired** — a bare scalar is never guessed into a keyword or enum member; name the kind (rule 3) instead |
-| 3 | plain object | a kind's config | the kind is `kind:` (grammar name or `TSKindId`), else the slot's only kind, else an error |
+| 3 | plain object | a kind's config | the kind is `$type:` (a kind id), else the slot's only kind, else an error |
 | 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element. An empty array (or empty spread) at an **optional** list slot is the slot absent: no elements node is built and the presence gate renders nothing (`ir.arguments([])` and `f()` render `()`); at a **required** list slot the list factory's non-empty guard throws, naming the slot |
-| 5 | kind-identified value (node data, a `kind:` object, or a bare kind id) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses; a wrapper's admitted set includes the members of any enum its slot reaches, so `returnType: TSKindId.StringKeyword` builds the `type_annotation` |
+| 5 | kind-identified value (node data, a `$type:` object, or a bare kind id) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses; a wrapper's admitted set includes the members of any enum its slot reaches, so `returnType: TSKindId.StringKeyword` builds the `type_annotation` |
 | 6 | bare non-object (string / number / boolean / array) | the field's declared `arm.default` | the slot has one candidate or declares a default; else an error |
 | 7 | omission | nothing | whatever strict lets you omit; all slots omittable ⇒ callable with no argument |
 
@@ -239,7 +239,7 @@ envelope as its array where the slot's one branch kind or its declared
 default is the envelope (rules 4 and 6), a single-slot wrapper dropped
 where exactly one arm admits its inner value (rule 5), an empty config as
 a bare call (rule 7). `--nested configs` prints nested compounds as config
-objects, keyless at a one-kind slot and `kind: TSKindId.<Member>` elsewhere
+objects, keyless at a one-kind slot and `$type: kinds.<Member>` elsewhere
 (rule 3); the default keeps the builder calls. Each grammar's loose rebuild
 is checked in beside the strict one (`examples/<n>-dogfood-<g>-loose.generated.ts`,
 `pnpm run gen:examples`), type-checked under the same ceiling, and held by
@@ -271,27 +271,22 @@ bare, and a kind id under a single-slot wrapper drops the wrapper
 ambiguous among the slot's leaf patterns, or where a tuple seat's array is one
 argument list the envelope builder takes as given.
 
-### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
+### L1 — The stamped kind enum is rejected as a bag's tag — RESOLVED
 
 A discriminated config accepts the raw grammar string but not the numeric enum
 the package exports for the purpose.
 
 ```ts
-ir.matchArm({ pattern: { pattern: { kind: kinds.StructPattern, … } } })       // → "T{a}=>{}"
-ir.matchArm({ pattern: { pattern: { kind: TSKindId.StructPattern, … } } }) // rejected
+ir.matchArm({ pattern: { pattern: { $type: 'struct_pattern', … } } })      // → "T{a}=>{}"
+ir.matchArm({ pattern: { pattern: { $type: kinds.StructPattern, … } } })   // rejected
 ```
 
-`TSKindId.StructPattern` is `305`; the resolver matches on names only, so every
-config re-spells a name the enum already holds.
+`kinds.StructPattern` is `305`; the resolver matched on names only, so every
+config re-spelled a name the enum already holds.
 
-Affected all three grammars (the resolver is shared). `_kindNameOf` (from.ts)
-now resolves a `kind:` discriminant's string or numeric spelling to the same
-name once, shared by every `"kind" in v` site (`_resolveOne`, `_resolveOneLeaf`,
-`_resolveOneBranch`, `_wrapArray`) instead of each re-deriving its own
-`typeof kind === "string"` check. Verified against all three regenerated
-packages (`tsc --noEmit` clean) and against rust at runtime: a numeric
-`TSKindId.StructPattern` and its string spelling now build byte-identical
-output through `ir.matchArm.withComma`.
+The tag is now the kind id and only the id: `_fromOfTag` (from.ts) resolves it
+once for every `"kind" in v` site, and a name string or a kind outside the slot's
+candidates throws naming them.
 
 ### L2 — List options are honoured only in first argument position — RESOLVED
 
@@ -354,8 +349,8 @@ factory shape (the classification behind the strict factory's target
 overload), not a coincidence of field names.
 
 ```ts
-ir.matchArm.withComma({ pattern: { kind: kinds.StructPattern, … } })              // → "T{a}=>{},"
-ir.matchArm.withComma({ pattern: { pattern: { kind: kinds.StructPattern, … } } })   // still builds
+ir.matchArm.withComma({ pattern: { $type: kinds.StructPattern, … } })              // → "T{a}=>{},"
+ir.matchArm.withComma({ pattern: { pattern: { $type: kinds.StructPattern, … } } })   // still builds
 ```
 
 Affects rust (`match_arm.pattern` → `match_pattern`).
