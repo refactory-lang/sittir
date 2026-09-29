@@ -10,8 +10,17 @@ import type { NodeMap } from '../../types.ts';
 
 const require = createRequire(import.meta.url);
 
-async function nodeMapOf(grammar: string): Promise<NodeMap> {
-	return (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap;
+const COMPILE_TIMEOUT = 120_000;
+const compiled = new Map<string, Promise<NodeMap>>();
+
+function nodeMapOf(grammar: string): Promise<NodeMap> {
+	let nodeMap = compiled.get(grammar);
+	if (nodeMap === undefined) {
+		nodeMap = (async () =>
+			(await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap)();
+		compiled.set(grammar, nodeMap);
+	}
+	return nodeMap;
 }
 
 function fullFormOf(nodeMap: NodeMap, kind: string): unknown {
@@ -26,14 +35,14 @@ describe('full form stamp', () => {
 		expect(fullFormOf(rust, 'lifetime')).toEqual({ open: { texts: ["'"] }, close: { texts: [''] } });
 		expect(fullFormOf(rust, 'line_comment')).toEqual({ open: { texts: ['//'] }, close: { texts: [''] } });
 		expect(fullFormOf(rust, 'block_comment')).toEqual({ open: { texts: ['/*'] }, close: { texts: ['*/'] } });
-	});
+	}, COMPILE_TIMEOUT);
 
 	it('records a spelling choice as alternatives of its slot', async () => {
 		expect(fullFormOf(await nodeMapOf('python'), 'integer_hex')).toEqual({
 			open: { texts: ['0x', '0X'], slot: 'prefix' },
 			close: { texts: [''] }
 		});
-	});
+	}, COMPILE_TIMEOUT);
 
 	it('stamps nothing around node content, around an optional delimiter, or across a word seam', async () => {
 		const rust = await nodeMapOf('rust');
@@ -47,7 +56,7 @@ describe('full form stamp', () => {
 		for (const arm of ['number_bigint_decimal', 'number_bigint_hex', 'number_bigint_binary', 'number_bigint_octal']) {
 			expect(fullFormOf(typescript, arm)).toEqual({ open: { texts: [''] }, close: { texts: ['n'] } });
 		}
-	});
+	}, COMPILE_TIMEOUT);
 
 	it('takes the literal runs around an enum that is the whole content', async () => {
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-go/grammar.js'), 'go');
@@ -57,6 +66,6 @@ describe('full form stamp', () => {
 		expect(content?.values.map((value) => ('value' in value ? [value.value, value.resolvedKind] : undefined))).toEqual(
 			['a', 'b', 'f', 'n', 'r', 't', 'v', '\\', "'", '"'].map((text) => [text, undefined])
 		);
-	}, 120_000);
+	}, COMPILE_TIMEOUT);
 });
 

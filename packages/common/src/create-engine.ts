@@ -115,6 +115,14 @@ function collectReaders(value: unknown, readers: Set<EngineHandle['current']>): 
 	}
 }
 
+function languageGuards<G extends object>(guards: G, inLanguage: (value: unknown) => boolean): Readonly<G> {
+	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
+		name,
+		(value: unknown, ...rest: unknown[]) => inLanguage(value) && (guard as (...args: unknown[]) => boolean)(value, ...rest)
+	]);
+	return Object.freeze(Object.fromEntries(entries) as G);
+}
+
 let engineCount = 0;
 const serials = new WeakMap<object, number>();
 const labelOf = (engine: EngineHandle['current']): string => `${engine.language.name}#${serials.get(engine) ?? '?'}`;
@@ -155,7 +163,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const engine: Engine<API> = {
 		...identity,
 		build,
-		is: hooks.is,
+		is: languageGuards(hooks.is, inLanguage),
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
 		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind },
