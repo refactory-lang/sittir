@@ -41385,7 +41385,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -45107,7 +45106,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "()".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -45700,7 +45698,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -45924,7 +45921,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "mut".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -47090,7 +47086,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "()".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -49319,7 +49314,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "..".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -49991,7 +49985,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -50096,7 +50089,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -50259,6 +50251,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: IdentifierTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -50419,7 +50419,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "self".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -50524,7 +50523,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "super".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -50629,7 +50627,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "crate".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -50999,7 +50996,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "ref".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -51131,7 +51127,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "unsafe".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -51263,7 +51258,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "static".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -51395,7 +51389,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "async".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -51527,7 +51520,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "move".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -52901,7 +52893,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "async".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -53006,7 +52997,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwDefaultTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "default".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -53111,7 +53101,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "const".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -53216,7 +53205,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "unsafe".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -54197,7 +54185,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionBareTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "..".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -54302,7 +54289,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemUnsafeMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "unsafe".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
@@ -54734,6 +54720,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralEmptyTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: CharLiteralEmptyTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -56793,6 +56787,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringOpenTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: StringOpenTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -57407,6 +57409,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentExtraSlashesTransport
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: LineCommentExtraSlashesTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -57624,6 +57634,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: LineCommentRegularTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -58889,7 +58907,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftBareTranspor
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "..".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -59259,7 +59276,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "_".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -59915,6 +59931,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: FloatLiteralTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60018,6 +60042,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: StringContentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60121,6 +60153,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: RawStringLiteralContentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60224,7 +60264,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterDocCommentMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -60329,7 +60368,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerDocCommentMarkerTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -60434,6 +60472,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralStartTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: RawStringLiteralStartTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60537,6 +60583,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralEndTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: RawStringLiteralEndTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60640,6 +60694,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DocCommentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: DocCommentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60743,6 +60805,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentContentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: BlockCommentContentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60846,6 +60916,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: TightTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -60949,7 +61027,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => " ".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -61054,7 +61131,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TabTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\t".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -61159,7 +61235,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -61264,7 +61339,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlanklineTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -61369,7 +61443,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\n\n\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -61474,6 +61547,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: IndentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -61577,6 +61658,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: DedentTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -61680,6 +61769,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            ::napi::ValueType::Number => {
+                let id = u32::from_napi_value(env, napi_val)?;
+                return Err(::napi::Error::from_reason(format!(
+                    "kind id {} ({:?}) has no fixed text: ErrorSentinelTransport renders from a node, not a kind id",
+                    id,
+                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))
+                )));
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
@@ -61954,7 +62051,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62059,7 +62155,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "=>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62164,7 +62259,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ":".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62269,7 +62363,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DollarTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "$".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62374,7 +62467,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "(".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62479,7 +62571,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ")".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62584,7 +62675,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "+".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62689,7 +62779,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62794,7 +62883,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -62899,7 +62987,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "block".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63004,7 +63091,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExprKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "expr".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63109,7 +63195,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for Expr2021KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "expr_2021".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63214,7 +63299,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "ident".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63319,7 +63403,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ItemKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "item".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63424,7 +63507,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LifetimeKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "lifetime".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63529,7 +63611,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "literal".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63634,7 +63715,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63739,7 +63819,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "pat".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63844,7 +63923,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatParamKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "pat_param".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -63949,7 +64027,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PathKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "path".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64054,7 +64131,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StmtKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "stmt".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64159,7 +64235,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TtKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "tt".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64264,7 +64339,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TyKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "ty".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64369,7 +64443,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "vis".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64474,7 +64547,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "#".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64579,7 +64651,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "[".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64684,7 +64755,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64789,7 +64859,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64894,7 +64963,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "u8".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -64999,7 +65067,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "i8".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65104,7 +65171,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "u16".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65209,7 +65275,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "i16".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65314,7 +65379,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "u32".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65419,7 +65483,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "i32".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65524,7 +65587,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "u64".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65629,7 +65691,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "i64".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65734,7 +65795,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "u128".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65839,7 +65899,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "i128".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -65944,7 +66003,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "isize".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66049,7 +66107,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "usize".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66154,7 +66211,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "f32".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66259,7 +66315,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "f64".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66364,7 +66419,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "bool".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66469,7 +66523,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "str".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66574,7 +66627,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "char".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66679,7 +66731,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "default".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66784,7 +66835,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "union".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66889,7 +66939,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "gen".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -66994,7 +67043,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "{".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67099,7 +67147,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "}".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67204,7 +67251,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "enum".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67309,7 +67355,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67414,7 +67459,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "extern".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67519,7 +67563,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "as".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67624,7 +67667,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "const".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67729,7 +67771,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "static".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67834,7 +67875,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "type".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -67939,7 +67979,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "fn".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68044,7 +68083,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "->".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68149,7 +68187,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "where".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68254,7 +68291,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "trait".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68359,7 +68395,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "for".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68464,7 +68499,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68569,7 +68603,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68674,7 +68707,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "let".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68779,7 +68811,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "else".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68884,7 +68915,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "use".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -68989,7 +69019,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonColonTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "::".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69094,7 +69123,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69199,7 +69227,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "...".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69304,7 +69331,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "'".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69409,7 +69435,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "impl".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69514,7 +69539,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "dyn".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69619,7 +69643,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "-".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69724,7 +69747,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "&&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69829,7 +69851,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "||".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -69934,7 +69955,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "|".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70039,7 +70059,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "^".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70144,7 +70163,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "==".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70249,7 +70267,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "!=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70354,7 +70371,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70459,7 +70475,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70564,7 +70579,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70669,7 +70683,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70774,7 +70787,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70879,7 +70891,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "%".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -70984,7 +70995,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "+=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71089,7 +71099,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "-=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71194,7 +71203,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71299,7 +71307,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71404,7 +71411,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "%=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71509,7 +71515,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "&=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71614,7 +71619,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "|=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71719,7 +71723,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "^=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71824,7 +71827,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "<<=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -71929,7 +71931,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ">>=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72034,7 +72035,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "return".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72139,7 +72139,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "yield".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72244,7 +72243,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "..".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72349,7 +72347,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "if".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72454,7 +72451,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "match".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72559,7 +72555,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ",".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72664,7 +72659,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "while".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72769,7 +72763,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "loop".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72874,7 +72867,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "in".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -72979,7 +72971,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "break".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73084,7 +73075,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "continue".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73189,7 +73179,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => ".".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73294,7 +73283,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "await".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73399,7 +73387,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "unsafe".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73504,7 +73491,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "async".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73609,7 +73595,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "try".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73714,7 +73699,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "ref".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73819,7 +73803,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "@".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -73924,7 +73907,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "\"".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74029,7 +74011,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "true".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74134,7 +74115,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "false".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74239,7 +74219,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "//".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74344,7 +74323,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashStarTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "/*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74449,7 +74427,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarSlashTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74554,7 +74531,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "move".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74659,7 +74635,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "_".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74764,7 +74739,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotEqTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "..=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74869,7 +74843,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "mod".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -74974,7 +74947,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "pub".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -75079,7 +75051,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "struct".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -75184,7 +75155,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawKeywordTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "raw".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -75289,7 +75259,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroRulesBangTransport {
         let mut __trivia: Option<TransportTrivia> = None;
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "macro_rules!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;

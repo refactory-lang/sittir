@@ -132,7 +132,7 @@ export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
-	render<const I extends string = string>(node: AnyNodeData, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
+	render<const I extends string = string>(node: AnyNodeData | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
@@ -239,7 +239,7 @@ export function createNativeEngine<
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
-		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): Rendered {
+		function renderNativeNode(node: AnyNodeData | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
@@ -252,7 +252,7 @@ export function createNativeEngine<
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
-			const transport = toTransportData(node) as TTransport;
+			const transport = (typeof node === 'number' ? node : toTransportData(node)) as TTransport;
 			return createRenderHandle(
 				() => engine.render(transport, undefined, perCall),
 				(path) => {

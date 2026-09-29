@@ -4233,7 +4233,10 @@ struct. Two cfg-gated `FromNapiValue` variants are emitted:
   dispatches on `napi_typeof` (never probing `String::from_napi_value` on a
   non-string; see `sittir_core::slot::transport_value_type`): a bare
   string is the text; a number is a value-less leaf sent as its kind id and
-  takes `defaultTextLiteral`; a boolean-presence leaf takes
+  takes `defaultTextLiteral` (`kindIdText`), or, for a kind whose text the
+  kind id does not determine, fails naming the id it was sent and that id's
+  kind (`kind_name_from_id`) — a content-bearing leaf never renders a kind
+  id as empty text; a boolean-presence leaf takes
   `booleanLiteral`; anything else is read as an object carrying `$text`
   and `$_trivia`. The struct is built from `text` and the trivia capture.
 - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
@@ -9772,6 +9775,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
 
+`FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
+
 `IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `irKey`, so the engine's kind-to-type map keys each kind as the builder table does, never by re-casing a kind-id name.
 
 #### body
@@ -14452,19 +14457,6 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 ```
 
 Every struct passes its own kind id to `render_with_trivia!` (`None` only when no kind table is given), so the sink holds a line end after a line-terminated kind (`RenderSink::end_line_after`). A leaf whose kind entry is anonymous (`anon`, the parser's fact) renders with `render_with_trivia!(token …)`. The reader counts such a token among the tokens between an owner and its same-line trailing entries (`$tokensBetween`), never as an owner. So its transport leaves those entries held and doesn't seat them ahead of itself: `a + /* x */ b` keeps the comment after `+`.
-
-### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
-
-The text a value-less leaf takes when it arrives over napi as a bare kind
-id (`scalar_leaf_value` in sittir-core serialises anonymous single-leaf
-fields that way): a token's own text, or a pattern's single fixed literal
-(`_semicolon` → ";"). Content-bearing patterns (identifier, number, …)
-have no default — they come in on the string path and must stay there.
-
-A depth token (`isDepthText`) has no default either: its render never
-reads `text` — the depth fact is the kind id the sink dispatches on
-(`w.indent()` / `w.dedent(seam)` through `literalWrite`), so the sentinel
-would only be carried to be ignored.
 
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS.jsName`
 

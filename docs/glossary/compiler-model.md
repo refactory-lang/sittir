@@ -2235,6 +2235,20 @@ a pass rebuilds.
  *  target is never fixed text: its render is its own template. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::kindIdText`
+
+The text a kind renders as when it is given only its kind id, or
+`undefined` when the id does not determine one: a fixed-text leaf's own
+text, or a pattern's single fixed literal (`_semicolon` → ";").
+Content-bearing patterns (identifier, number, …) have none. A depth token
+(`isDepthText`) has none either: its render never reads text — the sink
+dispatches on the kind id (`w.indent()` / `w.dedent(seam)` through
+`literalWrite`). A spacing sentinel (Tight) has no text at all. How the
+kind is stored does not enter into it. Both consumers of the fact read it
+here: the leaf transport's kind-id arm (`renderLeafTransportNapiImpls`) and
+the `FixedTextKindId` union (`emitTypes`), so the kinds the type admits
+are the kinds the runtime renders.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::NodesCtx`
 
 ```text

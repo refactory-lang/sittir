@@ -4,7 +4,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type IrKeyOf, type NamespaceMap, type ScmNode } from './types.js';
+import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ScmNode } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { methodsEngine } from './utils.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
@@ -18,6 +18,7 @@ export interface ScmAPI extends LanguageAPI {
 	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
+	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 }

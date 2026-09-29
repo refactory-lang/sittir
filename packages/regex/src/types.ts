@@ -1843,6 +1843,42 @@ export interface NamespaceMap {
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
 }
 
+export type FixedTextKindId =
+	| TSKindId.AnyCharacter
+	| TSKindId.StartAssertion
+	| TSKindId.EndAssertion
+	| TSKindId.BoundaryAssertion
+	| TSKindId.NonBoundaryAssertion
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleBlankline
+	| TSKindId.Caret
+	| TSKindId.LparenQmark
+	| TSKindId.Eq
+	| TSKindId.Bang
+	| TSKindId.Rparen
+	| TSKindId.LparenQmarkLt
+	| TSKindId.Lbrack
+	| TSKindId.Dash
+	| TSKindId.BslashDash
+	| TSKindId.Rbrack
+	| TSKindId.LbrackColon
+	| TSKindId.ColonRbrack
+	| TSKindId.Lparen
+	| TSKindId.LparenQmarkPLt
+	| TSKindId.Gt
+	| TSKindId.LparenQmarkColon
+	| TSKindId.Star
+	| TSKindId.Qmark
+	| TSKindId.Plus
+	| TSKindId.Lbrace
+	| TSKindId.Rbrace
+	| TSKindId.Comma
+	| TSKindId.Bslashk
+	| TSKindId.Lt
+	| TSKindId.LparenQmarkPEq
+	| TSKindId.Colon;
+
 export interface IrKeyOf {
 	[TSKindId.Pattern]: 'pattern';
 	[TSKindId.Alternation]: 'alternation';

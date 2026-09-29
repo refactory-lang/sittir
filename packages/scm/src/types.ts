@@ -1459,6 +1459,29 @@ export interface NamespaceMap {
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
 }
 
+export type FixedTextKindId =
+	| TSKindId.Space
+	| TSKindId.Tab
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleBlankline
+	| TSKindId.Star
+	| TSKindId.Plus
+	| TSKindId.Qmark
+	| TSKindId.At
+	| TSKindId.Dquote
+	| TSKindId.Lbrack
+	| TSKindId.Rbrack
+	| TSKindId.Lparen
+	| TSKindId.Rparen
+	| TSKindId.MISSINGKeyword
+	| TSKindId.Underscore
+	| TSKindId.Colon
+	| TSKindId.Bang
+	| TSKindId.Pound
+	| TSKindId.Dot
+	| TSKindId.Slash;
+
 export interface IrKeyOf {
 	[TSKindId.Program]: 'program';
 	[TSKindId.EscapeSequence]: 'escapeSequence';

@@ -50,6 +50,7 @@ export interface LanguageAPI {
 	readonly types: object;
 	readonly root: AnyNodeData;
 	readonly node: AnyNodeData;
+	readonly fixedTextKindId: number;
 	readonly options: object;
 	readonly indentChar: string;
 }
@@ -76,7 +77,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyNodeData, options?: API['options'] & RenderCallOptions): Rendered;
+	render(node: AnyNodeData | number, options?: API['options'] & RenderCallOptions): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: unknown };
 	holdsTree(tree: unknown): boolean;
@@ -128,7 +129,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	parse(source: string, options?: ParseOptions): API['root'];
 	read(path: string, options?: ParseOptions): Promise<API['root']>;
 	render<const R extends API['options'] = API['options']>(
-		node: API['node'] | ((build: API['build']) => API['node']),
+		node: RenderInput<API> | ((build: API['build']) => API['node']),
 		options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
 	): Rendered;
 	create(path: string, fn: (build: API['build']) => API['root']): Pending;
@@ -137,6 +138,8 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
+
+type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
 
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> = IndentOption<
 	R extends { readonly indent?: infer I extends string } ? I : string,
@@ -152,7 +155,7 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 
 export interface Interceptor<API extends LanguageAPI> {
 	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
-	render?(call: { readonly node: API['node']; readonly options: API['options'] }, next: () => string): string;
+	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
 	file?(
 		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },

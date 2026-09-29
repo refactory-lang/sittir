@@ -146,7 +146,7 @@ The inner trivia of a node that realizes empty: `inner()` reads its inner entrie
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
-The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
+The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
 
 ### `packages/types/src/engine-api.ts::Language`
 
@@ -195,6 +195,10 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 ### `packages/types/src/engine-api.ts::Engine`
 
 A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+
+### `packages/types/src/engine-api.ts::RenderInput`
+
+What `render` accepts: any of the language's nodes, or the kind id of a kind whose text the kind determines, which renders as that text. A kind id with no fixed text (an identifier, a depth sentinel) is a type error, and throws at run time naming the kind.
 
 ### `packages/types/src/engine-api.ts::RenderOptionsCheck`
 

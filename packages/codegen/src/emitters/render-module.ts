@@ -1,6 +1,6 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, kindIdText } from '../compiler/model/node-map.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -3238,7 +3238,7 @@ function renderTransportDataStruct(
 		lines.push(
 			...renderLeafTransportNapiImpls(
 				structName,
-				leafDefaultTextLiteral(node),
+				kindIdText(node),
 				leafBooleanPresenceLiteral(node, nodeMap)
 			)
 		);
@@ -3268,8 +3268,20 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
-		lines.push(`            // Raw kind_id: value-less leaf sent as its numeric kind tag.`);
 		lines.push(`            ::napi::ValueType::Number => ${rustStringLiteral(defaultTextLiteral)}.to_string(),`);
+	} else {
+		lines.push(`            ::napi::ValueType::Number => {`);
+		lines.push(`                let id = u32::from_napi_value(env, napi_val)?;`);
+		lines.push(`                return Err(::napi::Error::from_reason(format!(`);
+		lines.push(
+			`                    ${JSON.stringify(`kind id {} ({:?}) has no fixed text: ${structName} renders from a node, not a kind id`)},`
+		);
+		lines.push(`                    id,`);
+		lines.push(
+			`                    u16::try_from(id).map_or("<unknown>", |id| super::kind_ids::kind_name_from_id(::sittir_core::types::KindId(id)))`
+		);
+		lines.push(`                )));`);
+		lines.push(`            }`);
 	}
 	if (booleanLiteral !== undefined) {
 		lines.push(`            ::napi::ValueType::Boolean => {`);
@@ -3364,15 +3376,6 @@ function renderLeafTransportNapiImpls(
 	lines.push('');
 
 	return lines;
-}
-
-function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (isFixedTextLeaf(node)) {
-		const text = node.text || undefined;
-		return text !== undefined && isDepthText(text) ? undefined : text;
-	}
-	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
-	return undefined;
 }
 
 interface TransportMetadataField {

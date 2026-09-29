@@ -2,7 +2,7 @@ import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isKindIdStored, kindIdText } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
@@ -315,6 +315,14 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
 	lines.push('}');
+	lines.push('');
+
+	const fixedTextKindIds = new Set(
+		[...nodeMap.nodes]
+			.filter(([kind, node]) => kindIdText(node) !== undefined && hasKindId(kind, kindEntries))
+			.map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries))
+	);
+	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
 	lines.push('');
 
 	lines.push('export interface IrKeyOf {');
