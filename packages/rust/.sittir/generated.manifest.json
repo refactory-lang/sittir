@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "f7aa958dc8fc932dcec6a65a43dc3eb9c732f57e778c036d81c0b33d04262121",
+  "source_hash": "86817363c2b4f605f94f17a2d6a46f538576af914135ad981f4f234b067beead",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "923a011eee9d92ea0897c59d5d06b398434d75b36944967f8645b25c073a731d",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -21,7 +21,7 @@
     "packages/rust/src/backend.ts": "e2d39c0fcb07642b624899ea48d7eb125dd739abe06fa47bcbd758a65de22abe",
     "packages/rust/src/consts.ts": "66686f523e433b8c82acf229ef2f1a3b21fcba8e37aab80cc3978096437e9d28",
     "packages/rust/src/factories/bundle.ts": "3d86032ce414ea7ccf0811abaf0222023b7f254955823b8128a9f9fc1d71a1cb",
-    "packages/rust/src/factories/coerce.ts": "a7fcd9efa3825dcf571a2857221c2bd501458090812027f8e9e78d41c554cb56",
+    "packages/rust/src/factories/coerce.ts": "23e2efbc363c2a286a876289a6e5275c112dd5bac5ce294beec98165e9a2a15b",
     "packages/rust/src/factories/index.ts": "b8a031d43477474d861231f8079898ea06cf2a684d1de76dff0034b218a906f9",
     "packages/rust/src/factories/overlays/polymorphs.ts": "e4fe9d26030e7588e3b5a113eae663b7aa4e6b2e138829d9f6f2d5fc54022c8a",
     "packages/rust/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
@@ -35,7 +35,7 @@
     "packages/rust/src/options.ts": "e7468890ddfb86f88661ebe7f25b4fedb8e9dc3f5aa8b13144e233e644ea9e25",
     "packages/rust/src/render-engine.ts": "8d7608214f88bf360956f0147f63657fa959c1a281276f74eda65c43d59b9e37",
     "packages/rust/src/types-internal.ts": "9f7fc0eb046ab9d535e7316e6ce0bb0612d1b6ef80f08ce9f2d6a600c48b8e52",
-    "packages/rust/src/types.ts": "c13126b371b4d521a4e8d836810a66def69df4ad6e60cf0cb8291fcdda2f0c71",
+    "packages/rust/src/types.ts": "2d3efeebdbcf9e7c3900e4ce9081a3c522651fd0871813c5881bf22a9c54ef63",
     "packages/rust/src/utils.ts": "0000d9e0bee6e440458a19894f7569d62eab1e58cf408c12f8fefa196a0cfa1b",
     "packages/rust/src/wrap.ts": "976c17006f584edd58f425efed48f5d6f63f3200f07208643ac6ced414eed8df",
     "rust/crates/sittir-rust/index.d.ts": "b6f76ab78b73c822e6ed18a35c67c7f70c78387b26c98b2052a43fb96e4e845e",

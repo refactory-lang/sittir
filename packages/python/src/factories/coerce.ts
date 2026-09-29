@@ -384,136 +384,21 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	_statement: [
-		'_simple_statements',
-		'_compound_statement',
-		'if_statement',
-		'for_statement',
-		'while_statement',
-		'try_statement',
-		'with_statement',
-		'function_definition',
-		'class_definition',
-		'decorated_definition',
-		'match_statement'
-	],
-	_simple_statement: [
-		'future_import_statement',
-		'import_statement',
-		'import_from_statement',
-		'print_statement',
-		'assert_statement',
-		'expression_statement',
-		'return_statement',
-		'delete_statement',
-		'raise_statement',
-		'pass_statement',
-		'break_statement',
-		'continue_statement',
-		'global_statement',
-		'nonlocal_statement',
-		'exec_statement',
-		'type_alias_statement'
-	],
-	_compound_statement: [
-		'if_statement',
-		'for_statement',
-		'while_statement',
-		'try_statement',
-		'with_statement',
-		'function_definition',
-		'class_definition',
-		'decorated_definition',
-		'match_statement'
-	],
-	with_clause: ['with_clause_bare', 'with_clause_paren'],
-	_suite: ['suite_inline', 'suite_block', 'suite_empty'],
-	parameter: [
-		'identifier',
-		'typed_parameter',
-		'default_parameter',
-		'typed_default_parameter',
-		'list_splat_pattern',
-		'tuple_pattern',
-		'keyword_separator',
-		'positional_separator',
-		'dictionary_splat_pattern'
-	],
-	pattern: [
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword',
-		'subscript',
-		'attribute',
-		'list_splat_pattern',
-		'tuple_pattern',
-		'list_pattern'
-	],
-	expression: [
-		'comparison_operator',
-		'not_operator',
-		'boolean_operator',
-		'lambda',
-		'primary_expression',
-		'conditional_expression',
-		'named_expression',
-		'as_pattern'
-	],
-	primary_expression: [
-		'await',
-		'binary_operator',
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword',
-		'string',
-		'concatenated_string',
-		'integer',
-		'float',
-		'true',
-		'false',
-		'none',
-		'unary_operator',
-		'attribute',
-		'subscript',
-		'call',
-		'list',
-		'list_comprehension',
-		'dictionary',
-		'dictionary_comprehension',
-		'set',
-		'set_comprehension',
-		'tuple',
-		'parenthesized_expression',
-		'generator_expression',
-		'ellipsis',
-		'list_splat_pattern'
-	],
-	assignment: ['assignment_eq', 'assignment_type', 'assignment_typed'],
-	escape_sequence: 'escape_sequence_simple',
-	integer: 'integer_decimal_plain',
-	float: 'float_point',
-	line_continuation: 'line_continuation_newline',
-	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline'],
-	integer_decimal: 'integer_decimal_plain'
-};
+function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {
+	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
+	if (
+		name !== undefined &&
+		_isFromKind(name) &&
+		candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))
+	)
+		return name;
+	throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
+}
 
-/** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name.
- *  A supertype tag names its default arm; one without a default names no kind. */
-function _kindNameOf(kind: unknown): string | undefined {
-	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
-	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
-	if (tag === undefined || typeof tag === 'string') return tag ?? name;
-	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
+function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || !('$type' in v)) return undefined;
+	const { $type, ...rest } = v as Record<string, unknown>;
+	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
@@ -521,8 +406,7 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string')
-		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(text);
 }
 
@@ -908,13 +792,13 @@ function _resolveOne<T>(
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
 	}
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind, ...rest } = v;
-		const kindName = _kindNameOf(kind);
-		if (kindName !== undefined && _isFromKind(kindName)) {
-			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
-			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const built = _resolveByKind(
+			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
+			tagged.rest
+		) as _LooseFieldInput;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -965,7 +849,9 @@ function _listElements(
 	input: readonly unknown[],
 	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
-	resolve: (elements: readonly unknown[]) => readonly unknown[]
+	resolve: (elements: readonly unknown[]) => readonly unknown[],
+	tagKinds: readonly string[],
+	bagKinds?: readonly string[]
 ): readonly unknown[] {
 	const head = input[0];
 	const optionsFirst =
@@ -975,17 +861,17 @@ function _listElements(
 		!Array.isArray(head) &&
 		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
-		wrapperKind !== undefined &&
-		_isFromKind(wrapperKind) &&
-		typeof e === 'object' &&
-		e !== null &&
-		!Array.isArray(e) &&
-		!isNode(e) &&
-		!('kind' in e)
-			? _resolveByKind(wrapperKind, e)
-			: e
-	);
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		const tagged = _splitTag(e);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
+		if (bagKinds === undefined || bagKinds.length === 0) return e;
+		if (bagKinds.length > 1)
+			throw new Error(
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+			);
+		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
+	});
 	const resolved = elements.map((e) =>
 		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
@@ -1002,11 +888,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-	}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
@@ -1425,12 +1308,11 @@ function _resolveOneBranch<T>(
 ): T {
 	if (v === undefined || v === null) return v as T;
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
-	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
-			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const kn = _fromOfTag(tagged.tag, [kind]);
+		if (kn !== kind && kind in _wrapKindIds)
+			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
@@ -1447,11 +1329,8 @@ function _resolveOneBranch<T>(
 		return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
-		if ('kind' in v) {
-			const { kind: k, ...rest } = v;
-			const kn = _kindNameOf(k);
-			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-		}
+		const tagged = _splitTag(v);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object') {
@@ -2368,8 +2247,12 @@ export function coerceToImportList(
 		);
 	}
 	return F.buildImportList(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.DottedName | T.AliasedImport>(els, _K0, _K5)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.DottedName | T.AliasedImport>(els, _K0, _K5),
+			['dotted_name', 'aliased_import']
 		) as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>)
 	);
 }
@@ -4025,11 +3908,26 @@ export function coerceToParametersElements(
 		);
 	}
 	return F.buildParametersElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Parameter>(els, _K23, _K24)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Parameter>(els, _K23, _K24)),
+					[]
+				),
+			[
+				'identifier',
+				'keyword_separator',
+				'positional_separator',
+				'typed_parameter',
+				'default_parameter',
+				'typed_default_parameter',
+				'list_splat_pattern',
+				'tuple_pattern',
+				'dictionary_splat_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Parameter>)
 	);
 }
@@ -4061,9 +3959,20 @@ export function coerceToPatterns(
 		);
 	}
 	return F.buildPatterns(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pattern>(els, _K14, _K25)
-		) as unknown as NonEmptyArray<T.Pattern>)
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveMany<T.Pattern>(els, _K14, _K25), [
+			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
+			'subscript',
+			'attribute',
+			'list_splat_pattern',
+			'tuple_pattern',
+			'list_pattern'
+		]) as unknown as NonEmptyArray<T.Pattern>)
 	);
 }
 
@@ -5260,13 +5169,67 @@ export function coerceToCollectionElements(
 		);
 	}
 	return F.buildCollectionElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () =>
-					_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K36)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () =>
+						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K36)
+					),
+					[]
 				),
-				[]
-			)
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern',
+				'yield',
+				'list_splat',
+				'parenthesized_list_splat'
+			]
 		) as unknown as NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>)
 	);
 }
@@ -5681,11 +5644,33 @@ export function coerceToSimpleStatementsElements(
 		);
 	}
 	return F.buildSimpleStatementsElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.SimpleStatement>(els, _K40, _K41)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.SimpleStatement>(els, _K40, _K41)),
+					[]
+				),
+			[
+				'pass_statement',
+				'break_statement',
+				'continue_statement',
+				'future_import_statement',
+				'import_statement',
+				'import_from_statement',
+				'print_statement',
+				'assert_statement',
+				'expression_statement',
+				'return_statement',
+				'delete_statement',
+				'raise_statement',
+				'global_statement',
+				'nonlocal_statement',
+				'exec_statement',
+				'type_alias_statement'
+			]
 		) as unknown as NonEmptyArray<T.SimpleStatement>)
 	);
 }
@@ -5717,11 +5702,62 @@ export function coerceToSubjects(
 		);
 	}
 	return F.buildSubjects(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Expression>)
 	);
 }
@@ -5753,8 +5789,12 @@ export function coerceToCasePatterns(
 		);
 	}
 	return F.buildCasePatterns(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveManyBranch<T.CasePattern>(els, 'case_pattern')
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveManyBranch<T.CasePattern>(els, 'case_pattern'),
+			['case_pattern']
 		) as unknown as NonEmptyArray<T.CasePattern>)
 	);
 }
@@ -5792,9 +5832,9 @@ export function coerceToWithClauseWithItems(
 		);
 	}
 	return F.buildWithClauseWithItems(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveManyBranch<T.WithItem>(els, 'with_item')
-		) as unknown as NonEmptyArray<T.WithItem>)
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.WithItem>(els, 'with_item'), [
+			'with_item'
+		]) as unknown as NonEmptyArray<T.WithItem>)
 	);
 }
 
@@ -5825,9 +5865,9 @@ export function coerceToTypes(
 		);
 	}
 	return F.buildTypes(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveManyBranch<T.Type>(els, 'type')
-		) as unknown as NonEmptyArray<T.Type>)
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.Type>(els, 'type'), [
+			'type'
+		]) as unknown as NonEmptyArray<T.Type>)
 	);
 }
 
@@ -5890,17 +5930,72 @@ export function coerceToArgumentListElements(
 		);
 	}
 	return F.buildArgumentListElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () =>
-					_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
-						els,
-						_K7,
-						_K42
-					)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () =>
+						_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
+							els,
+							_K7,
+							_K42
+						)
+					),
+					[]
 				),
-				[]
-			)
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern',
+				'list_splat',
+				'dictionary_splat',
+				'parenthesized_list_splat',
+				'keyword_argument'
+			]
 		) as unknown as NonEmptyArray<
 			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 		>)
@@ -5944,11 +6039,62 @@ export function coerceToExpressionListExpressions(
 		);
 	}
 	return F.buildExpressionListExpressions(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Expression>)
 	);
 }
@@ -5990,8 +6136,12 @@ export function coerceToListPatternCasePatterns(
 		);
 	}
 	return F.buildListPatternCasePatterns(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveManyBranch<T.CasePattern>(els, 'case_pattern')
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveManyBranch<T.CasePattern>(els, 'case_pattern'),
+			['case_pattern']
 		) as unknown as NonEmptyArray<T.CasePattern>)
 	);
 }
@@ -6033,8 +6183,12 @@ export function coerceToDictPatternElements(
 		);
 	}
 	return F.buildDictPatternElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K43)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K43),
+			['key_value_pattern', 'splat_pattern']
 		) as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
 	);
 }
@@ -6072,9 +6226,20 @@ export function coerceToPatternListPatterns(
 		);
 	}
 	return F.buildPatternListPatterns(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pattern>(els, _K14, _K25)
-		) as unknown as NonEmptyArray<T.Pattern>)
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveMany<T.Pattern>(els, _K14, _K25), [
+			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
+			'subscript',
+			'attribute',
+			'list_splat_pattern',
+			'tuple_pattern',
+			'list_pattern'
+		]) as unknown as NonEmptyArray<T.Pattern>)
 	);
 }
 
@@ -6115,11 +6280,63 @@ export function coerceToSubscripts(
 		);
 	}
 	return F.buildSubscripts(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression | T.Slice>(els, _K7, _K44)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression | T.Slice>(els, _K7, _K44)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern',
+				'slice'
+			]
 		) as unknown as NonEmptyArray<T.Expression | T.Slice>)
 	);
 }
@@ -6161,8 +6378,12 @@ export function coerceToDictionaryElements(
 		);
 	}
 	return F.buildDictionaryElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K45)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K45),
+			['pair', 'dictionary_splat']
 		) as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
 	);
 }
@@ -6301,11 +6522,62 @@ export function coerceToPrintArguments(
 		);
 	}
 	return F.buildPrintArguments(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Expression>)
 	);
 }
@@ -6347,11 +6619,62 @@ export function coerceToPrintChevronArguments(
 		);
 	}
 	return F.buildPrintChevronArguments(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Expression>)
 	);
 }
@@ -7159,11 +7482,62 @@ export function coerceToExpressionStatementTuple(
 		);
 	}
 	return F.buildExpressionStatementTuple(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
+					[]
+				),
+			[
+				'identifier',
+				'integer_decimal_long',
+				'integer_decimal_imaginary',
+				'integer_decimal_plain',
+				'true',
+				'false',
+				'none',
+				'ellipsis',
+				'comparison_operator',
+				'not_operator',
+				'boolean_operator',
+				'lambda',
+				'await',
+				'binary_operator',
+				'print_keyword',
+				'exec_keyword',
+				'async_keyword',
+				'await_keyword',
+				'type_keyword',
+				'match_keyword',
+				'string',
+				'concatenated_string',
+				'integer_hex',
+				'integer_octal',
+				'integer_binary',
+				'float_point',
+				'float_leading_point',
+				'float_scientific',
+				'unary_operator',
+				'attribute',
+				'subscript',
+				'call',
+				'list',
+				'list_comprehension',
+				'dictionary',
+				'dictionary_comprehension',
+				'set',
+				'set_comprehension',
+				'tuple',
+				'parenthesized_expression',
+				'generator_expression',
+				'list_splat_pattern',
+				'conditional_expression',
+				'named_expression',
+				'as_pattern'
+			]
 		) as unknown as NonEmptyArray<T.Expression>)
 	);
 }
@@ -7195,9 +7569,9 @@ export function coerceToWithClauseBare(
 		);
 	}
 	return F.buildWithClauseBare(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveManyBranch<T.WithItem>(els, 'with_item')
-		) as unknown as NonEmptyArray<T.WithItem>)
+		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.WithItem>(els, 'with_item'), [
+			'with_item'
+		]) as unknown as NonEmptyArray<T.WithItem>)
 	);
 }
 

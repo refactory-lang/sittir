@@ -240,7 +240,7 @@ The spelling rule lives here alone; a consumer never rebuilds a name.
 
 A seated element whose config sets nothing but the seat's one required slot
 is that slot's value: the list builder takes the value bare and seats it
-itself, on the strict surface as on the loose one. An optional multiple slot
+itself, on the strict surface as on the loose one. The seat is the one the read marked on the config. An optional multiple slot
 given an empty array counts as unset, since the read projection spells an
 absent repeated slot as `[]` (`attributeItem: []` beside `expression`) and
 the strict factory builds the same node without it.
@@ -255,12 +255,17 @@ the strict factory builds the same node without it.
 
 ### `packages/tools/src/emit/factory-source.ts::wrapSeatElement`
 
-A seated element that stayed a plain config after `hoistSeatElement`: its keys are the seat's slots, so the seat's rules
-(`wrapTextLeaves`, and through it `loosenAt`) decide their spelling, the way a seated config inside a parent's config is
-already treated. The seat is the one element seat whose slots hold every key the config sets; with none or several
-matching the config is left as it is.
+A seated element that stayed a plain config after `hoistSeatElement`: the seat's rules (`wrapTextLeaves`, and through it `loosenAt`) decide the spelling of its slots, the way a seated config inside a parent's config is already treated. The seat is the one the read marked on the config (`seatKindOf`); a config with no mark is left as it is.
 
-On the loose surface the config also names the seat's kind (`kind: '<seat kind>'`) when the seat has a slot to hoist (`seatHoistedSlot`). Such a list's element slot takes the hoisted value bare beside the seat, so it has several candidate kinds, and a config there is dispatched by its name; untagged, a bare element beside it does not type-check. A seat with nothing to hoist is the element slot's only candidate, and its config stays untagged.
+On the loose surface the config also carries the seat's kind id as its `$type` tag (`$type: kinds.<Seat>`, printed by `kindTagSource`; the tag is the one `$`-key `printValue` keeps, `isTagEntry`) when the seat has a slot to hoist (`seatHoistedSlot`). Such a list's element slot takes the hoisted value bare beside the seat, so it has several candidate kinds, and a config there is dispatched by its tag. A seat with nothing to hoist is the element slot's only candidate, and its config stays untagged.
+
+### `packages/tools/src/emit/factory-source.ts::kindTagSource`
+
+The source of a kind's `$type` tag: the kind id printed as the engine's member. The tag on a seated element (`wrapSeatElement`) and the tag on a nested config (`loosenValue`) both print through it, so a kind has one spelling as a tag.
+
+### `packages/tools/src/emit/factory-source.ts::isTagEntry`
+
+Whether a config entry is a kind tag: the `$type` key holding a `Printed` tag. `printValue` drops every other `$`-prefixed key of a plain object, since those are node metadata; the tag is the one that prints, and a real node's numeric `$type` never qualifies.
 
 ### `packages/tools/src/emit/factory-source.ts::seatHoistedSlot`
 
