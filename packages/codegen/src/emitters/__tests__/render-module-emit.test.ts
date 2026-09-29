@@ -310,31 +310,6 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 	});
 });
 
-async function buildRustFixtureForParity() {
-	const grammar = 'rust' as const;
-	const grammarJsPath = resolveGrammarJsPath(grammar);
-	const overridesPath = resolveOverridesPath(grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
-	const raw = await evaluate(entryPath);
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
-
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
-
-	const renderRules =
-		generatedIdTables === undefined
-			? undefined
-			: spaceRenderRules({
-					nodeMap,
-					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
-					options: raw.options,
-					whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
-				});
-	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
-	return { grammar, nodeMap, generatedIdTables, templates };
-}
-
 // ---------------------------------------------------------------------------
 // Regression: override-polymorph variant pairing must use index order
 // ---------------------------------------------------------------------------
@@ -350,13 +325,11 @@ async function buildRustFixtureForParity() {
 // so pairing every variant with forms[0] would map function_type_fn_form onto
 // trait_form.
 it('variant pairing: function_type_fn_form renders through fn_form (not trait_form)', async () => {
-	const { grammar, nodeMap, generatedIdTables, templates } = await buildRustFixtureForParity();
-	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables);
-	const transport = emit.transportRs.contents;
+	const transport = await getRustTemplatesRs();
 	expect(transport).toContain('pub enum FunctionTypeContentTransportSlot {');
 	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render(w),');
 	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render(w),');
-}, 60_000);
+});
 
 describe('render options on transports', () => {
 	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
