@@ -2,201 +2,201 @@
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+const { build, kinds } = await createEngine(typescript);
 
 export function rebuildFormatLoose() {
-	return engine.build.program({
-		statements: [engine.build.importStatement.clauseFrom({
-			importClause: engine.kinds.TypeKeyword,
+	return build.program({
+		statements: [build.importStatement.clauseFrom({
+			importClause: kinds.TypeKeyword,
 			fromClause: {
-				importClause: engine.build.namedImports([engine.build.importSpecifier.name({
+				importClause: build.namedImports([build.importSpecifier.name({
 					name: "FormatRecord",
-				}), engine.build.importSpecifier.name({
+				}), build.importSpecifier.name({
 					name: "FormatTrivia",
 				})]),
-				source: engine.build.string.single("@sittir/types"),
+				source: build.string.single("@sittir/types"),
 			},
 		}, {
-			terminator: engine.kinds.Semi,
-		}), engine.build.exportStatement.default.declaration({
-			content: engine.build.functionDeclaration({
+			terminator: kinds.Semi,
+		}), build.exportStatement.default.declaration({
+			content: build.functionDeclaration({
 				name: "applyFormat",
-				parameters: [engine.build.requiredParameter({
+				parameters: [build.requiredParameter({
 					pattern: "canonicalRender",
-					type: engine.kinds.StringKeyword,
-				}), engine.build.requiredParameter({
+					type: kinds.StringKeyword,
+				}), build.requiredParameter({
 					pattern: "format",
 					type: "FormatRecord",
 				})],
-				returnType: engine.kinds.StringKeyword,
-				body: engine.build.statementBlock({
-					statements: [engine.build.lexicalDeclaration({
-						kind: engine.kinds.LetKeyword,
-						declarators: [engine.build.variableDeclarator.plain({
+				returnType: kinds.StringKeyword,
+				body: build.statementBlock({
+					statements: [build.lexicalDeclaration({
+						kind: kinds.LetKeyword,
+						declarators: [build.variableDeclarator.plain({
 							name: "result",
 							value: "canonicalRender",
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.expressionStatement(engine.build.assignmentExpression({
+						terminator: kinds.Semi,
+					}), build.expressionStatement(build.assignmentExpression({
 						left: "result",
-						right: engine.build.callExpression.call({
+						right: build.callExpression.call({
 							function: "applyTrivia",
 							arguments: ["result", "format"],
 						}),
 					}), {
-						terminator: engine.kinds.Semi,
-					}), engine.build.expressionStatement(engine.build.assignmentExpression({
+						terminator: kinds.Semi,
+					}), build.expressionStatement(build.assignmentExpression({
 						left: "result",
-						right: engine.build.callExpression.call({
+						right: build.callExpression.call({
 							function: "applyBoundary",
 							arguments: ["result", "format"],
 						}),
 					}), {
-						terminator: engine.kinds.Semi,
-					}), engine.build.returnStatement(engine.build.identifier("result"), {
-						terminator: engine.kinds.Semi,
+						terminator: kinds.Semi,
+					}), build.returnStatement(build.identifier("result"), {
+						terminator: kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(engine.build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), engine.build.functionDeclaration({
+		}).$trivia.leading(build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), build.functionDeclaration({
 			name: "applyBoundary",
-			parameters: [engine.build.requiredParameter({
+			parameters: [build.requiredParameter({
 				pattern: "s",
-				type: engine.kinds.StringKeyword,
-			}), engine.build.requiredParameter({
+				type: kinds.StringKeyword,
+			}), build.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: engine.kinds.StringKeyword,
-			body: engine.build.statementBlock({
-				statements: [engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
-						name: engine.build.objectPattern("boundary"),
+			returnType: kinds.StringKeyword,
+			body: build.statementBlock({
+				statements: [build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
+						name: build.objectPattern("boundary"),
 						value: "format",
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.ifStatement({
-					condition: engine.build.parenthesizedExpression.typed({
-						expression: engine.build.unaryExpression({
-							operator: engine.kinds.Bang,
+					terminator: kinds.Semi,
+				}), build.ifStatement({
+					condition: build.parenthesizedExpression.typed({
+						expression: build.unaryExpression({
+							operator: kinds.Bang,
 							argument: "boundary",
 						}),
 					}),
-					consequence: engine.build.returnStatement(engine.build.identifier("s"), {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement(build.identifier("s"), {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
+				}), build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
 						name: "leading",
-						value: engine.build.binaryExpression({
-							left: engine.build.memberExpression({
+						value: build.binaryExpression({
+							left: build.memberExpression({
 								object: "boundary",
-								separator: engine.kinds.Dot,
+								separator: kinds.Dot,
 								property: "leading",
 							}),
-							operator: engine.kinds.QmarkQmark,
-							right: engine.build.string.single(),
+							operator: kinds.QmarkQmark,
+							right: build.string.single(),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
 						name: "trailing",
-						value: engine.build.binaryExpression({
-							left: engine.build.memberExpression({
+						value: build.binaryExpression({
+							left: build.memberExpression({
 								object: "boundary",
-								separator: engine.kinds.Dot,
+								separator: kinds.Dot,
 								property: "trailing",
 							}),
-							operator: engine.kinds.QmarkQmark,
-							right: engine.build.string.single(),
+							operator: kinds.QmarkQmark,
+							right: build.string.single(),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.returnStatement(engine.build.templateString(engine.build.identifier("leading"), engine.build.identifier("s"), engine.build.identifier("trailing")), {
-					terminator: engine.kinds.Semi,
+					terminator: kinds.Semi,
+				}), build.returnStatement(build.templateString(build.identifier("leading"), build.identifier("s"), build.identifier("trailing")), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block("* Prepend/append boundary whitespace. ")), engine.build.functionDeclaration({
+		}).$trivia.leading(build.comment.block("* Prepend/append boundary whitespace. ")), build.functionDeclaration({
 			name: "applyTrivia",
-			parameters: [engine.build.requiredParameter({
+			parameters: [build.requiredParameter({
 				pattern: "s",
-				type: engine.kinds.StringKeyword,
-			}), engine.build.requiredParameter({
+				type: kinds.StringKeyword,
+			}), build.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: engine.kinds.StringKeyword,
-			body: engine.build.statementBlock({
-				statements: [engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
-						name: engine.build.objectPattern("trivia"),
+			returnType: kinds.StringKeyword,
+			body: build.statementBlock({
+				statements: [build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
+						name: build.objectPattern("trivia"),
 						value: "format",
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.ifStatement({
-					condition: engine.build.parenthesizedExpression.typed({
-						expression: engine.build.binaryExpression({
-							left: engine.build.unaryExpression({
-								operator: engine.kinds.Bang,
+					terminator: kinds.Semi,
+				}), build.ifStatement({
+					condition: build.parenthesizedExpression.typed({
+						expression: build.binaryExpression({
+							left: build.unaryExpression({
+								operator: kinds.Bang,
 								argument: "trivia",
 							}),
-							operator: engine.kinds.PipePipe,
-							right: engine.build.binaryExpression({
-								left: engine.build.memberExpression({
+							operator: kinds.PipePipe,
+							right: build.binaryExpression({
+								left: build.memberExpression({
 									object: "trivia",
-									separator: engine.kinds.Dot,
+									separator: kinds.Dot,
 									property: "length",
 								}),
-								operator: engine.kinds.EqEqEq,
+								operator: kinds.EqEqEq,
 								right: "0",
 							}),
 						}),
 					}),
-					consequence: engine.build.returnStatement(engine.build.identifier("s"), {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement(build.identifier("s"), {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
+				}), build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
 						name: "sorted",
-						value: engine.build.callExpression.call({
-							function: engine.build.memberExpression({
-								object: engine.build.array(engine.build.spreadElement("trivia")),
-								separator: engine.kinds.Dot,
+						value: build.callExpression.call({
+							function: build.memberExpression({
+								object: build.array(build.spreadElement("trivia")),
+								separator: kinds.Dot,
 								property: "sort",
 							}),
-							arguments: engine.build.arrowFunction({
-								content: engine.build.callSignature({
-									parameters: [engine.build.requiredParameter({
+							arguments: build.arrowFunction({
+								content: build.callSignature({
+									parameters: [build.requiredParameter({
 										pattern: "a",
-									}), engine.build.requiredParameter({
+									}), build.requiredParameter({
 										pattern: "b",
 									})],
 								}),
-								body: engine.build.binaryExpression({
-									left: engine.build.memberExpression({
+								body: build.binaryExpression({
+									left: build.memberExpression({
 										object: "b",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "offset",
 									}),
-									operator: engine.kinds.Dash,
-									right: engine.build.memberExpression({
+									operator: kinds.Dash,
+									right: build.memberExpression({
 										object: "a",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "offset",
 									}),
 								}),
@@ -204,343 +204,343 @@ export function rebuildFormatLoose() {
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration({
-					kind: engine.kinds.LetKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration({
+					kind: kinds.LetKeyword,
+					declarators: [build.variableDeclarator.plain({
 						name: "result",
 						value: "s",
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.forInStatement({
-					forHeader: engine.build.forHeader.letConstKind({
-						kind: engine.kinds.ConstKeyword,
+					terminator: kinds.Semi,
+				}), build.forInStatement({
+					forHeader: build.forHeader.letConstKind({
+						kind: kinds.ConstKeyword,
 						left: "item",
-						operator: engine.kinds.OfKeyword,
+						operator: kinds.OfKeyword,
 						right: "sorted",
 					}),
-					body: engine.build.statementBlock({
-						statements: [engine.build.lexicalDeclaration({
-							kind: engine.kinds.ConstKeyword,
-							declarators: [engine.build.variableDeclarator.plain({
+					body: build.statementBlock({
+						statements: [build.lexicalDeclaration({
+							kind: kinds.ConstKeyword,
+							declarators: [build.variableDeclarator.plain({
 								name: "offset",
-								value: engine.build.callExpression.call({
-									function: engine.build.memberExpression({
+								value: build.callExpression.call({
+									function: build.memberExpression({
 										object: "Math",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "max",
 									}),
-									arguments: ["0", engine.build.callExpression.call({
-										function: engine.build.memberExpression({
+									arguments: ["0", build.callExpression.call({
+										function: build.memberExpression({
 											object: "Math",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "min",
 										}),
-										arguments: [engine.build.memberExpression({
+										arguments: [build.memberExpression({
 											object: "item",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "offset",
-										}), engine.build.memberExpression({
+										}), build.memberExpression({
 											object: "result",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "length",
 										})],
 									})],
 								}),
 							})],
 						}, {
-							terminator: engine.kinds.Semi,
-						}), engine.build.expressionStatement(engine.build.assignmentExpression({
+							terminator: kinds.Semi,
+						}), build.expressionStatement(build.assignmentExpression({
 							left: "result",
-							right: engine.build.binaryExpression({
-								left: engine.build.binaryExpression({
-									left: engine.build.callExpression.call({
-										function: engine.build.memberExpression({
+							right: build.binaryExpression({
+								left: build.binaryExpression({
+									left: build.callExpression.call({
+										function: build.memberExpression({
 											object: "result",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "slice",
 										}),
 										arguments: ["0", "offset"],
 									}),
-									operator: engine.kinds.Plus,
-									right: engine.build.memberExpression({
+									operator: kinds.Plus,
+									right: build.memberExpression({
 										object: "item",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "text",
 									}),
 								}),
-								operator: engine.kinds.Plus,
-								right: engine.build.callExpression.call({
-									function: engine.build.memberExpression({
+								operator: kinds.Plus,
+								right: build.callExpression.call({
+									function: build.memberExpression({
 										object: "result",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "slice",
 									}),
 									arguments: "offset",
 								}),
 							}),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.returnStatement(engine.build.identifier("result"), {
-					terminator: engine.kinds.Semi,
+				}), build.returnStatement(build.identifier("result"), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), engine.build.exportStatement.default.declaration({
-			content: engine.build.functionDeclaration({
+		}).$trivia.leading(build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), build.exportStatement.default.declaration({
+			content: build.functionDeclaration({
 				name: "rebaseTrivia",
-				parameters: [engine.build.requiredParameter({
+				parameters: [build.requiredParameter({
 					pattern: "format",
 					type: "FormatRecord",
-				}), engine.build.requiredParameter({
+				}), build.requiredParameter({
 					pattern: "editStart",
-					type: engine.kinds.NumberKeyword,
-				}), engine.build.requiredParameter({
+					type: kinds.NumberKeyword,
+				}), build.requiredParameter({
 					pattern: "delta",
-					type: engine.kinds.NumberKeyword,
+					type: kinds.NumberKeyword,
 				})],
-				returnType: engine.build.typeAnnotation("FormatRecord"),
-				body: engine.build.statementBlock({
-					statements: [engine.build.lexicalDeclaration({
-						kind: engine.kinds.ConstKeyword,
-						declarators: [engine.build.variableDeclarator.plain({
+				returnType: build.typeAnnotation("FormatRecord"),
+				body: build.statementBlock({
+					statements: [build.lexicalDeclaration({
+						kind: kinds.ConstKeyword,
+						declarators: [build.variableDeclarator.plain({
 							name: "trivia",
-							value: engine.build.callExpression.call({
+							value: build.callExpression.call({
 								function: "rebaseTriviaItems",
-								arguments: [engine.build.memberExpression({
+								arguments: [build.memberExpression({
 									object: "format",
-									separator: engine.kinds.Dot,
+									separator: kinds.Dot,
 									property: "trivia",
 								}), "editStart", "delta"],
 							}),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.lexicalDeclaration({
-						kind: engine.kinds.ConstKeyword,
-						declarators: [engine.build.variableDeclarator.plain({
+						terminator: kinds.Semi,
+					}), build.lexicalDeclaration({
+						kind: kinds.ConstKeyword,
+						declarators: [build.variableDeclarator.plain({
 							name: "kinds",
-							value: engine.build.callExpression.call({
+							value: build.callExpression.call({
 								function: "rebaseKinds",
-								arguments: [engine.build.memberExpression({
+								arguments: [build.memberExpression({
 									object: "format",
-									separator: engine.kinds.Dot,
+									separator: kinds.Dot,
 									property: "kinds",
 								}), "editStart", "delta"],
 							}),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.returnStatement(engine.build.object(engine.build.spreadElement("format"), engine.build.parenthesizedExpression.typed({
-						expression: engine.build.binaryExpression({
-							left: engine.build.binaryExpression({
+						terminator: kinds.Semi,
+					}), build.returnStatement(build.object(build.spreadElement("format"), build.parenthesizedExpression.typed({
+						expression: build.binaryExpression({
+							left: build.binaryExpression({
 								left: "trivia",
-								operator: engine.kinds.BangEqEq,
-								right: engine.kinds.Undefined,
+								operator: kinds.BangEqEq,
+								right: kinds.Undefined,
 							}),
-							operator: engine.kinds.AmpAmp,
-							right: engine.build.object("trivia"),
+							operator: kinds.AmpAmp,
+							right: build.object("trivia"),
 						}),
-					}), engine.build.parenthesizedExpression.typed({
-						expression: engine.build.binaryExpression({
-							left: engine.build.binaryExpression({
+					}), build.parenthesizedExpression.typed({
+						expression: build.binaryExpression({
+							left: build.binaryExpression({
 								left: "kinds",
-								operator: engine.kinds.BangEqEq,
-								right: engine.kinds.Undefined,
+								operator: kinds.BangEqEq,
+								right: kinds.Undefined,
 							}),
-							operator: engine.kinds.AmpAmp,
-							right: engine.build.object("kinds"),
+							operator: kinds.AmpAmp,
+							right: build.object("kinds"),
 						}),
 					})), {
-						terminator: engine.kinds.Semi,
+						terminator: kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(engine.build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), engine.build.functionDeclaration({
+		}).$trivia.leading(build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), build.functionDeclaration({
 			name: "rebaseTriviaItems",
-			parameters: [engine.build.requiredParameter({
+			parameters: [build.requiredParameter({
 				pattern: "trivia",
-				type: engine.build.readonlyType(engine.build.unionType({
-					left: engine.build.arrayType("FormatTrivia"),
-					right: engine.build.literalType(engine.kinds.Undefined),
+				type: build.readonlyType(build.unionType({
+					left: build.arrayType("FormatTrivia"),
+					right: build.literalType(kinds.Undefined),
 				})),
-			}), engine.build.requiredParameter({
+			}), build.requiredParameter({
 				pattern: "editStart",
-				type: engine.kinds.NumberKeyword,
-			}), engine.build.requiredParameter({
+				type: kinds.NumberKeyword,
+			}), build.requiredParameter({
 				pattern: "delta",
-				type: engine.kinds.NumberKeyword,
+				type: kinds.NumberKeyword,
 			})],
-			returnType: engine.build.unionType({
-				left: engine.build.arrayType("FormatTrivia"),
-				right: engine.build.literalType(engine.kinds.Undefined),
+			returnType: build.unionType({
+				left: build.arrayType("FormatTrivia"),
+				right: build.literalType(kinds.Undefined),
 			}),
-			body: engine.build.statementBlock({
-				statements: [engine.build.ifStatement({
-					condition: engine.build.parenthesizedExpression.typed({
-						expression: engine.build.unaryExpression({
-							operator: engine.kinds.Bang,
+			body: build.statementBlock({
+				statements: [build.ifStatement({
+					condition: build.parenthesizedExpression.typed({
+						expression: build.unaryExpression({
+							operator: kinds.Bang,
 							argument: "trivia",
 						}),
 					}),
-					consequence: engine.build.returnStatement(engine.kinds.Undefined, {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement(kinds.Undefined, {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.returnStatement(engine.build.callExpression.call({
-					function: engine.build.memberExpression({
+				}), build.returnStatement(build.callExpression.call({
+					function: build.memberExpression({
 						object: "trivia",
-						separator: engine.kinds.Dot,
+						separator: kinds.Dot,
 						property: "map",
 					}),
-					arguments: engine.build.arrowFunction({
-						content: engine.build.callSignature({
-							parameters: engine.build.requiredParameter({
+					arguments: build.arrowFunction({
+						content: build.callSignature({
+							parameters: build.requiredParameter({
 								pattern: "item",
 							}),
 						}),
-						body: engine.build.statementBlock({
-							statements: [engine.build.ifStatement({
-								condition: engine.build.parenthesizedExpression.typed({
-									expression: engine.build.binaryExpression({
-										left: engine.build.memberExpression({
+						body: build.statementBlock({
+							statements: [build.ifStatement({
+								condition: build.parenthesizedExpression.typed({
+									expression: build.binaryExpression({
+										left: build.memberExpression({
 											object: "item",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "offset",
 										}),
-										operator: engine.kinds.Lt,
+										operator: kinds.Lt,
 										right: "editStart",
 									}),
 								}),
-								consequence: engine.build.returnStatement(engine.build.identifier("item"), {
-									terminator: engine.kinds.Semi,
+								consequence: build.returnStatement(build.identifier("item"), {
+									terminator: kinds.Semi,
 								}),
-							}), engine.build.lexicalDeclaration({
-								kind: engine.kinds.ConstKeyword,
-								declarators: [engine.build.variableDeclarator.plain({
+							}), build.lexicalDeclaration({
+								kind: kinds.ConstKeyword,
+								declarators: [build.variableDeclarator.plain({
 									name: "newOffset",
-									value: engine.build.binaryExpression({
-										left: engine.build.memberExpression({
+									value: build.binaryExpression({
+										left: build.memberExpression({
 											object: "item",
-											separator: engine.kinds.Dot,
+											separator: kinds.Dot,
 											property: "offset",
 										}),
-										operator: engine.kinds.Plus,
+										operator: kinds.Plus,
 										right: "delta",
 									}),
 								})],
 							}, {
-								terminator: engine.kinds.Semi,
-							}), engine.build.returnStatement(engine.build.object(engine.build.spreadElement("item"), engine.build.pair({
+								terminator: kinds.Semi,
+							}), build.returnStatement(build.object(build.spreadElement("item"), build.pair({
 								key: "offset",
-								value: engine.build.callExpression.call({
-									function: engine.build.memberExpression({
+								value: build.callExpression.call({
+									function: build.memberExpression({
 										object: "Math",
-										separator: engine.kinds.Dot,
+										separator: kinds.Dot,
 										property: "max",
 									}),
 									arguments: ["0", "newOffset"],
 								}),
 							})), {
-								terminator: engine.kinds.Semi,
-							}).$trivia.leading(engine.build.comment.line(" Clamp to zero: a large negative delta must not produce a negative"), engine.build.comment.line(" offset (negative indices into slice() silently corrupt output)."))],
+								terminator: kinds.Semi,
+							}).$trivia.leading(build.comment.line(" Clamp to zero: a large negative delta must not produce a negative"), build.comment.line(" offset (negative indices into slice() silently corrupt output)."))],
 						}),
 					}),
 				}), {
-					terminator: engine.kinds.Semi,
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), engine.build.functionDeclaration({
+		}).$trivia.leading(build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), build.functionDeclaration({
 			name: "rebaseKinds",
-			parameters: [engine.build.requiredParameter({
+			parameters: [build.requiredParameter({
 				pattern: "kinds",
-				type: engine.build.unionType({
-					left: engine.build.genericType({
+				type: build.unionType({
+					left: build.genericType({
 						name: "Record",
-						typeArguments: [engine.kinds.StringKeyword, "FormatRecord"],
+						typeArguments: [kinds.StringKeyword, "FormatRecord"],
 					}),
-					right: engine.build.literalType(engine.kinds.Undefined),
+					right: build.literalType(kinds.Undefined),
 				}),
-			}), engine.build.requiredParameter({
+			}), build.requiredParameter({
 				pattern: "editStart",
-				type: engine.kinds.NumberKeyword,
-			}), engine.build.requiredParameter({
+				type: kinds.NumberKeyword,
+			}), build.requiredParameter({
 				pattern: "delta",
-				type: engine.kinds.NumberKeyword,
+				type: kinds.NumberKeyword,
 			})],
-			returnType: engine.build.unionType({
-				left: engine.build.genericType({
+			returnType: build.unionType({
+				left: build.genericType({
 					name: "Record",
-					typeArguments: [engine.kinds.StringKeyword, "FormatRecord"],
+					typeArguments: [kinds.StringKeyword, "FormatRecord"],
 				}),
-				right: engine.build.literalType(engine.kinds.Undefined),
+				right: build.literalType(kinds.Undefined),
 			}),
-			body: engine.build.statementBlock({
-				statements: [engine.build.ifStatement({
-					condition: engine.build.parenthesizedExpression.typed({
-						expression: engine.build.unaryExpression({
-							operator: engine.kinds.Bang,
+			body: build.statementBlock({
+				statements: [build.ifStatement({
+					condition: build.parenthesizedExpression.typed({
+						expression: build.unaryExpression({
+							operator: kinds.Bang,
 							argument: "kinds",
 						}),
 					}),
-					consequence: engine.build.returnStatement(engine.kinds.Undefined, {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement(kinds.Undefined, {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain({
+				}), build.lexicalDeclaration({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain({
 						name: "result",
-						type: engine.build.genericType({
+						type: build.genericType({
 							name: "Record",
-							typeArguments: [engine.kinds.StringKeyword, "FormatRecord"],
+							typeArguments: [kinds.StringKeyword, "FormatRecord"],
 						}),
-						value: engine.build.object(),
+						value: build.object(),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.forInStatement({
-					forHeader: engine.build.forHeader.letConstKind({
-						kind: engine.kinds.ConstKeyword,
-						left: engine.build.arrayPattern("key", "sub"),
-						operator: engine.kinds.OfKeyword,
-						right: engine.build.callExpression.call({
-							function: engine.build.memberExpression({
+					terminator: kinds.Semi,
+				}), build.forInStatement({
+					forHeader: build.forHeader.letConstKind({
+						kind: kinds.ConstKeyword,
+						left: build.arrayPattern("key", "sub"),
+						operator: kinds.OfKeyword,
+						right: build.callExpression.call({
+							function: build.memberExpression({
 								object: "Object",
-								separator: engine.kinds.Dot,
+								separator: kinds.Dot,
 								property: "entries",
 							}),
 							arguments: "kinds",
 						}),
 					}),
-					body: engine.build.statementBlock({
-						statements: [engine.build.expressionStatement(engine.build.assignmentExpression({
-							left: engine.build.subscriptExpression({
+					body: build.statementBlock({
+						statements: [build.expressionStatement(build.assignmentExpression({
+							left: build.subscriptExpression({
 								object: "result",
 								index: "key",
 							}),
-							right: engine.build.callExpression.call({
+							right: build.callExpression.call({
 								function: "rebaseTrivia",
 								arguments: ["sub", "editStart", "delta"],
 							}),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.returnStatement(engine.build.identifier("result"), {
-					terminator: engine.kinds.Semi,
+				}), build.returnStatement(build.identifier("result"), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
+		}).$trivia.leading(build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
 	});
 }

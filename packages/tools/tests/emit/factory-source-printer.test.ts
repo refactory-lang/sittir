@@ -22,13 +22,13 @@ const ctx: PrintContext = {
 };
 
 describe('printValue', () => {
-	it('prints a catalog kind id as a member of the engine\'s kinds', () => {
-		expect(printValue(4, ctx, 0)).toBe('engine.kinds.Comma');
+	it('prints a catalog kind id as a member of the destructured kinds', () => {
+		expect(printValue(4, ctx, 0)).toBe('kinds.Comma');
 	});
 	it('prints strings, booleans and arrays', () => {
 		expect(printValue('a"b', ctx, 0)).toBe('"a\\"b"');
 		expect(printValue(true, ctx, 0)).toBe('true');
-		expect(printValue([4, 'x'], ctx, 0)).toBe('[engine.kinds.Comma, "x"]');
+		expect(printValue([4, 'x'], ctx, 0)).toBe('[kinds.Comma, "x"]');
 	});
 	it('prints a printed marker as its source', () => {
 		expect(printValue(new Printed(3, 'ir.identifier("f")'), ctx, 0)).toBe('ir.identifier("f")');

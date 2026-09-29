@@ -588,6 +588,8 @@ The no-argument call of a config-shaped node whose config printed empty.
 
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
 
+The generated file destructures the engine once, `const { build, kinds } = await createEngine(<grammar>);`, naming only the members the printed body uses (`ENGINE_MEMBERS`; a body that uses neither awaits `createEngine` unbound). Every printed factory path is `build.<path>` and every kind id `kinds.<Member>`; the two prefixes are the one pair of constants `BUILD` and `KINDS`, read by the kind-id printer, the loose kind tag and the mounted-path printer.
+
 #### body
 
 ```text
