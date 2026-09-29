@@ -14,8 +14,8 @@ describe('propose-14 signature classification', () => {
 			'export function collapseSeq(rule: Rule, ctx: SimplifyCtx): Rule { return rule; }'
 		);
 		expect(recs).toHaveLength(1);
-		expect(recs[0].name).toBe('collapseSeq');
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.name).toBe('collapseSeq');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 
 	it('classifies an optional-union ctx (SimplifyCtx | undefined) as conforming', () => {
@@ -23,7 +23,7 @@ describe('propose-14 signature classification', () => {
 			'compiler/simplify.ts',
 			'function fix(rule: Rule, ctx: SimplifyCtx | undefined, rules: Readonly<Record<string, Rule>>) {}'
 		);
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 
 	it('classifies (target, ctx, recursion-local) as conforming per CW6', () => {
@@ -31,7 +31,7 @@ describe('propose-14 signature classification', () => {
 			'compiler/normalize.ts',
 			'function liftRule(rule: Rule, ctx: NormalizeCtx, inField: boolean): Rule { return rule; }'
 		);
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 
 	it('classifies a single-param fn as getter-candidate', () => {
@@ -39,12 +39,12 @@ describe('propose-14 signature classification', () => {
 			'compiler/model/node-map.ts',
 			'export function storageKindOf(slot: AssembledSlot): string { return slot.kind; }'
 		);
-		expect(recs[0].bucket).toBe('getter-candidate');
+		expect(recs[0]?.bucket).toBe('getter-candidate');
 	});
 
 	it('classifies a zero-param fn as zero-param (outside the ratchet)', () => {
 		const recs = classifySource('compiler/evaluate.ts', 'function freshScope() { return {}; }');
-		expect(recs[0].bucket).toBe('zero-param');
+		expect(recs[0]?.bucket).toBe('zero-param');
 	});
 
 	it('classifies loose multi-param signatures as non-conforming', () => {
@@ -52,13 +52,13 @@ describe('propose-14 signature classification', () => {
 			'compiler/link.ts',
 			'export function walkRules(rule: Rule, rules: Map<string, Rule>, seen: Set<string>) {}'
 		);
-		expect(recs[0].bucket).toBe('non-conforming');
-		expect(recs[0].params.map((p) => p.name)).toEqual(['rule', 'rules', 'seen']);
+		expect(recs[0]?.bucket).toBe('non-conforming');
+		expect(recs[0]?.params.map((p) => p.name)).toEqual(['rule', 'rules', 'seen']);
 	});
 
 	it('the FIRST param is always the target, even when it looks ctx-shaped — (ctx, target) is non-conforming', () => {
 		const recs = classifySource('compiler/link.ts', 'function resolveRef(ctx: LinkCtx, rule: Rule) {}');
-		expect(recs[0].bucket).toBe('non-conforming');
+		expect(recs[0]?.bucket).toBe('non-conforming');
 	});
 
 	it('classifies ctx in a LATER position as conforming — extra optional args may precede it', () => {
@@ -67,7 +67,7 @@ describe('propose-14 signature classification', () => {
 			'compiler/assemble.ts',
 			'export function assemble(normalized: NormalizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }'
 		);
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 
 	it('classifies a param literally named `ctx` as conforming even when its type does not end in Ctx', () => {
@@ -78,7 +78,7 @@ describe('propose-14 signature classification', () => {
 			'compiler/link.ts',
 			'export function link(raw: RawGrammar, ctx: LinkOptions): LinkedGrammar { return raw; }'
 		);
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 
 	it('records class methods as Class.method and accessors as getter-candidate', () => {
@@ -99,8 +99,8 @@ describe('propose-14 signature classification', () => {
 			'compiler/assemble.ts',
 			'export const nameSlot = (slot: AssembledSlot, ctx: AssembleCtx) => slot.name;'
 		);
-		expect(recs[0].name).toBe('nameSlot');
-		expect(recs[0].bucket).toBe('conforming');
+		expect(recs[0]?.name).toBe('nameSlot');
+		expect(recs[0]?.bucket).toBe('conforming');
 	});
 });
 
@@ -189,8 +189,8 @@ describe('propose-14 module aggregation + self-test', () => {
 		const src = readFileSync(new URL('../../codegen/src/compiler/evaluate.ts', import.meta.url), 'utf8');
 		const recs = classifySource('compiler/evaluate.ts', src);
 		const counts = countByModule(recs);
-		expect(counts['compiler/evaluate.ts'].total).toBeGreaterThan(30);
-		expect(counts['compiler/evaluate.ts'].nonConforming).toBeGreaterThan(0);
+		expect(counts['compiler/evaluate.ts']?.total).toBeGreaterThan(30);
+		expect(counts['compiler/evaluate.ts']?.nonConforming).toBeGreaterThan(0);
 	});
 });
 

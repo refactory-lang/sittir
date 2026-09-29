@@ -5,12 +5,12 @@ import { readNodeModelFile } from '../../src/validate/common.ts';
 
 describe('hoistedCensus', () => {
 	it('splits hoisted kinds into seated and unseated', () => {
-		const model = {
+		const model: CensusModel = {
 			nodes: [
 				{
 					kind: 'parent',
 					annotations: {},
-					slots: [{ name: 'seat', values: [{ seat: { kind: '_parent_arm', shape: 'arm', mount: 'arm' } }] }]
+					slots: [{ values: [{ seat: { kind: '_parent_arm' } }] }]
 				},
 				{ kind: '_parent_arm', annotations: { hoisted: true }, slots: [] },
 				{ kind: '_orphan', annotations: { hoisted: true }, slots: [] },
@@ -25,7 +25,7 @@ describe('hoistedCensus', () => {
 	});
 
 	it('counts a variant reached through its flattened parent\'s route as seated', () => {
-		const model = {
+		const model: CensusModel = {
 			nodes: [
 				{ kind: 'parent', modelType: 'supertype' },
 				{ kind: 'parent_eq', annotations: { hoisted: true }, slots: [] }
@@ -36,7 +36,7 @@ describe('hoistedCensus', () => {
 	});
 
 	it('accepts a keyed node map', () => {
-		const model = { nodes: { a: { kind: 'a', annotations: { hoisted: true } }, b: { kind: 'b' } } };
+		const model: CensusModel = { nodes: { a: { kind: 'a', annotations: { hoisted: true } }, b: { kind: 'b' } } };
 		expect(hoistedCensus(model).hoisted).toEqual(['a']);
 	});
 

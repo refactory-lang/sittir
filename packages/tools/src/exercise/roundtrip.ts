@@ -1,4 +1,5 @@
 import type { AnyNodeData } from '@sittir/types';
+import type { ReadNodeLike } from '../validate/common.ts';
 import { loadBoundaryRender } from '../scripts/collect-baseline.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -26,11 +27,6 @@ interface ReadHandle {
 interface NativeCoords {
 	readonly handle?: number;
 	readonly childIndex?: number;
-}
-
-interface ReadNodeLike {
-	readonly $type?: string | number;
-	readonly $text?: string;
 }
 
 interface CommonModule {

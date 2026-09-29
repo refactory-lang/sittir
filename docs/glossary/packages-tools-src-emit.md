@@ -204,18 +204,30 @@ rebuilds reads this table: `pnpm run gen:examples`
 (`dogfood-render-bytes.test.ts`). A new target is one row here and nothing
 else.
 
-A target may carry `renderOptions`, the render options of its grammar's own
-`Options` type (`GrammarRenderOptions`, keyed by the grammars this package
-depends on). The render-bytes test renders the rebuild through the grammar's
-engine with them, and compares against the fixture as a file snapshot, so
+A target may carry `renderOptions`, typed as its own grammar's render options
+(`LanguageApis[G]['options']`): `DogfoodTarget` is a union keyed on `grammar`,
+so a row's options are checked against the grammar it names. The render-bytes
+test renders the rebuild through the grammar's engine with them, and compares against the fixture as a file snapshot, so
 `vitest -u` rewrites it. The typescript `format.ts` target sets
 `indent: '\t'` because its source is tab-indented, so its fixture shows the
 render's real differences from the source rather than the indent unit.
 
-### `packages/tools/src/emit/dogfood-targets.ts::GrammarRenderOptions`
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodTargetOf`
 
-The render-options type of each grammar a dogfood target may set options for,
-taken from that grammar package's `Options`: typescript today.
+One dogfood target of grammar `G`: its source, stem, export-name base, surfaces,
+committed fixture and optional `renderOptions` of type `LanguageApis[G]['options']`.
+
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodTarget`
+
+`DogfoodTargetOf<G>` for every grammar in `LanguageApis`, as a union keyed on
+`grammar`. Checking `target.grammar` narrows its `renderOptions` to that
+grammar's options.
+
+### `packages/tools/src/emit/dogfood-targets.ts::DogfoodRebuild`
+
+A `DogfoodTarget` without its `surfaces`, plus the one `surface` it prints and
+the derived `exportName` and `file`. It is distributed over the target union,
+so each rebuild keeps its grammar's option type.
 
 ### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_REBUILDS`
 

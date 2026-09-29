@@ -1114,7 +1114,7 @@ export interface NodeToConfigOpts {
 	readonly surface?: IrSurface;
 }
 
-interface ReadNodeLike {
+export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $span?: { readonly start: number; readonly end: number };
