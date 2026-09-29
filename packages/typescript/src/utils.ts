@@ -5,7 +5,7 @@ import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type TypescriptTypeMap } from './types.js';
 import { INNER_GAPS } from './consts.js';
 
-export const triviaFacts = {
+export const triviaFacts = Object.freeze({
 	kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
@@ -19,10 +19,10 @@ export const triviaFacts = {
 		'html_comment'
 	]),
 	innerGaps: INNER_GAPS,
-	whitespace: {
+	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-		kindIdByText: { ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 }
-	}
-} satisfies TriviaFacts;
+		kindIdByText: Object.freeze({ ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
+	})
+} satisfies TriviaFacts);
 
 export const { isNode, withMethods } = bindRuntime<TypescriptTypeMap>();

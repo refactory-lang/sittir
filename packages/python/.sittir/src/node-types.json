@@ -112,6 +112,20 @@
     ]
   },
   {
+    "type": "_statement",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "_compound_statement",
+        "named": true
+      },
+      {
+        "type": "simple_statements",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_suite",
     "named": true,
     "subtypes": [
@@ -968,11 +982,7 @@
         "required": false,
         "types": [
           {
-            "type": "_compound_statement",
-            "named": true
-          },
-          {
-            "type": "simple_statements",
+            "type": "_statement",
             "named": true
           }
         ]
@@ -3108,11 +3118,7 @@
         "required": false,
         "types": [
           {
-            "type": "_compound_statement",
-            "named": true
-          },
-          {
-            "type": "simple_statements",
+            "type": "_statement",
             "named": true
           }
         ]

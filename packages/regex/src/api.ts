@@ -32,7 +32,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly empty: RegexTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<RegexAPI> = {
+export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexAPI>>({
 	name: 'regex',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
@@ -41,4 +41,4 @@ export const hooks: LanguageHooks<RegexAPI> = {
 	trivia: triviaFacts,
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle)
-};
+});

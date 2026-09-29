@@ -3,7 +3,7 @@ import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
 import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, compareOrdinal } from './shared.ts';
 import { collectInteriors } from './interior.ts';
-import { pascalCase } from '../compiler/model/casing.ts';
+import { kindTypeName, pascalCase } from '../compiler/model/casing.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -30,9 +30,9 @@ function emitInnerGaps(lines: string[], nodeMap: NodeMap): void {
 		)
 		.sort(([a], [b]) => compareOrdinal(a, b));
 	lines.push('/** The gaps an empty node of each kind holds inner trivia in, in render order. */');
-	lines.push('export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {');
-	for (const [kind, keys] of rows) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(keys)},`);
-	lines.push('};');
+	lines.push('export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({');
+	for (const [kind, keys] of rows) lines.push(`  ${JSON.stringify(kind)}: Object.freeze(${JSON.stringify(keys)}),`);
+	lines.push('});');
 	lines.push('');
 }
 
@@ -121,7 +121,7 @@ export function bitflagBareConstName(propertyName: string): string {
 }
 
 export function bitflagPrefixedConstName(kind: string, propertyName: string): string {
-	return pascalCase(kind) + pascalCase(propertyName);
+	return kindTypeName(kind) + pascalCase(propertyName);
 }
 
 export function resolveBitflagConstName(

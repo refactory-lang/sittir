@@ -102,9 +102,9 @@ export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))
 export const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 
 export function buildModule(): T.EmptyModule;
-export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built;
-export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
-	const _statements = rejectBareText(children, 'Module.statements', 'a built SimpleStatements / CompoundStatement');
+export function buildModule(...children: T.Statement[]): T.Module.Built;
+export function buildModule(...children: T.Statement[]): T.Module.Built {
+	const _statements = rejectBareText(children, 'Module.statements', 'a built Statement');
 	return withMethods(
 		withAccessors(
 			{
@@ -112,7 +112,7 @@ export function buildModule(...children: (T.SimpleStatements | T.CompoundStateme
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: (T.SimpleStatements | T.CompoundStatement)[]) => buildModule(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildModule(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -1469,8 +1469,8 @@ export function buildDecorator(value: T.Expression): T.Decorator.Built {
 	);
 }
 
-export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Block.Built {
-	const _statements = rejectBareText(children, 'Block.statements', 'a built SimpleStatements / CompoundStatement');
+export function buildBlock(...children: T.Statement[]): T.Block.Built {
+	const _statements = rejectBareText(children, 'Block.statements', 'a built Statement');
 	return withMethods(
 		withAccessors(
 			{
@@ -1478,7 +1478,7 @@ export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatemen
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: (T.SimpleStatements | T.CompoundStatement)[]) => buildBlock(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildBlock(...vs) }
 			},
 			{
 				statements: () => _statements
@@ -5540,9 +5540,7 @@ function _buildSuiteInline(value: T.SimpleStatementsElements): T.SuiteInline.Bui
 }
 
 export function buildSuiteBlock(value: T.Block): ReturnType<typeof _buildSuiteBlock>;
-export function buildSuiteBlock(
-	...children: (T.SimpleStatements | T.CompoundStatement)[]
-): ReturnType<typeof _buildSuiteBlock>;
+export function buildSuiteBlock(...children: T.Statement[]): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildSuiteBlock(buildBlock() as T.Block);

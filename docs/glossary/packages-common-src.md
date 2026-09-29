@@ -20,9 +20,13 @@ The error a file verb (`read`, `create`, `edit`, `write`) raises while file chan
 
 Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' `is` guards and kind ids and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with inner gaps and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and finds which engine holds the node's parsed parts, so the node's own engine renders a node built throughout, the one engine that parsed its parsed descendants renders it with the calling engine's options over the call's, and a node whose parsed descendants come from several engines, or from a disposed one, is refused. A node stamped with another language is refused, naming both. `dispose` swaps the handle's engine for the identity before releasing the native engine. `types` is type-only and has no run-time value. An engine that renders another engine's parsed part applies its own options key by key over that engine's: a key the caller leaves unset keeps the reading engine's value.
 
+The engine object and its `EngineIdentity` are frozen, so no member can be reassigned; the identity holds the caller's `options` as given, and that object stays the caller's. The serial in a diagnostic label is recorded for the live engine and for its identity, so a disposed reader is still named `<language>#<n>`.
+
 ### `packages/common/src/create-engine.ts::scopedBuild`
 
 The builder table with every call run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle.
+
+The builders are read-only: the tables they wrap are frozen where they are built, and a write, definition or deletion through the scoped table throws `the build table of an engine is read-only`. The wrapper's target is an empty stand-in that forwards every trap to the real table, because a proxy may not return a different value for a non-writable, non-configurable property of its own target, and the scoped value is different from the frozen one.
 
 ### `packages/common/src/create-engine.ts::collectReaders`
 
@@ -95,7 +99,7 @@ Where a node came from, the value of its `$source` stamp: `Ts` for a node read f
 
 ### `packages/common/src/utils.ts::withMethods`
 
-Attaches `$render`, `$toEdit`, `$replace` and `$trivia` to a node, and binds a non-enumerable `$engine()` when an engine's handle is in scope. `$engine()` returns the handle's current value, so disposing the engine changes what every node it stamped sees in one assignment. With a handle, `$render` renders through its engine, `$toEdit` and `$replace` turn that text into an edit, and a disposed engine throws `engine disposed` naming `engine.render(node)`. Without one, the node renders through the facts it was handed. The `$with` setters and the `$trivia` setter run inside the node's own handle, whatever scope calls them, so a node they build carries the same engine, and `$trivia` reads the trivia facts from the identity, which survives disposal.
+Attaches `$render`, `$toEdit`, `$replace` and `$trivia` to a node, and binds a non-enumerable `$engine()` when an engine's handle is in scope. `$engine()` returns the handle's current value, so disposing the engine changes what every node it stamped sees in one assignment. With a handle, `$render` renders through its engine, `$toEdit` and `$replace` turn that text into an edit, and a disposed engine throws `engine disposed` naming `engine.render(node)`. Without one, the node is unbound: `$render`, `$toEdit`, `$replace` and every `$trivia` access throw `node has no engine`, and the node renders only through `engine.render(node)`, which stamps it. `withMethods` takes no facts; a node's trivia facts come from its engine. The `$with` setters and the `$trivia` setter run inside the node's own handle, whatever scope calls them, so a node they build carries the same engine, and `$trivia` reads the trivia facts from the identity, which survives disposal.
 
 ### `packages/common/src/utils.ts::isNode`
 
@@ -151,10 +155,16 @@ Storage for a slot that holds only kind ids: text, or a node's text, in the slot
 
 The `FlavorPair` constructor: a factory's strict and coerce flavours as one value.
 
+The pair is frozen.
+
 ### `packages/common/src/runtime.ts::hoist`
 
 Wraps a flavour pair as a callable (the coerce flavour when present, strict otherwise), copying every property and hoisting nested pairs through `hoistRoutes`; `Hoisted<B>` carries the exact surface. Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
+The callable's copied properties are non-writable and non-configurable, and the callable is frozen, so a factory shared under several keys cannot be changed under one of them.
+
 ### `packages/common/src/runtime.ts::hoistRoutes`
 
 Hoists a route object that need not be a pair at its top: a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`). A pair at the top hoists, recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair (a default route whose own variant is itself a route object) stays fully walked; anything else recurses member by member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, like a bundle entry's sub-factories.
+
+The route object it returns is frozen.

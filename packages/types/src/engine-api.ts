@@ -2,11 +2,11 @@ import type { AnyNodeData, ByteRange, Edit, FormatRecord, GrammarTriviaEntry, Re
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
-	kindName(type: AnyNodeData['$type']): string | undefined;
+	readonly kindName: (type: AnyNodeData['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
-	comment?: ((text: string) => AnyNodeData) | undefined;
+	readonly comment?: ((text: string) => AnyNodeData) | undefined;
 }
 
 export interface ParseOptions {
@@ -139,24 +139,24 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly kinds: API['kinds'];
 	readonly types: API['types'];
 	readonly diagnostics: EngineDiagnostics;
-	isNode(value: unknown): value is API['node'];
-	isParsedNode(value: unknown): value is API['node'];
-	isFactoryNode(value: unknown): value is API['node'];
-	isErrorNode(value: unknown): value is API['node'];
-	isEmptyNode<N extends API['empty']['node']>(
+	readonly isNode: (value: unknown) => value is API['node'];
+	readonly isParsedNode: (value: unknown) => value is API['node'];
+	readonly isFactoryNode: (value: unknown) => value is API['node'];
+	readonly isErrorNode: (value: unknown) => value is API['node'];
+	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
-	): node is N & Extract<API['empty'], { readonly node: N }>['empty'];
-	parse(source: string, options?: ParseOptions): API['root'];
-	read(path: string, options?: ParseOptions): Promise<API['root']>;
-	render<const R extends API['options'] = API['options']>(
+	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
+	readonly parse: (source: string, options?: ParseOptions) => API['root'];
+	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
+	readonly render: <const R extends API['options'] = API['options']>(
 		node: RenderInput<API> | ((build: API['build']) => API['node']),
 		options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
-	): Rendered;
-	create(path: string, fn: (build: API['build']) => API['root']): Pending;
-	edit(path: string, fn: (root: API['root']) => API['root']): Pending;
-	write(path: string, node: API['root']): Pending;
-	applyEdits(source: string, edits: readonly Edit[]): string;
-	dispose(): void;
+	) => Rendered;
+	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
+	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
+	readonly write: (path: string, node: API['root']) => Pending;
+	readonly applyEdits: (source: string, edits: readonly Edit[]) => string;
+	readonly dispose: () => void;
 }
 
 type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];

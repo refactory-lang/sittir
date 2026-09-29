@@ -121,7 +121,7 @@ function extractNodeText(value: unknown): string | undefined {
 }
 
 export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
-	return { strict, coerce };
+	return Object.freeze({ strict, coerce });
 }
 
 type AnyFlavorFn = (...args: never[]) => unknown;
@@ -138,12 +138,12 @@ export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Ho
 	for (const [key, value] of Object.entries(b)) {
 		Object.defineProperty(callable, key, {
 			value: hoistRoutes(value),
-			writable: true,
-			configurable: true,
+			writable: false,
+			configurable: false,
 			enumerable: true
 		});
 	}
-	return callable as Hoisted<B>;
+	return Object.freeze(callable) as Hoisted<B>;
 }
 
 export function hoistRoutes<B>(b: B): Hoisted<B> {
@@ -151,5 +151,5 @@ export function hoistRoutes<B>(b: B): Hoisted<B> {
 	if (typeof b !== 'object' || b === null || Array.isArray(b)) return b as Hoisted<B>;
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(b)) out[key] = hoistRoutes(value);
-	return out as Hoisted<B>;
+	return Object.freeze(out) as Hoisted<B>;
 }

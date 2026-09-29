@@ -33,7 +33,7 @@ const engine = await createEngine(typescript);
 //     slot instead of being merged into the statement's keys.
 // Open issues on this surface: docs/factory-surface-issues.md
 
-const id = (text: string) => engine.build.identifier.identifier(text);
+const id = (text: string) => engine.build.identifier(text);
 const ann = (type: string) => engine.build.typeAnnotation.strict(id(type));
 
 /** `import type { FormatRecord, FormatTrivia } from '@sittir/types';` */

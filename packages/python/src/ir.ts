@@ -15,7 +15,7 @@ import * as F from './factories/index.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
-export const synonym = {
+export const synonym = Object.freeze({
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
@@ -49,7 +49,7 @@ export const synonym = {
 	get class(): (typeof ir)['classDefinition'] {
 		return ir.classDefinition;
 	}
-} as const;
+} as const);
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
@@ -75,18 +75,6 @@ export const statement: {
 	match: F.matchStatement
 };
 
-export const namedExpressionLhs: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const expressions: {
-	readonly expressionList: typeof F.expressionList;
-} = {
-	expressionList: F.expressionList
-};
-
 export const pattern: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly subscript: typeof F.subscript;
@@ -101,12 +89,6 @@ export const pattern: {
 	listSplat: F.listSplatPattern,
 	tuple: F.tuplePattern,
 	list: F.listPattern
-};
-
-export const expressionWithinForInClause: {
-	readonly lambda: typeof F.lambdaWithinForInClause;
-} = {
-	lambda: F.lambdaWithinForInClause
 };
 
 export const expression: {
@@ -179,36 +161,6 @@ export const primaryExpression: {
 	generator: F.generatorExpression,
 	ellipsis: F.buildEllipsis,
 	listSplat: F.listSplatPattern
-};
-
-export const leftHandSide: {
-	readonly patternList: typeof F.patternList;
-} = {
-	patternList: F.patternList
-};
-
-export const rightHandSide: {
-	readonly expressionList: typeof F.expressionList;
-	readonly assignment: typeof F.assignment;
-	readonly augmentedAssignment: typeof F.augmentedAssignment;
-	readonly patternList: typeof F.patternList;
-	readonly yield: typeof F.yield_;
-} = {
-	expressionList: F.expressionList,
-	assignment: F.assignment,
-	augmentedAssignment: F.augmentedAssignment,
-	patternList: F.patternList,
-	yield: F.yield_
-};
-
-export const fExpression: {
-	readonly list: typeof F.expressionList;
-	readonly patternList: typeof F.patternList;
-	readonly yield: typeof F.yield_;
-} = {
-	list: F.expressionList,
-	patternList: F.patternList,
-	yield: F.yield_
 };
 
 export const whitespace: {
@@ -395,21 +347,15 @@ export const ir: {
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly statement: typeof statement;
-	readonly namedExpressionLhs: typeof namedExpressionLhs;
-	readonly expressions: typeof expressions;
 	readonly pattern: typeof pattern;
-	readonly expressionWithinForInClause: typeof expressionWithinForInClause;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
-	readonly leftHandSide: typeof leftHandSide;
-	readonly rightHandSide: typeof rightHandSide;
-	readonly fExpression: typeof fExpression;
 	readonly whitespace: typeof whitespace;
 	readonly simpleStatement: typeof simpleStatement;
 	readonly compoundStatement: typeof compoundStatement;
 	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
-} = {
+} = Object.freeze({
 	// Node factories
 	module: F.module,
 	simpleStatements: F.simpleStatements,
@@ -578,18 +524,12 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	namedExpressionLhs,
-	expressions,
 	pattern,
-	expressionWithinForInClause,
 	expression,
 	primaryExpression,
-	leftHandSide,
-	rightHandSide,
-	fExpression,
 	whitespace,
 	simpleStatement,
 	compoundStatement,
 	parameter,
 	synonym
-};
+});

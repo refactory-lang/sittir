@@ -5,10 +5,7 @@
 	"17-dogfood-rust-loose.generated.ts": 0,
 	"18-dogfood-typescript-loose.generated.ts": 0,
 	"19-dogfood-python-loose.generated.ts": 0,
-	"20-keyword-openers-python.generated.ts": {
-		"max": 1,
-		"issue": "#417"
-	},
+	"20-keyword-openers-python.generated.ts": 0,
 	"20-keyword-openers-rust.generated.ts": 0,
 	"20-keyword-openers-typescript.generated.ts": 0,
 	"21-list-seat-configs-rust.generated.ts": 0,

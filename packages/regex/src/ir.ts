@@ -15,24 +15,6 @@ import * as F from './factories/index.js';
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const classAtom: {
-	readonly character: typeof F.buildClassCharacter;
-	readonly characterEscape: typeof F.characterClassEscape;
-	readonly controlEscape: typeof F.buildControlEscape;
-	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
-	readonly identityEscape: typeof F.identityEscape;
-	readonly posixCharacter: typeof F.posixCharacterClass;
-	readonly range: typeof F.classRange;
-} = {
-	character: F.buildClassCharacter,
-	characterEscape: F.characterClassEscape,
-	controlEscape: F.buildControlEscape,
-	controlLetterEscape: F.buildControlLetterEscape,
-	identityEscape: F.identityEscape,
-	posixCharacter: F.posixCharacterClass,
-	range: F.classRange
-};
-
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly newline: typeof F.buildNewline;
@@ -44,8 +26,6 @@ export const whitespace: {
 	blankline: F.buildBlankline,
 	doubleBlankline: F.buildDoubleBlankline
 };
-
-export const characterEscape: typeof F.characterEscape = F.characterEscape;
 
 export const ir: {
 	readonly pattern: typeof F.pattern;
@@ -87,10 +67,8 @@ export const ir: {
 	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
-	readonly classAtom: typeof classAtom;
 	readonly whitespace: typeof whitespace;
-	readonly characterEscape: typeof characterEscape;
-} = {
+} = Object.freeze({
 	// Node factories
 	pattern: F.pattern,
 	alternation: F.alternation,
@@ -137,7 +115,5 @@ export const ir: {
 	decimalDigits: F.buildDecimalDigits,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	classAtom,
-	whitespace,
-	characterEscape
-};
+	whitespace
+});

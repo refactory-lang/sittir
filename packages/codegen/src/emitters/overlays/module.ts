@@ -150,18 +150,6 @@ function flatLeafKindByKey(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTabl
 	return out;
 }
 
-function withLeafDefault(kind: string, key: string, leafKind: string, routes: FlattenedVariantRoute[]): FlattenedVariantRoute[] {
-	const arm = routes.find((route) => route.child.kind === leafKind);
-	if (arm === undefined) {
-		throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}', and the leaf is not one of its arms`);
-	}
-	const declared = routes.find((route) => route.default && route !== arm);
-	if (declared !== undefined) {
-		throw new Error(`ir: '${kind}' shares the key '${key}' with its arm '${leafKind}', which makes that arm its default, but '${declared.name}' is declared the default`);
-	}
-	return routes.map((route) => (route === arm ? { ...route, default: true as const } : route));
-}
-
 export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
 	const referrers = referrersOf(nodeMap);
 	const mintedBy = (parent: string, child: string, variant: string): boolean => {
@@ -173,7 +161,8 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 	const out: FlattenedVariantParent[] = [];
 	const keyByParent = new Map<string, string>();
 	const pending = [...nodeMap.nodes].filter(
-		(entry): entry is [string, AssembledSupertype] => entry[1] instanceof AssembledSupertype && entry[1].subtypes.filter(isNodeRef).length >= 2
+		(entry): entry is [string, AssembledSupertype] =>
+			entry[1] instanceof AssembledSupertype && entry[1].declared && entry[1].subtypes.filter(isNodeRef).length >= 2
 	);
 	const routesOf = (kind: string, node: AssembledSupertype): FlattenedVariantRoute[] | 'wait' | null => {
 		const routes: FlattenedVariantRoute[] = [];
@@ -214,12 +203,14 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			pending.splice(i--, 1);
 			progressed = true;
 			if (routes === null) continue;
-			const key = node.irKey ?? lowerCamelCase(kind.replace(/^_+/, ''));
+			const key = node.irKey;
+			if (key === undefined) throw new Error(`ir: the supertype '${kind}' has no ir key`);
 			if (!isValidIdent(key) || taken.has(key)) continue;
 			const leafKind = leafKinds.get(key);
+			if (leafKind !== undefined) throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}'`);
 			taken.add(key);
 			keyByParent.set(kind, key);
-			out.push({ key, node, variants: leafKind === undefined ? routes : withLeafDefault(kind, key, leafKind, routes) });
+			out.push({ key, node, variants: routes });
 		}
 	}
 	return out;

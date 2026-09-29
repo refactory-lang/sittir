@@ -4,15 +4,14 @@ import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
 
-describe('ir.identifier is the identifier supertype, callable through its identifier arm', () => {
-	it('coerces and builds strictly', () => {
+describe('ir.identifier is the identifier leaf; the undeclared _identifier choice has no namespace', () => {
+	it('builds the leaf from its text', () => {
 		expect(ts.build.identifier('x').$render()).toBe('x');
-		expect(ts.build.identifier.strict('y').$render()).toBe('y');
 	});
 
-	it('keeps both arms as members', () => {
-		expect(ts.build.identifier.identifier('z').$render()).toBe('z');
-		expect(ts.build.identifier.undefined()).toBe(ts.kinds.Undefined);
+	it('carries no arms of the hidden choice', () => {
+		expect('identifier' in ts.build.identifier).toBe(false);
+		expect('undefined' in ts.build.identifier).toBe(false);
 	});
 
 	it('leaves the builder primaryExpression.identifier shares untouched', () => {

@@ -78,7 +78,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype) || flattenedKinds.has(kind)) continue;
+		if (!(node instanceof AssembledSupertype) || !node.declared || flattenedKinds.has(kind)) continue;
 		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
@@ -204,9 +204,9 @@ export function emitIr(config: EmitIrConfig): string {
 	}
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
-	body.push('} = {');
+	body.push('} = Object.freeze({');
 	body.push(...irValueLines);
-	body.push('};');
+	body.push('});');
 
 	return [...lines, ...body].join('\n');
 }
@@ -292,9 +292,9 @@ function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): str
 	const lines: string[] = [];
 	lines.push("// Role synonyms — resolve a native JS value to this grammar's node for that role.");
 	lines.push('// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.');
-	lines.push('export const synonym = {');
+	lines.push('export const synonym = Object.freeze({');
 	lines.push(...fns);
-	lines.push('} as const;');
+	lines.push('} as const);');
 	return lines;
 }
 

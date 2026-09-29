@@ -54,7 +54,7 @@ export const lookaheadAssertion: typeof B.lookaheadAssertion & {
 			options?: OptionsArg<typeof C.coerceToLookaheadAssertion>
 		) => ReturnType<typeof C.coerceToLookaheadAssertion>;
 	};
-} = {
+} = Object.freeze({
 	...B.lookaheadAssertion,
 	eq: {
 		strict: lookaheadAssertion$eq(F.buildLookaheadAssertion, TSKindId.Eq),
@@ -64,7 +64,7 @@ export const lookaheadAssertion: typeof B.lookaheadAssertion & {
 		strict: lookaheadAssertion$bang(F.buildLookaheadAssertion, TSKindId.Bang),
 		coerce: lookaheadAssertion$bang(C.coerceToLookaheadAssertion, TSKindId.Bang)
 	}
-};
+});
 
 const lookbehindAssertion$eq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -95,7 +95,7 @@ export const lookbehindAssertion: typeof B.lookbehindAssertion & {
 			options?: OptionsArg<typeof C.coerceToLookbehindAssertion>
 		) => ReturnType<typeof C.coerceToLookbehindAssertion>;
 	};
-} = {
+} = Object.freeze({
 	...B.lookbehindAssertion,
 	eq: {
 		strict: lookbehindAssertion$eq(F.buildLookbehindAssertion, TSKindId.Eq),
@@ -105,7 +105,7 @@ export const lookbehindAssertion: typeof B.lookbehindAssertion & {
 		strict: lookbehindAssertion$bang(F.buildLookbehindAssertion, TSKindId.Bang),
 		coerce: lookbehindAssertion$bang(C.coerceToLookbehindAssertion, TSKindId.Bang)
 	}
-};
+});
 
 const lookaroundAssertion$lookaheadAssertion =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -160,7 +160,7 @@ export const lookaroundAssertion: typeof B.lookaroundAssertion & {
 			) => ReturnType<typeof F.buildLookaroundAssertion>;
 		};
 	};
-} = {
+} = Object.freeze({
 	...B.lookaroundAssertion,
 	lookaheadAssertion: {
 		strict: lookaroundAssertion$lookaheadAssertion(F.buildLookaroundAssertion, F.buildLookaheadAssertion),
@@ -186,7 +186,7 @@ export const lookaroundAssertion: typeof B.lookaroundAssertion & {
 			coerce: lookaroundAssertion$lookbehindAssertion$bang(F.buildLookaroundAssertion, lookbehindAssertion.bang.coerce)
 		}
 	}
-};
+});
 
 const characterClassEscape$arm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -209,7 +209,7 @@ export const characterClassEscape: typeof B.characterClassEscape & {
 			...args: ArgsOf<typeof C.coerceToUnicodeCharacterEscape>
 		) => ReturnType<typeof F.buildCharacterClassEscape>;
 	};
-} = {
+} = Object.freeze({
 	...B.characterClassEscape,
 	arm: {
 		strict: characterClassEscape$arm(F.buildCharacterClassEscape, F.buildCharacterClassEscapeArm),
@@ -219,7 +219,7 @@ export const characterClassEscape: typeof B.characterClassEscape & {
 		strict: characterClassEscape$unicodeCharacterEscape(F.buildCharacterClassEscape, F.buildUnicodeCharacterEscape),
 		coerce: characterClassEscape$unicodeCharacterEscape(F.buildCharacterClassEscape, C.coerceToUnicodeCharacterEscape)
 	}
-};
+});
 
 const namedCapturingGroup$lparenQmarkLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -250,7 +250,7 @@ export const namedCapturingGroup: typeof B.namedCapturingGroup & {
 			options?: OptionsArg<typeof C.coerceToNamedCapturingGroup>
 		) => ReturnType<typeof C.coerceToNamedCapturingGroup>;
 	};
-} = {
+} = Object.freeze({
 	...B.namedCapturingGroup,
 	lparenQmarkLt: {
 		strict: namedCapturingGroup$lparenQmarkLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkLt),
@@ -260,7 +260,7 @@ export const namedCapturingGroup: typeof B.namedCapturingGroup & {
 		strict: namedCapturingGroup$lparenQmarkPLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkPLt),
 		coerce: namedCapturingGroup$lparenQmarkPLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkPLt)
 	}
-};
+});
 
 const termGroup$startAssertion =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -843,7 +843,7 @@ export const termGroup: typeof B.termGroup & {
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
-} = {
+} = Object.freeze({
 	...B.termGroup,
 	startAssertion: {
 		strict: termGroup$startAssertion(F.buildTermGroup, TSKindId.StartAssertion),
@@ -1006,14 +1006,14 @@ export const termGroup: typeof B.termGroup & {
 		strict: termGroup$disable(F.buildTermGroup, F.buildInlineFlagsGroupDisable),
 		coerce: termGroup$disable(C.coerceToTermGroup, C.coerceToInlineFlagsGroupDisable)
 	}
-};
+});
 
 export const term: typeof B.term & {
 	group: typeof termGroup;
-} = {
+} = Object.freeze({
 	...B.term,
 	group: termGroup
-};
+});
 
 const pattern$alternation =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1032,14 +1032,14 @@ export const pattern: typeof B.pattern & {
 		strict: (...args: ArgsOf<typeof F.buildTerm>) => ReturnType<typeof F.buildPattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTerm>) => ReturnType<typeof F.buildPattern>;
 	};
-} = {
+} = Object.freeze({
 	...B.pattern,
 	alternation: {
 		strict: pattern$alternation(F.buildPattern, F.buildAlternation),
 		coerce: pattern$alternation(F.buildPattern, C.coerceToAlternation)
 	},
 	term: { strict: pattern$term(F.buildPattern, F.buildTerm), coerce: pattern$term(F.buildPattern, C.coerceToTerm) }
-};
+});
 
 const countQuantifier$arm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1050,33 +1050,20 @@ export const countQuantifier: typeof B.countQuantifier & {
 		strict: (...args: ArgsOf<typeof F.buildCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
 		coerce: (...args: ArgsOf<typeof C.coerceToCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
 	};
-} = {
+} = Object.freeze({
 	...B.countQuantifier,
 	arm: {
 		strict: countQuantifier$arm(F.buildCountQuantifier, F.buildCountQuantifierArm),
 		coerce: countQuantifier$arm(F.buildCountQuantifier, C.coerceToCountQuantifierArm)
 	}
-};
+});
 
 export const inlineFlagsGroup: {
 	readonly enable: { strict: typeof F.buildInlineFlagsGroupEnable; coerce: typeof C.coerceToInlineFlagsGroupEnable };
 	readonly toggle: { strict: typeof F.buildInlineFlagsGroupToggle; coerce: typeof C.coerceToInlineFlagsGroupToggle };
 	readonly disable: { strict: typeof F.buildInlineFlagsGroupDisable; coerce: typeof C.coerceToInlineFlagsGroupDisable };
-} = {
-	enable: { strict: F.buildInlineFlagsGroupEnable, coerce: C.coerceToInlineFlagsGroupEnable },
-	toggle: { strict: F.buildInlineFlagsGroupToggle, coerce: C.coerceToInlineFlagsGroupToggle },
-	disable: { strict: F.buildInlineFlagsGroupDisable, coerce: C.coerceToInlineFlagsGroupDisable }
-};
-
-export const characterEscape: {
-	readonly controlEscape: { strict: typeof F.buildControlEscape; coerce: typeof C.coerceToControlEscape };
-	readonly controlLetterEscape: {
-		strict: typeof F.buildControlLetterEscape;
-		coerce: typeof C.coerceToControlLetterEscape;
-	};
-	readonly identityEscape: typeof B.identityEscape;
-} = {
-	controlEscape: { strict: F.buildControlEscape, coerce: C.coerceToControlEscape },
-	controlLetterEscape: { strict: F.buildControlLetterEscape, coerce: C.coerceToControlLetterEscape },
-	identityEscape: B.identityEscape
-};
+} = Object.freeze({
+	enable: Object.freeze({ strict: F.buildInlineFlagsGroupEnable, coerce: C.coerceToInlineFlagsGroupEnable }),
+	toggle: Object.freeze({ strict: F.buildInlineFlagsGroupToggle, coerce: C.coerceToInlineFlagsGroupToggle }),
+	disable: Object.freeze({ strict: F.buildInlineFlagsGroupDisable, coerce: C.coerceToInlineFlagsGroupDisable })
+});

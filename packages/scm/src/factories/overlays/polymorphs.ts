@@ -8,38 +8,38 @@ export * from './refines.js';
 
 export const stringContent: typeof B.stringContent & {
 	escapeSequence: typeof B.escapeSequence;
-} = {
+} = Object.freeze({
 	...B.stringContent,
 	escapeSequence: B.escapeSequence
-};
+});
 
 export const list: typeof B.list & {
 	capture: typeof B.capture;
-} = {
+} = Object.freeze({
 	...B.list,
 	capture: B.capture
-};
+});
 
 export const grouping: typeof B.grouping & {
 	capture: typeof B.capture;
-} = {
+} = Object.freeze({
 	...B.grouping,
 	capture: B.capture
-};
+});
 
 export const missingNode: typeof B.missingNode & {
 	capture: typeof B.capture;
-} = {
+} = Object.freeze({
 	...B.missingNode,
 	capture: B.capture
-};
+});
 
 export const anonymousNode: typeof B.anonymousNode & {
 	capture: typeof B.capture;
-} = {
+} = Object.freeze({
 	...B.anonymousNode,
 	capture: B.capture
-};
+});
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
 // constrained by another inference variable in a contravariant position,
@@ -178,7 +178,7 @@ const namedNodePlain: {
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
-} = {
+} = Object.freeze({
 	underscore: {
 		strict: namedNodePlain$underscore(F.buildNamedNodePlain, TSKindId.Underscore),
 		coerce: namedNodePlain$underscore(C.coerceToNamedNodePlain, TSKindId.Underscore),
@@ -208,7 +208,7 @@ const namedNodePlain: {
 		strict: namedNodePlain$anchoredLast(F.buildNamedNodePlain, F.buildNamedNodeGroupAnchoredLast),
 		coerce: namedNodePlain$anchoredLast(C.coerceToNamedNodePlain, C.coerceToNamedNodeGroupAnchoredLast)
 	}
-};
+});
 
 const namedNodeSupertyped$children =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -257,7 +257,7 @@ const namedNodeSupertyped: {
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
 	};
-} = {
+} = Object.freeze({
 	children: {
 		strict: namedNodeSupertyped$children(F.buildNamedNodeSupertyped, F.buildNamedNodeGroupChildren),
 		coerce: namedNodeSupertyped$children(C.coerceToNamedNodeSupertyped, C.coerceToNamedNodeGroupChildren)
@@ -266,7 +266,7 @@ const namedNodeSupertyped: {
 		strict: namedNodeSupertyped$anchoredLast(F.buildNamedNodeSupertyped, F.buildNamedNodeGroupAnchoredLast),
 		coerce: namedNodeSupertyped$anchoredLast(C.coerceToNamedNodeSupertyped, C.coerceToNamedNodeGroupAnchoredLast)
 	}
-};
+});
 
 export const namedNode: {
 	readonly plain: {
@@ -277,10 +277,14 @@ export const namedNode: {
 		strict: typeof F.buildNamedNodeSupertyped;
 		coerce: typeof C.coerceToNamedNodeSupertyped;
 	} & typeof namedNodeSupertyped;
-} = {
-	plain: { strict: F.buildNamedNodePlain, coerce: C.coerceToNamedNodePlain, ...namedNodePlain },
-	supertyped: { strict: F.buildNamedNodeSupertyped, coerce: C.coerceToNamedNodeSupertyped, ...namedNodeSupertyped }
-};
+} = Object.freeze({
+	plain: Object.freeze({ strict: F.buildNamedNodePlain, coerce: C.coerceToNamedNodePlain, ...namedNodePlain }),
+	supertyped: Object.freeze({
+		strict: F.buildNamedNodeSupertyped,
+		coerce: C.coerceToNamedNodeSupertyped,
+		...namedNodeSupertyped
+	})
+});
 
 export const namedNodeGroup: {
 	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
@@ -288,10 +292,13 @@ export const namedNodeGroup: {
 		strict: typeof F.buildNamedNodeGroupAnchoredLast;
 		coerce: typeof C.coerceToNamedNodeGroupAnchoredLast;
 	};
-} = {
-	children: { strict: F.buildNamedNodeGroupChildren, coerce: C.coerceToNamedNodeGroupChildren },
-	anchoredLast: { strict: F.buildNamedNodeGroupAnchoredLast, coerce: C.coerceToNamedNodeGroupAnchoredLast }
-};
+} = Object.freeze({
+	children: Object.freeze({ strict: F.buildNamedNodeGroupChildren, coerce: C.coerceToNamedNodeGroupChildren }),
+	anchoredLast: Object.freeze({
+		strict: F.buildNamedNodeGroupAnchoredLast,
+		coerce: C.coerceToNamedNodeGroupAnchoredLast
+	})
+});
 
 export const definition: {
 	readonly namedNode: typeof namedNode;
@@ -301,7 +308,7 @@ export const definition: {
 	readonly predicate: typeof B.predicate;
 	readonly list: typeof list;
 	readonly field: typeof B.fieldDefinition;
-} = {
+} = Object.freeze({
 	namedNode: namedNode,
 	anonymousNode: anonymousNode,
 	missingNode: missingNode,
@@ -309,22 +316,4 @@ export const definition: {
 	predicate: B.predicate,
 	list: list,
 	field: B.fieldDefinition
-};
-
-export const groupExpression: {
-	readonly definition: typeof definition;
-	readonly arm: typeof B.groupExpressionArm;
-} = {
-	definition: definition,
-	arm: B.groupExpressionArm
-};
-
-export const namedNodeExpression: {
-	readonly definition: typeof definition;
-	readonly negatedField: typeof B.negatedField;
-	readonly arm: typeof B.namedNodeExpressionArm;
-} = {
-	definition: definition,
-	negatedField: B.negatedField,
-	arm: B.namedNodeExpressionArm
-};
+});

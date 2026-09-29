@@ -416,16 +416,6 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'exec_statement',
 		'type_alias_statement'
 	],
-	_named_expression_lhs: [
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword'
-	],
-	_expressions: ['expression', 'expression_list'],
 	_compound_statement: [
 		'if_statement',
 		'for_statement',
@@ -464,7 +454,6 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'tuple_pattern',
 		'list_pattern'
 	],
-	_expression_within_for_in_clause: ['expression', 'lambda_within_for_in_clause'],
 	expression: [
 		'comparison_operator',
 		'not_operator',
@@ -509,20 +498,9 @@ const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefine
 		'list_splat_pattern'
 	],
 	assignment: ['assignment_eq', 'assignment_type', 'assignment_typed'],
-	_left_hand_side: ['pattern', 'pattern_list'],
-	_right_hand_side: ['expression', 'expression_list', 'assignment', 'augmented_assignment', 'pattern_list', 'yield'],
-	_f_expression: ['expression', 'expression_list', 'pattern_list', 'yield'],
 	escape_sequence: 'escape_sequence_simple',
 	integer: 'integer_decimal_plain',
 	float: 'float_point',
-	keyword_identifier: [
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword'
-	],
 	line_continuation: 'line_continuation_newline',
 	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline'],
 	integer_decimal: 'integer_decimal_plain'
@@ -1123,6 +1101,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
+	module: '_statement',
 	_simple_statements: 'simple_statements_elements',
 	import_statement: 'names',
 	chevron: 'expression',
@@ -1140,6 +1119,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	type_parameter: 'types',
 	argument_list: 'argument_list_elements',
 	decorator: 'expression',
+	block: '_statement',
 	dotted_name: 'identifier',
 	dict_pattern: 'dict_pattern_elements',
 	parameters_elements: 'parameter',
@@ -2206,25 +2186,17 @@ const _K47: readonly string[] = ['except_clause_exception_as', 'except_clause_ex
 
 export function coerceToModule(): T.EmptyModule;
 export function coerceToModule(
-	...input: readonly (
-		| T.Module.Loose
-		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: readonly (T.Module.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildModule>;
 export function coerceToModule(
-	...input: readonly (
-		| T.Module.Loose
-		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: readonly (T.Module.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildModule> {
 	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Module) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildModule(
-			...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(children, _K0, _K1) as unknown as Parameters<
-				typeof F.buildModule
-			>)
+			...(_resolveMany<T.Statement>(children, _K0, _K1) as unknown as Parameters<typeof F.buildModule>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -2234,11 +2206,7 @@ export function coerceToModule(
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildModule(
-		...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(_elems, _K0, _K1) as unknown as Parameters<
-			typeof F.buildModule
-		>)
-	);
+	return F.buildModule(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildModule>));
 }
 
 export function resolveSimpleStatements_simpleStatementsElements(
@@ -3490,19 +3458,14 @@ export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F
 }
 
 export function coerceToBlock(
-	...input: readonly (
-		| T.Block.Loose
-		| LooseValue<T.SimpleStatements | T.CompoundStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: readonly (T.Block.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildBlock> {
 	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Block) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildBlock(
-			...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(children, _K0, _K1) as unknown as Parameters<
-				typeof F.buildBlock
-			>)
+			...(_resolveMany<T.Statement>(children, _K0, _K1) as unknown as Parameters<typeof F.buildBlock>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -3512,11 +3475,7 @@ export function coerceToBlock(
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildBlock(
-		...(_resolveMany<T.SimpleStatements | T.CompoundStatement>(_elems, _K0, _K1) as unknown as Parameters<
-			typeof F.buildBlock
-		>)
-	);
+	return F.buildBlock(...(_resolveMany<T.Statement>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildBlock>));
 }
 
 export function resolveExpressionList_expression(

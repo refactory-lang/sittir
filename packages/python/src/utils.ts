@@ -5,7 +5,7 @@ import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type PythonTypeMap } from './types.js';
 import { INNER_GAPS } from './consts.js';
 
-export const triviaFacts = {
+export const triviaFacts = Object.freeze({
 	kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
@@ -19,10 +19,10 @@ export const triviaFacts = {
 		'line_continuation_nul'
 	]),
 	innerGaps: INNER_GAPS,
-	whitespace: {
+	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
-		kindIdByText: { ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 }
-	}
-} satisfies TriviaFacts;
+		kindIdByText: Object.freeze({ ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
+	})
+} satisfies TriviaFacts);
 
 export const { isNode, withMethods } = bindRuntime<PythonTypeMap>();

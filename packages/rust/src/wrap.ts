@@ -1153,10 +1153,7 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle) {
 			return drillIn<T.Shebang | undefined>(this._shebang, tree);
 		},
 		statements() {
-			return drillInAll<T.ExpressionStatement | T.DeclarationStatement>(
-				this._statements as readonly (T.ExpressionStatement | T.DeclarationStatement)[] | undefined,
-				tree
-			);
+			return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
 		$with: {
 			shebang: (v: NonNullable<T.SourceFile['_shebang']>) => wrapSourceFile({ ...$edited(data), _shebang: v }, tree),
@@ -8720,10 +8717,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 			return drillIn<T.Label | undefined>(this._label, tree);
 		},
 		statements() {
-			return drillInAll<T.ExpressionStatement | T.DeclarationStatement>(
-				this._statements as readonly (T.ExpressionStatement | T.DeclarationStatement)[] | undefined,
-				tree
-			);
+			return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
 		trailingExpression() {
 			return drillIn<T.Expression | undefined>(this._trailing_expression, tree);

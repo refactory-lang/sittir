@@ -154,6 +154,8 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
  */
 ```
 
+`hooks` is frozen, and so is the trivia hook it carries (the grammar's facts, joined by the comment coercer when there is one), so every engine of the language shares facts that none can change.
+
 ### `packages/codegen/src/emitters/factories.ts::collectUsesNonEmptyArray`
 
 ```text
@@ -2192,6 +2194,11 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  * @param lines - Output lines array to push into.
  */
 ```
+
+`_SUPERTYPE_KIND_TAGS` lists declared supertypes only, so a loose
+`{ kind: '<supertype>' }` tag resolves through a declared supertype's
+default arm and an undeclared hidden choice's kind names no factory. The
+wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
 
 #### body
 
@@ -6723,9 +6730,9 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * The generator stays name-first: the lookup helpers are still emitted
  * from kind names, but the runtime discriminant surface is numeric so
  * data/transport interfaces can carry `TSKindId.*` instead of string
- * literals. The ERROR member is followed by a `satisfies typeof
- * ERROR_KIND_ID` check, so a grammar whose `TSKindId` holds another
- * value fails its own type-check; `kind_ids.rs`'s const assert is the
+ * literals. The `ERROR` kind's member (`TSKindId.Error`) is followed
+ * by a `satisfies typeof ERROR_KIND_ID` check, so a grammar whose
+ * `TSKindId` holds another value fails its own type-check; `kind_ids.rs`'s const assert is the
  * Rust side of the same check.
  */
 ```
@@ -6815,6 +6822,8 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // catalog key — prevents the python `_as_pattern` symbolName
 // `"as_pattern"` shadowing the real `as_pattern` entry.
 ```
+
+`TSKindId` is frozen right after its declaration.
 
 ### `packages/codegen/src/emitters/types.ts::makeInliningLookupUnion`
 
@@ -9204,6 +9213,8 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  */
 ```
 
+`is` is frozen, and stays a check on the kind id alone: the language of a node is a fact of the engine's node guards, not of the package-level table.
+
 ### `packages/codegen/src/emitters/shared.ts::module`
 
 ```text
@@ -10991,6 +11002,8 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 
 The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
 
+`triviaFacts` is frozen, with its whitespace run table.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -12312,6 +12325,8 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 
 The flat namespace holds each builder once, under its own `irKey`; a supertype-stripped name exists only as a member of its group namespace (`ir.expression.binary`, never a flat `ir.binary`).
 
+A supertype gets an ir namespace if and only if the grammar declares it (`AssembledSupertype.declared`). An undeclared hidden choice gets no ir namespace however it would be emitted, neither a supertype group here nor flattened-parent routes (`flattenedVariantParents`); each of its arms keeps its own flat builder. Declare it in `grammar.sittir.ts` (`supertypes`) to give it one. The kind's type union is unaffected.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::isFlatLeafOrKeyword`
 
 ```text
@@ -12333,10 +12348,9 @@ The flat namespace holds each builder once, under its own `irKey`; a supertype-s
 
 No emitted code attaches properties to a factory: a factory is shared under
 every key that reaches it, so a mutation made for one key shows under all
-of them. A flattened parent whose key is also a flat leaf's key reaches that
-leaf as its default arm (`flattenedVariantParents`), so `ir.<key>` is the
-parent's own route object, not the leaf's builder. A supertype group whose
-name is a flat key throws.
+of them. Only a declared supertype gets a group. A flattened parent whose key is also
+a flat leaf's key throws (`flattenedVariantParents`), as does a supertype
+group whose name is a flat key: two surfaces never share one `ir` key.
 
 A group lists a surface-hidden member only when it is a punctuation leaf
 with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its
@@ -12410,6 +12424,8 @@ namespace, so a route to a shared kind stays reachable without going
 through `ir`. If that export's key collides with a flat leaf/keyword
 factory's own `ir` key, the parent's route object is attached onto that
 leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
+
+`ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
 
@@ -14457,7 +14473,7 @@ is reachable ONLY through one parent's variant arm.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
 
-The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
+The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when the grammar declares it (an undeclared hidden choice gets no ir namespace; see `ir.ts::module`), it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
 
 A route also carries `minted` when the child kind is exactly the name
 `polymorphVisibleName(parent, variant)` would mint for this variant AND
@@ -14470,20 +14486,9 @@ nests one parent's routes under another parent's path only through a
 to the same kind elsewhere.
 
 
-A parent key that is also a flat leaf's key is decided here, in one place.
-When the leaf is one of the parent's arms, that arm becomes the parent's
-default, so `ir.<key>` calls through the leaf's `{ strict, coerce }` pair
-and keeps the other arms as members. Typescript `_identifier` over
-`undefined | identifier` makes `ir.identifier('x')` coerce while
-`ir.identifier.undefined` stays reachable, and the leaf's builder that
-`ir.primaryExpression.identifier` shares is untouched. A leaf that is not an
-arm, or an arm that conflicts with a declared default, throws.
-
-### `packages/codegen/src/emitters/overlays/module.ts::withLeafDefault`
-
-Marks the route to the leaf that shares its parent's key as the parent's
-default, throwing when the leaf is not an arm or another route is declared
-the default.
+A parent key that is also a flat leaf's key throws, whether or not the
+leaf is one of the parent's arms: `ir.<key>` names one thing, and a
+parent's key never stands for one of its arms.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::flatLeafKindByKey`
 
@@ -14737,6 +14742,8 @@ Renders one sub-factory's transformation method and its two applications. Method
 ### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
 
 Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
+
+The overlay table and each form's pair are frozen.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::ValueArm`
 
@@ -15220,6 +15227,8 @@ ride in the erased-helper block for the flatten methods.
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 It imports the grammar types as `T` when any emitted block names `T.`.
+
+Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16167,6 +16176,8 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 ### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
 
 Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
+
+The table and each row's key list are frozen.
 
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 

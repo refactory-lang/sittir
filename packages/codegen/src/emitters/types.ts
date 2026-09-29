@@ -16,7 +16,7 @@ import {
 	findKindEntryForLiteral,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { pascalCase } from '../compiler/model/casing.ts';
+import { kindTypeName } from '../compiler/model/casing.ts';
 import { grammarTypePrefix } from '../grammars.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { buildTriviaNodeType, resolveTriviaTypeNames } from './client-utils.ts';
@@ -183,7 +183,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const emittedKindEnums = new Set<string>();
 		for (const st of supertypes) {
 			const stNode = nodeMap.nodes.get(st.kind);
-			const typeName = stNode?.typeName ?? pascalCase(st.kind);
+			const typeName = stNode?.typeName ?? kindTypeName(st.kind);
 			const enumName = typeName + 'Kind';
 			if (emittedKindEnums.has(enumName)) continue;
 			emittedKindEnums.add(enumName);
@@ -191,7 +191,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
 				const subNode = nodeMap.nodes.get(sub);
-				const member = subNode?.typeName ?? pascalCase(sub);
+				const member = subNode?.typeName ?? kindTypeName(sub);
 				if (seenSubMembers.has(member)) continue;
 				seenSubMembers.add(member);
 				lines.push(`  ${member} = ${JSON.stringify(sub)},`);
@@ -495,6 +495,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 		lines.push(`  ${entry.member} = ${entry.id},`);
 	}
 	lines.push('}');
+	lines.push('Object.freeze(TSKindId);');
 	lines.push('');
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`types.ts: TSKindId has no ${ERROR_KIND_NAME} member`);
@@ -620,7 +621,7 @@ interface EmittedSupertype {
 }
 
 function supertypeTypeName(kind: string, nodeMap: NodeMap): string {
-	return nodeMap.nodes.get(kind)?.typeName ?? pascalCase(kind);
+	return nodeMap.nodes.get(kind)?.typeName ?? kindTypeName(kind);
 }
 
 function emitOptionsHints(

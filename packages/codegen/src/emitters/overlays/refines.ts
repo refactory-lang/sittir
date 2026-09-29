@@ -13,7 +13,7 @@ export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 		if (!isSlotBearingCompound(node) || node instanceof AssembledList || !node.rawFactoryName) continue;
 		const key = keyByKind.get(node.kind);
 		if (key === undefined) continue;
-		lines.push(`export const ${key} = {`);
+		lines.push(`export const ${key} = Object.freeze({`);
 		lines.push(`	...B.${key},`);
 		for (const form of info.forms) {
 			const fn = `F.${refineFormFactoryName(node.rawFactoryName, form.name)}`;
@@ -21,11 +21,11 @@ export function emitRefinesOverlay(config: { nodeMap: NodeMap }): string {
 			if (keys[0] !== form.name) keys.push(form.name);
 			for (const formKey of keys) {
 				lines.push(
-					`	${JSON.stringify(formKey) === `"${formKey}"` ? formKey : JSON.stringify(formKey)}: { strict: ${fn} },`
+					`	${JSON.stringify(formKey) === `"${formKey}"` ? formKey : JSON.stringify(formKey)}: Object.freeze({ strict: ${fn} }),`
 				);
 			}
 		}
-		lines.push('};', '');
+		lines.push('});', '');
 	}
 	return [...overlayFrame(overlayImportPath(0), lines, ["import * as F from '../raw.js';"]), ...lines].join('\n');
 }

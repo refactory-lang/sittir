@@ -589,6 +589,7 @@ export function printingFactoryMap(
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
 					if (kind.startsWith('_')) return text;
+					if (typeof id === 'number' && ctx.keywordKinds?.has(kind)) return new Printed(id, printValue(id, ctx, 0), kind);
 					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
 				case 'direct':

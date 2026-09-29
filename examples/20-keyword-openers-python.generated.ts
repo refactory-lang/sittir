@@ -35,7 +35,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 		}), engine.build.forStatement.strict({
 			left: engine.build.identifier("i"),
 			right: engine.build.parenthesizedExpression.strict(engine.build.identifier("a")),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.passStatement("pass")))),
+			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.kinds.PassStatement))),
 		}), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.assertStatement.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x")))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.deleteStatement.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x")))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
 			left: engine.build.identifier("g"),
 			right: engine.build.lambda.strict({

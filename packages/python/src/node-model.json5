@@ -4311,21 +4311,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_simple_statements",
-            "_compound_statement"
+            "_statement"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_simple_statements",
-              "parseKind": "simple_statements"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_compound_statement",
-              "parseKind": "_compound_statement"
+              "name": "_statement",
+              "parseKind": "_statement"
             }
           ]
         }
@@ -11716,21 +11709,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_simple_statements",
-            "_compound_statement"
+            "_statement"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_simple_statements",
-              "parseKind": "simple_statements"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_compound_statement",
-              "parseKind": "_compound_statement"
+              "name": "_statement",
+              "parseKind": "_statement"
             }
           ]
         }
