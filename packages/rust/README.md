@@ -1,144 +1,182 @@
 # @sittir/rust
 
-135 Rust IR node kinds with self-contained builders — all generated from the tree-sitter-rust grammar by `@sittir/codegen`.
+Typed factories, guards, kind ids, a reader and a native renderer for Rust, generated from the tree-sitter-rust grammar by `@sittir/codegen`. The package exports the language descriptor and its types; everything you call is reached through an engine.
 
 ## Installation
 
 ```bash
-pnpm add @sittir/rust
+pnpm add @sittir/common @sittir/rust
 ```
 
-## Quick Start
-
-### Fluent API
-
-Every field holds a `Builder` instance — no strings. Use `LeafBuilder` via the `ir` namespace to introduce text:
+## Quick start
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-const node = ir
-	.fn(ir.identifier('main'))
-	.parameters(ir.parameters())
-	.body(
-		ir.block(
-			ir.expressionStatement(ir.macro_invocation(ir.identifier('println')))
-		)
-	);
+const engine = await createEngine(rust);
 
-node.renderImpl(); // "fn main ( ) { println ! }"
-node.render('fast'); // same, with brace/paren validation
-```
-
-### Declarative API (coercing constructors)
-
-For deeply nested constructs, call the constructor with a typed options object:
-
-```ts
-const node = ir.functionItem({
+const fn = engine.build.statement.function({
+	visibilityModifier: 'pub',
 	name: 'main',
-	parameters: ir.parameters.strict(),
-	body: ir.block.strict()
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
 });
+
+fn.$render(); // "pub fn main() {}"
+engine.render(fn).toString(); // the same text
 ```
 
-Leaf-typed fields accept strings — auto-resolved to `LeafBuilder`:
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `engine.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
+
+## Building
+
+A builder called with plain values is the coercing form: strings become leaf nodes, single values become lists where a list is expected. `.strict` takes only built nodes.
 
 ```ts
-// name is typed as Builder<TypeIdentifier> | string
-const s = ir.struct_({ name: 'Config' });
-// equivalent to: ir.struct_(ir.typeIdentifier('Config'))
-```
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-### Rest Params
+const engine = await createEngine(rust);
 
-Array fields use rest params for ergonomic construction:
-
-```ts
-// Multiple children as rest params
-ir.block(stmt1, stmt2, stmt3);
-
-// Instead of wrapping in an array
-ir.block([stmt1, stmt2, stmt3]); // ← old style, no longer needed
-```
-
-### CST Round-Trip
-
-```ts
-import { fromCST, edit } from '@sittir/rust';
-
-// Hydrate a tree-sitter CST node into a builder tree
-const builder = fromCST(treeSitterNode);
-builder.renderImpl(); // re-renders to source
-
-// Codemod-compatible edit
-const patch = edit(treeSitterNode, (b) => {
-	return b.body(ir.block()); // transform must return a builder
+const strict = engine.build.statement.function.strict({
+	visibilityModifier: engine.build.visibilityModifier.pub(),
+	name: engine.build.identifier('main'),
+	parameters: engine.build.parameters.strict(),
+	body: engine.build.block.strict()
 });
-// patch = { startPos: 0, endPos: 42, insertedText: "..." }
+
+engine.render(strict.name()).toString(); // "main"
+strict.$render(); // "pub fn main() {}"
 ```
 
-### Leaf Node Builders
+## Reading
 
-The `ir` namespace includes builders for all terminal node kinds:
+`parse` returns a lazily expanded tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
 
 ```ts
-ir.identifier('main'); // LeafBuilder<'identifier'>
-ir.typeIdentifier('Config'); // LeafBuilder<'type_identifier'>
-ir.integerLiteral(42); // LeafBuilder<'integer_literal'> (accepts number)
-ir.stringLiteral('"hello"'); // LeafBuilder<'string_literal'>
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+const source = 'fn main() {\n    // keep me\n    run( 1 );\n}\n';
+
+const file = engine.parse(source);
+const first = file.statements()[0];
+if (first !== undefined && engine.is.functionItem(first)) {
+	engine.render(first.name()).toString(); // "main"
+}
+
+file.$render() === source; // true
 ```
 
-### Semantic Operator Aliases
+## Updating
+
+Nodes are immutable. `$with` returns a rebuilt node, and only what you rebuild is re-spelled.
 
 ```ts
-ir.add(); // LeafBuilder for '+'
-ir.sub(); // LeafBuilder for '-'
-ir.eq(); // LeafBuilder for '=='
-ir.and(); // LeafBuilder for '&&'
-// ... all binary + compound assignment operators
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+
+const fn = engine.build.statement.function({
+	name: 'main',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
+});
+
+fn.$with.name(engine.build.identifier('greet')).$render(); // "fn greet() {}"
 ```
 
-## Generated API
+## Comments
 
-Everything below is generated by `@sittir/codegen` from `tree-sitter-rust/src/node-types.json` and `grammar.json`. Each builder is self-contained — no central render switch.
+`$trivia` attaches comments to a node. A loose string is built into the grammar's default comment.
 
-### Exports per Node
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-Each node file (`src/nodes/*.ts`) exports:
+const engine = await createEngine(rust);
 
-| Export                | Description                                 |
-| --------------------- | ------------------------------------------- |
-| `fn(name: Builder)`   | Factory function (fluent entry point)       |
-| `ir.functionItem(opts)` | Declarative construction with precise types |
-| `FunctionBuilder`     | Builder class type (via `export type`)      |
-| `FunctionItemOptions` | Options interface for the coercing form     |
+const fn = engine.build.statement.function({
+	name: 'main',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
+});
 
-### How It's Generated
-
+fn.$trivia('// entry point').$render(); // "// entry point\nfn main() {}"
 ```
-tree-sitter-rust/src/node-types.json
-tree-sitter-rust/src/grammar.json
-        |
-  @sittir/codegen
-        |
-  ├── src/nodes/*.ts      135 self-contained builder files
-  ├── src/builder.ts       ir namespace + fromCST + edit
-  ├── src/types.ts         Grammar-derived types + leaf types + supertype unions
-  └── tests/*.ts           Per-node test scaffolds
+
+## Render options
+
+An engine's render options come from the descriptor's `Options` type and are checked against it.
+
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust, { render: { indent: '\t' } });
+
+const fn = engine.build.statement.function({
+	name: 'f',
+	parameters: engine.build.parameters(),
+	body: engine.build.block({
+		statements: [engine.build.expressionStatement(engine.build.identifier('a'))]
+	})
+});
+
+engine.render(fn).toString(); // "fn f() {\n\ta;\n}"
+```
+
+## Edits
+
+`$toEdit` renders a node into an `Edit` that replaces a byte range, and `engine.applyEdits` applies a batch to a source string.
+
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+
+const rename = engine.build.identifier('b').$toEdit(4, 5);
+engine.applyEdits('let a = 1;', [rename]); // "let b = 1;"
+```
+
+## Guards and kinds
+
+The guards narrow to this engine's language: a node of another engine of the language passes, a node of another language does not, and a value with no engine never does.
+
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+const built = engine.build.identifier('x');
+const parsed = engine.parse('fn a() {}\n');
+
+engine.isNode(built); // true
+engine.isFactoryNode(built); // true
+engine.isParsedNode(parsed); // true
+engine.kinds.Identifier; // the kind id of `identifier`
 ```
 
 ## Types
 
-```ts
-import type {
-	StructItem,
-	FunctionItem,
-	Identifier, // leaf type
-	Expression // supertype union
-} from '@sittir/rust';
+The package index exports types only, besides the descriptor.
 
-import type { FunctionBuilder } from '@sittir/rust';
+```ts
+import type { RustAPI, FunctionItem, StructItem, Expression } from '@sittir/rust';
+```
+
+`RustAPI` is the language's type-level shape, from which every engine type is derived (`Engine<RustAPI>`).
+
+## Regenerating
+
+Everything under `src/` is generated. Change the grammar or the codegen, never the output:
+
+```bash
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
 
 ## License

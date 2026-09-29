@@ -274,9 +274,10 @@ themselves frozen.
 
 Each kind ships in two forms with the same output type:
 
+<!-- snippet: illustrative -->
 ```ts
-ir.functionItem.strict({ /* every field explicit, no coercion */ })
-ir.functionItem({        /* loose input — strings / arrays / plain objects */ })
+engine.build.statement.function.strict({ /* every field explicit, no coercion */ })
+engine.build.statement.function({        /* loose input — strings / arrays / plain objects */ })
 ```
 
 Coercion is closed-form: it walks the expected slot type and
@@ -299,11 +300,12 @@ empty form when omitted.
 The generated surface separates the cursor (a handle into the rule tree)
 from the resolved value (the underlying NodeData):
 
+<!-- snippet: illustrative -->
 ```ts
 fn.name        // cursor — handle into the tree, lazy
 fn.name()      // value  — resolved NodeData (or hoisted leaf text)
-fn.$with.name(ir.identifier('greet'))     // returns a new frozen node
-fn.$with.body(ir.block.strict())           // chainable, immutable
+fn.$with.name(engine.build.identifier('greet'))     // returns a new frozen node
+fn.$with.body(engine.build.block.strict())           // chainable, immutable
 ```
 
 Accessor functions (`fn.name()`) are non-enumerable; they don't appear in
@@ -414,11 +416,16 @@ const fn = engine.build.statement.function.strict({
 });
 
 fn.$render();      // "pub fn main() {}"
-fn.name();         // typed value — leaf-hoisted to its $text
-fn.body();         // returns the Block NodeData
+fn.name();         // the Identifier node
+fn.body();         // the Block node
 ```
 
 ```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+
 // Coercion — strings, arrays, and plain objects resolve to their
 // expected slot kind.
 const fn = engine.build.statement.function({
@@ -429,25 +436,39 @@ const fn = engine.build.statement.function({
   ),
   body: engine.build.block.strict()
 });
+
+fn.$render();      // "pub fn greet(name: String) {}"
 ```
 
 ### Read source into NodeData
 
 ```ts
-const file = engine.parse(source);
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-for (const stmt of file.statements()) {
+const engine = await createEngine(rust);
+const source = 'fn main() {}\nfn greet() {}\n';
+
+const names: unknown[] = [];
+for (const stmt of engine.parse(source).statements()) {
   if (engine.is.functionItem(stmt)) {
-    console.log(stmt.name(), stmt.body());
+    names.push(stmt.name());
   }
 }
+
+names.length;      // 2
 ```
 
 ### Round-trip
 
 ```ts
-engine.parse(source).$render() === source;
-// true for well-formed input
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+const source = 'fn main() {\n    // kept\n    run( 1 );\n}\n';
+
+engine.parse(source).$render() === source;      // true, for well-formed input
 ```
 
 For the broader target surface — `.$trivia()`, construction templates,
