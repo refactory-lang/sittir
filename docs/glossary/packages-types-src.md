@@ -136,6 +136,12 @@ What `render` accepts: any of the language's nodes, or the kind id of a kind who
 
 The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `indent` unit must be made only of the language's indent characters, and every key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render). A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the second half restores it: a misspelled key, or `indent` for a language with no indent unit, is a type error where it is written.
 
+When `R` is exactly the language's declared options type, the check is `unknown`: such a value has no undeclared key and its indent unit is the declared one, so there is nothing to add. That identity is what lets a caller generic over the language forward options typed as `API['options']`, where the full check would stay deferred and reject the very type its parameter declares. It also leaves a value with only undeclared keys to the options type's own weak-type check, which the full check's intersection would defeat. An explicit `API` type argument disables inference, so `R` takes its default, the declared options type, and the check is skipped.
+
+### `packages/types/src/engine-api.ts::IsExactly`
+
+Whether two types are identical, by comparing two generic signatures that differ only in `A` and `B`. The comparison is between function types, which are not generic objects, so it resolves even while `A` and `B` are still deferred type parameters.
+
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
 An engine's options, grouped by concern: the builder surface, the render options, the format record, and the interceptors.
