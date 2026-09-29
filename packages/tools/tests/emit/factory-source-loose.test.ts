@@ -181,8 +181,8 @@ describe('loose surface printing', () => {
 		);
 	});
 	it('drops a wrapper around a kind-id leaf when the wrapper alone takes it, and keeps it beside an enum the slot admits', () => {
-		expect(map.holder!({ item: map.wrapper!(4) }).source).toBe('ir.holder({\n\titem: TSKindId.Comma,\n})');
-		expect(map.sized!({ item: map.wrapper!(4) }).source).toBe('ir.sized({\n\titem: ir.wrapper(TSKindId.Comma),\n})');
+		expect(map.holder!({ item: map.wrapper!(4) }).source).toBe('ir.holder({\n\titem: engine.kinds.Comma,\n})');
+		expect(map.sized!({ item: map.wrapper!(4) }).source).toBe('ir.sized({\n\titem: ir.wrapper(engine.kinds.Comma),\n})');
 	});
 	it("loosens the elements of a bare array against the list's element slot", () => {
 		expect(map.holder2!({ args: map.args!({ expression: map.identifier!('x') }) }).source).toBe(
@@ -253,7 +253,7 @@ describe('loose surface printing with nested configs', () => {
 			'ir.callExpression({\n\tfunction: {\n\t\tfunction: "f",\n\t},\n})'
 		);
 		expect(map.block!({ statements: [map.call_expression!({ function: map.identifier!('f') })] }).source).toBe(
-			'ir.block({\n\tstatements: [{\n\t\tkind: TSKindId.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
+			'ir.block({\n\tstatements: [{\n\t\tkind: engine.kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
 		);
 		expect(map.function_item!({ body: map.block!({}) }).source).toBe('ir.functionItem({\n\tbody: {},\n})');
 	});

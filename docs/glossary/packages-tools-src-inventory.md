@@ -101,11 +101,12 @@ its interfaces extends that way.
 ### `packages/tools/src/inventory/emit.ts::renderVocabularyFile`
 
 ```text
-The dogfood step: builds the file's statements through the typescript
-package's strict factories (`ir.interfaceDeclaration`, `ir.internalModule`,
-`ir.unionType`, `ir.lookupType`, `ir.templateLiteralType`, ...) and renders
-the program with an engine from `createEngine(typescript)`, created on the
-first call and shared by later ones. Comments ride as trivia. The caller
+The dogfood step: builds the file's statements through the strict
+factories of one typescript engine, created when the module loads
+(`ir` and `TSKindId` are that engine's `build` and `kinds`:
+`ir.interfaceDeclaration`, `ir.internalModule`, `ir.unionType`,
+`ir.lookupType`, `ir.templateLiteralType`, ...), and renders the program
+with the same engine. Comments ride as trivia. The caller
 formats the result; a render defect that survives formatting is a finding
 about the typescript package, never something the emitter works around.
 ```
