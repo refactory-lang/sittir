@@ -1,4 +1,3 @@
-// @ts-nocheck — grammar.js is untyped
 import base from 'tree-sitter-scm/grammar.js';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {

@@ -29,10 +29,10 @@ per-grammar diagnostics file
 `packages/<lang>/grammar.sittir.ts` executes **twice**, in two different
 runtimes:
 
-1. **Tree-sitter side.** `packages/codegen/src/transpile/` bundles it with
-   esbuild (CJS, self-contained — enrich, wire, and the transform helpers
-   are bundled inline) into `packages/<lang>/.sittir/grammar.js`, which the
-   tree-sitter CLI executes with **its own** implementations of the
+1. **Tree-sitter side.** `packages/<lang>/.sittir/grammar.js` re-exports
+   the entry, and Node strips its types (`packages/codegen/src/transpile/`
+   writes the scaffolding). The tree-sitter CLI executes it with **its own**
+   implementations of the
    `grammar()` / `seq()` / `choice()` / `optional()` DSL runtime to
    produce the parser artifacts (`.sittir/src/grammar.json`,
    `node-types.json`, `parser.c`, `parser.wasm`).
@@ -41,7 +41,7 @@ runtimes:
    same DSL surface, producing the `RawGrammar` the compiler phases
    consume.
 
-Both executions run the very same bundled enrich/wire code, which is what
+Both executions run the very same enrich/wire modules, which is what
 keeps the two sides in agreement. Consequences:
 
 - **Code inside the DSL execution reaches both sides.** Anything enrich,

@@ -71,7 +71,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 	try {
 		writeFileSync(join(root, 'tsconfig.json'), JSON.stringify({ extends: resolve(__dirname, '../../../tsconfig.json') }));
 		const pkg = writePackage(join(root, 'packages', name), name);
-		await transpileOverrides({ package: pkg });
+		transpileOverrides({ package: pkg });
 		await runTreeSitterGenerate(pkg);
 		const generatedIdTables = await loadPackageIdTables(pkg);
 		expect(generatedIdTables).toBeDefined();

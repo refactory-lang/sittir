@@ -22,6 +22,9 @@
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"engines": {
+		"node": ">=22.18.0"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -62,7 +65,6 @@
 		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/typescript": "workspace:*",
 		"@types/node": "^25.6.0",
-		"esbuild": "^0.28.0",
 		"tree-sitter-c": "^0.24.1",
 		"tree-sitter-go": "^0.25.0",
 		"tree-sitter-rust": "^0.24.0",

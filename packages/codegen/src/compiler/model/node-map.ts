@@ -134,8 +134,11 @@ function assembleWarningKey(w: AssembleWarning): string {
 export class DedupedCollector<T> {
 	private readonly items: T[] = [];
 	private readonly seen = new Set<string>();
+	private readonly keyOf: (item: T) => string;
 
-	constructor(private readonly keyOf: (item: T) => string) {}
+	constructor(keyOf: (item: T) => string) {
+		this.keyOf = keyOf;
+	}
 
 	record(item: T): boolean {
 		const key = this.keyOf(item);

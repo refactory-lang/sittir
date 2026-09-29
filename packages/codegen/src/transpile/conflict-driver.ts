@@ -9,12 +9,10 @@ import { readConflictResolutions, writeConflictResolutions } from './conflict-re
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
-import { transpileOverrides } from './transpile-overrides.ts';
 
 export interface ConflictResolutionsStore {
 	read(): ConflictResolutionsFile;
-	write(file: ConflictResolutionsFile): Promise<void>;
-	bundle(): Promise<void>;
+	write(file: ConflictResolutionsFile): void;
 }
 
 export async function settleConflictResolutions(input: {
@@ -29,16 +27,13 @@ export async function settleConflictResolutions(input: {
 		ruleCount: inputs.ruleCount,
 		upstream: inputs,
 		generate: async (resolutions) => {
-			await store.write({ grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions });
+			store.write({ grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions });
 			return input.runGenerate();
 		},
-		generateSaved: async () => {
-			await store.bundle();
-			return input.runGenerate();
-		}
+		generateSaved: input.runGenerate
 	});
 	if (result.kind === 'converged') {
-		await store.write({ grammarHash: inputs.grammarHash, resolutions: result.resolutions });
+		store.write({ grammarHash: inputs.grammarHash, resolutions: result.resolutions });
 	}
 	return result;
 }
@@ -50,17 +45,10 @@ function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
 
 export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise<DerivationResult> {
 	const sittirDir = sittirDirOf(pkg);
-	const bundle = async () => {
-		await transpileOverrides({ package: pkg });
-	};
 	const result = await settleConflictResolutions({
 		store: {
 			read: () => readConflictResolutions(pkg),
-			write: async (file) => {
-				writeConflictResolutions(pkg, file);
-				await bundle();
-			},
-			bundle
+			write: (file) => writeConflictResolutions(pkg, file)
 		},
 		inputs: evaluateForDerivation(pkg),
 		runGenerate: async () => {

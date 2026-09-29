@@ -1,0 +1,13 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"noEmit": true,
+		"rootDir": ".",
+		"erasableSyntaxOnly": true,
+		"types": ["node", "tree-sitter-cli/dsl.d.ts"]
+	},
+	"files": ["./packages/codegen/src/dsl/authoring-globals.d.ts"]
+}

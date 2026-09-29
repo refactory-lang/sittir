@@ -15,6 +15,9 @@ export interface GrammarPackage {
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '');
 export const PACKAGES_DIR = join(REPO_ROOT, 'packages');
 export const GRAMMAR_ENTRY = 'grammar.sittir.ts';
+export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
+export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
+export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
 
 let discovered: readonly GrammarPackage[] | undefined;
 

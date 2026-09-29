@@ -1,10 +1,10 @@
 {
   "grammar": "python",
-  "source_hash": "adadcfa715d09e54461b491e8da954ffa52623d6eb14a33155fedd1c9bf59482",
+  "source_hash": "f579b7cabb0b66060a80d2486a81a966e2078eab12c16b909ba10e2ed919d0ab",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
-    "packages/python/.sittir/grammar.js": "6a83955e64cef8fb350170b0b2900f7eb85d18983173f4730c81c15ea1bc5067",
-    "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
+    "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
+    "packages/python/.sittir/package.json": "00d27b80327c62ad752c5bd2664c0f7f91fd4114e3ca08df7d60da933591397d",
     "packages/python/.sittir/parser.wasm": "aaf5f08051520435d41d75bd7cd79d86d7bb720deb1bfec3378a8199d6194170",
     "packages/python/.sittir/render-bodies.json": "c6ddacb8b31c0eb9789ebabe110222cce4ba52cc32a82d4190b4e532fd20d53b",
     "packages/python/.sittir/resolutions.json": "f566d216b915d00ccaf6c0a9ba21ab83895232ac66d7efde00a89c9e00d31f10",

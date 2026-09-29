@@ -123,11 +123,10 @@ function fullFormOf(node: AbstractAssembledCompound, forms: FullForms): FullForm
 
 class FullForms {
 	private readonly forms = new Map<string, FullForm | undefined>();
+	private readonly nodes: ReadonlyMap<string, AssembledNode>;
 	readonly edges: EdgeClassCtx;
-	constructor(
-		private readonly nodes: ReadonlyMap<string, AssembledNode>,
-		wordMatcher: RegExp | undefined
-	) {
+	constructor(nodes: ReadonlyMap<string, AssembledNode>, wordMatcher: RegExp | undefined) {
+		this.nodes = nodes;
 		this.edges = { nodes, isWordChar: wordCharPredicate(wordMatcher) };
 	}
 
