@@ -45,13 +45,13 @@ The root edges (`<root>_before`/`<root>_after`; `source_file_*` in rust, `progra
 One PR, stacked on master after the render-coordinate work. Behaviour changes, each stated in the PR body:
 - an unnamed render no longer takes the newest parse's indentation (the `last_tree_id` fallback is removed);
 - a render of built code that contains parsed nodes follows that tree's observed style, where it followed engine options before;
-- the calling engine's options in a cross-engine render become that engine's level, below the reading tree's table, instead of per-call options (Task 5). This closes the issue about native options that cannot be unset, and the PR body says so;
+- the calling engine's options in a cross-engine render become that engine's level, below the reading tree's table, instead of per-call options (Task 6). This closes the issue about native options that cannot be unset, and the PR body says so;
 - the descriptor gains `createEngine`, `styleFrom` and `styleFromSource`, and `Language<API>` gains `fileTypes`; the free forms `styleFrom(language, ...)` sit beside `createEngine(language, ...)`;
-- indentation is one fact: the table's `indent` replaces the tree-derived format record (Task 7).
+- indentation is one fact: the table's `indent` replaces the tree-derived format record (Task 8).
 
 Validation rows are expected to stay identical or to move only where the tree table supplies a root edge or list style the transport stamp could not (the two parity fixtures dropped for this reason come back). The row diff goes to review before push.
 
-Commit order: Task 0, then 1 and 2 (byte-identical), 3, 4, 5, 7, 6, 8 (Task 7 comes before 6 so `styleFrom` reports indentation from the start). Implementation starts once the root-edge work is on master.
+Commit order: Task 0, then 1 (file types), 2 and 3 (byte-identical), 4, 5, 6, 8, 7, 9 (Task 8 comes before 7 so `styleFrom` reports indentation from the start). Implementation starts once the root-edge work is on master.
 
 ---
 
@@ -73,7 +73,23 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 1: The table type and the layered base
+### Task 1: File types reach the descriptor
+
+**Files:**
+- Modify: `packages/codegen/src/transpile/transpile-overrides.ts` (the generated `.sittir/tree-sitter.json` and `.sittir/package.json` write an empty `file-types`)
+- Modify: `packages/codegen/src/emitters/index-file.ts` (the emitted descriptor carries `fileTypes`)
+- Modify: `packages/types/src/engine-api.ts` (`Language<API>` gains `fileTypes`)
+- Test: `packages/codegen/src/emitters/__tests__/index-file-emit.test.ts`, a census test over the generated grammars
+
+**Behaviour:** Every generated `.sittir/tree-sitter.json` has an empty `file-types` today (rust, typescript and python included), although the upstream grammar packages declare them (`tree-sitter-rust` has `rs`). The generation carries the upstream `file-types` into `.sittir/tree-sitter.json`, and the emitted descriptor reads them from it. That is the one source: extensions are never restated in a `grammar.sittir.ts`. A grammar whose upstream declares none has an empty list, and the emitter gives its descriptor no `styleFrom` (Task 7).
+
+- [ ] **Step 1:** Find the upstream source per grammar (the grammar package's `tree-sitter.json`; the typescript package holds two grammars, typescript and tsx, so its list is their union) and thread it through generation.
+- [ ] **Step 2:** Census of each grammar's resulting file types, recorded in the task notes and pinned by a test: rust `rs`; python `py`; typescript the upstream typescript and tsx lists; scm and regex whatever their upstream declares (empty if none).
+- [ ] **Step 3:** Regenerate; the only diffs are the file-type lists and the descriptor field. Glossary entries.
+
+---
+
+### Task 2: The table type and the layered base
 
 **Files:**
 - Create: `rust/crates/sittir-core/src/inferred.rs`
@@ -92,7 +108,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 2: One derivation of the list sites
+### Task 3: One derivation of the list sites
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-module.ts` (`listGapClassification`, its site helpers)
@@ -108,7 +124,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 3: The inference walk
+### Task 4: The inference walk
 
 **Files:**
 - Create: `rust/crates/sittir-core/src/infer.rs`
@@ -119,9 +135,9 @@ cd scratchpad/wt-tree-inferred && pnpm install
 **Behaviour:**
 - `infer_votes(tree: &ParsedTree<G>, grammar: &G) -> InferredVotes` visits the tree's nodes. For a node whose kind has `INFER_LISTS` rows, it collects each row's child coordinates in source order and calls `classify_list_gaps` with the row's token and allowed arms, then votes the result for the row's sites.
 - The root: the first and last child coordinates of the root go through `root_flanks`, the same function the occurrence stamp uses, and vote for the root edge sites.
-- The table is `fold(infer_votes(tree))`, the fold of Task 1 (`majority` and `split_gap` are the ones `classify.rs` already has). Each list is one vote for its site (the class `classify_list_gaps` gives it by majority over its gaps), so a long list does not outweigh a short one, and `styleFrom` inherits the same weighing.
+- The table is `fold(infer_votes(tree))`, the fold of Task 2 (`majority` and `split_gap` are the ones `classify.rs` already has). Each list is one vote for its site (the class `classify_list_gaps` gives it by majority over its gaps), so a long list does not outweigh a short one, and `styleFrom` inherits the same weighing.
 - The table lives on the tree entry, computed on first use. It is dropped when the entry's source is replaced.
-- Indentation: the table's `indent` (Task 7).
+- Indentation: the table's `indent` (Task 8).
 
 - [ ] **Step 1:** Tests over small sources: a uniform list, a mixed list (majority), a tie (default), a tree with no list of a site (absent), two trees' votes added before the fold (a majority of majorities would differ), a root with leading and trailing blank lines and with none, and nested lists voting into the same site.
 - [ ] **Step 2:** Agreement test: for a source read into a transport, the arm the prepare walk stamps on a list equals the arm the table holds when the tree has only that list.
@@ -129,7 +145,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 4: Render calls name their tree
+### Task 5: Render calls name their tree
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`render`, `render_to_file`)
@@ -139,15 +155,15 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 **Behaviour:**
 - One helper, `treeOf(node)`, names a node's tree: the tree of its own handle when it is a parsed node; else the one tree its parsed descendants share; else none. A render treats several trees, or none, as no tree layer, so the engine's options apply. `collectReaders` already walks the parsed descendants; it also collects their tree ids, so one walk answers both the reader and the tree.
-- `render(transport, tree_id, options)` takes `tree_id` from the JS call. The `last_tree_id` field and its fallback are removed, and so is its reset in `dispose_tree` and on dispose. The base of the resolve is `engine.options()` overlaid with the named tree's table (Task 1); a tree id the engine does not hold is refused with the existing unknown-tree diagnostic.
-- The tree's format record stops being read by `last_tree_id`; it is read by the named tree, and only until Task 7 removes it.
+- `render(transport, tree_id, options)` takes `tree_id` from the JS call. The `last_tree_id` field and its fallback are removed, and so is its reset in `dispose_tree` and on dispose. The base of the resolve is `engine.options()` overlaid with the named tree's table (Task 2); a tree id the engine does not hold is refused with the existing unknown-tree diagnostic.
+- The tree's format record stops being read by `last_tree_id`; it is read by the named tree, and only until Task 8 removes it.
 
 - [ ] **Step 1:** Tests: a render of a parsed node uses its own tree's table when two trees with different styles are parsed, in either order; a built node holding parsed children of one tree follows that tree; children of two trees fall to the engine options; rendering after `dispose` of a tree is refused.
 - [ ] **Step 2:** Implement; regenerate; the rows are compared before push.
 
 ---
 
-### Task 5: The calling engine's options are engine-level
+### Task 6: The calling engine's options are engine-level
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`render` takes an optional base options)
@@ -161,34 +177,34 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 6: `styleFrom` and the descriptor's `createEngine`
+### Task 7: `styleFrom` and the descriptor's `createEngine`
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`infer_style(sources) -> table`, internal to the language engine: one temporary parse per source, votes summed, folded)
 - Create: `packages/common/src/style-from.ts` (the one implementation, and the free `styleFrom`, `styleFromSource`)
 - Modify: `packages/common/src/create-engine.ts` (`loadLanguage` is shared by both entry points and stays cached)
 - Modify: `packages/types/src/engine-api.ts` (`Language<API>` gains `fileTypes`, `createEngine`, `styleFrom`, `styleFromSource`)
-- Modify: `packages/codegen/src/emitters/index-file.ts` (the emitted descriptor: `fileTypes` from the grammar's `tree-sitter.json`, and the delegates)
+- Modify: `packages/codegen/src/emitters/index-file.ts` (the delegates: `createEngine`, `styleFromSource`, and `styleFrom` only when the grammar has file types)
 - Modify: the per-grammar option key table emitter, so the key table maps keys to sites in both directions from one table
 - Test: `packages/common/tests/style-from.test.ts`, `packages/rust/tests/style-from.test.ts`, `packages/rust/tests/descriptor.test-d.ts`
 
 **Behaviour:**
 - `styleFrom(language, ...paths)` and `rust.styleFrom(...paths)` are async and return that language's `API['options']` with only the keys the files show. The method is a generated one-line delegate to the free form; there is one implementation.
-- `styleFromSource(language, ...sources)` and `rust.styleFromSource(...sources)` do the same over source text, for in-memory use. (The name is proposed here for review.)
+- `styleFromSource(language, text, ...more)` and `rust.styleFromSource(text, ...more)` do the same over source text, for in-memory use. Every grammar has it.
 - The language loads lazily through the same cached `loadLanguage` that `createEngine` uses, so importing the descriptor stays cheap. The call creates one temporary native instance, parses every file with it, and disposes it, on failure too. No `Engine` is created.
 - The votes of all files are summed before the fold. A tie takes the site's declared default. A key no file evidences is absent. The result is the language's `Options`, so it can be passed as `render` options as it stands. The projection inverts the key table the resolver uses; no second key list exists.
-- A path whose extension is not in the descriptor's `fileTypes` is refused, naming the extension and the accepted ones. `fileTypes` is the union of the `file-types` of the grammar's `tree-sitter.json`, emitted onto the descriptor; a grammar with none (scm, regex) accepts no path, and its source-text form still works.
-- The inference walk is the one Task 3 builds; `styleFrom` adds no second walk.
+- A path whose extension is not in the descriptor's `fileTypes` (Task 1) is refused at run time, naming the extension and the accepted ones. A grammar with no file types gets no `styleFrom`: the emitter leaves the method off its descriptor, and only `styleFromSource` exists there. The free `styleFrom(language, ...paths)` is typed so that a descriptor without file types is a type error at the call too (the constraint requires the descriptor's `styleFrom`).
+- The inference walk is the one Task 4 builds; `styleFrom` adds no second walk.
 - `createEngine` on the descriptor: `rust.createEngine(options)` is a generated delegate to `createEngine(rust, options)` with the same `const R` and `RenderOptionsCheck` signature, so `rust.createEngine({ render: { indent: '\t' } })` type-checks exactly like the free form and rejects the same wrong options.
-- Engine options stay immutable: the `render` block is resolved once at construction, as it is natively. A one-off style uses per-call `engine.render(node, options)`; parsed files already format themselves through the tree layer (Task 4).
+- Engine options stay immutable: the `render` block is resolved once at construction, as it is natively. A one-off style uses per-call `engine.render(node, options)`; parsed files already format themselves through the tree layer (Task 5).
 
-- [ ] **Step 1:** Tests: one file yields its keys and only its keys; two files sum votes (a case where the sum and the majority of majorities differ); a tie takes the default; a file with the wrong extension is refused with the accepted list; a file that fails to parse still disposes the temporary instance (spy on `createNative` and `dispose`); no `Engine` is created (count `createNative` calls: exactly one per call); the result, passed as `render` options, renders a built list the way the file spells it; a file with no trailing newline yields the root-edge arm that spells none, and a file with one yields the arm that spells it.
-- [ ] **Step 2:** Type-level tests in `descriptor.test-d.ts`: `rust.createEngine({ render: { indent: '\t' } })` type-checks and a wrong key or value fails the same way `createEngine(rust, ...)` does; `rust.styleFrom(...)` returns `Promise<RustAPI['options']>`.
+- [ ] **Step 1:** Tests: one file yields its keys and only its keys; two files sum votes (a case where the sum and the majority of majorities differ); a tie takes the default; a file with the wrong extension is refused with the accepted list; the emitted descriptor of a grammar with no file types has no `styleFrom` property; a file that fails to parse still disposes the temporary instance (spy on `createNative` and `dispose`); no `Engine` is created (count `createNative` calls: exactly one per call); the result, passed as `render` options, renders a built list the way the file spells it; a file with no trailing newline yields the root-edge arm that spells none, and a file with one yields the arm that spells it.
+- [ ] **Step 2:** Type-level tests in `descriptor.test-d.ts`: `rust.createEngine({ render: { indent: '\t' } })` type-checks and a wrong key or value fails the same way `createEngine(rust, ...)` does; `rust.styleFrom(...)` returns `Promise<RustAPI['options']>`; `regex.styleFrom` does not exist and `styleFrom(regex, ...)` is a type error, while `regex.styleFromSource(...)` and `styleFromSource(regex, ...)` type-check.
 - [ ] **Step 3:** Implement; glossary; the READMEs and the engine spec gain `rust.createEngine` and `rust.styleFrom` snippets, run by the README gate.
 
 ---
 
-### Task 7: Indentation is one fact
+### Task 8: Indentation is one fact
 
 **Files:** `rust/crates/sittir-core/src/format.rs`, `infer.rs`, `inferred.rs`, `napi_engine.rs`, `packages/common/src/engine.ts`, `packages/types/src/engine-api.ts`.
 
@@ -200,7 +216,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 8: Parity fixtures, docs, final gates
+### Task 9: Parity fixtures, docs, final gates
 
 - [ ] **Step 1: Fixtures.** The two parity fixtures dropped when the root edges became options come back, with the tree's inferred table as their options. This adds an options field to the fixture schema; agree the field with the render-coordinate owner first, since the fixtures and the parity crate are theirs. `source_file` left-out goes from 6 to 4.
 - [ ] **Step 2: Docs.** Glossary entries for every new declaration; the render-options spec's tree-table section describes what landed and names `styleFrom` where it named a public method; the engine spec gains `createEngine` and `styleFrom` on the descriptor; the root README and the language READMEs gain `rust.createEngine` and `rust.styleFrom` snippets, run by the README gate.
@@ -212,6 +228,4 @@ The edit work (`$save()` and the like) is a separate design. This plan keeps to 
 
 ## Open questions
 
-1. **Fixture schema.** The options field for parity fixtures is owned by the render-coordinate work; agree it with them before Task 8.
-2. **Source-text name.** `styleFromSource` is proposed for the in-memory form.
-3. **No `file-types`.** A grammar with none (scm, regex) accepts no path in `styleFrom`. Confirm, or name a fallback.
+1. **Fixture schema.** The options field for parity fixtures is owned by the render-coordinate work; agree it with them before Task 9.
