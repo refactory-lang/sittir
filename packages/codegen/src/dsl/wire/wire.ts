@@ -4,8 +4,8 @@ import type { AnyRule } from '../../types/rule.ts';
 import { typeEq } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
-import { isPreference } from '../primitives/preference.ts';
-import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import { BINDINGS_KEY, INDENT_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
 	parseFlankAddress,
@@ -312,8 +312,8 @@ export type PatchesCheck<B, P> = IsShaped<B> extends false
 	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
 
 type DeclaredLabels<O> = {
-	[K in Exclude<keyof O, typeof BINDINGS_KEY> & string]: `${K}/${keyof O[K] & string}`;
-}[Exclude<keyof O, typeof BINDINGS_KEY> & string];
+	[K in Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string];
 
 type PreferencePathCheck<M> = {
 	readonly [Path in keyof M]: Path extends string
@@ -346,7 +346,9 @@ type BindingsCheck<B, O, M> = {
 export type OptionsCheck<B, O> = {
 	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
 		? BindingsCheck<B, O, O[K]>
-		: PreferencePathCheck<O[K]>;
+		: K extends typeof INDENT_KEY
+			? PreferencePlaceholder
+			: PreferencePathCheck<O[K]>;
 };
 
 export type ShapedSymbols<B extends GrammarJson> = {

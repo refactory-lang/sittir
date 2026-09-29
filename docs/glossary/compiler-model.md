@@ -4298,6 +4298,10 @@ The seam arms of a site that admits only line breaks, the after edge of a line-t
 
 The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_whitespace` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_whitespace` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::indentUnitOf`
+
+The grammar's declared render indent unit, checked against `indentChars`. A grammar with indent characters must declare `indent` in its `options:` block, and a missing declaration throws naming the grammar; the unit must be non-empty and made only of those characters. A grammar with none (regex) must not declare one, and gets the empty unit. The unit is the one source of the render default: `renderOptionsRs` emits it into `defaults()`, and the runtime's format extractor compares parsed sources against it.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 
 Each site's arm, with the narrowest address that reaches it winning.

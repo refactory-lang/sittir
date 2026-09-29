@@ -30,6 +30,8 @@ describe('format-roundtrip python fixtures', () => {
 			if (entry.formatCategory !== 'canonical') {
 				expect(parsed.format).toBeDefined();
 				expect(parsed.format).toHaveProperty('boundary');
+			} else {
+				expect(parsed.format).toBeUndefined();
 			}
 		});
 	}

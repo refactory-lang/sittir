@@ -14,7 +14,7 @@ import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
-import { indentChars } from '../compiler/model/whitespace-arms.ts';
+import { indentChars, indentUnitOf } from '../compiler/model/whitespace-arms.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -86,6 +86,7 @@ export interface RenderOptionsPlan {
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
 	readonly indentChars: readonly string[];
+	readonly indent: string;
 }
 
 const KIND_ANON = 1;
@@ -133,7 +134,9 @@ export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
 	nodeMap: NodeMap,
-	whitespaceText: ReadonlyMap<string, string>
+	whitespaceText: ReadonlyMap<string, string>,
+	declaredIndent: string | undefined,
+	grammar: string
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -219,7 +222,8 @@ export function planRenderOptions(
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id),
 		kindFlags: kindFlagsOf(kindEntries, nodeMap),
-		indentChars: indentChars(nodeMap)
+		indentChars: indentChars(nodeMap),
+		indent: indentUnitOf(nodeMap, declaredIndent, grammar)
 	};
 }
 
@@ -566,6 +570,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        edge_rows: EDGE_ROWS,');
 	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        sites: SITE_SPECS,');
+	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');

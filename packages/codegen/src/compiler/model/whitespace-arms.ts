@@ -59,3 +59,18 @@ export function indentChars(nodeMap: NodeMap): readonly string[] {
 		return node !== undefined && isFixedTextLeaf(node) ? [node.text] : [];
 	});
 }
+
+export function indentUnitOf(nodeMap: NodeMap, declared: string | undefined, grammar: string): string {
+	const chars = indentChars(nodeMap);
+	if (chars.length === 0) {
+		if (declared !== undefined) throw new Error(`options: ${grammar} declares indent ${JSON.stringify(declared)} but its whitespace admits no indent characters`);
+		return '';
+	}
+	if (declared === undefined) {
+		throw new Error(`options: ${grammar} admits indent characters ${JSON.stringify(chars)} but declares no indent; add indent: preference(unit) to its options`);
+	}
+	if (declared === '' || ![...declared].every((c) => chars.includes(c))) {
+		throw new Error(`options: ${grammar} indent ${JSON.stringify(declared)} is not one or more of ${JSON.stringify(chars)}`);
+	}
+	return declared;
+}

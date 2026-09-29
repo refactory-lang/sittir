@@ -8,17 +8,21 @@
 use crate::types::{FormatBoundary, FormatRecord, FormatTrivia};
 
 /// Walk `tree` over `source` and return a consensus `FormatRecord`, or
-/// `None` when the source is already template-canonical (2-space or no
-/// indentation detected).
+/// `None` when the source is already template-canonical (its dominant
+/// indentation is `canonical_indent`, or there is none).
 ///
 /// Determinism guarantee: identical `source` + identical grammar version →
 /// identical result.
-pub fn extract_format(source: &str, tree: &tree_sitter::Tree) -> Option<FormatRecord> {
+pub fn extract_format(
+    source: &str,
+    tree: &tree_sitter::Tree,
+    canonical_indent: &str,
+) -> Option<FormatRecord> {
     // Touch the root node so the tree parameter is exercised.  Phase 2 will
     // use the cursor to collect per-kind separator and trivia samples.
     let _root = tree.root_node();
 
-    let indent = detect_indent(source)?;
+    let indent = detect_indent(source, canonical_indent)?;
 
     Some(FormatRecord {
         boundary: Some(FormatBoundary {
@@ -34,14 +38,11 @@ pub fn extract_format(source: &str, tree: &tree_sitter::Tree) -> Option<FormatRe
 
 /// Scan `source` for a dominant indentation pattern.
 ///
-/// Returns `None` when 2-space indentation (the template-canonical style) or
-/// no indentation at all is detected — callers treat that as "already
-/// canonical".
-///
-/// Returns `Some("\t")` when tab indentation dominates, and
-/// `Some("    ")` (four spaces) when 4-space indentation dominates over
-/// 2-space.
-fn detect_indent(source: &str) -> Option<String> {
+/// Returns `None` when the dominant indentation is `canonical_indent` (the
+/// grammar's declared unit) or when there is no indentation at all —
+/// callers treat that as "already canonical". Otherwise returns the
+/// dominant unit: a tab, four spaces, or two spaces.
+fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
     let mut tab_count = 0usize;
     let mut four_space_count = 0usize;
     let mut two_space_count = 0usize;
@@ -56,14 +57,16 @@ fn detect_indent(source: &str) -> Option<String> {
         }
     }
 
-    if tab_count > four_space_count && tab_count > two_space_count {
-        Some("\t".to_string())
+    let dominant = if tab_count > four_space_count && tab_count > two_space_count {
+        "\t"
     } else if four_space_count > two_space_count && four_space_count > tab_count {
-        Some("    ".to_string())
+        "    "
+    } else if two_space_count > four_space_count && two_space_count > tab_count {
+        "  "
     } else {
-        // 2-space or no indentation — already canonical.
-        None
-    }
+        return None;
+    };
+    (dominant != canonical_indent).then(|| dominant.to_string())
 }
 
 /// Apply a [`FormatRecord`] to a canonical render string.
@@ -128,7 +131,7 @@ mod tests {
         let source = "fn main() {\n\tprintln!(\"hello\");\n}\n";
         let tree = parse_rust(source);
 
-        let result = extract_format(source, &tree);
+        let result = extract_format(source, &tree, "  ");
         assert!(
             result.is_some(),
             "tab-indented source should return Some(FormatRecord)"
@@ -144,7 +147,7 @@ mod tests {
         let source = "fn main() {\n  println!(\"hello\");\n}\n";
         let tree = parse_rust(source);
 
-        let result = extract_format(source, &tree);
+        let result = extract_format(source, &tree, "  ");
         assert!(
             result.is_none(),
             "2-space indent source should return None (already canonical)"
@@ -156,7 +159,7 @@ mod tests {
         let source = "fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n";
         let tree = parse_rust(source);
 
-        let result = extract_format(source, &tree);
+        let result = extract_format(source, &tree, "  ");
         assert!(
             result.is_some(),
             "4-space indent source should return Some(FormatRecord)"
@@ -164,6 +167,14 @@ mod tests {
         let record = result.unwrap();
         let boundary = record.boundary.unwrap();
         assert_eq!(boundary.leading, Some("    ".to_string()));
+    }
+
+    #[test]
+    fn extract_format_declared_unit_is_canonical() {
+        let source = "fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n";
+        let tree = parse_rust(source);
+
+        assert!(extract_format(source, &tree, "    ").is_none());
     }
 
     // --- apply_format tests ---
