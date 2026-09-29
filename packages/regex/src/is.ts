@@ -78,7 +78,7 @@ const _supertype_inlineFlagsGroup_ids = new Set<number>([82, 83, 84]);
 const _supertype_characterEscape_ids = new Set<number>([76, 41, 42]);
 const _supertype_whitespace_ids = new Set<number>([47, 48, 49, 50]);
 
-export const is = {
+export const is = Object.freeze({
 	pattern: _g(TSKindId.Pattern),
 	alternation: _g(TSKindId.Alternation),
 	term: _g(TSKindId.Term),
@@ -101,4 +101,4 @@ export const is = {
 	inlineFlagsGroup: _sg(_supertype_inlineFlagsGroup_ids),
 	characterEscape: _sg(_supertype_characterEscape_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
-} as unknown as IsGuards;
+}) as unknown as IsGuards;

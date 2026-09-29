@@ -154,6 +154,8 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
  */
 ```
 
+`hooks` is frozen, and so is the trivia hook it carries (the grammar's facts, joined by the comment coercer when there is one), so every engine of the language shares facts that none can change.
+
 ### `packages/codegen/src/emitters/factories.ts::collectUsesNonEmptyArray`
 
 ```text
@@ -6816,6 +6818,8 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // `"as_pattern"` shadowing the real `as_pattern` entry.
 ```
 
+`TSKindId` is frozen right after its declaration.
+
 ### `packages/codegen/src/emitters/types.ts::makeInliningLookupUnion`
 
 ```text
@@ -9204,6 +9208,8 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  */
 ```
 
+`is` is frozen, and stays a check on the kind id alone: the language of a node is a fact of the engine's node guards, not of the package-level table.
+
 ### `packages/codegen/src/emitters/shared.ts::module`
 
 ```text
@@ -10991,6 +10997,8 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 
 The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
 
+`triviaFacts` is frozen, with its whitespace run table.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -12410,6 +12418,8 @@ namespace, so a route to a shared kind stays reachable without going
 through `ir`. If that export's key collides with a flat leaf/keyword
 factory's own `ir` key, the parent's route object is attached onto that
 leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
+
+`ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
 
@@ -14738,6 +14748,8 @@ Renders one sub-factory's transformation method and its two applications. Method
 
 Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
 
+The overlay table and each form's pair are frozen.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::ValueArm`
 
 ```text
@@ -15220,6 +15232,8 @@ ride in the erased-helper block for the flatten methods.
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 It imports the grammar types as `T` when any emitted block names `T.`.
+
+Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16167,6 +16181,8 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 ### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
 
 Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
+
+The table and each row's key list are frozen.
 
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 

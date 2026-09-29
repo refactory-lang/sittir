@@ -74,7 +74,7 @@ export const ir: {
 	readonly definition: typeof definition;
 	readonly groupExpression: typeof groupExpression;
 	readonly namedNodeExpression: typeof namedNodeExpression;
-} = {
+} = Object.freeze({
 	// Node factories
 	program: F.program,
 	escapeSequence: F.escapeSequence,
@@ -108,4 +108,4 @@ export const ir: {
 	definition,
 	groupExpression,
 	namedNodeExpression
-};
+});

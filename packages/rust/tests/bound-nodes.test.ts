@@ -107,3 +107,38 @@ describe('the engine a node belongs to', () => {
 		expect(other.build.identifier('z').$render()).toBe('z');
 	});
 });
+
+describe('the language facts an engine shares', () => {
+	it('are frozen, so no engine can change them for another', async () => {
+		const first = await createEngine(rust);
+		const second = await createEngine(rust);
+		const write = (fn: () => void) => expect(fn).toThrow(TypeError);
+		write(() => {
+			(first.trivia as { comment?: unknown }).comment = () => undefined;
+		});
+		write(() => {
+			(first as { render: unknown }).render = () => undefined;
+		});
+		write(() => {
+			(first.is as unknown as Record<string, unknown>).functionItem = () => true;
+		});
+		write(() => {
+			(first.kinds as unknown as Record<string, unknown>).SourceFile = 0;
+		});
+		write(() => {
+			(first.trivia.innerGaps as Record<string, unknown>).block = [];
+		});
+		expect(() => {
+			(first.build as Record<string, unknown>).identifier = () => undefined;
+		}).toThrow(/read-only/);
+		expect(second.trivia.comment).toBe(first.trivia.comment);
+		expect(second.parse('fn f() {}\n').statements()).toHaveLength(1);
+	});
+
+	it('leave the ir table of the package frozen at its source', async () => {
+		const { ir } = await import('../src/ir.ts');
+		expect(Object.isFrozen(ir)).toBe(true);
+		expect(Object.isFrozen(ir.functionItem)).toBe(true);
+		expect(Object.isFrozen(ir.functionItem.strict)).toBe(false);
+	});
+});

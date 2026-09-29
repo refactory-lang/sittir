@@ -15,7 +15,7 @@ import * as F from './factories/index.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
-export const synonym = {
+export const synonym = Object.freeze({
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
@@ -49,7 +49,7 @@ export const synonym = {
 	get class(): (typeof ir)['classDefinition'] {
 		return ir.classDefinition;
 	}
-} as const;
+} as const);
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
@@ -409,7 +409,7 @@ export const ir: {
 	readonly compoundStatement: typeof compoundStatement;
 	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
-} = {
+} = Object.freeze({
 	// Node factories
 	module: F.module,
 	simpleStatements: F.simpleStatements,
@@ -592,4 +592,4 @@ export const ir: {
 	compoundStatement,
 	parameter,
 	synonym
-};
+});

@@ -5,11 +5,14 @@ import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type ScmTypeMap } from './types.js';
 import { INNER_GAPS } from './consts.js';
 
-export const triviaFacts = {
+export const triviaFacts = Object.freeze({
 	kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', '_tab', 'comment']),
 	innerGaps: INNER_GAPS,
-	whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 } }
-} satisfies TriviaFacts;
+	whitespace: Object.freeze({
+		run: /^(?:(?:(?:\s+))+)$/u,
+		kindIdByText: Object.freeze({ ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 })
+	})
+} satisfies TriviaFacts);
 
 export const { isNode, withMethods } = bindRuntime<ScmTypeMap>();

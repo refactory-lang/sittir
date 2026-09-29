@@ -47,7 +47,7 @@ export const futureImportStatement: typeof B.futureImportStatement & {
 			...args: ArgsOf<typeof C.coerceToParenthesizedImportList>
 		) => ReturnType<typeof F.buildFutureImportStatement>;
 	};
-} = {
+} = Object.freeze({
 	...B.futureImportStatement,
 	importList: {
 		strict: futureImportStatement$importList(F.buildFutureImportStatement, F.buildImportList),
@@ -60,7 +60,7 @@ export const futureImportStatement: typeof B.futureImportStatement & {
 			C.coerceToParenthesizedImportList
 		)
 	}
-};
+});
 
 const importFromStatement$importList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -106,7 +106,7 @@ export const importFromStatement: typeof B.importFromStatement & {
 			options?: OptionsArg<typeof C.coerceToImportFromStatement>
 		) => ReturnType<typeof C.coerceToImportFromStatement>;
 	};
-} = {
+} = Object.freeze({
 	...B.importFromStatement,
 	importList: {
 		strict: importFromStatement$importList(F.buildImportFromStatement, F.buildImportList),
@@ -119,7 +119,7 @@ export const importFromStatement: typeof B.importFromStatement & {
 			C.coerceToParenthesizedImportList
 		)
 	}
-};
+});
 
 const comparisonOperator$comparators = <
 	PF extends (config: never) => unknown,
@@ -195,11 +195,11 @@ const comparisonOperator$seatedCoerce: (
 export const comparisonOperator: typeof B.comparisonOperator & {
 	strict: typeof comparisonOperator$seated;
 	coerce: typeof comparisonOperator$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.comparisonOperator,
 	strict: comparisonOperator$seated,
 	coerce: comparisonOperator$seatedCoerce
-};
+});
 
 const yieldFromClause$comparison =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -258,7 +258,7 @@ const yieldFromClause: {
 		strict: (...args: ArgsOf<typeof F.buildAsPattern>) => ReturnType<typeof F.buildYieldFromClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToAsPattern>) => ReturnType<typeof F.buildYieldFromClause>;
 	};
-} = {
+} = Object.freeze({
 	comparison: {
 		strict: yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.strict),
 		coerce: yieldFromClause$comparison(F.buildYieldFromClause, comparisonOperator.coerce)
@@ -287,7 +287,7 @@ const yieldFromClause: {
 		strict: yieldFromClause$as(F.buildYieldFromClause, F.buildAsPattern),
 		coerce: yieldFromClause$as(F.buildYieldFromClause, C.coerceToAsPattern)
 	}
-};
+});
 
 const yield_$fromClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -354,7 +354,7 @@ export const yield_: typeof B.yield_ & {
 			coerce: (...args: ArgsOf<typeof yieldFromClause.as.coerce>) => ReturnType<typeof F.buildYield>;
 		};
 	};
-} = {
+} = Object.freeze({
 	...B.yield_,
 	fromClause: {
 		strict: yield_$fromClause(F.buildYield, F.buildYieldFromClause),
@@ -388,7 +388,7 @@ export const yield_: typeof B.yield_ & {
 			coerce: yield_$fromClause$as(F.buildYield, yieldFromClause.as.coerce)
 		}
 	}
-};
+});
 
 const expressionStatement$comparison =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -581,7 +581,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 			};
 		};
 	};
-} = {
+} = Object.freeze({
 	...B.expressionStatement,
 	comparison: {
 		strict: expressionStatement$comparison(F.buildExpressionStatement, comparisonOperator.strict),
@@ -688,7 +688,7 @@ export const expressionStatement: typeof B.expressionStatement & {
 			}
 		}
 	}
-};
+});
 
 const matchStatement$subjects = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
@@ -724,11 +724,11 @@ const matchStatement$seatedCoerce: (
 export const matchStatement: typeof B.matchStatement & {
 	strict: typeof matchStatement$seated;
 	coerce: typeof matchStatement$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.matchStatement,
 	strict: matchStatement$seated,
 	coerce: matchStatement$seatedCoerce
-};
+});
 
 const matchBlock$block =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -747,7 +747,7 @@ export const matchBlock: typeof B.matchBlock & {
 		strict: (options?: OptionsArg<typeof F.buildMatchBlock>) => ReturnType<typeof F.buildMatchBlock>;
 		coerce: (options?: OptionsArg<typeof C.coerceToMatchBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
 	};
-} = {
+} = Object.freeze({
 	...B.matchBlock,
 	block: {
 		strict: matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock),
@@ -757,7 +757,7 @@ export const matchBlock: typeof B.matchBlock & {
 		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
 		coerce: matchBlock$empty(C.coerceToMatchBlock, TSKindId.Newline)
 	}
-};
+});
 
 const caseClause$casePatterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
@@ -790,11 +790,11 @@ const caseClause$seatedCoerce: (
 export const caseClause: typeof B.caseClause & {
 	strict: typeof caseClause$seated;
 	coerce: typeof caseClause$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.caseClause,
 	strict: caseClause$seated,
 	coerce: caseClause$seatedCoerce
-};
+});
 
 const exceptClauseException$as =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -819,7 +819,7 @@ const exceptClauseException: {
 			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionList>
 		) => ReturnType<typeof F.buildExceptClauseException>;
 	};
-} = {
+} = Object.freeze({
 	as: {
 		strict: exceptClauseException$as(F.buildExceptClauseException, F.buildExceptClauseExceptionAs),
 		coerce: exceptClauseException$as(F.buildExceptClauseException, C.coerceToExceptClauseExceptionAs)
@@ -828,7 +828,7 @@ const exceptClauseException: {
 		strict: exceptClauseException$list(F.buildExceptClauseException, F.buildExceptClauseExceptionList),
 		coerce: exceptClauseException$list(F.buildExceptClauseException, C.coerceToExceptClauseExceptionList)
 	}
-};
+});
 
 const exceptClause$exception =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1187,7 +1187,7 @@ export const exceptClause: typeof B.exceptClause & {
 			options?: OptionsArg<typeof C.coerceToExceptClause>
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
-} = {
+} = Object.freeze({
 	...B.exceptClause,
 	exception: {
 		strict: exceptClause$exception(F.buildExceptClause, F.buildExceptClauseException),
@@ -1249,7 +1249,7 @@ export const exceptClause: typeof B.exceptClause & {
 		strict: exceptClause$empty(F.buildExceptClause, F.buildSuiteEmpty),
 		coerce: exceptClause$empty(C.coerceToExceptClause, C.coerceToSuiteEmpty)
 	}
-};
+});
 
 const expressionList$comparison =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1410,7 +1410,7 @@ export const expressionList: typeof B.expressionList & {
 			options?: OptionsArg<typeof C.coerceToExpressionList>
 		) => ReturnType<typeof C.coerceToExpressionList>;
 	};
-} = {
+} = Object.freeze({
 	...B.expressionList,
 	comparison: {
 		strict: expressionList$comparison(F.buildExpressionList, comparisonOperator.strict),
@@ -1440,7 +1440,7 @@ export const expressionList: typeof B.expressionList & {
 		strict: expressionList$as(F.buildExpressionList, F.buildAsPattern),
 		coerce: expressionList$as(C.coerceToExpressionList, C.coerceToAsPattern)
 	}
-};
+});
 
 const keywordPattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1466,13 +1466,13 @@ export const keywordPattern: typeof B.keywordPattern & {
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
-} = {
+} = Object.freeze({
 	...B.keywordPattern,
 	negative: {
 		strict: keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative),
 		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative)
 	}
-};
+});
 
 const simplePattern$negative =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1483,13 +1483,13 @@ export const simplePattern: typeof B.simplePattern & {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
 	};
-} = {
+} = Object.freeze({
 	...B.simplePattern,
 	negative: {
 		strict: simplePattern$negative(F.buildSimplePattern, F.buildSimplePatternNegative),
 		coerce: simplePattern$negative(F.buildSimplePattern, C.coerceToSimplePatternNegative)
 	}
-};
+});
 
 const casePattern$caseAsPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1532,7 +1532,7 @@ export const casePattern: typeof B.casePattern & {
 			coerce: (...args: ArgsOf<typeof simplePattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
 	};
-} = {
+} = Object.freeze({
 	...B.casePattern,
 	caseAsPattern: {
 		strict: casePattern$caseAsPattern(F.buildCasePattern, F.buildCaseAsPattern),
@@ -1554,7 +1554,7 @@ export const casePattern: typeof B.casePattern & {
 			coerce: casePattern$simplePattern$negative(F.buildCasePattern, simplePattern.negative.coerce)
 		}
 	}
-};
+});
 
 const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
@@ -1580,11 +1580,11 @@ const unionPattern$seatedCoerce: (
 export const unionPattern: typeof B.unionPattern & {
 	strict: typeof unionPattern$seated;
 	coerce: typeof unionPattern$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.unionPattern,
 	strict: unionPattern$seated,
 	coerce: unionPattern$seatedCoerce
-};
+});
 
 const keyValuePattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1607,13 +1607,13 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
-} = {
+} = Object.freeze({
 	...B.keyValuePattern,
 	negative: {
 		strict: keyValuePattern$negative(F.buildKeyValuePattern, F.buildSimplePatternNegative),
 		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative)
 	}
-};
+});
 
 const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
@@ -1652,11 +1652,11 @@ const classPattern$seatedCoerce: (
 export const classPattern: typeof B.classPattern & {
 	strict: typeof classPattern$seated;
 	coerce: typeof classPattern$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.classPattern,
 	strict: classPattern$seated,
 	coerce: classPattern$seatedCoerce
-};
+});
 
 const subscript$subscripts = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
@@ -1689,11 +1689,11 @@ const subscript$seatedCoerce: (
 export const subscript: typeof B.subscript & {
 	strict: typeof subscript$seated;
 	coerce: typeof subscript$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.subscript,
 	strict: subscript$seated,
 	coerce: subscript$seatedCoerce
-};
+});
 
 const slice$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1737,11 +1737,11 @@ const slice$seatedCoerce: (
 export const slice: typeof B.slice & {
 	strict: typeof slice$seated;
 	coerce: typeof slice$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.slice,
 	strict: slice$seated,
 	coerce: slice$seatedCoerce
-};
+});
 
 const type$comparison =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1840,7 +1840,7 @@ export const type: typeof B.type & {
 		strict: (...args: ArgsOf<typeof F.buildMemberType>) => ReturnType<typeof F.buildType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToMemberType>) => ReturnType<typeof F.buildType>;
 	};
-} = {
+} = Object.freeze({
 	...B.type,
 	comparison: {
 		strict: type$comparison(F.buildType, comparisonOperator.strict),
@@ -1881,7 +1881,7 @@ export const type: typeof B.type & {
 		strict: type$memberType(F.buildType, F.buildMemberType),
 		coerce: type$memberType(F.buildType, C.coerceToMemberType)
 	}
-};
+});
 
 export const simpleStatement: {
 	readonly futureImport: typeof futureImportStatement;
@@ -1900,7 +1900,7 @@ export const simpleStatement: {
 	readonly nonlocal: typeof B.nonlocalStatement;
 	readonly exec: typeof B.execStatement;
 	readonly typeAlias: typeof B.typeAliasStatement;
-} = {
+} = Object.freeze({
 	futureImport: futureImportStatement,
 	import: B.importStatement,
 	importFrom: importFromStatement,
@@ -1910,14 +1910,14 @@ export const simpleStatement: {
 	return: B.returnStatement,
 	delete: B.deleteStatement,
 	raise: B.raiseStatement,
-	pass: { strict: F.buildPassStatement, coerce: C.coerceToPassStatement },
-	break: { strict: F.buildBreakStatement, coerce: C.coerceToBreakStatement },
-	continue: { strict: F.buildContinueStatement, coerce: C.coerceToContinueStatement },
+	pass: Object.freeze({ strict: F.buildPassStatement, coerce: C.coerceToPassStatement }),
+	break: Object.freeze({ strict: F.buildBreakStatement, coerce: C.coerceToBreakStatement }),
+	continue: Object.freeze({ strict: F.buildContinueStatement, coerce: C.coerceToContinueStatement }),
 	global: B.globalStatement,
 	nonlocal: B.nonlocalStatement,
 	exec: B.execStatement,
 	typeAlias: B.typeAliasStatement
-};
+});
 
 export const compoundStatement: {
 	readonly if: typeof B.ifStatement;
@@ -1929,7 +1929,7 @@ export const compoundStatement: {
 	readonly class: typeof B.classDefinition;
 	readonly decorated: typeof B.decoratedDefinition;
 	readonly match: typeof matchStatement;
-} = {
+} = Object.freeze({
 	if: B.ifStatement,
 	for: B.forStatement,
 	while: B.whileStatement,
@@ -1939,25 +1939,25 @@ export const compoundStatement: {
 	class: B.classDefinition,
 	decorated: B.decoratedDefinition,
 	match: matchStatement
-};
+});
 
 export const withClause: {
 	readonly bare: typeof B.withClauseBare;
 	readonly paren: { strict: typeof F.buildWithClauseParen; coerce: typeof C.coerceToWithClauseParen };
-} = {
+} = Object.freeze({
 	bare: B.withClauseBare,
-	paren: { strict: F.buildWithClauseParen, coerce: C.coerceToWithClauseParen }
-};
+	paren: Object.freeze({ strict: F.buildWithClauseParen, coerce: C.coerceToWithClauseParen })
+});
 
 export const suite: {
 	readonly inline: { strict: typeof F.buildSuiteInline; coerce: typeof C.coerceToSuiteInline };
 	readonly block: { strict: typeof F.buildSuiteBlock; coerce: typeof C.coerceToSuiteBlock };
 	readonly empty: { strict: typeof F.buildSuiteEmpty; coerce: typeof C.coerceToSuiteEmpty };
-} = {
-	inline: { strict: F.buildSuiteInline, coerce: C.coerceToSuiteInline },
-	block: { strict: F.buildSuiteBlock, coerce: C.coerceToSuiteBlock },
-	empty: { strict: F.buildSuiteEmpty, coerce: C.coerceToSuiteEmpty }
-};
+} = Object.freeze({
+	inline: Object.freeze({ strict: F.buildSuiteInline, coerce: C.coerceToSuiteInline }),
+	block: Object.freeze({ strict: F.buildSuiteBlock, coerce: C.coerceToSuiteBlock }),
+	empty: Object.freeze({ strict: F.buildSuiteEmpty, coerce: C.coerceToSuiteEmpty })
+});
 
 export const parameter: {
 	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
@@ -1972,27 +1972,27 @@ export const parameter: {
 		coerce: typeof C.coerceToPositionalSeparator;
 	};
 	readonly dictionarySplat: typeof B.dictionarySplatPattern;
-} = {
-	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier },
+} = Object.freeze({
+	identifier: Object.freeze({ strict: F.buildIdentifier, coerce: C.coerceToIdentifier }),
 	typed: B.typedParameter,
 	default: B.defaultParameter,
 	typedDefault: B.typedDefaultParameter,
 	listSplat: B.listSplatPattern,
 	tuple: B.tuplePattern,
-	keywordSeparator: { strict: F.buildKeywordSeparator, coerce: C.coerceToKeywordSeparator },
-	positionalSeparator: { strict: F.buildPositionalSeparator, coerce: C.coerceToPositionalSeparator },
+	keywordSeparator: Object.freeze({ strict: F.buildKeywordSeparator, coerce: C.coerceToKeywordSeparator }),
+	positionalSeparator: Object.freeze({ strict: F.buildPositionalSeparator, coerce: C.coerceToPositionalSeparator }),
 	dictionarySplat: B.dictionarySplatPattern
-};
+});
 
 export const assignment: {
 	readonly eq: { strict: typeof F.buildAssignmentEq; coerce: typeof C.coerceToAssignmentEq };
 	readonly type: { strict: typeof F.buildAssignmentType; coerce: typeof C.coerceToAssignmentType };
 	readonly typed: { strict: typeof F.buildAssignmentTyped; coerce: typeof C.coerceToAssignmentTyped };
-} = {
-	eq: { strict: F.buildAssignmentEq, coerce: C.coerceToAssignmentEq },
-	type: { strict: F.buildAssignmentType, coerce: C.coerceToAssignmentType },
-	typed: { strict: F.buildAssignmentTyped, coerce: C.coerceToAssignmentTyped }
-};
+} = Object.freeze({
+	eq: Object.freeze({ strict: F.buildAssignmentEq, coerce: C.coerceToAssignmentEq }),
+	type: Object.freeze({ strict: F.buildAssignmentType, coerce: C.coerceToAssignmentType }),
+	typed: Object.freeze({ strict: F.buildAssignmentTyped, coerce: C.coerceToAssignmentTyped })
+});
 
 export const escapeSequence: {
 	readonly strict: typeof F.buildEscapeSequenceSimple;
@@ -2013,17 +2013,20 @@ export const escapeSequence: {
 	};
 	readonly simple: { strict: typeof F.buildEscapeSequenceSimple; coerce: typeof C.coerceToEscapeSequenceSimple };
 	readonly named: { strict: typeof F.buildEscapeSequenceNamed; coerce: typeof C.coerceToEscapeSequenceNamed };
-} = {
+} = Object.freeze({
 	strict: F.buildEscapeSequenceSimple,
 	coerce: C.coerceToEscapeSequenceSimple,
-	unicodeFixed: { strict: F.buildEscapeSequenceUnicodeFixed, coerce: C.coerceToEscapeSequenceUnicodeFixed },
-	unicodeWide: { strict: F.buildEscapeSequenceUnicodeWide, coerce: C.coerceToEscapeSequenceUnicodeWide },
-	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex },
-	octal: { strict: F.buildEscapeSequenceOctal, coerce: C.coerceToEscapeSequenceOctal },
-	lineBreak: { strict: F.buildEscapeSequenceLineBreak, coerce: C.coerceToEscapeSequenceLineBreak },
-	simple: { strict: F.buildEscapeSequenceSimple, coerce: C.coerceToEscapeSequenceSimple },
-	named: { strict: F.buildEscapeSequenceNamed, coerce: C.coerceToEscapeSequenceNamed }
-};
+	unicodeFixed: Object.freeze({
+		strict: F.buildEscapeSequenceUnicodeFixed,
+		coerce: C.coerceToEscapeSequenceUnicodeFixed
+	}),
+	unicodeWide: Object.freeze({ strict: F.buildEscapeSequenceUnicodeWide, coerce: C.coerceToEscapeSequenceUnicodeWide }),
+	hex: Object.freeze({ strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex }),
+	octal: Object.freeze({ strict: F.buildEscapeSequenceOctal, coerce: C.coerceToEscapeSequenceOctal }),
+	lineBreak: Object.freeze({ strict: F.buildEscapeSequenceLineBreak, coerce: C.coerceToEscapeSequenceLineBreak }),
+	simple: Object.freeze({ strict: F.buildEscapeSequenceSimple, coerce: C.coerceToEscapeSequenceSimple }),
+	named: Object.freeze({ strict: F.buildEscapeSequenceNamed, coerce: C.coerceToEscapeSequenceNamed })
+});
 
 export const float: {
 	readonly strict: typeof F.buildFloatPoint;
@@ -2031,25 +2034,25 @@ export const float: {
 	readonly point: { strict: typeof F.buildFloatPoint; coerce: typeof C.coerceToFloatPoint };
 	readonly leadingPoint: { strict: typeof F.buildFloatLeadingPoint; coerce: typeof C.coerceToFloatLeadingPoint };
 	readonly scientific: { strict: typeof F.buildFloatScientific; coerce: typeof C.coerceToFloatScientific };
-} = {
+} = Object.freeze({
 	strict: F.buildFloatPoint,
 	coerce: C.coerceToFloatPoint,
-	point: { strict: F.buildFloatPoint, coerce: C.coerceToFloatPoint },
-	leadingPoint: { strict: F.buildFloatLeadingPoint, coerce: C.coerceToFloatLeadingPoint },
-	scientific: { strict: F.buildFloatScientific, coerce: C.coerceToFloatScientific }
-};
+	point: Object.freeze({ strict: F.buildFloatPoint, coerce: C.coerceToFloatPoint }),
+	leadingPoint: Object.freeze({ strict: F.buildFloatLeadingPoint, coerce: C.coerceToFloatLeadingPoint }),
+	scientific: Object.freeze({ strict: F.buildFloatScientific, coerce: C.coerceToFloatScientific })
+});
 
 export const lineContinuation: {
 	readonly strict: typeof F.buildLineContinuationNewline;
 	readonly coerce: typeof C.coerceToLineContinuationNewline;
 	readonly newline: { strict: typeof F.buildLineContinuationNewline; coerce: typeof C.coerceToLineContinuationNewline };
 	readonly nul: { strict: typeof F.buildLineContinuationNul; coerce: typeof C.coerceToLineContinuationNul };
-} = {
+} = Object.freeze({
 	strict: F.buildLineContinuationNewline,
 	coerce: C.coerceToLineContinuationNewline,
-	newline: { strict: F.buildLineContinuationNewline, coerce: C.coerceToLineContinuationNewline },
-	nul: { strict: F.buildLineContinuationNul, coerce: C.coerceToLineContinuationNul }
-};
+	newline: Object.freeze({ strict: F.buildLineContinuationNewline, coerce: C.coerceToLineContinuationNewline }),
+	nul: Object.freeze({ strict: F.buildLineContinuationNul, coerce: C.coerceToLineContinuationNul })
+});
 
 export const integerDecimal: {
 	readonly strict: typeof F.buildIntegerDecimalPlain;
@@ -2060,13 +2063,13 @@ export const integerDecimal: {
 		coerce: typeof C.coerceToIntegerDecimalImaginary;
 	};
 	readonly plain: { strict: typeof F.buildIntegerDecimalPlain; coerce: typeof C.coerceToIntegerDecimalPlain };
-} = {
+} = Object.freeze({
 	strict: F.buildIntegerDecimalPlain,
 	coerce: C.coerceToIntegerDecimalPlain,
-	long: { strict: F.buildIntegerDecimalLong, coerce: C.coerceToIntegerDecimalLong },
-	imaginary: { strict: F.buildIntegerDecimalImaginary, coerce: C.coerceToIntegerDecimalImaginary },
-	plain: { strict: F.buildIntegerDecimalPlain, coerce: C.coerceToIntegerDecimalPlain }
-};
+	long: Object.freeze({ strict: F.buildIntegerDecimalLong, coerce: C.coerceToIntegerDecimalLong }),
+	imaginary: Object.freeze({ strict: F.buildIntegerDecimalImaginary, coerce: C.coerceToIntegerDecimalImaginary }),
+	plain: Object.freeze({ strict: F.buildIntegerDecimalPlain, coerce: C.coerceToIntegerDecimalPlain })
+});
 
 export const integer: {
 	readonly strict: typeof F.buildIntegerDecimalPlain;
@@ -2075,11 +2078,11 @@ export const integer: {
 	readonly octal: { strict: typeof F.buildIntegerOctal; coerce: typeof C.coerceToIntegerOctal };
 	readonly binary: { strict: typeof F.buildIntegerBinary; coerce: typeof C.coerceToIntegerBinary };
 	readonly decimal: typeof integerDecimal;
-} = {
+} = Object.freeze({
 	strict: F.buildIntegerDecimalPlain,
 	coerce: C.coerceToIntegerDecimalPlain,
-	hex: { strict: F.buildIntegerHex, coerce: C.coerceToIntegerHex },
-	octal: { strict: F.buildIntegerOctal, coerce: C.coerceToIntegerOctal },
-	binary: { strict: F.buildIntegerBinary, coerce: C.coerceToIntegerBinary },
+	hex: Object.freeze({ strict: F.buildIntegerHex, coerce: C.coerceToIntegerHex }),
+	octal: Object.freeze({ strict: F.buildIntegerOctal, coerce: C.coerceToIntegerOctal }),
+	binary: Object.freeze({ strict: F.buildIntegerBinary, coerce: C.coerceToIntegerBinary }),
 	decimal: integerDecimal
-};
+});

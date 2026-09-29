@@ -34,10 +34,10 @@ function emitTriviaFacts(whitespace: WhitespaceTrivia | undefined, triviaKinds: 
 		...(whitespace === undefined
 			? []
 			: [
-					`    whitespace: { run: /${whitespace.run.source}/${whitespace.run.flags}, kindIdByText: ${JSON.stringify(Object.fromEntries(whitespace.kindIdByText))} }`
+					`    whitespace: Object.freeze({ run: /${whitespace.run.source}/${whitespace.run.flags}, kindIdByText: Object.freeze(${JSON.stringify(Object.fromEntries(whitespace.kindIdByText))}) })`
 				])
 	];
-	return ['export const triviaFacts = {', facts.join(',\n'), '} satisfies TriviaFacts;'];
+	return ['export const triviaFacts = Object.freeze({', facts.join(',\n'), '} satisfies TriviaFacts);'];
 }
 
 export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: NodeMap): string[] {

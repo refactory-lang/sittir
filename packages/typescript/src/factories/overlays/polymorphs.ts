@@ -52,13 +52,13 @@ export const importStatement: typeof B.importStatement & {
 			options?: OptionsArg<typeof C.coerceToImportStatement>
 		) => ReturnType<typeof C.coerceToImportStatement>;
 	};
-} = {
+} = Object.freeze({
 	...B.importStatement,
 	clauseFrom: {
 		strict: importStatement$clauseFrom(F.buildImportStatement, F.buildImportStatementClauseFrom),
 		coerce: importStatement$clauseFrom(C.coerceToImportStatement, C.coerceToImportStatementClauseFrom)
 	}
-};
+});
 
 const importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -77,7 +77,7 @@ const importClauseGroup: {
 		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
-} = {
+} = Object.freeze({
 	namespaceImport: {
 		strict: importClauseGroup$namespaceImport(F.buildImportClauseGroup, F.buildNamespaceImport),
 		coerce: importClauseGroup$namespaceImport(F.buildImportClauseGroup, C.coerceToNamespaceImport)
@@ -86,7 +86,7 @@ const importClauseGroup: {
 		strict: importClauseGroup$namedImports(F.buildImportClauseGroup, F.buildNamedImports),
 		coerce: importClauseGroup$namedImports(F.buildImportClauseGroup, C.coerceToNamedImports)
 	}
-};
+});
 
 const importClauseDefaultImport$importClauseGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -158,7 +158,7 @@ const importClauseDefaultImport: {
 			) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 		};
 	};
-} = {
+} = Object.freeze({
 	importClauseGroup: {
 		strict: importClauseDefaultImport$importClauseGroup(F.buildImportClauseDefaultImport, F.buildImportClauseGroup),
 		coerce: importClauseDefaultImport$importClauseGroup(
@@ -186,7 +186,7 @@ const importClauseDefaultImport: {
 			)
 		}
 	}
-};
+});
 
 const importClause$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -249,7 +249,7 @@ export const importClause: typeof B.importClause & {
 			};
 		};
 	};
-} = {
+} = Object.freeze({
 	...B.importClause,
 	namespaceImport: {
 		strict: importClause$namespaceImport(F.buildImportClause, F.buildNamespaceImport),
@@ -293,7 +293,7 @@ export const importClause: typeof B.importClause & {
 			}
 		}
 	}
-};
+});
 
 const forInStatement$lhs =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -365,7 +365,7 @@ export const forInStatement: typeof B.forInStatement & {
 			options?: OptionsArg<typeof C.coerceToForInStatement>
 		) => ReturnType<typeof C.coerceToForInStatement>;
 	};
-} = {
+} = Object.freeze({
 	...B.forInStatement,
 	lhs: {
 		strict: forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs),
@@ -379,7 +379,7 @@ export const forInStatement: typeof B.forInStatement & {
 		strict: forInStatement$letConstKind(F.buildForInStatement, F.buildForHeaderLetConstKind),
 		coerce: forInStatement$letConstKind(C.coerceToForInStatement, C.coerceToForHeaderLetConstKind)
 	}
-};
+});
 
 const catchClause$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -416,11 +416,11 @@ const catchClause$seatedCoerce: (
 export const catchClause: typeof B.catchClause & {
 	strict: typeof catchClause$seated;
 	coerce: typeof catchClause$seatedCoerce;
-} = {
+} = Object.freeze({
 	...B.catchClause,
 	strict: catchClause$seated,
 	coerce: catchClause$seatedCoerce
-};
+});
 
 const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -439,7 +439,7 @@ export const classHeritage: typeof B.classHeritage & {
 		strict: (...args: ArgsOf<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
 		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
 	};
-} = {
+} = Object.freeze({
 	...B.classHeritage,
 	extendsClause: {
 		strict: classHeritage$extendsClause(F.buildClassHeritage, F.buildClassHeritageExtendsClause),
@@ -449,7 +449,7 @@ export const classHeritage: typeof B.classHeritage & {
 		strict: classHeritage$implementsClause(F.buildClassHeritage, F.buildImplementsClause),
 		coerce: classHeritage$implementsClause(F.buildClassHeritage, C.coerceToImplementsClause)
 	}
-};
+});
 
 const arrowFunction$parameter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -475,13 +475,13 @@ export const arrowFunction: typeof B.arrowFunction & {
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
 	};
-} = {
+} = Object.freeze({
 	...B.arrowFunction,
 	parameter: {
 		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
 		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter)
 	}
-};
+});
 
 const lhsExpression$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -508,7 +508,7 @@ export const lhsExpression: typeof B.lhsExpression & {
 		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
 	};
-} = {
+} = Object.freeze({
 	...B.lhsExpression,
 	memberExpression: {
 		strict: lhsExpression$memberExpression(F.buildLhsExpression, F.buildMemberExpression),
@@ -522,7 +522,7 @@ export const lhsExpression: typeof B.lhsExpression & {
 		strict: lhsExpression$nonNullExpression(F.buildLhsExpression, F.buildNonNullExpression),
 		coerce: lhsExpression$nonNullExpression(F.buildLhsExpression, C.coerceToNonNullExpression)
 	}
-};
+});
 
 const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -548,24 +548,24 @@ export const binaryExpression: typeof B.binaryExpression & {
 			options?: OptionsArg<typeof C.coerceToBinaryExpression>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
-} = {
+} = Object.freeze({
 	...B.binaryExpression,
 	in: {
 		strict: binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn),
 		coerce: binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn)
 	}
-};
+});
 
 export const classBody: typeof B.classBody & {
 	method: { strict: typeof F.buildClassBodyMethod; coerce: typeof C.coerceToClassBodyMethod };
 	methodSig: { strict: typeof F.buildClassBodyMethodSig; coerce: typeof C.coerceToClassBodyMethodSig };
 	member: { strict: typeof F.buildClassBodyMember; coerce: typeof C.coerceToClassBodyMember };
-} = {
+} = Object.freeze({
 	...B.classBody,
-	method: { strict: F.buildClassBodyMethod, coerce: C.coerceToClassBodyMethod },
-	methodSig: { strict: F.buildClassBodyMethodSig, coerce: C.coerceToClassBodyMethodSig },
-	member: { strict: F.buildClassBodyMember, coerce: C.coerceToClassBodyMember }
-};
+	method: Object.freeze({ strict: F.buildClassBodyMethod, coerce: C.coerceToClassBodyMethod }),
+	methodSig: Object.freeze({ strict: F.buildClassBodyMethodSig, coerce: C.coerceToClassBodyMethodSig }),
+	member: Object.freeze({ strict: F.buildClassBodyMember, coerce: C.coerceToClassBodyMember })
+});
 
 const restPattern$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -592,7 +592,7 @@ export const restPattern: typeof B.restPattern & {
 		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
 	};
-} = {
+} = Object.freeze({
 	...B.restPattern,
 	memberExpression: {
 		strict: restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression),
@@ -606,7 +606,7 @@ export const restPattern: typeof B.restPattern & {
 		strict: restPattern$nonNullExpression(F.buildRestPattern, F.buildNonNullExpression),
 		coerce: restPattern$nonNullExpression(F.buildRestPattern, C.coerceToNonNullExpression)
 	}
-};
+});
 
 const ambientDeclaration$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -730,7 +730,7 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	module: typeof B.ambientDeclarationModule;
-} = {
+} = Object.freeze({
 	...B.ambientDeclaration,
 	function: {
 		strict: ambientDeclaration$function(F.buildAmbientDeclaration, F.buildFunctionDeclaration),
@@ -789,7 +789,7 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 		coerce: ambientDeclaration$global(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
 	},
 	module: B.ambientDeclarationModule
-};
+});
 
 const enumBody$elements =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -800,13 +800,13 @@ export const enumBody: typeof B.enumBody & {
 		strict: (...args: ArgsOf<typeof F.buildEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
 		coerce: (...args: ArgsOf<typeof C.coerceToEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
 	};
-} = {
+} = Object.freeze({
 	...B.enumBody,
 	elements: {
 		strict: enumBody$elements(F.buildEnumBody, F.buildEnumBodyElements),
 		coerce: enumBody$elements(F.buildEnumBody, C.coerceToEnumBodyElements)
 	}
-};
+});
 
 const typeQueryMemberExpression$dot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -837,7 +837,7 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
 		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
 	};
-} = {
+} = Object.freeze({
 	...B.typeQueryMemberExpression,
 	dot: {
 		strict: typeQueryMemberExpression$dot(F.buildTypeQueryMemberExpression, TSKindId.Dot),
@@ -847,7 +847,7 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 		strict: typeQueryMemberExpression$qmarkDot(F.buildTypeQueryMemberExpression, TSKindId.QmarkDot),
 		coerce: typeQueryMemberExpression$qmarkDot(C.coerceToTypeQueryMemberExpression, TSKindId.QmarkDot)
 	}
-};
+});
 
 const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -878,7 +878,7 @@ export const constraint: typeof B.constraint & {
 			options?: OptionsArg<typeof C.coerceToConstraint>
 		) => ReturnType<typeof C.coerceToConstraint>;
 	};
-} = {
+} = Object.freeze({
 	...B.constraint,
 	extends: {
 		strict: constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword),
@@ -888,7 +888,7 @@ export const constraint: typeof B.constraint & {
 		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),
 		coerce: constraint$colon(C.coerceToConstraint, TSKindId.Colon)
 	}
-};
+});
 
 const indexSignatureMappedTypeClause$mappedTypeClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -914,7 +914,7 @@ const indexSignatureMappedTypeClause: {
 			options?: OptionsArg<typeof C.coerceToIndexSignatureMappedTypeClause>
 		) => ReturnType<typeof C.coerceToIndexSignatureMappedTypeClause>;
 	};
-} = {
+} = Object.freeze({
 	mappedTypeClause: {
 		strict: indexSignatureMappedTypeClause$mappedTypeClause(
 			F.buildIndexSignatureMappedTypeClause,
@@ -925,7 +925,7 @@ const indexSignatureMappedTypeClause: {
 			C.coerceToMappedTypeClause
 		)
 	}
-};
+});
 
 const parenthesizedExpressionSequence$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -940,7 +940,7 @@ const parenthesizedExpressionSequence: {
 			...args: ArgsOf<typeof C.coerceToSequenceExpression>
 		) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	};
-} = {
+} = Object.freeze({
 	sequenceExpression: {
 		strict: parenthesizedExpressionSequence$sequenceExpression(
 			F.buildParenthesizedExpressionSequence,
@@ -951,7 +951,7 @@ const parenthesizedExpressionSequence: {
 			C.coerceToSequenceExpression
 		)
 	}
-};
+});
 
 const exportStatementDefaultFrom$starFrom =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1186,7 +1186,7 @@ const exportStatementDefaultFrom: {
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
-} = {
+} = Object.freeze({
 	starFrom: {
 		strict: exportStatementDefaultFrom$starFrom(
 			F.buildExportStatementDefaultFrom,
@@ -1300,7 +1300,7 @@ const exportStatementDefaultFrom: {
 		strict: exportStatementDefaultFrom$semi(F.buildExportStatementDefaultFrom, TSKindId.Semi),
 		coerce: exportStatementDefaultFrom$semi(C.coerceToExportStatementDefaultFrom, TSKindId.Semi)
 	}
-};
+});
 
 const exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
@@ -1331,7 +1331,7 @@ const exportStatementDefaultDeclarationDefaultKwValue: {
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>;
 	};
-} = {
+} = Object.freeze({
 	automaticSemicolon: {
 		strict: exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon(
 			F.buildExportStatementDefaultDeclarationDefaultKwValue,
@@ -1352,7 +1352,7 @@ const exportStatementDefaultDeclarationDefaultKwValue: {
 			TSKindId.Semi
 		)
 	}
-};
+});
 
 const exportStatementDefaultDeclarationDefaultKw$value =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1727,7 +1727,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 	};
-} = {
+} = Object.freeze({
 	value: {
 		strict: exportStatementDefaultDeclarationDefaultKw$value(
 			F.buildExportStatementDefaultDeclarationDefaultKw,
@@ -2038,7 +2038,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			)
 		}
 	}
-};
+});
 
 const exportStatementDefaultDeclaration$defaultKw =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3313,7 +3313,7 @@ const exportStatementDefaultDeclaration: {
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 	};
-} = {
+} = Object.freeze({
 	defaultKw: {
 		strict: exportStatementDefaultDeclaration$defaultKw(
 			F.buildExportStatementDefaultDeclaration,
@@ -3899,7 +3899,7 @@ const exportStatementDefaultDeclaration: {
 			)
 		}
 	}
-};
+});
 
 export const declaration: {
 	readonly function: typeof B.functionDeclaration;
@@ -3916,7 +3916,7 @@ export const declaration: {
 	readonly interface: typeof B.interfaceDeclaration;
 	readonly importAlias: typeof B.importAlias;
 	readonly ambient: typeof ambientDeclaration;
-} = {
+} = Object.freeze({
 	function: B.functionDeclaration,
 	generatorFunction: B.generatorFunctionDeclaration,
 	class: B.classDeclaration,
@@ -3931,15 +3931,15 @@ export const declaration: {
 	interface: B.interfaceDeclaration,
 	importAlias: B.importAlias,
 	ambient: ambientDeclaration
-};
+});
 
 export const importSpecifier: {
 	readonly name: { strict: typeof F.buildImportSpecifierName; coerce: typeof C.coerceToImportSpecifierName };
 	readonly as: { strict: typeof F.buildImportSpecifierAs; coerce: typeof C.coerceToImportSpecifierAs };
-} = {
-	name: { strict: F.buildImportSpecifierName, coerce: C.coerceToImportSpecifierName },
-	as: { strict: F.buildImportSpecifierAs, coerce: C.coerceToImportSpecifierAs }
-};
+} = Object.freeze({
+	name: Object.freeze({ strict: F.buildImportSpecifierName, coerce: C.coerceToImportSpecifierName }),
+	as: Object.freeze({ strict: F.buildImportSpecifierAs, coerce: C.coerceToImportSpecifierAs })
+});
 
 export const variableDeclarator: {
 	readonly plain: { strict: typeof F.buildVariableDeclaratorPlain; coerce: typeof C.coerceToVariableDeclaratorPlain };
@@ -3947,10 +3947,10 @@ export const variableDeclarator: {
 		strict: typeof F.buildVariableDeclaratorDefinite;
 		coerce: typeof C.coerceToVariableDeclaratorDefinite;
 	};
-} = {
-	plain: { strict: F.buildVariableDeclaratorPlain, coerce: C.coerceToVariableDeclaratorPlain },
-	definite: { strict: F.buildVariableDeclaratorDefinite, coerce: C.coerceToVariableDeclaratorDefinite }
-};
+} = Object.freeze({
+	plain: Object.freeze({ strict: F.buildVariableDeclaratorPlain, coerce: C.coerceToVariableDeclaratorPlain }),
+	definite: Object.freeze({ strict: F.buildVariableDeclaratorDefinite, coerce: C.coerceToVariableDeclaratorDefinite })
+});
 
 export const forHeader: {
 	readonly lhs: { strict: typeof F.buildForHeaderLhs; coerce: typeof C.coerceToForHeaderLhs };
@@ -3959,19 +3959,19 @@ export const forHeader: {
 		strict: typeof F.buildForHeaderLetConstKind;
 		coerce: typeof C.coerceToForHeaderLetConstKind;
 	};
-} = {
-	lhs: { strict: F.buildForHeaderLhs, coerce: C.coerceToForHeaderLhs },
-	varKind: { strict: F.buildForHeaderVarKind, coerce: C.coerceToForHeaderVarKind },
-	letConstKind: { strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind }
-};
+} = Object.freeze({
+	lhs: Object.freeze({ strict: F.buildForHeaderLhs, coerce: C.coerceToForHeaderLhs }),
+	varKind: Object.freeze({ strict: F.buildForHeaderVarKind, coerce: C.coerceToForHeaderVarKind }),
+	letConstKind: Object.freeze({ strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind })
+});
 
 export const formalParameter: {
 	readonly required: typeof B.requiredParameter;
 	readonly optional: typeof B.optionalParameter;
-} = {
+} = Object.freeze({
 	required: B.requiredParameter,
 	optional: B.optionalParameter
-};
+});
 
 export const callExpression: {
 	readonly call: { strict: typeof F.buildCallExpressionCall; coerce: typeof C.coerceToCallExpressionCall };
@@ -3980,31 +3980,34 @@ export const callExpression: {
 		coerce: typeof C.coerceToCallExpressionTemplateCall;
 	};
 	readonly member: { strict: typeof F.buildCallExpressionMember; coerce: typeof C.coerceToCallExpressionMember };
-} = {
-	call: { strict: F.buildCallExpressionCall, coerce: C.coerceToCallExpressionCall },
-	templateCall: { strict: F.buildCallExpressionTemplateCall, coerce: C.coerceToCallExpressionTemplateCall },
-	member: { strict: F.buildCallExpressionMember, coerce: C.coerceToCallExpressionMember }
-};
+} = Object.freeze({
+	call: Object.freeze({ strict: F.buildCallExpressionCall, coerce: C.coerceToCallExpressionCall }),
+	templateCall: Object.freeze({
+		strict: F.buildCallExpressionTemplateCall,
+		coerce: C.coerceToCallExpressionTemplateCall
+	}),
+	member: Object.freeze({ strict: F.buildCallExpressionMember, coerce: C.coerceToCallExpressionMember })
+});
 
 export const destructuringPattern: {
 	readonly object: typeof B.objectPattern;
 	readonly array: typeof B.arrayPattern;
-} = {
+} = Object.freeze({
 	object: B.objectPattern,
 	array: B.arrayPattern
-};
+});
 
 export const updateExpression: {
 	readonly strict: typeof F.buildUpdateExpressionPostfix;
 	readonly coerce: typeof C.coerceToUpdateExpressionPostfix;
 	readonly postfix: { strict: typeof F.buildUpdateExpressionPostfix; coerce: typeof C.coerceToUpdateExpressionPostfix };
 	readonly prefix: { strict: typeof F.buildUpdateExpressionPrefix; coerce: typeof C.coerceToUpdateExpressionPrefix };
-} = {
+} = Object.freeze({
 	strict: F.buildUpdateExpressionPostfix,
 	coerce: C.coerceToUpdateExpressionPostfix,
-	postfix: { strict: F.buildUpdateExpressionPostfix, coerce: C.coerceToUpdateExpressionPostfix },
-	prefix: { strict: F.buildUpdateExpressionPrefix, coerce: C.coerceToUpdateExpressionPrefix }
-};
+	postfix: Object.freeze({ strict: F.buildUpdateExpressionPostfix, coerce: C.coerceToUpdateExpressionPostfix }),
+	prefix: Object.freeze({ strict: F.buildUpdateExpressionPrefix, coerce: C.coerceToUpdateExpressionPrefix })
+});
 
 const parenthesizedExpressionTyped$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4398,7 +4401,7 @@ const parenthesizedExpressionTyped: {
 			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
 		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
 	};
-} = {
+} = Object.freeze({
 	as: {
 		strict: parenthesizedExpressionTyped$as(F.buildParenthesizedExpressionTyped, F.buildAsExpression),
 		coerce: parenthesizedExpressionTyped$as(C.coerceToParenthesizedExpressionTyped, C.coerceToAsExpression)
@@ -4500,7 +4503,7 @@ const parenthesizedExpressionTyped: {
 		strict: parenthesizedExpressionTyped$yield(F.buildParenthesizedExpressionTyped, F.buildYieldExpression),
 		coerce: parenthesizedExpressionTyped$yield(C.coerceToParenthesizedExpressionTyped, C.coerceToYieldExpression)
 	}
-};
+});
 
 export const parenthesizedExpression: {
 	readonly typed: {
@@ -4511,50 +4514,50 @@ export const parenthesizedExpression: {
 		strict: typeof F.buildParenthesizedExpressionSequence;
 		coerce: typeof C.coerceToParenthesizedExpressionSequence;
 	} & typeof parenthesizedExpressionSequence;
-} = {
-	typed: {
+} = Object.freeze({
+	typed: Object.freeze({
 		strict: F.buildParenthesizedExpressionTyped,
 		coerce: C.coerceToParenthesizedExpressionTyped,
 		...parenthesizedExpressionTyped
-	},
-	sequence: {
+	}),
+	sequence: Object.freeze({
 		strict: F.buildParenthesizedExpressionSequence,
 		coerce: C.coerceToParenthesizedExpressionSequence,
 		...parenthesizedExpressionSequence
-	}
-};
+	})
+});
 
 export const string: {
 	readonly double: { strict: typeof F.buildStringDouble; coerce: typeof C.coerceToStringDouble };
 	readonly single: { strict: typeof F.buildStringSingle; coerce: typeof C.coerceToStringSingle };
-} = {
-	double: { strict: F.buildStringDouble, coerce: C.coerceToStringDouble },
-	single: { strict: F.buildStringSingle, coerce: C.coerceToStringSingle }
-};
+} = Object.freeze({
+	double: Object.freeze({ strict: F.buildStringDouble, coerce: C.coerceToStringDouble }),
+	single: Object.freeze({ strict: F.buildStringSingle, coerce: C.coerceToStringSingle })
+});
 
 export const comment: {
 	readonly strict: typeof F.buildCommentLine;
 	readonly coerce: typeof C.coerceToCommentLine;
 	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
 	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
-} = {
+} = Object.freeze({
 	strict: F.buildCommentLine,
 	coerce: C.coerceToCommentLine,
-	line: { strict: F.buildCommentLine, coerce: C.coerceToCommentLine },
-	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
-};
+	line: Object.freeze({ strict: F.buildCommentLine, coerce: C.coerceToCommentLine }),
+	block: Object.freeze({ strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock })
+});
 
 export const identifier: {
 	readonly strict: typeof F.buildIdentifier;
 	readonly coerce: typeof C.coerceToIdentifier;
 	readonly undefined: { strict: typeof F.buildUndefined; coerce: typeof C.coerceToUndefined };
 	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
-} = {
+} = Object.freeze({
 	strict: F.buildIdentifier,
 	coerce: C.coerceToIdentifier,
-	undefined: { strict: F.buildUndefined, coerce: C.coerceToUndefined },
-	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier }
-};
+	undefined: Object.freeze({ strict: F.buildUndefined, coerce: C.coerceToUndefined }),
+	identifier: Object.freeze({ strict: F.buildIdentifier, coerce: C.coerceToIdentifier })
+});
 
 export const metaProperty: {
 	readonly newTarget: { strict: typeof F.buildMetaPropertyNewTarget; coerce: typeof C.coerceToMetaPropertyNewTarget };
@@ -4562,18 +4565,18 @@ export const metaProperty: {
 		strict: typeof F.buildMetaPropertyImportMeta;
 		coerce: typeof C.coerceToMetaPropertyImportMeta;
 	};
-} = {
-	newTarget: { strict: F.buildMetaPropertyNewTarget, coerce: C.coerceToMetaPropertyNewTarget },
-	importMeta: { strict: F.buildMetaPropertyImportMeta, coerce: C.coerceToMetaPropertyImportMeta }
-};
+} = Object.freeze({
+	newTarget: Object.freeze({ strict: F.buildMetaPropertyNewTarget, coerce: C.coerceToMetaPropertyNewTarget }),
+	importMeta: Object.freeze({ strict: F.buildMetaPropertyImportMeta, coerce: C.coerceToMetaPropertyImportMeta })
+});
 
 export const pattern: {
 	readonly lhs: typeof lhsExpression;
 	readonly rest: typeof restPattern;
-} = {
+} = Object.freeze({
 	lhs: lhsExpression,
 	rest: restPattern
-};
+});
 
 export const indexSignature: {
 	readonly colon: { strict: typeof F.buildIndexSignatureColon; coerce: typeof C.coerceToIndexSignatureColon };
@@ -4581,14 +4584,14 @@ export const indexSignature: {
 		strict: typeof F.buildIndexSignatureMappedTypeClause;
 		coerce: typeof C.coerceToIndexSignatureMappedTypeClause;
 	} & typeof indexSignatureMappedTypeClause;
-} = {
-	colon: { strict: F.buildIndexSignatureColon, coerce: C.coerceToIndexSignatureColon },
-	mappedTypeClause: {
+} = Object.freeze({
+	colon: Object.freeze({ strict: F.buildIndexSignatureColon, coerce: C.coerceToIndexSignatureColon }),
+	mappedTypeClause: Object.freeze({
 		strict: F.buildIndexSignatureMappedTypeClause,
 		coerce: C.coerceToIndexSignatureMappedTypeClause,
 		...indexSignatureMappedTypeClause
-	}
-};
+	})
+});
 
 export const exportStatementDefault: {
 	readonly from: {
@@ -4599,18 +4602,18 @@ export const exportStatementDefault: {
 		strict: typeof F.buildExportStatementDefaultDeclaration;
 		coerce: typeof C.coerceToExportStatementDefaultDeclaration;
 	} & typeof exportStatementDefaultDeclaration;
-} = {
-	from: {
+} = Object.freeze({
+	from: Object.freeze({
 		strict: F.buildExportStatementDefaultFrom,
 		coerce: C.coerceToExportStatementDefaultFrom,
 		...exportStatementDefaultFrom
-	},
-	declaration: {
+	}),
+	declaration: Object.freeze({
 		strict: F.buildExportStatementDefaultDeclaration,
 		coerce: C.coerceToExportStatementDefaultDeclaration,
 		...exportStatementDefaultDeclaration
-	}
-};
+	})
+});
 
 export const numberBigint: {
 	readonly strict: typeof F.buildNumberBigintDecimal;
@@ -4619,14 +4622,14 @@ export const numberBigint: {
 	readonly binary: { strict: typeof F.buildNumberBigintBinary; coerce: typeof C.coerceToNumberBigintBinary };
 	readonly octal: { strict: typeof F.buildNumberBigintOctal; coerce: typeof C.coerceToNumberBigintOctal };
 	readonly decimal: { strict: typeof F.buildNumberBigintDecimal; coerce: typeof C.coerceToNumberBigintDecimal };
-} = {
+} = Object.freeze({
 	strict: F.buildNumberBigintDecimal,
 	coerce: C.coerceToNumberBigintDecimal,
-	hex: { strict: F.buildNumberBigintHex, coerce: C.coerceToNumberBigintHex },
-	binary: { strict: F.buildNumberBigintBinary, coerce: C.coerceToNumberBigintBinary },
-	octal: { strict: F.buildNumberBigintOctal, coerce: C.coerceToNumberBigintOctal },
-	decimal: { strict: F.buildNumberBigintDecimal, coerce: C.coerceToNumberBigintDecimal }
-};
+	hex: Object.freeze({ strict: F.buildNumberBigintHex, coerce: C.coerceToNumberBigintHex }),
+	binary: Object.freeze({ strict: F.buildNumberBigintBinary, coerce: C.coerceToNumberBigintBinary }),
+	octal: Object.freeze({ strict: F.buildNumberBigintOctal, coerce: C.coerceToNumberBigintOctal }),
+	decimal: Object.freeze({ strict: F.buildNumberBigintDecimal, coerce: C.coerceToNumberBigintDecimal })
+});
 
 const literalType$negativeNumber =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4781,7 +4784,7 @@ export const literalType: typeof B.literalType & {
 		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
 	};
-} = {
+} = Object.freeze({
 	...B.literalType,
 	negativeNumber: {
 		strict: literalType$negativeNumber(F.buildLiteralType, F.buildLiteralTypeNegativeNumber),
@@ -4859,27 +4862,27 @@ export const literalType: typeof B.literalType & {
 		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
 		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
 	}
-};
+});
 
 export const exportStatement: {
 	readonly default: typeof exportStatementDefault;
 	readonly typeExport: typeof B.exportStatementTypeExport;
 	readonly equalsExport: typeof B.exportStatementEqualsExport;
 	readonly namespaceExport: typeof B.exportStatementNamespaceExport;
-} = {
+} = Object.freeze({
 	default: exportStatementDefault,
 	typeExport: B.exportStatementTypeExport,
 	equalsExport: B.exportStatementEqualsExport,
 	namespaceExport: B.exportStatementNamespaceExport
-};
+});
 
 export const moduleExportName: {
 	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
 	readonly string: typeof string;
-} = {
-	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier },
+} = Object.freeze({
+	identifier: Object.freeze({ strict: F.buildIdentifier, coerce: C.coerceToIdentifier }),
 	string: string
-};
+});
 
 export const statement: {
 	readonly export: typeof exportStatement;
@@ -4902,7 +4905,7 @@ export const statement: {
 	readonly throw: typeof B.throwStatement;
 	readonly empty: { strict: typeof F.buildEmptyStatement; coerce: typeof C.coerceToEmptyStatement };
 	readonly labeled: typeof B.labeledStatement;
-} = {
+} = Object.freeze({
 	export: exportStatement,
 	import: importStatement,
 	debugger: B.debuggerStatement,
@@ -4921,9 +4924,9 @@ export const statement: {
 	continue: B.continueStatement,
 	return: B.returnStatement,
 	throw: B.throwStatement,
-	empty: { strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement },
+	empty: Object.freeze({ strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement }),
 	labeled: B.labeledStatement
-};
+});
 
 export const number: {
 	readonly strict: typeof F.buildNumberDecimal;
@@ -4942,18 +4945,21 @@ export const number: {
 	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
 	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
 	readonly bigint: typeof numberBigint;
-} = {
+} = Object.freeze({
 	strict: F.buildNumberDecimal,
 	coerce: C.coerceToNumberDecimal,
-	hex: { strict: F.buildNumberHex, coerce: C.coerceToNumberHex },
-	floatPoint: { strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint },
-	floatLeadingPoint: { strict: F.buildNumberFloatLeadingPoint, coerce: C.coerceToNumberFloatLeadingPoint },
-	floatScientific: { strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific },
-	decimal: { strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal },
-	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
-	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
+	hex: Object.freeze({ strict: F.buildNumberHex, coerce: C.coerceToNumberHex }),
+	floatPoint: Object.freeze({ strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint }),
+	floatLeadingPoint: Object.freeze({
+		strict: F.buildNumberFloatLeadingPoint,
+		coerce: C.coerceToNumberFloatLeadingPoint
+	}),
+	floatScientific: Object.freeze({ strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific }),
+	decimal: Object.freeze({ strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal }),
+	binary: Object.freeze({ strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary }),
+	octal: Object.freeze({ strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal }),
 	bigint: numberBigint
-};
+});
 
 export const propertyName: {
 	readonly identifier: { strict: typeof F.buildPropertyIdentifier; coerce: typeof C.coerceToPropertyIdentifier };
@@ -4961,10 +4967,10 @@ export const propertyName: {
 	readonly string: typeof string;
 	readonly number: typeof number;
 	readonly computed: typeof B.computedPropertyName;
-} = {
-	identifier: { strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier },
+} = Object.freeze({
+	identifier: Object.freeze({ strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier }),
 	privateIdentifier: B.privatePropertyIdentifier,
 	string: string,
 	number: number,
 	computed: B.computedPropertyName
-};
+});

@@ -602,7 +602,7 @@ const _supertype_whitespace_ids = new Set<number>([180, 181, 182, 183, 184, 185,
 const _supertype_exportStatementDefault_ids = new Set<number>([426, 427]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
-export const is = {
+export const is = Object.freeze({
 	program: _g(TSKindId.Program),
 	hashBangLine: _g(TSKindId.HashBangLine),
 	namespaceExport: _g(TSKindId.NamespaceExport),
@@ -794,4 +794,4 @@ export const is = {
 	whitespace: _sg(_supertype_whitespace_ids),
 	exportStatementDefault: _sg(_supertype_exportStatementDefault_ids),
 	numberBigint: _sg(_supertype_numberBigint_ids)
-} as unknown as IsGuards;
+}) as unknown as IsGuards;

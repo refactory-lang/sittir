@@ -59,7 +59,7 @@ describe('emitApi', () => {
 	});
 
 	it('wires the hooks through the shared native adapter and the wrapper', () => {
-		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = {');
+		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<PythonAPI>>({');
 		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
 		expect(output).toContain('trivia: triviaFacts,');
@@ -73,7 +73,7 @@ describe('emitApi', () => {
 			rootTreeTypeName: 'ModuleTree',
 			commentCoercer: 'coerceToComment'
 		});
-		expect(withComment).toContain('trivia: { ...triviaFacts, comment: coerceToComment },');
+		expect(withComment).toContain('trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),');
 		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 

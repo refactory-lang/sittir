@@ -90,7 +90,7 @@ export const ir: {
 	readonly classAtom: typeof classAtom;
 	readonly whitespace: typeof whitespace;
 	readonly characterEscape: typeof characterEscape;
-} = {
+} = Object.freeze({
 	// Node factories
 	pattern: F.pattern,
 	alternation: F.alternation,
@@ -140,4 +140,4 @@ export const ir: {
 	classAtom,
 	whitespace,
 	characterEscape
-};
+});

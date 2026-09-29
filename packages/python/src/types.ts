@@ -447,6 +447,7 @@ export enum TSKindId {
 	Names = 337,
 	ERROR = 65535
 }
+Object.freeze(TSKindId);
 
 void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
 

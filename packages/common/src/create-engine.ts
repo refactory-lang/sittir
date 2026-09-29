@@ -55,18 +55,38 @@ function unimplementedVerb(verb: 'read' | 'create' | 'edit' | 'write'): Error {
 	return new Error(`file verb "${verb}" is not implemented`);
 }
 
+function refuseWrite(): never {
+	throw new Error('the build table of an engine is read-only');
+}
+
 function scopedBuild<B>(build: B, handle: EngineHandle): B {
 	const proxies = new WeakMap<object, unknown>();
 	const scope = (value: unknown): unknown => {
 		if (value === null || (typeof value !== 'function' && typeof value !== 'object')) return value;
 		const known = proxies.get(value);
 		if (known !== undefined) return known;
-		const proxy = new Proxy(value, {
-			get: (target, key, receiver) => {
-				const member: unknown = Reflect.get(target, key, receiver);
-				return Object.hasOwn(target, key) ? scope(member) : member;
+		const shell = typeof value === 'function' ? () => undefined : {};
+		const proxy = new Proxy(shell, {
+			get: (_, key, receiver) => {
+				const member: unknown = Reflect.get(value, key, receiver);
+				return Object.hasOwn(value, key) ? scope(member) : member;
 			},
-			apply: (target, self, args) => inEngine(handle, () => Reflect.apply(target as () => unknown, self, args))
+			has: (_, key) => Reflect.has(value, key),
+			ownKeys: () => Reflect.ownKeys(value),
+			getOwnPropertyDescriptor: (_, key) => {
+				const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
+				if (descriptor === undefined) return undefined;
+				return 'value' in descriptor
+					? { ...descriptor, value: scope(descriptor.value), configurable: true }
+					: { ...descriptor, configurable: true };
+			},
+			getPrototypeOf: () => Reflect.getPrototypeOf(value),
+			apply: (_, self, args) => inEngine(handle, () => Reflect.apply(value as () => unknown, self, args)),
+			set: refuseWrite,
+			defineProperty: refuseWrite,
+			deleteProperty: refuseWrite,
+			setPrototypeOf: refuseWrite,
+			preventExtensions: refuseWrite
 		});
 		proxies.set(value, proxy);
 		return proxy;
@@ -105,12 +125,12 @@ function assembleEngine<API extends LanguageAPI>(
 	options: EngineOptions<API> | undefined
 ): Engine<API> {
 	const native = hooks.createNative(nativeEngineOptions(options));
-	const identity: EngineIdentity<API> = {
+	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
 		options: options?.render,
 		trivia: hooks.trivia
-	};
+	});
 	const handle: EngineHandle = { current: identity };
 	const build = scopedBuild(hooks.build, handle);
 	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
@@ -195,8 +215,10 @@ function assembleEngine<API extends LanguageAPI>(
 		}
 	};
 	handle.current = engine;
-	serials.set(engine, ++engineCount);
-	return engine;
+	const serial = ++engineCount;
+	serials.set(engine, serial);
+	serials.set(identity, serial);
+	return Object.freeze(engine);
 }
 
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(

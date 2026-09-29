@@ -10,8 +10,8 @@ describe('utils runtime binding emission', () => {
 		const contents = emitClientUtils({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain("import { bindRuntime } from '@sittir/common/utils';");
-		expect(contents).toContain('export const triviaFacts = {');
-		expect(contents).toContain('} satisfies TriviaFacts;');
+		expect(contents).toContain('export const triviaFacts = Object.freeze({');
+		expect(contents).toContain('} satisfies TriviaFacts);');
 		expect(contents).toContain(
 			`export const { isNode, withMethods } = bindRuntime<${grammarTypeMapName('synth')}>();`
 		);

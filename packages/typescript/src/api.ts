@@ -33,13 +33,13 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly empty: TypescriptTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<TypescriptAPI> = {
+export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<TypescriptAPI>>({
 	name: 'typescript',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: { ...triviaFacts, comment: coerceToCommentLine },
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToCommentLine }),
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
-};
+});

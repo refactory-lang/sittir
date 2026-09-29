@@ -31,10 +31,11 @@ function hasRender(value: unknown): boolean {
 	return value !== null && typeof value === 'object' && typeof (value as { $render?: unknown }).$render === 'function';
 }
 
-function renderedNodes(result: unknown): unknown[] {
-	if (result === null || typeof result !== 'object') return [];
+function renderedNodes(result: unknown, seen = new Set<object>()): unknown[] {
+	if (result === null || typeof result !== 'object' || seen.has(result)) return [];
+	seen.add(result);
 	if (hasRender(result)) return [result];
-	return Object.values(result).filter(hasRender);
+	return Object.values(result).flatMap((member) => renderedNodes(member, seen));
 }
 
 describe('the compile-checked examples run', () => {
@@ -60,6 +61,13 @@ describe('the compile-checked examples run', () => {
 			}
 		});
 	}
+
+	it('finds every node nested in the arrays and objects a function returns', () => {
+		const leaf = { $render: () => 'x' };
+		const nested = { statements: [leaf, { inner: { deeper: [leaf, { $render: () => 'y' }] } }], count: 2 };
+		expect(renderedNodes(nested)).toHaveLength(2);
+		expect(renderedNodes([[leaf], null, 'text', 3])).toEqual([leaf]);
+	});
 
 	it('renders the first example to the source it constructs', async () => {
 		const { explicitMainFunction } = await import('../../examples/01-construct-nodes.ts');

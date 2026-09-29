@@ -5,11 +5,14 @@ import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type RegexTypeMap } from './types.js';
 import { INNER_GAPS } from './consts.js';
 
-export const triviaFacts = {
+export const triviaFacts = Object.freeze({
 	kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline']),
 	innerGaps: INNER_GAPS,
-	whitespace: { run: /^(?:(?:(?:\r?\n))+)$/u, kindIdByText: { '\n': 48, '\n\n': 49, '\n\n\n': 50 } }
-} satisfies TriviaFacts;
+	whitespace: Object.freeze({
+		run: /^(?:(?:(?:\r?\n))+)$/u,
+		kindIdByText: Object.freeze({ '\n': 48, '\n\n': 49, '\n\n\n': 50 })
+	})
+} satisfies TriviaFacts);
 
 export const { isNode, withMethods } = bindRuntime<RegexTypeMap>();

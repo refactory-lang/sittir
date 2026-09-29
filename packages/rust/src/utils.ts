@@ -5,7 +5,7 @@ import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type RustTypeMap } from './types.js';
 import { INNER_GAPS } from './consts.js';
 
-export const triviaFacts = {
+export const triviaFacts = Object.freeze({
 	kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
@@ -18,10 +18,10 @@ export const triviaFacts = {
 		'line_comment'
 	]),
 	innerGaps: INNER_GAPS,
-	whitespace: {
+	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
-		kindIdByText: { ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 }
-	}
-} satisfies TriviaFacts;
+		kindIdByText: Object.freeze({ ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
+	})
+} satisfies TriviaFacts);
 
 export const { isNode, withMethods } = bindRuntime<RustTypeMap>();

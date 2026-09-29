@@ -33,13 +33,13 @@ export interface RustAPI extends LanguageAPI {
 	readonly empty: RustTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<RustAPI> = {
+export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI>>({
 	name: 'rust',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: { ...triviaFacts, comment: coerceToLineComment },
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToLineComment }),
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle)
-};
+});

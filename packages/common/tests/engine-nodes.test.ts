@@ -154,6 +154,17 @@ describe('rendering through an engine what another engine parsed', () => {
 		expect(() => built.$render()).toThrow(/several engines/);
 	});
 
+	it('names a disposed reader by its serial', async () => {
+		const fake = fakeLanguage('fake');
+		const a = await engineOf(fake);
+		const b = await engineOf(fake);
+		const c = await engineOf(fake);
+		const built = a.build.group(b.parse('src'), c.parse('src'));
+		b.dispose();
+		c.dispose();
+		expect(() => a.render(built)).toThrow(/several engines \(fake#\d+, fake#\d+\)/);
+	});
+
 	it('throws when a parsing engine is disposed', async () => {
 		const fake = fakeLanguage('fake');
 		const a = await engineOf(fake);
@@ -167,6 +178,42 @@ describe('rendering through an engine what another engine parsed', () => {
 		const a = await engineOf(fakeLanguage('fake'));
 		const other = await engineOf(fakeLanguage('other'));
 		expect(() => a.render(other.build.leaf('x'))).toThrow('cannot render a other node through a fake engine');
+	});
+});
+
+describe('the immutability of an engine', () => {
+	it('refuses assignment to the engine and its build table', async () => {
+		const fake = fakeLanguage('fake');
+		const engine = await engineOf(fake);
+		expect(() => {
+			engine.render = () => undefined;
+		}).toThrow(TypeError);
+		expect(() => {
+			engine.build.leaf = () => undefined;
+		}).toThrow(/read-only/);
+		expect(() => {
+			engine.build.leaf.strict = () => undefined;
+		}).toThrow(/read-only/);
+		expect(() => {
+			delete engine.build.number.bigint;
+		}).toThrow(/read-only/);
+		expect(() => Object.defineProperty(engine.build, 'extra', { value: 1 })).toThrow(/read-only/);
+	});
+
+	it('leaves the options the caller passed unfrozen', async () => {
+		const options = { indent: '>' };
+		const engine = (await createEngine(fakeLanguage('fake').language as never, { render: options } as never)) as any;
+		expect(Object.isFrozen(engine)).toBe(true);
+		expect(Object.isFrozen(options)).toBe(false);
+		expect(engine.build.leaf('a').$render()).toBe('A:>:1');
+	});
+
+	it('still detaches on dispose', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		const built = engine.build.leaf('a');
+		engine.dispose();
+		expect(() => built.$render()).toThrow(/engine disposed/);
+		expect(() => engine.render(built)).not.toThrow(/read-only/);
 	});
 });
 

@@ -93,15 +93,15 @@ export interface ${api} extends LanguageAPI {
 	readonly empty: ${grammarTypeMapName(grammar)}['empty'];
 }
 
-export const hooks: LanguageHooks<${api}> = {
+export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>({
 	name: '${grammar}',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: ${config.commentCoercer === undefined ? 'triviaFacts' : `{ ...triviaFacts, comment: ${config.commentCoercer} }`},
+	trivia: ${config.commentCoercer === undefined ? 'triviaFacts' : `Object.freeze({ ...triviaFacts, comment: ${config.commentCoercer} })`},
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle)
-};
+});
 `;
 }

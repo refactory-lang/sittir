@@ -103,6 +103,7 @@ export enum TSKindId {
 	NamedNodeGroupChildrenRepeat1 = 65,
 	ERROR = 65535
 }
+Object.freeze(TSKindId);
 
 void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
 

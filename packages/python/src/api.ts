@@ -33,13 +33,13 @@ export interface PythonAPI extends LanguageAPI {
 	readonly empty: PythonTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<PythonAPI> = {
+export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<PythonAPI>>({
 	name: 'python',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: { ...triviaFacts, comment: coerceToComment },
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)
-};
+});

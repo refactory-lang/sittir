@@ -93,19 +93,19 @@ export const TOKEN_INTERIORS = {
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** The gaps an empty node of each kind holds inner trivia in, in render order. */
-export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
-	arguments: ['elements'],
-	array: ['elements'],
-	array_pattern: ['elements'],
-	class_body: ['content'],
-	enum_body: ['enum_body_elements'],
-	export_clause: ['export_specifiers'],
-	formal_parameters: ['formal_parameters_elements'],
-	named_imports: ['import_specifiers'],
-	object: ['properties'],
-	object_pattern: ['properties'],
-	program: ['statements'],
-	statement_block: ['statements'],
-	switch_body: ['cases'],
-	tuple_type: ['tuple_type_members']
-};
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
+	arguments: Object.freeze(['elements']),
+	array: Object.freeze(['elements']),
+	array_pattern: Object.freeze(['elements']),
+	class_body: Object.freeze(['content']),
+	enum_body: Object.freeze(['enum_body_elements']),
+	export_clause: Object.freeze(['export_specifiers']),
+	formal_parameters: Object.freeze(['formal_parameters_elements']),
+	named_imports: Object.freeze(['import_specifiers']),
+	object: Object.freeze(['properties']),
+	object_pattern: Object.freeze(['properties']),
+	program: Object.freeze(['statements']),
+	statement_block: Object.freeze(['statements']),
+	switch_body: Object.freeze(['cases']),
+	tuple_type: Object.freeze(['tuple_type_members'])
+});

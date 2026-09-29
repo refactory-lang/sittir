@@ -3,8 +3,8 @@ import * as B from '../bundle.js';
 import * as F from '../raw.js';
 export * from '../bundle.js';
 
-export const objectType = {
+export const objectType = Object.freeze({
 	...B.objectType,
-	curly: { strict: F.buildObjectTypeCurly },
-	flow: { strict: F.buildObjectTypeFlow }
-};
+	curly: Object.freeze({ strict: F.buildObjectTypeCurly }),
+	flow: Object.freeze({ strict: F.buildObjectTypeFlow })
+});

@@ -461,7 +461,7 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_whitespace_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 
-export const is = {
+export const is = Object.freeze({
 	module: _g(TSKindId.Module),
 	SimpleStatements: _g(TSKindId.SimpleStatements),
 	importStatement: _g(TSKindId.ImportStatement),
@@ -608,4 +608,4 @@ export const is = {
 	lineContinuation: _sg(_supertype_lineContinuation_ids),
 	whitespace: _sg(_supertype_whitespace_ids),
 	integerDecimal: _sg(_supertype_integerDecimal_ids)
-} as unknown as IsGuards;
+}) as unknown as IsGuards;

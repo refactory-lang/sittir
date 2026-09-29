@@ -30,9 +30,9 @@ function emitInnerGaps(lines: string[], nodeMap: NodeMap): void {
 		)
 		.sort(([a], [b]) => compareOrdinal(a, b));
 	lines.push('/** The gaps an empty node of each kind holds inner trivia in, in render order. */');
-	lines.push('export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {');
-	for (const [kind, keys] of rows) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(keys)},`);
-	lines.push('};');
+	lines.push('export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({');
+	for (const [kind, keys] of rows) lines.push(`  ${JSON.stringify(kind)}: Object.freeze(${JSON.stringify(keys)}),`);
+	lines.push('});');
 	lines.push('');
 }
 

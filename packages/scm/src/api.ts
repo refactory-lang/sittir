@@ -33,13 +33,13 @@ export interface ScmAPI extends LanguageAPI {
 	readonly empty: ScmTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<ScmAPI> = {
+export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>({
 	name: 'scm',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: { ...triviaFacts, comment: coerceToComment },
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
-};
+});

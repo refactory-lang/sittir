@@ -495,6 +495,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 		lines.push(`  ${entry.member} = ${entry.id},`);
 	}
 	lines.push('}');
+	lines.push('Object.freeze(TSKindId);');
 	lines.push('');
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`types.ts: TSKindId has no ${ERROR_KIND_NAME} member`);
