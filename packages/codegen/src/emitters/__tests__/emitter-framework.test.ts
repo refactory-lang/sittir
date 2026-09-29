@@ -104,21 +104,21 @@ describe('loop-driven emitters', () => {
 			word: undefined,
 		} as any;
 
-		const first = emitAll({ grammar: 'rust', nodeTypes: [], nodeMap });
-		const second = emitAll({ grammar: 'rust', nodeTypes: [], nodeMap });
+		const first = emitAll({ grammar: 'rust', nodeMap });
+		const second = emitAll({ grammar: 'rust', nodeMap });
 
 		expect(first.templates.bodies).not.toBe(second.templates.bodies);
 	});
 
 	it('emitAll routes group nodes through the wrap emitter', () => {
-		const { wrap } = emitAll({ grammar: 'synth', nodeTypes: [], nodeMap: makeHiddenHelperNodeMap() });
+		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenHelperNodeMap() });
 
 		expect(wrap).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrap).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 	});
 
 	it('emitAll routes supertype nodes through the wrap emitter', () => {
-		const { wrap } = emitAll({ grammar: 'synth', nodeTypes: [], nodeMap: makeHiddenSupertypeNodeMap() });
+		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenSupertypeNodeMap() });
 
 		expect(wrap).toContain(
 			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {'

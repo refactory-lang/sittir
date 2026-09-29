@@ -72,7 +72,6 @@ describe('KindId emission', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const contents = emitTypes({
 			grammar: 'synth',
-			nodeTypes: [],
 			nodeMap,
 			generatedIdTables
 		});

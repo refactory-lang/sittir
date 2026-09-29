@@ -1084,10 +1084,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return `build${this.typeName}`;
 	}
 
-	get treeTypeName(): string {
-		return `${this.typeName}Tree`;
-	}
-
 	get configTypeName(): string {
 		return `${this.typeName}Config`;
 	}

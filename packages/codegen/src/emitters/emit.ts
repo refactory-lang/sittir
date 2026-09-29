@@ -43,7 +43,6 @@ import {
 import { emitRefinesOverlay } from './overlays/refines.ts';
 import { emitPolymorphsOverlay } from './overlays/polymorphs.ts';
 import type { OverlayName } from './overlays/module.ts';
-import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -58,7 +57,6 @@ export interface EmitAllConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
-	nodeTypes: readonly RawNodeEntry[];
 	diagnostics?: DiagnosticSink;
 }
 
@@ -181,7 +179,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: config.nodeTypes, sites: sitePreferences, addresses: addressTables, triviaKinds });
+	const types = emitTypes({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds });
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });

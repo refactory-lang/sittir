@@ -13,7 +13,6 @@ import type {
 	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
-	TreeFor,
 	NamespaceMap,
 	Chevron,
 	PassStatement,
@@ -32,16 +31,14 @@ describe('python NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<FunctionDefinition.Config, NamespaceMap[TSKindId.FunctionDefinition]['Config']>>();
 	});
 
-	it('Fluent / Loose / Tree / Kind each converge', () => {
+	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<FunctionDefinition.Built, BuiltFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Loose, LooseFor<TSKindId.FunctionDefinition>>>();
-		expectTrue<Equals<FunctionDefinition.Tree, TreeFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Kind, 'function_definition'>>();
 	});
 
 	it('Module (root kind) converges', () => {
 		expectTrue<Equals<Module.Config, ConfigFor<TSKindId.Module>>>();
-		expectTrue<Equals<Module.Tree, NamespaceMap[TSKindId.Module]['Tree']>>();
 	});
 
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {

@@ -1736,7 +1736,6 @@ function emitSeparatedListFactory(
 interface TextFactoryNode {
 	readonly kind: string;
 	readonly typeName: string;
-	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 }
 

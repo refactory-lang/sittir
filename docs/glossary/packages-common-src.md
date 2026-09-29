@@ -59,7 +59,7 @@ The runtime helpers generated code calls, exported through `@sittir/common/utils
 
 ### `packages/common/src/runtime.ts::NamespacePart`
 
-One member (`Node`, `Loose` or `Tree`) of kind `K`'s namespace in a grammar type map; `never` for a key the map does not have.
+One member (`Node` or `Loose`) of kind `K`'s namespace in a grammar type map; `never` for a key the map does not have.
 
 ### `packages/common/src/runtime.ts::GrammarRuntime`
 

@@ -55,7 +55,6 @@ import type {
 	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
-import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import {
 	DELIMITER_IMPORT,
 	isRequired,
@@ -104,7 +103,6 @@ type StructuralNode = SlotBearingCompound;
 
 export interface EmitTypesConfig {
 	grammar: string;
-	nodeTypes: readonly RawNodeEntry[];
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	sites?: readonly SitePreference[];
@@ -120,7 +118,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	referencedBitflagConsts.clear();
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
-	const grammarKeys = grammarKeySetOf(config.nodeTypes);
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
 	const grammarPrefix = grammarTypePrefix(grammar);
@@ -141,10 +138,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('__SITTIR_TYPES_IMPORT__');
 	lines.push('');
 	lines.push(`export type { ${grammarAlias} };`);
-	lines.push('');
-	lines.push(`export type NodeData<K extends NodeKind<${grammarAlias}>> = BaseNodeData<${grammarAlias}, K>;`);
-	lines.push(`export type NodeConfig<K extends NodeKind<${grammarAlias}>> = BaseNodeConfig<${grammarAlias}, K>;`);
-	lines.push(`export type TreeNode<K extends NodeKind<${grammarAlias}>> = BaseTreeNode<${grammarAlias}, K>;`);
 	lines.push('');
 
 	const leafMapKey = (kind: string): string => `[${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]`;
@@ -239,17 +232,12 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	if (missingKindTypes.size > 0) lines.push('');
 
-	// @sittir/types. One fewer alias to keep in sync across regenerations.
-
-	const treeEmitted = emitTreeInterfaceDeclarations(lines, nodeKinds, leafKinds, nodeMap, grammarKeys);
-
 	const refineInfos = collectRefineKindInfos(nodeMap);
-	emitRefineFormTreeAliases(lines, refineInfos);
 
 	const emittedSupertypes = emitSupertypeUnionDeclarations(lines, supertypes, nodeMap, generatedTypes);
 	emitSupertypeNamespaces(lines, emittedSupertypes);
 
-	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, treeEmitted, kindEntries);
+	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, kindEntries);
 
 	lines.push(`export type ${grammarPrefix}Node = NodeOfNamespaces<NamespaceMap>;`);
 	lines.push('');
@@ -282,9 +270,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	});
 	for (const kind of keywordNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
 		lines.push(
-			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, ${tree}, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, '${kind}'> {}`
 		);
 	}
 	const leafNamespaceKinds = leafKinds.filter((kind) => {
@@ -297,9 +284,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	});
 	for (const kind of leafNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
-		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
 		lines.push(
-			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, ${tree}, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, '${kind}'> {}`
 		);
 	}
 	lines.push('');
@@ -340,11 +326,10 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push("export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];");
 	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
 	lines.push("export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];");
-	lines.push("export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];");
 	lines.push('');
 
 	lines.push('// Namespace sugar — merges with each data interface so consumers can write');
-	lines.push('// <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.');
+	lines.push('// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
 	for (const kind of namespaceKinds) {
@@ -364,7 +349,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const ns = `${node.typeName}Ns`;
 		const surface = isKindIdStored(node) ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
 		lines.push(`export namespace ${node.typeName} {`);
-		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
+		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs']) {
 			if (member === 'Built' && surface !== undefined) emitBuiltInterface(lines, surface, '  ');
 			else lines.push(`  export type ${member} = ${ns}['${member}'];`);
 		}
@@ -406,18 +391,13 @@ export function emitTypes(config: EmitTypesConfig): string {
 }
 
 const VOCABULARY_IMPORTS = [
-	'NodeData as BaseNodeData',
-	'NodeConfig as BaseNodeConfig',
-	'TreeNode as BaseTreeNode',
 	'ConfigOf',
 	'LooseConfigOf',
 	'WidenNumeric',
 	'LooseValue',
-	'NodeKind',
 	'NodeNs',
 	'KeywordNs',
 	'LeafNs',
-	'AnyTreeNodeOf as AnyTreeNode',
 	'Terminal',
 	'NonEmptyArray',
 	'BooleanKeyword as BaseBooleanKeyword',
@@ -452,10 +432,6 @@ function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: read
 			: `export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
 		''
 	];
-}
-
-function grammarKeySetOf(nodeTypes: readonly RawNodeEntry[]): Set<string> {
-	return new Set(nodeTypes.map((entry) => (entry.named ? entry.type : `_anonymous_${entry.type}`)));
 }
 
 interface NodeCategories {
@@ -634,42 +610,9 @@ function leafConstructionTextType(node: AssembledNode): string {
 	return shape === undefined ? leafTextType(node) : `string | ${numberInputType(shape)}`;
 }
 
-function emitTreeInterfaceDeclarations(
-	lines: string[],
-	nodeKinds: string[],
-	leafKinds: string[],
-	nodeMap: NodeMap,
-	grammarKeys: Set<string>
-): Set<string> {
-	lines.push('// Tree types');
-	const treeEmitted = new Set<string>();
-	for (const kind of [...nodeKinds, ...leafKinds]) {
-		const node = nodeMap.nodes.get(kind)!;
-		if (treeEmitted.has(node.typeName)) continue;
-		treeEmitted.add(node.typeName);
-		const isAnon = isFixedTextLeaf(node);
-		const candidate = isAnon ? `_anonymous_${kind}` : kind;
-		const grammarKey = grammarKeys.has(candidate) ? candidate : null;
-		if (grammarKey && !isAnon) {
-			lines.push(`export interface ${node.typeName}Tree extends TreeNode<'${grammarKey}'> {}`);
-		} else if (isAnon) {
-			lines.push(
-				`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`
-			);
-		} else {
-			lines.push(
-				`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`
-			);
-		}
-	}
-	lines.push('');
-	return treeEmitted;
-}
-
 interface EmittedSupertype {
 	readonly kind: string;
 	readonly typeName: string;
-	readonly hasTree: boolean;
 }
 
 function supertypeTypeName(kind: string, nodeMap: NodeMap): string {
@@ -709,7 +652,6 @@ function emitSupertypeNamespaces(lines: string[], emitted: readonly EmittedSuper
 	for (const st of emitted) {
 		lines.push(`export namespace ${st.typeName} {`);
 		lines.push(`  export type Kind = '${st.kind}';`);
-		if (st.hasTree) lines.push(`  export type Tree = ${st.typeName}Tree;`);
 		lines.push('}');
 		lines.push('');
 	}
@@ -724,7 +666,6 @@ function emitSupertypeUnionDeclarations(
 	const emitted: EmittedSupertype[] = [];
 	if (supertypes.length === 0) return emitted;
 	lines.push('// Supertype unions');
-	const interfaceTypes = new Set(generatedTypes);
 	const pending: { kind: string; subtypes: string[]; typeName: string }[] = [];
 	for (const st of supertypes) {
 		if (st.subtypes.length === 0) {
@@ -759,12 +700,7 @@ function emitSupertypeUnionDeclarations(
 		for (const m of members) lines.push(`  | ${m}`);
 		lines.push(';');
 		lines.push('');
-		const treeMembers = resolvedSubs.filter((r) => interfaceTypes.has(r.typeName)).map((r) => `${r.typeName}Tree`);
-		if (treeMembers.length > 0) {
-			lines.push(`export type ${typeName}Tree = ${treeMembers.join(' | ')};`);
-			lines.push('');
-		}
-		emitted.push({ kind: st.kind, typeName, hasTree: treeMembers.length > 0 });
+		emitted.push({ kind: st.kind, typeName });
 	}
 	return emitted;
 }
@@ -773,7 +709,6 @@ function collectAndEmitTokenTypeAliases(
 	lines: string[],
 	nodeMap: NodeMap,
 	generatedTypes: Set<string>,
-	treeEmitted: Set<string>,
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
@@ -791,12 +726,6 @@ function collectAndEmitTokenTypeAliases(
 		if (generatedTypes.has(node.typeName)) continue;
 		generatedTypes.add(node.typeName);
 		lines.push(`export type ${node.typeName} = ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
-		if (!treeEmitted.has(node.typeName)) {
-			treeEmitted.add(node.typeName);
-			lines.push(
-				`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`
-			);
-		}
 	}
 	lines.push('');
 }
@@ -1185,18 +1114,6 @@ function quoteKey(key: string): string {
 	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
 }
 
-function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly RefineKindInfo[] | undefined): void {
-	if (!refineInfos || refineInfos.length === 0) return;
-	lines.push('// refine() per-form Tree aliases — same shape as the base kind Tree.');
-	for (const info of refineInfos) {
-		for (const form of info.forms) {
-			const formType = refineFormTypeName(info.typeName, form.name);
-			lines.push(`export type ${formType}Tree = ${info.typeName}Tree;`);
-		}
-	}
-	lines.push('');
-}
-
 function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
@@ -1241,7 +1158,6 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
 		lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Tree = TreeFor<${nsKey}>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');
 }
@@ -1273,7 +1189,6 @@ function emitRefineFormSubNamespaces(
 			lines.push(`    export type BuildArgs = ${surface.buildArgs};`);
 			lines.push(`    export type LooseArgs = ${surface.looseArgs};`);
 		}
-		lines.push(`    export type Tree = ${formType}Tree;`);
 		lines.push('  }');
 	}
 }

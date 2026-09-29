@@ -6645,15 +6645,6 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // annotation stays as a string literal instead of a TSKindId reference.
 ```
 
-### `packages/codegen/src/emitters/types.ts::grammarKeySetOf`
-
-The kind keys grammar.ts declares (the PythonGrammar / RustGrammar type
-literal), from the node types `generate` loaded once: a named entry by its
-type, an anonymous token under `_anonymous_<token>`. Tree type interfaces
-can only use `NodeKind<Grammar>` as their discriminator, so a kind absent
-from this set — a hidden rule, a promoted terminal, a synthesised form —
-falls back to a generic `AnyTreeNode`.
-
 ### `packages/codegen/src/emitters/types.ts::collectNodesByCategory`
 
 ```text
@@ -6888,52 +6879,12 @@ falls back to a generic `AnyTreeNode`.
 // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
 ```
 
-### `packages/codegen/src/emitters/types.ts::emitTreeInterfaceDeclarations`
-
-```text
-/**
- * Emit `export interface <TypeName>Tree` declarations for every structural
- * and leaf kind, plus synthetic per-form Tree interfaces for polymorphs.
- *
- * @remarks
- * Tree interfaces are retained for every kind because tree-sitter's native
- * `field` / `children` typing lives here, grammar-key-anchored. These
- * shape-match `X.Tree` (= `TreeNodeOf<X>`) structurally, but reach the
- * grammar schema through the `TreeNode<'kind'>` computed type. `X.Tree`
- * (namespace sugar) is the preferred consumer path; the flat `XTree`
- * interface stays because factories emit `replace(target: T.XTree)` with an
- * interface reference — anonymous type projections from namespace sugar are
- * verbose.
- *
- * @param lines - Output line buffer to append to.
- * @param nodeKinds - Structural kind strings.
- * @param leafKinds - Leaf kind strings.
- * @param nodeMap - The assembled node map.
- * @param grammarKeys - Set of kind keys present in grammar.ts / node-types.json.
- * @returns The set of type names for which a Tree interface was emitted.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Tree interface declaration emission
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Hidden single-literal `_kw_*` keywords are inlined at every
-// field reference, so their Tree interfaces are dead exports.
-// Skip in lockstep with `emitLeafTerminalAliases`.
-```
-
 ### `packages/codegen/src/emitters/types.ts::emitSupertypeUnionDeclarations`
 
 ```text
 /**
  * Emit `export type <TypeName> = | A | B | …` union declarations for every
- * supertype, plus the corresponding `<TypeName>Tree` union.
+ * supertype.
  *
  * @remarks
  * Unions must be emitted under the `AssembledNode`'s `typeName` (e.g.
@@ -6989,21 +6940,6 @@ falls back to a generic `AnyTreeNode`.
 #### body
 
 ```text
-// Supertype Tree union — factories reference it from
-// `replace(target: T.SupertypeTree)` signatures. Filter to
-// subtypes whose data INTERFACE was actually emitted (the matching
-// `Tree` alias only exists when the data type itself does — for
-// example, hidden single-literal `_kw_*` keywords resolve their
-// literal inline and emit no Tree alias, and a supertype member's
-// own Tree union is emitted only when it has tree-bearing members
-// of its own). Without the filter the supertype Tree references
-// dangling identifiers like `WildcardPatternTree` for
-// `_wildcard_pattern`.
-```
-
-#### body
-
-```text
 // Supertype Config/Loose unions dropped (US7 landing):
 // consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
@@ -7011,8 +6947,8 @@ falls back to a generic `AnyTreeNode`.
 
 ### `packages/codegen/src/emitters/types.ts::EmittedSupertype`
 
-A supertype union `emitSupertypeUnionDeclarations` wrote: its kind, its type
-name, and whether a `Tree` union was written beside it.
+A supertype union `emitSupertypeUnionDeclarations` wrote: its kind and its
+type name.
 
 ### `packages/codegen/src/emitters/types.ts::supertypeTypeName`
 
@@ -7021,7 +6957,7 @@ The type name a supertype's union is declared under: the node's own
 
 ### `packages/codegen/src/emitters/types.ts::emitSupertypeNamespaces`
 
-`export namespace X { Kind; Tree }` for every emitted supertype, so a
+`export namespace X { Kind }` for every emitted supertype, so a
 supertype has the same kind of home a struct kind has. It merges with the
 union alias of the same name.
 
@@ -7034,7 +6970,7 @@ each namespace merging with the kind's interface or alias. A kind root that
 finds no declared type to carry its hint fails at codegen instead of
 dropping out of `Options` while the Rust trie still accepts it. The hint lives in the namespace, not on the node
 interface, because a member on the node interfaces is re-examined by every
-derived surface (`Built`, `Loose`, `Tree`, the namespace map) and cost about
+derived surface (`Built`, `Loose`, the namespace map) and cost about
 30k instantiations on the typescript grammar however its type was spelled;
 in the namespace it costs nothing until `Options` is read. Kinds that share
 a display share a root; the one that owns its display (`ownsItsDisplay`) is
@@ -7053,8 +6989,7 @@ kept, and any other pair fails at codegen.
 ```text
 /**
  * Collect all token type names that are actually referenced in field/child
- * content-type lists of structured nodes, then emit their type and Tree
- * interface declarations.
+ * content-type lists of structured nodes, then emit their type declarations.
  *
  * @remarks
  * Only tokens that ARE actually referenced in field/child content-type lists
@@ -7068,8 +7003,6 @@ kept, and any other pair fails at codegen.
  * @param lines - Output line buffer to append to.
  * @param nodeMap - The assembled node map.
  * @param generatedTypes - Mutable set of emitted type names; updated in place.
- * @param treeEmitted - Mutable set of type names for which a Tree interface was
- *   already emitted; updated in place as new token Tree interfaces are added.
  */
 ```
 
@@ -7300,35 +7233,13 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 /** Quote a type/object key if it is not a plain identifier. */
 ```
 
-### `packages/codegen/src/emitters/types.ts::emitRefineFormTreeAliases`
-
-```text
-/**
- * Emit per-form Tree aliases for every refined kind.
- *
- * @remarks
- * Refine narrows choice selections at the Config/factory surface, not
- * the parse shape — the tree produced by tree-sitter is identical
- * regardless of which form constructed the node. The per-form Tree
- * alias therefore points at the base kind's Tree type; it exists so
- * method return types (`curly().type(...)`) can name a form-
- * specific Tree type at compile time without a structural duplicate.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// refine() per-form type emission (phase 2)
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceSugarBlock`
 
 ```text
 /**
  * Emit the namespace sugar block for one structured kind — the
- * declaration-merged `namespace <TypeName> { Config; Fluent; Loose; Tree;
- * Kind; }` block, plus per-form sub-namespaces when refine() registered
+ * declaration-merged `namespace <TypeName> { Config; Fluent; Loose; Kind; }`
+ * block, plus per-form sub-namespaces when refine() registered
  * forms for this kind. Keyword kinds get the same merge under the same
  * convention (bare name = the built type, here the id alias) with the
  * full member set read off their `KeywordNs` row (`Config` / `LooseConfig`
@@ -7345,7 +7256,7 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
  * For refined kinds:
  *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
  *     exposing `Config` (base Config minus the form's auto-stamped
- *     fields) and `Tree` (alias to the base kind Tree).
+ *     fields).
  *   - The top-level `<TypeName>.Config` shadows the generic
  *     `ConfigFor<'kind'>` with the first-declared form's Config — so
  *     bare-call sugar `ir.<kind>({...})` routes to the default form's
@@ -7368,8 +7279,8 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 
 ```text
 /** Each refine form's sub-namespace carries its own `Built` / `BuildArgs` /
- *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config` and
- *  `Tree`, so a form factory annotates `T.<Kind>.<Form>.Built` exactly as
+ *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config`, so a
+ *  form factory annotates `T.<Kind>.<Form>.Built` exactly as
  *  a plain kind's factory annotates `T.<Kind>.Built`. */
 ```
 
@@ -7382,7 +7293,6 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  *     the form's narrowed fields (those selections map to a single
  *     string literal, so phase-1 auto-stamp would otherwise need to be
  *     reapplied on top of the main Config).
- *   - `Tree`   — alias to the base Tree type (same parse shape).
  */
 ```
 
@@ -8347,7 +8257,7 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
  *   - A polymorph form's fields / children (same, per form).
  *   - A supertype's `subtypes` list.
  *
- * Emitters that decide which terminal aliases / Tree interfaces to emit
+ * Emitters that decide which terminal aliases to emit
  * use this to skip unreferenced terminals whose only consumer is a missing
  * factory binding. Previously duplicated in `types.ts::computeReferencedKinds`,
  * `type-test.ts` (inline walker), and `types.ts::collectAndEmitTokenTypeAliases`
@@ -9704,7 +9614,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  *   1. const enum TSKindId + lookup helpers
  *   2. Scoped const enums per supertype
  *   3. Concrete node interfaces
- *   4. Per-form Config/Tree aliases (polymorph forms only — base-kind
+ *   4. Per-form Config aliases (polymorph forms only — base-kind
  *      aliases were dropped in spec 008 Phase 9)
  *   5. Supertype unions
  *   6. Discriminated grammar union + KindMap + VariantMap
@@ -9820,27 +9730,10 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 #### body
 
 ```text
-// 4. Per-form Config/Tree aliases (polymorph forms only)
+// 4. Per-form Config aliases (polymorph forms only)
 // Polymorph forms have no flat `${typeName}Config` alias — consumers
 // (factories + dispatchers) reference `ConfigOf<T.${typeName}>` directly,
 // which picks up the polymorph-variant hoist via the generic in
-```
-
-#### body
-
-```text
-// Tree interfaces
-```
-
-#### body
-
-```text
-// refine() per-form Tree aliases — one per form per refined kind.
-// Tree shape is identical across forms (refine narrows choice
-// selections at the Config/factory surface, not the parse shape),
-// so each alias just points at the base kind's Tree type. Emitting
-// the alias lets method return types (e.g. `curly().methodFoo()`)
-// name a form-specific Tree at compile time when needed.
 ```
 
 #### body
@@ -9887,12 +9780,12 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // For every structural kind with a data interface, emit:
 //   1. interface <TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap> {}
 //   2. an entry in NamespaceMap keyed by the kind string
-//   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }`
+//   3. namespace sugar: `export namespace <TypeName> { Config; Fluent; Loose; Kind; }`
 //      — declaration-merges with the data interface so consumers can
 //      write `<TypeName>.Config` alongside using `<TypeName>` as a type.
 //
-// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>` /
-// `TreeFor<K>` resolve via NamespaceMap for code parametric over kinds.
+// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>`
+// resolve via NamespaceMap for code parametric over kinds.
 // All three access paths (`<TypeName>.Config`, `ConfigFor<'kind'>`,
 // `NamespaceMap['kind']['Config']`) resolve to the same type.
 // ---------------------------------------------------------------------
@@ -9944,8 +9837,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 // Patch the @sittir/types import: include only names referenced in the
-// emitted body. Always-used: NodeData/NodeConfig/TreeNode/NodeKind/NodeNs/
-// AnyTreeNodeOf/Terminal/NonEmptyArray/BooleanKeyword. Optional: ConfigOf
+// emitted body. Always-used: NodeNs/Terminal/NonEmptyArray/BooleanKeyword.
+// Optional: ConfigOf
 // (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
 // bitflag-typed fields). Empty grammars don't pull any of these, so emitting
 // them unconditionally trips `no-unused-vars` on the generated package.

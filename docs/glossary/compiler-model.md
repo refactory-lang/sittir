@@ -550,12 +550,6 @@ Distinct from `hidden`, which means "has no factory".
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::treeTypeName`
-
-```text
-/** Tree interface name: `${typeName}Tree`. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::configTypeName`
 
 ```text

@@ -2,18 +2,13 @@
 
 import type { TypescriptGrammar } from './grammar.js';
 import type {
-	NodeData as BaseNodeData,
-	NodeConfig as BaseNodeConfig,
-	TreeNode as BaseTreeNode,
 	ConfigOf,
 	LooseConfigOf,
 	WidenNumeric,
 	LooseValue,
-	NodeKind,
 	NodeNs,
 	KeywordNs,
 	LeafNs,
-	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
@@ -29,10 +24,6 @@ import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
 
 export type { TypescriptGrammar };
-
-export type NodeData<K extends NodeKind<TypescriptGrammar>> = BaseNodeData<TypescriptGrammar, K>;
-export type NodeConfig<K extends NodeKind<TypescriptGrammar>> = BaseNodeConfig<TypescriptGrammar, K>;
-export type TreeNode<K extends NodeKind<TypescriptGrammar>> = BaseTreeNode<TypescriptGrammar, K>;
 
 export type LeafScalarMap = {
 	[TSKindId.True]: boolean;
@@ -9900,580 +9891,6 @@ export type AsyncKeyword = TSKindId.AsyncKeyword;
 export type StaticKeyword = TSKindId.StaticKeyword;
 export type LetKeyword = TSKindId.LetKeyword;
 
-// Tree types
-export interface ProgramTree extends TreeNode<'program'> {}
-export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
-export interface NamespaceExportTree extends TreeNode<'namespace_export'> {}
-export interface ExportClauseTree extends TreeNode<'export_clause'> {}
-export interface ExportSpecifierTree extends TreeNode<'export_specifier'> {}
-export interface ImportStatementTree extends TreeNode<'import_statement'> {}
-export interface ImportClauseTree extends TreeNode<'import_clause'> {}
-export interface NamespaceImportTree extends TreeNode<'namespace_import'> {}
-export interface NamedImportsTree extends TreeNode<'named_imports'> {}
-export interface ImportAttributeTree extends TreeNode<'import_attribute'> {}
-export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
-export interface VariableDeclarationTree extends TreeNode<'variable_declaration'> {}
-export interface LexicalDeclarationTree extends TreeNode<'lexical_declaration'> {}
-export interface StatementBlockTree extends TreeNode<'statement_block'> {}
-export interface ElseClauseTree extends TreeNode<'else_clause'> {}
-export interface IfStatementTree extends TreeNode<'if_statement'> {}
-export interface SwitchStatementTree extends TreeNode<'switch_statement'> {}
-export interface ForStatementTree extends TreeNode<'for_statement'> {}
-export interface ForInStatementTree extends TreeNode<'for_in_statement'> {}
-export interface WhileStatementTree extends TreeNode<'while_statement'> {}
-export interface DoStatementTree extends TreeNode<'do_statement'> {}
-export interface TryStatementTree extends TreeNode<'try_statement'> {}
-export interface WithStatementTree extends TreeNode<'with_statement'> {}
-export interface BreakStatementTree extends TreeNode<'break_statement'> {}
-export interface ContinueStatementTree extends TreeNode<'continue_statement'> {}
-export interface DebuggerStatementTree extends TreeNode<'debugger_statement'> {}
-export interface ReturnStatementTree extends TreeNode<'return_statement'> {}
-export interface ThrowStatementTree extends TreeNode<'throw_statement'> {}
-export interface LabeledStatementTree extends TreeNode<'labeled_statement'> {}
-export interface SwitchBodyTree extends TreeNode<'switch_body'> {}
-export interface SwitchCaseTree extends TreeNode<'switch_case'> {}
-export interface SwitchDefaultTree extends TreeNode<'switch_default'> {}
-export interface CatchClauseTree extends TreeNode<'catch_clause'> {}
-export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
-export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
-export interface ObjectTree extends TreeNode<'object'> {}
-export interface ObjectPatternTree extends TreeNode<'object_pattern'> {}
-export interface AssignmentPatternTree extends TreeNode<'assignment_pattern'> {}
-export interface ObjectAssignmentPatternTree extends TreeNode<'object_assignment_pattern'> {}
-export interface ArrayTree extends TreeNode<'array'> {}
-export interface ArrayPatternTree extends TreeNode<'array_pattern'> {}
-export interface NestedIdentifierTree extends TreeNode<'nested_identifier'> {}
-export interface ClassTree extends TreeNode<'class'> {}
-export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
-export interface ClassHeritageTree extends TreeNode<'class_heritage'> {}
-export interface FunctionExpressionTree extends TreeNode<'function_expression'> {}
-export interface FunctionDeclarationTree extends TreeNode<'function_declaration'> {}
-export interface GeneratorFunctionTree extends TreeNode<'generator_function'> {}
-export interface GeneratorFunctionDeclarationTree extends TreeNode<'generator_function_declaration'> {}
-export interface ArrowFunctionTree extends TreeNode<'arrow_function'> {}
-export interface NewExpressionTree extends TreeNode<'new_expression'> {}
-export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
-export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
-export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
-export interface LhsExpressionTree extends AnyTreeNode {
-	readonly type: '_lhs_expression';
-}
-export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
-export interface AugmentedAssignmentExpressionTree extends TreeNode<'augmented_assignment_expression'> {}
-export interface SpreadElementTree extends TreeNode<'spread_element'> {}
-export interface TernaryExpressionTree extends TreeNode<'ternary_expression'> {}
-export interface BinaryExpressionTree extends TreeNode<'binary_expression'> {}
-export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
-export interface SequenceExpressionTree extends TreeNode<'sequence_expression'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
-export interface TemplateStringTree extends TreeNode<'template_string'> {}
-export interface TemplateSubstitutionTree extends TreeNode<'template_substitution'> {}
-export interface RegexTree extends TreeNode<'regex'> {}
-export interface PrivatePropertyIdentifierTree extends TreeNode<'private_property_identifier'> {}
-export interface ArgumentsTree extends TreeNode<'arguments'> {}
-export interface DecoratorTree extends TreeNode<'decorator'> {}
-export interface DecoratorMemberExpressionTree extends TreeNode<'decorator_member_expression'> {}
-export interface DecoratorCallExpressionTree extends TreeNode<'decorator_call_expression'> {}
-export interface ClassBodyTree extends TreeNode<'class_body'> {}
-export interface FormalParametersTree extends TreeNode<'formal_parameters'> {}
-export interface ClassStaticBlockTree extends TreeNode<'class_static_block'> {}
-export interface RestPatternTree extends TreeNode<'rest_pattern'> {}
-export interface MethodDefinitionTree extends TreeNode<'method_definition'> {}
-export interface PairTree extends TreeNode<'pair'> {}
-export interface PairPatternTree extends TreeNode<'pair_pattern'> {}
-export interface ComputedPropertyNameTree extends TreeNode<'computed_property_name'> {}
-export interface PublicFieldDefinitionTree extends TreeNode<'public_field_definition'> {}
-export interface NonNullExpressionTree extends TreeNode<'non_null_expression'> {}
-export interface MethodSignatureTree extends TreeNode<'method_signature'> {}
-export interface AbstractMethodSignatureTree extends TreeNode<'abstract_method_signature'> {}
-export interface FunctionSignatureTree extends TreeNode<'function_signature'> {}
-export interface DecoratorParenthesizedExpressionTree extends TreeNode<'decorator_parenthesized_expression'> {}
-export interface TypeAssertionTree extends TreeNode<'type_assertion'> {}
-export interface AsExpressionTree extends TreeNode<'as_expression'> {}
-export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'> {}
-export interface InstantiationExpressionTree extends TreeNode<'instantiation_expression'> {}
-export interface ImportRequireClauseTree extends TreeNode<'import_require_clause'> {}
-export interface ExtendsClauseTree extends TreeNode<'extends_clause'> {}
-export interface ExtendsClauseSingleTree extends TreeNode<'extends_clause_single'> {}
-export interface ImplementsClauseTree extends TreeNode<'implements_clause'> {}
-export interface AmbientDeclarationTree extends TreeNode<'ambient_declaration'> {}
-export interface AbstractClassDeclarationTree extends TreeNode<'abstract_class_declaration'> {}
-export interface ModuleTree extends TreeNode<'module'> {}
-export interface InternalModuleTree extends TreeNode<'internal_module'> {}
-export interface ImportAliasTree extends TreeNode<'import_alias'> {}
-export interface NestedTypeIdentifierTree extends TreeNode<'nested_type_identifier'> {}
-export interface InterfaceDeclarationTree extends TreeNode<'interface_declaration'> {}
-export interface ExtendsTypeClauseTree extends TreeNode<'extends_type_clause'> {}
-export interface EnumDeclarationTree extends TreeNode<'enum_declaration'> {}
-export interface EnumBodyTree extends TreeNode<'enum_body'> {}
-export interface EnumAssignmentTree extends TreeNode<'enum_assignment'> {}
-export interface TypeAliasDeclarationTree extends TreeNode<'type_alias_declaration'> {}
-export interface RequiredParameterTree extends TreeNode<'required_parameter'> {}
-export interface OptionalParameterTree extends TreeNode<'optional_parameter'> {}
-export interface OmittingTypeAnnotationTree extends TreeNode<'omitting_type_annotation'> {}
-export interface AddingTypeAnnotationTree extends TreeNode<'adding_type_annotation'> {}
-export interface OptingTypeAnnotationTree extends TreeNode<'opting_type_annotation'> {}
-export interface TypeAnnotationTree extends TreeNode<'type_annotation'> {}
-export interface TypeQueryMemberExpressionInTypeAnnotationTree extends TreeNode<'type_query_member_expression_in_type_annotation'> {}
-export interface TypeQueryCallExpressionInTypeAnnotationTree extends TreeNode<'type_query_call_expression_in_type_annotation'> {}
-export interface AssertsTree extends TreeNode<'asserts'> {}
-export interface AssertsAnnotationTree extends TreeNode<'asserts_annotation'> {}
-export interface TupleParameterTree extends TreeNode<'tuple_parameter'> {}
-export interface OptionalTupleParameterTree extends TreeNode<'optional_tuple_parameter'> {}
-export interface OptionalTypeTree extends TreeNode<'optional_type'> {}
-export interface RestTypeTree extends TreeNode<'rest_type'> {}
-export interface ConstructorTypeTree extends TreeNode<'constructor_type'> {}
-export interface TemplateTypeTree extends TreeNode<'template_type'> {}
-export interface TemplateLiteralTypeTree extends TreeNode<'template_literal_type'> {}
-export interface InferTypeTree extends TreeNode<'infer_type'> {}
-export interface ConditionalTypeTree extends TreeNode<'conditional_type'> {}
-export interface GenericTypeTree extends TreeNode<'generic_type'> {}
-export interface TypePredicateTree extends TreeNode<'type_predicate'> {}
-export interface TypePredicateAnnotationTree extends TreeNode<'type_predicate_annotation'> {}
-export interface TypeQueryMemberExpressionTree extends TreeNode<'type_query_member_expression'> {}
-export interface TypeQuerySubscriptExpressionTree extends TreeNode<'type_query_subscript_expression'> {}
-export interface TypeQueryCallExpressionTree extends TreeNode<'type_query_call_expression'> {}
-export interface TypeQueryInstantiationExpressionTree extends TreeNode<'type_query_instantiation_expression'> {}
-export interface TypeQueryTree extends TreeNode<'type_query'> {}
-export interface IndexTypeQueryTree extends TreeNode<'index_type_query'> {}
-export interface LookupTypeTree extends TreeNode<'lookup_type'> {}
-export interface MappedTypeClauseTree extends TreeNode<'mapped_type_clause'> {}
-export interface LiteralTypeTree extends TreeNode<'literal_type'> {}
-export interface FlowMaybeTypeTree extends TreeNode<'flow_maybe_type'> {}
-export interface ParenthesizedTypeTree extends TreeNode<'parenthesized_type'> {}
-export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
-export interface ObjectTypeTree extends TreeNode<'object_type'> {}
-export interface CallSignatureTree extends TreeNode<'call_signature'> {}
-export interface PropertySignatureTree extends TreeNode<'property_signature'> {}
-export interface TypeParametersTree extends TreeNode<'type_parameters'> {}
-export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
-export interface DefaultTypeTree extends TreeNode<'default_type'> {}
-export interface ConstraintTree extends TreeNode<'constraint'> {}
-export interface ConstructSignatureTree extends TreeNode<'construct_signature'> {}
-export interface ArrayTypeTree extends TreeNode<'array_type'> {}
-export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
-export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
-export interface UnionTypeTree extends TreeNode<'union_type'> {}
-export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
-export interface FunctionTypeTree extends TreeNode<'function_type'> {}
-export interface ExportSpecifiersTree extends TreeNode<'export_specifiers'> {}
-export interface ImportSpecifiersTree extends TreeNode<'import_specifiers'> {}
-export interface FormalParametersElementsTree extends TreeNode<'formal_parameters_elements'> {}
-export interface EnumBodyElementsTree extends TreeNode<'enum_body_elements'> {}
-export interface TypesTree extends TreeNode<'types'> {}
-export interface TypeParametersElementsTree extends TreeNode<'type_parameters_elements'> {}
-export interface TupleTypeMembersTree extends TreeNode<'tuple_type_members'> {}
-export interface ImportClauseGroupTree extends TreeNode<'import_clause_group'> {}
-export interface CatchClauseGroupTree extends TreeNode<'catch_clause_group'> {}
-export interface AmbientDeclarationGlobalTree extends TreeNode<'ambient_declaration_global'> {}
-export interface AmbientDeclarationModuleTree extends TreeNode<'ambient_declaration_module'> {}
-export interface ObjectTypeContentTree extends TreeNode<'object_type_content'> {}
-export interface ExportStatementNamespaceExportTree extends TreeNode<'export_statement_namespace_export'> {}
-export interface ExportStatementTypeExportTree extends TreeNode<'export_statement_type_export'> {}
-export interface ExportStatementEqualsExportTree extends TreeNode<'export_statement_equals_export'> {}
-export interface CommentLineTree extends TreeNode<'comment_line'> {}
-export interface CommentBlockTree extends TreeNode<'comment_block'> {}
-export interface LiteralTypeNegativeNumberTree extends TreeNode<'literal_type_negative_number'> {}
-export interface NumberHexTree extends TreeNode<'number_hex'> {}
-export interface NumberFloatPointTree extends TreeNode<'number_float_point'> {}
-export interface NumberFloatLeadingPointTree extends TreeNode<'number_float_leading_point'> {}
-export interface NumberFloatScientificTree extends TreeNode<'number_float_scientific'> {}
-export interface NumberBinaryTree extends TreeNode<'number_binary'> {}
-export interface NumberOctalTree extends TreeNode<'number_octal'> {}
-export interface NumberBigintHexTree extends TreeNode<'number_bigint_hex'> {}
-export interface NumberBigintBinaryTree extends TreeNode<'number_bigint_binary'> {}
-export interface NumberBigintOctalTree extends TreeNode<'number_bigint_octal'> {}
-export interface NumberBigintDecimalTree extends TreeNode<'number_bigint_decimal'> {}
-export interface BinaryExpressionInTree extends TreeNode<'binary_expression_in'> {}
-export interface ClassBodyMethodTree extends TreeNode<'class_body_method'> {}
-export interface ClassBodyMethodSigTree extends TreeNode<'class_body_method_sig'> {}
-export interface ClassBodyMemberTree extends TreeNode<'class_body_member'> {}
-export interface IndexSignatureColonTree extends TreeNode<'index_signature_colon'> {}
-export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature_mapped_type_clause'> {}
-export interface ImportStatementClauseFromTree extends TreeNode<'import_statement_clause_from'> {}
-export interface ImportSpecifierNameTree extends TreeNode<'import_specifier_name'> {}
-export interface ImportSpecifierAsTree extends TreeNode<'import_specifier_as'> {}
-export interface ParenthesizedExpressionTypedTree extends TreeNode<'parenthesized_expression_typed'> {}
-export interface ParenthesizedExpressionSequenceTree extends TreeNode<'parenthesized_expression_sequence'> {}
-export interface CallExpressionCallTree extends TreeNode<'call_expression_call'> {}
-export interface CallExpressionTemplateCallTree extends TreeNode<'call_expression_template_call'> {}
-export interface CallExpressionMemberTree extends TreeNode<'call_expression_member'> {}
-export interface StringDoubleTree extends TreeNode<'string_double'> {}
-export interface StringSingleTree extends TreeNode<'string_single'> {}
-export interface UpdateExpressionPostfixTree extends TreeNode<'update_expression_postfix'> {}
-export interface UpdateExpressionPrefixTree extends TreeNode<'update_expression_prefix'> {}
-export interface ArrowFunctionParameterTree extends TreeNode<'arrow_function_parameter'> {}
-export interface ClassHeritageExtendsClauseTree extends TreeNode<'class_heritage_extends_clause'> {}
-export interface ImportClauseDefaultImportTree extends TreeNode<'import_clause_default_import'> {}
-export interface ExportStatementDefaultFromTree extends TreeNode<'export_statement_default_from'> {}
-export interface ExportStatementDefaultDeclarationTree extends TreeNode<'export_statement_default_declaration'> {}
-export interface ExportStatementDefaultFromStarFromTree extends TreeNode<'export_statement_default_from_star_from'> {}
-export interface ExportStatementDefaultFromNsFromTree extends TreeNode<'export_statement_default_from_ns_from'> {}
-export interface ExportStatementDefaultFromClauseFromTree extends TreeNode<'export_statement_default_from_clause_from'> {}
-export interface ExportStatementDefaultDeclarationDefaultKwTree extends TreeNode<'export_statement_default_declaration_default_kw'> {}
-export interface ExportStatementDefaultDeclarationDefaultKwValueTree extends TreeNode<'export_statement_default_declaration_default_kw_value'> {}
-export interface VariableDeclaratorPlainTree extends TreeNode<'variable_declarator_plain'> {}
-export interface VariableDeclaratorDefiniteTree extends TreeNode<'variable_declarator_definite'> {}
-export interface ForHeaderLhsTree extends TreeNode<'for_header_lhs'> {}
-export interface ForHeaderVarKindTree extends TreeNode<'for_header_var_kind'> {}
-export interface ForHeaderLetConstKindTree extends TreeNode<'for_header_let_const_kind'> {}
-export interface StatementIdentifierTree extends TreeNode<'statement_identifier'> {}
-export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_property_identifier'> {}
-export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
-export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> {}
-export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
-export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
-export interface ImportTree extends AnyTreeNode {
-	readonly type: 'import';
-}
-export interface EmptyStatementTree extends AnyTreeNode {
-	readonly type: 'empty_statement';
-}
-export interface OptionalChainTree extends AnyTreeNode {
-	readonly type: 'optional_chain';
-}
-export interface UnescapedDoubleStringFragmentTree extends AnyTreeNode {
-	readonly type: 'unescaped_double_string_fragment';
-}
-export interface UnescapedSingleStringFragmentTree extends AnyTreeNode {
-	readonly type: 'unescaped_single_string_fragment';
-}
-export interface RegexPatternTree extends TreeNode<'regex_pattern'> {}
-export interface RegexFlagsTree extends TreeNode<'regex_flags'> {}
-export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface ThisTree extends AnyTreeNode {
-	readonly type: 'this';
-}
-export interface SuperTree extends AnyTreeNode {
-	readonly type: 'super';
-}
-export interface TrueTree extends AnyTreeNode {
-	readonly type: 'true';
-}
-export interface FalseTree extends AnyTreeNode {
-	readonly type: 'false';
-}
-export interface NullTree extends AnyTreeNode {
-	readonly type: 'null';
-}
-export interface UndefinedTree extends AnyTreeNode {
-	readonly type: 'undefined';
-}
-export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
-export interface OverrideModifierTree extends AnyTreeNode {
-	readonly type: 'override_modifier';
-}
-export interface ExistentialTypeTree extends AnyTreeNode {
-	readonly type: 'existential_type';
-}
-export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
-export interface KwAwaitMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_await_marker';
-}
-export interface KwAsyncMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_async_marker';
-}
-export interface KwUsingMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_using_marker';
-}
-export interface KwStaticMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_static_marker';
-}
-export interface KwDeclareMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_declare_marker';
-}
-export interface KwAbstractMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_abstract_marker';
-}
-export interface KwAccessorMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_accessor_marker';
-}
-export interface KwConstMarkerTree extends AnyTreeNode {
-	readonly type: '_kw_const_marker';
-}
-export interface KindTree extends AnyTreeNode {
-	readonly type: '_kind';
-}
-export interface ForHeaderOperatorTree extends AnyTreeNode {
-	readonly type: '__for_header_operator';
-}
-export interface NumberDecimalTree extends TreeNode<'number_decimal'> {}
-export interface EmptyMemberTree extends AnyTreeNode {
-	readonly type: 'empty_member';
-}
-export interface MetaPropertyNewTargetTree extends AnyTreeNode {
-	readonly type: 'meta_property_new_target';
-}
-export interface MetaPropertyImportMetaTree extends AnyTreeNode {
-	readonly type: 'meta_property_import_meta';
-}
-export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
-export interface JsxTextTree extends AnyTreeNode {
-	readonly type: 'jsx_text';
-}
-export interface TemplateCharsTree extends AnyTreeNode {
-	readonly type: '_template_chars';
-}
-export interface AutomaticSemicolonTree extends AnyTreeNode {
-	readonly type: '_automatic_semicolon';
-}
-export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode {
-	readonly type: '_function_signature_automatic_semicolon';
-}
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export interface TabTree extends AnyTreeNode {
-	readonly type: '_tab';
-}
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export interface DoubleBlanklineTree extends AnyTreeNode {
-	readonly type: '_double_blankline';
-}
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
-}
-export interface TernaryQmarkTree extends AnyTreeNode {
-	readonly type: '_ternary_qmark';
-}
-export interface ErrorRecoveryTree extends AnyTreeNode {
-	readonly type: '__error_recovery';
-}
-export interface AsKeywordTree extends AnyTreeNode {
-	readonly type: 'as_keyword';
-}
-export interface TypeKeywordTree extends AnyTreeNode {
-	readonly type: 'type_keyword';
-}
-export interface TypeofKeywordTree extends AnyTreeNode {
-	readonly type: 'typeof_keyword';
-}
-export interface ImportKeywordTree extends AnyTreeNode {
-	readonly type: 'import_keyword';
-}
-export interface WithKeywordTree extends AnyTreeNode {
-	readonly type: 'with_keyword';
-}
-export interface AssertKeywordTree extends AnyTreeNode {
-	readonly type: 'assert_keyword';
-}
-export interface VarKeywordTree extends AnyTreeNode {
-	readonly type: 'var_keyword';
-}
-export interface ElseKeywordTree extends AnyTreeNode {
-	readonly type: 'else_keyword';
-}
-export interface IfKeywordTree extends AnyTreeNode {
-	readonly type: 'if_keyword';
-}
-export interface SwitchKeywordTree extends AnyTreeNode {
-	readonly type: 'switch_keyword';
-}
-export interface ForKeywordTree extends AnyTreeNode {
-	readonly type: 'for_keyword';
-}
-export interface WhileKeywordTree extends AnyTreeNode {
-	readonly type: 'while_keyword';
-}
-export interface DoKeywordTree extends AnyTreeNode {
-	readonly type: 'do_keyword';
-}
-export interface TryKeywordTree extends AnyTreeNode {
-	readonly type: 'try_keyword';
-}
-export interface BreakKeywordTree extends AnyTreeNode {
-	readonly type: 'break_keyword';
-}
-export interface ContinueKeywordTree extends AnyTreeNode {
-	readonly type: 'continue_keyword';
-}
-export interface DebuggerKeywordTree extends AnyTreeNode {
-	readonly type: 'debugger_keyword';
-}
-export interface ReturnKeywordTree extends AnyTreeNode {
-	readonly type: 'return_keyword';
-}
-export interface ThrowKeywordTree extends AnyTreeNode {
-	readonly type: 'throw_keyword';
-}
-export interface DeclareKeywordTree extends AnyTreeNode {
-	readonly type: 'declare_keyword';
-}
-export interface NamespaceKeywordTree extends AnyTreeNode {
-	readonly type: 'namespace_keyword';
-}
-export interface PublicKeywordTree extends AnyTreeNode {
-	readonly type: 'public_keyword';
-}
-export interface PrivateKeywordTree extends AnyTreeNode {
-	readonly type: 'private_keyword';
-}
-export interface ProtectedKeywordTree extends AnyTreeNode {
-	readonly type: 'protected_keyword';
-}
-export interface OverrideKeywordTree extends AnyTreeNode {
-	readonly type: 'override_keyword';
-}
-export interface ReadonlyKeywordTree extends AnyTreeNode {
-	readonly type: 'readonly_keyword';
-}
-export interface ModuleKeywordTree extends AnyTreeNode {
-	readonly type: 'module_keyword';
-}
-export interface AnyKeywordTree extends AnyTreeNode {
-	readonly type: 'any_keyword';
-}
-export interface NumberKeywordTree extends AnyTreeNode {
-	readonly type: 'number_keyword';
-}
-export interface BooleanKeywordTree extends AnyTreeNode {
-	readonly type: 'boolean_keyword';
-}
-export interface StringKeywordTree extends AnyTreeNode {
-	readonly type: 'string_keyword';
-}
-export interface SymbolKeywordTree extends AnyTreeNode {
-	readonly type: 'symbol_keyword';
-}
-export interface ExportKeywordTree extends AnyTreeNode {
-	readonly type: 'export_keyword';
-}
-export interface ObjectKeywordTree extends AnyTreeNode {
-	readonly type: 'object_keyword';
-}
-export interface NewKeywordTree extends AnyTreeNode {
-	readonly type: 'new_keyword';
-}
-export interface GetKeywordTree extends AnyTreeNode {
-	readonly type: 'get_keyword';
-}
-export interface SetKeywordTree extends AnyTreeNode {
-	readonly type: 'set_keyword';
-}
-export interface AsyncKeywordTree extends AnyTreeNode {
-	readonly type: 'async_keyword';
-}
-export interface StaticKeywordTree extends AnyTreeNode {
-	readonly type: 'static_keyword';
-}
-export interface LetKeywordTree extends AnyTreeNode {
-	readonly type: 'let_keyword';
-}
-export interface CaseKeywordTree extends AnyTreeNode {
-	readonly type: 'case_keyword';
-}
-export interface DefaultKeywordTree extends AnyTreeNode {
-	readonly type: 'default_keyword';
-}
-export interface CatchKeywordTree extends AnyTreeNode {
-	readonly type: 'catch_keyword';
-}
-export interface FinallyKeywordTree extends AnyTreeNode {
-	readonly type: 'finally_keyword';
-}
-export interface YieldKeywordTree extends AnyTreeNode {
-	readonly type: 'yield_keyword';
-}
-export interface ClassKeywordTree extends AnyTreeNode {
-	readonly type: 'class_keyword';
-}
-export interface FunctionKeywordTree extends AnyTreeNode {
-	readonly type: 'function_keyword';
-}
-export interface AwaitKeywordTree extends AnyTreeNode {
-	readonly type: 'await_keyword';
-}
-export interface InstanceofKeywordTree extends AnyTreeNode {
-	readonly type: 'instanceof_keyword';
-}
-export interface VoidKeywordTree extends AnyTreeNode {
-	readonly type: 'void_keyword';
-}
-export interface DeleteKeywordTree extends AnyTreeNode {
-	readonly type: 'delete_keyword';
-}
-export interface AbstractKeywordTree extends AnyTreeNode {
-	readonly type: 'abstract_keyword';
-}
-export interface ConstKeywordTree extends AnyTreeNode {
-	readonly type: 'const_keyword';
-}
-export interface SatisfiesKeywordTree extends AnyTreeNode {
-	readonly type: 'satisfies_keyword';
-}
-export interface RequireKeywordTree extends AnyTreeNode {
-	readonly type: 'require_keyword';
-}
-export interface ExtendsKeywordTree extends AnyTreeNode {
-	readonly type: 'extends_keyword';
-}
-export interface ImplementsKeywordTree extends AnyTreeNode {
-	readonly type: 'implements_keyword';
-}
-export interface InterfaceKeywordTree extends AnyTreeNode {
-	readonly type: 'interface_keyword';
-}
-export interface EnumKeywordTree extends AnyTreeNode {
-	readonly type: 'enum_keyword';
-}
-export interface AssertsKeywordTree extends AnyTreeNode {
-	readonly type: 'asserts_keyword';
-}
-export interface InferKeywordTree extends AnyTreeNode {
-	readonly type: 'infer_keyword';
-}
-export interface IsKeywordTree extends AnyTreeNode {
-	readonly type: 'is_keyword';
-}
-export interface KeyofKeywordTree extends AnyTreeNode {
-	readonly type: 'keyof_keyword';
-}
-export interface InKeywordTree extends AnyTreeNode {
-	readonly type: 'in_keyword';
-}
-export interface UnknownKeywordTree extends AnyTreeNode {
-	readonly type: 'unknown_keyword';
-}
-export interface NeverKeywordTree extends AnyTreeNode {
-	readonly type: 'never_keyword';
-}
-export interface UsingKeywordTree extends AnyTreeNode {
-	readonly type: 'using_keyword';
-}
-export interface AccessorKeywordTree extends AnyTreeNode {
-	readonly type: 'accessor_keyword';
-}
-export interface OfKeywordTree extends AnyTreeNode {
-	readonly type: 'of_keyword';
-}
-export interface GlobalKeywordTree extends AnyTreeNode {
-	readonly type: 'global_keyword';
-}
-export interface FromKeywordTree extends AnyTreeNode {
-	readonly type: 'from_keyword';
-}
-export interface TargetKeywordTree extends AnyTreeNode {
-	readonly type: 'target_keyword';
-}
-export interface MetaKeywordTree extends AnyTreeNode {
-	readonly type: 'meta_keyword';
-}
-
-// refine() per-form Tree aliases — same shape as the base kind Tree.
-export type ObjectTypeCurlyTree = ObjectTypeTree;
-export type ObjectTypeFlowTree = ObjectTypeTree;
-
 // Supertype unions
 export type ExportStatement =
 	| ExportStatementDefault
@@ -10481,14 +9898,7 @@ export type ExportStatement =
 	| ExportStatementEqualsExport
 	| ExportStatementNamespaceExport;
 
-export type ExportStatementTree =
-	| ExportStatementTypeExportTree
-	| ExportStatementEqualsExportTree
-	| ExportStatementNamespaceExportTree;
-
 export type ModuleExportName = Identifier | String;
-
-export type ModuleExportNameTree = IdentifierTree;
 
 export type Declaration =
 	| FunctionDeclaration
@@ -10506,25 +9916,7 @@ export type Declaration =
 	| ImportAlias
 	| AmbientDeclaration;
 
-export type DeclarationTree =
-	| FunctionDeclarationTree
-	| GeneratorFunctionDeclarationTree
-	| ClassDeclarationTree
-	| LexicalDeclarationTree
-	| VariableDeclarationTree
-	| FunctionSignatureTree
-	| AbstractClassDeclarationTree
-	| ModuleTree
-	| InternalModuleTree
-	| TypeAliasDeclarationTree
-	| EnumDeclarationTree
-	| InterfaceDeclarationTree
-	| ImportAliasTree
-	| AmbientDeclarationTree;
-
 export type ImportSpecifier = ImportSpecifierName | ImportSpecifierAs;
-
-export type ImportSpecifierTree = ImportSpecifierNameTree | ImportSpecifierAsTree;
 
 export type Statement =
 	| ExportStatement
@@ -10548,41 +9940,13 @@ export type Statement =
 	| EmptyStatement
 	| LabeledStatement;
 
-export type StatementTree =
-	| ImportStatementTree
-	| DebuggerStatementTree
-	| ExpressionStatementTree
-	| StatementBlockTree
-	| IfStatementTree
-	| SwitchStatementTree
-	| ForStatementTree
-	| ForInStatementTree
-	| WhileStatementTree
-	| DoStatementTree
-	| TryStatementTree
-	| WithStatementTree
-	| BreakStatementTree
-	| ContinueStatementTree
-	| ReturnStatementTree
-	| ThrowStatementTree
-	| EmptyStatementTree
-	| LabeledStatementTree;
-
 export type VariableDeclarator = VariableDeclaratorPlain | VariableDeclaratorDefinite;
-
-export type VariableDeclaratorTree = VariableDeclaratorPlainTree | VariableDeclaratorDefiniteTree;
 
 export type ForHeader = ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 
-export type ForHeaderTree = ForHeaderLhsTree | ForHeaderVarKindTree | ForHeaderLetConstKindTree;
-
 export type ParenthesizedExpression = ParenthesizedExpressionTyped | ParenthesizedExpressionSequence;
 
-export type ParenthesizedExpressionTree = ParenthesizedExpressionTypedTree | ParenthesizedExpressionSequenceTree;
-
 export type Expressions = Expression | SequenceExpression;
-
-export type ExpressionsTree = SequenceExpressionTree;
 
 export type Expression =
 	| AsExpression
@@ -10600,21 +9964,6 @@ export type Expression =
 	| UpdateExpression
 	| NewExpression
 	| YieldExpression;
-
-export type ExpressionTree =
-	| AsExpressionTree
-	| SatisfiesExpressionTree
-	| InstantiationExpressionTree
-	| InternalModuleTree
-	| TypeAssertionTree
-	| AssignmentExpressionTree
-	| AugmentedAssignmentExpressionTree
-	| AwaitExpressionTree
-	| UnaryExpressionTree
-	| BinaryExpressionTree
-	| TernaryExpressionTree
-	| NewExpressionTree
-	| YieldExpressionTree;
 
 export type PrimaryExpression =
 	| SubscriptExpression
@@ -10663,55 +10012,9 @@ export type PrimaryExpression =
 	| CallExpression
 	| NonNullExpression;
 
-export type PrimaryExpressionTree =
-	| SubscriptExpressionTree
-	| MemberExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| ThisTree
-	| SuperTree
-	| TemplateStringTree
-	| RegexTree
-	| TrueTree
-	| FalseTree
-	| NullTree
-	| ObjectTree
-	| ArrayTree
-	| FunctionExpressionTree
-	| ArrowFunctionTree
-	| GeneratorFunctionTree
-	| ClassTree
-	| NonNullExpressionTree;
-
 export type FormalParameter = RequiredParameter | OptionalParameter;
 
-export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
-
 export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | CallExpressionMember;
-
-export type CallExpressionTree = CallExpressionCallTree | CallExpressionTemplateCallTree | CallExpressionMemberTree;
 
 export type AugmentedAssignmentLhs =
 	| MemberExpression
@@ -10742,49 +10045,13 @@ export type AugmentedAssignmentLhs =
 	| ParenthesizedExpression
 	| NonNullExpression;
 
-export type AugmentedAssignmentLhsTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| IdentifierTree
-	| NonNullExpressionTree;
-
 export type DestructuringPattern = ObjectPattern | ArrayPattern;
-
-export type DestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
 
 export type UpdateExpression = UpdateExpressionPostfix | UpdateExpressionPrefix;
 
-export type UpdateExpressionTree = UpdateExpressionPostfixTree | UpdateExpressionPrefixTree;
-
 export type String = StringDouble | StringSingle;
 
-export type StringTree = StringDoubleTree | StringSingleTree;
-
 export type Comment = CommentLine | CommentBlock;
-
-export type CommentTree = CommentLineTree | CommentBlockTree;
 
 export type Number =
 	| NumberHex
@@ -10796,34 +10063,15 @@ export type Number =
 	| NumberOctal
 	| NumberBigint;
 
-export type NumberTree =
-	| NumberHexTree
-	| NumberFloatPointTree
-	| NumberFloatLeadingPointTree
-	| NumberFloatScientificTree
-	| NumberDecimalTree
-	| NumberBinaryTree
-	| NumberOctalTree;
-
 export type _Identifier = Undefined | Identifier;
-
-export type _IdentifierTree = UndefinedTree | IdentifierTree;
 
 export type MetaProperty = MetaPropertyNewTarget | MetaPropertyImportMeta;
 
-export type MetaPropertyTree = MetaPropertyNewTargetTree | MetaPropertyImportMetaTree;
-
 export type Pattern = LhsExpression | RestPattern;
-
-export type PatternTree = LhsExpressionTree | RestPatternTree;
 
 export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 
-export type PropertyNameTree = PropertyIdentifierTree | PrivatePropertyIdentifierTree | ComputedPropertyNameTree;
-
 export type ImportIdentifier = Identifier | TypeKeyword;
-
-export type ImportIdentifierTree = IdentifierTree | TypeKeywordTree;
 
 export type Type =
 	| PrimaryType
@@ -10834,17 +10082,7 @@ export type Type =
 	| TypeQueryMemberExpressionInTypeAnnotation
 	| TypeQueryCallExpressionInTypeAnnotation;
 
-export type TypeTree =
-	| FunctionTypeTree
-	| ReadonlyTypeTree
-	| ConstructorTypeTree
-	| InferTypeTree
-	| TypeQueryMemberExpressionInTypeAnnotationTree
-	| TypeQueryCallExpressionInTypeAnnotationTree;
-
 export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
-
-export type TupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree;
 
 export type PrimaryType =
 	| ParenthesizedType
@@ -10867,208 +10105,136 @@ export type PrimaryType =
 	| IntersectionType
 	| UnionType;
 
-export type PrimaryTypeTree =
-	| ParenthesizedTypeTree
-	| PredefinedTypeTree
-	| TypeIdentifierTree
-	| NestedTypeIdentifierTree
-	| GenericTypeTree
-	| ObjectTypeTree
-	| ArrayTypeTree
-	| TupleTypeTree
-	| FlowMaybeTypeTree
-	| TypeQueryTree
-	| IndexTypeQueryTree
-	| ThisTree
-	| ExistentialTypeTree
-	| LiteralTypeTree
-	| LookupTypeTree
-	| ConditionalTypeTree
-	| TemplateLiteralTypeTree
-	| IntersectionTypeTree
-	| UnionTypeTree;
-
 export type IndexSignature = IndexSignatureColon | IndexSignatureMappedTypeClause;
-
-export type IndexSignatureTree = IndexSignatureColonTree | IndexSignatureMappedTypeClauseTree;
 
 export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
-export type WhitespaceTree =
-	| TightTree
-	| SpaceTree
-	| TabTree
-	| NewlineTree
-	| BlanklineTree
-	| DoubleBlanklineTree
-	| IndentTree
-	| DedentTree;
-
 export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatementDefaultDeclaration;
-
-export type ExportStatementDefaultTree = ExportStatementDefaultFromTree | ExportStatementDefaultDeclarationTree;
 
 export type NumberBigint = NumberBigintHex | NumberBigintBinary | NumberBigintOctal | NumberBigintDecimal;
 
-export type NumberBigintTree =
-	| NumberBigintHexTree
-	| NumberBigintBinaryTree
-	| NumberBigintOctalTree
-	| NumberBigintDecimalTree;
-
 export namespace ExportStatement {
 	export type Kind = 'export_statement';
-	export type Tree = ExportStatementTree;
 }
 
 export namespace ModuleExportName {
 	export type Kind = '_module_export_name';
-	export type Tree = ModuleExportNameTree;
 }
 
 export namespace Declaration {
 	export type Kind = 'declaration';
-	export type Tree = DeclarationTree;
 }
 
 export namespace ImportSpecifier {
 	export type Kind = 'import_specifier';
-	export type Tree = ImportSpecifierTree;
 }
 
 export namespace Statement {
 	export type Kind = 'statement';
-	export type Tree = StatementTree;
 }
 
 export namespace VariableDeclarator {
 	export type Kind = 'variable_declarator';
-	export type Tree = VariableDeclaratorTree;
 }
 
 export namespace ForHeader {
 	export type Kind = '_for_header';
-	export type Tree = ForHeaderTree;
 }
 
 export namespace ParenthesizedExpression {
 	export type Kind = 'parenthesized_expression';
-	export type Tree = ParenthesizedExpressionTree;
 }
 
 export namespace Expressions {
 	export type Kind = '_expressions';
-	export type Tree = ExpressionsTree;
 }
 
 export namespace Expression {
 	export type Kind = 'expression';
-	export type Tree = ExpressionTree;
 }
 
 export namespace PrimaryExpression {
 	export type Kind = 'primary_expression';
-	export type Tree = PrimaryExpressionTree;
 }
 
 export namespace FormalParameter {
 	export type Kind = '_formal_parameter';
-	export type Tree = FormalParameterTree;
 }
 
 export namespace CallExpression {
 	export type Kind = 'call_expression';
-	export type Tree = CallExpressionTree;
 }
 
 export namespace AugmentedAssignmentLhs {
 	export type Kind = '_augmented_assignment_lhs';
-	export type Tree = AugmentedAssignmentLhsTree;
 }
 
 export namespace DestructuringPattern {
 	export type Kind = '_destructuring_pattern';
-	export type Tree = DestructuringPatternTree;
 }
 
 export namespace UpdateExpression {
 	export type Kind = 'update_expression';
-	export type Tree = UpdateExpressionTree;
 }
 
 export namespace String {
 	export type Kind = 'string';
-	export type Tree = StringTree;
 }
 
 export namespace Comment {
 	export type Kind = 'comment';
-	export type Tree = CommentTree;
 }
 
 export namespace Number {
 	export type Kind = 'number';
-	export type Tree = NumberTree;
 }
 
 export namespace _Identifier {
 	export type Kind = '_identifier';
-	export type Tree = _IdentifierTree;
 }
 
 export namespace MetaProperty {
 	export type Kind = 'meta_property';
-	export type Tree = MetaPropertyTree;
 }
 
 export namespace Pattern {
 	export type Kind = 'pattern';
-	export type Tree = PatternTree;
 }
 
 export namespace PropertyName {
 	export type Kind = '_property_name';
-	export type Tree = PropertyNameTree;
 }
 
 export namespace ImportIdentifier {
 	export type Kind = '_import_identifier';
-	export type Tree = ImportIdentifierTree;
 }
 
 export namespace Type {
 	export type Kind = 'type';
-	export type Tree = TypeTree;
 }
 
 export namespace TupleTypeMember {
 	export type Kind = '_tuple_type_member';
-	export type Tree = TupleTypeMemberTree;
 }
 
 export namespace PrimaryType {
 	export type Kind = 'primary_type';
-	export type Tree = PrimaryTypeTree;
 }
 
 export namespace IndexSignature {
 	export type Kind = 'index_signature';
-	export type Tree = IndexSignatureTree;
 }
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
-	export type Tree = WhitespaceTree;
 }
 
 export namespace ExportStatementDefault {
 	export type Kind = 'export_statement_default';
-	export type Tree = ExportStatementDefaultTree;
 }
 
 export namespace NumberBigint {
 	export type Kind = 'number_bigint';
-	export type Tree = NumberBigintTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -16303,274 +15469,98 @@ export interface InterfaceBodyNs extends NodeNs<
 	'content',
 	'interface_body'
 > {}
-export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', ImportTree, 'import'> {}
-export interface EmptyStatementNs extends KeywordNs<
-	TSKindId.EmptyStatement,
-	';',
-	EmptyStatementTree,
-	'empty_statement'
-> {}
-export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', OptionalChainTree, 'optional_chain'> {}
-export interface ThisNs extends KeywordNs<TSKindId.This, 'this', ThisTree, 'this'> {}
-export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', SuperTree, 'super'> {}
-export interface TrueNs extends KeywordNs<TSKindId.True, 'true', TrueTree, 'true'> {}
-export interface FalseNs extends KeywordNs<TSKindId.False, 'false', FalseTree, 'false'> {}
-export interface NullNs extends KeywordNs<TSKindId.Null, 'null', NullTree, 'null'> {}
-export interface UndefinedNs extends KeywordNs<TSKindId.Undefined, 'undefined', UndefinedTree, 'undefined'> {}
-export interface OverrideModifierNs extends KeywordNs<
-	TSKindId.OverrideModifier,
-	'override',
-	OverrideModifierTree,
-	'override_modifier'
-> {}
-export interface ExistentialTypeNs extends KeywordNs<
-	TSKindId.ExistentialType,
-	'*',
-	ExistentialTypeTree,
-	'existential_type'
-> {}
-export interface KwAwaitMarkerNs extends KeywordNs<
-	TSKindId.KwAwaitMarker,
-	'await',
-	KwAwaitMarkerTree,
-	'_kw_await_marker'
-> {}
-export interface KwAsyncMarkerNs extends KeywordNs<
-	TSKindId.KwAsyncMarker,
-	'async',
-	KwAsyncMarkerTree,
-	'_kw_async_marker'
-> {}
-export interface KwUsingMarkerNs extends KeywordNs<
-	TSKindId.KwUsingMarker,
-	'using',
-	KwUsingMarkerTree,
-	'_kw_using_marker'
-> {}
-export interface KwStaticMarkerNs extends KeywordNs<
-	TSKindId.KwStaticMarker,
-	'static',
-	KwStaticMarkerTree,
-	'_kw_static_marker'
-> {}
-export interface KwDeclareMarkerNs extends KeywordNs<
-	TSKindId.KwDeclareMarker,
-	'declare',
-	KwDeclareMarkerTree,
-	'_kw_declare_marker'
-> {}
-export interface KwAbstractMarkerNs extends KeywordNs<
-	TSKindId.KwAbstractMarker,
-	'abstract',
-	KwAbstractMarkerTree,
-	'_kw_abstract_marker'
-> {}
-export interface KwAccessorMarkerNs extends KeywordNs<
-	TSKindId.KwAccessorMarker,
-	'accessor',
-	KwAccessorMarkerTree,
-	'_kw_accessor_marker'
-> {}
-export interface KwConstMarkerNs extends KeywordNs<
-	TSKindId.KwConstMarker,
-	'const',
-	KwConstMarkerTree,
-	'_kw_const_marker'
-> {}
-export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', EmptyMemberTree, 'empty_member'> {}
+export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', 'import'> {}
+export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', 'empty_statement'> {}
+export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', 'optional_chain'> {}
+export interface ThisNs extends KeywordNs<TSKindId.This, 'this', 'this'> {}
+export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', 'super'> {}
+export interface TrueNs extends KeywordNs<TSKindId.True, 'true', 'true'> {}
+export interface FalseNs extends KeywordNs<TSKindId.False, 'false', 'false'> {}
+export interface NullNs extends KeywordNs<TSKindId.Null, 'null', 'null'> {}
+export interface UndefinedNs extends KeywordNs<TSKindId.Undefined, 'undefined', 'undefined'> {}
+export interface OverrideModifierNs extends KeywordNs<TSKindId.OverrideModifier, 'override', 'override_modifier'> {}
+export interface ExistentialTypeNs extends KeywordNs<TSKindId.ExistentialType, '*', 'existential_type'> {}
+export interface KwAwaitMarkerNs extends KeywordNs<TSKindId.KwAwaitMarker, 'await', '_kw_await_marker'> {}
+export interface KwAsyncMarkerNs extends KeywordNs<TSKindId.KwAsyncMarker, 'async', '_kw_async_marker'> {}
+export interface KwUsingMarkerNs extends KeywordNs<TSKindId.KwUsingMarker, 'using', '_kw_using_marker'> {}
+export interface KwStaticMarkerNs extends KeywordNs<TSKindId.KwStaticMarker, 'static', '_kw_static_marker'> {}
+export interface KwDeclareMarkerNs extends KeywordNs<TSKindId.KwDeclareMarker, 'declare', '_kw_declare_marker'> {}
+export interface KwAbstractMarkerNs extends KeywordNs<TSKindId.KwAbstractMarker, 'abstract', '_kw_abstract_marker'> {}
+export interface KwAccessorMarkerNs extends KeywordNs<TSKindId.KwAccessorMarker, 'accessor', '_kw_accessor_marker'> {}
+export interface KwConstMarkerNs extends KeywordNs<TSKindId.KwConstMarker, 'const', '_kw_const_marker'> {}
+export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', 'empty_member'> {}
 export interface MetaPropertyNewTargetNs extends KeywordNs<
 	TSKindId.MetaPropertyNewTarget,
 	'new.target',
-	MetaPropertyNewTargetTree,
 	'meta_property_new_target'
 > {}
 export interface MetaPropertyImportMetaNs extends KeywordNs<
 	TSKindId.MetaPropertyImportMeta,
 	'import.meta',
-	MetaPropertyImportMetaTree,
 	'meta_property_import_meta'
 > {}
-export interface AutomaticSemicolonNs extends KeywordNs<
-	TSKindId.AutomaticSemicolon,
-	'\n',
-	AutomaticSemicolonTree,
-	'_automatic_semicolon'
-> {}
+export interface AutomaticSemicolonNs extends KeywordNs<TSKindId.AutomaticSemicolon, '\n', '_automatic_semicolon'> {}
 export interface FunctionSignatureAutomaticSemicolonNs extends KeywordNs<
 	TSKindId.FunctionSignatureAutomaticSemicolon,
 	'\n',
-	FunctionSignatureAutomaticSemicolonTree,
 	'_function_signature_automatic_semicolon'
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
-export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
-export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TabTree, '_tab'> {}
-export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
-export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
-export interface DoubleBlanklineNs extends KeywordNs<
-	TSKindId.DoubleBlankline,
-	'\n\n\n',
-	DoubleBlanklineTree,
-	'_double_blankline'
-> {}
-export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', IndentTree, '_indent'> {}
-export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', DedentTree, '_dedent'> {}
-export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TypeKeywordTree, 'type_keyword'> {}
-export interface DeclareKeywordNs extends KeywordNs<
-	TSKindId.DeclareKeyword,
-	'declare',
-	DeclareKeywordTree,
-	'declare_keyword'
-> {}
-export interface NamespaceKeywordNs extends KeywordNs<
-	TSKindId.NamespaceKeyword,
-	'namespace',
-	NamespaceKeywordTree,
-	'namespace_keyword'
-> {}
-export interface PublicKeywordNs extends KeywordNs<
-	TSKindId.PublicKeyword,
-	'public',
-	PublicKeywordTree,
-	'public_keyword'
-> {}
-export interface PrivateKeywordNs extends KeywordNs<
-	TSKindId.PrivateKeyword,
-	'private',
-	PrivateKeywordTree,
-	'private_keyword'
-> {}
-export interface ProtectedKeywordNs extends KeywordNs<
-	TSKindId.ProtectedKeyword,
-	'protected',
-	ProtectedKeywordTree,
-	'protected_keyword'
-> {}
-export interface OverrideKeywordNs extends KeywordNs<
-	TSKindId.OverrideKeyword,
-	'override',
-	OverrideKeywordTree,
-	'override_keyword'
-> {}
-export interface ReadonlyKeywordNs extends KeywordNs<
-	TSKindId.ReadonlyKeyword,
-	'readonly',
-	ReadonlyKeywordTree,
-	'readonly_keyword'
-> {}
-export interface ModuleKeywordNs extends KeywordNs<
-	TSKindId.ModuleKeyword,
-	'module',
-	ModuleKeywordTree,
-	'module_keyword'
-> {}
-export interface AnyKeywordNs extends KeywordNs<TSKindId.AnyKeyword, 'any', AnyKeywordTree, 'any_keyword'> {}
-export interface NumberKeywordNs extends KeywordNs<
-	TSKindId.NumberKeyword,
-	'number',
-	NumberKeywordTree,
-	'number_keyword'
-> {}
-export interface BooleanKeywordNs extends KeywordNs<
-	TSKindId.BooleanKeyword,
-	'boolean',
-	BooleanKeywordTree,
-	'boolean_keyword'
-> {}
-export interface StringKeywordNs extends KeywordNs<
-	TSKindId.StringKeyword,
-	'string',
-	StringKeywordTree,
-	'string_keyword'
-> {}
-export interface SymbolKeywordNs extends KeywordNs<
-	TSKindId.SymbolKeyword,
-	'symbol',
-	SymbolKeywordTree,
-	'symbol_keyword'
-> {}
-export interface ExportKeywordNs extends KeywordNs<
-	TSKindId.ExportKeyword,
-	'export',
-	ExportKeywordTree,
-	'export_keyword'
-> {}
-export interface ObjectKeywordNs extends KeywordNs<
-	TSKindId.ObjectKeyword,
-	'object',
-	ObjectKeywordTree,
-	'object_keyword'
-> {}
-export interface NewKeywordNs extends KeywordNs<TSKindId.NewKeyword, 'new', NewKeywordTree, 'new_keyword'> {}
-export interface GetKeywordNs extends KeywordNs<TSKindId.GetKeyword, 'get', GetKeywordTree, 'get_keyword'> {}
-export interface SetKeywordNs extends KeywordNs<TSKindId.SetKeyword, 'set', SetKeywordTree, 'set_keyword'> {}
-export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', AsyncKeywordTree, 'async_keyword'> {}
-export interface StaticKeywordNs extends KeywordNs<
-	TSKindId.StaticKeyword,
-	'static',
-	StaticKeywordTree,
-	'static_keyword'
-> {}
-export interface LetKeywordNs extends KeywordNs<TSKindId.LetKeyword, 'let', LetKeywordTree, 'let_keyword'> {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', '_tight'> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', '_space'> {}
+export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', '_tab'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', '_blankline'> {}
+export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', '_double_blankline'> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', '_indent'> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', '_dedent'> {}
+export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', 'type_keyword'> {}
+export interface DeclareKeywordNs extends KeywordNs<TSKindId.DeclareKeyword, 'declare', 'declare_keyword'> {}
+export interface NamespaceKeywordNs extends KeywordNs<TSKindId.NamespaceKeyword, 'namespace', 'namespace_keyword'> {}
+export interface PublicKeywordNs extends KeywordNs<TSKindId.PublicKeyword, 'public', 'public_keyword'> {}
+export interface PrivateKeywordNs extends KeywordNs<TSKindId.PrivateKeyword, 'private', 'private_keyword'> {}
+export interface ProtectedKeywordNs extends KeywordNs<TSKindId.ProtectedKeyword, 'protected', 'protected_keyword'> {}
+export interface OverrideKeywordNs extends KeywordNs<TSKindId.OverrideKeyword, 'override', 'override_keyword'> {}
+export interface ReadonlyKeywordNs extends KeywordNs<TSKindId.ReadonlyKeyword, 'readonly', 'readonly_keyword'> {}
+export interface ModuleKeywordNs extends KeywordNs<TSKindId.ModuleKeyword, 'module', 'module_keyword'> {}
+export interface AnyKeywordNs extends KeywordNs<TSKindId.AnyKeyword, 'any', 'any_keyword'> {}
+export interface NumberKeywordNs extends KeywordNs<TSKindId.NumberKeyword, 'number', 'number_keyword'> {}
+export interface BooleanKeywordNs extends KeywordNs<TSKindId.BooleanKeyword, 'boolean', 'boolean_keyword'> {}
+export interface StringKeywordNs extends KeywordNs<TSKindId.StringKeyword, 'string', 'string_keyword'> {}
+export interface SymbolKeywordNs extends KeywordNs<TSKindId.SymbolKeyword, 'symbol', 'symbol_keyword'> {}
+export interface ExportKeywordNs extends KeywordNs<TSKindId.ExportKeyword, 'export', 'export_keyword'> {}
+export interface ObjectKeywordNs extends KeywordNs<TSKindId.ObjectKeyword, 'object', 'object_keyword'> {}
+export interface NewKeywordNs extends KeywordNs<TSKindId.NewKeyword, 'new', 'new_keyword'> {}
+export interface GetKeywordNs extends KeywordNs<TSKindId.GetKeyword, 'get', 'get_keyword'> {}
+export interface SetKeywordNs extends KeywordNs<TSKindId.SetKeyword, 'set', 'set_keyword'> {}
+export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', 'async_keyword'> {}
+export interface StaticKeywordNs extends KeywordNs<TSKindId.StaticKeyword, 'static', 'static_keyword'> {}
+export interface LetKeywordNs extends KeywordNs<TSKindId.LetKeyword, 'let', 'let_keyword'> {}
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
 	UnescapedDoubleStringFragment.Built,
-	UnescapedDoubleStringFragmentTree,
 	'unescaped_double_string_fragment'
 > {}
 export interface UnescapedSingleStringFragmentNs extends LeafNs<
 	UnescapedSingleStringFragment,
 	string,
 	UnescapedSingleStringFragment.Built,
-	UnescapedSingleStringFragmentTree,
 	'unescaped_single_string_fragment'
 > {}
-export interface RegexPatternNs extends LeafNs<
-	RegexPattern,
-	string,
-	RegexPattern.Built,
-	RegexPatternTree,
-	'regex_pattern'
-> {}
-export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Built, RegexFlagsTree, 'regex_flags'> {}
-export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
+export interface RegexPatternNs extends LeafNs<RegexPattern, string, RegexPattern.Built, 'regex_pattern'> {}
+export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Built, 'regex_flags'> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, 'identifier'> {}
 export interface NumberDecimalNs extends LeafNs<
 	NumberDecimal,
 	string | number | bigint,
 	NumberDecimal.Built,
-	NumberDecimalTree,
 	'number_decimal'
 > {}
-export interface HtmlCommentNs extends LeafNs<
-	HtmlComment,
-	string,
-	HtmlComment.Built,
-	HtmlCommentTree,
-	'html_comment'
-> {}
-export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, JsxTextTree, 'jsx_text'> {}
-export interface TemplateCharsNs extends LeafNs<
-	TemplateChars,
-	string,
-	TemplateChars.Built,
-	TemplateCharsTree,
-	'_template_chars'
-> {}
-export interface TernaryQmarkNs extends LeafNs<
-	TernaryQmark,
-	string,
-	TernaryQmark.Built,
-	TernaryQmarkTree,
-	'_ternary_qmark'
-> {}
-export interface ErrorRecoveryNs extends LeafNs<
-	ErrorRecovery,
-	string,
-	ErrorRecovery.Built,
-	ErrorRecoveryTree,
-	'__error_recovery'
-> {}
+export interface HtmlCommentNs extends LeafNs<HtmlComment, string, HtmlComment.Built, 'html_comment'> {}
+export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, 'jsx_text'> {}
+export interface TemplateCharsNs extends LeafNs<TemplateChars, string, TemplateChars.Built, '_template_chars'> {}
+export interface TernaryQmarkNs extends LeafNs<TernaryQmark, string, TernaryQmark.Built, '_ternary_qmark'> {}
+export interface ErrorRecoveryNs extends LeafNs<ErrorRecovery, string, ErrorRecovery.Built, '__error_recovery'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -17326,10 +16316,9 @@ export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
 export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
 export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
-export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
-// <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.
+// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.
 export namespace Program {
 	export type Config = ConfigFor<TSKindId.Program>;
 	export interface Built extends T.Program, NodeMethodsOf {
@@ -17346,7 +16335,6 @@ export namespace Program {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.Program, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Program
 	];
-	export type Tree = TreeFor<TSKindId.Program>;
 	export type Kind = 'program';
 }
 export namespace HashBangLine {
@@ -17362,7 +16350,6 @@ export namespace HashBangLine {
 	export type LooseConfig = LooseConfigFor<TSKindId.HashBangLine>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.HashBangLine>;
 	export type Kind = 'hash_bang_line';
 }
 export namespace NamespaceExport {
@@ -17380,7 +16367,6 @@ export namespace NamespaceExport {
 	export type LooseArgs = [
 		value: LooseValue<T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.NamespaceExport>;
 	export type Kind = 'namespace_export';
 }
 export namespace ExportClause {
@@ -17396,7 +16382,6 @@ export namespace ExportClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
 	export type BuildArgs = [value?: T.ExportSpecifiers];
 	export type LooseArgs = [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ExportClause>;
 	export type Kind = 'export_clause';
 }
 export namespace ExportSpecifier {
@@ -17416,7 +16401,6 @@ export namespace ExportSpecifier {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ExportSpecifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExportSpecifier
 	];
-	export type Tree = TreeFor<TSKindId.ExportSpecifier>;
 	export type Kind = 'export_specifier';
 }
 export namespace ImportStatement {
@@ -17444,7 +16428,6 @@ export namespace ImportStatement {
 			| T.ImportStatement,
 		options?: T.ImportStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.ImportStatement>;
 	export type Kind = 'import_statement';
 }
 export namespace ImportClause {
@@ -17467,7 +16450,6 @@ export namespace ImportClause {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ImportClause>;
 	export type Kind = 'import_clause';
 }
 export namespace NamespaceImport {
@@ -17483,7 +16465,6 @@ export namespace NamespaceImport {
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceImport>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NamespaceImport>;
 	export type Kind = 'namespace_import';
 }
 export namespace NamedImports {
@@ -17499,7 +16480,6 @@ export namespace NamedImports {
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
 	export type BuildArgs = [value?: T.ImportSpecifiers];
 	export type LooseArgs = [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NamedImports>;
 	export type Kind = 'named_imports';
 }
 export namespace ImportAttribute {
@@ -17518,7 +16498,6 @@ export namespace ImportAttribute {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ImportAttribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ImportAttribute
 	];
-	export type Tree = TreeFor<TSKindId.ImportAttribute>;
 	export type Kind = 'import_attribute';
 }
 export namespace ExpressionStatement {
@@ -17539,7 +16518,6 @@ export namespace ExpressionStatement {
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExpressionStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.ExpressionStatement>;
 	export type Kind = 'expression_statement';
 }
 export namespace VariableDeclaration {
@@ -17568,7 +16546,6 @@ export namespace VariableDeclaration {
 			| T.VariableDeclaration,
 		options?: T.VariableDeclaration.Options
 	];
-	export type Tree = TreeFor<TSKindId.VariableDeclaration>;
 	export type Kind = 'variable_declaration';
 }
 export namespace LexicalDeclaration {
@@ -17598,7 +16575,6 @@ export namespace LexicalDeclaration {
 			| T.LexicalDeclaration,
 		options?: T.LexicalDeclaration.Options
 	];
-	export type Tree = TreeFor<TSKindId.LexicalDeclaration>;
 	export type Kind = 'lexical_declaration';
 }
 export namespace StatementBlock {
@@ -17617,7 +16593,6 @@ export namespace StatementBlock {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.StatementBlock
 	];
-	export type Tree = TreeFor<TSKindId.StatementBlock>;
 	export type Kind = 'statement_block';
 }
 export namespace ElseClause {
@@ -17633,7 +16608,6 @@ export namespace ElseClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
 	export type BuildArgs = [value: T.Statement];
 	export type LooseArgs = [value: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ElseClause>;
 	export type Kind = 'else_clause';
 }
 export namespace IfStatement {
@@ -17653,7 +16627,6 @@ export namespace IfStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IfStatement
 	];
-	export type Tree = TreeFor<TSKindId.IfStatement>;
 	export type Kind = 'if_statement';
 }
 export namespace SwitchStatement {
@@ -17672,7 +16645,6 @@ export namespace SwitchStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.SwitchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchStatement
 	];
-	export type Tree = TreeFor<TSKindId.SwitchStatement>;
 	export type Kind = 'switch_statement';
 }
 export namespace ForStatement {
@@ -17693,7 +16665,6 @@ export namespace ForStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForStatement
 	];
-	export type Tree = TreeFor<TSKindId.ForStatement>;
 	export type Kind = 'for_statement';
 }
 export namespace ForInStatement {
@@ -17713,7 +16684,6 @@ export namespace ForInStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForInStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForInStatement
 	];
-	export type Tree = TreeFor<TSKindId.ForInStatement>;
 	export type Kind = 'for_in_statement';
 }
 export namespace WhileStatement {
@@ -17732,7 +16702,6 @@ export namespace WhileStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WhileStatement
 	];
-	export type Tree = TreeFor<TSKindId.WhileStatement>;
 	export type Kind = 'while_statement';
 }
 export namespace DoStatement {
@@ -17756,7 +16725,6 @@ export namespace DoStatement {
 			| T.DoStatement,
 		options?: T.DoStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.DoStatement>;
 	export type Kind = 'do_statement';
 }
 export namespace TryStatement {
@@ -17776,7 +16744,6 @@ export namespace TryStatement {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
 	];
-	export type Tree = TreeFor<TSKindId.TryStatement>;
 	export type Kind = 'try_statement';
 }
 export namespace WithStatement {
@@ -17795,7 +16762,6 @@ export namespace WithStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WithStatement
 	];
-	export type Tree = TreeFor<TSKindId.WithStatement>;
 	export type Kind = 'with_statement';
 }
 export namespace BreakStatement {
@@ -17824,7 +16790,6 @@ export namespace BreakStatement {
 		>,
 		options?: T.BreakStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.BreakStatement>;
 	export type Kind = 'break_statement';
 }
 export namespace ContinueStatement {
@@ -17853,7 +16818,6 @@ export namespace ContinueStatement {
 		>,
 		options?: T.ContinueStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.ContinueStatement>;
 	export type Kind = 'continue_statement';
 }
 export namespace DebuggerStatement {
@@ -17871,7 +16835,6 @@ export namespace DebuggerStatement {
 	export type LooseArgs = [
 		value: LooseValue<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.DebuggerStatement>;
 	export type Kind = 'debugger_statement';
 }
 export namespace ReturnStatement {
@@ -17892,7 +16855,6 @@ export namespace ReturnStatement {
 		value?: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ReturnStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.ReturnStatement>;
 	export type Kind = 'return_statement';
 }
 export namespace ThrowStatement {
@@ -17913,7 +16875,6 @@ export namespace ThrowStatement {
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ThrowStatement.Options
 	];
-	export type Tree = TreeFor<TSKindId.ThrowStatement>;
 	export type Kind = 'throw_statement';
 }
 export namespace LabeledStatement {
@@ -17932,7 +16893,6 @@ export namespace LabeledStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.LabeledStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LabeledStatement
 	];
-	export type Tree = TreeFor<TSKindId.LabeledStatement>;
 	export type Kind = 'labeled_statement';
 }
 export namespace SwitchBody {
@@ -17950,7 +16910,6 @@ export namespace SwitchBody {
 	export type LooseArgs = [
 		...children: LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.SwitchBody>;
 	export type Kind = 'switch_body';
 }
 export namespace SwitchCase {
@@ -17969,7 +16928,6 @@ export namespace SwitchCase {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.SwitchCase, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchCase
 	];
-	export type Tree = TreeFor<TSKindId.SwitchCase>;
 	export type Kind = 'switch_case';
 }
 export namespace SwitchDefault {
@@ -17985,7 +16943,6 @@ export namespace SwitchDefault {
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchDefault>;
 	export type BuildArgs = [...children: T.Statement[]];
 	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.SwitchDefault>;
 	export type Kind = 'switch_default';
 }
 export namespace CatchClause {
@@ -18004,7 +16961,6 @@ export namespace CatchClause {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClause
 	];
-	export type Tree = TreeFor<TSKindId.CatchClause>;
 	export type Kind = 'catch_clause';
 }
 export namespace FinallyClause {
@@ -18020,7 +16976,6 @@ export namespace FinallyClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
 	export type BuildArgs = [value: T.StatementBlock];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.FinallyClause>;
 	export type Kind = 'finally_clause';
 }
 export namespace YieldExpression {
@@ -18036,7 +16991,6 @@ export namespace YieldExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
 	export type BuildArgs = [value?: T.Expression];
 	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.YieldExpression>;
 	export type Kind = 'yield_expression';
 }
 export namespace Object {
@@ -18151,7 +17105,6 @@ export namespace Object {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.Object>;
 	export type Kind = 'object';
 }
 export namespace ObjectPattern {
@@ -18266,7 +17219,6 @@ export namespace ObjectPattern {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.ObjectPattern>;
 	export type Kind = 'object_pattern';
 }
 export namespace AssignmentPattern {
@@ -18287,7 +17239,6 @@ export namespace AssignmentPattern {
 			| LooseConfigOf<T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AssignmentPattern
 	];
-	export type Tree = TreeFor<TSKindId.AssignmentPattern>;
 	export type Kind = 'assignment_pattern';
 }
 export namespace ObjectAssignmentPattern {
@@ -18308,7 +17259,6 @@ export namespace ObjectAssignmentPattern {
 			| LooseConfigOf<T.ObjectAssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ObjectAssignmentPattern
 	];
-	export type Tree = TreeFor<TSKindId.ObjectAssignmentPattern>;
 	export type Kind = 'object_assignment_pattern';
 }
 export namespace Array {
@@ -18326,7 +17276,6 @@ export namespace Array {
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.Array>;
 	export type Kind = 'array';
 }
 export namespace ArrayPattern {
@@ -18344,7 +17293,6 @@ export namespace ArrayPattern {
 	export type LooseArgs = [
 		...children: LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.ArrayPattern>;
 	export type Kind = 'array_pattern';
 }
 export namespace NestedIdentifier {
@@ -18363,7 +17311,6 @@ export namespace NestedIdentifier {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.NestedIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NestedIdentifier
 	];
-	export type Tree = TreeFor<TSKindId.NestedIdentifier>;
 	export type Kind = 'nested_identifier';
 }
 export namespace Class {
@@ -18385,7 +17332,6 @@ export namespace Class {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Class
 	];
-	export type Tree = TreeFor<TSKindId.Class>;
 	export type Kind = 'class';
 }
 export namespace ClassDeclaration {
@@ -18410,7 +17356,6 @@ export namespace ClassDeclaration {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.ClassDeclaration>;
 	export type Kind = 'class_declaration';
 }
 export namespace ClassHeritage {
@@ -18433,7 +17378,6 @@ export namespace ClassHeritage {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ClassHeritage>;
 	export type Kind = 'class_heritage';
 }
 export namespace FunctionExpression {
@@ -18460,7 +17404,6 @@ export namespace FunctionExpression {
 			| LooseConfigOf<T.FunctionExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.FunctionExpression
 	];
-	export type Tree = TreeFor<TSKindId.FunctionExpression>;
 	export type Kind = 'function_expression';
 }
 export namespace FunctionDeclaration {
@@ -18490,7 +17433,6 @@ export namespace FunctionDeclaration {
 			| LooseConfigOf<T.FunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.FunctionDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.FunctionDeclaration>;
 	export type Kind = 'function_declaration';
 }
 export namespace GeneratorFunction {
@@ -18515,7 +17457,6 @@ export namespace GeneratorFunction {
 			| LooseConfigOf<T.GeneratorFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.GeneratorFunction
 	];
-	export type Tree = TreeFor<TSKindId.GeneratorFunction>;
 	export type Kind = 'generator_function';
 }
 export namespace GeneratorFunctionDeclaration {
@@ -18547,7 +17488,6 @@ export namespace GeneratorFunctionDeclaration {
 			| LooseConfigOf<T.GeneratorFunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.GeneratorFunctionDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.GeneratorFunctionDeclaration>;
 	export type Kind = 'generator_function_declaration';
 }
 export namespace ArrowFunction {
@@ -18567,7 +17507,6 @@ export namespace ArrowFunction {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ArrowFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ArrowFunction
 	];
-	export type Tree = TreeFor<TSKindId.ArrowFunction>;
 	export type Kind = 'arrow_function';
 }
 export namespace NewExpression {
@@ -18587,7 +17526,6 @@ export namespace NewExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.NewExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NewExpression
 	];
-	export type Tree = TreeFor<TSKindId.NewExpression>;
 	export type Kind = 'new_expression';
 }
 export namespace AwaitExpression {
@@ -18603,7 +17541,6 @@ export namespace AwaitExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.AwaitExpression>;
 	export type Kind = 'await_expression';
 }
 export namespace MemberExpression {
@@ -18625,7 +17562,6 @@ export namespace MemberExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MemberExpression
 	];
-	export type Tree = TreeFor<TSKindId.MemberExpression>;
 	export type Kind = 'member_expression';
 }
 export namespace SubscriptExpression {
@@ -18647,7 +17583,6 @@ export namespace SubscriptExpression {
 			| LooseConfigOf<T.SubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.SubscriptExpression
 	];
-	export type Tree = TreeFor<TSKindId.SubscriptExpression>;
 	export type Kind = 'subscript_expression';
 }
 export namespace LhsExpression {
@@ -18761,7 +17696,6 @@ export namespace LhsExpression {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.LhsExpression>;
 	export type Kind = '_lhs_expression';
 }
 export namespace AssignmentExpression {
@@ -18783,7 +17717,6 @@ export namespace AssignmentExpression {
 			| LooseConfigOf<T.AssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AssignmentExpression
 	];
-	export type Tree = TreeFor<TSKindId.AssignmentExpression>;
 	export type Kind = 'assignment_expression';
 }
 export namespace AugmentedAssignmentExpression {
@@ -18807,7 +17740,6 @@ export namespace AugmentedAssignmentExpression {
 			| LooseConfigOf<T.AugmentedAssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AugmentedAssignmentExpression
 	];
-	export type Tree = TreeFor<TSKindId.AugmentedAssignmentExpression>;
 	export type Kind = 'augmented_assignment_expression';
 }
 export namespace SpreadElement {
@@ -18823,7 +17755,6 @@ export namespace SpreadElement {
 	export type LooseConfig = LooseConfigFor<TSKindId.SpreadElement>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.SpreadElement>;
 	export type Kind = 'spread_element';
 }
 export namespace TernaryExpression {
@@ -18845,7 +17776,6 @@ export namespace TernaryExpression {
 			| LooseConfigOf<T.TernaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TernaryExpression
 	];
-	export type Tree = TreeFor<TSKindId.TernaryExpression>;
 	export type Kind = 'ternary_expression';
 }
 export namespace BinaryExpression {
@@ -18868,7 +17798,6 @@ export namespace BinaryExpression {
 			| LooseConfigOf<T.BinaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.BinaryExpression
 	];
-	export type Tree = TreeFor<TSKindId.BinaryExpression>;
 	export type Kind = 'binary_expression';
 }
 export namespace UnaryExpression {
@@ -18887,7 +17816,6 @@ export namespace UnaryExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.UnaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnaryExpression
 	];
-	export type Tree = TreeFor<TSKindId.UnaryExpression>;
 	export type Kind = 'unary_expression';
 }
 export namespace SequenceExpression {
@@ -18903,7 +17831,6 @@ export namespace SequenceExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
 	export type BuildArgs = [...children: T.Expression[]];
 	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.SequenceExpression>;
 	export type Kind = 'sequence_expression';
 }
 export namespace EscapeSequence {
@@ -18919,7 +17846,6 @@ export namespace EscapeSequence {
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EscapeSequence>;
 	export type Kind = 'escape_sequence';
 }
 export namespace TemplateString {
@@ -18942,7 +17868,6 @@ export namespace TemplateString {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.TemplateString>;
 	export type Kind = 'template_string';
 }
 export namespace TemplateSubstitution {
@@ -18960,7 +17885,6 @@ export namespace TemplateSubstitution {
 	export type LooseArgs = [
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.TemplateSubstitution>;
 	export type Kind = 'template_substitution';
 }
 export namespace Regex {
@@ -18979,7 +17903,6 @@ export namespace Regex {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Regex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Regex
 	];
-	export type Tree = TreeFor<TSKindId.Regex>;
 	export type Kind = 'regex';
 }
 export namespace PrivatePropertyIdentifier {
@@ -18995,7 +17918,6 @@ export namespace PrivatePropertyIdentifier {
 	export type LooseConfig = LooseConfigFor<TSKindId.PrivatePropertyIdentifier>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.PrivatePropertyIdentifier>;
 	export type Kind = 'private_property_identifier';
 }
 export namespace Arguments {
@@ -19013,7 +17935,6 @@ export namespace Arguments {
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.Arguments>;
 	export type Kind = 'arguments';
 }
 export namespace Decorator {
@@ -19044,7 +17965,6 @@ export namespace Decorator {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.Decorator>;
 	export type Kind = 'decorator';
 }
 export namespace DecoratorMemberExpression {
@@ -19065,7 +17985,6 @@ export namespace DecoratorMemberExpression {
 			| LooseConfigOf<T.DecoratorMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.DecoratorMemberExpression
 	];
-	export type Tree = TreeFor<TSKindId.DecoratorMemberExpression>;
 	export type Kind = 'decorator_member_expression';
 }
 export namespace DecoratorCallExpression {
@@ -19087,7 +18006,6 @@ export namespace DecoratorCallExpression {
 			| LooseConfigOf<T.DecoratorCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.DecoratorCallExpression
 	];
-	export type Tree = TreeFor<TSKindId.DecoratorCallExpression>;
 	export type Kind = 'decorator_call_expression';
 }
 export namespace ClassBody {
@@ -19126,7 +18044,6 @@ export namespace ClassBody {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.ClassBody>;
 	export type Kind = 'class_body';
 }
 export namespace FormalParameters {
@@ -19144,7 +18061,6 @@ export namespace FormalParameters {
 	export type LooseArgs = [
 		value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.FormalParameters>;
 	export type Kind = 'formal_parameters';
 }
 export namespace ClassStaticBlock {
@@ -19167,7 +18083,6 @@ export namespace ClassStaticBlock {
 			| LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassStaticBlock
 	];
-	export type Tree = TreeFor<TSKindId.ClassStaticBlock>;
 	export type Kind = 'class_static_block';
 }
 export namespace RestPattern {
@@ -19281,7 +18196,6 @@ export namespace RestPattern {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.RestPattern>;
 	export type Kind = 'rest_pattern';
 }
 export namespace MethodDefinition {
@@ -19312,7 +18226,6 @@ export namespace MethodDefinition {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MethodDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodDefinition
 	];
-	export type Tree = TreeFor<TSKindId.MethodDefinition>;
 	export type Kind = 'method_definition';
 }
 export namespace Pair {
@@ -19331,7 +18244,6 @@ export namespace Pair {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Pair
 	];
-	export type Tree = TreeFor<TSKindId.Pair>;
 	export type Kind = 'pair';
 }
 export namespace PairPattern {
@@ -19350,7 +18262,6 @@ export namespace PairPattern {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.PairPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.PairPattern
 	];
-	export type Tree = TreeFor<TSKindId.PairPattern>;
 	export type Kind = 'pair_pattern';
 }
 export namespace ComputedPropertyName {
@@ -19366,7 +18277,6 @@ export namespace ComputedPropertyName {
 	export type LooseConfig = LooseConfigFor<TSKindId.ComputedPropertyName>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ComputedPropertyName>;
 	export type Kind = 'computed_property_name';
 }
 export namespace PublicFieldDefinition {
@@ -19411,7 +18321,6 @@ export namespace PublicFieldDefinition {
 			| LooseConfigOf<T.PublicFieldDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.PublicFieldDefinition
 	];
-	export type Tree = TreeFor<TSKindId.PublicFieldDefinition>;
 	export type Kind = 'public_field_definition';
 }
 export namespace NonNullExpression {
@@ -19427,7 +18336,6 @@ export namespace NonNullExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.NonNullExpression>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NonNullExpression>;
 	export type Kind = 'non_null_expression';
 }
 export namespace MethodSignature {
@@ -19457,7 +18365,6 @@ export namespace MethodSignature {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodSignature
 	];
-	export type Tree = TreeFor<TSKindId.MethodSignature>;
 	export type Kind = 'method_signature';
 }
 export namespace AbstractMethodSignature {
@@ -19494,7 +18401,6 @@ export namespace AbstractMethodSignature {
 			| LooseConfigOf<T.AbstractMethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AbstractMethodSignature
 	];
-	export type Tree = TreeFor<TSKindId.AbstractMethodSignature>;
 	export type Kind = 'abstract_method_signature';
 }
 export namespace FunctionSignature {
@@ -19526,7 +18432,6 @@ export namespace FunctionSignature {
 			| T.FunctionSignature,
 		options?: T.FunctionSignature.Options
 	];
-	export type Tree = TreeFor<TSKindId.FunctionSignature>;
 	export type Kind = 'function_signature';
 }
 export namespace DecoratorParenthesizedExpression {
@@ -19551,7 +18456,6 @@ export namespace DecoratorParenthesizedExpression {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.DecoratorParenthesizedExpression>;
 	export type Kind = 'decorator_parenthesized_expression';
 }
 export namespace TypeAssertion {
@@ -19570,7 +18474,6 @@ export namespace TypeAssertion {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypeAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeAssertion
 	];
-	export type Tree = TreeFor<TSKindId.TypeAssertion>;
 	export type Kind = 'type_assertion';
 }
 export namespace AsExpression {
@@ -19589,7 +18492,6 @@ export namespace AsExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.AsExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsExpression
 	];
-	export type Tree = TreeFor<TSKindId.AsExpression>;
 	export type Kind = 'as_expression';
 }
 export namespace SatisfiesExpression {
@@ -19610,7 +18512,6 @@ export namespace SatisfiesExpression {
 			| LooseConfigOf<T.SatisfiesExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.SatisfiesExpression
 	];
-	export type Tree = TreeFor<TSKindId.SatisfiesExpression>;
 	export type Kind = 'satisfies_expression';
 }
 export namespace InstantiationExpression {
@@ -19631,7 +18532,6 @@ export namespace InstantiationExpression {
 			| LooseConfigOf<T.InstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InstantiationExpression
 	];
-	export type Tree = TreeFor<TSKindId.InstantiationExpression>;
 	export type Kind = 'instantiation_expression';
 }
 export namespace ImportRequireClause {
@@ -19652,7 +18552,6 @@ export namespace ImportRequireClause {
 			| LooseConfigOf<T.ImportRequireClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportRequireClause
 	];
-	export type Tree = TreeFor<TSKindId.ImportRequireClause>;
 	export type Kind = 'import_require_clause';
 }
 export namespace ExtendsClause {
@@ -19670,7 +18569,6 @@ export namespace ExtendsClause {
 	export type LooseArgs = [
 		...children: LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.ExtendsClause>;
 	export type Kind = 'extends_clause';
 }
 export namespace ExtendsClauseSingle {
@@ -19691,7 +18589,6 @@ export namespace ExtendsClauseSingle {
 			| LooseConfigOf<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExtendsClauseSingle
 	];
-	export type Tree = TreeFor<TSKindId.ExtendsClauseSingle>;
 	export type Kind = 'extends_clause_single';
 }
 export namespace ImplementsClause {
@@ -19709,7 +18606,6 @@ export namespace ImplementsClause {
 	export type LooseArgs = [
 		...children: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.ImplementsClause>;
 	export type Kind = 'implements_clause';
 }
 export namespace AmbientDeclaration {
@@ -19734,7 +18630,6 @@ export namespace AmbientDeclaration {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.AmbientDeclaration>;
 	export type Kind = 'ambient_declaration';
 }
 export namespace AbstractClassDeclaration {
@@ -19758,7 +18653,6 @@ export namespace AbstractClassDeclaration {
 			| LooseConfigOf<T.AbstractClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AbstractClassDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.AbstractClassDeclaration>;
 	export type Kind = 'abstract_class_declaration';
 }
 export namespace Module {
@@ -19777,7 +18671,6 @@ export namespace Module {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Module, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Module
 	];
-	export type Tree = TreeFor<TSKindId.Module>;
 	export type Kind = 'module';
 }
 export namespace InternalModule {
@@ -19796,7 +18689,6 @@ export namespace InternalModule {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.InternalModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InternalModule
 	];
-	export type Tree = TreeFor<TSKindId.InternalModule>;
 	export type Kind = 'internal_module';
 }
 export namespace ImportAlias {
@@ -19820,7 +18712,6 @@ export namespace ImportAlias {
 			| T.ImportAlias,
 		options?: T.ImportAlias.Options
 	];
-	export type Tree = TreeFor<TSKindId.ImportAlias>;
 	export type Kind = 'import_alias';
 }
 export namespace NestedTypeIdentifier {
@@ -19841,7 +18732,6 @@ export namespace NestedTypeIdentifier {
 			| LooseConfigOf<T.NestedTypeIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.NestedTypeIdentifier
 	];
-	export type Tree = TreeFor<TSKindId.NestedTypeIdentifier>;
 	export type Kind = 'nested_type_identifier';
 }
 export namespace InterfaceDeclaration {
@@ -19864,7 +18754,6 @@ export namespace InterfaceDeclaration {
 			| LooseConfigOf<T.InterfaceDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InterfaceDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.InterfaceDeclaration>;
 	export type Kind = 'interface_declaration';
 }
 export namespace ExtendsTypeClause {
@@ -19891,7 +18780,6 @@ export namespace ExtendsTypeClause {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.ExtendsTypeClause>;
 	export type Kind = 'extends_type_clause';
 }
 export namespace EnumDeclaration {
@@ -19911,7 +18799,6 @@ export namespace EnumDeclaration {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.EnumDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.EnumDeclaration>;
 	export type Kind = 'enum_declaration';
 }
 export namespace EnumBody {
@@ -19927,7 +18814,6 @@ export namespace EnumBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
 	export type BuildArgs = [value?: T.EnumBodyElements];
 	export type LooseArgs = [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EnumBody>;
 	export type Kind = 'enum_body';
 }
 export namespace EnumAssignment {
@@ -19946,7 +18832,6 @@ export namespace EnumAssignment {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumAssignment
 	];
-	export type Tree = TreeFor<TSKindId.EnumAssignment>;
 	export type Kind = 'enum_assignment';
 }
 export namespace TypeAliasDeclaration {
@@ -19977,7 +18862,6 @@ export namespace TypeAliasDeclaration {
 			| T.TypeAliasDeclaration,
 		options?: T.TypeAliasDeclaration.Options
 	];
-	export type Tree = TreeFor<TSKindId.TypeAliasDeclaration>;
 	export type Kind = 'type_alias_declaration';
 }
 export namespace RequiredParameter {
@@ -20005,7 +18889,6 @@ export namespace RequiredParameter {
 			| LooseConfigOf<T.RequiredParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.RequiredParameter
 	];
-	export type Tree = TreeFor<TSKindId.RequiredParameter>;
 	export type Kind = 'required_parameter';
 }
 export namespace OptionalParameter {
@@ -20033,7 +18916,6 @@ export namespace OptionalParameter {
 			| LooseConfigOf<T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.OptionalParameter
 	];
-	export type Tree = TreeFor<TSKindId.OptionalParameter>;
 	export type Kind = 'optional_parameter';
 }
 export namespace OmittingTypeAnnotation {
@@ -20051,7 +18933,6 @@ export namespace OmittingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.OmittingTypeAnnotation>;
 	export type Kind = 'omitting_type_annotation';
 }
 export namespace AddingTypeAnnotation {
@@ -20069,7 +18950,6 @@ export namespace AddingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.AddingTypeAnnotation>;
 	export type Kind = 'adding_type_annotation';
 }
 export namespace OptingTypeAnnotation {
@@ -20087,7 +18967,6 @@ export namespace OptingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.OptingTypeAnnotation>;
 	export type Kind = 'opting_type_annotation';
 }
 export namespace TypeAnnotation {
@@ -20105,7 +18984,6 @@ export namespace TypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.TypeAnnotation>;
 	export type Kind = 'type_annotation';
 }
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
@@ -20130,7 +19008,6 @@ export namespace TypeQueryMemberExpressionInTypeAnnotation {
 			| LooseConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryMemberExpressionInTypeAnnotation
 	];
-	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
 	export type Kind = 'type_query_member_expression_in_type_annotation';
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
@@ -20153,7 +19030,6 @@ export namespace TypeQueryCallExpressionInTypeAnnotation {
 			| LooseConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryCallExpressionInTypeAnnotation
 	];
-	export type Tree = TreeFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
 	export type Kind = 'type_query_call_expression_in_type_annotation';
 }
 export namespace Asserts {
@@ -20171,7 +19047,6 @@ export namespace Asserts {
 	export type LooseArgs = [
 		value: LooseValue<T.TypePredicate | T.Identifier | TSKindId.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.Asserts>;
 	export type Kind = 'asserts';
 }
 export namespace AssertsAnnotation {
@@ -20187,7 +19062,6 @@ export namespace AssertsAnnotation {
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
 	export type BuildArgs = [value: T.Asserts];
 	export type LooseArgs = [value: LooseValue<T.Asserts, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.AssertsAnnotation>;
 	export type Kind = 'asserts_annotation';
 }
 export namespace TupleParameter {
@@ -20206,7 +19080,6 @@ export namespace TupleParameter {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TupleParameter
 	];
-	export type Tree = TreeFor<TSKindId.TupleParameter>;
 	export type Kind = 'tuple_parameter';
 }
 export namespace OptionalTupleParameter {
@@ -20227,7 +19100,6 @@ export namespace OptionalTupleParameter {
 			| LooseConfigOf<T.OptionalTupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.OptionalTupleParameter
 	];
-	export type Tree = TreeFor<TSKindId.OptionalTupleParameter>;
 	export type Kind = 'optional_tuple_parameter';
 }
 export namespace OptionalType {
@@ -20245,7 +19117,6 @@ export namespace OptionalType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.OptionalType>;
 	export type Kind = 'optional_type';
 }
 export namespace RestType {
@@ -20263,7 +19134,6 @@ export namespace RestType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.RestType>;
 	export type Kind = 'rest_type';
 }
 export namespace ConstructorType {
@@ -20284,7 +19154,6 @@ export namespace ConstructorType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ConstructorType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConstructorType
 	];
-	export type Tree = TreeFor<TSKindId.ConstructorType>;
 	export type Kind = 'constructor_type';
 }
 export namespace TemplateType {
@@ -20307,7 +19176,6 @@ export namespace TemplateType {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.TemplateType>;
 	export type Kind = 'template_type';
 }
 export namespace TemplateLiteralType {
@@ -20325,7 +19193,6 @@ export namespace TemplateLiteralType {
 	export type LooseArgs = [
 		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.TemplateLiteralType>;
 	export type Kind = 'template_literal_type';
 }
 export namespace InferType {
@@ -20344,7 +19211,6 @@ export namespace InferType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.InferType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InferType
 	];
-	export type Tree = TreeFor<TSKindId.InferType>;
 	export type Kind = 'infer_type';
 }
 export namespace ConditionalType {
@@ -20365,7 +19231,6 @@ export namespace ConditionalType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ConditionalType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConditionalType
 	];
-	export type Tree = TreeFor<TSKindId.ConditionalType>;
 	export type Kind = 'conditional_type';
 }
 export namespace GenericType {
@@ -20384,7 +19249,6 @@ export namespace GenericType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenericType
 	];
-	export type Tree = TreeFor<TSKindId.GenericType>;
 	export type Kind = 'generic_type';
 }
 export namespace TypePredicate {
@@ -20403,7 +19267,6 @@ export namespace TypePredicate {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypePredicate
 	];
-	export type Tree = TreeFor<TSKindId.TypePredicate>;
 	export type Kind = 'type_predicate';
 }
 export namespace TypePredicateAnnotation {
@@ -20419,7 +19282,6 @@ export namespace TypePredicateAnnotation {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
 	export type BuildArgs = [value: T.TypePredicate];
 	export type LooseArgs = [value: LooseValue<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.TypePredicateAnnotation>;
 	export type Kind = 'type_predicate_annotation';
 }
 export namespace TypeQueryMemberExpression {
@@ -20443,7 +19305,6 @@ export namespace TypeQueryMemberExpression {
 			| LooseConfigOf<T.TypeQueryMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryMemberExpression
 	];
-	export type Tree = TreeFor<TSKindId.TypeQueryMemberExpression>;
 	export type Kind = 'type_query_member_expression';
 }
 export namespace TypeQuerySubscriptExpression {
@@ -20464,7 +19325,6 @@ export namespace TypeQuerySubscriptExpression {
 			| LooseConfigOf<T.TypeQuerySubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQuerySubscriptExpression
 	];
-	export type Tree = TreeFor<TSKindId.TypeQuerySubscriptExpression>;
 	export type Kind = 'type_query_subscript_expression';
 }
 export namespace TypeQueryCallExpression {
@@ -20485,7 +19345,6 @@ export namespace TypeQueryCallExpression {
 			| LooseConfigOf<T.TypeQueryCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryCallExpression
 	];
-	export type Tree = TreeFor<TSKindId.TypeQueryCallExpression>;
 	export type Kind = 'type_query_call_expression';
 }
 export namespace TypeQueryInstantiationExpression {
@@ -20508,7 +19367,6 @@ export namespace TypeQueryInstantiationExpression {
 			| LooseConfigOf<T.TypeQueryInstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryInstantiationExpression
 	];
-	export type Tree = TreeFor<TSKindId.TypeQueryInstantiationExpression>;
 	export type Kind = 'type_query_instantiation_expression';
 }
 export namespace TypeQuery {
@@ -20553,7 +19411,6 @@ export namespace TypeQuery {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.TypeQuery>;
 	export type Kind = 'type_query';
 }
 export namespace IndexTypeQuery {
@@ -20571,7 +19428,6 @@ export namespace IndexTypeQuery {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.IndexTypeQuery>;
 	export type Kind = 'index_type_query';
 }
 export namespace LookupType {
@@ -20590,7 +19446,6 @@ export namespace LookupType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.LookupType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LookupType
 	];
-	export type Tree = TreeFor<TSKindId.LookupType>;
 	export type Kind = 'lookup_type';
 }
 export namespace MappedTypeClause {
@@ -20610,7 +19465,6 @@ export namespace MappedTypeClause {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MappedTypeClause
 	];
-	export type Tree = TreeFor<TSKindId.MappedTypeClause>;
 	export type Kind = 'mapped_type_clause';
 }
 export namespace LiteralType {
@@ -20658,7 +19512,6 @@ export namespace LiteralType {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.LiteralType>;
 	export type Kind = 'literal_type';
 }
 export namespace FlowMaybeType {
@@ -20676,7 +19529,6 @@ export namespace FlowMaybeType {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.FlowMaybeType>;
 	export type Kind = 'flow_maybe_type';
 }
 export namespace ParenthesizedType {
@@ -20694,7 +19546,6 @@ export namespace ParenthesizedType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.ParenthesizedType>;
 	export type Kind = 'parenthesized_type';
 }
 export namespace TypeArguments {
@@ -20710,7 +19561,6 @@ export namespace TypeArguments {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
 	export type BuildArgs = [value: T.Types];
 	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.TypeArguments>;
 	export type Kind = 'type_arguments';
 }
 export namespace ObjectType {
@@ -20725,7 +19575,6 @@ export namespace ObjectType {
 		}
 		export type BuildArgs = [config?: T.ObjectType.Curly.Config];
 		export type LooseArgs = [config?: T.ObjectType.Curly.Config];
-		export type Tree = ObjectTypeCurlyTree;
 	}
 	export namespace Flow {
 		export type Config = Omit<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>;
@@ -20738,7 +19587,6 @@ export namespace ObjectType {
 		}
 		export type BuildArgs = [config?: T.ObjectType.Flow.Config];
 		export type LooseArgs = [config?: T.ObjectType.Flow.Config];
-		export type Tree = ObjectTypeFlowTree;
 	}
 	/** Default form: 'curly' (first-declared). */
 	export type Config = Curly.Config;
@@ -20757,7 +19605,6 @@ export namespace ObjectType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ObjectType
 	];
-	export type Tree = TreeFor<TSKindId.ObjectType>;
 	export type Kind = 'object_type';
 }
 export namespace CallSignature {
@@ -20777,7 +19624,6 @@ export namespace CallSignature {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CallSignature
 	];
-	export type Tree = TreeFor<TSKindId.CallSignature>;
 	export type Kind = 'call_signature';
 }
 export namespace PropertySignature {
@@ -20805,7 +19651,6 @@ export namespace PropertySignature {
 			| LooseConfigOf<T.PropertySignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.PropertySignature
 	];
-	export type Tree = TreeFor<TSKindId.PropertySignature>;
 	export type Kind = 'property_signature';
 }
 export namespace TypeParameters {
@@ -20823,7 +19668,6 @@ export namespace TypeParameters {
 	export type LooseArgs = [
 		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.TypeParameters>;
 	export type Kind = 'type_parameters';
 }
 export namespace TypeParameter {
@@ -20844,7 +19688,6 @@ export namespace TypeParameter {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypeParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeParameter
 	];
-	export type Tree = TreeFor<TSKindId.TypeParameter>;
 	export type Kind = 'type_parameter';
 }
 export namespace DefaultType {
@@ -20862,7 +19705,6 @@ export namespace DefaultType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.DefaultType>;
 	export type Kind = 'default_type';
 }
 export namespace Constraint {
@@ -20881,7 +19723,6 @@ export namespace Constraint {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Constraint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Constraint
 	];
-	export type Tree = TreeFor<TSKindId.Constraint>;
 	export type Kind = 'constraint';
 }
 export namespace ConstructSignature {
@@ -20904,7 +19745,6 @@ export namespace ConstructSignature {
 			| LooseConfigOf<T.ConstructSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ConstructSignature
 	];
-	export type Tree = TreeFor<TSKindId.ConstructSignature>;
 	export type Kind = 'construct_signature';
 }
 export namespace ArrayType {
@@ -20922,7 +19762,6 @@ export namespace ArrayType {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.ArrayType>;
 	export type Kind = 'array_type';
 }
 export namespace TupleType {
@@ -20938,7 +19777,6 @@ export namespace TupleType {
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
 	export type BuildArgs = [value?: T.TupleTypeMembers];
 	export type LooseArgs = [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.TupleType>;
 	export type Kind = 'tuple_type';
 }
 export namespace ReadonlyType {
@@ -20956,7 +19794,6 @@ export namespace ReadonlyType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.ReadonlyType>;
 	export type Kind = 'readonly_type';
 }
 export namespace UnionType {
@@ -20975,7 +19812,6 @@ export namespace UnionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnionType
 	];
-	export type Tree = TreeFor<TSKindId.UnionType>;
 	export type Kind = 'union_type';
 }
 export namespace IntersectionType {
@@ -20994,7 +19830,6 @@ export namespace IntersectionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.IntersectionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IntersectionType
 	];
-	export type Tree = TreeFor<TSKindId.IntersectionType>;
 	export type Kind = 'intersection_type';
 }
 export namespace FunctionType {
@@ -21014,7 +19849,6 @@ export namespace FunctionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.FunctionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.FunctionType
 	];
-	export type Tree = TreeFor<TSKindId.FunctionType>;
 	export type Kind = 'function_type';
 }
 export namespace ExportSpecifiers {
@@ -21043,7 +19877,6 @@ export namespace ExportSpecifiers {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.ExportSpecifiers>;
 	export type Kind = 'export_specifiers';
 }
 export namespace ImportSpecifiers {
@@ -21064,7 +19897,6 @@ export namespace ImportSpecifiers {
 		element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.ImportSpecifiers>;
 	export type Kind = 'import_specifiers';
 }
 export namespace FormalParametersElements {
@@ -21095,7 +19927,6 @@ export namespace FormalParametersElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.FormalParametersElements>;
 	export type Kind = 'formal_parameters_elements';
 }
 export namespace EnumBodyElements {
@@ -21276,7 +20107,6 @@ export namespace EnumBodyElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.EnumBodyElements>;
 	export type Kind = 'enum_body_elements';
 }
 export namespace Types {
@@ -21297,7 +20127,6 @@ export namespace Types {
 		element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Tree = TreeFor<TSKindId.Types>;
 	export type Kind = 'types';
 }
 export namespace TypeParametersElements {
@@ -21333,7 +20162,6 @@ export namespace TypeParametersElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.TypeParametersElements>;
 	export type Kind = 'type_parameters_elements';
 }
 export namespace TupleTypeMembers {
@@ -21384,7 +20212,6 @@ export namespace TupleTypeMembers {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.TupleTypeMembers>;
 	export type Kind = 'tuple_type_members';
 }
 export namespace ImportClauseGroup {
@@ -21402,7 +20229,6 @@ export namespace ImportClauseGroup {
 	export type LooseArgs = [
 		value: LooseValue<T.NamespaceImport | T.NamedImports, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.ImportClauseGroup>;
 	export type Kind = 'import_clause_group';
 }
 export namespace CatchClauseGroup {
@@ -21421,7 +20247,6 @@ export namespace CatchClauseGroup {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.CatchClauseGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClauseGroup
 	];
-	export type Tree = TreeFor<TSKindId.CatchClauseGroup>;
 	export type Kind = 'catch_clause_group';
 }
 export namespace AmbientDeclarationGlobal {
@@ -21437,7 +20262,6 @@ export namespace AmbientDeclarationGlobal {
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
 	export type BuildArgs = [value: T.StatementBlock];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.AmbientDeclarationGlobal>;
 	export type Kind = 'ambient_declaration_global';
 }
 export namespace AmbientDeclarationModule {
@@ -21469,7 +20293,6 @@ export namespace AmbientDeclarationModule {
 			| T.AmbientDeclarationModule,
 		options?: T.AmbientDeclarationModule.Options
 	];
-	export type Tree = TreeFor<TSKindId.AmbientDeclarationModule>;
 	export type Kind = 'ambient_declaration_module';
 }
 export namespace ObjectTypeContent {
@@ -21539,7 +20362,6 @@ export namespace ObjectTypeContent {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.ObjectTypeContent>;
 	export type Kind = 'object_type_content';
 }
 export namespace ExportStatementNamespaceExport {
@@ -21562,7 +20384,6 @@ export namespace ExportStatementNamespaceExport {
 		value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementNamespaceExport.Options
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementNamespaceExport>;
 	export type Kind = 'export_statement_namespace_export';
 }
 export namespace ExportStatementTypeExport {
@@ -21590,7 +20411,6 @@ export namespace ExportStatementTypeExport {
 			  >
 			| T.ExportStatementTypeExport
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementTypeExport>;
 	export type Kind = 'export_statement_type_export';
 }
 export namespace ExportStatementEqualsExport {
@@ -21613,7 +20433,6 @@ export namespace ExportStatementEqualsExport {
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementEqualsExport.Options
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementEqualsExport>;
 	export type Kind = 'export_statement_equals_export';
 }
 export namespace CommentLine {
@@ -21629,7 +20448,6 @@ export namespace CommentLine {
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentLine>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.CommentLine>;
 	export type Kind = 'comment_line';
 }
 export namespace CommentBlock {
@@ -21645,7 +20463,6 @@ export namespace CommentBlock {
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentBlock>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.CommentBlock>;
 	export type Kind = 'comment_block';
 }
 export namespace LiteralTypeNegativeNumber {
@@ -21666,7 +20483,6 @@ export namespace LiteralTypeNegativeNumber {
 			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.LiteralTypeNegativeNumber
 	];
-	export type Tree = TreeFor<TSKindId.LiteralTypeNegativeNumber>;
 	export type Kind = 'literal_type_negative_number';
 }
 export namespace NumberHex {
@@ -21694,7 +20510,6 @@ export namespace NumberHex {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberHex.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberHex>;
 	export type Kind = 'number_hex';
 }
 export namespace NumberFloatPoint {
@@ -21742,7 +20557,6 @@ export namespace NumberFloatPoint {
 			| T.NumberFloatPoint,
 		options?: T.NumberFloatPoint.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberFloatPoint>;
 	export type Kind = 'number_float_point';
 }
 export namespace NumberFloatLeadingPoint {
@@ -21792,7 +20606,6 @@ export namespace NumberFloatLeadingPoint {
 			| T.NumberFloatLeadingPoint,
 		options?: T.NumberFloatLeadingPoint.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberFloatLeadingPoint>;
 	export type Kind = 'number_float_leading_point';
 }
 export namespace NumberFloatScientific {
@@ -21842,7 +20655,6 @@ export namespace NumberFloatScientific {
 			| T.NumberFloatScientific,
 		options?: T.NumberFloatScientific.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberFloatScientific>;
 	export type Kind = 'number_float_scientific';
 }
 export namespace NumberBinary {
@@ -21870,7 +20682,6 @@ export namespace NumberBinary {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberBinary.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberBinary>;
 	export type Kind = 'number_binary';
 }
 export namespace NumberOctal {
@@ -21898,7 +20709,6 @@ export namespace NumberOctal {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberOctal.Options
 	];
-	export type Tree = TreeFor<TSKindId.NumberOctal>;
 	export type Kind = 'number_octal';
 }
 export namespace NumberBigintHex {
@@ -21920,7 +20730,6 @@ export namespace NumberBigintHex {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.NumberBigintHex>;
 	export type Kind = 'number_bigint_hex';
 }
 export namespace NumberBigintBinary {
@@ -21942,7 +20751,6 @@ export namespace NumberBigintBinary {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.NumberBigintBinary>;
 	export type Kind = 'number_bigint_binary';
 }
 export namespace NumberBigintOctal {
@@ -21964,7 +20772,6 @@ export namespace NumberBigintOctal {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.NumberBigintOctal>;
 	export type Kind = 'number_bigint_octal';
 }
 export namespace NumberBigintDecimal {
@@ -21986,7 +20793,6 @@ export namespace NumberBigintDecimal {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.NumberBigintDecimal>;
 	export type Kind = 'number_bigint_decimal';
 }
 export namespace BinaryExpressionIn {
@@ -22007,7 +20813,6 @@ export namespace BinaryExpressionIn {
 			| LooseConfigOf<T.BinaryExpressionIn, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.BinaryExpressionIn
 	];
-	export type Tree = TreeFor<TSKindId.BinaryExpressionIn>;
 	export type Kind = 'binary_expression_in';
 }
 export namespace ClassBodyMethod {
@@ -22034,7 +20839,6 @@ export namespace ClassBodyMethod {
 			| T.ClassBodyMethod,
 		options?: T.ClassBodyMethod.Options
 	];
-	export type Tree = TreeFor<TSKindId.ClassBodyMethod>;
 	export type Kind = 'class_body_method';
 }
 export namespace ClassBodyMethodSig {
@@ -22055,7 +20859,6 @@ export namespace ClassBodyMethodSig {
 			| LooseConfigOf<T.ClassBodyMethodSig, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassBodyMethodSig
 	];
-	export type Tree = TreeFor<TSKindId.ClassBodyMethodSig>;
 	export type Kind = 'class_body_method_sig';
 }
 export namespace ClassBodyMember {
@@ -22086,7 +20889,6 @@ export namespace ClassBodyMember {
 		>,
 		options?: T.ClassBodyMember.Options
 	];
-	export type Tree = TreeFor<TSKindId.ClassBodyMember>;
 	export type Kind = 'class_body_member';
 }
 export namespace IndexSignatureColon {
@@ -22112,7 +20914,6 @@ export namespace IndexSignatureColon {
 			| LooseConfigOf<T.IndexSignatureColon, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.IndexSignatureColon
 	];
-	export type Tree = TreeFor<TSKindId.IndexSignatureColon>;
 	export type Kind = 'index_signature_colon';
 }
 export namespace IndexSignatureMappedTypeClause {
@@ -22141,7 +20942,6 @@ export namespace IndexSignatureMappedTypeClause {
 			| LooseConfigOf<T.IndexSignatureMappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.IndexSignatureMappedTypeClause
 	];
-	export type Tree = TreeFor<TSKindId.IndexSignatureMappedTypeClause>;
 	export type Kind = 'index_signature_mapped_type_clause';
 }
 export namespace ImportStatementClauseFrom {
@@ -22162,7 +20962,6 @@ export namespace ImportStatementClauseFrom {
 			| LooseConfigOf<T.ImportStatementClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportStatementClauseFrom
 	];
-	export type Tree = TreeFor<TSKindId.ImportStatementClauseFrom>;
 	export type Kind = 'import_statement_clause_from';
 }
 export namespace ImportSpecifierName {
@@ -22183,7 +20982,6 @@ export namespace ImportSpecifierName {
 			| LooseConfigOf<T.ImportSpecifierName, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportSpecifierName
 	];
-	export type Tree = TreeFor<TSKindId.ImportSpecifierName>;
 	export type Kind = 'import_specifier_name';
 }
 export namespace ImportSpecifierAs {
@@ -22205,7 +21003,6 @@ export namespace ImportSpecifierAs {
 			| LooseConfigOf<T.ImportSpecifierAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportSpecifierAs
 	];
-	export type Tree = TreeFor<TSKindId.ImportSpecifierAs>;
 	export type Kind = 'import_specifier_as';
 }
 export namespace ParenthesizedExpressionTyped {
@@ -22228,7 +21025,6 @@ export namespace ParenthesizedExpressionTyped {
 			| LooseConfigOf<T.ParenthesizedExpressionTyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ParenthesizedExpressionTyped
 	];
-	export type Tree = TreeFor<TSKindId.ParenthesizedExpressionTyped>;
 	export type Kind = 'parenthesized_expression_typed';
 }
 export namespace ParenthesizedExpressionSequence {
@@ -22244,7 +21040,6 @@ export namespace ParenthesizedExpressionSequence {
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type BuildArgs = [value: T.SequenceExpression];
 	export type LooseArgs = [value: LooseValue<T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type Kind = 'parenthesized_expression_sequence';
 }
 export namespace CallExpressionCall {
@@ -22266,7 +21061,6 @@ export namespace CallExpressionCall {
 			| LooseConfigOf<T.CallExpressionCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionCall
 	];
-	export type Tree = TreeFor<TSKindId.CallExpressionCall>;
 	export type Kind = 'call_expression_call';
 }
 export namespace CallExpressionTemplateCall {
@@ -22287,7 +21081,6 @@ export namespace CallExpressionTemplateCall {
 			| LooseConfigOf<T.CallExpressionTemplateCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionTemplateCall
 	];
-	export type Tree = TreeFor<TSKindId.CallExpressionTemplateCall>;
 	export type Kind = 'call_expression_template_call';
 }
 export namespace CallExpressionMember {
@@ -22309,7 +21102,6 @@ export namespace CallExpressionMember {
 			| LooseConfigOf<T.CallExpressionMember, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionMember
 	];
-	export type Tree = TreeFor<TSKindId.CallExpressionMember>;
 	export type Kind = 'call_expression_member';
 }
 export namespace StringDouble {
@@ -22332,7 +21124,6 @@ export namespace StringDouble {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.StringDouble>;
 	export type Kind = 'string_double';
 }
 export namespace StringSingle {
@@ -22355,7 +21146,6 @@ export namespace StringSingle {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.StringSingle>;
 	export type Kind = 'string_single';
 }
 export namespace UpdateExpressionPostfix {
@@ -22376,7 +21166,6 @@ export namespace UpdateExpressionPostfix {
 			| LooseConfigOf<T.UpdateExpressionPostfix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.UpdateExpressionPostfix
 	];
-	export type Tree = TreeFor<TSKindId.UpdateExpressionPostfix>;
 	export type Kind = 'update_expression_postfix';
 }
 export namespace UpdateExpressionPrefix {
@@ -22397,7 +21186,6 @@ export namespace UpdateExpressionPrefix {
 			| LooseConfigOf<T.UpdateExpressionPrefix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.UpdateExpressionPrefix
 	];
-	export type Tree = TreeFor<TSKindId.UpdateExpressionPrefix>;
 	export type Kind = 'update_expression_prefix';
 }
 export namespace ArrowFunctionParameter {
@@ -22493,7 +21281,6 @@ export namespace ArrowFunctionParameter {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ArrowFunctionParameter>;
 	export type Kind = 'arrow_function_parameter';
 }
 export namespace ClassHeritageExtendsClause {
@@ -22514,7 +21301,6 @@ export namespace ClassHeritageExtendsClause {
 			| LooseConfigOf<T.ClassHeritageExtendsClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassHeritageExtendsClause
 	];
-	export type Tree = TreeFor<TSKindId.ClassHeritageExtendsClause>;
 	export type Kind = 'class_heritage_extends_clause';
 }
 export namespace ImportClauseDefaultImport {
@@ -22537,7 +21323,6 @@ export namespace ImportClauseDefaultImport {
 			| LooseConfigOf<T.ImportClauseDefaultImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportClauseDefaultImport
 	];
-	export type Tree = TreeFor<TSKindId.ImportClauseDefaultImport>;
 	export type Kind = 'import_clause_default_import';
 }
 export namespace ExportStatementDefaultFrom {
@@ -22581,7 +21366,6 @@ export namespace ExportStatementDefaultFrom {
 		>,
 		options?: T.ExportStatementDefaultFrom.Options
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFrom>;
 	export type Kind = 'export_statement_default_from';
 }
 export namespace ExportStatementDefaultDeclaration {
@@ -22604,7 +21388,6 @@ export namespace ExportStatementDefaultDeclaration {
 			| LooseConfigOf<T.ExportStatementDefaultDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultDeclaration
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclaration>;
 	export type Kind = 'export_statement_default_declaration';
 }
 export namespace ExportStatementDefaultFromStarFrom {
@@ -22620,7 +21403,6 @@ export namespace ExportStatementDefaultFromStarFrom {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type BuildArgs = [value: T.String];
 	export type LooseArgs = [value: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type Kind = 'export_statement_default_from_star_from';
 }
 export namespace ExportStatementDefaultFromNsFrom {
@@ -22641,7 +21423,6 @@ export namespace ExportStatementDefaultFromNsFrom {
 			| LooseConfigOf<T.ExportStatementDefaultFromNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultFromNsFrom
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromNsFrom>;
 	export type Kind = 'export_statement_default_from_ns_from';
 }
 export namespace ExportStatementDefaultFromClauseFrom {
@@ -22662,7 +21443,6 @@ export namespace ExportStatementDefaultFromClauseFrom {
 			| LooseConfigOf<T.ExportStatementDefaultFromClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultFromClauseFrom
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
 	export type Kind = 'export_statement_default_from_clause_from';
 }
 export namespace ExportStatementDefaultDeclarationDefaultKw {
@@ -22687,7 +21467,6 @@ export namespace ExportStatementDefaultDeclarationDefaultKw {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
 	export type Kind = 'export_statement_default_declaration_default_kw';
 }
 export namespace ExportStatementDefaultDeclarationDefaultKwValue {
@@ -22719,7 +21498,6 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 	];
-	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
 	export type Kind = 'export_statement_default_declaration_default_kw_value';
 }
 export namespace VariableDeclaratorPlain {
@@ -22741,7 +21519,6 @@ export namespace VariableDeclaratorPlain {
 			| LooseConfigOf<T.VariableDeclaratorPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.VariableDeclaratorPlain
 	];
-	export type Tree = TreeFor<TSKindId.VariableDeclaratorPlain>;
 	export type Kind = 'variable_declarator_plain';
 }
 export namespace VariableDeclaratorDefinite {
@@ -22762,7 +21539,6 @@ export namespace VariableDeclaratorDefinite {
 			| LooseConfigOf<T.VariableDeclaratorDefinite, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.VariableDeclaratorDefinite
 	];
-	export type Tree = TreeFor<TSKindId.VariableDeclaratorDefinite>;
 	export type Kind = 'variable_declarator_definite';
 }
 export namespace ForHeaderLhs {
@@ -22782,7 +21558,6 @@ export namespace ForHeaderLhs {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForHeaderLhs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderLhs
 	];
-	export type Tree = TreeFor<TSKindId.ForHeaderLhs>;
 	export type Kind = 'for_header_lhs';
 }
 export namespace ForHeaderVarKind {
@@ -22803,7 +21578,6 @@ export namespace ForHeaderVarKind {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForHeaderVarKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderVarKind
 	];
-	export type Tree = TreeFor<TSKindId.ForHeaderVarKind>;
 	export type Kind = 'for_header_var_kind';
 }
 export namespace ForHeaderLetConstKind {
@@ -22829,7 +21603,6 @@ export namespace ForHeaderLetConstKind {
 			| LooseConfigOf<T.ForHeaderLetConstKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ForHeaderLetConstKind
 	];
-	export type Tree = TreeFor<TSKindId.ForHeaderLetConstKind>;
 	export type Kind = 'for_header_let_const_kind';
 }
 export namespace StatementIdentifier {
@@ -22949,7 +21722,6 @@ export namespace StatementIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.StatementIdentifier>;
 	export type Kind = 'statement_identifier';
 }
 export namespace ShorthandPropertyIdentifier {
@@ -23069,7 +21841,6 @@ export namespace ShorthandPropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type Kind = 'shorthand_property_identifier';
 }
 export namespace ShorthandPropertyIdentifierPattern {
@@ -23189,7 +21960,6 @@ export namespace ShorthandPropertyIdentifierPattern {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type Kind = 'shorthand_property_identifier_pattern';
 }
 export namespace PropertyIdentifier {
@@ -23309,7 +22079,6 @@ export namespace PropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.PropertyIdentifier>;
 	export type Kind = 'property_identifier';
 }
 export namespace TypeIdentifier {
@@ -23326,7 +22095,6 @@ export namespace TypeIdentifier {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.TypeIdentifier>;
 	export type Kind = 'type_identifier';
 }
 export namespace InterfaceBody {
@@ -23343,7 +22111,6 @@ export namespace InterfaceBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
 	export type BuildArgs = [value: T.ObjectType];
 	export type LooseArgs = [value: LooseValue<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.InterfaceBody>;
 	export type Kind = 'interface_body';
 }
 export namespace Import {
@@ -23353,7 +22120,6 @@ export namespace Import {
 	export type LooseConfig = ImportNs['LooseConfig'];
 	export type BuildArgs = ImportNs['BuildArgs'];
 	export type LooseArgs = ImportNs['LooseArgs'];
-	export type Tree = ImportNs['Tree'];
 	export type Kind = 'import';
 }
 export namespace EmptyStatement {
@@ -23363,7 +22129,6 @@ export namespace EmptyStatement {
 	export type LooseConfig = EmptyStatementNs['LooseConfig'];
 	export type BuildArgs = EmptyStatementNs['BuildArgs'];
 	export type LooseArgs = EmptyStatementNs['LooseArgs'];
-	export type Tree = EmptyStatementNs['Tree'];
 	export type Kind = 'empty_statement';
 }
 export namespace OptionalChain {
@@ -23373,7 +22138,6 @@ export namespace OptionalChain {
 	export type LooseConfig = OptionalChainNs['LooseConfig'];
 	export type BuildArgs = OptionalChainNs['BuildArgs'];
 	export type LooseArgs = OptionalChainNs['LooseArgs'];
-	export type Tree = OptionalChainNs['Tree'];
 	export type Kind = 'optional_chain';
 }
 export namespace This {
@@ -23383,7 +22147,6 @@ export namespace This {
 	export type LooseConfig = ThisNs['LooseConfig'];
 	export type BuildArgs = ThisNs['BuildArgs'];
 	export type LooseArgs = ThisNs['LooseArgs'];
-	export type Tree = ThisNs['Tree'];
 	export type Kind = 'this';
 }
 export namespace Super {
@@ -23393,7 +22156,6 @@ export namespace Super {
 	export type LooseConfig = SuperNs['LooseConfig'];
 	export type BuildArgs = SuperNs['BuildArgs'];
 	export type LooseArgs = SuperNs['LooseArgs'];
-	export type Tree = SuperNs['Tree'];
 	export type Kind = 'super';
 }
 export namespace True {
@@ -23403,7 +22165,6 @@ export namespace True {
 	export type LooseConfig = TrueNs['LooseConfig'];
 	export type BuildArgs = TrueNs['BuildArgs'];
 	export type LooseArgs = TrueNs['LooseArgs'];
-	export type Tree = TrueNs['Tree'];
 	export type Kind = 'true';
 }
 export namespace False {
@@ -23413,7 +22174,6 @@ export namespace False {
 	export type LooseConfig = FalseNs['LooseConfig'];
 	export type BuildArgs = FalseNs['BuildArgs'];
 	export type LooseArgs = FalseNs['LooseArgs'];
-	export type Tree = FalseNs['Tree'];
 	export type Kind = 'false';
 }
 export namespace Null {
@@ -23423,7 +22183,6 @@ export namespace Null {
 	export type LooseConfig = NullNs['LooseConfig'];
 	export type BuildArgs = NullNs['BuildArgs'];
 	export type LooseArgs = NullNs['LooseArgs'];
-	export type Tree = NullNs['Tree'];
 	export type Kind = 'null';
 }
 export namespace Undefined {
@@ -23433,7 +22192,6 @@ export namespace Undefined {
 	export type LooseConfig = UndefinedNs['LooseConfig'];
 	export type BuildArgs = UndefinedNs['BuildArgs'];
 	export type LooseArgs = UndefinedNs['LooseArgs'];
-	export type Tree = UndefinedNs['Tree'];
 	export type Kind = 'undefined';
 }
 export namespace OverrideModifier {
@@ -23443,7 +22201,6 @@ export namespace OverrideModifier {
 	export type LooseConfig = OverrideModifierNs['LooseConfig'];
 	export type BuildArgs = OverrideModifierNs['BuildArgs'];
 	export type LooseArgs = OverrideModifierNs['LooseArgs'];
-	export type Tree = OverrideModifierNs['Tree'];
 	export type Kind = 'override_modifier';
 }
 export namespace ExistentialType {
@@ -23453,7 +22210,6 @@ export namespace ExistentialType {
 	export type LooseConfig = ExistentialTypeNs['LooseConfig'];
 	export type BuildArgs = ExistentialTypeNs['BuildArgs'];
 	export type LooseArgs = ExistentialTypeNs['LooseArgs'];
-	export type Tree = ExistentialTypeNs['Tree'];
 	export type Kind = 'existential_type';
 }
 export namespace KwAwaitMarker {
@@ -23463,7 +22219,6 @@ export namespace KwAwaitMarker {
 	export type LooseConfig = KwAwaitMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAwaitMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAwaitMarkerNs['LooseArgs'];
-	export type Tree = KwAwaitMarkerNs['Tree'];
 	export type Kind = '_kw_await_marker';
 }
 export namespace KwAsyncMarker {
@@ -23473,7 +22228,6 @@ export namespace KwAsyncMarker {
 	export type LooseConfig = KwAsyncMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAsyncMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAsyncMarkerNs['LooseArgs'];
-	export type Tree = KwAsyncMarkerNs['Tree'];
 	export type Kind = '_kw_async_marker';
 }
 export namespace KwUsingMarker {
@@ -23483,7 +22237,6 @@ export namespace KwUsingMarker {
 	export type LooseConfig = KwUsingMarkerNs['LooseConfig'];
 	export type BuildArgs = KwUsingMarkerNs['BuildArgs'];
 	export type LooseArgs = KwUsingMarkerNs['LooseArgs'];
-	export type Tree = KwUsingMarkerNs['Tree'];
 	export type Kind = '_kw_using_marker';
 }
 export namespace KwStaticMarker {
@@ -23493,7 +22246,6 @@ export namespace KwStaticMarker {
 	export type LooseConfig = KwStaticMarkerNs['LooseConfig'];
 	export type BuildArgs = KwStaticMarkerNs['BuildArgs'];
 	export type LooseArgs = KwStaticMarkerNs['LooseArgs'];
-	export type Tree = KwStaticMarkerNs['Tree'];
 	export type Kind = '_kw_static_marker';
 }
 export namespace KwDeclareMarker {
@@ -23503,7 +22255,6 @@ export namespace KwDeclareMarker {
 	export type LooseConfig = KwDeclareMarkerNs['LooseConfig'];
 	export type BuildArgs = KwDeclareMarkerNs['BuildArgs'];
 	export type LooseArgs = KwDeclareMarkerNs['LooseArgs'];
-	export type Tree = KwDeclareMarkerNs['Tree'];
 	export type Kind = '_kw_declare_marker';
 }
 export namespace KwAbstractMarker {
@@ -23513,7 +22264,6 @@ export namespace KwAbstractMarker {
 	export type LooseConfig = KwAbstractMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAbstractMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAbstractMarkerNs['LooseArgs'];
-	export type Tree = KwAbstractMarkerNs['Tree'];
 	export type Kind = '_kw_abstract_marker';
 }
 export namespace KwAccessorMarker {
@@ -23523,7 +22273,6 @@ export namespace KwAccessorMarker {
 	export type LooseConfig = KwAccessorMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAccessorMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAccessorMarkerNs['LooseArgs'];
-	export type Tree = KwAccessorMarkerNs['Tree'];
 	export type Kind = '_kw_accessor_marker';
 }
 export namespace KwConstMarker {
@@ -23533,7 +22282,6 @@ export namespace KwConstMarker {
 	export type LooseConfig = KwConstMarkerNs['LooseConfig'];
 	export type BuildArgs = KwConstMarkerNs['BuildArgs'];
 	export type LooseArgs = KwConstMarkerNs['LooseArgs'];
-	export type Tree = KwConstMarkerNs['Tree'];
 	export type Kind = '_kw_const_marker';
 }
 export namespace EmptyMember {
@@ -23543,7 +22291,6 @@ export namespace EmptyMember {
 	export type LooseConfig = EmptyMemberNs['LooseConfig'];
 	export type BuildArgs = EmptyMemberNs['BuildArgs'];
 	export type LooseArgs = EmptyMemberNs['LooseArgs'];
-	export type Tree = EmptyMemberNs['Tree'];
 	export type Kind = 'empty_member';
 }
 export namespace MetaPropertyNewTarget {
@@ -23553,7 +22300,6 @@ export namespace MetaPropertyNewTarget {
 	export type LooseConfig = MetaPropertyNewTargetNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyNewTargetNs['BuildArgs'];
 	export type LooseArgs = MetaPropertyNewTargetNs['LooseArgs'];
-	export type Tree = MetaPropertyNewTargetNs['Tree'];
 	export type Kind = 'meta_property_new_target';
 }
 export namespace MetaPropertyImportMeta {
@@ -23563,7 +22309,6 @@ export namespace MetaPropertyImportMeta {
 	export type LooseConfig = MetaPropertyImportMetaNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyImportMetaNs['BuildArgs'];
 	export type LooseArgs = MetaPropertyImportMetaNs['LooseArgs'];
-	export type Tree = MetaPropertyImportMetaNs['Tree'];
 	export type Kind = 'meta_property_import_meta';
 }
 export namespace AutomaticSemicolon {
@@ -23573,7 +22318,6 @@ export namespace AutomaticSemicolon {
 	export type LooseConfig = AutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = AutomaticSemicolonNs['BuildArgs'];
 	export type LooseArgs = AutomaticSemicolonNs['LooseArgs'];
-	export type Tree = AutomaticSemicolonNs['Tree'];
 	export type Kind = '_automatic_semicolon';
 }
 export namespace FunctionSignatureAutomaticSemicolon {
@@ -23583,7 +22327,6 @@ export namespace FunctionSignatureAutomaticSemicolon {
 	export type LooseConfig = FunctionSignatureAutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = FunctionSignatureAutomaticSemicolonNs['BuildArgs'];
 	export type LooseArgs = FunctionSignatureAutomaticSemicolonNs['LooseArgs'];
-	export type Tree = FunctionSignatureAutomaticSemicolonNs['Tree'];
 	export type Kind = '_function_signature_automatic_semicolon';
 }
 export namespace Tight {
@@ -23593,7 +22336,6 @@ export namespace Tight {
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
 	export type LooseArgs = TightNs['LooseArgs'];
-	export type Tree = TightNs['Tree'];
 	export type Kind = '_tight';
 }
 export namespace Space {
@@ -23603,7 +22345,6 @@ export namespace Space {
 	export type LooseConfig = SpaceNs['LooseConfig'];
 	export type BuildArgs = SpaceNs['BuildArgs'];
 	export type LooseArgs = SpaceNs['LooseArgs'];
-	export type Tree = SpaceNs['Tree'];
 	export type Kind = '_space';
 }
 export namespace Tab {
@@ -23613,7 +22354,6 @@ export namespace Tab {
 	export type LooseConfig = TabNs['LooseConfig'];
 	export type BuildArgs = TabNs['BuildArgs'];
 	export type LooseArgs = TabNs['LooseArgs'];
-	export type Tree = TabNs['Tree'];
 	export type Kind = '_tab';
 }
 export namespace Newline {
@@ -23623,7 +22363,6 @@ export namespace Newline {
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
 	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Tree = NewlineNs['Tree'];
 	export type Kind = '_newline';
 }
 export namespace Blankline {
@@ -23633,7 +22372,6 @@ export namespace Blankline {
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
 	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Tree = BlanklineNs['Tree'];
 	export type Kind = '_blankline';
 }
 export namespace DoubleBlankline {
@@ -23643,7 +22381,6 @@ export namespace DoubleBlankline {
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
-	export type Tree = DoubleBlanklineNs['Tree'];
 	export type Kind = '_double_blankline';
 }
 export namespace Indent {
@@ -23653,7 +22390,6 @@ export namespace Indent {
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
 	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Tree = IndentNs['Tree'];
 	export type Kind = '_indent';
 }
 export namespace Dedent {
@@ -23663,7 +22399,6 @@ export namespace Dedent {
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Tree = DedentNs['Tree'];
 	export type Kind = '_dedent';
 }
 export namespace TypeKeyword {
@@ -23673,7 +22408,6 @@ export namespace TypeKeyword {
 	export type LooseConfig = TypeKeywordNs['LooseConfig'];
 	export type BuildArgs = TypeKeywordNs['BuildArgs'];
 	export type LooseArgs = TypeKeywordNs['LooseArgs'];
-	export type Tree = TypeKeywordNs['Tree'];
 	export type Kind = 'type_keyword';
 }
 export namespace DeclareKeyword {
@@ -23683,7 +22417,6 @@ export namespace DeclareKeyword {
 	export type LooseConfig = DeclareKeywordNs['LooseConfig'];
 	export type BuildArgs = DeclareKeywordNs['BuildArgs'];
 	export type LooseArgs = DeclareKeywordNs['LooseArgs'];
-	export type Tree = DeclareKeywordNs['Tree'];
 	export type Kind = 'declare_keyword';
 }
 export namespace NamespaceKeyword {
@@ -23693,7 +22426,6 @@ export namespace NamespaceKeyword {
 	export type LooseConfig = NamespaceKeywordNs['LooseConfig'];
 	export type BuildArgs = NamespaceKeywordNs['BuildArgs'];
 	export type LooseArgs = NamespaceKeywordNs['LooseArgs'];
-	export type Tree = NamespaceKeywordNs['Tree'];
 	export type Kind = 'namespace_keyword';
 }
 export namespace PublicKeyword {
@@ -23703,7 +22435,6 @@ export namespace PublicKeyword {
 	export type LooseConfig = PublicKeywordNs['LooseConfig'];
 	export type BuildArgs = PublicKeywordNs['BuildArgs'];
 	export type LooseArgs = PublicKeywordNs['LooseArgs'];
-	export type Tree = PublicKeywordNs['Tree'];
 	export type Kind = 'public_keyword';
 }
 export namespace PrivateKeyword {
@@ -23713,7 +22444,6 @@ export namespace PrivateKeyword {
 	export type LooseConfig = PrivateKeywordNs['LooseConfig'];
 	export type BuildArgs = PrivateKeywordNs['BuildArgs'];
 	export type LooseArgs = PrivateKeywordNs['LooseArgs'];
-	export type Tree = PrivateKeywordNs['Tree'];
 	export type Kind = 'private_keyword';
 }
 export namespace ProtectedKeyword {
@@ -23723,7 +22453,6 @@ export namespace ProtectedKeyword {
 	export type LooseConfig = ProtectedKeywordNs['LooseConfig'];
 	export type BuildArgs = ProtectedKeywordNs['BuildArgs'];
 	export type LooseArgs = ProtectedKeywordNs['LooseArgs'];
-	export type Tree = ProtectedKeywordNs['Tree'];
 	export type Kind = 'protected_keyword';
 }
 export namespace OverrideKeyword {
@@ -23733,7 +22462,6 @@ export namespace OverrideKeyword {
 	export type LooseConfig = OverrideKeywordNs['LooseConfig'];
 	export type BuildArgs = OverrideKeywordNs['BuildArgs'];
 	export type LooseArgs = OverrideKeywordNs['LooseArgs'];
-	export type Tree = OverrideKeywordNs['Tree'];
 	export type Kind = 'override_keyword';
 }
 export namespace ReadonlyKeyword {
@@ -23743,7 +22471,6 @@ export namespace ReadonlyKeyword {
 	export type LooseConfig = ReadonlyKeywordNs['LooseConfig'];
 	export type BuildArgs = ReadonlyKeywordNs['BuildArgs'];
 	export type LooseArgs = ReadonlyKeywordNs['LooseArgs'];
-	export type Tree = ReadonlyKeywordNs['Tree'];
 	export type Kind = 'readonly_keyword';
 }
 export namespace ModuleKeyword {
@@ -23753,7 +22480,6 @@ export namespace ModuleKeyword {
 	export type LooseConfig = ModuleKeywordNs['LooseConfig'];
 	export type BuildArgs = ModuleKeywordNs['BuildArgs'];
 	export type LooseArgs = ModuleKeywordNs['LooseArgs'];
-	export type Tree = ModuleKeywordNs['Tree'];
 	export type Kind = 'module_keyword';
 }
 export namespace AnyKeyword {
@@ -23763,7 +22489,6 @@ export namespace AnyKeyword {
 	export type LooseConfig = AnyKeywordNs['LooseConfig'];
 	export type BuildArgs = AnyKeywordNs['BuildArgs'];
 	export type LooseArgs = AnyKeywordNs['LooseArgs'];
-	export type Tree = AnyKeywordNs['Tree'];
 	export type Kind = 'any_keyword';
 }
 export namespace NumberKeyword {
@@ -23773,7 +22498,6 @@ export namespace NumberKeyword {
 	export type LooseConfig = NumberKeywordNs['LooseConfig'];
 	export type BuildArgs = NumberKeywordNs['BuildArgs'];
 	export type LooseArgs = NumberKeywordNs['LooseArgs'];
-	export type Tree = NumberKeywordNs['Tree'];
 	export type Kind = 'number_keyword';
 }
 export namespace BooleanKeyword {
@@ -23783,7 +22507,6 @@ export namespace BooleanKeyword {
 	export type LooseConfig = BooleanKeywordNs['LooseConfig'];
 	export type BuildArgs = BooleanKeywordNs['BuildArgs'];
 	export type LooseArgs = BooleanKeywordNs['LooseArgs'];
-	export type Tree = BooleanKeywordNs['Tree'];
 	export type Kind = 'boolean_keyword';
 }
 export namespace StringKeyword {
@@ -23793,7 +22516,6 @@ export namespace StringKeyword {
 	export type LooseConfig = StringKeywordNs['LooseConfig'];
 	export type BuildArgs = StringKeywordNs['BuildArgs'];
 	export type LooseArgs = StringKeywordNs['LooseArgs'];
-	export type Tree = StringKeywordNs['Tree'];
 	export type Kind = 'string_keyword';
 }
 export namespace SymbolKeyword {
@@ -23803,7 +22525,6 @@ export namespace SymbolKeyword {
 	export type LooseConfig = SymbolKeywordNs['LooseConfig'];
 	export type BuildArgs = SymbolKeywordNs['BuildArgs'];
 	export type LooseArgs = SymbolKeywordNs['LooseArgs'];
-	export type Tree = SymbolKeywordNs['Tree'];
 	export type Kind = 'symbol_keyword';
 }
 export namespace ExportKeyword {
@@ -23813,7 +22534,6 @@ export namespace ExportKeyword {
 	export type LooseConfig = ExportKeywordNs['LooseConfig'];
 	export type BuildArgs = ExportKeywordNs['BuildArgs'];
 	export type LooseArgs = ExportKeywordNs['LooseArgs'];
-	export type Tree = ExportKeywordNs['Tree'];
 	export type Kind = 'export_keyword';
 }
 export namespace ObjectKeyword {
@@ -23823,7 +22543,6 @@ export namespace ObjectKeyword {
 	export type LooseConfig = ObjectKeywordNs['LooseConfig'];
 	export type BuildArgs = ObjectKeywordNs['BuildArgs'];
 	export type LooseArgs = ObjectKeywordNs['LooseArgs'];
-	export type Tree = ObjectKeywordNs['Tree'];
 	export type Kind = 'object_keyword';
 }
 export namespace NewKeyword {
@@ -23833,7 +22552,6 @@ export namespace NewKeyword {
 	export type LooseConfig = NewKeywordNs['LooseConfig'];
 	export type BuildArgs = NewKeywordNs['BuildArgs'];
 	export type LooseArgs = NewKeywordNs['LooseArgs'];
-	export type Tree = NewKeywordNs['Tree'];
 	export type Kind = 'new_keyword';
 }
 export namespace GetKeyword {
@@ -23843,7 +22561,6 @@ export namespace GetKeyword {
 	export type LooseConfig = GetKeywordNs['LooseConfig'];
 	export type BuildArgs = GetKeywordNs['BuildArgs'];
 	export type LooseArgs = GetKeywordNs['LooseArgs'];
-	export type Tree = GetKeywordNs['Tree'];
 	export type Kind = 'get_keyword';
 }
 export namespace SetKeyword {
@@ -23853,7 +22570,6 @@ export namespace SetKeyword {
 	export type LooseConfig = SetKeywordNs['LooseConfig'];
 	export type BuildArgs = SetKeywordNs['BuildArgs'];
 	export type LooseArgs = SetKeywordNs['LooseArgs'];
-	export type Tree = SetKeywordNs['Tree'];
 	export type Kind = 'set_keyword';
 }
 export namespace AsyncKeyword {
@@ -23863,7 +22579,6 @@ export namespace AsyncKeyword {
 	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
 	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
 	export type LooseArgs = AsyncKeywordNs['LooseArgs'];
-	export type Tree = AsyncKeywordNs['Tree'];
 	export type Kind = 'async_keyword';
 }
 export namespace StaticKeyword {
@@ -23873,7 +22588,6 @@ export namespace StaticKeyword {
 	export type LooseConfig = StaticKeywordNs['LooseConfig'];
 	export type BuildArgs = StaticKeywordNs['BuildArgs'];
 	export type LooseArgs = StaticKeywordNs['LooseArgs'];
-	export type Tree = StaticKeywordNs['Tree'];
 	export type Kind = 'static_keyword';
 }
 export namespace LetKeyword {
@@ -23883,7 +22597,6 @@ export namespace LetKeyword {
 	export type LooseConfig = LetKeywordNs['LooseConfig'];
 	export type BuildArgs = LetKeywordNs['BuildArgs'];
 	export type LooseArgs = LetKeywordNs['LooseArgs'];
-	export type Tree = LetKeywordNs['Tree'];
 	export type Kind = 'let_keyword';
 }
 export namespace UnescapedDoubleStringFragment {
@@ -23898,7 +22611,6 @@ export namespace UnescapedDoubleStringFragment {
 	export type LooseConfig = UnescapedDoubleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedDoubleStringFragmentNs['BuildArgs'];
 	export type LooseArgs = UnescapedDoubleStringFragmentNs['LooseArgs'];
-	export type Tree = UnescapedDoubleStringFragmentNs['Tree'];
 	export type Kind = 'unescaped_double_string_fragment';
 }
 export namespace UnescapedSingleStringFragment {
@@ -23913,7 +22625,6 @@ export namespace UnescapedSingleStringFragment {
 	export type LooseConfig = UnescapedSingleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedSingleStringFragmentNs['BuildArgs'];
 	export type LooseArgs = UnescapedSingleStringFragmentNs['LooseArgs'];
-	export type Tree = UnescapedSingleStringFragmentNs['Tree'];
 	export type Kind = 'unescaped_single_string_fragment';
 }
 export namespace RegexPattern {
@@ -23928,7 +22639,6 @@ export namespace RegexPattern {
 	export type LooseConfig = RegexPatternNs['LooseConfig'];
 	export type BuildArgs = RegexPatternNs['BuildArgs'];
 	export type LooseArgs = RegexPatternNs['LooseArgs'];
-	export type Tree = RegexPatternNs['Tree'];
 	export type Kind = 'regex_pattern';
 }
 export namespace RegexFlags {
@@ -23943,7 +22653,6 @@ export namespace RegexFlags {
 	export type LooseConfig = RegexFlagsNs['LooseConfig'];
 	export type BuildArgs = RegexFlagsNs['BuildArgs'];
 	export type LooseArgs = RegexFlagsNs['LooseArgs'];
-	export type Tree = RegexFlagsNs['Tree'];
 	export type Kind = 'regex_flags';
 }
 export namespace Identifier {
@@ -23958,7 +22667,6 @@ export namespace Identifier {
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
-	export type Tree = IdentifierNs['Tree'];
 	export type Kind = 'identifier';
 }
 export namespace NumberDecimal {
@@ -23973,7 +22681,6 @@ export namespace NumberDecimal {
 	export type LooseConfig = NumberDecimalNs['LooseConfig'];
 	export type BuildArgs = NumberDecimalNs['BuildArgs'];
 	export type LooseArgs = NumberDecimalNs['LooseArgs'];
-	export type Tree = NumberDecimalNs['Tree'];
 	export type Kind = 'number_decimal';
 }
 export namespace HtmlComment {
@@ -23988,7 +22695,6 @@ export namespace HtmlComment {
 	export type LooseConfig = HtmlCommentNs['LooseConfig'];
 	export type BuildArgs = HtmlCommentNs['BuildArgs'];
 	export type LooseArgs = HtmlCommentNs['LooseArgs'];
-	export type Tree = HtmlCommentNs['Tree'];
 	export type Kind = 'html_comment';
 }
 export namespace JsxText {
@@ -24003,7 +22709,6 @@ export namespace JsxText {
 	export type LooseConfig = JsxTextNs['LooseConfig'];
 	export type BuildArgs = JsxTextNs['BuildArgs'];
 	export type LooseArgs = JsxTextNs['LooseArgs'];
-	export type Tree = JsxTextNs['Tree'];
 	export type Kind = 'jsx_text';
 }
 export namespace TemplateChars {
@@ -24018,7 +22723,6 @@ export namespace TemplateChars {
 	export type LooseConfig = TemplateCharsNs['LooseConfig'];
 	export type BuildArgs = TemplateCharsNs['BuildArgs'];
 	export type LooseArgs = TemplateCharsNs['LooseArgs'];
-	export type Tree = TemplateCharsNs['Tree'];
 	export type Kind = '_template_chars';
 }
 export namespace TernaryQmark {
@@ -24033,7 +22737,6 @@ export namespace TernaryQmark {
 	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
 	export type BuildArgs = TernaryQmarkNs['BuildArgs'];
 	export type LooseArgs = TernaryQmarkNs['LooseArgs'];
-	export type Tree = TernaryQmarkNs['Tree'];
 	export type Kind = '_ternary_qmark';
 }
 export namespace ErrorRecovery {
@@ -24048,7 +22751,6 @@ export namespace ErrorRecovery {
 	export type LooseConfig = ErrorRecoveryNs['LooseConfig'];
 	export type BuildArgs = ErrorRecoveryNs['BuildArgs'];
 	export type LooseArgs = ErrorRecoveryNs['LooseArgs'];
-	export type Tree = ErrorRecoveryNs['Tree'];
 	export type Kind = '__error_recovery';
 }
 

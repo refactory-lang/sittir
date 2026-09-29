@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { loadPackageNodeTypes } from '../../validate/node-types-loader.ts';
 import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 import { emptyForms, triviaKinds } from '../../compiler/model/trivia.ts';
 import { emitTypes } from '../types.ts';
@@ -11,13 +10,13 @@ async function rust() {
 	const generatedIdTables = await loadGeneratedIdTables('rust');
 	const pkg = grammarPackage('rust');
 	const { nodeMap } = await compileGrammar({ package: pkg, generatedIdTables });
-	return { nodeMap, generatedIdTables, nodeTypes: loadPackageNodeTypes(pkg) };
+	return { nodeMap, generatedIdTables };
 }
 
 describe('empty forms in the emitted types', () => {
 	it('gives a kind that realizes empty its Empty form and type-map entry, and a kind that cannot none', async () => {
-		const { nodeMap, generatedIdTables, nodeTypes } = await rust();
-		const types = emitTypes({ grammar: 'rust', nodeTypes, nodeMap, generatedIdTables });
+		const { nodeMap, generatedIdTables } = await rust();
+		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables });
 		expect(types).toContain('export interface EmptyBlock extends Block.Built {');
 		expect(types).toContain('InnerTrivia<this>;');
 		expect(types).toContain('{ readonly node: Block; readonly empty: EmptyBlock }');
@@ -34,9 +33,9 @@ describe('empty forms in the emitted types', () => {
 	});
 
 	it('keys inner trivia by gap only when some kind has more than one gap', async () => {
-		const { nodeMap, generatedIdTables, nodeTypes } = await rust();
+		const { nodeMap, generatedIdTables } = await rust();
 		expect([...emptyForms(nodeMap).values()].every((form) => form.gaps.length === 1)).toBe(true);
-		const types = emitTypes({ grammar: 'rust', nodeTypes, nodeMap, generatedIdTables, triviaKinds: [...triviaKinds(nodeMap)] });
+		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [...triviaKinds(nodeMap)] });
 		expect(types).not.toContain('GrammarInnerTriviaAt<');
 		expect(types).toContain("export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;");
 	});

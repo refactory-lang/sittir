@@ -14,7 +14,6 @@ import type {
 	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
-	TreeFor,
 	NamespaceMap,
 	HashBangLine,
 	NamespaceExport,
@@ -34,16 +33,14 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<ClassDeclaration.Config, NamespaceMap[TSKindId.ClassDeclaration]['Config']>>();
 	});
 
-	it('Fluent / Loose / Tree / Kind each converge', () => {
+	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<ClassDeclaration.Built, BuiltFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
-		expectTrue<Equals<ClassDeclaration.Tree, TreeFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
 	});
 
 	it('Program (root kind) converges', () => {
 		expectTrue<Equals<Program.Config, ConfigFor<TSKindId.Program>>>();
-		expectTrue<Equals<Program.Tree, NamespaceMap[TSKindId.Program]['Tree']>>();
 	});
 
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {

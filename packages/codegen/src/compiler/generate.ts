@@ -126,7 +126,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			expectTestFailures: raw.expectTestFailures,
 			options: raw.options,
 			visibleExternals: raw.visibleExternals,
-			nodeTypes,
 			diagnostics: compilation.diagnostics
 		});
 

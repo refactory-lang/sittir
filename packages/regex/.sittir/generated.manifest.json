@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "ed1a48fce2dccf92d41b5074948dd231db1148380b1d4c4dd21099a81e4464a5",
+  "source_hash": "a656ed2a922ca772f936d16217b047d4dcc72e44eccd8a6c07bdd12c410c422a",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "d3b245116457aeb378ce22778a877561b7a128b64a30e32e0e6431f64e307aa3",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -35,7 +35,7 @@
     "packages/regex/src/node-model.json5": "ab1805c99f88dfdf42691d495e6d96415aae0f7cfcbd854789fd5242fe01869d",
     "packages/regex/src/options.ts": "c4434dce04fcd39003a8dcdd9df63a9e6453c66dad3745eaa538cff34b6e42f0",
     "packages/regex/src/render-engine.ts": "af1dd82f1aaface64c4f0eae63ec5484afee3fd8a51c4d40935ccf25a8270394",
-    "packages/regex/src/types.ts": "dc01a0ba7fb54efcc3a01908a90fa4fef0ca345a26ffaac98e919d0e5df079a6",
+    "packages/regex/src/types.ts": "5f4beffbb9203ff076e0d94f3b2a296d9eb89c20dc1a2937232abc54f9ce2164",
     "packages/regex/src/utils.ts": "efab8ef315f8b870975bee1d4f9e8610ebf83f4e3eba314ab851301283c5ab7d",
     "packages/regex/src/wrap.ts": "9ef2672224cb9771102ab278d43bf9c49c5291190dc8d0db39c3ae46aae35538",
     "rust/crates/sittir-regex/index.d.ts": "2aa719bc6637f20ad088d434237a493faf1efd28311a1cb64706c19485cc2978",

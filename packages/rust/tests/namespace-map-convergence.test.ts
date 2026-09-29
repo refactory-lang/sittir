@@ -22,7 +22,6 @@ import type {
 	BuiltFor,
 	LooseFor,
 	LooseConfigFor,
-	TreeFor,
 	NamespaceMap,
 	AttributeItem,
 	DeclarationList,
@@ -42,10 +41,9 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<FunctionItem.Config, NamespaceMap[TSKindId.FunctionItem]['Config']>>();
 	});
 
-	it('Fluent / Loose / Tree / Kind each converge', () => {
+	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<FunctionItem.Built, BuiltFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
-		expectTrue<Equals<FunctionItem.Tree, TreeFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
 	});
 
@@ -62,8 +60,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 	// are no longer emitted (spec 008 US7 landing). Consumers use namespace
 	// sugar (`FunctionItem.Config`, `FunctionItem.Loose`) or the generic
 	// accessors (`ConfigFor<TSKindId.FunctionItem>`, `LooseFor<TSKindId.FunctionItem>`).
-	// `FunctionItemTree` INTERFACE is still emitted — factories use it for
-	// `replace(target: T.FunctionItemTree)` signatures.
+
 
 	it("BuildArgs is the builder's own parameter list, and Config is its first element", () => {
 		// ARITY comes from the factory, CONTENT from the interface: the alias

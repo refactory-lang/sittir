@@ -8,7 +8,7 @@ import type {
 } from '@sittir/types';
 import { isEmptyNode, isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
-type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose' | 'Tree'> = K extends keyof M['namespaces']
+type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
 		? X
 		: never
@@ -16,7 +16,7 @@ type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose' | 'Tr
 
 export interface GrammarRuntime<M extends GrammarTypeMap> {
 	isNode<K extends keyof M['namespaces']>(
-		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'> | NamespacePart<M, K, 'Tree'>
+		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
 	isNode(v: unknown): v is AnyNodeData;
 	isEmpty<N extends M['empty']['node']>(node: N): node is N & Extract<M['empty'], { readonly node: N }>['empty'];

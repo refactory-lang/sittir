@@ -2,17 +2,12 @@
 
 import type { RegexGrammar } from './grammar.js';
 import type {
-	NodeData as BaseNodeData,
-	NodeConfig as BaseNodeConfig,
-	TreeNode as BaseTreeNode,
 	ConfigOf,
 	LooseConfigOf,
 	LooseValue,
-	NodeKind,
 	NodeNs,
 	KeywordNs,
 	LeafNs,
-	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
 	KindEnum,
@@ -25,10 +20,6 @@ import type {
 import type * as T from './types.js';
 
 export type { RegexGrammar };
-
-export type NodeData<K extends NodeKind<RegexGrammar>> = BaseNodeData<RegexGrammar, K>;
-export type NodeConfig<K extends NodeKind<RegexGrammar>> = BaseNodeConfig<RegexGrammar, K>;
-export type TreeNode<K extends NodeKind<RegexGrammar>> = BaseTreeNode<RegexGrammar, K>;
 
 export type LeafScalarMap = {
 	[TSKindId.DecimalDigits]: number | bigint;
@@ -961,77 +952,6 @@ export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 
-// Tree types
-export interface PatternTree extends TreeNode<'pattern'> {}
-export interface AlternationTree extends TreeNode<'alternation'> {}
-export interface TermTree extends TreeNode<'term'> {}
-export interface LookaroundAssertionTree extends TreeNode<'lookaround_assertion'> {}
-export interface LookaheadAssertionTree extends TreeNode<'lookahead_assertion'> {}
-export interface LookbehindAssertionTree extends TreeNode<'lookbehind_assertion'> {}
-export interface CharacterClassTree extends TreeNode<'character_class'> {}
-export interface PosixCharacterClassTree extends TreeNode<'posix_character_class'> {}
-export interface ClassRangeTree extends TreeNode<'class_range'> {}
-export interface AnonymousCapturingGroupTree extends TreeNode<'anonymous_capturing_group'> {}
-export interface NamedCapturingGroupTree extends TreeNode<'named_capturing_group'> {}
-export interface NonCapturingGroupTree extends TreeNode<'non_capturing_group'> {}
-export interface CountQuantifierTree extends TreeNode<'count_quantifier'> {}
-export interface BackreferenceEscapeTree extends TreeNode<'backreference_escape'> {}
-export interface NamedGroupBackreferenceTree extends TreeNode<'named_group_backreference'> {}
-export interface CharacterClassEscapeTree extends TreeNode<'character_class_escape'> {}
-export interface UnicodePropertyValueExpressionTree extends TreeNode<'unicode_property_value_expression'> {}
-export interface IdentityEscapeTree extends TreeNode<'identity_escape'> {}
-export interface TermGroupTree extends TreeNode<'term_group'> {}
-export interface CountQuantifierGroupTree extends TreeNode<'count_quantifier_group'> {}
-export interface CountQuantifierArmTree extends TreeNode<'count_quantifier_arm'> {}
-export interface CharacterClassEscapeArmTree extends TreeNode<'character_class_escape_arm'> {}
-export interface UnicodePropertyValueExpressionGroupTree extends TreeNode<'unicode_property_value_expression_group'> {}
-export interface InlineFlagsGroupEnableTree extends TreeNode<'inline_flags_group_enable'> {}
-export interface InlineFlagsGroupToggleTree extends TreeNode<'inline_flags_group_toggle'> {}
-export interface InlineFlagsGroupDisableTree extends TreeNode<'inline_flags_group_disable'> {}
-export interface LazyTree extends TreeNode<'lazy'> {}
-export interface UnicodePropertyNameTree extends TreeNode<'unicode_property_name'> {}
-export interface AnyCharacterTree extends AnyTreeNode {
-	readonly type: 'any_character';
-}
-export interface StartAssertionTree extends AnyTreeNode {
-	readonly type: 'start_assertion';
-}
-export interface EndAssertionTree extends AnyTreeNode {
-	readonly type: 'end_assertion';
-}
-export interface BoundaryAssertionTree extends AnyTreeNode {
-	readonly type: 'boundary_assertion';
-}
-export interface NonBoundaryAssertionTree extends AnyTreeNode {
-	readonly type: 'non_boundary_assertion';
-}
-export interface PatternCharacterTree extends TreeNode<'pattern_character'> {}
-export interface PosixClassNameTree extends TreeNode<'posix_class_name'> {}
-export interface ClassCharacterTree extends TreeNode<'class_character'> {}
-export interface FlagsTree extends TreeNode<'flags'> {}
-export interface ZeroOrMoreTree extends TreeNode<'zero_or_more'> {}
-export interface OneOrMoreTree extends TreeNode<'one_or_more'> {}
-export interface OptionalTree extends TreeNode<'optional'> {}
-export interface DecimalEscapeTree extends TreeNode<'decimal_escape'> {}
-export interface UnicodeCharacterEscapeTree extends TreeNode<'unicode_character_escape'> {}
-export interface UnicodePropertyValueTree extends TreeNode<'unicode_property_value'> {}
-export interface ControlEscapeTree extends TreeNode<'control_escape'> {}
-export interface ControlLetterEscapeTree extends TreeNode<'control_letter_escape'> {}
-export interface GroupNameTree extends TreeNode<'group_name'> {}
-export interface DecimalDigitsTree extends TreeNode<'decimal_digits'> {}
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
-}
-export interface DoubleBlanklineTree extends AnyTreeNode {
-	readonly type: '_double_blankline';
-}
-
 // Supertype unions
 export type ClassAtom =
 	| ClassCharacter
@@ -1043,55 +963,30 @@ export type ClassAtom =
 	| PosixCharacterClass
 	| ClassRange;
 
-export type ClassAtomTree =
-	| ClassCharacterTree
-	| CharacterClassEscapeTree
-	| ControlEscapeTree
-	| ControlLetterEscapeTree
-	| IdentityEscapeTree
-	| PosixCharacterClassTree
-	| ClassRangeTree;
-
 export type InlineFlagsGroup = InlineFlagsGroupEnable | InlineFlagsGroupToggle | InlineFlagsGroupDisable;
-
-export type InlineFlagsGroupTree =
-	| InlineFlagsGroupEnableTree
-	| InlineFlagsGroupToggleTree
-	| InlineFlagsGroupDisableTree;
 
 export type CharacterEscape = ControlEscape | ControlLetterEscape | IdentityEscape;
 
-export type CharacterEscapeTree = ControlEscapeTree | ControlLetterEscapeTree | IdentityEscapeTree;
-
 export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
-
-export type WhitespaceTree = TightTree | NewlineTree | BlanklineTree | DoubleBlanklineTree;
 
 export namespace ClassAtom {
 	export type Kind = '_class_atom';
-	export type Tree = ClassAtomTree;
 }
 
 export namespace InlineFlagsGroup {
 	export type Kind = 'inline_flags_group';
-	export type Tree = InlineFlagsGroupTree;
 }
 
 export namespace CharacterEscape {
 	export type Kind = '_character_escape';
-	export type Tree = CharacterEscapeTree;
 }
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
-	export type Tree = WhitespaceTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type BslashDash = TSKindId.BslashDash;
-export interface BslashDashTree extends AnyTreeNode {
-	readonly type: 'bslash_dash';
-}
 
 export type RegexNode = NodeOfNamespaces<NamespaceMap>;
 
@@ -1691,101 +1586,56 @@ export interface UnicodePropertyNameNs extends NodeNs<
 	'content',
 	'unicode_property_name'
 > {}
-export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', AnyCharacterTree, 'any_character'> {}
-export interface StartAssertionNs extends KeywordNs<
-	TSKindId.StartAssertion,
-	'^',
-	StartAssertionTree,
-	'start_assertion'
-> {}
-export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', EndAssertionTree, 'end_assertion'> {}
-export interface BoundaryAssertionNs extends KeywordNs<
-	TSKindId.BoundaryAssertion,
-	'\\b',
-	BoundaryAssertionTree,
-	'boundary_assertion'
-> {}
+export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', 'any_character'> {}
+export interface StartAssertionNs extends KeywordNs<TSKindId.StartAssertion, '^', 'start_assertion'> {}
+export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', 'end_assertion'> {}
+export interface BoundaryAssertionNs extends KeywordNs<TSKindId.BoundaryAssertion, '\\b', 'boundary_assertion'> {}
 export interface NonBoundaryAssertionNs extends KeywordNs<
 	TSKindId.NonBoundaryAssertion,
 	'\\B',
-	NonBoundaryAssertionTree,
 	'non_boundary_assertion'
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
-export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
-export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
-export interface DoubleBlanklineNs extends KeywordNs<
-	TSKindId.DoubleBlankline,
-	'\n\n\n',
-	DoubleBlanklineTree,
-	'_double_blankline'
-> {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', '_tight'> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', '_newline'> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', '_blankline'> {}
+export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', '_double_blankline'> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
 	PatternCharacter.Built,
-	PatternCharacterTree,
 	'pattern_character'
 > {}
-export interface PosixClassNameNs extends LeafNs<
-	PosixClassName,
-	string,
-	PosixClassName.Built,
-	PosixClassNameTree,
-	'posix_class_name'
-> {}
-export interface ClassCharacterNs extends LeafNs<
-	ClassCharacter,
-	string,
-	ClassCharacter.Built,
-	ClassCharacterTree,
-	'class_character'
-> {}
-export interface FlagsNs extends LeafNs<Flags, string, Flags.Built, FlagsTree, 'flags'> {}
-export interface ZeroOrMoreNs extends LeafNs<ZeroOrMore, string, ZeroOrMore.Built, ZeroOrMoreTree, 'zero_or_more'> {}
-export interface OneOrMoreNs extends LeafNs<OneOrMore, string, OneOrMore.Built, OneOrMoreTree, 'one_or_more'> {}
-export interface OptionalNs extends LeafNs<Optional, string, Optional.Built, OptionalTree, 'optional'> {}
-export interface DecimalEscapeNs extends LeafNs<
-	DecimalEscape,
-	string,
-	DecimalEscape.Built,
-	DecimalEscapeTree,
-	'decimal_escape'
-> {}
+export interface PosixClassNameNs extends LeafNs<PosixClassName, string, PosixClassName.Built, 'posix_class_name'> {}
+export interface ClassCharacterNs extends LeafNs<ClassCharacter, string, ClassCharacter.Built, 'class_character'> {}
+export interface FlagsNs extends LeafNs<Flags, string, Flags.Built, 'flags'> {}
+export interface ZeroOrMoreNs extends LeafNs<ZeroOrMore, string, ZeroOrMore.Built, 'zero_or_more'> {}
+export interface OneOrMoreNs extends LeafNs<OneOrMore, string, OneOrMore.Built, 'one_or_more'> {}
+export interface OptionalNs extends LeafNs<Optional, string, Optional.Built, 'optional'> {}
+export interface DecimalEscapeNs extends LeafNs<DecimalEscape, string, DecimalEscape.Built, 'decimal_escape'> {}
 export interface UnicodeCharacterEscapeNs extends LeafNs<
 	UnicodeCharacterEscape,
 	string,
 	UnicodeCharacterEscape.Built,
-	UnicodeCharacterEscapeTree,
 	'unicode_character_escape'
 > {}
 export interface UnicodePropertyValueNs extends LeafNs<
 	UnicodePropertyValue,
 	string,
 	UnicodePropertyValue.Built,
-	UnicodePropertyValueTree,
 	'unicode_property_value'
 > {}
-export interface ControlEscapeNs extends LeafNs<
-	ControlEscape,
-	string,
-	ControlEscape.Built,
-	ControlEscapeTree,
-	'control_escape'
-> {}
+export interface ControlEscapeNs extends LeafNs<ControlEscape, string, ControlEscape.Built, 'control_escape'> {}
 export interface ControlLetterEscapeNs extends LeafNs<
 	ControlLetterEscape,
 	string,
 	ControlLetterEscape.Built,
-	ControlLetterEscapeTree,
 	'control_letter_escape'
 > {}
-export interface GroupNameNs extends LeafNs<GroupName, string, GroupName.Built, GroupNameTree, 'group_name'> {}
+export interface GroupNameNs extends LeafNs<GroupName, string, GroupName.Built, 'group_name'> {}
 export interface DecimalDigitsNs extends LeafNs<
 	DecimalDigits,
 	string | number | bigint,
 	DecimalDigits.Built,
-	DecimalDigitsTree,
 	'decimal_digits'
 > {}
 
@@ -1939,10 +1789,9 @@ export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
 export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
 export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
-export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
-// <TypeName>.Config / .Built / .Loose / .Tree alongside using <TypeName> as a type.
+// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.
 export namespace Pattern {
 	export type Config = ConfigFor<TSKindId.Pattern>;
 	export interface Built extends T.Pattern, NodeMethodsOf {
@@ -1956,7 +1805,6 @@ export namespace Pattern {
 	export type LooseConfig = LooseConfigFor<TSKindId.Pattern>;
 	export type BuildArgs = [value: T.Alternation | T.Term];
 	export type LooseArgs = [value: LooseValue<T.Alternation | T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.Pattern>;
 	export type Kind = 'pattern';
 }
 export namespace Alternation {
@@ -1972,7 +1820,6 @@ export namespace Alternation {
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
 	export type BuildArgs = [...children: T.Term[]];
 	export type LooseArgs = [...children: LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.Alternation>;
 	export type Kind = 'alternation';
 }
 export namespace Term {
@@ -1988,7 +1835,6 @@ export namespace Term {
 	export type LooseConfig = LooseConfigFor<TSKindId.Term>;
 	export type BuildArgs = [...children: T.TermGroup[]];
 	export type LooseArgs = [...children: LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Tree = TreeFor<TSKindId.Term>;
 	export type Kind = 'term';
 }
 export namespace LookaroundAssertion {
@@ -2006,7 +1852,6 @@ export namespace LookaroundAssertion {
 	export type LooseArgs = [
 		value: LooseValue<T.LookaheadAssertion | T.LookbehindAssertion, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.LookaroundAssertion>;
 	export type Kind = 'lookaround_assertion';
 }
 export namespace LookaheadAssertion {
@@ -2027,7 +1872,6 @@ export namespace LookaheadAssertion {
 			| LooseConfigOf<T.LookaheadAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.LookaheadAssertion
 	];
-	export type Tree = TreeFor<TSKindId.LookaheadAssertion>;
 	export type Kind = 'lookahead_assertion';
 }
 export namespace LookbehindAssertion {
@@ -2048,7 +1892,6 @@ export namespace LookbehindAssertion {
 			| LooseConfigOf<T.LookbehindAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.LookbehindAssertion
 	];
-	export type Tree = TreeFor<TSKindId.LookbehindAssertion>;
 	export type Kind = 'lookbehind_assertion';
 }
 export namespace CharacterClass {
@@ -2100,7 +1943,6 @@ export namespace CharacterClass {
 			T.NamespaceMap
 		>[]
 	];
-	export type Tree = TreeFor<TSKindId.CharacterClass>;
 	export type Kind = 'character_class';
 }
 export namespace PosixCharacterClass {
@@ -2116,7 +1958,6 @@ export namespace PosixCharacterClass {
 	export type LooseConfig = LooseConfigFor<TSKindId.PosixCharacterClass>;
 	export type BuildArgs = [value: T.PosixClassName];
 	export type LooseArgs = [value: LooseValue<T.PosixClassName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.PosixCharacterClass>;
 	export type Kind = 'posix_character_class';
 }
 export namespace ClassRange {
@@ -2135,7 +1976,6 @@ export namespace ClassRange {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ClassRange, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassRange
 	];
-	export type Tree = TreeFor<TSKindId.ClassRange>;
 	export type Kind = 'class_range';
 }
 export namespace AnonymousCapturingGroup {
@@ -2151,7 +1991,6 @@ export namespace AnonymousCapturingGroup {
 	export type LooseConfig = LooseConfigFor<TSKindId.AnonymousCapturingGroup>;
 	export type BuildArgs = [value: T.Pattern];
 	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.AnonymousCapturingGroup>;
 	export type Kind = 'anonymous_capturing_group';
 }
 export namespace NamedCapturingGroup {
@@ -2173,7 +2012,6 @@ export namespace NamedCapturingGroup {
 			| LooseConfigOf<T.NamedCapturingGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.NamedCapturingGroup
 	];
-	export type Tree = TreeFor<TSKindId.NamedCapturingGroup>;
 	export type Kind = 'named_capturing_group';
 }
 export namespace NonCapturingGroup {
@@ -2189,7 +2027,6 @@ export namespace NonCapturingGroup {
 	export type LooseConfig = LooseConfigFor<TSKindId.NonCapturingGroup>;
 	export type BuildArgs = [value: T.Pattern];
 	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NonCapturingGroup>;
 	export type Kind = 'non_capturing_group';
 }
 export namespace CountQuantifier {
@@ -2207,7 +2044,6 @@ export namespace CountQuantifier {
 	export type LooseArgs = [
 		value: LooseValue<T.CountQuantifierArm | T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Tree = TreeFor<TSKindId.CountQuantifier>;
 	export type Kind = 'count_quantifier';
 }
 export namespace BackreferenceEscape {
@@ -2223,7 +2059,6 @@ export namespace BackreferenceEscape {
 	export type LooseConfig = LooseConfigFor<TSKindId.BackreferenceEscape>;
 	export type BuildArgs = [value: T.GroupName];
 	export type LooseArgs = [value: LooseValue<T.GroupName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.BackreferenceEscape>;
 	export type Kind = 'backreference_escape';
 }
 export namespace NamedGroupBackreference {
@@ -2239,7 +2074,6 @@ export namespace NamedGroupBackreference {
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedGroupBackreference>;
 	export type BuildArgs = [value: T.GroupName];
 	export type LooseArgs = [value: LooseValue<T.GroupName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NamedGroupBackreference>;
 	export type Kind = 'named_group_backreference';
 }
 export namespace CharacterClassEscape {
@@ -2264,7 +2098,6 @@ export namespace CharacterClassEscape {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.CharacterClassEscape>;
 	export type Kind = 'character_class_escape';
 }
 export namespace UnicodePropertyValueExpression {
@@ -2287,7 +2120,6 @@ export namespace UnicodePropertyValueExpression {
 			| LooseConfigOf<T.UnicodePropertyValueExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.UnicodePropertyValueExpression
 	];
-	export type Tree = TreeFor<TSKindId.UnicodePropertyValueExpression>;
 	export type Kind = 'unicode_property_value_expression';
 }
 export namespace IdentityEscape {
@@ -2303,7 +2135,6 @@ export namespace IdentityEscape {
 	export type LooseConfig = LooseConfigFor<TSKindId.IdentityEscape>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.IdentityEscape>;
 	export type Kind = 'identity_escape';
 }
 export namespace TermGroup {
@@ -2322,7 +2153,6 @@ export namespace TermGroup {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TermGroup
 	];
-	export type Tree = TreeFor<TSKindId.TermGroup>;
 	export type Kind = 'term_group';
 }
 export namespace CountQuantifierGroup {
@@ -2338,7 +2168,6 @@ export namespace CountQuantifierGroup {
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifierGroup>;
 	export type BuildArgs = [value?: T.DecimalDigits];
 	export type LooseArgs = [value?: LooseValue<T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.CountQuantifierGroup>;
 	export type Kind = 'count_quantifier_group';
 }
 export namespace CountQuantifierArm {
@@ -2359,7 +2188,6 @@ export namespace CountQuantifierArm {
 			| LooseConfigOf<T.CountQuantifierArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CountQuantifierArm
 	];
-	export type Tree = TreeFor<TSKindId.CountQuantifierArm>;
 	export type Kind = 'count_quantifier_arm';
 }
 export namespace CharacterClassEscapeArm {
@@ -2380,7 +2208,6 @@ export namespace CharacterClassEscapeArm {
 			| LooseConfigOf<T.CharacterClassEscapeArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CharacterClassEscapeArm
 	];
-	export type Tree = TreeFor<TSKindId.CharacterClassEscapeArm>;
 	export type Kind = 'character_class_escape_arm';
 }
 export namespace UnicodePropertyValueExpressionGroup {
@@ -2405,7 +2232,6 @@ export namespace UnicodePropertyValueExpressionGroup {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.UnicodePropertyValueExpressionGroup>;
 	export type Kind = 'unicode_property_value_expression_group';
 }
 export namespace InlineFlagsGroupEnable {
@@ -2426,7 +2252,6 @@ export namespace InlineFlagsGroupEnable {
 			| LooseConfigOf<T.InlineFlagsGroupEnable, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InlineFlagsGroupEnable
 	];
-	export type Tree = TreeFor<TSKindId.InlineFlagsGroupEnable>;
 	export type Kind = 'inline_flags_group_enable';
 }
 export namespace InlineFlagsGroupToggle {
@@ -2448,7 +2273,6 @@ export namespace InlineFlagsGroupToggle {
 			| LooseConfigOf<T.InlineFlagsGroupToggle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InlineFlagsGroupToggle
 	];
-	export type Tree = TreeFor<TSKindId.InlineFlagsGroupToggle>;
 	export type Kind = 'inline_flags_group_toggle';
 }
 export namespace InlineFlagsGroupDisable {
@@ -2469,7 +2293,6 @@ export namespace InlineFlagsGroupDisable {
 			| LooseConfigOf<T.InlineFlagsGroupDisable, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InlineFlagsGroupDisable
 	];
-	export type Tree = TreeFor<TSKindId.InlineFlagsGroupDisable>;
 	export type Kind = 'inline_flags_group_disable';
 }
 export namespace Lazy {
@@ -2486,7 +2309,6 @@ export namespace Lazy {
 	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
 	export type BuildArgs = [value: TSKindId.Qmark];
 	export type LooseArgs = [value: LooseValue<TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.Lazy>;
 	export type Kind = 'lazy';
 }
 export namespace UnicodePropertyName {
@@ -2503,7 +2325,6 @@ export namespace UnicodePropertyName {
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyName>;
 	export type BuildArgs = [value: T.UnicodePropertyValue];
 	export type LooseArgs = [value: LooseValue<T.UnicodePropertyValue, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.UnicodePropertyName>;
 	export type Kind = 'unicode_property_name';
 }
 export namespace AnyCharacter {
@@ -2513,7 +2334,6 @@ export namespace AnyCharacter {
 	export type LooseConfig = AnyCharacterNs['LooseConfig'];
 	export type BuildArgs = AnyCharacterNs['BuildArgs'];
 	export type LooseArgs = AnyCharacterNs['LooseArgs'];
-	export type Tree = AnyCharacterNs['Tree'];
 	export type Kind = 'any_character';
 }
 export namespace StartAssertion {
@@ -2523,7 +2343,6 @@ export namespace StartAssertion {
 	export type LooseConfig = StartAssertionNs['LooseConfig'];
 	export type BuildArgs = StartAssertionNs['BuildArgs'];
 	export type LooseArgs = StartAssertionNs['LooseArgs'];
-	export type Tree = StartAssertionNs['Tree'];
 	export type Kind = 'start_assertion';
 }
 export namespace EndAssertion {
@@ -2533,7 +2352,6 @@ export namespace EndAssertion {
 	export type LooseConfig = EndAssertionNs['LooseConfig'];
 	export type BuildArgs = EndAssertionNs['BuildArgs'];
 	export type LooseArgs = EndAssertionNs['LooseArgs'];
-	export type Tree = EndAssertionNs['Tree'];
 	export type Kind = 'end_assertion';
 }
 export namespace BoundaryAssertion {
@@ -2543,7 +2361,6 @@ export namespace BoundaryAssertion {
 	export type LooseConfig = BoundaryAssertionNs['LooseConfig'];
 	export type BuildArgs = BoundaryAssertionNs['BuildArgs'];
 	export type LooseArgs = BoundaryAssertionNs['LooseArgs'];
-	export type Tree = BoundaryAssertionNs['Tree'];
 	export type Kind = 'boundary_assertion';
 }
 export namespace NonBoundaryAssertion {
@@ -2553,7 +2370,6 @@ export namespace NonBoundaryAssertion {
 	export type LooseConfig = NonBoundaryAssertionNs['LooseConfig'];
 	export type BuildArgs = NonBoundaryAssertionNs['BuildArgs'];
 	export type LooseArgs = NonBoundaryAssertionNs['LooseArgs'];
-	export type Tree = NonBoundaryAssertionNs['Tree'];
 	export type Kind = 'non_boundary_assertion';
 }
 export namespace Tight {
@@ -2563,7 +2379,6 @@ export namespace Tight {
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
 	export type LooseArgs = TightNs['LooseArgs'];
-	export type Tree = TightNs['Tree'];
 	export type Kind = '_tight';
 }
 export namespace Newline {
@@ -2573,7 +2388,6 @@ export namespace Newline {
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
 	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Tree = NewlineNs['Tree'];
 	export type Kind = '_newline';
 }
 export namespace Blankline {
@@ -2583,7 +2397,6 @@ export namespace Blankline {
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
 	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Tree = BlanklineNs['Tree'];
 	export type Kind = '_blankline';
 }
 export namespace DoubleBlankline {
@@ -2593,7 +2406,6 @@ export namespace DoubleBlankline {
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
-	export type Tree = DoubleBlanklineNs['Tree'];
 	export type Kind = '_double_blankline';
 }
 export namespace PatternCharacter {
@@ -2608,7 +2420,6 @@ export namespace PatternCharacter {
 	export type LooseConfig = PatternCharacterNs['LooseConfig'];
 	export type BuildArgs = PatternCharacterNs['BuildArgs'];
 	export type LooseArgs = PatternCharacterNs['LooseArgs'];
-	export type Tree = PatternCharacterNs['Tree'];
 	export type Kind = 'pattern_character';
 }
 export namespace PosixClassName {
@@ -2623,7 +2434,6 @@ export namespace PosixClassName {
 	export type LooseConfig = PosixClassNameNs['LooseConfig'];
 	export type BuildArgs = PosixClassNameNs['BuildArgs'];
 	export type LooseArgs = PosixClassNameNs['LooseArgs'];
-	export type Tree = PosixClassNameNs['Tree'];
 	export type Kind = 'posix_class_name';
 }
 export namespace ClassCharacter {
@@ -2638,7 +2448,6 @@ export namespace ClassCharacter {
 	export type LooseConfig = ClassCharacterNs['LooseConfig'];
 	export type BuildArgs = ClassCharacterNs['BuildArgs'];
 	export type LooseArgs = ClassCharacterNs['LooseArgs'];
-	export type Tree = ClassCharacterNs['Tree'];
 	export type Kind = 'class_character';
 }
 export namespace Flags {
@@ -2653,7 +2462,6 @@ export namespace Flags {
 	export type LooseConfig = FlagsNs['LooseConfig'];
 	export type BuildArgs = FlagsNs['BuildArgs'];
 	export type LooseArgs = FlagsNs['LooseArgs'];
-	export type Tree = FlagsNs['Tree'];
 	export type Kind = 'flags';
 }
 export namespace ZeroOrMore {
@@ -2668,7 +2476,6 @@ export namespace ZeroOrMore {
 	export type LooseConfig = ZeroOrMoreNs['LooseConfig'];
 	export type BuildArgs = ZeroOrMoreNs['BuildArgs'];
 	export type LooseArgs = ZeroOrMoreNs['LooseArgs'];
-	export type Tree = ZeroOrMoreNs['Tree'];
 	export type Kind = 'zero_or_more';
 }
 export namespace OneOrMore {
@@ -2683,7 +2490,6 @@ export namespace OneOrMore {
 	export type LooseConfig = OneOrMoreNs['LooseConfig'];
 	export type BuildArgs = OneOrMoreNs['BuildArgs'];
 	export type LooseArgs = OneOrMoreNs['LooseArgs'];
-	export type Tree = OneOrMoreNs['Tree'];
 	export type Kind = 'one_or_more';
 }
 export namespace Optional {
@@ -2698,7 +2504,6 @@ export namespace Optional {
 	export type LooseConfig = OptionalNs['LooseConfig'];
 	export type BuildArgs = OptionalNs['BuildArgs'];
 	export type LooseArgs = OptionalNs['LooseArgs'];
-	export type Tree = OptionalNs['Tree'];
 	export type Kind = 'optional';
 }
 export namespace DecimalEscape {
@@ -2713,7 +2518,6 @@ export namespace DecimalEscape {
 	export type LooseConfig = DecimalEscapeNs['LooseConfig'];
 	export type BuildArgs = DecimalEscapeNs['BuildArgs'];
 	export type LooseArgs = DecimalEscapeNs['LooseArgs'];
-	export type Tree = DecimalEscapeNs['Tree'];
 	export type Kind = 'decimal_escape';
 }
 export namespace UnicodeCharacterEscape {
@@ -2728,7 +2532,6 @@ export namespace UnicodeCharacterEscape {
 	export type LooseConfig = UnicodeCharacterEscapeNs['LooseConfig'];
 	export type BuildArgs = UnicodeCharacterEscapeNs['BuildArgs'];
 	export type LooseArgs = UnicodeCharacterEscapeNs['LooseArgs'];
-	export type Tree = UnicodeCharacterEscapeNs['Tree'];
 	export type Kind = 'unicode_character_escape';
 }
 export namespace UnicodePropertyValue {
@@ -2743,7 +2546,6 @@ export namespace UnicodePropertyValue {
 	export type LooseConfig = UnicodePropertyValueNs['LooseConfig'];
 	export type BuildArgs = UnicodePropertyValueNs['BuildArgs'];
 	export type LooseArgs = UnicodePropertyValueNs['LooseArgs'];
-	export type Tree = UnicodePropertyValueNs['Tree'];
 	export type Kind = 'unicode_property_value';
 }
 export namespace ControlEscape {
@@ -2758,7 +2560,6 @@ export namespace ControlEscape {
 	export type LooseConfig = ControlEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlEscapeNs['BuildArgs'];
 	export type LooseArgs = ControlEscapeNs['LooseArgs'];
-	export type Tree = ControlEscapeNs['Tree'];
 	export type Kind = 'control_escape';
 }
 export namespace ControlLetterEscape {
@@ -2773,7 +2574,6 @@ export namespace ControlLetterEscape {
 	export type LooseConfig = ControlLetterEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlLetterEscapeNs['BuildArgs'];
 	export type LooseArgs = ControlLetterEscapeNs['LooseArgs'];
-	export type Tree = ControlLetterEscapeNs['Tree'];
 	export type Kind = 'control_letter_escape';
 }
 export namespace GroupName {
@@ -2788,7 +2588,6 @@ export namespace GroupName {
 	export type LooseConfig = GroupNameNs['LooseConfig'];
 	export type BuildArgs = GroupNameNs['BuildArgs'];
 	export type LooseArgs = GroupNameNs['LooseArgs'];
-	export type Tree = GroupNameNs['Tree'];
 	export type Kind = 'group_name';
 }
 export namespace DecimalDigits {
@@ -2803,7 +2602,6 @@ export namespace DecimalDigits {
 	export type LooseConfig = DecimalDigitsNs['LooseConfig'];
 	export type BuildArgs = DecimalDigitsNs['BuildArgs'];
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
-	export type Tree = DecimalDigitsNs['Tree'];
 	export type Kind = 'decimal_digits';
 }
 
