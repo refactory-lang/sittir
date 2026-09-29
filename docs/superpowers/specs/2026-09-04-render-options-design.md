@@ -328,18 +328,18 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - `render(node, { options?, reformat? })` on engines and tree handles; a
   handle's render fills from its tree's inferred table after per-call
   options and before engine options, and never needs the client to pass it.
-- `engine.fromNode(node)` — a new engine whose options are the parent's with
-  the options a parsed tree's bytes evidence on top: per key, the majority of
-  the stamps its lists carry, absent where the tree holds no list of that
-  site. An inference, never a declaration: a caller who renders with it is
-  round-tripping the tree's own spacing, and reads it as
-  `engine.fromNode(node).options`. The walk is a native function over the
-  parsed tree in the grammar crate, answering in site and arm ids as the
-  engine's resolved options do; `fromNode` projects the cached table to
-  `Options` keys, and a Rust consumer reads the table directly. There is no
-  public method that returns the table alone. The tree is the node's own,
-  else the one its parsed descendants share, else the call is refused.
-  Rendering never needs `fromNode`: the table is applied natively.
+- `styleFrom(language, ...paths)` (and `rust.styleFrom(...paths)`) — the
+  `render` options the bytes of some files evidence: per key, the majority of
+  the stamps their lists carry, absent where no file holds a list of that
+  site; with several files the raw votes are added before the majority is
+  taken, and a tie takes the declared default. An inference, never a
+  declaration: a caller who renders with it is round-tripping the files' own
+  spacing. It creates no engine: it loads the language, parses the files with
+  a temporary native instance and disposes it. The walk is a native function
+  over the parsed tree in the grammar crate, answering in site and arm ids as
+  the engine's resolved options do, and it is the walk a parsed tree's own
+  table folds; there is no public method that returns a tree's table.
+  Rendering never needs `styleFrom`: the table is applied natively.
 - Native: `SittirEngine` takes the options object once at construction and
   resolves it to one kind id per site there, applying the precedence above
   and rejecting unknown keys; per-call options travel the same way. Per
@@ -367,7 +367,7 @@ outrank engine options, and only an explicit `reformat` overrides them.
   stamps; `reformat` rewrites whitespace and never a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
-  slots; `engine.fromNode(node).options` names the spacing a parsed tree's lists
+  slots; `styleFrom` names the spacing some files' lists
   were written with, and rendering a rebuilt node with that result reproduces
   the tree's list spacing.
 - Every existing gate stays identical: validator history compared
