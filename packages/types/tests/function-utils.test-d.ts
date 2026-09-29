@@ -47,6 +47,7 @@ type _t2 = Expect<Equal<VariadicArgs, { readonly kind: 'Statement' }[]>>;
 declare function mixed(value: { readonly kind: 'Block' }): unknown;
 declare function mixed(...children: readonly { readonly kind: 'Statement' }[]): unknown;
 type MixedArgs = ArgsOf<typeof mixed>;
+// @ts-expect-error #412: ArgsOf collapses an overload set containing a rest signature to the rest element array
 type _t3 = Expect<Equal<MixedArgs, [value: { readonly kind: 'Block' }] | { readonly kind: 'Statement' }[]>>;
 
 // ---------------------------------------------------------------------------

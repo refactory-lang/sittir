@@ -1,7 +1,6 @@
 // Runtime verification of the TypeScript use-case examples against the native
 // engine: every export executes and produces what the guide promises.
 import { describe, expect, it } from 'vitest';
-import { createEngine, ir } from '@sittir/typescript';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -20,6 +19,10 @@ import {
 	formatBoundaryStrict,
 	returnResultStrict
 } from '../../../examples/18-dogfood-typescript-strict.ts';
+import typescript from '@sittir/typescript';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
 
 // The strict surface alone, so each gap lands on the layer that owns it.
 describe('examples/18 dogfood typescript — strict factory surface', () => {
@@ -40,7 +43,7 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
-		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
+		const builders = Object.keys(ts.build).filter((k) => typeof (ts.build as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(194);
 	});
 });
@@ -52,7 +55,7 @@ describe('examples/18 generated rebuild (format.ts)', () => {
 		expect((await rebuildFormatGenerated()).$render()).toContain('function applyFormat');
 	});
 	it('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
+		expect(dogfoodContract(ts, await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
 	});
 });
 
@@ -64,6 +67,6 @@ describe('examples/18 loose rebuild (format.ts)', () => {
 		expect((await rebuildFormatLoose()).$render()).toContain('function applyFormat');
 	});
 	it('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), await rebuildFormatLoose(), target).reparsesEqual).toBe(true);
+		expect(dogfoodContract(ts, await rebuildFormatLoose(), target).reparsesEqual).toBe(true);
 	});
 });

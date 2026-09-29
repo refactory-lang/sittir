@@ -33,8 +33,6 @@
 		}
 	},
 	"scripts": {
-		"generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar typescript --all --output src/",
-		"regenerate": "pnpm generate && pnpm build && pnpm test",
 		"build": "tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"dev": "tsc -p tsconfig.build.json --watch",

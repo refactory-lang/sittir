@@ -101,22 +101,22 @@ describe('deriveVocabulary', () => {
 });
 
 describe('vocabularyFiles', () => {
-	it('renders a namespace through the typescript factories', () => {
+	it('renders a namespace through the typescript factories', async () => {
 		const files = vocabularyFiles(deriveVocabulary());
 		expect(files.map((f) => f.name)).toContain('context');
 		const comment = files.find((f) => f.name === 'comment');
 		expect(comment).toBeDefined();
 		if (!comment) return;
-		const source = renderVocabularyFile(comment);
+		const source = await renderVocabularyFile(comment);
 		expect(source).toContain('export interface Comment<G extends GrammarContext>');
 		expect(source).toContain("import type { GrammarContext } from './context.ts';");
 	});
-	it('spells a sub-kind as its parent narrowed by SubKindOf, importing the helpers it uses', () => {
+	it('spells a sub-kind as its parent narrowed by SubKindOf, importing the helpers it uses', async () => {
 		const files = vocabularyFiles(deriveVocabulary());
 		const modifier = files.find((f) => f.name === 'modifier');
 		expect(modifier).toBeDefined();
 		if (!modifier) return;
-		const source = renderVocabularyFile(modifier);
+		const source = await renderVocabularyFile(modifier);
 		expect(source).toContain('extends Simplify<SubKindOf<V.Modifier<G>>>');
 		expect(source).toContain("import type { Simplify } from 'type-fest';");
 		expect(source).toContain("import type { SubKindOf } from './utils.ts';");

@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import type { AnyNodeData } from '@sittir/types';
 import {
 	withMethods,
-	isNodeData,
-	isTreeNode,
+	isNode,
+	isParsedNode,
+	isFactoryNode,
+	Source,
 	hasKind,
 	coerceBooleanKeywordStorage,
 	coerceBitflagStorage
@@ -12,8 +14,7 @@ import {
 describe('@sittir/common/utils runtime surface', () => {
 	it('exports the shared runtime helpers', () => {
 		expect(typeof withMethods).toBe('function');
-		expect(typeof isNodeData).toBe('function');
-		expect(typeof isTreeNode).toBe('function');
+		expect(typeof isNode).toBe('function');
 		expect(typeof hasKind).toBe('function');
 		expect(typeof coerceBooleanKeywordStorage).toBe('function');
 		expect(typeof coerceBitflagStorage).toBe('function');
@@ -58,10 +59,16 @@ describe('@sittir/common/utils runtime surface', () => {
 	});
 
 	it('guards and coercers behave consistently', () => {
-		expect(isNodeData({ $type: 1, $source: 2, _name: 'x' })).toBe(true);
-		expect(isNodeData({ $type: 1 })).toBe(false);
-		expect(isTreeNode({ type: 'x', field: () => undefined, text: () => 'x' })).toBe(true);
-		expect(isTreeNode({ type: 'x' })).toBe(false);
+		expect(isNode({ $type: 1, $source: 2, _name: 'x' })).toBe(true);
+		expect(isNode({ $type: 1 })).toBe(false);
+		expect(isParsedNode({ $type: 1, $source: Source.Ts })).toBe(true);
+		expect(isParsedNode({ $type: 1, $source: Source.Sg })).toBe(true);
+		expect(isParsedNode({ $type: 1, $source: Source.Factory })).toBe(false);
+		expect(isFactoryNode({ $type: 1, $source: Source.Factory })).toBe(true);
+		expect(isFactoryNode({ $type: 1, $source: Source.Ts })).toBe(false);
+		expect(isFactoryNode({ $type: 1, _name: 'x' })).toBe(true);
+		expect(isParsedNode({ $type: 1 })).toBe(false);
+		expect(isFactoryNode({ $type: 1 })).toBe(false);
 		expect(hasKind({ kind: 'node' })).toBe(true);
 		expect(hasKind({ kind: 1 })).toBe(false);
 		expect(coerceBooleanKeywordStorage(undefined)).toBeUndefined();

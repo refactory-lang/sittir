@@ -18,6 +18,7 @@ import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts
 import { interiorOf } from './interior.ts';
 
 import {
+	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
 	hasOptionalElements,
 	isMultiple,
@@ -826,7 +827,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
 			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
-			"import { Delimiter } from './types.js';",
+			DELIMITER_IMPORT,
 			"import type * as T from './types.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			"import { withMethods, methodsEngine } from './utils.js';",

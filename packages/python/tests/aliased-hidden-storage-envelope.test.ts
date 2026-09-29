@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine, ir, TSKindId } from '../src/index.ts';
+import python from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
+const pyNative = (await python.load()).createNative();
 
 function shapeOf(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(shapeOf);
@@ -23,15 +27,15 @@ function findKind(node: unknown, kind: number): unknown {
 
 describe('a case pattern over aliased hidden storage', () => {
 	it('builds the same envelope the reader reads', () => {
-		const built = ir.casePattern.strict(
-			ir.simplePattern.strict(
-				ir.classPattern.strict({ name: ir.dottedName.strict(ir.identifier('a'), ir.identifier('test')) })
+		const built = py.build.casePattern.strict(
+			py.build.simplePattern.strict(
+				py.build.classPattern.strict({ name: py.build.dottedName.strict(py.build.identifier('a'), py.build.identifier('test')) })
 			)
 		);
-		expect(createEngine().render(built).toString()).toBe('a.test()');
-		const { root } = createEngine().diagnostics.parseAndRead('match x:\n    case a.test():\n        pass\n', {
+		expect(py.render(built).toString()).toBe('a.test()');
+		const { root } = pyNative.parseAndRead('match x:\n    case a.test():\n        pass\n', {
 			deep: true
 		});
-		expect(shapeOf(findKind(root, TSKindId.CasePattern))).toEqual(shapeOf(built));
+		expect(shapeOf(findKind(root, py.kinds.CasePattern))).toEqual(shapeOf(built));
 	});
 });

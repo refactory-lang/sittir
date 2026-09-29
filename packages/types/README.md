@@ -16,7 +16,6 @@ Provides the runtime base classes and type-level machinery for sittir's builder 
 2. **`LeafBuilder<K>`** — concrete builder for terminal nodes (identifiers, literals, keywords)
 3. **`RenderContext`** — context threaded through render/build calls (parser, indent)
 4. **`Edit`** — codemod-compatible text edit interface (`{ startPos, endPos, insertedText }`)
-5. **Type projections** — `NodeType<G, K>`, `BuilderConfig<G, T>` for deriving types from grammars
 
 ## Runtime Classes
 
@@ -63,31 +62,6 @@ const edit: Edit = {
 	insertedText: 'fn main() {}'
 };
 ```
-
-## Type-Level Projections
-
-| Type                  | Description                                                               |
-| --------------------- | ------------------------------------------------------------------------- |
-| `NodeType<G, K>`      | Primary projection — grammar `G`, node kind `K` to fully expanded IR node |
-| `BuilderConfig<G, T>` | Builder input shape with grammar-derived optional fields                  |
-| `NodeKind<G>`         | All node kind string literals for grammar `G`                             |
-| `NamedKind<G>`        | Subtype-resolved named node kinds                                         |
-| `ValidationResult`    | Validation outcome (`{ ok: true }` or `{ ok: false; errors }`)            |
-
-```ts
-import type { NodeType, BuilderConfig } from '@sittir/types';
-import type { RustGrammar } from '@sittir/rust';
-
-// Derive the full IR node type for a Rust struct
-type StructItem = NodeType<RustGrammar, 'struct_item'>;
-
-// Derive the builder input (loosened for ergonomics)
-type StructConfig = BuilderConfig<RustGrammar, StructItem>;
-```
-
-## Structural Compatibility
-
-`@sittir/types` is structurally compatible with `@codemod.com/jssg-types` grammar types. If you have existing codemod code that uses jssg-types grammars, they work as `G` without any changes — TypeScript's structural typing handles the mapping.
 
 ## License
 

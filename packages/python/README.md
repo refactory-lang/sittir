@@ -55,7 +55,6 @@ const patch = edit(treeSitterNode, (b) => b.body(ir.block()));
 
 ```ts
 import type {
-	PythonGrammar,
 	FunctionDefinition,
 	ClassDefinition,
 	Identifier, // leaf type

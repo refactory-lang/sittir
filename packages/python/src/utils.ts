@@ -35,4 +35,4 @@ export const methodsEngine = {
 	}
 } satisfies GrammarFacts;
 
-export const { isNodeData, isEmpty, withMethods } = bindRuntime<PythonTypeMap>(methodsEngine);
+export const { isNode, isEmpty, withMethods } = bindRuntime<PythonTypeMap>(methodsEngine);

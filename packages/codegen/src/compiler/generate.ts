@@ -2,18 +2,16 @@ import { computeTransportSCC } from './scc.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
 
-import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
-import { emitApi, emitEngine, emitRenderEngine } from '../emitters/engine.ts';
+import { emitApi, emitRenderEngine } from '../emitters/engine.ts';
 import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
-import { loadPackageNodeTypes } from '../validate/node-types-loader.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
@@ -28,9 +26,7 @@ import type { OverlayName } from '../emitters/overlays/module.ts';
 import { triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
-	grammar: string;
 	types: string;
-	engine: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
@@ -107,7 +103,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const rootKind = normalized.root!;
 		const grammarRoles = withRootRole(extractGrammarRoles(pkg), rootKind);
-		const nodeTypes = loadPackageNodeTypes(pkg);
 		const triviaKindNames = [...triviaKinds(nodeMap)];
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
@@ -127,7 +122,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			expectTestFailures: raw.expectTestFailures,
 			options: raw.options,
 			visibleExternals: raw.visibleExternals,
-			nodeTypes,
 			diagnostics: compilation.diagnostics
 		});
 
@@ -149,8 +143,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}
 
 		const result: GeneratedFiles = {
-			grammar: emitGrammar({ grammar: cfg.grammar, nodeTypes }),
-			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			api: emitApi({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			backend: emitBackend({ grammar: cfg.grammar }),

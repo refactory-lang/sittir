@@ -13,7 +13,7 @@ describe('utils runtime binding emission', () => {
 		expect(contents).toContain('export const methodsEngine = {');
 		expect(contents).toContain('} satisfies GrammarFacts;');
 		expect(contents).toContain(
-			`export const { isNodeData, isEmpty, withMethods } = bindRuntime<${grammarTypeMapName('synth')}>(methodsEngine);`
+			`export const { isNode, isEmpty, withMethods } = bindRuntime<${grammarTypeMapName('synth')}>(methodsEngine);`
 		);
 	});
 

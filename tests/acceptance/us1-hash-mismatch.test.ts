@@ -31,7 +31,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Resolve the REAL dist entry via Node's native ESM resolver (bypasses
+// Resolve the REAL dist entry (and the backend module beside it) via Node's native ESM resolver (bypasses
 // Vite's module graph entirely). This test specifically exercises the
 // BUILT dist package's internal wiring (backend.js's relative
 // `./hash.js` import, which the mock below targets), so it must
@@ -47,6 +47,7 @@ import { fileURLToPath } from 'node:url';
 // relative path from this file to packages/rust/dist.
 const RUST_DIST_ENTRY = fileURLToPath(import.meta.resolve('@sittir/rust'));
 const HASH_MODULE = join(dirname(RUST_DIST_ENTRY), 'hash.js');
+const BACKEND_MODULE = join(dirname(RUST_DIST_ENTRY), 'backend.js');
 
 describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 	it('falls through to js with reason containing "hash mismatch"', async () => {
@@ -54,7 +55,7 @@ describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 		vi.doMock(HASH_MODULE, () => ({
 			TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one'
 		}));
-		const { getActiveBackend } = await import(RUST_DIST_ENTRY);
+		const { getActiveBackend } = await import(BACKEND_MODULE);
 		const backend = getActiveBackend();
 		expect(backend.name).toBe('js');
 		if (backend.hashMatch !== undefined) {

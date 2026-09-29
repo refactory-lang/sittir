@@ -91,8 +91,8 @@ describe('types emitter child slot arity', () => {
 	// the original regression-guard intent (no singleton-tuple wrapping, no
 	// lossy union collapse, no literal pollution in the emitted type).
 	it('emits singular unnamed children as their own kind-derived field, not a tuple', () => {
-		const requiredSrc = emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap: makeRequiredSingleChildNodeMap() });
-		const optionalSrc = emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap: makeOptionalSingleChildNodeMap() });
+		const requiredSrc = emitTypes({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
+		const optionalSrc = emitTypes({ grammar: 'synth', nodeMap: makeOptionalSingleChildNodeMap() });
 
 		expect(requiredSrc).toContain('readonly _identifier: Identifier;');
 		expect(requiredSrc).not.toContain('readonly _identifier: readonly [Identifier];');
@@ -100,7 +100,7 @@ describe('types emitter child slot arity', () => {
 	});
 
 	it('keeps distinct unnamed children as separately-typed fields instead of folding into one ambiguous union', () => {
-		const src = emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap: makeMultiSingularChildNodeMap() });
+		const src = emitTypes({ grammar: 'synth', nodeMap: makeMultiSingularChildNodeMap() });
 
 		expect(src).toContain('readonly _identifier: Identifier;');
 		expect(src).toContain('readonly _number_literal: NumberLiteral;');
@@ -108,7 +108,7 @@ describe('types emitter child slot arity', () => {
 	});
 
 	it('drops inline terminal literals from child slot types', () => {
-		const src = emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap: makeOptionalKeywordChildNodeMap() });
+		const src = emitTypes({ grammar: 'synth', nodeMap: makeOptionalKeywordChildNodeMap() });
 
 		expect(src).toContain('readonly _expression?: Expression;');
 		expect(src).toContain('readonly _expression_list?: ExpressionList;');

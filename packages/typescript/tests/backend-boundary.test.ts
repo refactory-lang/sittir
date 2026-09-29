@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RENDER_MODULE_HASH } from '../src/hash.ts';
-import { TSKindId } from '../src/types.ts';
+import typescript from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
 
 // Phase D: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
-	$type: TSKindId.Identifier,
+	$type: ts.kinds.Identifier,
 	$source: 2,
 	$named: true,
 	$text: 'x'
@@ -77,10 +80,10 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		// Phase D: $type is numeric on the wire; TSKindId.Identifier = 1
 		// $source is numeric: 2 = factory
-		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
+		expect(render(identifier)).toBe(`ok:${ts.kinds.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				$type: TSKindId.Identifier,
+				$type: ts.kinds.Identifier,
 				$source: 2,
 				$named: true,
 				$text: 'x'
@@ -103,7 +106,7 @@ describe('boundary', () => {
 		);
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
-			$type: TSKindId.Arguments,
+			$type: ts.kinds.Arguments,
 			$source: 2,
 			$named: true,
 			$children: [identifier, 'oops']
@@ -148,14 +151,13 @@ describe('boundary', () => {
 			}
 		);
 
-		// Engine created - remove ts-expect-error
-		const { createEngine } = await import('../src/engine.ts');
-		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
+				const { createEngine } = await import('@sittir/common');
+		const engine = await createEngine((await import('../src/index.ts')).default, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
 		// not a raw string — boundary.ts's own render() calls .toString() on
 		// this same return value. This test calls the lower-level engine API
 		// directly, so it must do the same unwrap.
-		expect(engine.render(identifier).toString()).toBe('\tx');
+		expect(engine.render(engine.build.identifier('x')).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 	});
 

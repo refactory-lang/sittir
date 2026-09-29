@@ -6,34 +6,37 @@
  * Compile-time only: `pnpm --filter @sittir/typescript type-check`.
  */
 
-import { ir } from '@sittir/typescript';
+import typescript from '@sittir/typescript';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
 
 // The calls HEAD accepted.
-ir.number(42);
-ir.number('42');
-ir.number.hex(255);
-ir.number.bigint('42');
-ir.literalType.bigint('42');
-ir.primaryType.literal.bigint('42');
-ir.updateExpression.postfix({ argument: 'i', operator: '++' });
-ir.updateExpression.prefix({ argument: 'i', operator: '++' });
+ts.build.number(42);
+ts.build.number('42');
+ts.build.number.hex(255);
+ts.build.number.bigint('42');
+ts.build.literalType.bigint('42');
+ts.build.primaryType.literal.bigint('42');
+ts.build.updateExpression.postfix({ argument: 'i', operator: '++' });
+ts.build.updateExpression.prefix({ argument: 'i', operator: '++' });
 
 // The bigint radix arms, and the decimal default under every mount path.
-ir.number.bigint(42n);
-ir.number.bigint.decimal(42n);
-ir.number.bigint.hex(42n);
-ir.number.bigint.binary(42n);
-ir.number.bigint.octal(42n);
-ir.numberBigint(42n);
-ir.literalType.bigint(42n);
-ir.literalType.bigint.hex(42n);
-ir.primaryType.literal.bigint.octal(42n);
-ir.primaryExpression.number.bigint(42n);
-ir.propertyName.number.bigint.binary(42n);
+ts.build.number.bigint(42n);
+ts.build.number.bigint.decimal(42n);
+ts.build.number.bigint.hex(42n);
+ts.build.number.bigint.binary(42n);
+ts.build.number.bigint.octal(42n);
+ts.build.numberBigint(42n);
+ts.build.literalType.bigint(42n);
+ts.build.literalType.bigint.hex(42n);
+ts.build.primaryType.literal.bigint.octal(42n);
+ts.build.primaryExpression.number.bigint(42n);
+ts.build.propertyName.number.bigint.binary(42n);
 
 // update_expression is callable through its postfix default, where it is
 // declared and where it is mounted as a sub-factory arm.
-ir.updateExpression({ argument: 'i', operator: '++' });
-ir.expression.update({ argument: 'i', operator: '--' });
-ir.parenthesizedExpression.typed.update({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });
-ir.parenthesizedExpression.typed.update.prefix({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });
+ts.build.updateExpression({ argument: 'i', operator: '++' });
+ts.build.expression.update({ argument: 'i', operator: '--' });
+ts.build.parenthesizedExpression.typed.update({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });
+ts.build.parenthesizedExpression.typed.update.prefix({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });

@@ -64,77 +64,9 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 `$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyNodeData`, `Trivia = any`) it is the loose `$trivia` every `AnyNodeData` may carry, so a grammar's narrower setter is assignable to it.
 
-### `packages/types/src/engine-api.ts::GrammarNodeMethods`
+### `packages/types/src/engine-api.ts::NodeMethods`
 
-The methods every built node carries. Unlike the older `NodeMethods` (unprefixed `render`/`toEdit`/`replace`, still used by `FluentNodeOf`), these are the `# `packages/types/src` — Type Glossary
-
-### `packages/types/src/full-form.ts::MatchedAlternative`
-
-The alternatives among `Alts` that the text `I` starts with. It distributes over `Alts`, because an `infer` inside a template literal captures a single character, not a whole alternative.
-
-### `packages/types/src/full-form.ts::SpelledAffix`
-
-The spelling a full-form coercer takes from its text: the alternative the text starts with, `Default` when it starts with none (bare content), and every alternative when the text is a plain `string`, since only the runtime knows it then.
-
-### `packages/types/src/full-form.ts::WithSpelling`
-
-A built node whose spelling slot `K` is narrowed to `P`, on both its stored field (`_<K>`) and its accessor. The narrowing comes first in the intersection, so the accessor call resolves to `P`.
-
-### `packages/types/src/full-form.ts::Interior`
-
-The text between a full form's delimiters, or the text itself when it does not carry both: the type mirror of `spelledInterior`.
-
-### `packages/types/src/full-form.ts::LeadCheck`
-
-Walks a polymorph's sibling leads in the runtime's order and, for the first lead the interior starts with, gives an object type whose one key reads `starts the way <builder> does; build it with <builder>`. An argument intersected with it fails to compile with that key in the message. `unknown` when no lead matches.
-
-### `packages/types/src/full-form.ts::SiblingLeadRefusal`
-
-The compile-time form of `refuseSiblingLead`: a full-form coercer's input is `I & SiblingLeadRefusal<I, …>`, so a literal whose interior starts the way a sibling arm does is refused while it is being typed. A plain `string` and a config object pass unchanged and are checked at runtime.
-
-### `packages/types/src/full-form.ts::AllOf`
-
-Whether every character of `S` is one of `C`, walking `S` one leading character at a time: `true` for the empty rest, `false` at the first character outside `C`.
-
-### `packages/types/src/full-form.ts::OnlyOf`
-
-`I` when it is a non-empty string made only of characters in `C`, else `never`. A plain `string` passes unchanged, left to the runtime. Intersected with its own input (`I & OnlyOf<I, C>`), a literal outside the set fails to compile where it is written.
-
-### `packages/types/src/options.ts::IndentOption`
-
-The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit as the caller spelled it and checked whole, for a grammar that admits an indent character. `unknown` (no key) when `IndentChar` is `never`. `DerivedOptions` includes it at `I = string`, so a standalone `Options` value types `indent` as `string`; `createEngine`, `createRenderEngine` and `render` include it at their inferred `I`.
-
-### `packages/types/src/engine-api.ts::TriviaFacts`
-
-The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
-
-### `packages/types/src/core-types.ts::RenderCallOptions`
-
-The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
-
-### `packages/types/src/engine-api.ts::ParseOptions`
-
-How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
-
-### `packages/types/src/engine-api.ts::GrammarFacts`
-
-The facts a grammar's runtime reads: `render` and `toEdit` from its native engine, and its `TriviaFacts`. Generated `utils.ts` declares them once as `methodsEngine`.
-
-### `packages/types/src/engine-api.ts::GrammarTypeMap`
-
-The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`), `empty` (a union of `{ node, empty }` pairs, one per kind that realizes empty), and `trivia` (the union of its trivia kind types). A trivia kind may be stored as a kind id, so the members are constrained only to `unknown`.
-
-### `packages/types/src/core-types.ts::GrammarTriviaEntry`
-
-A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
-
-### `packages/types/src/core-types.ts::TriviaSetter`
-
-`$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyNodeData`, `Trivia = any`) it is the loose `$trivia` every `AnyNodeData` may carry, so a grammar's narrower setter is assignable to it.
-
-### `packages/types/src/engine-api.ts::GrammarNodeMethods`
-
--prefixed methods the runtime attaches. The polymorphic `this` makes it self-referential, because `$trivia` rebuilds the node and hands back the same kind.
+The methods the runtime attaches to every node (`withMethods`): `$render`, `$toEdit`, `$replace` and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because `$trivia` rebuilds the node and hands back the same kind. NodeNs' default `Built` is the node with these methods.
 
 ### `packages/types/src/engine-api.ts::GrammarInnerTrivia`
 
@@ -146,7 +78,7 @@ The inner trivia of a node that realizes empty: `inner()` reads its inner entrie
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
-The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
+The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
 
 ### `packages/types/src/engine-api.ts::Language`
 
@@ -195,6 +127,10 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 ### `packages/types/src/engine-api.ts::Engine`
 
 A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+
+### `packages/types/src/engine-api.ts::RenderInput`
+
+What `render` accepts: any of the language's nodes, or the kind id of a kind whose text the kind determines, which renders as that text. A kind id with no fixed text (an identifier, a depth sentinel) is a type error, and throws at run time naming the kind.
 
 ### `packages/types/src/engine-api.ts::RenderOptionsCheck`
 

@@ -5968,7 +5968,7 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 ### `packages/codegen/src/compiler/generate.ts::is`
 
 ```text
-/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
+/** is.ts — per-grammar kind guards (`is`). */
 ```
 
 ### `packages/codegen/src/compiler/generate.ts::kindIds`

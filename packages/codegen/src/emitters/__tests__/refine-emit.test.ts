@@ -3,7 +3,7 @@
  *
  * Covers:
  *   - link-refine path + selection validation
- *   - types.ts per-form Config + Tree namespace emission
+ *   - types.ts per-form Config namespace emission
  *   - factories.ts per-form factory emission
  *   - ir.ts per-form key attachment
  *
@@ -336,7 +336,7 @@ function runPipelineRaw(raw: RawGrammar) {
 	const generatedIdTables = makeGeneratedIdTables();
 	return {
 		nodeMap,
-		typesSrc: emitTypes({ grammar: 'synth', nodeTypes: [], nodeMap, generatedIdTables }),
+		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
 		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
 		irSrc: emitIr({ grammar: 'synth', nodeMap })
 	};
@@ -384,7 +384,7 @@ function makeGeneratedIdTables(): GeneratedIdTables {
 }
 
 describe('types emitter — per-form namespace sugar', () => {
-	it('emits sub-namespaces with Config and Tree for each form', () => {
+	it('emits sub-namespaces with Config for each form, and no Tree aliases', () => {
 		const { typesSrc } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
@@ -396,9 +396,7 @@ describe('types emitter — per-form namespace sugar', () => {
 		expect(typesSrc).toMatch(
 			/Curly \{\s+export type Config = Omit<ConfigFor<TSKindId.IfaceBody>, "opening" \| "closing">/
 		);
-		// Per-form Tree aliases point at the base Tree.
-		expect(typesSrc).toContain('export type IfaceBodyCurlyTree = IfaceBodyTree;');
-		expect(typesSrc).toContain('export type IfaceBodyFlowTree = IfaceBodyTree;');
+		expect(typesSrc).not.toMatch(/\bIfaceBody\w*Tree\b/);
 		// Default Config points at the first-declared form.
 		expect(typesSrc).toMatch(/Default form: 'curly' \(first-declared\)/);
 		expect(typesSrc).toMatch(/export type Config = Curly\.Config;/);
@@ -430,7 +428,6 @@ describe('types emitter — per-form namespace sugar', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const src = emitTypes({
 			grammar: 'synth',
-			nodeTypes: [],
 			nodeMap,
 			generatedIdTables: makeGeneratedIdTables()
 		});
@@ -492,7 +489,7 @@ describe('factories emitter — per-form factory emission', () => {
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
-		const { factories } = emitAll({ grammar: 'synth', nodeTypes: [], nodeMap });
+		const { factories } = emitAll({ grammar: 'synth', nodeMap });
 		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
 		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);
 	});

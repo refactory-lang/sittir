@@ -1,5 +1,5 @@
-import type { TreeHandle } from '@sittir/common';
-import type { AnyNodeData, Edit, NodeTrivia } from '@sittir/types';
+import type { TreeHandle } from '@sittir/common/utils';
+import type { Edit, NodeTrivia } from '@sittir/types';
 import { readFileSync } from 'node:fs';
 export type { TreeHandle };
 
@@ -19,14 +19,6 @@ export function renderText(value: unknown): string {
 		if (typeof render === 'function') return render.call(value) as string;
 	}
 	return nodeText(value);
-}
-
-export function isNodeData(value: unknown): value is AnyNodeData {
-	return value !== null && typeof value === 'object' && '$type' in value;
-}
-
-export function isTypedNodeData(value: unknown): value is AnyNodeData & { $type: number } {
-	return isNodeData(value) && typeof value.$type === 'number';
 }
 
 export function replaceAtSpan(

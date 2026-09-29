@@ -4,25 +4,26 @@
 // read by one could slice the other's unrelated tree. A node read by one
 // grammar's engine is refused by another grammar's with the handle named.
 import { describe, expect, it } from 'vitest';
+import type { AnyNodeData } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../src/languages.ts';
 
 describe('a coordinate names its tree across grammars', () => {
 	it('is refused by an engine of another grammar instead of resolved against its own tree', async () => {
-		const { createEngine: createRust } = (await import('@sittir/rust')) as { createEngine: () => any };
-		const { createEngine: createTypescript } = (await import('@sittir/typescript')) as { createEngine: () => any };
-		const typescript = createTypescript();
+		const typescript = await createEngine(await languageByName('typescript'));
 		typescript.parse('let decoy = 1;\n');
-		const rust = createRust();
-		const item = rust.parse('fn real() {}\n').statements()[0];
+		const rust = await createEngine(await languageByName('rust'));
+		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyNodeData[] }).statements()[0]!;
 		expect(() => typescript.render(item).toString()).toThrow(/names tree \d+, which this engine does not hold/);
 	});
 
 	it('mints distinct ids for trees parsed by engines of different grammars', async () => {
-		const { createEngine: createRust } = (await import('@sittir/rust')) as { createEngine: () => any };
-		const { createEngine: createTypescript } = (await import('@sittir/typescript')) as { createEngine: () => any };
-		const treeIdOf = (engine: any, source: string): number =>
-			Math.floor((engine.diagnostics.parseAndRead(source).root.$nodeHandle as number) / 2 ** 32);
-		const a = treeIdOf(createRust(), 'fn a() {}\n');
-		const b = treeIdOf(createTypescript(), 'let b = 1;\n');
+		const treeIdOf = async (grammar: string, source: string): Promise<number> => {
+			const native = (await (await languageByName(grammar)).load()).createNative();
+			return Math.floor((native.parseAndRead(source).root as { $nodeHandle: number }).$nodeHandle / 2 ** 32);
+		};
+		const a = await treeIdOf('rust', 'fn a() {}\n');
+		const b = await treeIdOf('typescript', 'let b = 1;\n');
 		expect(a).not.toBe(b);
 	});
 });

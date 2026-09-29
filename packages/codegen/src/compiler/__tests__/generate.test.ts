@@ -27,7 +27,6 @@ describe('generate — new pipeline end-to-end', () => {
 		});
 
 		// All files should be non-empty strings
-		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.types).toContain('readonly $type: TSKindId.');
 		expect(result.factories.length).toBeGreaterThan(0);
@@ -44,7 +43,6 @@ describe('generate — new pipeline end-to-end', () => {
 			outputDir: '/tmp/sittir-test-rust'
 		});
 
-		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.types).toContain('export type TokenKeywords = TSKindId.');
 		expect(result.types).toContain('export interface BinaryExpression {');
@@ -62,7 +60,6 @@ describe('generate — new pipeline end-to-end', () => {
 			outputDir: '/tmp/sittir-test-typescript'
 		});
 
-		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.types).toContain('export interface BinaryExpression {');
 		// A representative sample of operator tokens, not the full union —

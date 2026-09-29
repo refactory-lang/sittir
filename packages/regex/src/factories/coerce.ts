@@ -6,7 +6,7 @@ import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import type { AnyNodeData, LooseValue } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
-import { isNodeData } from '../utils.js';
+import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -193,7 +193,7 @@ function _kindNameOf(kind: unknown): string | undefined {
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
-	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeData(rest))
+	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
 	if (typeof text !== 'string')
@@ -264,7 +264,7 @@ function _resolveOne<T>(
 	defaultArm?: string
 ): T {
 	if (v === undefined || v === null) return v as T;
-	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	const kindId = isNode(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (
@@ -277,7 +277,7 @@ function _resolveOne<T>(
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
-		if (isNodeData(v)) return v as T;
+		if (isNode(v)) return v as T;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -311,7 +311,7 @@ function _resolveOne<T>(
 		const kindName = _kindNameOf(kind);
 		if (kindName !== undefined && _isFromKind(kindName)) {
 			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
-			return (isNodeData(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
+			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 		}
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
@@ -371,7 +371,7 @@ function _listElements(
 		typeof head === 'object' &&
 		head !== null &&
 		!Array.isArray(head) &&
-		!isNodeData(head) &&
+		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
 	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
 		wrapperKind !== undefined &&
@@ -379,13 +379,13 @@ function _listElements(
 		typeof e === 'object' &&
 		e !== null &&
 		!Array.isArray(e) &&
-		!isNodeData(e) &&
+		!isNode(e) &&
 		!('kind' in e)
 			? _resolveByKind(wrapperKind, e)
 			: e
 	);
 	const resolved = elements.map((e) =>
-		wrapperKind !== undefined && isNodeData(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
+		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
 			: resolve([e])[0]
 	);
@@ -394,7 +394,7 @@ function _listElements(
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
-	if (isNodeData(v)) return v as T;
+	if (isNode(v)) return v as T;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
@@ -515,14 +515,14 @@ function _resolveOneBranch<T>(
 ): T {
 	if (v === undefined || v === null) return v as T;
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
-	if (typeof v === 'object' && !Array.isArray(v) && !isNodeData(v) && 'kind' in v) {
+	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
 		const kn = _kindNameOf(k);
 		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
 			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
 		}
 	}
-	if (isNodeData(v)) {
+	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
 			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as T;
@@ -569,7 +569,7 @@ function _resolveManyBranch<T>(
 function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (v === true || v === false) return v as T;
-	if (isNodeData(v)) return v as T;
+	if (isNode(v)) return v as T;
 	if (Array.isArray(v)) return v as T;
 	return v as T;
 }
@@ -579,7 +579,7 @@ function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	if (typeof v === 'number') return v as T;
 	if (typeof v === 'string') return v as T;
 	if (Array.isArray(v)) return v as T;
-	if (isNodeData(v)) return v as T;
+	if (isNode(v)) return v as T;
 	return v as T;
 }
 
@@ -589,11 +589,11 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-/** Narrows a coercer input to its config arm. A bare `isNodeData` check
+/** Narrows a coercer input to its config arm. A bare `isNode` check
  *  cannot: the NodeData arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
 function _isLooseConfig<C>(v: C | AnyNodeData): v is C {
-	return !isNodeData(v);
+	return !isNode(v);
 }
 function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
 	if (v === undefined || v === null) {
@@ -648,14 +648,14 @@ export function resolvePattern_content(value: T.Pattern.LooseConfig['content']):
 }
 
 export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.buildPattern> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Pattern)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.Pattern)
 		return input as unknown as ReturnType<typeof F.buildPattern>;
 	return F.buildPattern(
 		_requireField(
 			'pattern',
 			'content',
 			_resolveOne<T.Alternation | T.Term>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K1
 			)
@@ -666,7 +666,7 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 export function coerceToAlternation(
 	...input: readonly (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildAlternation> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Alternation) {
+	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Alternation) {
 		const data = input[0];
 		const stored = (data as unknown as { _term?: unknown })._term;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -677,7 +677,7 @@ export function coerceToAlternation(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('term' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNode(head) || !('term' in head)) return input;
 		const v = (head as Record<string, unknown>)['term'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -689,7 +689,7 @@ export function coerceToAlternation(
 export function coerceToTerm(
 	...input: readonly (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildTerm> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Term) {
+	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Term) {
 		const data = input[0];
 		const stored = (data as unknown as { _term_group?: unknown })._term_group;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -700,7 +700,7 @@ export function coerceToTerm(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('termGroup' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNode(head) || !('termGroup' in head)) return input;
 		const v = (head as Record<string, unknown>)['termGroup'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -742,14 +742,14 @@ export function resolveLookaroundAssertion_content(
 export function coerceToLookaroundAssertion(
 	input: T.LookaroundAssertion.Loose
 ): ReturnType<typeof F.buildLookaroundAssertion> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.LookaroundAssertion)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.LookaroundAssertion)
 		return input as unknown as ReturnType<typeof F.buildLookaroundAssertion>;
 	return F.buildLookaroundAssertion(
 		_requireField(
 			'lookaround_assertion',
 			'content',
 			_resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 				_K0,
 				_K2
 			)
@@ -851,7 +851,7 @@ export function coerceToCharacterClass(
 		  >
 	)[]
 ): ReturnType<typeof F.buildCharacterClass> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CharacterClass) {
+	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.CharacterClass) {
 		const data = input[0];
 		const stored = (data as unknown as { _class_atoms?: unknown })._class_atoms;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -876,7 +876,7 @@ export function coerceToCharacterClass(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('classAtoms' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNode(head) || !('classAtoms' in head)) return input;
 		const v = (head as Record<string, unknown>)['classAtoms'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -908,14 +908,14 @@ export function resolvePosixCharacterClass_posixClassName(
 export function coerceToPosixCharacterClass(
 	input: T.PosixCharacterClass.Loose
 ): ReturnType<typeof F.buildPosixCharacterClass> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.PosixCharacterClass)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.PosixCharacterClass)
 		return input as unknown as ReturnType<typeof F.buildPosixCharacterClass>;
 	return F.buildPosixCharacterClass(
 		_requireField(
 			'posix_character_class',
 			'posixClassName',
 			_resolveOneLeaf<T.PosixClassName>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'posixClassName' in input
+				input !== null && typeof input === 'object' && !isNode(input) && 'posixClassName' in input
 					? input.posixClassName
 					: typeof input === 'string'
 						? spelledInterior(input, '[:', ':]')
@@ -971,14 +971,14 @@ export function resolveAnonymousCapturingGroup_pattern(
 export function coerceToAnonymousCapturingGroup(
 	input: T.AnonymousCapturingGroup.Loose
 ): ReturnType<typeof F.buildAnonymousCapturingGroup> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AnonymousCapturingGroup)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.AnonymousCapturingGroup)
 		return input as unknown as ReturnType<typeof F.buildAnonymousCapturingGroup>;
 	return F.buildAnonymousCapturingGroup(
 		_requireField(
 			'anonymous_capturing_group',
 			'pattern',
 			_resolveOneBranch<T.Pattern>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'pattern' in input ? input.pattern : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'pattern' in input ? input.pattern : input,
 				'pattern'
 			)
 		)
@@ -1031,14 +1031,14 @@ export function resolveNonCapturingGroup_pattern(
 export function coerceToNonCapturingGroup(
 	input: T.NonCapturingGroup.Loose
 ): ReturnType<typeof F.buildNonCapturingGroup> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NonCapturingGroup)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.NonCapturingGroup)
 		return input as unknown as ReturnType<typeof F.buildNonCapturingGroup>;
 	return F.buildNonCapturingGroup(
 		_requireField(
 			'non_capturing_group',
 			'pattern',
 			_resolveOneBranch<T.Pattern>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'pattern' in input ? input.pattern : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'pattern' in input ? input.pattern : input,
 				'pattern'
 			)
 		)
@@ -1072,14 +1072,14 @@ export function resolveCountQuantifier_content(
 }
 
 export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnType<typeof F.buildCountQuantifier> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.CountQuantifier)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.CountQuantifier)
 		return input as unknown as ReturnType<typeof F.buildCountQuantifier>;
 	return F.buildCountQuantifier(
 		_requireField(
 			'count_quantifier',
 			'content',
 			_resolveOne<T.CountQuantifierArm | T.DecimalDigits>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 				_K7,
 				_K8
 			)
@@ -1096,14 +1096,14 @@ export function resolveBackreferenceEscape_groupName(
 export function coerceToBackreferenceEscape(
 	input: T.BackreferenceEscape.Loose
 ): ReturnType<typeof F.buildBackreferenceEscape> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.BackreferenceEscape)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.BackreferenceEscape)
 		return input as unknown as ReturnType<typeof F.buildBackreferenceEscape>;
 	return F.buildBackreferenceEscape(
 		_requireField(
 			'backreference_escape',
 			'groupName',
 			_resolveOneLeaf<T.GroupName>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'groupName' in input
+				input !== null && typeof input === 'object' && !isNode(input) && 'groupName' in input
 					? input.groupName
 					: typeof input === 'string'
 						? spelledInterior(input, '\\k<', '>')
@@ -1123,14 +1123,14 @@ export function resolveNamedGroupBackreference_groupName(
 export function coerceToNamedGroupBackreference(
 	input: T.NamedGroupBackreference.Loose
 ): ReturnType<typeof F.buildNamedGroupBackreference> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NamedGroupBackreference)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.NamedGroupBackreference)
 		return input as unknown as ReturnType<typeof F.buildNamedGroupBackreference>;
 	return F.buildNamedGroupBackreference(
 		_requireField(
 			'named_group_backreference',
 			'groupName',
 			_resolveOneLeaf<T.GroupName>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'groupName' in input
+				input !== null && typeof input === 'object' && !isNode(input) && 'groupName' in input
 					? input.groupName
 					: typeof input === 'string'
 						? spelledInterior(input, '(?P=', ')')
@@ -1155,14 +1155,14 @@ export function resolveCharacterClassEscape_content(
 export function coerceToCharacterClassEscape(
 	input: T.CharacterClassEscape.Loose
 ): ReturnType<typeof F.buildCharacterClassEscape> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.CharacterClassEscape)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.CharacterClassEscape)
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscape>;
 	return F.buildCharacterClassEscape(
 		_requireField(
 			'character_class_escape',
 			'content',
 			_resolveOne<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 				_K9,
 				_K10
 			)
@@ -1237,14 +1237,14 @@ export function resolveIdentityEscape_content(
 }
 
 export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnType<typeof F.buildIdentityEscape> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IdentityEscape)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.IdentityEscape)
 		return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
 		_requireField(
 			'identity_escape',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content)
@@ -1324,11 +1324,11 @@ export function resolveCountQuantifierGroup_decimalDigits(
 export function coerceToCountQuantifierGroup(
 	input?: T.CountQuantifierGroup.Loose
 ): ReturnType<typeof F.buildCountQuantifierGroup> {
-	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.CountQuantifierGroup)
+	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.CountQuantifierGroup)
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierGroup>;
 	return F.buildCountQuantifierGroup(
 		_resolveOneLeaf<T.DecimalDigits>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'decimalDigits' in input
+			input !== null && typeof input === 'object' && !isNode(input) && 'decimalDigits' in input
 				? input.decimalDigits
 				: typeof input === 'string'
 					? spelledInterior(input, ',', '')
@@ -1405,14 +1405,14 @@ export function resolveUnicodePropertyValueExpressionGroup_unicodePropertyName(
 export function coerceToUnicodePropertyValueExpressionGroup(
 	input: T.UnicodePropertyValueExpressionGroup.Loose
 ): ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.UnicodePropertyValueExpressionGroup)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.UnicodePropertyValueExpressionGroup)
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 	return F.buildUnicodePropertyValueExpressionGroup(
 		_requireField(
 			'unicode_property_value_expression_group',
 			'unicodePropertyName',
 			_resolveOneBranch<T.UnicodePropertyName>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'unicodePropertyName' in input
+				input !== null && typeof input === 'object' && !isNode(input) && 'unicodePropertyName' in input
 					? input.unicodePropertyName
 					: typeof input === 'string'
 						? spelledInterior(input, '', '=')
@@ -1539,7 +1539,7 @@ export function resolveLazy_content(value: T.Lazy.LooseConfig['content']): T.Laz
 }
 
 export function coerceToLazy(input: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Lazy)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.Lazy)
 		return input as unknown as ReturnType<typeof F.buildLazy>;
 	return F.buildLazy(
 		_requireField(
@@ -1547,12 +1547,10 @@ export function coerceToLazy(input: T.Lazy.Loose): ReturnType<typeof F.buildLazy
 			'content',
 			coerceKindEnumStorage(
 				_resolveKindEnumScalar(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 					() =>
 						_resolveOne<'?'>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+							input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
 								? input.content
 								: input,
 							_K0,
@@ -1574,14 +1572,14 @@ export function resolveUnicodePropertyName_content(
 export function coerceToUnicodePropertyName(
 	input: T.UnicodePropertyName.Loose
 ): ReturnType<typeof F.buildUnicodePropertyName> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.UnicodePropertyName)
+	if (isNode(input) && (input.$type as string | number) === TSKindId.UnicodePropertyName)
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
 	return F.buildUnicodePropertyName(
 		_requireField(
 			'unicode_property_name',
 			'content',
 			_resolveOneLeaf<T.UnicodePropertyValue>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
 				'unicode_property_value'
 			)
 		)

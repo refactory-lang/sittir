@@ -4,8 +4,12 @@
 
 import { describe, it, expect } from 'vitest';
 import * as F from '../src/factories/index.js';
-import { createEngine } from '../src/engine.js';
-import { TSKindId, type LineComment } from '../src/types.js';
+import type { LineComment } from '../src/types.js';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
+const rsNative = (await rust.load()).createNative();
 
 function makeFn(name: string) {
 	return F.buildFunctionItem({
@@ -71,8 +75,8 @@ describe('$trivia() integration', () => {
 		const fn = makeFn('main');
 		fn.$trivia('// hello', '// a');
 		expect((triviaDataOf(fn)?.leading as { $type: unknown }[] | undefined)?.map((entry) => entry.$type)).toEqual([
-			TSKindId.LineComment,
-			TSKindId.LineComment
+			rs.kinds.LineComment,
+			rs.kinds.LineComment
 		]);
 		expect(fn.$render()).toBe('// hello\n// a\nfn main() {}');
 	});
@@ -130,7 +134,7 @@ describe('$trivia() integration', () => {
 	type WrappedEntry = { content(): unknown; $render(): string };
 
 	it('wraps read trivia entries like slot children', () => {
-		const letDecl = createEngine().parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0]!;
+		const letDecl = rs.parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0]!;
 		const lead = triviaDataOf(letDecl)!.leading as WrappedEntry[];
 		expect(lead.every((entry) => typeof entry.content === 'function')).toBe(true);
 		expect(lead.map((entry) => entry.$render())).toEqual(['//!\n', '/*!*/', '//\n', '///\n']);
@@ -138,7 +142,7 @@ describe('$trivia() integration', () => {
 
 	it('reads each entry with the span the parser gave it, whatever its render adds', () => {
 		const source = '//!\n/*!*/\n//\n///\nlet x;\n';
-		const { root } = createEngine().diagnostics.parseAndRead(source, { deep: true });
+		const { root } = rsNative.parseAndRead(source, { deep: true });
 		const statements = (root as unknown as { _statements: unknown })._statements;
 		const statement = (Array.isArray(statements) ? statements[0] : statements) as {
 			$_trivia: { leading: { $span: { start: number; end: number } }[] };
@@ -147,7 +151,7 @@ describe('$trivia() integration', () => {
 	});
 
 	it('wraps the entries of an inner gap', () => {
-		const fn = createEngine().parse('fn f() {\n    // only\n}\n').statements()[0] as unknown as {
+		const fn = rs.parse('fn f() {\n    // only\n}\n').statements()[0] as unknown as {
 			body(): object;
 		};
 		const inner = (triviaDataOf(fn.body()) as { inner?: Record<string, WrappedEntry[]> }).inner!;

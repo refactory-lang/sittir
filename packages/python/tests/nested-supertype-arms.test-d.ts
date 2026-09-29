@@ -6,19 +6,22 @@
  * Compile-time only: `pnpm --filter @sittir/python type-check`.
  */
 
-import { ir } from '@sittir/python';
+import python from '@sittir/python';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
 
 // The calls HEAD accepted.
-ir.integer('3');
-ir.integer(3);
-ir.integer(3n);
-ir.integer.hex(255);
-ir.integer.decimal('3');
-ir.primaryExpression.integer('3');
+py.build.integer('3');
+py.build.integer(3);
+py.build.integer(3n);
+py.build.integer.hex(255);
+py.build.integer.decimal('3');
+py.build.primaryExpression.integer('3');
 
 // The nested arms, with plain the default.
-ir.integer.decimal.plain('3');
-ir.integer.decimal.long('3L');
-ir.integer.decimal.imaginary('3j');
-ir.integerDecimal('3');
-ir.primaryExpression.integer.decimal.long('3L');
+py.build.integer.decimal.plain('3');
+py.build.integer.decimal.long('3L');
+py.build.integer.decimal.imaginary('3j');
+py.build.integerDecimal('3');
+py.build.primaryExpression.integer.decimal.long('3L');

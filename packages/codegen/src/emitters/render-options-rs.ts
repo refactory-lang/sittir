@@ -1,7 +1,7 @@
 import type { SeamOrigin } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
-import { DelimiterFlags } from '../compiler/model/node-map.ts';
+import { Delimiter } from '@sittir/common/utils';
 import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
@@ -90,11 +90,9 @@ export interface RenderOptionsPlan {
 const KIND_ANON = 1;
 const KIND_LINE_TERMINATED = 2;
 
-const DELIMITER_BITS: Readonly<Record<string, number>> = {
-	'Delimiter.Leading': DelimiterFlags.leading,
-	'Delimiter.Trailing': DelimiterFlags.trailing,
-	'Delimiter.Both': DelimiterFlags.both
-};
+const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
+	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
+);
 
 type IdEntry = KindEntryLike & { readonly id?: number };
 

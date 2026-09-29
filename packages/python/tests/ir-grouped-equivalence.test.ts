@@ -3,24 +3,21 @@
  * output to flat access. Mirrors the rust counterpart.
  */
 import { describe, expect, it } from 'vitest';
-import { ir, statement, expression } from '@sittir/python';
+import python from '@sittir/python';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
 
 describe('python ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
-		// `statement.if` === `ir.statement.if` (reserved words are valid property keys).
-		expect(ir.statement.if).toBe(statement.if);
-		expect(ir.statement.if.strict).toBe(statement.if.strict);
-	});
-
-	it('grouped namespace attached to ir is the same object as standalone export', () => {
-		expect(ir.statement).toBe(statement);
-		expect(ir.expression).toBe(expression);
+		expect(py.build.statement.if).toBe(py.build.ifStatement);
+		expect(py.build.statement.if.strict).toBe(py.build.ifStatement.strict);
 	});
 
 	it('covers known supertypes with at least one member', () => {
 		const groups = ['statement', 'expression'] as const;
 		for (const g of groups) {
-			const obj = ir[g] as Record<string, unknown>;
+			const obj = py.build[g] as Record<string, unknown>;
 			expect(Object.keys(obj).length).toBeGreaterThan(0);
 		}
 	});

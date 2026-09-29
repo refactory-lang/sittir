@@ -146,14 +146,13 @@ describe('boundary', () => {
 			}
 		);
 
-		// Engine created - remove ts-expect-error
-		const { createEngine } = await import('../src/engine.ts');
-		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
+				const { createEngine } = await import('@sittir/common');
+		const engine = await createEngine((await import('../src/index.ts')).default, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
 		// not a raw string — boundary.ts's own render() calls .toString() on
 		// this same return value. This test calls the lower-level engine API
 		// directly, so it must do the same unwrap.
-		expect(engine.render(identifier).toString()).toBe('\tx');
+		expect(engine.render(engine.build.identifier('x')).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 	});
 

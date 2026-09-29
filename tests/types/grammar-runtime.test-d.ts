@@ -1,4 +1,4 @@
-import type { AnyNodeData, GrammarFacts, GrammarNodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
+import type { AnyNodeData, GrammarFacts, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
 import { bindRuntime } from '../../packages/common/src/utils.ts';
 
 interface List {
@@ -36,11 +36,11 @@ declare const leaf: Leaf;
 runtime.isEmpty(leaf);
 
 declare const value: unknown;
-if (runtime.isNodeData(value)) value satisfies AnyNodeData;
+if (runtime.isNode(value)) value satisfies AnyNodeData;
 
 const built = runtime.withMethods(leaf, facts);
 // @ts-expect-error methods attach to a node, and an object without a $type is not one
 runtime.withMethods({}, facts);
-built satisfies Leaf & GrammarNodeMethods<Comment>;
+built satisfies Leaf & NodeMethods<Comment>;
 built.$trivia.leading() satisfies readonly Comment[];
 built.$trivia.leading('// note') satisfies typeof built;

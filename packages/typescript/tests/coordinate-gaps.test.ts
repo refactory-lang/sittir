@@ -4,13 +4,14 @@
 // The wrapped accessors are typed as slot data while the values carry the
 // fluent surface, so the shapes below are asserted through `unknown`.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/engine.js';
-import { ir } from '../src/ir.js';
-import { TSKindId } from '../src/types.js';
+import typescript from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const ts = await createEngine(typescript);
 
 describe('gaps between coordinates', () => {
 	it('keeps the blank lines a parsed block spelled when a statement is appended', () => {
-		const engine = createEngine();
+		const engine = ts;
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
 		const fn = engine.parse(source).statements()[0] as unknown as {
 			body(): {
@@ -21,9 +22,9 @@ describe('gaps between coordinates', () => {
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
-			ir.expressionStatement.strict(
-				ir.callExpression.call.strict({ function: ir.identifier('d'), arguments: ir.arguments.strict() }),
-				{ terminator: TSKindId.Semi }
+			ts.build.expressionStatement.strict(
+				ts.build.callExpression.call.strict({ function: ts.build.identifier('d'), arguments: ts.build.arguments.strict() }),
+				{ terminator: ts.kinds.Semi }
 			)
 		);
 		// The blank lines are the claim; the indent width is the format's.
@@ -32,7 +33,7 @@ describe('gaps between coordinates', () => {
 	});
 
 	it('keeps a tight comma list tight when an argument is replaced', () => {
-		const engine = createEngine();
+		const engine = ts;
 		const call = (
 			engine.parse('f(a,b,c);\n').statements()[0] as unknown as {
 				expression(): {
@@ -46,7 +47,7 @@ describe('gaps between coordinates', () => {
 			.expression()
 			.arguments();
 		const [a, , c] = call.elements();
-		const rebuilt = call.$with.elements(a, ir.identifier('x'), c);
+		const rebuilt = call.$with.elements(a, ts.build.identifier('x'), c);
 		expect(engine.render(rebuilt as never).toString()).toBe('(a,x,c)');
 	});
 });

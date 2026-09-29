@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { ir as rust } from '@sittir/rust';
-import { ir as python } from '@sittir/python';
-import { ir as typescript } from '@sittir/typescript';
+import { createEngine } from '../src/create-engine.ts';
+import rust from '@sittir/rust';
+import python from '@sittir/python';
+import typescript from '@sittir/typescript';
+
+const tables = {
+	rust: (await createEngine(rust)).build,
+	python: (await createEngine(python)).build,
+	typescript: (await createEngine(typescript)).build
+};
 
 const FUNCTION_OWN = new Set(['length', 'name', 'prototype', 'arguments', 'caller']);
 const FLAVOURS = new Set(['strict', 'coerce']);
@@ -28,9 +35,9 @@ function strictLessCallablesWithStrictMembers(table: object): string[] {
 
 describe('the strict surface covers every builder table', () => {
 	it.each([
-		['rust', rust],
-		['python', python],
-		['typescript', typescript]
+		['rust', tables.rust],
+		['python', tables.python],
+		['typescript', tables.typescript]
 	])('%s: no callable without a strict flavour carries a member that has one', (_grammar, table) => {
 		expect(strictLessCallablesWithStrictMembers(table)).toEqual([]);
 	});

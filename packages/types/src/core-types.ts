@@ -66,7 +66,7 @@ export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
  * class of field-name-vs-discriminant collisions (e.g. Python's
  * `type_alias_statement` has a field literally named `type`). The `$source`
  * provenance tag lets `.from()` dispatch with a clean equality check
- * instead of structural `isNodeData` probing.
+ * instead of structural `isNode` probing.
  */
 export interface AnyNodeData {
 	/**
