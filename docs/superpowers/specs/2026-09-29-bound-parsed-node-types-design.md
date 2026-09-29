@@ -103,11 +103,28 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
   type SlotInput<Self, K> = SlotHintsOf<Self>[K] extends SlotHint<infer I> ? I : never;
 
   type Setters<Self> = { [K in keyof SlotHintsOf<Self>]: (v: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>> };
-  type WithSlot<Self, K, V> = Remap<Self, K | '$with'> & { [P in K]: () => V } & { $with: Setters<WithSlot<Self, K, V>> };
+  type ListCall<Self> = /* list owners only */ {
+  	(options: ListOptions<Self>, ...items: NonEmptyArray<ListElementInput<Self>>): WithSlot<Self, ListSlot<Self>, ListSlotInput<Self>>;
+  	(...items: NonEmptyArray<ListElementInput<Self>>): WithSlot<Self, ListSlot<Self>, ListSlotInput<Self>>;
+  };
+  type WithOf<Self> = Setters<Self> & ([ListOwnerOf<Self>] extends [never] ? {} : ListCall<Self>);
+  type WithSlot<Self, K, V> = Remap<Self, K | '$with'> & { [P in K]: () => V } & { $with: WithOf<WithSlot<Self, K, V>> };
 
-  // in FunctionItem.Parsed
-  $with: Setters<this>;
+  // in FunctionItem.Parsed, and in every Parsed
+  $with: WithOf<this>;
   ```
+
+  - **One `$with` type for every node:** `WithOf` is the slot setters,
+    plus the factory's call signature when the node is a list owner. A
+    list owner's `Parsed` therefore keeps the callable `$with`, and stays
+    assignable to its `Bound`, which has the same shape.
+  - **What the list call returns:** calling a list owner's `$with` builds
+    a replacement list through the list kind's own factory and seats it
+    in the list slot. So it returns `WithSlot` on that slot, typed as the
+    slot's input (the list's `.Bound`). Iteration, `length`, `at` and the
+    flattened options come from `ListOwnerOf`, which `WithSlot` keeps
+    (it remaps accessors and `$with`, not `__slotHints__`), so they read
+    the replacement list's element type.
 
   - **Replaced vs untouched slots:** the replaced slot reads as `.Bound`,
     since it holds a factory node until commit. The untouched slots stay
@@ -118,7 +135,7 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
     declared input type, never from `typeof v`. Per-call inference of the
     argument is what made type-checking unbounded.
   - **Why `this` is passed in:** `this` is not allowed inside the nested
-    setter type literal, so it enters at the member (`Setters<this, …>`).
+    setter type literal, so it enters at the member (`WithOf<this>`).
   - **Remap, not intersect:** `Remap` (key-remapping) drops the slot's
     accessor and `$with` before re-adding them. A plain intersection
     would make each an overload pair in which the original signature
@@ -143,8 +160,11 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
 - **Key-remapping, not `Omit`:** they drop the main interface's own
   accessor signatures by key-remapping
   (`{ [P in keyof D as P extends K ? never : P]: D[P] }`, distributed
-  over unions). The storage interfaces carry an index signature, so
-  `keyof` is `string` and `Omit` drops every declared key.
+  over unions). `Omit` is a plain `Pick` over `Exclude<keyof T, K>`: it
+  does not distribute over a union and collapses it to its common keys.
+  A throwaway type-check of declared wrap returns built on `Omit` lost
+  the declared keys and cascaded to thousands of errors. Key-remapping
+  keeps each member's keys, so it is the only form used.
 - **Supertype dispatch** needs no declared type of its own, since the
   union distributes. The existing `is.*` guards narrow within the
   wrapped union unchanged.

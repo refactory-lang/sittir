@@ -49,7 +49,7 @@ emitter and the wrap emitter call it.
   never `Omit`. The storage interfaces carry an index signature, so
   `Omit` drops every declared key.
 - `this` cannot appear inside a nested type literal. Pass it in at the
-  member: `$with: Setters<this>`.
+  member: `$with: WithOf<this>`.
 - Every task ends green on:
   - `pnpm run type-check`;
   - `pnpm run lint`;
@@ -103,10 +103,11 @@ emitter and the wrap emitter call it.
   - `BoundOf<N, ByKindId>`: the node surface computed from main interface
     `N`, with children resolved through `ByKindId`, an id-keyed map of
     `.Bound` interfaces.
-  - `ParsedOf<N, ByKindId>`: the same surface, with `$with: Setters<this>`
+  - `ParsedOf<N, ByKindId>`: the same surface, with `$with: WithOf<this>`
     semantics and children resolved through `ByKindId`, an id-keyed map
     of `.Parsed` interfaces.
-  - `Setters<Self>` and `WithSlot<Self, K, V>`.
+  - `Setters<Self>`, `WithOf<Self>` (setters plus, for a list owner, the
+    list factory's call signature) and `WithSlot<Self, K, V>`.
   - `ListOwnerMembers<E, O>`:
     `Iterable<E> & { readonly length: number; at(i: number): E | undefined } & Readonly<O>`.
 
@@ -245,7 +246,7 @@ export type ParsedOf<N, ByKindId> = BoundOf<N, ByKindId>;
   - `Setters` reads only `__slotHints__`.
   - The `Parsed` interface gets its `$with` through the declaring
     interface's `Setters<this>` (Task 3 emits
-    `interface Parsed extends ParsedOf<X, ParsedByKindId> { readonly $with: Setters<this> }`).
+    `interface Parsed extends ParsedOf<X, ParsedByKindId> { readonly $with: WithOf<this> }`).
   - `NodeMethods` are not part of `BoundOf`. Task 3's emitted interfaces
     add `NodeMethodsOf` in their `extends` list, as `Built` does today.
 
@@ -424,7 +425,7 @@ git commit -m "feat(codegen): every kind interface stamps its slot inputs and li
 export namespace FunctionItem {
 	export interface Bound extends BoundOf<T.FunctionItem, BoundByKindId>, NodeMethodsOf {}
 	export interface Parsed extends ParsedOf<T.FunctionItem, ParsedByKindId>, NodeMethodsOf {
-		readonly $with: Setters<this>;
+		readonly $with: WithOf<this>;
 	}
 	// Config, Loose, LooseConfig, BuildArgs, LooseArgs, Kind unchanged
 }
