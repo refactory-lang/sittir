@@ -54,6 +54,7 @@ export interface LanguageAPI {
 	readonly fixedTextKindId: number;
 	readonly options: object;
 	readonly indentChar: string;
+	readonly empty: GrammarTypeMap['empty'];
 }
 
 export interface Language<API extends LanguageAPI> {
@@ -138,6 +139,13 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly kinds: API['kinds'];
 	readonly types: API['types'];
 	readonly diagnostics: EngineDiagnostics;
+	isNode(value: unknown): value is API['node'];
+	isParsedNode(value: unknown): value is API['node'];
+	isFactoryNode(value: unknown): value is API['node'];
+	isErrorNode(value: unknown): value is API['node'];
+	isEmptyNode<N extends API['empty']['node']>(
+		node: N
+	): node is N & Extract<API['empty'], { readonly node: N }>['empty'];
 	parse(source: string, options?: ParseOptions): API['root'];
 	read(path: string, options?: ParseOptions): Promise<API['root']>;
 	render<const R extends API['options'] = API['options']>(

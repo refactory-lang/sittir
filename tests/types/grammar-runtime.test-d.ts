@@ -1,4 +1,4 @@
-import type { AnyNodeData, TriviaFacts, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
+import type { AnyNodeData, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
 import { bindRuntime } from '../../packages/common/src/utils.ts';
 
 interface List {
@@ -25,15 +25,9 @@ interface FakeTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment;
 }
 
-declare const facts: TriviaFacts;
-const runtime = bindRuntime<FakeTypeMap>(facts);
-
-declare const list: List;
-if (runtime.isEmpty(list)) list satisfies EmptyList;
+const runtime = bindRuntime<FakeTypeMap>();
 
 declare const leaf: Leaf;
-// @ts-expect-error a kind that never realizes empty has no isEmpty
-runtime.isEmpty(leaf);
 
 declare const value: unknown;
 if (runtime.isNode(value)) value satisfies AnyNodeData;

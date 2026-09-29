@@ -237,7 +237,7 @@ const todo = ir.functionItem({
 todo.$render(); // fn todo() {\n    // TODO\n}
 ```
 
-Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `isEmpty(node)` narrows a read node to it.
+Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `engine.isEmptyNode(node)` narrows a read node to it.
 
 ## 4. Construction templates — pre-compiled
 

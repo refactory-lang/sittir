@@ -72,7 +72,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node } from './types.js';
+import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
 ${config.commentCoercer === undefined ? '' : `import { ${config.commentCoercer} } from './factories/coerce.js';\n`}import { RENDER_MODULE_HASH } from './hash.js';
@@ -90,6 +90,7 @@ export interface ${api} extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: ${grammarTypeMapName(grammar)}['empty'];
 }
 
 export const hooks: LanguageHooks<${api}> = {

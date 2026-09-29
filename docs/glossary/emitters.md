@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
 
 
 ```text
@@ -10979,11 +10979,11 @@ The union of the grammar's trivia kind types, `AnyNodeData` when it has none: wh
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
+Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitTriviaFacts`
 
-Emits `triviaFacts`, the grammar's `TriviaFacts`, which `withMethods` and `isEmpty` read at runtime:
+Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry to the engine, and which a node's `$trivia` reads through its engine:
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
@@ -11188,7 +11188,7 @@ omits the key.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; `isEmpty` is its one value export besides the descriptor. It depends on the grammar's name only, not on its node list.
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 

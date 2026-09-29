@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, TriviaFacts } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { createRenderHandle } from '../src/engine.ts';
 import { inTreeEngine } from '../src/engine-scope.ts';
+import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
 import { withMethods } from '../src/utils.ts';
 import { triviaFacts } from './support/fake-engine.ts';
@@ -11,7 +12,11 @@ interface Options {
 	readonly indent?: string;
 }
 
-const trivia = triviaFacts();
+const trivia: TriviaFacts = {
+	...triviaFacts(),
+	kindName: (type) => (type === 3 ? 'group' : type === 9 ? 'comment' : undefined),
+	innerGaps: { group: ['inner'] }
+};
 
 const node = (data: Record<string, unknown>): AnyNodeData => withMethods(data as unknown as AnyNodeData);
 
@@ -162,5 +167,76 @@ describe('rendering through an engine what another engine parsed', () => {
 		const a = await engineOf(fakeLanguage('fake'));
 		const other = await engineOf(fakeLanguage('other'));
 		expect(() => a.render(other.build.leaf('x'))).toThrow('cannot render a other node through a fake engine');
+	});
+});
+
+describe('the node guards of an engine', () => {
+	const parsedLeaf = (fake: ReturnType<typeof fakeLanguage>) =>
+		inTreeEngine(fake.trees[0]!, () => node({ $type: 1, $text: 'p', $source: Source.Ts }));
+
+	it('accept a node of their language, from any engine of it and from any origin', async () => {
+		const fake = fakeLanguage('fake');
+		const a = await engineOf(fake);
+		const b = await engineOf(fake);
+		b.parse('src');
+		const built = b.build.leaf('x');
+		const parsed = b.parse('src');
+		for (const guard of ['isNode'] as const) {
+			expect(a[guard](built)).toBe(true);
+			expect(a[guard](parsed)).toBe(true);
+		}
+		expect(a.isFactoryNode(built)).toBe(true);
+		expect(a.isFactoryNode(parsed)).toBe(false);
+		expect(a.isParsedNode(parsed)).toBe(true);
+		expect(a.isParsedNode(built)).toBe(false);
+		expect(a.isParsedNode(parsedLeaf(fake))).toBe(true);
+	});
+
+	it('reject a node of another language whose kind id is valid in both', async () => {
+		const a = await engineOf(fakeLanguage('fake'));
+		const other = await engineOf(fakeLanguage('other'));
+		const foreign = other.build.leaf('x');
+		expect(foreign.$type).toBe(a.build.leaf('x').$type);
+		expect(a.isNode(foreign)).toBe(false);
+		expect(a.isFactoryNode(foreign)).toBe(false);
+		expect(a.isEmptyNode(other.build.group())).toBe(false);
+	});
+
+	it('reject every value that carries no engine', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyNodeData);
+		for (const value of [unstamped, { $type: 1, $source: Source.Factory }, 'x', 1, null, undefined]) {
+			expect(engine.isNode(value)).toBe(false);
+			expect(engine.isFactoryNode(value)).toBe(false);
+			expect(engine.isParsedNode(value)).toBe(false);
+			expect(engine.isErrorNode(value)).toBe(false);
+		}
+	});
+
+	it('still accept the nodes of a disposed engine', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		const built = engine.build.leaf('x');
+		engine.dispose();
+		expect(engine.isNode(built)).toBe(true);
+		expect(engine.isFactoryNode(built)).toBe(true);
+	});
+
+	it('recognise an error node only when it is parsed and of their language', async () => {
+		const fake = fakeLanguage('fake');
+		const engine = await engineOf(fake);
+		engine.parse('src');
+		const error = inTreeEngine(fake.trees[0]!, () => node({ $type: ERROR_KIND_ID, $source: Source.Ts }));
+		expect(engine.isErrorNode(error)).toBe(true);
+		expect(engine.isErrorNode(parsedLeaf(fake))).toBe(false);
+		const other = await engineOf(fakeLanguage('other'));
+		expect(other.isErrorNode(error)).toBe(false);
+	});
+
+	it('take an empty node only of a kind with an inner gap and no content', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		expect(engine.isEmptyNode(engine.build.group())).toBe(true);
+		expect(engine.isEmptyNode(engine.build.group(engine.build.leaf('a')))).toBe(false);
+		expect(engine.isEmptyNode(engine.build.leaf('a'))).toBe(false);
+		expect(engine.isEmptyNode({ $type: 3, $source: Source.Factory } as never)).toBe(false);
 	});
 });

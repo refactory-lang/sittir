@@ -1,4 +1,5 @@
 import type {
+	AnyNodeData,
 	ApiSurface,
 	Engine,
 	EngineIdentity,
@@ -14,7 +15,13 @@ import type {
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, isLive, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
-import { isNode, isParsedNode } from './utils.ts';
+import {
+	isEmptyNode as isEmptyNodeData,
+	isErrorNode,
+	isFactoryNode,
+	isNode,
+	isParsedNode
+} from './utils.ts';
 
 const loaded = new WeakMap<Language<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
@@ -121,6 +128,10 @@ function assembleEngine<API extends LanguageAPI>(
 		bindTree(read.tree, handle);
 		return read;
 	};
+	const inLanguage = (value: unknown): boolean => {
+		const stamp = engineOf(value);
+		return stamp !== undefined && sameLanguage(stamp, identity);
+	};
 	const engine: Engine<API> = {
 		...identity,
 		build,
@@ -128,6 +139,19 @@ function assembleEngine<API extends LanguageAPI>(
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
 		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind },
+		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
+		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
+		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
+		isErrorNode: (value): value is API['node'] => isErrorNode(value) && inLanguage(value),
+		isEmptyNode: ((node: AnyNodeData): boolean => {
+			const kind = hooks.trivia.kindName(node.$type);
+			return (
+				engine.isNode(node) &&
+				kind !== undefined &&
+				hooks.trivia.innerGaps[kind] !== undefined &&
+				isEmptyNodeData(node)
+			);
+		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const { root, tree } = readAndBind(source, parseOptions);
 			return hooks.wrap(root, tree);

@@ -3,10 +3,9 @@ import type {
 	FlavorPair,
 	NodeMethods,
 	GrammarTypeMap,
-	Hoisted,
-	TriviaFacts
+	Hoisted
 } from '@sittir/types';
-import { isEmptyNode, isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
+import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -19,17 +18,12 @@ export interface GrammarRuntime<M extends GrammarTypeMap> {
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
 	isNode(v: unknown): v is AnyNodeData;
-	isEmpty<N extends M['empty']['node']>(node: N): node is N & Extract<M['empty'], { readonly node: N }>['empty'];
 	withMethods<T extends AnyNodeData>(node: T): T & NodeMethods<M['trivia']>;
 }
 
-export function bindRuntime<M extends GrammarTypeMap>(trivia: TriviaFacts): GrammarRuntime<M> {
+export function bindRuntime<M extends GrammarTypeMap>(): GrammarRuntime<M> {
 	return {
 		isNode: isAnyNode,
-		isEmpty(node: AnyNodeData): boolean {
-			const kind = trivia.kindName(node.$type);
-			return kind !== undefined && trivia.innerGaps[kind] !== undefined && isEmptyNode(node);
-		},
 		withMethods<T extends AnyNodeData>(node: T) {
 			return withAnyMethods(node) as unknown as T & NodeMethods<M['trivia']>;
 		}

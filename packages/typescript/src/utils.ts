@@ -25,4 +25,4 @@ export const triviaFacts = {
 	}
 } satisfies TriviaFacts;
 
-export const { isNode, isEmpty, withMethods } = bindRuntime<TypescriptTypeMap>(triviaFacts);
+export const { isNode, withMethods } = bindRuntime<TypescriptTypeMap>();

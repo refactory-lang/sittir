@@ -4,7 +4,14 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type RegexNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type RegexNode,
+	type RegexTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
 import { RENDER_MODULE_HASH } from './hash.js';
@@ -22,6 +29,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: RegexTypeMap['empty'];
 }
 
 export const hooks: LanguageHooks<RegexAPI> = {

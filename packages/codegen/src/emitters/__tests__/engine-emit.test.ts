@@ -49,6 +49,11 @@ describe('emitApi', () => {
 		expect(output).toContain('readonly root: ModuleTree;');
 	});
 
+	it("types the API's empty forms from the grammar's type map", () => {
+		expect(output).toContain("readonly empty: PythonTypeMap['empty'];");
+		expect(output).toMatch(/import \{[^}]*type PythonTypeMap[^}]*\} from '\.\/types\.js';/);
+	});
+
 	it('keys the kind-to-type map on the stamped ir keys', () => {
 		expect(output).toContain('readonly types: KindTypes<IrKeyOf, NamespaceMap>;');
 	});
@@ -94,10 +99,10 @@ describe('emitIndex', () => {
 		expect(output).not.toMatch(/^import \{[^}]*\} from '\.\/api\.js'/m);
 	});
 
-	it('re-exports types only, besides the descriptor and isEmpty', () => {
+	it('re-exports types only, besides the descriptor', () => {
 		const valueExports = output
 			.split('\n')
 			.filter((line) => line.startsWith('export ') && !line.startsWith('export type '));
-		expect(valueExports).toEqual(['export default rust;', "export { isEmpty } from './utils.js';"]);
+		expect(valueExports).toEqual(['export default rust;']);
 	});
 });

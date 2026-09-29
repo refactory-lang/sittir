@@ -4,7 +4,14 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type TypescriptNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type TypescriptNode,
+	type TypescriptTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { triviaFacts } from './utils.js';
 import { coerceToCommentLine } from './factories/coerce.js';
@@ -23,6 +30,7 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: TypescriptTypeMap['empty'];
 }
 
 export const hooks: LanguageHooks<TypescriptAPI> = {

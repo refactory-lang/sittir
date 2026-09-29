@@ -12,4 +12,4 @@ export const triviaFacts = {
 	whitespace: { run: /^(?:(?:(?:\r?\n))+)$/u, kindIdByText: { '\n': 48, '\n\n': 49, '\n\n\n': 50 } }
 } satisfies TriviaFacts;
 
-export const { isNode, isEmpty, withMethods } = bindRuntime<RegexTypeMap>(triviaFacts);
+export const { isNode, withMethods } = bindRuntime<RegexTypeMap>();

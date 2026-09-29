@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { AnyNodeData, GrammarTypeMap, TriviaFacts } from '@sittir/types';
+import type { GrammarTypeMap } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
@@ -14,19 +14,8 @@ import {
 	rejectKeywordText
 } from '../src/utils.ts';
 
-function facts(innerGaps: TriviaFacts['innerGaps']): TriviaFacts {
-	return { kindName: (type) => (type === 1 ? 'list' : type === 2 ? 'leaf' : undefined), kinds: new Set(), innerGaps };
-}
-
 describe('bindRuntime', () => {
-	const runtime = bindRuntime<GrammarTypeMap>(facts({ list: ['inner'] }));
-
-	it('isEmpty holds only for a kind with an inner gap and no content', () => {
-		expect(runtime.isEmpty({ $type: 1, $source: 2 } as AnyNodeData)).toBe(true);
-		expect(runtime.isEmpty({ $type: 1, $source: 2, _items: [{ $type: 2, $source: 2 }] } as AnyNodeData)).toBe(false);
-		expect(runtime.isEmpty({ $type: 2, $source: 2 } as AnyNodeData)).toBe(false);
-		expect(runtime.isEmpty({ $type: 3, $source: 2 } as AnyNodeData)).toBe(false);
-	});
+	const runtime = bindRuntime<GrammarTypeMap>();
 
 	it('isNode recognises node data only', () => {
 		expect(runtime.isNode({ $type: 2, $source: 2 })).toBe(true);

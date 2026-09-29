@@ -12,4 +12,4 @@ export const triviaFacts = {
 	whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 } }
 } satisfies TriviaFacts;
 
-export const { isNode, isEmpty, withMethods } = bindRuntime<ScmTypeMap>(triviaFacts);
+export const { isNode, withMethods } = bindRuntime<ScmTypeMap>();

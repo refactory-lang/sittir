@@ -24,4 +24,4 @@ export const triviaFacts = {
 	}
 } satisfies TriviaFacts;
 
-export const { isNode, isEmpty, withMethods } = bindRuntime<RustTypeMap>(triviaFacts);
+export const { isNode, withMethods } = bindRuntime<RustTypeMap>();
