@@ -1116,9 +1116,11 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	return { Parser, Language, lang, isOverride: false };
 }
 
+export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
+
 export interface NodeToConfigOpts {
 	readonly tree?: TreeHandle;
-	readonly factoryMap?: Record<string, (...args: unknown[]) => unknown>;
+	readonly factoryMap?: Record<string, FactoryEntry>;
 	readonly factoryShapes?: Record<string, FactoryShape>;
 	readonly fieldAliasMap?: Record<string, Record<string, string>>;
 	readonly factoryFields?: Record<string, readonly string[]>;
@@ -1503,10 +1505,12 @@ function irStrictFor(
 function buildWithFactory(
 	referenceData: ReadNodeLike,
 	kind: string,
-	factory: (...args: unknown[]) => unknown,
+	entry: FactoryEntry,
 	opts: NodeToConfigOpts
 ): unknown {
 	const shape = opts.factoryShapes?.[kind] ?? 'config';
+	if (shape === 'constant') return entry;
+	const factory = entry as (...args: unknown[]) => unknown;
 	if (shape === 'text') {
 		return carryTrivia(
 			referenceData,
@@ -1981,7 +1985,7 @@ export function separatedListFactoryOptions(data: unknown): { separator?: number
 }
 
 export interface FactoryDispatchArtifacts {
-	readonly factoryMap: Record<string, (...args: any[]) => unknown>;
+	readonly factoryMap: Record<string, FactoryEntry>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly factoryFields: Record<string, readonly string[]>;

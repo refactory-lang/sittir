@@ -51,7 +51,7 @@ const cases: readonly Case[] = [
 			const built = python.build.functionDefinition({
 				name: 'g',
 				parameters: python.build.parameters(),
-				body: python.build.block(python.build.passStatement())
+				body: python.build.block(python.build.passStatement)
 			});
 			const items = order === 'reversed' ? [fn!, imp!] : order === 'parsed-built' ? [imp!, built] : [built, imp!];
 			return root.$with.statements(...items).$render();

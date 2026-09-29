@@ -3,314 +3,314 @@ import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(typescript);
+const { build, kinds } = await createEngine(typescript);
 
 export function rebuildKeywordOpenersTypescriptGenerated() {
-	return engine.build.program.strict({
-		statements: [engine.build.functionDeclaration.strict({
-			name: engine.build.identifier("f"),
-			typeParameters: engine.build.typeParameters.strict({ delimiter: Delimiter.None }, engine.build.typeParameter.strict({
-				name: engine.build.identifier("T"),
+	return build.program.strict({
+		statements: [build.functionDeclaration.strict({
+			name: build.identifier("f"),
+			typeParameters: build.typeParameters.strict({ delimiter: Delimiter.None }, build.typeParameter.strict({
+				name: build.identifier("T"),
 			})),
-			parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("a")),
-				type: engine.build.typeAnnotation.strict(engine.build.genericType.strict({
-					name: engine.build.identifier("Array"),
-					typeArguments: engine.build.typeArguments.strict({ delimiter: Delimiter.None }, engine.build.identifier("T")),
+			parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("a")),
+				type: build.typeAnnotation.strict(build.genericType.strict({
+					name: build.identifier("Array"),
+					typeArguments: build.typeArguments.strict({ delimiter: Delimiter.None }, build.identifier("T")),
 				})),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("b")),
-				type: engine.build.typeAnnotation.strict(engine.build.tupleType.strict({ delimiter: Delimiter.None }, engine.kinds.NumberKeyword, engine.kinds.StringKeyword)),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("b")),
+				type: build.typeAnnotation.strict(build.tupleType.strict({ delimiter: Delimiter.None }, kinds.NumberKeyword, kinds.StringKeyword)),
 			})),
-			returnType: engine.build.typeAnnotation.strict(engine.build.arrayType.strict(engine.build.parenthesizedType.strict(engine.build.unionType.strict({
-				left: engine.kinds.NumberKeyword,
-				right: engine.kinds.StringKeyword,
+			returnType: build.typeAnnotation.strict(build.arrayType.strict(build.parenthesizedType.strict(build.unionType.strict({
+				left: kinds.NumberKeyword,
+				right: kinds.StringKeyword,
 			})))),
-			body: engine.build.statementBlock.strict({
-				statements: [engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("x"),
-						value: engine.build.binaryExpression.strict({
-							left: engine.build.parenthesizedExpression.typed.strict({
-								expression: engine.build.binaryExpression.strict({
-									left: engine.build.number.decimal("1"),
-									operator: engine.kinds.Plus,
-									right: engine.build.number.decimal("2"),
+			body: build.statementBlock.strict({
+				statements: [build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("x"),
+						value: build.binaryExpression.strict({
+							left: build.parenthesizedExpression.typed.strict({
+								expression: build.binaryExpression.strict({
+									left: build.number.decimal("1"),
+									operator: kinds.Plus,
+									right: build.number.decimal("2"),
 								}),
 							}),
-							operator: engine.kinds.Star,
-							right: engine.build.number.decimal("3"),
+							operator: kinds.Star,
+							right: build.number.decimal("3"),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.ifStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.identifier("x"),
+					terminator: kinds.Semi,
+				}), build.ifStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.identifier("x"),
 					}),
-					consequence: engine.build.statementBlock.strict({
-						statements: [engine.build.returnStatement.strict(engine.build.parenthesizedExpression.typed.strict({
-							expression: engine.build.identifier("x"),
+					consequence: build.statementBlock.strict({
+						statements: [build.returnStatement.strict(build.parenthesizedExpression.typed.strict({
+							expression: build.identifier("x"),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.whileStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.identifier("x"),
+				}), build.whileStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.identifier("x"),
 					}),
-					body: engine.build.statementBlock.strict({
-						statements: [engine.build.expressionStatement.strict(engine.build.assignmentExpression.strict({
-							left: engine.build.lhsExpression.strict(engine.build.identifier("x")),
-							right: engine.build.parenthesizedExpression.typed.strict({
-								expression: engine.build.binaryExpression.strict({
-									left: engine.build.identifier("x"),
-									operator: engine.kinds.Dash,
-									right: engine.build.number.decimal("1"),
+					body: build.statementBlock.strict({
+						statements: [build.expressionStatement.strict(build.assignmentExpression.strict({
+							left: build.lhsExpression.strict(build.identifier("x")),
+							right: build.parenthesizedExpression.typed.strict({
+								expression: build.binaryExpression.strict({
+									left: build.identifier("x"),
+									operator: kinds.Dash,
+									right: build.number.decimal("1"),
 								}),
 							}),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.forStatement.strict({
-					initializer: engine.build.lexicalDeclaration.strict({
-						kind: engine.kinds.LetKeyword,
-						declarators: [engine.build.variableDeclarator.plain.strict({
-							name: engine.build.identifier("i"),
-							value: engine.build.number.decimal("0"),
+				}), build.forStatement.strict({
+					initializer: build.lexicalDeclaration.strict({
+						kind: kinds.LetKeyword,
+						declarators: [build.variableDeclarator.plain.strict({
+							name: build.identifier("i"),
+							value: build.number.decimal("0"),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
+						terminator: kinds.Semi,
 					}),
-					condition: engine.build.binaryExpression.strict({
-						left: engine.build.identifier("i"),
-						operator: engine.kinds.Lt,
-						right: engine.build.number.decimal("3"),
+					condition: build.binaryExpression.strict({
+						left: build.identifier("i"),
+						operator: kinds.Lt,
+						right: build.number.decimal("3"),
 					}),
-					increment: engine.build.updateExpression.postfix.strict({
-						argument: engine.build.identifier("i"),
-						operator: engine.kinds.PlusPlus,
+					increment: build.updateExpression.postfix.strict({
+						argument: build.identifier("i"),
+						operator: kinds.PlusPlus,
 					}),
-					body: engine.build.statementBlock.strict({
-						statements: [engine.build.continueStatement.strict(undefined, {
-							terminator: engine.kinds.Semi,
+					body: build.statementBlock.strict({
+						statements: [build.continueStatement.strict(undefined, {
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.forInStatement.strict({
-					forHeader: engine.build.forHeader.letConstKind.strict({
-						kind: engine.kinds.ConstKeyword,
-						left: engine.build.identifier("i"),
-						operator: engine.kinds.OfKeyword,
-						right: engine.build.parenthesizedExpression.typed.strict({
-							expression: engine.build.identifier("a"),
+				}), build.forInStatement.strict({
+					forHeader: build.forHeader.letConstKind.strict({
+						kind: kinds.ConstKeyword,
+						left: build.identifier("i"),
+						operator: kinds.OfKeyword,
+						right: build.parenthesizedExpression.typed.strict({
+							expression: build.identifier("a"),
 						}),
 					}),
-					body: engine.build.statementBlock.strict({
-						statements: [engine.build.continueStatement.strict(undefined, {
-							terminator: engine.kinds.Semi,
+					body: build.statementBlock.strict({
+						statements: [build.continueStatement.strict(undefined, {
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.switchStatement.strict({
-					value: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.identifier("x"),
+				}), build.switchStatement.strict({
+					value: build.parenthesizedExpression.typed.strict({
+						expression: build.identifier("x"),
 					}),
-					body: engine.build.switchBody.strict(engine.build.switchCase.strict({
-						value: engine.build.parenthesizedExpression.typed.strict({
-							expression: engine.build.number.decimal("1"),
+					body: build.switchBody.strict(build.switchCase.strict({
+						value: build.parenthesizedExpression.typed.strict({
+							expression: build.number.decimal("1"),
 						}),
-						body: [engine.build.breakStatement.strict(undefined, {
-							terminator: engine.kinds.Semi,
+						body: [build.breakStatement.strict(undefined, {
+							terminator: kinds.Semi,
 						})],
 					})),
-				}), engine.build.throwStatement.strict(engine.build.parenthesizedExpression.typed.strict({
-					expression: engine.build.newExpression.strict({
-						constructor_: engine.build.identifier("Error"),
-						arguments: engine.build.arguments.strict(engine.build.string.double.strict(engine.build.unescapedDoubleStringFragment("x"))),
+				}), build.throwStatement.strict(build.parenthesizedExpression.typed.strict({
+					expression: build.newExpression.strict({
+						constructor_: build.identifier("Error"),
+						arguments: build.arguments.strict(build.string.double.strict(build.unescapedDoubleStringFragment("x"))),
 					}),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.awaitExpression.strict(engine.build.parenthesizedExpression.typed.strict({
-					expression: engine.build.callExpression.call.strict({
-						function: engine.build.identifier("foo"),
-						arguments: engine.build.arguments.strict(),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.awaitExpression.strict(build.parenthesizedExpression.typed.strict({
+					expression: build.callExpression.call.strict({
+						function: build.identifier("foo"),
+						arguments: build.arguments.strict(),
 					}),
 				})), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.unaryExpression.strict({
-					operator: engine.kinds.TypeofKeyword,
-					argument: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.identifier("x"),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.unaryExpression.strict({
+					operator: kinds.TypeofKeyword,
+					argument: build.parenthesizedExpression.typed.strict({
+						expression: build.identifier("x"),
 					}),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.newExpression.strict({
-					constructor_: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.identifier("Foo"),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.newExpression.strict({
+					constructor_: build.parenthesizedExpression.typed.strict({
+						expression: build.identifier("Foo"),
 					}),
-					arguments: engine.build.arguments.strict(),
+					arguments: build.arguments.strict(),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("t"),
-						type: engine.build.typeAnnotation.strict(engine.build.parenthesizedType.strict(engine.kinds.StringKeyword)),
-						value: engine.build.string.double.strict(engine.build.unescapedDoubleStringFragment("a")),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("t"),
+						type: build.typeAnnotation.strict(build.parenthesizedType.strict(kinds.StringKeyword)),
+						value: build.string.double.strict(build.unescapedDoubleStringFragment("a")),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("arr"),
-						value: engine.build.array.strict(engine.build.parenthesizedExpression.typed.strict({
-							expression: engine.build.number.decimal("1"),
-						}), engine.build.array.strict(engine.build.number.decimal("2"))),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("arr"),
+						value: build.array.strict(build.parenthesizedExpression.typed.strict({
+							expression: build.number.decimal("1"),
+						}), build.array.strict(build.number.decimal("2"))),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("y"),
-						value: engine.build.asExpression.strict({
-							expression: engine.build.identifier("x"),
-							typeAnnotation: engine.build.parenthesizedType.strict(engine.build.identifier("Foo")),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("y"),
+						value: build.asExpression.strict({
+							expression: build.identifier("x"),
+							typeAnnotation: build.parenthesizedType.strict(build.identifier("Foo")),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("g"),
-						value: engine.build.arrowFunction.strict({
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("g"),
+						value: build.arrowFunction.strict({
 							asyncMarker: true,
-							content: engine.build.callSignature.strict({
-								parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-									pattern: engine.build.lhsExpression.strict(engine.build.identifier("z")),
+							content: build.callSignature.strict({
+								parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+									pattern: build.lhsExpression.strict(build.identifier("z")),
 								})),
 							}),
-							body: engine.build.parenthesizedExpression.typed.strict({
-								expression: engine.build.identifier("z"),
+							body: build.parenthesizedExpression.typed.strict({
+								expression: build.identifier("z"),
 							}),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.unaryExpression.strict({
-					operator: engine.kinds.VoidKeyword,
-					argument: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.number.decimal("0"),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.unaryExpression.strict({
+					operator: kinds.VoidKeyword,
+					argument: build.parenthesizedExpression.typed.strict({
+						expression: build.number.decimal("0"),
 					}),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.unaryExpression.strict({
-					operator: engine.kinds.DeleteKeyword,
-					argument: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.memberExpression.strict({
-							object: engine.build.identifier("a"),
-							separator: engine.kinds.Dot,
-							property: engine.build.identifier("b"),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.unaryExpression.strict({
+					operator: kinds.DeleteKeyword,
+					argument: build.parenthesizedExpression.typed.strict({
+						expression: build.memberExpression.strict({
+							object: build.identifier("a"),
+							separator: kinds.Dot,
+							property: build.identifier("b"),
 						}),
 					}),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("k"),
-						value: engine.build.binaryExpression.strict({
-							left: engine.build.identifier("x"),
-							operator: engine.kinds.InstanceofKeyword,
-							right: engine.build.parenthesizedExpression.typed.strict({
-								expression: engine.build.identifier("Foo"),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("k"),
+						value: build.binaryExpression.strict({
+							left: build.identifier("x"),
+							operator: kinds.InstanceofKeyword,
+							right: build.parenthesizedExpression.typed.strict({
+								expression: build.identifier("Foo"),
 							}),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("inn"),
-						value: engine.build.binaryExpression.in.strict({
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("inn"),
+						value: build.binaryExpression.in.strict({
 							binaryExpressionIn: {
-								left: engine.build.string.double.strict(engine.build.unescapedDoubleStringFragment("a")),
-								right: engine.build.parenthesizedExpression.typed.strict({
-									expression: engine.build.identifier("obj"),
+								left: build.string.double.strict(build.unescapedDoubleStringFragment("a")),
+								right: build.parenthesizedExpression.typed.strict({
+									expression: build.identifier("obj"),
 								}),
 							},
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("tpl"),
-						value: engine.build.templateString.strict(engine.build.templateChars("a"), engine.build.templateSubstitution.strict(engine.build.parenthesizedExpression.typed.strict({
-							expression: engine.build.identifier("x"),
-						})), engine.build.templateChars("b")),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("tpl"),
+						value: build.templateString.strict(build.templateChars("a"), build.templateSubstitution.strict(build.parenthesizedExpression.typed.strict({
+							expression: build.identifier("x"),
+						})), build.templateChars("b")),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("o"),
-						value: engine.build.object.strict(engine.build.pair.strict({
-							key: engine.build.identifier("a"),
-							value: engine.build.parenthesizedExpression.typed.strict({
-								expression: engine.build.number.decimal("1"),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("o"),
+						value: build.object.strict(build.pair.strict({
+							key: build.identifier("a"),
+							value: build.parenthesizedExpression.typed.strict({
+								expression: build.number.decimal("1"),
 							}),
-						}), engine.build.pair.strict({
-							key: engine.build.identifier("b"),
-							value: engine.build.array.strict(engine.build.number.decimal("2")),
+						}), build.pair.strict({
+							key: build.identifier("b"),
+							value: build.array.strict(build.number.decimal("2")),
 						})),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("m"),
-						value: engine.build.memberExpression.strict({
-							object: engine.build.subscriptExpression.strict({
-								object: engine.build.identifier("a"),
-								index: engine.build.number.decimal("0"),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("m"),
+						value: build.memberExpression.strict({
+							object: build.subscriptExpression.strict({
+								object: build.identifier("a"),
+								index: build.number.decimal("0"),
 							}),
-							separator: engine.kinds.Dot,
-							property: engine.build.identifier("b"),
+							separator: kinds.Dot,
+							property: build.identifier("b"),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.expressionStatement.strict(engine.build.callExpression.call.strict({
-					function: engine.build.subscriptExpression.strict({
-						object: engine.build.memberExpression.strict({
-							object: engine.build.callExpression.call.strict({
-								function: engine.build.identifier("foo"),
-								arguments: engine.build.arguments.strict(engine.build.identifier("x")),
+					terminator: kinds.Semi,
+				}), build.expressionStatement.strict(build.callExpression.call.strict({
+					function: build.subscriptExpression.strict({
+						object: build.memberExpression.strict({
+							object: build.callExpression.call.strict({
+								function: build.identifier("foo"),
+								arguments: build.arguments.strict(build.identifier("x")),
 							}),
-							separator: engine.kinds.Dot,
-							property: engine.build.identifier("bar"),
+							separator: kinds.Dot,
+							property: build.identifier("bar"),
 						}),
-						index: engine.build.number.decimal("1"),
+						index: build.number.decimal("1"),
 					}),
-					arguments: engine.build.arguments.strict(engine.build.identifier("y")),
+					arguments: build.arguments.strict(build.identifier("y")),
 				}), {
-					terminator: engine.kinds.Semi,
-				}), engine.build.returnStatement.strict(engine.build.array.strict(engine.build.identifier("x"), engine.build.parenthesizedExpression.typed.strict({
-					expression: engine.build.identifier("y"),
+					terminator: kinds.Semi,
+				}), build.returnStatement.strict(build.array.strict(build.identifier("x"), build.parenthesizedExpression.typed.strict({
+					expression: build.identifier("y"),
 				})), {
-					terminator: engine.kinds.Semi,
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),

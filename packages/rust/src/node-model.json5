@@ -3910,7 +3910,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_block_comment_content",
@@ -3977,7 +3977,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_delim_tokens",
@@ -4002,7 +4002,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_error_sentinel",
@@ -4182,7 +4182,7 @@
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
       "text": "unsafe",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_indent",
@@ -4194,7 +4194,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_async",
@@ -4206,7 +4206,7 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_async_marker",
@@ -4218,7 +4218,7 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_const",
@@ -4230,7 +4230,7 @@
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
       "text": "const",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_default",
@@ -4242,7 +4242,7 @@
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
       "text": "default",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_move_marker",
@@ -4254,7 +4254,7 @@
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
       "text": "move",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_ref_marker",
@@ -4266,7 +4266,7 @@
       "isParameterless": true,
       "stampExpression": "\"ref\" as const",
       "text": "ref",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_static_marker",
@@ -4278,7 +4278,7 @@
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
       "text": "static",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_unsafe",
@@ -4290,7 +4290,7 @@
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
       "text": "unsafe",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_unsafe_marker",
@@ -4302,7 +4302,7 @@
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
       "text": "unsafe",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_let_chain",
@@ -4423,7 +4423,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_non_delim_token",
@@ -4531,7 +4531,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_statement",
@@ -4576,7 +4576,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tight",
@@ -4588,7 +4588,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_token_keywords",
@@ -9056,7 +9056,7 @@
       "isParameterless": true,
       "stampExpression": "\"crate\" as const",
       "text": "crate",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "dash",
@@ -9556,7 +9556,7 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "enum_item",
@@ -13586,7 +13586,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "inner_line_doc_comment_marker",
@@ -13598,7 +13598,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "integer_literal",
@@ -16396,7 +16396,7 @@
       "isParameterless": true,
       "stampExpression": "\"mut\" as const",
       "text": "mut",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "negative_literal",
@@ -16456,7 +16456,7 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "non_special_token",
@@ -16994,7 +16994,7 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "outer_line_doc_comment_marker",
@@ -17006,7 +17006,7 @@
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "parameter",
@@ -18005,7 +18005,7 @@
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "range_expression_binary",
@@ -18830,7 +18830,7 @@
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "range_pattern_with_left_with_right",
@@ -19966,7 +19966,7 @@
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "removed_trait_bound",
@@ -21083,7 +21083,7 @@
       "isParameterless": true,
       "stampExpression": "\"self\" as const",
       "text": "self",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "self_parameter",
@@ -22335,7 +22335,7 @@
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
       "text": "super",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "token_binding_pattern",
@@ -25053,7 +25053,7 @@
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "unit_type",
@@ -25065,7 +25065,7 @@
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "unsafe_block",
@@ -26751,7 +26751,7 @@
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "yield_expression",

@@ -286,21 +286,21 @@ interface _LeafEntry {
 	readonly factory: (text: string) => AnyNodeData | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement() },
-	unit_type: { values: ['()'], factory: () => F.buildUnitType() },
-	never_type: { values: ['!'], factory: () => F.buildNeverType() },
-	mutable_specifier: { values: ['mut'], factory: () => F.buildMutableSpecifier() },
-	unit_expression: { values: ['()'], factory: () => F.buildUnitExpression() },
-	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern() },
-	inner_line_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerLineDocCommentMarker() },
-	outer_line_doc_comment_marker: { values: ['/'], factory: () => F.buildOuterLineDocCommentMarker() },
+	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
+	unit_type: { values: ['()'], factory: () => F.buildUnitType },
+	never_type: { values: ['!'], factory: () => F.buildNeverType },
+	mutable_specifier: { values: ['mut'], factory: () => F.buildMutableSpecifier },
+	unit_expression: { values: ['()'], factory: () => F.buildUnitExpression },
+	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern },
+	inner_line_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerLineDocCommentMarker },
+	outer_line_doc_comment_marker: { values: ['/'], factory: () => F.buildOuterLineDocCommentMarker },
 	identifier: { pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
 	shebang: { factory: (content: string) => _resolveByKind('shebang', content) },
-	self: { values: ['self'], factory: () => F.buildSelf() },
-	super: { values: ['super'], factory: () => F.buildSuper() },
-	crate: { values: ['crate'], factory: () => F.buildCrate() },
+	self: { values: ['self'], factory: () => F.buildSelf },
+	super: { values: ['super'], factory: () => F.buildSuper },
+	crate: { values: ['crate'], factory: () => F.buildCrate },
 	metavariable: { factory: (content: string) => _resolveByKind('metavariable', content) },
-	range_expression_bare: { values: ['..'], factory: () => F.buildRangeExpressionBare() },
+	range_expression_bare: { values: ['..'], factory: () => F.buildRangeExpressionBare },
 	integer_literal_decimal: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_decimal'].regex, 'su'),
 		factory: (text: string) => {
@@ -350,28 +350,28 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_open: { pattern: /^(?:(?:[bc]?"))$/u, factory: F.buildStringOpen },
 	line_comment_extra_slashes: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentExtraSlashes },
 	line_comment_regular: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentRegular },
-	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
-	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern() },
+	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare },
+	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern },
 	float_literal: {
 		pattern: /^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u,
 		factory: F.buildFloatLiteral
 	},
 	string_content: { pattern: /^(?:(?:[^"\\]+))$/u, factory: F.buildStringContent },
 	raw_string_literal_content: { pattern: /^(?:(?:[\s\S]*))$/u, factory: F.buildRawStringLiteralContent },
-	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker() },
-	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker() },
+	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker },
+	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker },
 	raw_string_literal_start: { pattern: /^(?:(?:[bc]?r#*"))$/u, factory: F.buildRawStringLiteralStart },
 	raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
 	doc_comment: { pattern: /^(?:(?:.*\n?))$/u, factory: F.buildDocComment },
 	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() },
-	_tab: { values: ['\t'], factory: () => F.buildTab() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
-	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
-	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
+	_tight: { values: [''], factory: () => F.buildTight },
+	_space: { values: [' '], factory: () => F.buildSpace },
+	_tab: { values: ['\t'], factory: () => F.buildTab },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	type_identifier: {
 		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
@@ -2904,8 +2904,8 @@ export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeo
 	});
 }
 
-export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): ReturnType<typeof F.buildEmptyStatement> {
-	return F.buildEmptyStatement();
+export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): typeof F.buildEmptyStatement {
+	return F.buildEmptyStatement;
 }
 
 export function resolveExpressionStatement_content(
@@ -5524,8 +5524,8 @@ export function coerceToTupleType(input: T.TupleType.Loose): ReturnType<typeof F
 	);
 }
 
-export function coerceToUnitType(_input?: T.UnitType.Loose): ReturnType<typeof F.buildUnitType> {
-	return F.buildUnitType();
+export function coerceToUnitType(_input?: T.UnitType.Loose): typeof F.buildUnitType {
+	return F.buildUnitType;
 }
 
 export function resolveGenericFunction_function(
@@ -5736,8 +5736,8 @@ export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<
 	});
 }
 
-export function coerceToNeverType(_input?: T.NeverType.Loose): ReturnType<typeof F.buildNeverType> {
-	return F.buildNeverType();
+export function coerceToNeverType(_input?: T.NeverType.Loose): typeof F.buildNeverType {
+	return F.buildNeverType;
 }
 
 export function resolveAbstractType_typeParameters(
@@ -5796,10 +5796,8 @@ export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<type
 	);
 }
 
-export function coerceToMutableSpecifier(
-	_input?: T.MutableSpecifier.Loose
-): ReturnType<typeof F.buildMutableSpecifier> {
-	return F.buildMutableSpecifier();
+export function coerceToMutableSpecifier(_input?: T.MutableSpecifier.Loose): typeof F.buildMutableSpecifier {
+	return F.buildMutableSpecifier;
 }
 
 export function resolveMacroInvocation_macro(
@@ -6743,8 +6741,8 @@ export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnT
 	});
 }
 
-export function coerceToUnitExpression(_input?: T.UnitExpression.Loose): ReturnType<typeof F.buildUnitExpression> {
-	return F.buildUnitExpression();
+export function coerceToUnitExpression(_input?: T.UnitExpression.Loose): typeof F.buildUnitExpression {
+	return F.buildUnitExpression;
 }
 
 export function resolveStructExpression_name(
@@ -7582,8 +7580,8 @@ export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<
 
 export function coerceToRemainingFieldPattern(
 	_input?: T.RemainingFieldPattern.Loose
-): ReturnType<typeof F.buildRemainingFieldPattern> {
-	return F.buildRemainingFieldPattern();
+): typeof F.buildRemainingFieldPattern {
+	return F.buildRemainingFieldPattern;
 }
 
 export function resolveMutPattern_pattern(value: T.MutPattern.LooseConfig['pattern']): T.MutPattern['_pattern'] {
@@ -7815,14 +7813,14 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 
 export function coerceToInnerLineDocCommentMarker(
 	_input?: T.InnerLineDocCommentMarker.Loose
-): ReturnType<typeof F.buildInnerLineDocCommentMarker> {
-	return F.buildInnerLineDocCommentMarker();
+): typeof F.buildInnerLineDocCommentMarker {
+	return F.buildInnerLineDocCommentMarker;
 }
 
 export function coerceToOuterLineDocCommentMarker(
 	_input?: T.OuterLineDocCommentMarker.Loose
-): ReturnType<typeof F.buildOuterLineDocCommentMarker> {
-	return F.buildOuterLineDocCommentMarker();
+): typeof F.buildOuterLineDocCommentMarker {
+	return F.buildOuterLineDocCommentMarker;
 }
 
 export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['content']): T.BlockComment['_content'] {
@@ -7885,16 +7883,16 @@ export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function coerceToSelf(_input?: T.Self.Loose): ReturnType<typeof F.buildSelf> {
-	return F.buildSelf();
+export function coerceToSelf(_input?: T.Self.Loose): typeof F.buildSelf {
+	return F.buildSelf;
 }
 
-export function coerceToSuper(_input?: T.Super.Loose): ReturnType<typeof F.buildSuper> {
-	return F.buildSuper();
+export function coerceToSuper(_input?: T.Super.Loose): typeof F.buildSuper {
+	return F.buildSuper;
 }
 
-export function coerceToCrate(_input?: T.Crate.Loose): ReturnType<typeof F.buildCrate> {
-	return F.buildCrate();
+export function coerceToCrate(_input?: T.Crate.Loose): typeof F.buildCrate {
+	return F.buildCrate;
 }
 
 export function resolveMetavariable_name(value: T.Metavariable.LooseConfig['name']): T.Metavariable['_name'] {
@@ -9283,10 +9281,8 @@ export function coerceToTupleExpressionElements(
 	);
 }
 
-export function coerceToRangeExpressionBare(
-	_input?: T.RangeExpressionBare.Loose
-): ReturnType<typeof F.buildRangeExpressionBare> {
-	return F.buildRangeExpressionBare();
+export function coerceToRangeExpressionBare(_input?: T.RangeExpressionBare.Loose): typeof F.buildRangeExpressionBare {
+	return F.buildRangeExpressionBare;
 }
 
 export function resolveIntegerLiteralDecimal_content(
@@ -11824,8 +11820,8 @@ export function coerceToRangePatternWithLeftWithRight(
 
 export function coerceToRangePatternWithLeftBare(
 	_input?: T.RangePatternWithLeftBare.Loose
-): ReturnType<typeof F.buildRangePatternWithLeftBare> {
-	return F.buildRangePatternWithLeftBare();
+): typeof F.buildRangePatternWithLeftBare {
+	return F.buildRangePatternWithLeftBare;
 }
 
 export function resolveRangePatternWithLeft_left(
@@ -12040,8 +12036,8 @@ export function coerceToStructItemUnit(input: T.StructItemUnit.Loose): ReturnTyp
 	});
 }
 
-export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): ReturnType<typeof F.buildWildcardPattern> {
-	return F.buildWildcardPattern();
+export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeof F.buildWildcardPattern {
+	return F.buildWildcardPattern;
 }
 
 export function resolveAttributedFieldDeclaration_attributeItems(
@@ -12284,14 +12280,14 @@ export function coerceToRawStringLiteralContent(
 
 export function coerceToOuterDocCommentMarker(
 	_input?: T.OuterDocCommentMarker.Loose
-): ReturnType<typeof F.buildOuterDocCommentMarker> {
-	return F.buildOuterDocCommentMarker();
+): typeof F.buildOuterDocCommentMarker {
+	return F.buildOuterDocCommentMarker;
 }
 
 export function coerceToInnerDocCommentMarker(
 	_input?: T.InnerDocCommentMarker.Loose
-): ReturnType<typeof F.buildInnerDocCommentMarker> {
-	return F.buildInnerDocCommentMarker();
+): typeof F.buildInnerDocCommentMarker {
+	return F.buildInnerDocCommentMarker;
 }
 
 export function coerceToRawStringLiteralStart(
@@ -12320,36 +12316,36 @@ export function coerceToBlockCommentContent(
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
 }
 
-export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
-	return F.buildTab();
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
-export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
-	return F.buildIndent();
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
 }
 
-export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
-	return F.buildDedent();
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function resolveTypeIdentifier_content(
