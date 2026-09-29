@@ -38,7 +38,7 @@ Each PR is a branch stacked on the previous one (`feat/engine-api-1-surface` on 
 | PR | Tasks (parts) | Behaviour change | Gate |
 |---|---|---|---|
 | **1. Surface move** | 0; 1 (all types); 3 (**core only**: `load()` cache, the `build` proxy binding *without* stamping, `parse`, `render` of a node or build callback, `applyEdits`, `dispose`, other-language refusal); 6 (**descriptor and `api.ts` only**: `boundary.ts`, `methodsEngine` and `$render()` stay as they are); 6b (dead surface); 6c (runtime into common); 7; 8; 9 | None | Rows, render fixtures and dogfood `.rendered` byte-identical |
-| **2. Bound nodes** | 2; 3 (**cross-engine rendering, disposable `Rendered`**); 6 (**retire `boundary.ts`, `defaultEngine`, and `methodsEngine`'s `render`/`toEdit`**) | Engine render options reach `$render()` | Rows and fixtures identical under default options; the Task 2 and Task 6 stamp tests |
+| **2. Bound nodes** | Planned in `2026-09-29-engine-api-bound-nodes.md`, which supersedes Task 2 and this PR's parts of Tasks 3 and 6 | Engine render options reach `$render()` | That plan's gates |
 | **3. Surfaces + interceptors** | 3 (**`api` option with the derived strict surface; interceptors; `timing()` replacing `SITTIR_METRICS`**), plus the `StrictSurface` tsc-cost check from Task 10 | Opt-in only | Rows and fixtures identical; the interceptor and surface tests; tsc cost within 10% |
 | **4. File verbs** | 4 | New API | The files and engine file-verb tests |
 | **5. Projects** | 5; 10 (final docs and the complete gate list) | New API | The project tests; full final gates |

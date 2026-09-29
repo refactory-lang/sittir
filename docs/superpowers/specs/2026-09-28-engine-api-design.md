@@ -239,9 +239,11 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   engine, `{ current: Engine | EngineIdentity }`, shared by every node that engine
   stamps. `$engine()` returns `handle.current`.
 - **`EngineIdentity`** is what a node needs to know about its engine without holding
-  it: `language` (the descriptor) and its metadata (grammar name, version, the
-  grammar's hash, the engine's options). `Engine` carries the same fields, so code
-  that needs only identity reads them the same way from either.
+  it: `language` (the descriptor), the grammar name, the render module hash (which
+  identifies the generated surface), the engine's options, and the language's trivia
+  facts. All of it is plain data, so `$trivia` reads keep working on a disposed
+  engine's nodes. `Engine` carries the same fields, so code that needs only identity
+  reads them the same way from either.
 - `build.*` stamps each node with its engine's handle. Nodes built implicitly inside a
   builder (from strings, plain objects or numbers) get the same handle.
 - Parsed nodes carry the handle of the engine that read them; their coordinates
@@ -357,9 +359,14 @@ interface Project {
 - **Same language:** allowed. Options come from the calling engine A (A's engine
   options, then the call's). Coordinates are resolved by the engine holding the tree:
   a parsed node's tree handle names B, so A hands the render to B with A's options. A
-  built node has no tree, and A renders it directly. The node's tree handle is the
-  one fact that decides which engine holds its source; trees never move between
-  engines.
+  built node has no tree of its own, but its parsed descendants do:
+  - none: A renders it directly;
+  - all held by one engine: that engine renders it, with A's options;
+  - held by several engines: the render throws, naming them.
+
+  A tree handle is the one fact that decides which engine holds a node's source; trees
+  never move between engines. `node.$render()` is `node.$engine().render(node)`, so the
+  same rule applies to it.
 - **Another language:** a type error. At run time it throws, naming both languages;
   the language is checked from the node's stamp.
 
@@ -395,8 +402,13 @@ engine surface.
 - Importing `@sittir/rust` loads no factories and no native binding.
 - Two engines of one language with different indent options render the same built
   shape differently through `$render()`.
-- Cross-engine rendering: a parsed node from B rendered by A uses A's options and
-  B's tree; a built node from B renders directly through A.
+- Cross-engine rendering:
+  - a parsed node from B rendered by A uses A's options and B's tree;
+  - a node built by A over children parsed by B renders through B with A's options,
+    by `A.render` and by `$render()`, which fixes a factory `$render()` that went
+    to another native engine;
+  - children parsed by two engines in one built node throw, naming both;
+  - a node built throughout renders directly through its engine.
 - `edit`: an unchanged root leaves the file untouched (modification time unchanged),
   and untouched regions re-render byte for byte.
 - `create` and `edit` precondition errors.
