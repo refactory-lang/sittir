@@ -51,7 +51,7 @@ One PR, stacked on master after the render-coordinate work. Behaviour changes, e
 
 Validation rows are expected to stay identical or to move only where the tree table supplies a root edge or list style the transport stamp could not (the two parity fixtures dropped for this reason come back). The row diff goes to review before push.
 
-Commit order: Task 0, then 1 (file types), 2 and 3 (byte-identical), 4, 5, 6, 8, 7, 9 (Task 8 comes before 7 so `styleFrom` reports indentation from the start). Implementation starts once the root-edge work is on master.
+Commit order: Task 0, then 2 and 3 (byte-identical; Task 1 is its own PR), 4, 5, 6, 8, 7, 9 (Task 8 comes before 7 so `styleFrom` reports indentation from the start). Implementation starts once the root-edge work is on master.
 
 ---
 
@@ -73,19 +73,9 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 1: File types reach the descriptor
+### Task 1: File types reach the descriptor (its own PR, before this one)
 
-**Files:**
-- Modify: `packages/codegen/src/transpile/transpile-overrides.ts` (the generated `.sittir/tree-sitter.json` and `.sittir/package.json` write an empty `file-types`)
-- Modify: `packages/codegen/src/emitters/index-file.ts` (the emitted descriptor carries `fileTypes`)
-- Modify: `packages/types/src/engine-api.ts` (`Language<API>` gains `fileTypes`)
-- Test: `packages/codegen/src/emitters/__tests__/index-file-emit.test.ts`, a census test over the generated grammars
-
-**Behaviour:** Every generated `.sittir/tree-sitter.json` has an empty `file-types` today (rust, typescript and python included), although the upstream grammar packages declare them (`tree-sitter-rust` has `rs`). The generation carries the upstream `file-types` into `.sittir/tree-sitter.json`, and the emitted descriptor reads them from it. That is the one source: extensions are never restated in a `grammar.sittir.ts`. A grammar whose upstream declares none has an empty list, and the emitter gives its descriptor no `styleFrom` (Task 7).
-
-- [ ] **Step 1:** Find the upstream source per grammar (the grammar package's `tree-sitter.json`; the typescript package holds two grammars, typescript and tsx, so its list is their union) and thread it through generation.
-- [ ] **Step 2:** Census of each grammar's resulting file types, recorded in the task notes and pinned by a test: rust `rs`; python `py`; typescript the upstream typescript and tsx lists; scm and regex whatever their upstream declares (empty if none).
-- [ ] **Step 3:** Regenerate; the only diffs are the file-type lists and the descriptor field. Glossary entries.
+The grammar's file types are a stamped fact of the codegen model, read from the upstream package's `tree-sitter.json` (the only entry, or the one named as the grammar), required on every compile phase and on the node map, and carried on the emitted descriptor as `fileTypes`. It ships as a separate small PR that lands before the root-edge work, which reads the same fact for its trailing-newline default. The census it pins: rust `rs`, typescript `ts`, python `py`, scm `scm`, regex none. This plan starts from it.
 
 ---
 
@@ -184,7 +174,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 - Create: `packages/common/src/style-from.ts` (the one implementation, and the free `styleFrom`, `styleFromSource`)
 - Modify: `packages/common/src/create-engine.ts` (`loadLanguage` is shared by both entry points and stays cached)
 - Modify: `packages/types/src/engine-api.ts` (`Language<API>` gains `fileTypes`, `createEngine`, `styleFrom`, `styleFromSource`)
-- Modify: `packages/codegen/src/emitters/index-file.ts` (the delegates: `createEngine`, `styleFromSource`, and `styleFrom` only when the grammar has file types)
+- Modify: `packages/codegen/src/emitters/index-file.ts` (the descriptor's `fileTypes` as a literal tuple, and the delegates: `createEngine`, `styleFromSource`, and the file-based members only when the grammar has file types)
 - Modify: the per-grammar option key table emitter, so the key table maps keys to sites in both directions from one table
 - Test: `packages/common/tests/style-from.test.ts`, `packages/rust/tests/style-from.test.ts`, `packages/rust/tests/descriptor.test-d.ts`
 
@@ -193,13 +183,14 @@ cd scratchpad/wt-tree-inferred && pnpm install
 - `styleFromSource(language, text, ...more)` and `rust.styleFromSource(text, ...more)` do the same over source text, for in-memory use. Every grammar has it.
 - The language loads lazily through the same cached `loadLanguage` that `createEngine` uses, so importing the descriptor stays cheap. The call creates one temporary native instance, parses every file with it, and disposes it, on failure too. No `Engine` is created.
 - The votes of all files are summed before the fold. A tie takes the site's declared default. A key no file evidences is absent. The result is the language's `Options`, so it can be passed as `render` options as it stands. The projection inverts the key table the resolver uses; no second key list exists.
-- A path whose extension is not in the descriptor's `fileTypes` (Task 1) is refused at run time, naming the extension and the accepted ones. A grammar with no file types gets no `styleFrom`: the emitter leaves the method off its descriptor, and only `styleFromSource` exists there. The free `styleFrom(language, ...paths)` is typed so that a descriptor without file types is a type error at the call too (the constraint requires the descriptor's `styleFrom`).
+- A path whose extension is not in the descriptor's `fileTypes` (Task 1) is refused at run time, naming the extension and the accepted ones.
+- **File-based members are gated by the descriptor's type.** The descriptor's `fileTypes` is a literal tuple (`readonly ['rs']`, `readonly []`), so its type knows emptiness. One conditional type on the descriptor adds every file-based member (`styleFrom` today; the file write-through of the edit work when it lands) only when `fileTypes` is non-empty, and the emitter leaves the same members off such a descriptor at run time. A grammar with none exposes no file-based member at all; `styleFromSource` reads text and stays on every grammar. The free `styleFrom(language, ...paths)` is typed through the same conditional, so a descriptor without file types is a type error at the call too. There is one gate, not a check per member.
 - The inference walk is the one Task 4 builds; `styleFrom` adds no second walk.
 - `createEngine` on the descriptor: `rust.createEngine(options)` is a generated delegate to `createEngine(rust, options)` with the same `const R` and `RenderOptionsCheck` signature, so `rust.createEngine({ render: { indent: '\t' } })` type-checks exactly like the free form and rejects the same wrong options.
 - Engine options stay immutable: the `render` block is resolved once at construction, as it is natively. A one-off style uses per-call `engine.render(node, options)`; parsed files already format themselves through the tree layer (Task 5).
 
 - [ ] **Step 1:** Tests: one file yields its keys and only its keys; two files sum votes (a case where the sum and the majority of majorities differ); a tie takes the default; a file with the wrong extension is refused with the accepted list; the emitted descriptor of a grammar with no file types has no `styleFrom` property; a file that fails to parse still disposes the temporary instance (spy on `createNative` and `dispose`); no `Engine` is created (count `createNative` calls: exactly one per call); the result, passed as `render` options, renders a built list the way the file spells it; a file with no trailing newline yields the root-edge arm that spells none, and a file with one yields the arm that spells it.
-- [ ] **Step 2:** Type-level tests in `descriptor.test-d.ts`: `rust.createEngine({ render: { indent: '\t' } })` type-checks and a wrong key or value fails the same way `createEngine(rust, ...)` does; `rust.styleFrom(...)` returns `Promise<RustAPI['options']>`; `regex.styleFrom` does not exist and `styleFrom(regex, ...)` is a type error, while `regex.styleFromSource(...)` and `styleFromSource(regex, ...)` type-check.
+- [ ] **Step 2:** Type-level tests in `descriptor.test-d.ts`: `rust.createEngine({ render: { indent: '\t' } })` type-checks and a wrong key or value fails the same way `createEngine(rust, ...)` does; `rust.styleFrom(...)` returns `Promise<RustAPI['options']>`; `regex.styleFrom` does not exist and `styleFrom(regex, ...)` is a type error (and so is every other file-based member on a descriptor with no file types), while `regex.styleFromSource(...)` and `styleFromSource(regex, ...)` type-check.
 - [ ] **Step 3:** Implement; glossary; the READMEs and the engine spec gain `rust.createEngine` and `rust.styleFrom` snippets, run by the README gate.
 
 ---
