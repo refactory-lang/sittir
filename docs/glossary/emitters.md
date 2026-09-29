@@ -285,6 +285,28 @@ which makes "a sibling gap belongs to the child before it" literally true:
 an element is seated only when a present element follows it. The seating happens in the parent's prepare, not in
 the element's, because only the parent knows an element's position.
 
+A coordinate followed by a coordinate is left to the source only when its
+pair's gap classified as a source separator, and the call reads that from
+the slot's `listGapClassification` (`&separated_<slot>`), never from a second
+adjacency test: a kept pair whose source gap holds a removed item's text did
+not classify, so the first item takes its seat. A seated slot with no
+classification (no single separator token to split on) passes `&[]`, so
+every coordinate in it takes its seat.
+
+### `packages/codegen/src/emitters/render-module.ts::seatedListFields`
+
+The repeat slots of a kind that take seats: named, multiple, with a seat
+table (`SEATS_<KIND>_<SLOT>`), and with elements that can reach a seat
+(`slotElementsReach`). `seatLoops` emits a call for each of them, and
+`listGapClassification` binds its per-pair classification only for them, so
+the two agree on which slots carry the flags.
+
+### `packages/codegen/src/emitters/render-module.ts::separatedLocal`
+
+The name of the local that holds a seated slot's per-pair classification,
+`separated_<slot>`, written by `listGapClassification` and read by
+`seatLoops`.
+
 ### `packages/codegen/src/emitters/render-module.ts::SeatReach`
 
 Whether a kind can reach a seated element: a predicate over kind names,
@@ -15719,7 +15741,7 @@ array read instead of a search.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`). The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`).
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`). The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
@@ -15874,6 +15896,12 @@ engine's option table, the grammar's default. The block precedes the
 `get_or_insert` fills because a fill would make the class unreachable; it
 does not wait for the children's `prepare` (the seats must run before the
 children, and the classifier resolves the coordinates it measures itself).
+
+For a seated slot (`seatedListFields`) the block is bound as
+`separated_<slot>` and yields `gaps.separated`: for each item, whether the
+gap from it to the next coordinate split on the token and classified on each
+side that has a site. `seatLoops` reads that result, so whether a pair keeps
+its source gap and which arm the site takes are one measurement.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 

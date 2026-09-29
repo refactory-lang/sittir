@@ -3664,7 +3664,7 @@ The kinds whose text ends only at a line break (`lineTerminated`) and that are n
 
 Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after it on its row would be read as its text.
 
-At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` and typescript's `hash_bang_line` are lexed leaves and own none. After any node of a line-terminated kind, whether a transport, a source coordinate or detached trivia text (`RenderSink::end_line_after`), the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end`). The edge may widen it to a blank line; no later seam narrows it, and it survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
+At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` and typescript's `hash_bang_line` are lexed leaves and own none. After any node of a line-terminated kind, whether a transport, a source coordinate or detached trivia text (`RenderSink::end_line_after`), the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end` with `LineHold::Terminated`). The hold is a floor, not an override: a mark without a line break never replaces it, and a wider break widens it whatever its strength, so a blank line declared after the kind or kept from the source gap survives. It also survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
 
 An owner's after edge belongs after its trailing entries, so the sink sets it aside while an own-line trailing run renders (`RenderSink::take_seam`) and merges it back after the run (`restore_seam`). Two line breaks merge by width whatever their strengths: the wider wins, and a break is never narrowed or added to. A blank-line separator after `fn g() {}` therefore still follows a trailing `// t`, as `fn g() {}\n// t\n\nfn h() {}`.
 
@@ -4564,6 +4564,18 @@ The runtime's reading of loose whitespace text: `run`, the lexical-extras regex,
 
 Whether a kind's text always ends its line, so the next token must start on a new line: `true` when every arm ends in an open pattern (`lineEnds`, with symbol arms resolved through the node map), `false` when any arm ends in a literal, a closed pattern or nothing, and `undefined` when an arm ends in a kind with no rule to read. An external token is read through its render-only rule. Examples: rust `line_comment` reaches `_line_doc_content` (`.*\n?`) through its doc arms and is true; block comments, typescript `html_comment` and both python line continuations are false. Memoised per node map and kind. An undetermined trivia kind is the `trivia-line-end-undetermined` grammar diagnostic.
 
+### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminated`
+
+Whether every way a kind's text can end reaches the grammar's declared newline token: the kind is one whose node carries the `newline` role (`AssembledNodeBase.externalRole`), or every one of its `lineEnds` is a symbol that is. A literal, a pattern or an empty end is false. It is a different fact from `lineTerminated`: the token lies outside the span of the kind that ends in it (python's `_simple_statements` ends in `_newline`, and its span stops before the line break), so a source slice of the kind never ends its line. Only python declares a newline role: its `_simple_statements`, `decorator`, `suite_inline` and `suite_empty` hold, and no rust, typescript, scm or regex kind does.
+
+### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminatedKinds`
+
+The outermost kinds that hold `lineBreakTerminated` (`outermostEnds`). They reach the runtime as `KIND_LINE_BREAK_TERMINATED` in the grammar's `KIND_FLAGS`. After a node of such a kind the writer holds its line end as a `LineHold::Break`: the same floor as a line-terminated kind's, but not written at the end of a render, because the break is not part of the node's span. A render of a node ending in one reproduces its span without the break, so a splice lands before the source's own newline. Their after edges keep their arms: `lineBreakingArms` reads only `lineTerminatedKinds`. Memoised per node map.
+
+### `packages/codegen/src/compiler/model/trivia.ts::outermostEnds`
+
+The kinds a predicate holds for that are not reached through the end edge (`lineEnds`) of another kind it holds for: the outermost of each chain, so a line end is held once, after the enclosing kind. `lineTerminatedKinds` and `lineBreakTerminatedKinds` both select through it.
+
 ### `packages/codegen/src/compiler/model/trivia.ts::COMMENT_IR_KEY`
 
 The `ir` key a loose trivia string is built through: every grammar's `comment`.
@@ -4641,6 +4653,10 @@ own edges stay, since it still sits among its neighbours. Stamped once at the en
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.grammarRoot`
 
 Whether the kind is the grammar's root rule, stamped once in assemble (`stampGrammarRoot`) from the root link records. Only the root holds extras outside its own tokens.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.externalRole`
+
+The structural-whitespace role (`indent`, `dedent` or `newline`) the grammar declares for this external kind with `role()`, stamped by assemble (`stampExternalRoles`). `lineBreakTerminated` reads the `newline` role. Undefined for every kind without a declaration.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.triviaInterior`
 
