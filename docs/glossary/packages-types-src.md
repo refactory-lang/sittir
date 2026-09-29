@@ -216,6 +216,10 @@ A group of engines over one file set. Their file changes are staged, inspected w
 
 A language's kind-to-node-type map, derived from two emitted type maps: `Keys` names each kind id's ir key, and `NsMap` holds each kind id's namespace, whose `Node` is the kind's node type. The key is the stamped ir key, the same fact the builder table is keyed by.
 
+### `packages/types/src/engine-api.ts::NodeOfNamespaces`
+
+Every node a language builds or reads, derived from its namespace map: each kind's `Node` and `Built`, kept only where they are objects. A keyword's namespace gives its kind id (a number) for both, so keywords drop out: a kind id is not a node. A grammar's `<Prefix>Node` (`RustNode`) is this union over its `NamespaceMap`, and it is the language API's `node`, so everything `build` returns and everything `parse` reads is accepted by `render`, with no second list of kinds.
+
 ### `packages/types/src/engine-api.ts::Types`
 
 The kind-to-node-type map of an engine, for generic code over any engine.

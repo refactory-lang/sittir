@@ -178,5 +178,10 @@ export type KindTypes<Keys extends object, NsMap extends object> = {
 		: never;
 };
 
+export type NodeOfNamespaces<NsMap extends object> = Extract<
+	{ [Id in keyof NsMap]: NsMap[Id] extends { readonly Node: infer N; readonly Built: infer B } ? N | B : never }[keyof NsMap],
+	object
+>;
+
 export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
 export type ApiOf<L> = L extends Language<infer API> ? API : never;

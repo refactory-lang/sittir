@@ -16,6 +16,7 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	KindEnum,
+	NodeOfNamespaces,
 	GrammarTypeMap,
 	GrammarNodeMethods,
 	TriviaSetter,
@@ -850,29 +851,7 @@ export namespace Whitespace {
 
 // Token type aliases (only tokens referenced in field/child unions)
 
-export type ScmNode =
-	| Program
-	| EscapeSequence
-	| Capture
-	| String
-	| ImmediateString
-	| StringContent
-	| Parameters
-	| Comment
-	| List
-	| Grouping
-	| MissingNode
-	| AnonymousNode
-	| FieldDefinition
-	| NegatedField
-	| Predicate
-	| GroupExpressionArm
-	| NamedNodeExpressionArm
-	| GroupingGroup
-	| NamedNodePlain
-	| NamedNodeSupertyped
-	| NamedNodeGroupChildren
-	| NamedNodeGroupAnchoredLast;
+export type ScmNode = NodeOfNamespaces<NamespaceMap>;
 
 export interface OptionsHintMap {
 	program: Program.Hints;

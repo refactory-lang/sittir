@@ -1526,6 +1526,7 @@ export type {
 	LanguageHooks,
 	NativeEngineOptions,
 	NativeLanguageEngine,
+	NodeOfNamespaces,
 	ParseOptions,
 	Pending,
 	Project,

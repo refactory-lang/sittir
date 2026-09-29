@@ -16,6 +16,7 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	KindEnum,
+	NodeOfNamespaces,
 	GrammarTypeMap,
 	GrammarNodeMethods,
 	TriviaSetter,
@@ -1101,35 +1102,7 @@ export interface BslashDashTree extends AnyTreeNode {
 	readonly type: 'bslash_dash';
 }
 
-export type RegexNode =
-	| Pattern
-	| Alternation
-	| Term
-	| LookaroundAssertion
-	| LookaheadAssertion
-	| LookbehindAssertion
-	| CharacterClass
-	| PosixCharacterClass
-	| ClassRange
-	| AnonymousCapturingGroup
-	| NamedCapturingGroup
-	| NonCapturingGroup
-	| CountQuantifier
-	| BackreferenceEscape
-	| NamedGroupBackreference
-	| CharacterClassEscape
-	| UnicodePropertyValueExpression
-	| IdentityEscape
-	| TermGroup
-	| CountQuantifierGroup
-	| CountQuantifierArm
-	| CharacterClassEscapeArm
-	| UnicodePropertyValueExpressionGroup
-	| InlineFlagsGroupEnable
-	| InlineFlagsGroupToggle
-	| InlineFlagsGroupDisable
-	| Lazy
-	| UnicodePropertyName;
+export type RegexNode = NodeOfNamespaces<NamespaceMap>;
 
 export interface OptionsHintMap {
 	alternation: Alternation.Hints;

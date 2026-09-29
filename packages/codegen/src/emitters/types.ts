@@ -252,12 +252,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, treeEmitted, kindEntries);
 
-	lines.push(`export type ${grammarPrefix}Node =`);
-	for (const kind of nodeKinds) {
-		const node = nodeMap.nodes.get(kind)!;
-		lines.push(`  | ${node.typeName}`);
-	}
-	lines.push(';');
+	lines.push(`export type ${grammarPrefix}Node = NodeOfNamespaces<NamespaceMap>;`);
 	lines.push('');
 
 	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);
@@ -420,6 +415,7 @@ const VOCABULARY_IMPORTS = [
 	'BooleanKeyword as BaseBooleanKeyword',
 	'Bitflag',
 	'KindEnum',
+	'NodeOfNamespaces',
 	'OmitEach',
 	'GrammarTypeMap',
 	'GrammarNodeMethods',
