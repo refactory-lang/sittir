@@ -17,7 +17,7 @@
 #define MAX_ALIAS_SEQUENCE_LENGTH 10
 #define MAX_RESERVED_WORD_SET_SIZE 0
 #define PRODUCTION_ID_COUNT 421
-#define SUPERTYPE_COUNT 25
+#define SUPERTYPE_COUNT 26
 
 enum ts_symbol_identifiers {
   sym_identifier = 1,
@@ -2167,6 +2167,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
   [sym__statement] = {
     .visible = false,
     .named = true,
+    .supertype = true,
   },
   [sym_empty_statement] = {
     .visible = true,
@@ -9396,6 +9397,7 @@ static const TSSymbol ts_supertype_symbols[SUPERTYPE_COUNT] = {
   sym__literal,
   sym__literal_pattern,
   sym__pattern,
+  sym__statement,
   sym__type,
   sym_array_expression,
   sym_char_literal,
@@ -9424,27 +9426,28 @@ static const TSMapSlice ts_supertype_map_slices[] = {
   [sym__literal] = {.index = 40, .length = 6},
   [sym__literal_pattern] = {.index = 46, .length = 7},
   [sym__pattern] = {.index = 53, .length = 18},
-  [sym__type] = {.index = 71, .length = 17},
-  [sym_array_expression] = {.index = 88, .length = 2},
-  [sym_char_literal] = {.index = 90, .length = 3},
-  [sym_char_literal_escaped] = {.index = 93, .length = 4},
-  [sym_closure_expression] = {.index = 97, .length = 2},
-  [sym_delim_token_tree] = {.index = 99, .length = 3},
-  [sym_escape_sequence] = {.index = 102, .length = 4},
-  [sym_field_pattern] = {.index = 106, .length = 2},
-  [sym_foreign_mod_item] = {.index = 108, .length = 2},
-  [sym_impl_item] = {.index = 110, .length = 2},
-  [sym_integer_literal] = {.index = 112, .length = 4},
-  [sym_macro_definition] = {.index = 116, .length = 3},
-  [sym_match_arm] = {.index = 119, .length = 2},
-  [sym_mod_item] = {.index = 121, .length = 2},
-  [sym_or_pattern] = {.index = 123, .length = 2},
-  [sym_pointer_type] = {.index = 125, .length = 2},
-  [sym_range_pattern] = {.index = 127, .length = 2},
-  [sym_reference_expression] = {.index = 129, .length = 4},
-  [sym_struct_item] = {.index = 133, .length = 3},
-  [sym_token_tree] = {.index = 136, .length = 3},
-  [sym_token_tree_pattern] = {.index = 139, .length = 3},
+  [sym__statement] = {.index = 71, .length = 1},
+  [sym__type] = {.index = 72, .length = 17},
+  [sym_array_expression] = {.index = 89, .length = 2},
+  [sym_char_literal] = {.index = 91, .length = 3},
+  [sym_char_literal_escaped] = {.index = 94, .length = 4},
+  [sym_closure_expression] = {.index = 98, .length = 2},
+  [sym_delim_token_tree] = {.index = 100, .length = 3},
+  [sym_escape_sequence] = {.index = 103, .length = 4},
+  [sym_field_pattern] = {.index = 107, .length = 2},
+  [sym_foreign_mod_item] = {.index = 109, .length = 2},
+  [sym_impl_item] = {.index = 111, .length = 2},
+  [sym_integer_literal] = {.index = 113, .length = 4},
+  [sym_macro_definition] = {.index = 117, .length = 3},
+  [sym_match_arm] = {.index = 120, .length = 2},
+  [sym_mod_item] = {.index = 122, .length = 2},
+  [sym_or_pattern] = {.index = 124, .length = 2},
+  [sym_pointer_type] = {.index = 126, .length = 2},
+  [sym_range_pattern] = {.index = 128, .length = 2},
+  [sym_reference_expression] = {.index = 130, .length = 4},
+  [sym_struct_item] = {.index = 134, .length = 3},
+  [sym_token_tree] = {.index = 137, .length = 3},
+  [sym_token_tree_pattern] = {.index = 140, .length = 3},
 };
 
 static const TSSymbol ts_supertype_map_entries[] = {
@@ -9524,6 +9527,8 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_tuple_pattern,
     sym_tuple_struct_pattern,
   [71] =
+    sym_expression_statement,
+  [72] =
     alias_sym_type_identifier,
     sym__primitive_type,
     sym_abstract_type,
@@ -9541,77 +9546,77 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_scoped_type_identifier,
     sym_tuple_type,
     sym_unit_type,
-  [88] =
+  [89] =
     sym_array_expression_list,
     sym_array_expression_semi,
-  [90] =
+  [91] =
     sym_char_literal_empty,
     sym_char_literal_escaped,
     sym_char_literal_plain,
-  [93] =
+  [94] =
     sym_char_literal_escaped_hex,
     sym_char_literal_escaped_simple,
     sym_char_literal_escaped_unicode_braced,
     sym_char_literal_escaped_unicode_fixed,
-  [97] =
+  [98] =
     sym_closure_expression_block,
     sym_closure_expression_expr,
-  [99] =
+  [100] =
     sym_delim_token_tree_brace,
     sym_delim_token_tree_bracket,
     sym_delim_token_tree_paren,
-  [102] =
+  [103] =
     sym_escape_sequence_hex,
     sym_escape_sequence_simple,
     sym_escape_sequence_unicode_braced,
     sym_escape_sequence_unicode_fixed,
-  [106] =
+  [107] =
     sym_field_pattern_named,
     sym_field_pattern_shorthand,
-  [108] =
+  [109] =
     sym_foreign_mod_item_body,
     sym_foreign_mod_item_semi,
-  [110] =
+  [111] =
     sym_impl_item_body,
     sym_impl_item_semi,
-  [112] =
+  [113] =
     sym_integer_literal_binary,
     sym_integer_literal_decimal,
     sym_integer_literal_hex,
     sym_integer_literal_octal,
-  [116] =
+  [117] =
     sym_macro_definition_brace,
     sym_macro_definition_bracket,
     sym_macro_definition_paren,
-  [119] =
+  [120] =
     sym_match_arm_block_ending,
     sym_match_arm_with_comma,
-  [121] =
+  [122] =
     sym_mod_item_external,
     sym_mod_item_inline,
-  [123] =
+  [124] =
     sym_or_pattern_binary,
     sym_or_pattern_prefix,
-  [125] =
+  [126] =
     sym_pointer_type_const,
     sym_pointer_type_mut,
-  [127] =
+  [128] =
     sym_range_pattern_prefix,
     sym_range_pattern_with_left,
-  [129] =
+  [130] =
     sym_reference_expression_bare,
     sym_reference_expression_mut,
     sym_reference_expression_raw_const,
     sym_reference_expression_raw_mut,
-  [133] =
+  [134] =
     sym_struct_item_brace,
     sym_struct_item_tuple,
     sym_struct_item_unit,
-  [136] =
+  [137] =
     sym_token_tree_brace,
     sym_token_tree_bracket,
     sym_token_tree_paren,
-  [139] =
+  [140] =
     sym_token_tree_pattern_brace,
     sym_token_tree_pattern_bracket,
     sym_token_tree_pattern_paren,

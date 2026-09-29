@@ -286,7 +286,7 @@ export interface BlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _label?: SlotValue<LabelTransport>
-  _statements?: Array<SlotValue<BlockStatementsTransportSlot>>
+  _statements?: Array<SlotValue<StatementTransport>>
   _trailing_expression?: SlotValue<Box<ExpressionTransport>>
   _statements_separator_space?: number
 }
@@ -1326,7 +1326,7 @@ export interface SourceFileTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _shebang?: SlotValue<ShebangTransport>
-  _statements?: Array<SlotValue<SourceFileStatementsTransportSlot>>
+  _statements?: Array<SlotValue<StatementTransport>>
   _statements_separator_space?: number
 }
 

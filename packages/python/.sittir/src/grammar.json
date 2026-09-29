@@ -8750,6 +8750,7 @@
     "float",
     "line_continuation",
     "_whitespace",
+    "_statement",
     "assignment",
     "with_clause",
     "_suite"

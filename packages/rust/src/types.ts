@@ -3415,12 +3415,12 @@ export enum CharLiteralEscapedKind {
 export interface SourceFile {
 	readonly $type: TSKindId.SourceFile;
 	readonly _shebang?: Shebang;
-	readonly _statements?: readonly (ExpressionStatement | DeclarationStatement)[];
+	readonly _statements?: readonly Statement[];
 	readonly __inputHints__?: {
-		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	shebang(): Shebang | undefined;
-	statements(): readonly (ExpressionStatement | DeclarationStatement)[];
+	statements(): readonly Statement[];
 }
 
 export interface ExpressionStatement {
@@ -7477,16 +7477,16 @@ export interface TryBlock {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _label?: Label;
-	readonly _statements?: readonly (ExpressionStatement | DeclarationStatement)[];
+	readonly _statements?: readonly Statement[];
 	readonly _trailing_expression?: Expression;
 	readonly __inputHints__?: {
-		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 		readonly trailing_expression?:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	label(): Label | undefined;
-	statements(): readonly (ExpressionStatement | DeclarationStatement)[];
+	statements(): readonly Statement[];
 	trailingExpression(): Expression | undefined;
 }
 

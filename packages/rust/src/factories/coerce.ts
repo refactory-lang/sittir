@@ -3033,7 +3033,7 @@ export function resolveSourceFile_statements(
 	value: T.SourceFile.LooseConfig['statements']
 ): T.SourceFile['_statements'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.ExpressionStatement | T.DeclarationStatement>(value, _K0, _K1)),
+		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
 		[]
 	);
 }
@@ -7594,7 +7594,7 @@ export function resolveBlock_label(value: T.Block.LooseConfig['label']): T.Block
 
 export function resolveBlock_statements(value: T.Block.LooseConfig['statements']): T.Block['_statements'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.ExpressionStatement | T.DeclarationStatement>(value, _K0, _K1)),
+		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
 		[]
 	);
 }

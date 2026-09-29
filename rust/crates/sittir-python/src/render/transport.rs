@@ -2068,6 +2068,261 @@ impl ::sittir_core::prepare::Prepare for VerbatimTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum StatementTransport {
+    SimpleStatements(SimpleStatementsTransport),
+    CompoundStatement(CompoundStatementTransport),
+    IfStatement(IfStatementTransport),
+    ForStatement(ForStatementTransport),
+    WhileStatement(WhileStatementTransport),
+    TryStatement(TryStatementTransport),
+    WithStatement(WithStatementTransport),
+    FunctionDefinition(FunctionDefinitionTransport),
+    ClassDefinition(ClassDefinitionTransport),
+    DecoratedDefinition(DecoratedDefinitionTransport),
+    MatchStatement(MatchStatementTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for StatementTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            StatementTransport::SimpleStatements(t) => t.prepare(ctx),
+            StatementTransport::CompoundStatement(t) => t.prepare(ctx),
+            StatementTransport::IfStatement(t) => t.prepare(ctx),
+            StatementTransport::ForStatement(t) => t.prepare(ctx),
+            StatementTransport::WhileStatement(t) => t.prepare(ctx),
+            StatementTransport::TryStatement(t) => t.prepare(ctx),
+            StatementTransport::WithStatement(t) => t.prepare(ctx),
+            StatementTransport::FunctionDefinition(t) => t.prepare(ctx),
+            StatementTransport::ClassDefinition(t) => t.prepare(ctx),
+            StatementTransport::DecoratedDefinition(t) => t.prepare(ctx),
+            StatementTransport::MatchStatement(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    128 => {
+                        if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::SimpleStatements(value));
+                        }
+                        if let Ok(value) = IfStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfStatement(value));
+                        }
+                        if let Ok(value) = ForStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForStatement(value));
+                        }
+                        if let Ok(value) = WhileStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileStatement(value));
+                        }
+                        if let Ok(value) = TryStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryStatement(value));
+                        }
+                        if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithStatement(value));
+                        }
+                        if let Ok(value) = FunctionDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionDefinition(value));
+                        }
+                        if let Ok(value) = ClassDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClassDefinition(value));
+                        }
+                        if let Ok(value) = DecoratedDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DecoratedDefinition(value));
+                        }
+                        if let Ok(value) = MatchStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchStatement(value));
+                        }
+                        if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundStatement(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 128 in StatementTransport decodes as none of its members"))
+                    },
+                    129 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    150 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    156 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    157 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    158 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    161 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    173 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    153 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    339 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in StatementTransport")
+                )?;
+                match kind_id {
+                    128 => {
+                        if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::SimpleStatements(value));
+                        }
+                        if let Ok(value) = IfStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfStatement(value));
+                        }
+                        if let Ok(value) = ForStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForStatement(value));
+                        }
+                        if let Ok(value) = WhileStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileStatement(value));
+                        }
+                        if let Ok(value) = TryStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryStatement(value));
+                        }
+                        if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithStatement(value));
+                        }
+                        if let Ok(value) = FunctionDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionDefinition(value));
+                        }
+                        if let Ok(value) = ClassDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClassDefinition(value));
+                        }
+                        if let Ok(value) = DecoratedDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DecoratedDefinition(value));
+                        }
+                        if let Ok(value) = MatchStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchStatement(value));
+                        }
+                        if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundStatement(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 128 in StatementTransport decodes as none of its members"))
+                    },
+                    129 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    150 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    156 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    157 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    158 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    161 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    173 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    153 => Ok(Self::CompoundStatement(
+                        CompoundStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    339 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("StatementTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StatementTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StatementTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StatementTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StatementTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StatementTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StatementTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for StatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::CompoundStatement(inner) => inner.kind_in(kinds),
+            Self::IfStatement(inner) => inner.kind_in(kinds),
+            Self::ForStatement(inner) => inner.kind_in(kinds),
+            Self::WhileStatement(inner) => inner.kind_in(kinds),
+            Self::TryStatement(inner) => inner.kind_in(kinds),
+            Self::WithStatement(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
+            Self::MatchStatement(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_statement(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum SimpleStatementTransport {
     FutureImportStatement(FutureImportStatementTransport),
     ImportStatement(ImportStatementTransport),
@@ -2292,6 +2547,185 @@ impl ::sittir_core::view::KindOf for SimpleStatementTransport {
 impl ::sittir_core::render::Render for SimpleStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_simple_statement(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum CompoundStatementTransport {
+    IfStatement(IfStatementTransport),
+    ForStatement(ForStatementTransport),
+    WhileStatement(WhileStatementTransport),
+    TryStatement(TryStatementTransport),
+    WithStatement(WithStatementTransport),
+    FunctionDefinition(FunctionDefinitionTransport),
+    ClassDefinition(ClassDefinitionTransport),
+    DecoratedDefinition(DecoratedDefinitionTransport),
+    MatchStatement(MatchStatementTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for CompoundStatementTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            CompoundStatementTransport::IfStatement(t) => t.prepare(ctx),
+            CompoundStatementTransport::ForStatement(t) => t.prepare(ctx),
+            CompoundStatementTransport::WhileStatement(t) => t.prepare(ctx),
+            CompoundStatementTransport::TryStatement(t) => t.prepare(ctx),
+            CompoundStatementTransport::WithStatement(t) => t.prepare(ctx),
+            CompoundStatementTransport::FunctionDefinition(t) => t.prepare(ctx),
+            CompoundStatementTransport::ClassDefinition(t) => t.prepare(ctx),
+            CompoundStatementTransport::DecoratedDefinition(t) => t.prepare(ctx),
+            CompoundStatementTransport::MatchStatement(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for CompoundStatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    150 => Ok(Self::IfStatement(
+                        IfStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    156 => Ok(Self::ForStatement(
+                        ForStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    157 => Ok(Self::WhileStatement(
+                        WhileStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    158 => Ok(Self::TryStatement(
+                        TryStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    161 => Ok(Self::WithStatement(
+                        WithStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::FunctionDefinition(
+                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    173 => Ok(Self::ClassDefinition(
+                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::DecoratedDefinition(
+                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    153 => Ok(Self::MatchStatement(
+                        MatchStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in CompoundStatementTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in CompoundStatementTransport")
+                )?;
+                match kind_id {
+                    150 => Ok(Self::IfStatement(
+                        IfStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    156 => Ok(Self::ForStatement(
+                        ForStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    157 => Ok(Self::WhileStatement(
+                        WhileStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    158 => Ok(Self::TryStatement(
+                        TryStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    161 => Ok(Self::WithStatement(
+                        WithStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::FunctionDefinition(
+                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    173 => Ok(Self::ClassDefinition(
+                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    177 => Ok(Self::DecoratedDefinition(
+                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    153 => Ok(Self::MatchStatement(
+                        MatchStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in CompoundStatementTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("CompoundStatementTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CompoundStatementTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("CompoundStatementTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CompoundStatementTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CompoundStatementTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CompoundStatementTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CompoundStatementTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for CompoundStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::IfStatement(inner) => inner.kind_in(kinds),
+            Self::ForStatement(inner) => inner.kind_in(kinds),
+            Self::WhileStatement(inner) => inner.kind_in(kinds),
+            Self::TryStatement(inner) => inner.kind_in(kinds),
+            Self::WithStatement(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
+            Self::MatchStatement(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+fn compound_statement_transport_to_any(t: CompoundStatementTransport) -> AnyTransport {
+    match t {
+        CompoundStatementTransport::IfStatement(inner) => AnyTransport::IfStatement(inner),
+        CompoundStatementTransport::ForStatement(inner) => AnyTransport::ForStatement(inner),
+        CompoundStatementTransport::WhileStatement(inner) => AnyTransport::WhileStatement(inner),
+        CompoundStatementTransport::TryStatement(inner) => AnyTransport::TryStatement(inner),
+        CompoundStatementTransport::WithStatement(inner) => AnyTransport::WithStatement(inner),
+        CompoundStatementTransport::FunctionDefinition(inner) => AnyTransport::FunctionDefinition(inner),
+        CompoundStatementTransport::ClassDefinition(inner) => AnyTransport::ClassDefinition(inner),
+        CompoundStatementTransport::DecoratedDefinition(inner) => AnyTransport::DecoratedDefinition(inner),
+        CompoundStatementTransport::MatchStatement(inner) => AnyTransport::MatchStatement(inner),
+    }
+}
+
+impl ::sittir_core::render::Render for CompoundStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_compound_statement(self, w)
     }
 }
 
@@ -4666,212 +5100,6 @@ impl ::sittir_core::render::Render for IntegerDecimalTransport {
     }
 }
 
-
-#[derive(Debug, Clone)]
-pub enum ModuleStatementsTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    IfStatement(IfStatementTransport),
-    ForStatement(ForStatementTransport),
-    WhileStatement(WhileStatementTransport),
-    TryStatement(TryStatementTransport),
-    WithStatement(WithStatementTransport),
-    FunctionDefinition(FunctionDefinitionTransport),
-    ClassDefinition(ClassDefinitionTransport),
-    DecoratedDefinition(DecoratedDefinitionTransport),
-    MatchStatement(MatchStatementTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for ModuleStatementsTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ModuleStatementsTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::IfStatement(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::ForStatement(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::WhileStatement(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::TryStatement(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::WithStatement(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::FunctionDefinition(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::ClassDefinition(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::DecoratedDefinition(t) => t.prepare(ctx),
-            ModuleStatementsTransportSlot::MatchStatement(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ModuleStatementsTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::IfStatement(inner) => inner.kind_in(kinds),
-            Self::ForStatement(inner) => inner.kind_in(kinds),
-            Self::WhileStatement(inner) => inner.kind_in(kinds),
-            Self::TryStatement(inner) => inner.kind_in(kinds),
-            Self::WithStatement(inner) => inner.kind_in(kinds),
-            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
-            Self::ClassDefinition(inner) => inner.kind_in(kinds),
-            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
-            Self::MatchStatement(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    339 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    150 => Ok(Self::IfStatement(
-                        IfStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    156 => Ok(Self::ForStatement(
-                        ForStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    157 => Ok(Self::WhileStatement(
-                        WhileStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    158 => Ok(Self::TryStatement(
-                        TryStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    161 => Ok(Self::WithStatement(
-                        WithStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    164 => Ok(Self::FunctionDefinition(
-                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    173 => Ok(Self::ClassDefinition(
-                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    177 => Ok(Self::DecoratedDefinition(
-                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::MatchStatement(
-                        MatchStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ModuleStatementsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ModuleStatementsTransportSlot")
-                )?;
-                match kind_id {
-                    129 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    339 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    150 => Ok(Self::IfStatement(
-                        IfStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    156 => Ok(Self::ForStatement(
-                        ForStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    157 => Ok(Self::WhileStatement(
-                        WhileStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    158 => Ok(Self::TryStatement(
-                        TryStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    161 => Ok(Self::WithStatement(
-                        WithStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    164 => Ok(Self::FunctionDefinition(
-                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    173 => Ok(Self::ClassDefinition(
-                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    177 => Ok(Self::DecoratedDefinition(
-                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::MatchStatement(
-                        MatchStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ModuleStatementsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ModuleStatementsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ModuleStatementsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ModuleStatementsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ModuleStatementsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ModuleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ModuleStatementsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ModuleStatementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn module_statements_transport_slot_to_any(t: ModuleStatementsTransportSlot) -> AnyTransport {
-    match t {
-        ModuleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ModuleStatementsTransportSlot::IfStatement(inner) => AnyTransport::IfStatement(inner),
-        ModuleStatementsTransportSlot::ForStatement(inner) => AnyTransport::ForStatement(inner),
-        ModuleStatementsTransportSlot::WhileStatement(inner) => AnyTransport::WhileStatement(inner),
-        ModuleStatementsTransportSlot::TryStatement(inner) => AnyTransport::TryStatement(inner),
-        ModuleStatementsTransportSlot::WithStatement(inner) => AnyTransport::WithStatement(inner),
-        ModuleStatementsTransportSlot::FunctionDefinition(inner) => AnyTransport::FunctionDefinition(inner),
-        ModuleStatementsTransportSlot::ClassDefinition(inner) => AnyTransport::ClassDefinition(inner),
-        ModuleStatementsTransportSlot::DecoratedDefinition(inner) => AnyTransport::DecoratedDefinition(inner),
-        ModuleStatementsTransportSlot::MatchStatement(inner) => AnyTransport::MatchStatement(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for ModuleStatementsTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ModuleStatementsTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::IfStatement(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::ForStatement(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::WhileStatement(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::TryStatement(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::WithStatement(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::FunctionDefinition(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::ClassDefinition(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::DecoratedDefinition(inner) => inner.render(w),
-            ModuleStatementsTransportSlot::MatchStatement(inner) => inner.render(w),
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub enum FutureImportStatementContentTransportSlot {
@@ -9904,212 +10132,6 @@ impl ::sittir_core::render::Render for DecoratedDefinitionDefinitionTransportSlo
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render(w),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum BlockStatementsTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    IfStatement(IfStatementTransport),
-    ForStatement(ForStatementTransport),
-    WhileStatement(WhileStatementTransport),
-    TryStatement(TryStatementTransport),
-    WithStatement(WithStatementTransport),
-    FunctionDefinition(FunctionDefinitionTransport),
-    ClassDefinition(ClassDefinitionTransport),
-    DecoratedDefinition(DecoratedDefinitionTransport),
-    MatchStatement(MatchStatementTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for BlockStatementsTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            BlockStatementsTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::IfStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ForStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::WhileStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::TryStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::WithStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::FunctionDefinition(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ClassDefinition(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::DecoratedDefinition(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::MatchStatement(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for BlockStatementsTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::IfStatement(inner) => inner.kind_in(kinds),
-            Self::ForStatement(inner) => inner.kind_in(kinds),
-            Self::WhileStatement(inner) => inner.kind_in(kinds),
-            Self::TryStatement(inner) => inner.kind_in(kinds),
-            Self::WithStatement(inner) => inner.kind_in(kinds),
-            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
-            Self::ClassDefinition(inner) => inner.kind_in(kinds),
-            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
-            Self::MatchStatement(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    339 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    150 => Ok(Self::IfStatement(
-                        IfStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    156 => Ok(Self::ForStatement(
-                        ForStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    157 => Ok(Self::WhileStatement(
-                        WhileStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    158 => Ok(Self::TryStatement(
-                        TryStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    161 => Ok(Self::WithStatement(
-                        WithStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    164 => Ok(Self::FunctionDefinition(
-                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    173 => Ok(Self::ClassDefinition(
-                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    177 => Ok(Self::DecoratedDefinition(
-                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::MatchStatement(
-                        MatchStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockStatementsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BlockStatementsTransportSlot")
-                )?;
-                match kind_id {
-                    129 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    339 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    150 => Ok(Self::IfStatement(
-                        IfStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    156 => Ok(Self::ForStatement(
-                        ForStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    157 => Ok(Self::WhileStatement(
-                        WhileStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    158 => Ok(Self::TryStatement(
-                        TryStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    161 => Ok(Self::WithStatement(
-                        WithStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    164 => Ok(Self::FunctionDefinition(
-                        FunctionDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    173 => Ok(Self::ClassDefinition(
-                        ClassDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    177 => Ok(Self::DecoratedDefinition(
-                        DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::MatchStatement(
-                        MatchStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockStatementsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("BlockStatementsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockStatementsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlockStatementsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockStatementsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockStatementsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockStatementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn block_statements_transport_slot_to_any(t: BlockStatementsTransportSlot) -> AnyTransport {
-    match t {
-        BlockStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        BlockStatementsTransportSlot::IfStatement(inner) => AnyTransport::IfStatement(inner),
-        BlockStatementsTransportSlot::ForStatement(inner) => AnyTransport::ForStatement(inner),
-        BlockStatementsTransportSlot::WhileStatement(inner) => AnyTransport::WhileStatement(inner),
-        BlockStatementsTransportSlot::TryStatement(inner) => AnyTransport::TryStatement(inner),
-        BlockStatementsTransportSlot::WithStatement(inner) => AnyTransport::WithStatement(inner),
-        BlockStatementsTransportSlot::FunctionDefinition(inner) => AnyTransport::FunctionDefinition(inner),
-        BlockStatementsTransportSlot::ClassDefinition(inner) => AnyTransport::ClassDefinition(inner),
-        BlockStatementsTransportSlot::DecoratedDefinition(inner) => AnyTransport::DecoratedDefinition(inner),
-        BlockStatementsTransportSlot::MatchStatement(inner) => AnyTransport::MatchStatement(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for BlockStatementsTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            BlockStatementsTransportSlot::SimpleStatements(inner) => inner.render(w),
-            BlockStatementsTransportSlot::IfStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ForStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::WhileStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::TryStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::WithStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::FunctionDefinition(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ClassDefinition(inner) => inner.render(w),
-            BlockStatementsTransportSlot::DecoratedDefinition(inner) => inner.render(w),
-            BlockStatementsTransportSlot::MatchStatement(inner) => inner.render(w),
         }
     }
 }
@@ -25075,7 +25097,7 @@ pub struct ModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Option<Vec<::sittir_core::SlotValue<ModuleStatementsTransportSlot>>>,
+    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
     pub statements_separator_space: Option<u16>,
 }
@@ -28358,7 +28380,7 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Option<Vec<::sittir_core::SlotValue<BlockStatementsTransportSlot>>>,
+    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
     pub statements_separator_space: Option<u16>,
 }
@@ -48977,6 +48999,26 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorTranspor
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for StatementTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::SimpleStatements(t) => t.seat_target(table),
+            Self::CompoundStatement(t) => t.seat_target(table),
+            Self::IfStatement(t) => t.seat_target(table),
+            Self::ForStatement(t) => t.seat_target(table),
+            Self::WhileStatement(t) => t.seat_target(table),
+            Self::TryStatement(t) => t.seat_target(table),
+            Self::WithStatement(t) => t.seat_target(table),
+            Self::FunctionDefinition(t) => t.seat_target(table),
+            Self::ClassDefinition(t) => t.seat_target(table),
+            Self::DecoratedDefinition(t) => t.seat_target(table),
+            Self::MatchStatement(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for SimpleStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -48993,6 +49035,24 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementTransport {
             Self::NonlocalStatement(t) => t.seat_target(table),
             Self::ExecStatement(t) => t.seat_target(table),
             Self::TypeAliasStatement(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for CompoundStatementTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::IfStatement(t) => t.seat_target(table),
+            Self::ForStatement(t) => t.seat_target(table),
+            Self::WhileStatement(t) => t.seat_target(table),
+            Self::TryStatement(t) => t.seat_target(table),
+            Self::WithStatement(t) => t.seat_target(table),
+            Self::FunctionDefinition(t) => t.seat_target(table),
+            Self::ClassDefinition(t) => t.seat_target(table),
+            Self::DecoratedDefinition(t) => t.seat_target(table),
+            Self::MatchStatement(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -49066,25 +49126,6 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionTransport {
             Self::ParenthesizedExpression(t) => t.seat_target(table),
             Self::GeneratorExpression(t) => t.seat_target(table),
             Self::ListSplatPattern(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ModuleStatementsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::SimpleStatements(t) => t.seat_target(table),
-            Self::IfStatement(t) => t.seat_target(table),
-            Self::ForStatement(t) => t.seat_target(table),
-            Self::WhileStatement(t) => t.seat_target(table),
-            Self::TryStatement(t) => t.seat_target(table),
-            Self::WithStatement(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::DecoratedDefinition(t) => t.seat_target(table),
-            Self::MatchStatement(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -49338,25 +49379,6 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionDefinitionTranspo
         match self {
             Self::ClassDefinition(t) => t.seat_target(table),
             Self::FunctionDefinition(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for BlockStatementsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::SimpleStatements(t) => t.seat_target(table),
-            Self::IfStatement(t) => t.seat_target(table),
-            Self::ForStatement(t) => t.seat_target(table),
-            Self::WhileStatement(t) => t.seat_target(table),
-            Self::TryStatement(t) => t.seat_target(table),
-            Self::WithStatement(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::DecoratedDefinition(t) => t.seat_target(table),
-            Self::MatchStatement(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -52906,6 +52928,22 @@ fn render_is_not(t: &IsNotTransport, w: &mut dyn ::sittir_core::render::RenderSi
     w.text(&t.text)
 }
 
+fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        StatementTransport::SimpleStatements(inner) => inner.render(w),
+        StatementTransport::CompoundStatement(inner) => inner.render(w),
+        StatementTransport::IfStatement(inner) => inner.render(w),
+        StatementTransport::ForStatement(inner) => inner.render(w),
+        StatementTransport::WhileStatement(inner) => inner.render(w),
+        StatementTransport::TryStatement(inner) => inner.render(w),
+        StatementTransport::WithStatement(inner) => inner.render(w),
+        StatementTransport::FunctionDefinition(inner) => inner.render(w),
+        StatementTransport::ClassDefinition(inner) => inner.render(w),
+        StatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        StatementTransport::MatchStatement(inner) => inner.render(w),
+    }
+}
+
 fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         SimpleStatementTransport::FutureImportStatement(inner) => inner.render(w),
@@ -52924,6 +52962,20 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
         SimpleStatementTransport::NonlocalStatement(inner) => inner.render(w),
         SimpleStatementTransport::ExecStatement(inner) => inner.render(w),
         SimpleStatementTransport::TypeAliasStatement(inner) => inner.render(w),
+    }
+}
+
+fn render_compound_statement(t: &CompoundStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        CompoundStatementTransport::IfStatement(inner) => inner.render(w),
+        CompoundStatementTransport::ForStatement(inner) => inner.render(w),
+        CompoundStatementTransport::WhileStatement(inner) => inner.render(w),
+        CompoundStatementTransport::TryStatement(inner) => inner.render(w),
+        CompoundStatementTransport::WithStatement(inner) => inner.render(w),
+        CompoundStatementTransport::FunctionDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::ClassDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::MatchStatement(inner) => inner.render(w),
     }
 }
 

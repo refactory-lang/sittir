@@ -28,7 +28,7 @@ import {
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'rust',
-	supertypes: ($, previous) => [...(previous ?? []), $.comment],
+	supertypes: ($, previous) => [...(previous ?? []), $.comment, $._statement],
 
 	groups: {
 		attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
