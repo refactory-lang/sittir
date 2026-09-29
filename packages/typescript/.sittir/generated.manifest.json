@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "7b0c4b6cefdc471928199c82ae57d43a02fb914a4dbe08922804698941a0c79e",
+  "source_hash": "c0f596ed6d80061558167d0e1542d40fca9afab3ad9a5c65daa939437ae04ddc",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "00084035e8f7966c76b4bd1691d214fcd08a0d1493a95a52691b249036e5b119",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -20,11 +20,11 @@
     "packages/typescript/src/api.ts": "8f31e70c4256cb73f5ae9f9e13921d1ed29ccfce13b6eede204d63a0546e8706",
     "packages/typescript/src/backend.ts": "06d30d9821658787e2fec800caf1d984ccda8d0862117e1792851c739de28c87",
     "packages/typescript/src/consts.ts": "a5db1947b1909261288e32debdadc8d19be0230967c66dd934e1e6e3fc9128d7",
-    "packages/typescript/src/factories/bundle.ts": "d20bf41f29b9a60b4c4d3eda40dcc9919d7bf7123854b941a9adaca418de1a99",
+    "packages/typescript/src/factories/bundle.ts": "a151349349326c2ffe8af27044eb1276728ce5f9c169ab48ab3495efdc006cbd",
     "packages/typescript/src/factories/coerce.ts": "90fca437e4bb1b8b99159137f78aa7be4b3227dcefc9ffd6d31b23e1a02534b1",
-    "packages/typescript/src/factories/index.ts": "bdbfdeea5880bdc3d90b620817dc23c8302be309231c17ee82df9d546e4d3e12",
-    "packages/typescript/src/factories/overlays/polymorphs.ts": "101476307f86240f4bf8564e545cdfa133867083c9d20f9ba34e28339df635df",
-    "packages/typescript/src/factories/overlays/refines.ts": "6f3924f170c4b95c5bdd9214f6786344009891c30fe8e6f0b71aea3db7f06800",
+    "packages/typescript/src/factories/index.ts": "e4f7514db2fb88641494d852db0f857e54caf0f7f508e6710c20cb51d1486624",
+    "packages/typescript/src/factories/overlays/polymorphs.ts": "edf893a2a7522a2df303b9a369d8319b4bd62c60ccf99a08dada180d0c90d31f",
+    "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/typescript/src/factories/raw.ts": "cb74afa2ccbbf15e1638488d6f49cc1c0689378284a665121459499a6fb444e0",
     "packages/typescript/src/hash.ts": "6407e147e095cac1d75271214f286a4dc71b17abdd94b297738a4f49e2b1171b",

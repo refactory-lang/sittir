@@ -211,13 +211,9 @@ export namespace from {
 		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
-		let result: string | undefined;
-		if (node instanceof AssembledPattern) {
-			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node));
-		} else if (isBuilderTextLeaf(node)) {
-			result = emitKeywordFrom(node);
-		}
-		if (result) output.push(result);
+		const form = leafFromForm(node);
+		if (form === 'string') output.push(emitStringLikeFrom(node, numericLeafShape(node.kind, node)));
+		else if (form === 'keyword') output.push(emitKeywordFrom(node));
 	}
 
 	export function branch(
@@ -835,6 +831,17 @@ interface LeafFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
+}
+
+function leafFromForm(node: AssembledNode): 'string' | 'keyword' | undefined {
+	if (node instanceof AssembledPattern) return 'string';
+	if (isBuilderTextLeaf(node)) return 'keyword';
+	return undefined;
+}
+
+export function keywordLeafArity(node: AssembledNode, coerced: boolean): number | undefined {
+	if (leafFromForm(node) !== 'keyword') return undefined;
+	return coerced ? 1 : 0;
 }
 
 function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined): string {

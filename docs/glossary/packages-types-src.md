@@ -188,4 +188,16 @@ The union of a function's argument tuples over every declared overload, up to fo
 
 ### `packages/types/src/index.ts::MaxArity`
 
-The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `hoist` types its arity stamp with it.
+The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `bundle` types each pair's arity stamp with it.
+
+### `packages/types/src/index.ts::HoistArity`
+
+A flavor pair's arity stamp: the route key, for the refusal message, and `max`, the most arguments the hoisted call takes, typed by `bundle` as the flavor's `MaxArity`.
+
+### `packages/types/src/index.ts::StrictFlavor`
+
+A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
+
+### `packages/types/src/index.ts::HoistedRoutes`
+
+The hoisted members of a pair: every key but `arity`, each through `Hoisted`. The stamp is read by `hoist` and is not a route.

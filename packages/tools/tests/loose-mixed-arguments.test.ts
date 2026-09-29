@@ -61,4 +61,17 @@ describe('a hoisted builder refuses more arguments than it takes', () => {
 		expect(() => call(x, {})).toThrow('expressionStatement: takes at most 1 argument, got 2');
 		expect(() => call(x, undefined)).toThrow('expressionStatement: takes at most 1 argument, got 2');
 	});
+
+	it('rust: a nested sub-factory route takes its full arity and refuses one more', () => {
+		const x = rust.build.identifier('x');
+		expect(rust.render(rust.build.expressionStatement.withSemi(x)).toString()).toBe('x;');
+		const call = rust.build.expressionStatement.withSemi as (...args: unknown[]) => unknown;
+		expect(() => call(x, {})).toThrow('expressionStatement.withSemi: takes at most 1 argument, got 2');
+	});
+
+	it('rust: a flattened-variant route takes its full arity and refuses one more', () => {
+		expect(rust.render(rust.build.charLiteral.plain('a')).toString()).toBe("'a'");
+		const call = rust.build.charLiteral.plain as (...args: unknown[]) => unknown;
+		expect(() => call('a', {})).toThrow('charLiteral.plain: takes at most 1 argument, got 2');
+	});
 });
