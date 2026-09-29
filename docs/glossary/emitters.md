@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
 
 
 ```text
@@ -13363,6 +13363,8 @@ normalization; a node that already carries slot storage (built or edited) is lef
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
+
+Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
 #### body
 

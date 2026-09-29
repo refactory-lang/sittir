@@ -310,6 +310,7 @@ function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts, scoped: S
 export { numberText, type NumberBase } from './number.ts';
 export { readNode, type TreeHandle } from './readNode.ts';
 export { toEditAt } from './edit.ts';
+export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toTransportData, markEdited } from './transport-data.ts';
 export {

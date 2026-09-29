@@ -8,7 +8,8 @@ import {
 	markEdited as $edited,
 	mapTriviaEntries,
 	projectInterior,
-	coerceBooleanKeywordStorage
+	coerceBooleanKeywordStorage,
+	inTreeEngine
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -8874,8 +8875,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
 	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
-	if (!fn) return _drillUnknownKindChildren(shown, tree);
-	return fn(shown, tree);
+	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }
 
 /**

@@ -59,6 +59,11 @@ describe('emitApi', () => {
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
 		expect(output).toContain('trivia: methodsEngine.trivia,');
 	});
+
+	it("hands the engine the package's render module hash", () => {
+		expect(output).toContain("import { RENDER_MODULE_HASH } from './hash.js';");
+		expect(output).toContain('renderModuleHash: RENDER_MODULE_HASH,');
+	});
 });
 
 describe('emitIndex', () => {

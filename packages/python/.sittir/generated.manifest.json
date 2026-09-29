@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "bc442bf43002bb3b5119766ee9043c0d6b3d7db2b3d02d0f8a71e98f0d4b1971",
+  "source_hash": "9d9290a3fb38d1c9ef66f8dab64bff6cf29af6a6533a1d3e5a8440ebc3bbb8b5",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -17,7 +17,7 @@
     "packages/python/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
-    "packages/python/src/api.ts": "2c695bfc93888b83073910b051b441ebe786b152e07fb7d73ba2770bd5b9e07a",
+    "packages/python/src/api.ts": "f87c9dfc8c31d57f9fb1b217e355c0769b01c45ee418a388a2dd23602e2c7ee9",
     "packages/python/src/backend.ts": "19286f9b2efc9700ebc4c9407a0c5a8583ef165febfd6ebf32afadbcce965720",
     "packages/python/src/boundary.ts": "4f41fcdcb85da3bd2cead3f942d9718a18564862284bf6e793aedc980fbcdfdc",
     "packages/python/src/consts.ts": "262ad8aadf511ae828097b3b9a3431fe32494b8991623c6cd56f929b3dc2c5d3",
@@ -37,7 +37,7 @@
     "packages/python/src/render-engine.ts": "afdfb79e61218055e5f43fdce367965b58fdb5f629e2203d4504417c72c0695a",
     "packages/python/src/types.ts": "5cf69ccc9aa23f45a94a105ceec23e6bed73f69fbebb810a3cf5705f4d2f9593",
     "packages/python/src/utils.ts": "7947e9a4f9c2e739b838aebae666ae5d4ffe14cd91f1da788818cc09ca1c85c1",
-    "packages/python/src/wrap.ts": "38f095ff2ba2f7e7c1f4f02f100a12e935acc9bfbc9991914f81c58bc7c9f8ef",
+    "packages/python/src/wrap.ts": "a96b5a8dd8798393bc0087c3693f62c8b8f879fbf243aaed721389fb9641c6e3",
     "rust/crates/sittir-python/index.d.ts": "d2a4a4828891b73fec6e15bafced17051db3c3aa44017b7996be3ca95078ce9b",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "b88555fd1668553b8fbd214c25d1c7764d48184f1d46ecd43fbabd82a150b0af",

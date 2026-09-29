@@ -76,6 +76,7 @@ import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { methodsEngine } from './utils.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
 
@@ -94,6 +95,7 @@ export interface ${api} extends LanguageAPI {
 
 export const hooks: LanguageHooks<${api}> = {
 	name: '${grammar}',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,

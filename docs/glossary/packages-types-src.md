@@ -94,7 +94,7 @@ The options a language's native engine is created with: the format record and th
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids and trivia facts as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
 
 ### `packages/types/src/engine-api.ts::NativeLanguageEngine`
 
@@ -130,7 +130,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 

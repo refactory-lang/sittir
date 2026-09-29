@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "f28bd68463dd70e4ba7925fd136a1440ffea3f19014cef2e2b62a0df0ecf8601",
+  "source_hash": "ad806f1a56f44195db5c0e7ae802cede1209eef8154b8a2634964a71bbcb8b57",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "d3b245116457aeb378ce22778a877561b7a128b64a30e32e0e6431f64e307aa3",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -16,7 +16,7 @@
     "packages/regex/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/regex/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/regex/.sittir/tree-sitter.json": "1685e375272b69733d56d12988266145147dec3ed86bbe3aeb61813101b05c6c",
-    "packages/regex/src/api.ts": "0e81ea50b8d840167d700680f5343d49b9bd8ff3fcc1a04dca35bed4d1c25ad6",
+    "packages/regex/src/api.ts": "c2e08764510ec9ea80e54dca01a0e13dc771a724b8a1c22a3f3a9d9a231b0ee8",
     "packages/regex/src/backend.ts": "f8e19be12c49e7ad75933388b8617d0111a93110c89be7f5ff3dc6138950721b",
     "packages/regex/src/boundary.ts": "e8c72f8cefe0bd635cc613694dd372a30a1b4f0ebeb5adefa9cfcc6719468b6b",
     "packages/regex/src/consts.ts": "c700b1a0e5575adcfe126dec771091f0a3c5bcb3dfb0716edeadc137d6b89918",
@@ -36,7 +36,7 @@
     "packages/regex/src/render-engine.ts": "af1dd82f1aaface64c4f0eae63ec5484afee3fd8a51c4d40935ccf25a8270394",
     "packages/regex/src/types.ts": "e15bb9a07432d7c718ab2f179fb67053a9eef2d0d0198d99a10da6d038ab8433",
     "packages/regex/src/utils.ts": "efab8ef315f8b870975bee1d4f9e8610ebf83f4e3eba314ab851301283c5ab7d",
-    "packages/regex/src/wrap.ts": "9ef2672224cb9771102ab278d43bf9c49c5291190dc8d0db39c3ae46aae35538",
+    "packages/regex/src/wrap.ts": "0d60e699dc0b3fdfc6bb25197f4d36695580dd78809f5250fb4e094f21552424",
     "rust/crates/sittir-regex/index.d.ts": "2aa719bc6637f20ad088d434237a493faf1efd28311a1cb64706c19485cc2978",
     "rust/crates/sittir-regex/index.js": "6476237a6d6a87ef8d8d90e2d25a069fb6ba02e687ecba666512e47f34b8bb6d",
     "rust/crates/sittir-regex/src/lib.rs": "301a7e834f15cfdf4f2ef00445165ad1c9affe56bb9d9be9089b623b072405a0",

@@ -18,7 +18,19 @@ The error a file verb (`read`, `create`, `edit`, `write`) raises while file chan
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
-Builds one engine from a language's loaded hooks: it creates the native engine from the mapped options and exposes the hooks' builders, guards and kind ids. `parse` reads through the native engine and wraps the root with its tree. `render` takes a node, or a callback that receives the builders, and hands the call's flat render options to the native engine, which resolves them over its own. `types` is type-only and has no run-time value.
+Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' guards and kind ids and a scoped `build`. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root. `render` takes a node, or a callback that receives the scoped builders, and finds which engine holds the node's parsed parts, so the node's own engine renders a node built throughout, the one engine that parsed its parsed descendants renders it with the calling engine's options over the call's, and a node whose parsed descendants come from several engines, or from a disposed one, is refused. A node stamped with another language is refused, naming both. `dispose` swaps the handle's engine for the identity before releasing the native engine. `types` is type-only and has no run-time value. An engine that renders another engine's parsed part applies its own options key by key over that engine's: a key the caller leaves unset keeps the reading engine's value.
+
+### `packages/common/src/create-engine.ts::scopedBuild`
+
+The builder table with every call run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle.
+
+### `packages/common/src/create-engine.ts::collectReaders`
+
+The engines that parsed the parts of a node a render must slice from source. A parsed node names its reading engine and its whole subtree belongs to that engine's tree, so the walk stops there; it goes through the storage slots, `$other` and the trivia of anything else. A node built throughout, including by several engines, reports none.
+
+### `packages/common/src/create-engine.ts::labelOf`
+
+An engine's language name and its creation serial, so an error naming several engines of one language tells them apart.
 
 ### `packages/common/src/create-engine.ts::createEngine`
 
@@ -35,6 +47,22 @@ The one object an engine shares with every node it stamps. `current` is the live
 ### `packages/common/src/engine-scope.ts::inEngine`
 
 Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child expansion, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
+
+### `packages/common/src/engine-scope.ts::sameLanguage`
+
+Whether two engine identities are of one language: the same descriptor object, the key a language loads under, not the same name. An engine renders another engine's node only when this holds, and the engine's node guards test the same predicate, so "same language" has one definition.
+
+### `packages/common/src/engine-scope.ts::engineOf`
+
+The engine a value's `$engine()` returns, or `undefined` for a value with no engine: not an object, or one that has not been stamped.
+
+### `packages/common/src/engine-scope.ts::bindTree`
+
+Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
+
+### `packages/common/src/engine-scope.ts::inTreeEngine`
+
+Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child expanded long after the parse returned, outside any engine call, is stamped with the reading engine.
 
 ### `packages/common/src/engine-scope.ts::currentHandle`
 

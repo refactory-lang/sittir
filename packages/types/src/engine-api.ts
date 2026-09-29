@@ -16,7 +16,7 @@ export interface ParseOptions {
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly language: Language<API>;
 	readonly renderModuleHash: string;
-	readonly options: API['options'];
+	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
 }
 
@@ -75,6 +75,7 @@ export interface NativeEngineOptions<O extends object = Readonly<Record<string, 
 
 export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
+	readonly renderModuleHash: string;
 	readonly build: API['build'];
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
@@ -86,7 +87,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyNodeData | number, options?: API['options'] & RenderCallOptions): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
-	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: unknown };
+	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: object };
 	holdsTree(tree: unknown): boolean;
 	dispose(): void;
 }
@@ -127,8 +128,7 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 		? never
 		: API['build'];
 
-export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
-	readonly language: API['name'];
+export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> extends EngineIdentity<API> {
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];

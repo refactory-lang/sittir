@@ -12,6 +12,7 @@ function fakeLanguage(name = 'fake') {
 	const natives: { readonly disposed: boolean }[] = [];
 	const hooks = {
 		name,
+		renderModuleHash: 'hash',
 		build: {
 			leaf: Object.assign((text: string) => ({ $type: 1, text }), {
 				strict: (text: string) => ({ $type: 1, text, strict: true }),
@@ -92,7 +93,8 @@ describe('createEngine', () => {
 
 	it('exposes the language, guards and kinds from the hooks', async () => {
 		const e = await engineOf();
-		expect(e.language).toBe('fake');
+		expect(e.language.name).toBe('fake');
+		expect(e.renderModuleHash).toBe('hash');
 		expect(e.kinds).toEqual({ Leaf: 1 });
 	});
 

@@ -7,6 +7,7 @@ import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ScmNode } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { methodsEngine } from './utils.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 
@@ -25,6 +26,7 @@ export interface ScmAPI extends LanguageAPI {
 
 export const hooks: LanguageHooks<ScmAPI> = {
 	name: 'scm',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,

@@ -7,6 +7,7 @@ import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type TypescriptNode } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { methodsEngine } from './utils.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 
@@ -25,6 +26,7 @@ export interface TypescriptAPI extends LanguageAPI {
 
 export const hooks: LanguageHooks<TypescriptAPI> = {
 	name: 'typescript',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,

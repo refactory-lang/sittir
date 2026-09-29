@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "975e936dc65bbca013d0a6983018ce18bcbda1eac14378f4f03ed03b0c604696",
+  "source_hash": "737522d849def796584347599decae773848afec024c085a61017670eea3752d",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "00084035e8f7966c76b4bd1691d214fcd08a0d1493a95a52691b249036e5b119",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -17,7 +17,7 @@
     "packages/typescript/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/typescript/.sittir/tree-sitter.json": "9f1a0a28bf7b0d72fde59956be9d85aea276447d08ad124cb9b474aa9575ae8e",
     "packages/typescript/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
-    "packages/typescript/src/api.ts": "c4afcdd9237f161b1b79b9aa4eb36a945951231127e0407e7b6d02d6be0db5dd",
+    "packages/typescript/src/api.ts": "473a507acf558cb0a71c0c1d597414857a30bbe3699cc8c956285b6a7fc52ff3",
     "packages/typescript/src/backend.ts": "06d30d9821658787e2fec800caf1d984ccda8d0862117e1792851c739de28c87",
     "packages/typescript/src/boundary.ts": "e127ec463a0c609d87143b59925d1b0bb21efc2173a6cbd65cafebf8ece8b8f8",
     "packages/typescript/src/consts.ts": "4d919c707b8f58d3a8f581d807f0bdc15dc55ad24c15acf1cdbd79d5f7e983b4",
@@ -37,7 +37,7 @@
     "packages/typescript/src/render-engine.ts": "1fe023d22fd8cd5cce7162f35e2523889c355c2e92f7e49959247196eb38c3ab",
     "packages/typescript/src/types.ts": "76c9f46b38645f0b645c5545bd095780d350fcd95baff4454bf3805a9c84eee8",
     "packages/typescript/src/utils.ts": "502261d151c47df92e932411704f438360948ae1d5df86acf333c399408bc428",
-    "packages/typescript/src/wrap.ts": "d01f20d58f0f005a63740f4ef9094e1d327a58588b4fd9578e5b033472addf1e",
+    "packages/typescript/src/wrap.ts": "d41cc72c978da53a29644f385d13837069861dc57860b80bf871adf64cba2145",
     "rust/crates/sittir-typescript/index.d.ts": "3a17dca23cc1f6e2c570863c02e139e9d51f3b4902de3f75fb8cc264735ed28b",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "29244cfe9782cad27e8d3d68531aec8f87bfd8459a1b7f07354b91d402b6eade",

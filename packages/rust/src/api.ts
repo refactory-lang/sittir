@@ -7,6 +7,7 @@ import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type RustNode } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { methodsEngine } from './utils.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
 import { wrapNode, type SourceFileTree } from './wrap.js';
 
@@ -25,6 +26,7 @@ export interface RustAPI extends LanguageAPI {
 
 export const hooks: LanguageHooks<RustAPI> = {
 	name: 'rust',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
