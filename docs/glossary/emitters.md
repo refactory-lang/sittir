@@ -14933,8 +14933,8 @@ a composed call expression has no `typeof`.
 The seated type takes the parent's options as `T.<Type>.Options` when the
 parent has a registered spelling (`spellingTypeOf`), the same fact the raw
 factory's trailing parameter comes from. `OptionsArg<typeof parent>` cannot
-serve: a raw factory with a bare-text overload lists that overload last, and
-`ArgsOf` reads the last overload, which has no options parameter.
+serve: a raw factory with a bare-text overload contributes that overload's
+tuple to `ArgsOf`'s union, and the bare-text tuple has no options parameter.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedParent`
 

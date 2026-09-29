@@ -152,20 +152,29 @@ export interface Terminal<ID extends number | string = number, V extends string 
  * `ArgsOf<CF>[0]` are both load-bearing call shapes across the generated
  * sub-factory overlay, the former spreading a whole argument list into the
  * child, the latter reading its first (and possibly only) positional
- * argument out. A 4-way overload intersection (the codegen sub-factory
- * ceiling) unions every declared overload's argument tuple; a plain
- * rest-parameter function yields the element type as an array.
+ * argument out. Up to four declared overloads (the codegen sub-factory
+ * ceiling) contribute their argument tuples to the union, a rest signature
+ * as much as a fixed one; a rest parameter's array is its element type as a
+ * mutable array. Each `infer` is constrained to `readonly unknown[]`: an
+ * unconstrained rest `infer` carries a mutable `unknown[]` bound that a
+ * `readonly` rest parameter fails, and one failed signature fails the whole
+ * pattern.
  */
 export type ArgsOf<F> = F extends {
-	(...a: infer A): unknown;
-	(...b: infer B): unknown;
-	(...c: infer C): unknown;
-	(...d: infer D): unknown;
+	(...a: infer A extends readonly unknown[]): unknown;
+	(...b: infer B extends readonly unknown[]): unknown;
+	(...c: infer C extends readonly unknown[]): unknown;
+	(...d: infer D extends readonly unknown[]): unknown;
 }
-	? A | B | C | D
-	: F extends (...args: readonly (infer E)[]) => unknown
+	? MutableRest<A> | MutableRest<B> | MutableRest<C> | MutableRest<D>
+	: never;
+
+/** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
+type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
+	? readonly E[] extends A
 		? E[]
-		: never;
+		: A
+	: A;
 
 /**
  * OptionsArg<F> — F's own trailing options parameter, read off {@link ArgsOf}

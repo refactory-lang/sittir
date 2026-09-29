@@ -47,8 +47,16 @@ type _t2 = Expect<Equal<VariadicArgs, { readonly kind: 'Statement' }[]>>;
 declare function mixed(value: { readonly kind: 'Block' }): unknown;
 declare function mixed(...children: readonly { readonly kind: 'Statement' }[]): unknown;
 type MixedArgs = ArgsOf<typeof mixed>;
-// @ts-expect-error #412: ArgsOf collapses an overload set containing a rest signature to the rest element array
 type _t3 = Expect<Equal<MixedArgs, [value: { readonly kind: 'Block' }] | { readonly kind: 'Statement' }[]>>;
+
+// An overload set of rest signatures only unions each one's element array.
+declare function allRest(...texts: readonly string[]): unknown;
+declare function allRest(...ids: readonly number[]): unknown;
+type _t3b = Expect<Equal<ArgsOf<typeof allRest>, string[] | number[]>>;
+
+// A rest parameter that is a union of tuples keeps each tuple, rest element included.
+declare function tupleRest(...args: [text: string] | [options: { readonly o: 1 }, ...texts: string[]]): unknown;
+type _t3c = Expect<Equal<ArgsOf<typeof tupleRest>, [text: string] | [options: { readonly o: 1 }, ...texts: string[]]>>;
 
 // ---------------------------------------------------------------------------
 // 4. ArgsOf<F> — a genuinely multi-parameter overload arm keeps its tuple
