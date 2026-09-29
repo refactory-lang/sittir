@@ -70,6 +70,20 @@ describe('the engine a node belongs to', () => {
 		expect(stampOf(other.build.identifier('a'))).toBe(other);
 	});
 
+	it('is the stamp of a child coerced from a string, a strict build, and a trivia entry made outside any build', async () => {
+		const engine = await createEngine(rust);
+		const param = engine.build.parameter({ name: 'a', type: 'String' }) as any;
+		expect(stampOf(param.type())).toBe(engine);
+		expect(stampOf(engine.build.parameters.strict())).toBe(engine);
+		const fn = engine.build.functionItem({
+			name: 'f',
+			parameters: engine.build.parameters(),
+			body: engine.build.block()
+		});
+		fn.$trivia('// x');
+		expect(stampOf((fn.$trivia.leading() as unknown[])[0])).toBe(engine);
+	});
+
 	it('is kept by a $with rebuild called from another engine scope', async () => {
 		const engine = await createEngine(rust);
 		const other = await createEngine(rust);
