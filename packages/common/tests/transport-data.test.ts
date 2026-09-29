@@ -74,7 +74,7 @@ describe('toTransportData', () => {
 			_name: leaf('main', 3),
 			_body: rebuilt
 		};
-		const out = toTransportData(node as never) as Record<string, unknown>;
+		const out = toTransportData(node as never) as unknown as Record<string, unknown>;
 		expect(out.$nodeHandle).toBeUndefined();
 		expect(out.$span).toBeUndefined();
 		expect(out._body).toEqual(rebuilt);
@@ -88,7 +88,7 @@ describe('toTransportData', () => {
 			_a: stub(0, 4, 0),
 			_b: { $type: 9, $source: 2, $named: true }
 		};
-		const out = toTransportData(parent as never) as Record<string, unknown>;
+		const out = toTransportData(parent as never) as unknown as Record<string, unknown>;
 		expect(out._a).toEqual(stub(0, 4, 0));
 	});
 
@@ -102,7 +102,7 @@ describe('toTransportData', () => {
 			$_trivia: { leading: [leaf('// c', 0)] },
 			_a: stub(0, 4, 0)
 		};
-		const own = toTransportData(withOwnTrivia as never) as Record<string, unknown>;
+		const own = toTransportData(withOwnTrivia as never) as unknown as Record<string, unknown>;
 		expect(own.$nodeHandle).toBeUndefined();
 		expect(own.$_trivia).toBeDefined();
 
@@ -136,7 +136,7 @@ describe('toTransportData', () => {
 			$nodeHandle: 0,
 			_a: { $type: 9, $source: 2, $named: true }
 		};
-		const out = toTransportData(node as never) as Record<string, unknown>;
+		const out = toTransportData(node as never) as unknown as Record<string, unknown>;
 		expect(out.$text).toBeUndefined();
 		expect(out.$nodeHandle).toBeUndefined();
 		expect(out.$span).toBeUndefined();
@@ -144,7 +144,7 @@ describe('toTransportData', () => {
 
 	it('sends a leaf that kept its trivia as itself, never as a coordinate', () => {
 		const withTrivia = { ...leaf('2', 12), $nodeHandle: 12, $childIndex: 1, $_trivia: { trailing: [leaf('# two', 14)] } };
-		const out = toTransportData(withTrivia as never) as Record<string, unknown>;
+		const out = toTransportData(withTrivia as never) as unknown as Record<string, unknown>;
 		expect(out.$nodeHandle).toBeUndefined();
 		expect(out.$childIndex).toBeUndefined();
 		expect(out.$text).toBe('2');
