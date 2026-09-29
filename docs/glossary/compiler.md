@@ -308,6 +308,8 @@ parents.
 
 A kind whose rule does not fit the model type it was classified as is recorded and left out, so the run continues to the gate: `kind-shape-mismatch` {kind, expected, found} for a supertype, literal, enum or list body of the wrong shape (`kindShapeMismatch`), `unclassifiable-shape` for a kind nothing classifies, and `single-literal-choice` for a literal choice whose arms yield fewer than two values (`model/node-map.ts::enumValuesOf`; typescript's upstream `meta_property`, two keyword sequences). The left-out kinds are `AssembledNodeMap.droppedKinds`.
 
+The node map carries the grammar's `fileTypes`, stamped by the compile from the upstream package and carried through link and normalize like `reserved`; consumers read it from the model.
+
 ### `packages/codegen/src/compiler/assemble.ts::AssembledNodeMap.droppedKinds`
 
 The kinds assemble recorded and left out of the model. Hydrate skips references to them (`HydrateSlotRefsConfig.reportedAbsentNames`), since their absence is already a record.
@@ -4640,6 +4642,10 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  * never call from compiler logic or an emitter's branching path.
  */
 ```
+
+### `packages/codegen/src/compiler/upstream-file-types.ts::upstreamFileTypes`
+
+The file types a grammar declares: the `file-types` of its upstream package's `tree-sitter.json`. The entry is the only one the file has, or, when it has several, the one named as our grammar (typescript's upstream lists typescript, tsx and flow; the union or the first entry would be wrong), and several entries with none named so is refused. An entry that declares no file types, or a null list, gives none (regex), and a list that is not strings, or a package with no `tree-sitter.json`, is refused with the path. It is the one source: the grammar compile stamps the result as the model's `fileTypes`, and the generated `tree-sitter.json` files read the same function, so extensions are never restated in a grammar file.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::packageGrammarJsPath`
 

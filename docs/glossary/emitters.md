@@ -11203,6 +11203,8 @@ omits the key.
 
 The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
 
+The descriptor carries `fileTypes`, the model's file types, an empty list for a grammar with none.
+
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 
 ```text

@@ -4,7 +4,9 @@
   "tree-sitter": [
     {
       "scope": "source.scm",
-      "file-types": []
+      "file-types": [
+        "scm"
+      ]
     }
   ]
 }

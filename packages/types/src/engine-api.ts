@@ -59,6 +59,7 @@ export interface LanguageAPI {
 
 export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
+	readonly fileTypes: readonly string[];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
 }

@@ -1,3 +1,4 @@
+import { upstreamFileTypes } from './upstream-file-types.ts';
 import { existsSync } from 'node:fs';
 
 import { evaluate } from './evaluate.ts';
@@ -43,7 +44,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const overridesPath = packageEntryPath(cfg.package);
 	const entryPath = existsSync(overridesPath) ? overridesPath : packageGrammarJsPath(cfg.package);
 
-	const evaluated = await evaluate(entryPath);
+	const evaluated = { ...(await evaluate(entryPath)), fileTypes: upstreamFileTypes(cfg.package) };
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
