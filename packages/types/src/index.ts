@@ -1137,6 +1137,7 @@ export interface LeafNs<
 }
 
 export type { DerivedOptions, IndentOption, OptionsHintOf } from './options.ts';
+export type * from './node-surface.ts';
 export type {
 	Interior,
 	LeadCheck,

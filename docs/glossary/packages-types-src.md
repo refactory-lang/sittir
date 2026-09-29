@@ -183,3 +183,47 @@ The `LanguageAPI` a descriptor carries.
 ### `packages/types/src/index.ts::ArgsOf`
 
 The union of a function's argument tuples over every declared overload, up to four, a rest signature as much as a fixed one; a bare rest array reads as its element type's mutable array. Each `infer` is bounded by `readonly unknown[]`, because an unbounded rest `infer` carries a mutable `unknown[]` bound that a generated coercer's `readonly` rest parameter fails, and one failed signature fails the whole match. A forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime. The overlay wire types and any future consumer use this, never bare `Parameters`, for factory references.
+
+### `packages/types/src/node-surface.ts::SlotHint`
+
+What one slot of a kind interface contributes to its node surfaces: the type its `$with` setter and factory take (`input`) and whether the slot is optional. The emitter stamps one per slot on the interface's `__slotHints__`; every node surface reads the hints and never infers a slot's input from its storage key.
+
+### `packages/types/src/node-surface.ts::ListOwnerHint`
+
+Marks a kind whose sole content is a separated list: the element type its stored list yields (the stored element, not the spread's arms, so no content is lost on read) and the options type its factory takes. Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads.
+
+### `packages/types/src/node-surface.ts::Remap`
+
+Key-remapping removal of the keys `K` from `T`. It is the only form used to drop members: `Omit` does not distribute over a union and collapses it to its common keys, and a declared type built on it lost its keys and cascaded into thousands of errors. Remapping keeps each member's keys.
+
+### `packages/types/src/node-surface.ts::SlotHintsOf`
+
+The slot hints of a kind interface with the reserved `$listOwner` entry removed, so a setter is produced per slot and never for the list-owner fact.
+
+### `packages/types/src/node-surface.ts::ListOwnerOf`
+
+The `$listOwner` hint of a kind interface, or `never` when it is not a list owner. It is the single test of list-ownership, so no surface infers it from an accessor's name or from storage keys.
+
+### `packages/types/src/node-surface.ts::ListOwnerMembers`
+
+The members a list owner adds on top of its own accessors: it iterates its stored elements, reports `length`, gives `at(index)` over the same stored array, and carries the factory's options flattened on as read-only properties.
+
+### `packages/types/src/node-surface.ts::Setters`
+
+One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
+
+### `packages/types/src/node-surface.ts::WithOf`
+
+The type of `$with` on a node: its slot setters. A node passes itself in (`WithOf<this>`) because `this` is not allowed inside a nested type literal.
+
+### `packages/types/src/node-surface.ts::WithSlot`
+
+The node after `$with.<slot>(v)`: the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins.
+
+### `packages/types/src/node-surface.ts::BoundOf`
+
+The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; list owners gain `ListOwnerMembers`; `$with` returns `.Bound`. Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
+
+### `packages/types/src/node-surface.ts::ParsedOf`
+
+The surface of a tree-bound node: `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes.
