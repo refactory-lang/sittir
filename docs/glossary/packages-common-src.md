@@ -61,6 +61,10 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyNodeData['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
 
+### `packages/common/src/utils.ts::withMethods`
+
+Attaches `$render`, `$toEdit`, `$replace` and `$trivia` to a node, and binds a non-enumerable `$engine()` when an engine's handle is in scope. `$engine()` returns the handle's current value, so disposing the engine changes what every node it stamped sees in one assignment. With a handle, `$render` renders through its engine, `$toEdit` and `$replace` turn that text into an edit, and a disposed engine throws `engine disposed` naming `engine.render(node)`. Without one, the node renders through the facts it was handed. The `$with` setters and the `$trivia` setter run inside the node's own handle, whatever scope calls them, so a node they build carries the same engine, and `$trivia` reads the trivia facts from the identity, which survives disposal.
+
 ### `packages/common/src/utils.ts::isNode`
 
 Whether a value is a sittir node, built or read: an object with a numeric `$type` that carries storage (`_` keys), text (`$text`), a whitespace-kind `$other`, or a `$source` stamp. A bare `{ $type }` is a factory config, not a node.
@@ -86,7 +90,7 @@ One member (`Node` or `Loose`) of kind `K`'s namespace in a grammar type map; `n
 The runtime a grammar binds, one generic signature per guard over its type map:
 - `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyNodeData>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
 - `isEmpty` takes only a kind the map's `empty` pairs name, and narrows it to that kind's `Empty<TypeName>` form.
-- `withMethods` attaches the node methods, typed by the map's trivia union, rendering through the engine it is handed: factories pass the grammar's facts, and a wrapped tree passes its tree-scoped engine.
+- `withMethods` attaches the node methods, typed by the map's trivia union. A node built inside an engine's scope renders through that engine; one built outside any scope renders through the facts it is handed, which factories pass as the grammar's and a wrapped tree as its tree-scoped engine.
 
 ### `packages/common/src/runtime.ts::bindRuntime`
 
