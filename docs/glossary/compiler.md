@@ -6091,7 +6091,7 @@ Reads `ts_symbol_metadata[]` from `parser.c`: each symbol's `.visible` and `.nam
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectTokenCount`
 
-parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (terminals), ids at or above it its nonterminals and aliases. `undefined` when the define is absent, in which case no row is stamped `terminal`.
+parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (terminals), ids at or above it its nonterminals and aliases. Read through the C parser like the rest of parser.c: the preamble before the symbol enum is parsed and its `preproc_def` named `TOKEN_COUNT` gives the value. `undefined` when the define is absent, in which case no row is stamped `terminal`.
 
 ### `packages/codegen/src/compiler/inline-sets.ts::GrammarJsonNode`
 

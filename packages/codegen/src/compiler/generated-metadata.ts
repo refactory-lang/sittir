@@ -32,7 +32,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	grammarJson?: unknown
 ): Promise<GeneratedIdTables> {
 	const parser = await loadCParser();
-	const symbolIds = collectEnumIds(parser, source, 'enum ts_symbol_identifiers');
+	const symbolIds = collectEnumIds(parser, source, SYMBOL_ENUM_MARKER);
 	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
 	const symbolNames = collectNameTable(parser, source, 'static const char * const ts_symbol_names[]');
 	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
@@ -41,7 +41,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 		names: symbolNames,
 		facts: {
 			aliasedNonTerminals: collectAliasedNonTerminals(parser, source),
-			tokenCount: collectTokenCount(source),
+			tokenCount: collectTokenCount(parser, source),
 			...collectSymbolFlags(parser, source)
 		}
 	};
@@ -62,6 +62,8 @@ function collisionFreeIds({ ids, collisions }: JoinedIds, sourceArtifact: string
 	}
 	return ids;
 }
+
+const SYMBOL_ENUM_MARKER = 'enum ts_symbol_identifiers';
 
 type CParser = TS.Parser;
 type CNode = TS.Node;
@@ -114,9 +116,17 @@ function collectEnumIds(parser: CParser, source: string, marker: string): Map<st
 	return result;
 }
 
-function collectTokenCount(source: string): number | undefined {
-	const match = /^#define TOKEN_COUNT (\d+)$/m.exec(source);
-	return match === null ? undefined : Number(match[1]);
+function collectTokenCount(parser: CParser, source: string): number | undefined {
+	const end = source.indexOf(SYMBOL_ENUM_MARKER);
+	const tree = parser.parse(end < 0 ? source : source.slice(0, end));
+	if (!tree) return undefined;
+	let count: number | undefined;
+	walkCNodes(tree.rootNode, (node) => {
+		if (node.type !== 'preproc_def' || node.childForFieldName('name')?.text !== 'TOKEN_COUNT') return;
+		const value = Number.parseInt(node.childForFieldName('value')?.text ?? '', 10);
+		if (!Number.isNaN(value)) count = value;
+	});
+	return count;
 }
 
 function collectSymbolFlags(
