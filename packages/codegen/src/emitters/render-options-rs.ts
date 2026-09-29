@@ -12,7 +12,8 @@ import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } 
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
-import { lineTerminatedTrivia } from '../compiler/model/trivia.ts';
+import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
+import { indentChars } from '../compiler/model/whitespace-arms.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -83,6 +84,7 @@ export interface RenderOptionsPlan {
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
+	readonly indentChars: readonly string[];
 }
 
 const KIND_ANON = 1;
@@ -118,7 +120,7 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
-		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedTrivia(entry.kind, nodeMap) ? KIND_LINE_TERMINATED : 0);
+		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
@@ -183,7 +185,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			strength: isFlank ? SEAM_DECLARED : seamStrength(site.origin),
+			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
@@ -213,7 +215,8 @@ export function planRenderOptions(
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id),
-		kindFlags: kindFlagsOf(kindEntries, nodeMap)
+		kindFlags: kindFlagsOf(kindEntries, nodeMap),
+		indentChars: indentChars(nodeMap)
 	};
 }
 
@@ -569,6 +572,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        depth_sites: DEPTH_SITES,');
 	L.push('        indent: INDENT_KIND,');
 	L.push('        dedent: DEDENT_KIND,');
+	L.push(`        indent_chars: ${rustStringLiteral(plan.indentChars.join(''))},`);
 	L.push('    };');
 	L.push('}', '');
 	L.push('pub type Options = ::sittir_core::options::Options<Sites>;', '');

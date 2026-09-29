@@ -729,6 +729,7 @@ impl ::sittir_core::options::OptionSites for Sites {
         depth_sites: DEPTH_SITES,
         indent: INDENT_KIND,
         dedent: DEDENT_KIND,
+        indent_chars: "",
     };
 }
 

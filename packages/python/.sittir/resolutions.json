@@ -1,5 +1,5 @@
 {
-	"grammarHash": "2a50bf77e30e0a09e955da21db54b3fe211219b2fe38b8b6bbb1b91dc4c279a5",
+	"grammarHash": "f9e6c05a9dede9b96ae6092787a037328d01a3589c9adb044af05be796f7f0de",
 	"resolutions": [
 		{
 			"resolution": {
@@ -275,10 +275,12 @@
 			"sourceChains": [
 				[
 					"except_clause_exception_as",
+					"except_clause_exception",
 					"except_clause"
 				],
 				[
 					"except_clause_exception_list",
+					"except_clause_exception",
 					"except_clause"
 				]
 			],
@@ -312,6 +314,7 @@
 				],
 				[
 					"except_clause_exception_as",
+					"except_clause_exception",
 					"except_clause"
 				]
 			],

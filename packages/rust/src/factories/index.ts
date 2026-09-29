@@ -181,11 +181,12 @@ export const fieldPattern: Hoisted<typeof O.fieldPattern> = hoistRoutes(O.fieldP
 export const rangePattern: Hoisted<typeof O.rangePattern> = hoistRoutes(O.rangePattern);
 export const orPattern: Hoisted<typeof O.orPattern> = hoistRoutes(O.orPattern);
 export const integerLiteral: Hoisted<typeof O.integerLiteral> = hoistRoutes(O.integerLiteral);
-export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
 export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.escapeSequence);
 export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
+export const charLiteralEscaped: Hoisted<typeof O.charLiteralEscaped> = hoistRoutes(O.charLiteralEscaped);
 export const declarationStatement: Hoisted<typeof O.declarationStatement> = hoistRoutes(O.declarationStatement);
 export const tokenPattern: Hoisted<typeof O.tokenPattern> = hoistRoutes(O.tokenPattern);
 export const tokens: Hoisted<typeof O.tokens> = hoistRoutes(O.tokens);
+export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
 
 methodsEngine.trivia.comment = coerceToLineComment;

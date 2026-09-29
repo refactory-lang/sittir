@@ -809,9 +809,10 @@ wrapper is dropped, so the stamp must sit on the seq itself.
 ```
 
 A lift deposited under the patch-chosen name is stamped `annotations.hoisted`
-on the way in, and its arms' `variantOf` owners are renamed from the lift to the new
-name (`renameRule`), so no label names the lift once the lift is pruned. An authored
-body of that name is left as authored.
+on the way in, unless enrich listed the lift as a supertype (`wireIsBaseSupertype`):
+a nested token-form parent is a supertype, and stays one. Its arms' `variantOf` owners
+are renamed from the lift to the new name (`renameRule`), so no label names the lift
+once the lift is pruned. An authored body of that name is left as authored.
 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
@@ -1778,4 +1779,23 @@ Removes `annotations.default` from a member, looking through an `ALIAS` to the a
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::distributeTokenForms`
 
-The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (descending through seqs and through a presence choice whose live arm is a form alternation, in which case the blank is one more arm) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into; it stays one lexeme. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. A presence choice is recognised in both spellings the two pipelines produce: a `CHOICE` with a blank arm (tree-sitter's) and an `OPTIONAL` node (sittir's evaluate), so both mint the same arms. Any other rule shape is returned as is.
+The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (`findOutermostForms`) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into here; it stays one lexeme until the enrich hoist recurses into the minted arm. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. A presence choice is recognised in both spellings the two pipelines produce: a `CHOICE` with a blank arm (tree-sitter's) and an `OPTIONAL` node (sittir's evaluate), so both mint the same arms. Any other rule shape is returned as is.
+
+`fielded` holds the field sites as index paths from the rule root; each prec or token wrapper peeled on the way down consumes one path segment (`underWrapper`), so the sites handed to `findOutermostForms` are relative to the token body.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::findOutermostForms`
+
+Finds the first form alternation in a token body, descending through seqs, single-content wrappers and a presence choice whose live arm is a form alternation (the blank then becomes one more arm). It stops at a `FIELD` node and at a choice whose path is a field site (`isFieldedAt`): a field's value is one lexeme, so the automatic split applies to unfielded choices only.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::isFieldedAt`
+
+Whether an index path is exactly one of the field sites.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::underWrapper`
+
+The field sites below a single-content wrapper: the sites whose first segment is the wrapper's content (`0`), with that segment dropped.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::factorSharedOptional`
+
+Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choice(x, y, …, n))` wherever every member of a choice (two or more) is optional, bottom-up, so a choice nested in a choice is factored first. The two spellings match the same text; the factored one keeps the blank case in one place, so the token-form hoist splits the inner choice into disjoint arms plus one blank arm, instead of one arm per optional member that each also accepts the blank. A mixed choice is left alone. The result of a rewrite no longer matches (its members are the inner choice and a blank), so the rewrite is idempotent; an unchanged rule is returned as the same object. Enrich runs it on every rule, so the rewrite reaches both the parser and the IR, and the DSL builders stay faithful to what the grammar wrote.
+

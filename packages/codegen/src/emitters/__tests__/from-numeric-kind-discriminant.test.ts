@@ -14,7 +14,7 @@ describe('a `kind:` discriminant resolves both its string and numeric spellings'
 	it('emits one shared resolver for both spellings', () => {
 		expect(emitted).toContain('function _kindNameOf(kind: unknown): string | undefined {');
 		expect(emitted).toContain(
-			'return typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;'
+			'const name = typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;'
 		);
 	});
 

@@ -454,6 +454,14 @@ the grammar does not name it.
 
 Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
 
+### `packages/codegen/src/dsl/primitives/variant.ts::variantMintName`
+
+The name suffix a variant mints under its patched rule: the names of the enclosing variants (`nestedUnder`) followed by its own, joined with `_`.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::variantOwnerKind`
+
+The kind that owns a variant, stamped as its `variantOf`: the patched rule for a top-level variant, and for a variant nested under other variants the node the enclosing variants mint (`polymorphVisibleName` of the patched rule and the enclosing names). It reads the same `nestedUnder` as `variantMintName`, so a nested arm's name and its owner always agree.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
 `_whitespace`, the hidden supertype enrich mints for every grammar

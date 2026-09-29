@@ -12,7 +12,7 @@ import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shar
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
+import { bundleEntries, flattenedVariantParents, isFlatLeafOrKeyword } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -71,12 +71,8 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 	}
 
-	const flatRefByKey = new Map<string, string>();
-	for (const { key, node } of bundleEntries(nodeMap, generatedIdTables)) flatRefByKey.set(key, bundleRef(node));
-	for (const [kind, node] of nodeMap.nodes) {
-		if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatRefByKey.set(node.irKey!, `F.${node.rawFactoryName}`);
-	}
-	let needsAttachProps = false;
+	const flatKeys = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
+	for (const [kind, node] of nodeMap.nodes) if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatKeys.add(node.irKey!);
 	const flattenedParents = flattenedVariantParents(nodeMap, generatedIdTables);
 	const flattenedKinds = new Set(flattenedParents.map((parent) => parent.node.kind));
 	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
@@ -128,21 +124,14 @@ export function emitIr(config: EmitIrConfig): string {
 		usedGroupNames.add(groupName);
 		groupNames.push(groupName);
 
-		const sameNamedKind = flatRefByKey.get(groupName);
-		if (sameNamedKind === undefined) {
-			groupBlocks.push(`export const ${groupName}: {`);
-			groupBlocks.push(...memberTypeEntries);
-			groupBlocks.push('} = {');
-			groupBlocks.push(...memberEntries);
-			groupBlocks.push('};');
-		} else {
-			needsAttachProps = true;
-			groupBlocks.push(`export const ${groupName}: typeof ${sameNamedKind} & {`);
-			groupBlocks.push(...memberTypeEntries);
-			groupBlocks.push(`} = attachProps(${sameNamedKind}, {`);
-			groupBlocks.push(...memberEntries);
-			groupBlocks.push('});');
+		if (flatKeys.has(groupName)) {
+			throw new Error(`ir: the supertype group '${groupName}' shares its key with a flat factory`);
 		}
+		groupBlocks.push(`export const ${groupName}: {`);
+		groupBlocks.push(...memberTypeEntries);
+		groupBlocks.push('} = {');
+		groupBlocks.push(...memberEntries);
+		groupBlocks.push('};');
 		groupBlocks.push('');
 	}
 
@@ -155,16 +144,7 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 		usedGroupNames.add(key);
 		groupNames.push(key);
-		const sameNamedKind = flatRefByKey.get(key);
-		if (sameNamedKind === undefined) {
-			groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
-			continue;
-		}
-		needsAttachProps = true;
-		groupBlocks.push(
-			`export const ${key}: typeof ${sameNamedKind} & typeof F.${key} = attachProps(${sameNamedKind}, F.${key});`,
-			''
-		);
+		groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
 	}
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
@@ -222,12 +202,6 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
-	if (needsAttachProps)
-		lines.splice(
-			lines.indexOf("import * as F from './factories/index.js';") + 1,
-			0,
-			"import { attachProps } from './utils.js';"
-		);
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
 	body.push('} = {');
@@ -237,16 +211,6 @@ export function emitIr(config: EmitIrConfig): string {
 	return [...lines, ...body].join('\n');
 }
 
-function isFlatLeafOrKeyword(
-	kind: string,
-	node: AssembledNode,
-	kindEntries: ReturnType<typeof collectKindEntries> | undefined
-): boolean {
-	if (!node.userFacing || node.factoryInline) return false;
-	if (isBuilderTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
-	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
-	return !kindEntries || hasCatalogEntry(kindEntries, kind);
-}
 
 function groupNameFor(supertypeKind: string): string {
 	const bare = supertypeKind.replace(/^_+/, '');

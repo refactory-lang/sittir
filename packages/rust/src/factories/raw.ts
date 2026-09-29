@@ -37,23 +37,29 @@ const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
 const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
 const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
-const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
-const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
-const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
-const _slotRe_buildIntegerLiteralDecimal_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
-const _slotRe_buildIntegerLiteralHex_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
-const _slotRe_buildIntegerLiteralBinary_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
-const _slotRe_buildIntegerLiteralOctal_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
-const _slotRe_buildCharLiteralEscaped_content =
-	/^(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u;
-const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
-const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
-const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
-const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
-const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
+export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
+export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
+export const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
+export const _slotRe_buildIntegerLiteralDecimal_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
+export const _slotRe_buildIntegerLiteralHex_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
+export const _slotRe_buildIntegerLiteralBinary_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
+export const _slotRe_buildIntegerLiteralOctal_suffix =
+	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
+export const _slotRe_buildCharLiteralEscapedSimple_content = /^(?:\\(?:[^xu]))$/u;
+export const _slotRe_buildCharLiteralEscapedUnicodeFixed_content = /^(?:\\(?:u[0-9a-fA-F]{4}))$/u;
+export const _slotRe_buildCharLiteralEscapedUnicodeBraced_content = /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u;
+export const _slotRe_buildCharLiteralEscapedHex_content = /^(?:\\(?:x[0-9a-fA-F]{2}))$/u;
+export const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:[^xu]))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
+export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
+export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 
 export function buildSourceFile(): T.EmptySourceFile;
 export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Built;
@@ -7074,7 +7080,7 @@ export function buildRangeExpressionBare(): TSKindId.RangeExpressionBare {
 }
 
 export function buildIntegerLiteralDecimal(
-	config: WidenNumeric<T.IntegerLiteralDecimal.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Built {
 	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
@@ -7091,7 +7097,7 @@ export function buildIntegerLiteralDecimal(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralDecimal({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralDecimal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7121,7 +7127,7 @@ export function buildIntegerLiteralDecimal(
 }
 
 export function buildIntegerLiteralHex(
-	config: WidenNumeric<T.IntegerLiteralHex.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Built {
 	const _content = numberText(16, '0x', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
@@ -7138,7 +7144,7 @@ export function buildIntegerLiteralHex(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralHex({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralHex({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7168,7 +7174,7 @@ export function buildIntegerLiteralHex(
 }
 
 export function buildIntegerLiteralBinary(
-	config: WidenNumeric<T.IntegerLiteralBinary.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Built {
 	const _content = numberText(2, '0b', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
@@ -7185,7 +7191,7 @@ export function buildIntegerLiteralBinary(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralBinary({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralBinary({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7215,7 +7221,7 @@ export function buildIntegerLiteralBinary(
 }
 
 export function buildIntegerLiteralOctal(
-	config: WidenNumeric<T.IntegerLiteralOctal.Config, 'content'>
+	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Built {
 	const _content = numberText(8, '0o', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
@@ -7232,7 +7238,7 @@ export function buildIntegerLiteralOctal(
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string | number) => buildIntegerLiteralOctal({ ...config, content: value }),
+					content: (value: string | number | bigint) => buildIntegerLiteralOctal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7255,34 +7261,6 @@ export function buildIntegerLiteralOctal(
 			{
 				content: () => _content,
 				suffix: () => _suffix
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildCharLiteralEscaped(config: T.CharLiteralEscaped.Config): T.CharLiteralEscaped.Built {
-	const _b = coerceBooleanKeywordStorage(config.b);
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralEscaped_content.test(_content))
-		throw new Error(`char_literal_escaped.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteralEscaped as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteralEscaped.Config>['b']) =>
-						buildCharLiteralEscaped({ ...config, b: value }),
-					content: (value: string) => buildCharLiteralEscaped({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -7327,6 +7305,124 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Built {
 			$named: true as const,
 			$text: text
 		},
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralEscapedSimple(
+	config: T.CharLiteralEscapedSimple.Config
+): T.CharLiteralEscapedSimple.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
+		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralEscapedSimple as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralEscapedSimple.Config>['b']) =>
+						buildCharLiteralEscapedSimple({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralEscapedSimple({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralEscapedUnicodeFixed(
+	config: T.CharLiteralEscapedUnicodeFixed.Config
+): T.CharLiteralEscapedUnicodeFixed.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
+		throw new Error(`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b']) =>
+						buildCharLiteralEscapedUnicodeFixed({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralEscapedUnicodeFixed({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralEscapedUnicodeBraced(
+	config: T.CharLiteralEscapedUnicodeBraced.Config
+): T.CharLiteralEscapedUnicodeBraced.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
+		throw new Error(`char_literal_escaped_unicode_braced.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b']) =>
+						buildCharLiteralEscapedUnicodeBraced({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralEscapedUnicodeBraced({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
+		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralEscapedHex as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralEscapedHex.Config>['b']) =>
+						buildCharLiteralEscapedHex({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralEscapedHex({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -10113,7 +10209,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 }
 
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
-	text = numberText('float', '', text);
+	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
 	return withMethods(
@@ -10226,6 +10322,10 @@ export function buildTight(): TSKindId.Tight {
 
 export function buildSpace(): TSKindId.Space {
 	return TSKindId.Space;
+}
+
+export function buildTab(): TSKindId.Tab {
+	return TSKindId.Tab;
 }
 
 export function buildNewline(): TSKindId.Newline {
@@ -10488,9 +10588,12 @@ export type FluentKindMap = {
 	integer_literal_hex: T.IntegerLiteralHex.Built;
 	integer_literal_binary: T.IntegerLiteralBinary.Built;
 	integer_literal_octal: T.IntegerLiteralOctal.Built;
-	char_literal_escaped: T.CharLiteralEscaped.Built;
 	char_literal_plain: T.CharLiteralPlain.Built;
 	char_literal_empty: T.CharLiteralEmpty;
+	char_literal_escaped_simple: T.CharLiteralEscapedSimple.Built;
+	char_literal_escaped_unicode_fixed: T.CharLiteralEscapedUnicodeFixed.Built;
+	char_literal_escaped_unicode_braced: T.CharLiteralEscapedUnicodeBraced.Built;
+	char_literal_escaped_hex: T.CharLiteralEscapedHex.Built;
 	escape_sequence_simple: T.EscapeSequenceSimple.Built;
 	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Built;
 	escape_sequence_unicode_braced: T.EscapeSequenceUnicodeBraced.Built;
@@ -10575,6 +10678,7 @@ export type FluentKindMap = {
 	_block_comment_content: T.BlockCommentContent;
 	_tight: T.Tight;
 	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
@@ -10750,9 +10854,12 @@ export const _factoryMap = {
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,
 	integer_literal_octal: buildIntegerLiteralOctal,
-	char_literal_escaped: buildCharLiteralEscaped,
 	char_literal_plain: buildCharLiteralPlain,
 	char_literal_empty: buildCharLiteralEmpty,
+	char_literal_escaped_simple: buildCharLiteralEscapedSimple,
+	char_literal_escaped_unicode_fixed: buildCharLiteralEscapedUnicodeFixed,
+	char_literal_escaped_unicode_braced: buildCharLiteralEscapedUnicodeBraced,
+	char_literal_escaped_hex: buildCharLiteralEscapedHex,
 	escape_sequence_simple: buildEscapeSequenceSimple,
 	escape_sequence_unicode_fixed: buildEscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_braced: buildEscapeSequenceUnicodeBraced,
@@ -10837,6 +10944,7 @@ export const _factoryMap = {
 	_block_comment_content: buildBlockCommentContent,
 	_tight: buildTight,
 	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,

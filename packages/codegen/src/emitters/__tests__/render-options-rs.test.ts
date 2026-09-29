@@ -180,11 +180,12 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('        sites: SITE_SPECS,');
 	});
 
-	it('gives a list flank declared strength, the strength the list view writes it at', () => {
-		const flank: SitePreference = { kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start' };
-		const plan = planRenderOptions([...sites, flank], kindEntries, makeSiteKindsNodeMap([...sites, flank]), whitespaceText);
-		const row = plan.spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start');
-		expect(row?.strength).toBe(SEAM_DECLARED);
+	it("gives a list flank its origin's strength: declared only when a preference declares it", () => {
+		const flank = (origin?: SitePreference['origin']): SitePreference => ({ kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start', ...(origin === undefined ? {} : { origin }) });
+		const strengthOf = (site: SitePreference) =>
+			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText).spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start')?.strength;
+		expect(strengthOf(flank('preference'))).toBe(SEAM_DECLARED);
+		expect(strengthOf(flank())).toBe(0);
 	});
 
 	it('builds a dense seat table per (kind, slot) indexed by the seated kind id, and fails on a seat whose kind has no id', () => {

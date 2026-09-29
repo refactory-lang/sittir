@@ -8,7 +8,7 @@ import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
-import { lineTerminatedTrivia, triviaKinds } from './trivia.ts';
+import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -772,7 +772,7 @@ function withKindEdges(
 ): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
-	const breaking = lineTerminatedTrivia(kind, config.nodeMap) ? lineBreakingArms(config.nodeMap) : undefined;
+	const breaking = lineTerminatedKinds(config.nodeMap).has(kind) ? lineBreakingArms(config.nodeMap) : undefined;
 	const breakingSeams: SeamArms | undefined = breaking && {
 		...seams,
 		arms: seams.arms.filter((arm) => breaking.arms.includes(arm)),

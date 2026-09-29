@@ -33,3 +33,17 @@ export type SiblingLeadRefusal<
 	Close extends string,
 	Leads extends readonly (readonly [string, string])[]
 > = string extends I ? unknown : I extends string ? LeadCheck<Interior<I, Open, Close>, Leads> : unknown;
+
+type AllOf<S extends string, C extends string> = S extends ''
+	? true
+	: S extends `${C}${infer Rest}`
+		? AllOf<Rest, C>
+		: false;
+
+export type OnlyOf<I extends string, C extends string> = string extends I
+	? I
+	: I extends ''
+		? never
+		: AllOf<I, C> extends true
+			? I
+			: never;

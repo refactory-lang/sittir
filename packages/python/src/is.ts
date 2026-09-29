@@ -15,6 +15,7 @@ import type {
 	FExpression,
 	Float,
 	Integer,
+	IntegerDecimal,
 	KeywordIdentifier,
 	LeftHandSide,
 	LineContinuation,
@@ -421,6 +422,7 @@ export interface IsGuards {
 	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	integerDecimal(v: { readonly $type: string | number } | number): v is IntegerDecimal;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -636,6 +638,7 @@ export interface AssertGuards {
 	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
 	lineContinuation(v: { readonly $type: string | number } | number): asserts v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
+	integerDecimal(v: { readonly $type: string | number } | number): asserts v is IntegerDecimal;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -646,33 +649,34 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([126, 147, 153, 154, 155, 158, 161, 170, 174, 150]);
+const _supertype_statement_ids = new Set<number>([129, 150, 156, 157, 158, 161, 164, 173, 177, 153]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	130, 127, 131, 135, 137, 138, 141, 142, 143, 144, 145, 146, 166, 167, 168, 169
+	133, 130, 134, 138, 140, 141, 144, 145, 146, 147, 148, 149, 169, 170, 171, 172
 ]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
-const _supertype_expressions_ids = new Set<number>([177]);
-const _supertype_compoundStatement_ids = new Set<number>([147, 153, 154, 155, 158, 161, 170, 174, 150]);
-const _supertype_withClause_ids = new Set<number>([288, 289]);
-const _supertype_suite_ids = new Set<number>([291, 292, 293]);
-const _supertype_parameter_ids = new Set<number>([1, 221, 195, 196, 197, 193, 255, 254, 198]);
-const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 218, 217, 197, 193, 194]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([211]);
-const _supertype_expression_ids = new Set<number>([209, 203, 204, 210, 242, 139, 199]);
+const _supertype_expressions_ids = new Set<number>([180]);
+const _supertype_compoundStatement_ids = new Set<number>([150, 156, 157, 158, 161, 164, 173, 177, 153]);
+const _supertype_withClause_ids = new Set<number>([292, 293]);
+const _supertype_suite_ids = new Set<number>([295, 296, 297]);
+const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
+const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 221, 220, 200, 196, 197]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([214]);
+const _supertype_expression_ids = new Set<number>([212, 206, 207, 213, 245, 142, 202]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	253, 205, 1, 68, 38, 69, 70, 39, 22, 244, 243, 71, 72, 73, 206, 217, 218, 220, 229, 234, 232, 235, 230, 236, 231, 238,
-	237, 64, 197
+	256, 208, 1, 68, 38, 69, 70, 39, 22, 247, 246, 71, 72, 73, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241,
+	240, 64, 200
 ]);
-const _supertype_assignment_ids = new Set<number>([284, 285, 286]);
-const _supertype_leftHandSide_ids = new Set<number>([214]);
-const _supertype_rightHandSide_ids = new Set<number>([177, 213, 214, 216]);
-const _supertype_fExpression_ids = new Set<number>([177, 214, 216]);
-const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
-const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
-const _supertype_float_ids = new Set<number>([94, 95, 96]);
+const _supertype_assignment_ids = new Set<number>([288, 289, 290]);
+const _supertype_leftHandSide_ids = new Set<number>([217]);
+const _supertype_rightHandSide_ids = new Set<number>([180, 216, 217, 219]);
+const _supertype_fExpression_ids = new Set<number>([180, 217, 219]);
+const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
+const _supertype_integer_ids = new Set<number>([90, 91, 92]);
+const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_keywordIdentifier_ids = new Set<number>([68, 38, 69, 70, 39, 22]);
-const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
-const _supertype_whitespace_ids = new Set<number>([120, 121, 113, 122, 123]);
+const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
+const _supertype_whitespace_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
+const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 
 export const is = {
 	module: _g(TSKindId.Module),
@@ -819,7 +823,8 @@ export const is = {
 	float: _sg(_supertype_float_ids),
 	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	lineContinuation: _sg(_supertype_lineContinuation_ids),
-	whitespace: _sg(_supertype_whitespace_ids)
+	whitespace: _sg(_supertype_whitespace_ids),
+	integerDecimal: _sg(_supertype_integerDecimal_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -989,7 +994,8 @@ export const assert = {
 	float: _makeAssert('float', is.float as _AnyGuard),
 	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
 	lineContinuation: _makeAssert('lineContinuation', is.lineContinuation as _AnyGuard),
-	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard),
+	integerDecimal: _makeAssert('integerDecimal', is.integerDecimal as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

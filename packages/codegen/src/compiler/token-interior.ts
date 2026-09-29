@@ -12,6 +12,12 @@ const SUFFIX_SLOT = 'suffix';
 
 type Member = 'template' | 'flag' | 'enum' | 'slot' | 'group';
 
+export type ContentRole = 'enum' | 'content' | 'literal';
+
+export function isSoleEnumContent(roles: readonly ContentRole[]): boolean {
+	return !roles.includes('content') && roles.filter((role) => role === 'enum').length === 1;
+}
+
 function isEnumOfStrings(rule: LinkRule): boolean {
 	if (rule.type === CHOICE) {
 		const arms = rule.members.filter((m) => !isBlank(m));
@@ -105,9 +111,16 @@ function flattenMembers(members: readonly LinkRule[]): LinkRule[] {
 	);
 }
 
+function flattenLiteralSeqs(members: readonly LinkRule[]): LinkRule[] {
+	return members.flatMap((member) =>
+		member.type === SEQ && !(member as { lexed?: boolean }).lexed && !containsPattern(member) ? flattenLiteralSeqs(member.members) : [member]
+	);
+}
+
 interface InteriorState {
 	slotSeen: boolean;
 	readonly slotCount: number;
+	readonly enumIsContent: boolean;
 }
 
 const TOKEN_INTERIOR_UNSTRUCTURABLE = 'token-interior-unstructurable';
@@ -147,7 +160,7 @@ function structureMembers(
 		}
 		if (cls === 'enum') {
 			const named = isField(member);
-			const name = named ? member.name : state.slotSeen ? SUFFIX_SLOT : PREFIX_SLOT;
+			const name = named ? member.name : state.enumIsContent ? CONTENT_SLOT : state.slotSeen ? SUFFIX_SLOT : PREFIX_SLOT;
 			out.push(named ? member : fieldOf(name, member, member.id));
 			i += 1;
 			continue;
@@ -189,14 +202,16 @@ function structureSeq(
 	lookup: (name: string) => LinkRule | undefined,
 	diagnostics: DiagnosticSink
 ): LinkRule | undefined {
-	const members = containsField(seq) ? flattenMembers(seq.members) : seq.members;
+	const members = containsField(seq) ? flattenMembers(seq.members) : flattenLiteralSeqs(seq.members);
 	const classes = members.map(memberClass);
-	if (!members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m))) return undefined;
+	const patternSlot = members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m));
+	const enumIsContent = isSoleEnumContent(classes.map((c) => (c === 'slot' || c === 'group' ? 'content' : c === 'enum' ? 'enum' : 'literal')));
+	if (!patternSlot && !enumIsContent) return undefined;
 	if (!containsField(seq) && !classes.some((c) => c === 'template' || c === 'flag' || c === 'enum' || c === 'group')) return undefined;
 	const slotCount = classes.filter(
 		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
 	).length;
-	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount }, false, diagnostics);
+	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount, enumIsContent }, false, diagnostics);
 	return out === undefined ? undefined : { ...seq, members: out };
 }
 

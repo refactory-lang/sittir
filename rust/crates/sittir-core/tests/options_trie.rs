@@ -30,7 +30,15 @@ impl OptionSites for Sites {
         depth_sites: &[("a", &[0, 1])],
         indent: 20,
         dedent: 21,
+        indent_chars: " \t",
     };
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+struct NoIndentSites;
+
+impl OptionSites for NoIndentSites {
+    const TABLES: OptionTables = OptionTables { indent_chars: "", ..Sites::TABLES };
 }
 
 static SITES: &[SiteSpec] = &[SiteSpec { default_arm: 1, strength: 0 }, SiteSpec { default_arm: 1, strength: 0 }];
@@ -63,6 +71,21 @@ fn indent_and_delimiter_resolve_beside_spacing() {
     let table = resolve(r#"{ "indent": "\t", "a": { "d": 2 } }"#).unwrap();
     assert_eq!(table.indent, "\t");
     assert_eq!(table.delimiter, vec![2]);
+}
+
+#[test]
+fn an_indent_unit_is_one_or_more_admitted_characters() {
+    assert_eq!(resolve(r#"{ "indent": "\t \t" }"#).unwrap().indent, "\t \t");
+    let refused = |unit: &str| Err(format!("options: indent {unit:?} is not a unit of [' ', '\\t'] (one or more of them)"));
+    assert_eq!(resolve(r#"{ "indent": "x" }"#), refused("x"));
+    assert_eq!(resolve(r#"{ "indent": " \n" }"#), refused(" \n"));
+    assert_eq!(resolve(r#"{ "indent": "" }"#), refused(""));
+}
+
+#[test]
+fn indent_is_no_option_where_no_character_is_admitted() {
+    let serde_json::Value::Object(obj) = serde_json::from_str(r#"{ "indent": "\t" }"#).unwrap() else { panic!("not an object") };
+    assert_eq!(Options::<NoIndentSites>::read(&obj).map(|_| ()), Err("options: unknown key indent".to_string()));
 }
 
 #[test]

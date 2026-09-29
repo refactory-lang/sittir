@@ -849,191 +849,6 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 	}
 };
 
-const literalType$negativeNumber =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$hex =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$floatPoint =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$floatLeadingPoint =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$floatScientific =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$decimal =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$binary =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$octal =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$bigint =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$double =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$single =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$true =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const literalType$false =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const literalType$null =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const literalType$undefined =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-export const literalType: typeof B.literalType & {
-	negativeNumber: {
-		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	hex: {
-		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatLeadingPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatScientific: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	decimal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	binary: {
-		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	octal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	bigint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	double: {
-		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	single: {
-		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	true: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	false: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	null: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	undefined: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-} = {
-	...B.literalType,
-	negativeNumber: {
-		strict: literalType$negativeNumber(F.buildLiteralType, F.buildLiteralTypeNegativeNumber),
-		coerce: literalType$negativeNumber(F.buildLiteralType, C.coerceToLiteralTypeNegativeNumber)
-	},
-	hex: {
-		strict: literalType$hex(F.buildLiteralType, F.buildNumberHex),
-		coerce: literalType$hex(F.buildLiteralType, C.coerceToNumberHex)
-	},
-	floatPoint: {
-		strict: literalType$floatPoint(F.buildLiteralType, F.buildNumberFloatPoint),
-		coerce: literalType$floatPoint(F.buildLiteralType, C.coerceToNumberFloatPoint)
-	},
-	floatLeadingPoint: {
-		strict: literalType$floatLeadingPoint(F.buildLiteralType, F.buildNumberFloatLeadingPoint),
-		coerce: literalType$floatLeadingPoint(F.buildLiteralType, C.coerceToNumberFloatLeadingPoint)
-	},
-	floatScientific: {
-		strict: literalType$floatScientific(F.buildLiteralType, F.buildNumberFloatScientific),
-		coerce: literalType$floatScientific(F.buildLiteralType, C.coerceToNumberFloatScientific)
-	},
-	decimal: {
-		strict: literalType$decimal(F.buildLiteralType, F.buildNumberDecimal),
-		coerce: literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal)
-	},
-	binary: {
-		strict: literalType$binary(F.buildLiteralType, F.buildNumberBinary),
-		coerce: literalType$binary(F.buildLiteralType, C.coerceToNumberBinary)
-	},
-	octal: {
-		strict: literalType$octal(F.buildLiteralType, F.buildNumberOctal),
-		coerce: literalType$octal(F.buildLiteralType, C.coerceToNumberOctal)
-	},
-	bigint: {
-		strict: literalType$bigint(F.buildLiteralType, F.buildNumberBigint),
-		coerce: literalType$bigint(F.buildLiteralType, C.coerceToNumberBigint)
-	},
-	double: {
-		strict: literalType$double(F.buildLiteralType, F.buildStringDouble),
-		coerce: literalType$double(F.buildLiteralType, C.coerceToStringDouble)
-	},
-	single: {
-		strict: literalType$single(F.buildLiteralType, F.buildStringSingle),
-		coerce: literalType$single(F.buildLiteralType, C.coerceToStringSingle)
-	},
-	true: {
-		strict: literalType$true(F.buildLiteralType, TSKindId.True),
-		coerce: literalType$true(C.coerceToLiteralType, TSKindId.True)
-	},
-	false: {
-		strict: literalType$false(F.buildLiteralType, TSKindId.False),
-		coerce: literalType$false(C.coerceToLiteralType, TSKindId.False)
-	},
-	null: {
-		strict: literalType$null(F.buildLiteralType, TSKindId.Null),
-		coerce: literalType$null(C.coerceToLiteralType, TSKindId.Null)
-	},
-	undefined: {
-		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
-		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
-	}
-};
-
 const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -1109,409 +924,6 @@ const indexSignatureMappedTypeClause: {
 			C.coerceToIndexSignatureMappedTypeClause,
 			C.coerceToMappedTypeClause
 		)
-	}
-};
-
-const parenthesizedExpressionTyped$as =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$satisfies =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$instantiation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$internalModule =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'name' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$typeAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'typeArguments' || key === 'expression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$assignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'usingMarker' || key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$augmentedAssignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$await =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$unary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'operator' || key === 'argument') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$binary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right' || key === 'binaryExpressionIn') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$ternary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$new =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'constructor_' || key === 'typeArguments' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$binary$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped: {
-	as: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAsExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAsExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	satisfies: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildSatisfiesExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToSatisfiesExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	instantiation: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildInstantiationExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToInstantiationExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	internalModule: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildInternalModule>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToInternalModule>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	typeAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildTypeAssertion>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToTypeAssertion>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	assignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAssignmentExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAssignmentExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	augmentedAssignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAugmentedAssignmentExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	await: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof F.buildAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof C.coerceToAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	unary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildUnaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToUnaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	binary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildBinaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToBinaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		in: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof binaryExpression.in.strict>;
-				},
-				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof binaryExpression.in.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		};
-	};
-	ternary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildTernaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToTernaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	new: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildNewExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToNewExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	yield: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof F.buildYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof C.coerceToYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-} = {
-	as: {
-		strict: parenthesizedExpressionTyped$as(F.buildParenthesizedExpressionTyped, F.buildAsExpression),
-		coerce: parenthesizedExpressionTyped$as(C.coerceToParenthesizedExpressionTyped, C.coerceToAsExpression)
-	},
-	satisfies: {
-		strict: parenthesizedExpressionTyped$satisfies(F.buildParenthesizedExpressionTyped, F.buildSatisfiesExpression),
-		coerce: parenthesizedExpressionTyped$satisfies(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToSatisfiesExpression
-		)
-	},
-	instantiation: {
-		strict: parenthesizedExpressionTyped$instantiation(
-			F.buildParenthesizedExpressionTyped,
-			F.buildInstantiationExpression
-		),
-		coerce: parenthesizedExpressionTyped$instantiation(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToInstantiationExpression
-		)
-	},
-	internalModule: {
-		strict: parenthesizedExpressionTyped$internalModule(F.buildParenthesizedExpressionTyped, F.buildInternalModule),
-		coerce: parenthesizedExpressionTyped$internalModule(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToInternalModule
-		)
-	},
-	typeAssertion: {
-		strict: parenthesizedExpressionTyped$typeAssertion(F.buildParenthesizedExpressionTyped, F.buildTypeAssertion),
-		coerce: parenthesizedExpressionTyped$typeAssertion(C.coerceToParenthesizedExpressionTyped, C.coerceToTypeAssertion)
-	},
-	assignment: {
-		strict: parenthesizedExpressionTyped$assignment(F.buildParenthesizedExpressionTyped, F.buildAssignmentExpression),
-		coerce: parenthesizedExpressionTyped$assignment(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToAssignmentExpression
-		)
-	},
-	augmentedAssignment: {
-		strict: parenthesizedExpressionTyped$augmentedAssignment(
-			F.buildParenthesizedExpressionTyped,
-			F.buildAugmentedAssignmentExpression
-		),
-		coerce: parenthesizedExpressionTyped$augmentedAssignment(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToAugmentedAssignmentExpression
-		)
-	},
-	await: {
-		strict: parenthesizedExpressionTyped$await(F.buildParenthesizedExpressionTyped, F.buildAwaitExpression),
-		coerce: parenthesizedExpressionTyped$await(C.coerceToParenthesizedExpressionTyped, C.coerceToAwaitExpression)
-	},
-	unary: {
-		strict: parenthesizedExpressionTyped$unary(F.buildParenthesizedExpressionTyped, F.buildUnaryExpression),
-		coerce: parenthesizedExpressionTyped$unary(C.coerceToParenthesizedExpressionTyped, C.coerceToUnaryExpression)
-	},
-	binary: {
-		strict: parenthesizedExpressionTyped$binary(F.buildParenthesizedExpressionTyped, F.buildBinaryExpression),
-		coerce: parenthesizedExpressionTyped$binary(C.coerceToParenthesizedExpressionTyped, C.coerceToBinaryExpression),
-		in: {
-			strict: parenthesizedExpressionTyped$binary$in(F.buildParenthesizedExpressionTyped, binaryExpression.in.strict),
-			coerce: parenthesizedExpressionTyped$binary$in(C.coerceToParenthesizedExpressionTyped, binaryExpression.in.coerce)
-		}
-	},
-	ternary: {
-		strict: parenthesizedExpressionTyped$ternary(F.buildParenthesizedExpressionTyped, F.buildTernaryExpression),
-		coerce: parenthesizedExpressionTyped$ternary(C.coerceToParenthesizedExpressionTyped, C.coerceToTernaryExpression)
-	},
-	new: {
-		strict: parenthesizedExpressionTyped$new(F.buildParenthesizedExpressionTyped, F.buildNewExpression),
-		coerce: parenthesizedExpressionTyped$new(C.coerceToParenthesizedExpressionTyped, C.coerceToNewExpression)
-	},
-	yield: {
-		strict: parenthesizedExpressionTyped$yield(F.buildParenthesizedExpressionTyped, F.buildYieldExpression),
-		coerce: parenthesizedExpressionTyped$yield(C.coerceToParenthesizedExpressionTyped, C.coerceToYieldExpression)
 	}
 };
 
@@ -4553,28 +3965,6 @@ export const forHeader: {
 	letConstKind: { strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind }
 };
 
-export const parenthesizedExpression: {
-	readonly typed: {
-		strict: typeof F.buildParenthesizedExpressionTyped;
-		coerce: typeof C.coerceToParenthesizedExpressionTyped;
-	} & typeof parenthesizedExpressionTyped;
-	readonly sequence: {
-		strict: typeof F.buildParenthesizedExpressionSequence;
-		coerce: typeof C.coerceToParenthesizedExpressionSequence;
-	} & typeof parenthesizedExpressionSequence;
-} = {
-	typed: {
-		strict: F.buildParenthesizedExpressionTyped,
-		coerce: C.coerceToParenthesizedExpressionTyped,
-		...parenthesizedExpressionTyped
-	},
-	sequence: {
-		strict: F.buildParenthesizedExpressionSequence,
-		coerce: C.coerceToParenthesizedExpressionSequence,
-		...parenthesizedExpressionSequence
-	}
-};
-
 export const formalParameter: {
 	readonly required: typeof B.requiredParameter;
 	readonly optional: typeof B.optionalParameter;
@@ -4605,11 +3995,533 @@ export const destructuringPattern: {
 };
 
 export const updateExpression: {
+	readonly strict: typeof F.buildUpdateExpressionPostfix;
+	readonly coerce: typeof C.coerceToUpdateExpressionPostfix;
 	readonly postfix: { strict: typeof F.buildUpdateExpressionPostfix; coerce: typeof C.coerceToUpdateExpressionPostfix };
 	readonly prefix: { strict: typeof F.buildUpdateExpressionPrefix; coerce: typeof C.coerceToUpdateExpressionPrefix };
 } = {
+	strict: F.buildUpdateExpressionPostfix,
+	coerce: C.coerceToUpdateExpressionPostfix,
 	postfix: { strict: F.buildUpdateExpressionPostfix, coerce: C.coerceToUpdateExpressionPostfix },
 	prefix: { strict: F.buildUpdateExpressionPrefix, coerce: C.coerceToUpdateExpressionPrefix }
+};
+
+const parenthesizedExpressionTyped$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$satisfies =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$instantiation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'expression' || key === 'typeArguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$internalModule =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'body') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$typeAssertion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'typeArguments' || key === 'expression') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$assignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'usingMarker' || key === 'left' || key === 'right') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$augmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$await =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$unary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'operator' || key === 'argument') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'operator' || key === 'right' || key === 'binaryExpressionIn') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$ternary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$update =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$new =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'constructor_' || key === 'typeArguments' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$binary$in =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$update$postfix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$update$prefix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped: {
+	as: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildAsExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToAsExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	satisfies: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildSatisfiesExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToSatisfiesExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	instantiation: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildInstantiationExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToInstantiationExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	internalModule: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildInternalModule>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToInternalModule>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	typeAssertion: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildTypeAssertion>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToTypeAssertion>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	assignment: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildAssignmentExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToAssignmentExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	augmentedAssignment: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildAugmentedAssignmentExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	await: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof F.buildAwaitExpression>[0];
+			},
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof C.coerceToAwaitExpression>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	unary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildUnaryExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToUnaryExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildBinaryExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToBinaryExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		in: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof binaryExpression.in.strict>;
+				},
+				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof binaryExpression.in.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		};
+	};
+	ternary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildTernaryExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToTernaryExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	update: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof updateExpression.strict>;
+			},
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof updateExpression.coerce>;
+			},
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		postfix: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof updateExpression.postfix.strict>;
+				},
+				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof updateExpression.postfix.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		};
+		prefix: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof updateExpression.prefix.strict>;
+				},
+				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof updateExpression.prefix.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		};
+	};
+	new: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof F.buildNewExpression>[0],
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
+				ArgsOf<typeof C.coerceToNewExpression>[0],
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+	yield: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof F.buildYieldExpression>[0];
+			},
+			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+				expression: ArgsOf<typeof C.coerceToYieldExpression>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+	};
+} = {
+	as: {
+		strict: parenthesizedExpressionTyped$as(F.buildParenthesizedExpressionTyped, F.buildAsExpression),
+		coerce: parenthesizedExpressionTyped$as(C.coerceToParenthesizedExpressionTyped, C.coerceToAsExpression)
+	},
+	satisfies: {
+		strict: parenthesizedExpressionTyped$satisfies(F.buildParenthesizedExpressionTyped, F.buildSatisfiesExpression),
+		coerce: parenthesizedExpressionTyped$satisfies(
+			C.coerceToParenthesizedExpressionTyped,
+			C.coerceToSatisfiesExpression
+		)
+	},
+	instantiation: {
+		strict: parenthesizedExpressionTyped$instantiation(
+			F.buildParenthesizedExpressionTyped,
+			F.buildInstantiationExpression
+		),
+		coerce: parenthesizedExpressionTyped$instantiation(
+			C.coerceToParenthesizedExpressionTyped,
+			C.coerceToInstantiationExpression
+		)
+	},
+	internalModule: {
+		strict: parenthesizedExpressionTyped$internalModule(F.buildParenthesizedExpressionTyped, F.buildInternalModule),
+		coerce: parenthesizedExpressionTyped$internalModule(
+			C.coerceToParenthesizedExpressionTyped,
+			C.coerceToInternalModule
+		)
+	},
+	typeAssertion: {
+		strict: parenthesizedExpressionTyped$typeAssertion(F.buildParenthesizedExpressionTyped, F.buildTypeAssertion),
+		coerce: parenthesizedExpressionTyped$typeAssertion(C.coerceToParenthesizedExpressionTyped, C.coerceToTypeAssertion)
+	},
+	assignment: {
+		strict: parenthesizedExpressionTyped$assignment(F.buildParenthesizedExpressionTyped, F.buildAssignmentExpression),
+		coerce: parenthesizedExpressionTyped$assignment(
+			C.coerceToParenthesizedExpressionTyped,
+			C.coerceToAssignmentExpression
+		)
+	},
+	augmentedAssignment: {
+		strict: parenthesizedExpressionTyped$augmentedAssignment(
+			F.buildParenthesizedExpressionTyped,
+			F.buildAugmentedAssignmentExpression
+		),
+		coerce: parenthesizedExpressionTyped$augmentedAssignment(
+			C.coerceToParenthesizedExpressionTyped,
+			C.coerceToAugmentedAssignmentExpression
+		)
+	},
+	await: {
+		strict: parenthesizedExpressionTyped$await(F.buildParenthesizedExpressionTyped, F.buildAwaitExpression),
+		coerce: parenthesizedExpressionTyped$await(C.coerceToParenthesizedExpressionTyped, C.coerceToAwaitExpression)
+	},
+	unary: {
+		strict: parenthesizedExpressionTyped$unary(F.buildParenthesizedExpressionTyped, F.buildUnaryExpression),
+		coerce: parenthesizedExpressionTyped$unary(C.coerceToParenthesizedExpressionTyped, C.coerceToUnaryExpression)
+	},
+	binary: {
+		strict: parenthesizedExpressionTyped$binary(F.buildParenthesizedExpressionTyped, F.buildBinaryExpression),
+		coerce: parenthesizedExpressionTyped$binary(C.coerceToParenthesizedExpressionTyped, C.coerceToBinaryExpression),
+		in: {
+			strict: parenthesizedExpressionTyped$binary$in(F.buildParenthesizedExpressionTyped, binaryExpression.in.strict),
+			coerce: parenthesizedExpressionTyped$binary$in(C.coerceToParenthesizedExpressionTyped, binaryExpression.in.coerce)
+		}
+	},
+	ternary: {
+		strict: parenthesizedExpressionTyped$ternary(F.buildParenthesizedExpressionTyped, F.buildTernaryExpression),
+		coerce: parenthesizedExpressionTyped$ternary(C.coerceToParenthesizedExpressionTyped, C.coerceToTernaryExpression)
+	},
+	update: {
+		strict: parenthesizedExpressionTyped$update(F.buildParenthesizedExpressionTyped, updateExpression.strict),
+		coerce: parenthesizedExpressionTyped$update(C.coerceToParenthesizedExpressionTyped, updateExpression.coerce),
+		postfix: {
+			strict: parenthesizedExpressionTyped$update$postfix(
+				F.buildParenthesizedExpressionTyped,
+				updateExpression.postfix.strict
+			),
+			coerce: parenthesizedExpressionTyped$update$postfix(
+				C.coerceToParenthesizedExpressionTyped,
+				updateExpression.postfix.coerce
+			)
+		},
+		prefix: {
+			strict: parenthesizedExpressionTyped$update$prefix(
+				F.buildParenthesizedExpressionTyped,
+				updateExpression.prefix.strict
+			),
+			coerce: parenthesizedExpressionTyped$update$prefix(
+				C.coerceToParenthesizedExpressionTyped,
+				updateExpression.prefix.coerce
+			)
+		}
+	},
+	new: {
+		strict: parenthesizedExpressionTyped$new(F.buildParenthesizedExpressionTyped, F.buildNewExpression),
+		coerce: parenthesizedExpressionTyped$new(C.coerceToParenthesizedExpressionTyped, C.coerceToNewExpression)
+	},
+	yield: {
+		strict: parenthesizedExpressionTyped$yield(F.buildParenthesizedExpressionTyped, F.buildYieldExpression),
+		coerce: parenthesizedExpressionTyped$yield(C.coerceToParenthesizedExpressionTyped, C.coerceToYieldExpression)
+	}
+};
+
+export const parenthesizedExpression: {
+	readonly typed: {
+		strict: typeof F.buildParenthesizedExpressionTyped;
+		coerce: typeof C.coerceToParenthesizedExpressionTyped;
+	} & typeof parenthesizedExpressionTyped;
+	readonly sequence: {
+		strict: typeof F.buildParenthesizedExpressionSequence;
+		coerce: typeof C.coerceToParenthesizedExpressionSequence;
+	} & typeof parenthesizedExpressionSequence;
+} = {
+	typed: {
+		strict: F.buildParenthesizedExpressionTyped,
+		coerce: C.coerceToParenthesizedExpressionTyped,
+		...parenthesizedExpressionTyped
+	},
+	sequence: {
+		strict: F.buildParenthesizedExpressionSequence,
+		coerce: C.coerceToParenthesizedExpressionSequence,
+		...parenthesizedExpressionSequence
+	}
 };
 
 export const string: {
@@ -4632,40 +4544,14 @@ export const comment: {
 	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
 };
 
-export const number: {
-	readonly strict: typeof F.buildNumberDecimal;
-	readonly coerce: typeof C.coerceToNumberDecimal;
-	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
-	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
-	readonly floatLeadingPoint: {
-		strict: typeof F.buildNumberFloatLeadingPoint;
-		coerce: typeof C.coerceToNumberFloatLeadingPoint;
-	};
-	readonly floatScientific: {
-		strict: typeof F.buildNumberFloatScientific;
-		coerce: typeof C.coerceToNumberFloatScientific;
-	};
-	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
-	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
-	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
-	readonly bigint: { strict: typeof F.buildNumberBigint; coerce: typeof C.coerceToNumberBigint };
-} = {
-	strict: F.buildNumberDecimal,
-	coerce: C.coerceToNumberDecimal,
-	hex: { strict: F.buildNumberHex, coerce: C.coerceToNumberHex },
-	floatPoint: { strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint },
-	floatLeadingPoint: { strict: F.buildNumberFloatLeadingPoint, coerce: C.coerceToNumberFloatLeadingPoint },
-	floatScientific: { strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific },
-	decimal: { strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal },
-	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
-	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
-	bigint: { strict: F.buildNumberBigint, coerce: C.coerceToNumberBigint }
-};
-
 export const identifier: {
+	readonly strict: typeof F.buildIdentifier;
+	readonly coerce: typeof C.coerceToIdentifier;
 	readonly undefined: { strict: typeof F.buildUndefined; coerce: typeof C.coerceToUndefined };
 	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
 } = {
+	strict: F.buildIdentifier,
+	coerce: C.coerceToIdentifier,
 	undefined: { strict: F.buildUndefined, coerce: C.coerceToUndefined },
 	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier }
 };
@@ -4687,20 +4573,6 @@ export const pattern: {
 } = {
 	lhs: lhsExpression,
 	rest: restPattern
-};
-
-export const propertyName: {
-	readonly identifier: { strict: typeof F.buildPropertyIdentifier; coerce: typeof C.coerceToPropertyIdentifier };
-	readonly privateIdentifier: typeof B.privatePropertyIdentifier;
-	readonly string: typeof string;
-	readonly number: typeof number;
-	readonly computed: typeof B.computedPropertyName;
-} = {
-	identifier: { strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier },
-	privateIdentifier: B.privatePropertyIdentifier,
-	string: string,
-	number: number,
-	computed: B.computedPropertyName
 };
 
 export const indexSignature: {
@@ -4737,6 +4609,255 @@ export const exportStatementDefault: {
 		strict: F.buildExportStatementDefaultDeclaration,
 		coerce: C.coerceToExportStatementDefaultDeclaration,
 		...exportStatementDefaultDeclaration
+	}
+};
+
+export const numberBigint: {
+	readonly strict: typeof F.buildNumberBigintDecimal;
+	readonly coerce: typeof C.coerceToNumberBigintDecimal;
+	readonly hex: { strict: typeof F.buildNumberBigintHex; coerce: typeof C.coerceToNumberBigintHex };
+	readonly binary: { strict: typeof F.buildNumberBigintBinary; coerce: typeof C.coerceToNumberBigintBinary };
+	readonly octal: { strict: typeof F.buildNumberBigintOctal; coerce: typeof C.coerceToNumberBigintOctal };
+	readonly decimal: { strict: typeof F.buildNumberBigintDecimal; coerce: typeof C.coerceToNumberBigintDecimal };
+} = {
+	strict: F.buildNumberBigintDecimal,
+	coerce: C.coerceToNumberBigintDecimal,
+	hex: { strict: F.buildNumberBigintHex, coerce: C.coerceToNumberBigintHex },
+	binary: { strict: F.buildNumberBigintBinary, coerce: C.coerceToNumberBigintBinary },
+	octal: { strict: F.buildNumberBigintOctal, coerce: C.coerceToNumberBigintOctal },
+	decimal: { strict: F.buildNumberBigintDecimal, coerce: C.coerceToNumberBigintDecimal }
+};
+
+const literalType$negativeNumber =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$hex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatLeadingPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatScientific =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$decimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$octal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$double =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$single =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$true =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$false =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$null =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$undefined =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$bigint$hex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$octal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$decimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const literalType: typeof B.literalType & {
+	negativeNumber: {
+		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	hex: {
+		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatLeadingPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatScientific: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	decimal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	octal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	bigint: {
+		strict: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof numberBigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		hex: {
+			strict: (...args: ArgsOf<typeof numberBigint.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		binary: {
+			strict: (...args: ArgsOf<typeof numberBigint.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		octal: {
+			strict: (...args: ArgsOf<typeof numberBigint.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		decimal: {
+			strict: (...args: ArgsOf<typeof numberBigint.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+	};
+	double: {
+		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	single: {
+		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	true: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	false: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	null: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	undefined: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+} = {
+	...B.literalType,
+	negativeNumber: {
+		strict: literalType$negativeNumber(F.buildLiteralType, F.buildLiteralTypeNegativeNumber),
+		coerce: literalType$negativeNumber(F.buildLiteralType, C.coerceToLiteralTypeNegativeNumber)
+	},
+	hex: {
+		strict: literalType$hex(F.buildLiteralType, F.buildNumberHex),
+		coerce: literalType$hex(F.buildLiteralType, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: literalType$floatPoint(F.buildLiteralType, F.buildNumberFloatPoint),
+		coerce: literalType$floatPoint(F.buildLiteralType, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: literalType$floatLeadingPoint(F.buildLiteralType, F.buildNumberFloatLeadingPoint),
+		coerce: literalType$floatLeadingPoint(F.buildLiteralType, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: literalType$floatScientific(F.buildLiteralType, F.buildNumberFloatScientific),
+		coerce: literalType$floatScientific(F.buildLiteralType, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: literalType$decimal(F.buildLiteralType, F.buildNumberDecimal),
+		coerce: literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: literalType$binary(F.buildLiteralType, F.buildNumberBinary),
+		coerce: literalType$binary(F.buildLiteralType, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: literalType$octal(F.buildLiteralType, F.buildNumberOctal),
+		coerce: literalType$octal(F.buildLiteralType, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: literalType$bigint(F.buildLiteralType, numberBigint.strict),
+		coerce: literalType$bigint(F.buildLiteralType, numberBigint.coerce),
+		hex: {
+			strict: literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.strict),
+			coerce: literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.coerce)
+		},
+		binary: {
+			strict: literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.strict),
+			coerce: literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.coerce)
+		},
+		octal: {
+			strict: literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.strict),
+			coerce: literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.coerce)
+		},
+		decimal: {
+			strict: literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.strict),
+			coerce: literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.coerce)
+		}
+	},
+	double: {
+		strict: literalType$double(F.buildLiteralType, F.buildStringDouble),
+		coerce: literalType$double(F.buildLiteralType, C.coerceToStringDouble)
+	},
+	single: {
+		strict: literalType$single(F.buildLiteralType, F.buildStringSingle),
+		coerce: literalType$single(F.buildLiteralType, C.coerceToStringSingle)
+	},
+	true: {
+		strict: literalType$true(F.buildLiteralType, TSKindId.True),
+		coerce: literalType$true(C.coerceToLiteralType, TSKindId.True)
+	},
+	false: {
+		strict: literalType$false(F.buildLiteralType, TSKindId.False),
+		coerce: literalType$false(C.coerceToLiteralType, TSKindId.False)
+	},
+	null: {
+		strict: literalType$null(F.buildLiteralType, TSKindId.Null),
+		coerce: literalType$null(C.coerceToLiteralType, TSKindId.Null)
+	},
+	undefined: {
+		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
+		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
 	}
 };
 
@@ -4802,4 +4923,48 @@ export const statement: {
 	throw: B.throwStatement,
 	empty: { strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement },
 	labeled: B.labeledStatement
+};
+
+export const number: {
+	readonly strict: typeof F.buildNumberDecimal;
+	readonly coerce: typeof C.coerceToNumberDecimal;
+	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
+	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
+	readonly floatLeadingPoint: {
+		strict: typeof F.buildNumberFloatLeadingPoint;
+		coerce: typeof C.coerceToNumberFloatLeadingPoint;
+	};
+	readonly floatScientific: {
+		strict: typeof F.buildNumberFloatScientific;
+		coerce: typeof C.coerceToNumberFloatScientific;
+	};
+	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
+	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
+	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
+	readonly bigint: typeof numberBigint;
+} = {
+	strict: F.buildNumberDecimal,
+	coerce: C.coerceToNumberDecimal,
+	hex: { strict: F.buildNumberHex, coerce: C.coerceToNumberHex },
+	floatPoint: { strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint },
+	floatLeadingPoint: { strict: F.buildNumberFloatLeadingPoint, coerce: C.coerceToNumberFloatLeadingPoint },
+	floatScientific: { strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific },
+	decimal: { strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal },
+	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
+	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
+	bigint: numberBigint
+};
+
+export const propertyName: {
+	readonly identifier: { strict: typeof F.buildPropertyIdentifier; coerce: typeof C.coerceToPropertyIdentifier };
+	readonly privateIdentifier: typeof B.privatePropertyIdentifier;
+	readonly string: typeof string;
+	readonly number: typeof number;
+	readonly computed: typeof B.computedPropertyName;
+} = {
+	identifier: { strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier },
+	privateIdentifier: B.privatePropertyIdentifier,
+	string: string,
+	number: number,
+	computed: B.computedPropertyName
 };

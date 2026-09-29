@@ -66,9 +66,9 @@ describe('loose trivia strings build ir.comment', () => {
 	});
 
 	it('builds a line comment from its full spelling, not a doubled marker', () => {
-		expect(ir.lineComment('// TODO').$render()).toBe('// TODO');
-		expect(ir.comment('// TODO').$render()).toBe('// TODO');
-		expect(ir.comment(' TODO').$render()).toBe('// TODO');
+		expect(ir.lineComment('// TODO').$render()).toBe('// TODO\n');
+		expect(ir.comment('// TODO').$render()).toBe('// TODO\n');
+		expect(ir.comment(' TODO').$render()).toBe('// TODO\n');
 	});
 
 	it('refuses loose text a sibling arm would read back as, naming that arm', () => {

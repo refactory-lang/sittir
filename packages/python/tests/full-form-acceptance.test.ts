@@ -25,7 +25,13 @@ describe('builders accept their kind spelled in full', () => {
 	});
 
 	it('takes the full form first where the delimiter can also begin the content', () => {
-		expect(ir.comment('# x').$render()).toBe('# x');
+		expect(ir.comment('# x').$render()).toBe('# x\n');
+	});
+
+	it('reads a delimiter that is itself a valid interior as the interior', () => {
+		expect(ir.escapeSequence.simple('\\').$render()).toBe('\\\\');
+		expect(ir.escapeSequence.simple('\\\\').$render()).toBe('\\\\');
+		expect(ir.escapeSequence.simple('n').$render()).toBe('\\n');
 	});
 
 	it('leaves a kind whose affix is separated from its content to its bare content', () => {

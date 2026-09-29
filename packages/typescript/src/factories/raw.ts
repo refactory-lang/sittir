@@ -34,34 +34,36 @@ const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
 const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
 const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
 const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
-const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
-const _slotRe_buildEscapeSequence_content =
+export const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
+export const _slotRe_buildEscapeSequence_content =
 	/^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:[\r?][\n\u2028\u2029])))$/u;
-const _slotRe_buildPrivatePropertyIdentifier_content =
+export const _slotRe_buildPrivatePropertyIdentifier_content =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
-const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
-const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
-const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
-const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
-const _slotRe_buildNumberFloatPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
-const _slotRe_buildNumberFloatPoint_marker = /^(?:e|E)$/u;
-const _slotRe_buildNumberFloatPoint_sign = /^(?:-|\+)$/u;
-const _slotRe_buildNumberFloatPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
-const _slotRe_buildNumberFloatLeadingPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
-const _slotRe_buildNumberFloatLeadingPoint_marker = /^(?:e|E)$/u;
-const _slotRe_buildNumberFloatLeadingPoint_sign = /^(?:-|\+)$/u;
-const _slotRe_buildNumberFloatLeadingPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
-const _slotRe_buildNumberFloatScientific_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
-const _slotRe_buildNumberFloatScientific_marker = /^(?:e|E)$/u;
-const _slotRe_buildNumberFloatScientific_sign = /^(?:-|\+)$/u;
-const _slotRe_buildNumberFloatScientific_exponent = /^(?:(?:\d(_?\d)*))$/u;
-const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
-const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
-const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
-const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
-const _slotRe_buildNumberBigint_content =
-	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*)))$/u;
+export const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
+export const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
+export const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
+export const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+export const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
+export const _slotRe_buildNumberFloatPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatPoint_marker = /^(?:e|E)$/u;
+export const _slotRe_buildNumberFloatPoint_sign = /^(?:-|\+)$/u;
+export const _slotRe_buildNumberFloatPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatLeadingPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatLeadingPoint_marker = /^(?:e|E)$/u;
+export const _slotRe_buildNumberFloatLeadingPoint_sign = /^(?:-|\+)$/u;
+export const _slotRe_buildNumberFloatLeadingPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatScientific_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
+export const _slotRe_buildNumberFloatScientific_marker = /^(?:e|E)$/u;
+export const _slotRe_buildNumberFloatScientific_sign = /^(?:-|\+)$/u;
+export const _slotRe_buildNumberFloatScientific_exponent = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
+export const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
+export const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
+export const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
+export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+export const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
+export const _slotRe_buildNumberBigintOctal_content = /^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$/u;
+export const _slotRe_buildNumberBigintDecimal_content = /^(?:(?:\d(_?\d)*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(config?: Partial<T.Program.Config>): T.Program.Built;
@@ -4640,7 +4642,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[357], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[361], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	return withMethods(
 		withAccessors(
@@ -8023,7 +8025,7 @@ export function buildLiteralTypeNegativeNumber(
 	);
 }
 
-export function buildNumberHex(value: string | number, options?: T.NumberHex.Options): T.NumberHex.Built {
+export function buildNumberHex(value: string | number | bigint, options?: T.NumberHex.Options): T.NumberHex.Built {
 	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
 		throw new Error(`number_hex.prefix: text does not match pattern: ${_prefix}`);
@@ -8039,7 +8041,7 @@ export function buildNumberHex(value: string | number, options?: T.NumberHex.Opt
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildNumberHex(value, options),
+					content: (value: string | number | bigint) => buildNumberHex(value, options),
 					prefix: (spelling: '0x' | '0X') => buildNumberHex(value, { ...options, prefix: spelling })
 				}
 			},
@@ -8053,7 +8055,10 @@ export function buildNumberHex(value: string | number, options?: T.NumberHex.Opt
 }
 
 export function buildNumberFloatPoint(
-	config: WidenNumeric<T.NumberFloatPoint.Config, 'integer' | 'fraction' | 'exponent'>,
+	config: WidenNumeric<
+		T.NumberFloatPoint.Config,
+		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+	>,
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Built {
 	const _integer = numberText(10, '', config.integer);
@@ -8083,10 +8088,12 @@ export function buildNumberFloatPoint(
 				_sign,
 				_exponent,
 				$with: {
-					integer: (value: string | number) => buildNumberFloatPoint({ ...config, integer: value }, options),
-					fraction: (value?: string | number) => buildNumberFloatPoint({ ...config, fraction: value }, options),
+					integer: (value: string | number | bigint) => buildNumberFloatPoint({ ...config, integer: value }, options),
+					fraction: (value?: string | number | bigint) =>
+						buildNumberFloatPoint({ ...config, fraction: value }, options),
 					sign: (value?: '-' | '+') => buildNumberFloatPoint({ ...config, sign: value }, options),
-					exponent: (value?: string | number) => buildNumberFloatPoint({ ...config, exponent: value }, options),
+					exponent: (value?: string | number | bigint) =>
+						buildNumberFloatPoint({ ...config, exponent: value }, options),
 					marker: (spelling: 'e' | 'E') => buildNumberFloatPoint(config, { ...options, marker: spelling })
 				}
 			},
@@ -8103,7 +8110,7 @@ export function buildNumberFloatPoint(
 }
 
 export function buildNumberFloatLeadingPoint(
-	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, 'fraction' | 'exponent'>,
+	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Built {
 	const _fraction = numberText(10, '', config.fraction);
@@ -8129,9 +8136,11 @@ export function buildNumberFloatLeadingPoint(
 				_sign,
 				_exponent,
 				$with: {
-					fraction: (value: string | number) => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options),
+					fraction: (value: string | number | bigint) =>
+						buildNumberFloatLeadingPoint({ ...config, fraction: value }, options),
 					sign: (value?: '-' | '+') => buildNumberFloatLeadingPoint({ ...config, sign: value }, options),
-					exponent: (value?: string | number) => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options),
+					exponent: (value?: string | number | bigint) =>
+						buildNumberFloatLeadingPoint({ ...config, exponent: value }, options),
 					marker: (spelling: 'e' | 'E') => buildNumberFloatLeadingPoint(config, { ...options, marker: spelling })
 				}
 			},
@@ -8147,7 +8156,7 @@ export function buildNumberFloatLeadingPoint(
 }
 
 export function buildNumberFloatScientific(
-	config: WidenNumeric<T.NumberFloatScientific.Config, 'integer' | 'exponent'>,
+	config: WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Built {
 	const _integer = numberText(10, '', config.integer);
@@ -8173,9 +8182,11 @@ export function buildNumberFloatScientific(
 				_sign,
 				_exponent,
 				$with: {
-					integer: (value: string | number) => buildNumberFloatScientific({ ...config, integer: value }, options),
+					integer: (value: string | number | bigint) =>
+						buildNumberFloatScientific({ ...config, integer: value }, options),
 					sign: (value?: '-' | '+') => buildNumberFloatScientific({ ...config, sign: value }, options),
-					exponent: (value: string | number) => buildNumberFloatScientific({ ...config, exponent: value }, options),
+					exponent: (value: string | number | bigint) =>
+						buildNumberFloatScientific({ ...config, exponent: value }, options),
 					marker: (spelling: 'e' | 'E') => buildNumberFloatScientific(config, { ...options, marker: spelling })
 				}
 			},
@@ -8190,7 +8201,7 @@ export function buildNumberFloatScientific(
 	);
 }
 
-export function buildNumberDecimal(text: string | number): T.NumberDecimal.Built {
+export function buildNumberDecimal(text: string | number | bigint): T.NumberDecimal.Built {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
 	if (!_leafRe_buildNumberDecimal.test(text)) throw new Error(`number_decimal: text does not match pattern: ${text}`);
@@ -8205,7 +8216,10 @@ export function buildNumberDecimal(text: string | number): T.NumberDecimal.Built
 	);
 }
 
-export function buildNumberBinary(value: string | number, options?: T.NumberBinary.Options): T.NumberBinary.Built {
+export function buildNumberBinary(
+	value: string | number | bigint,
+	options?: T.NumberBinary.Options
+): T.NumberBinary.Built {
 	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
 		throw new Error(`number_binary.prefix: text does not match pattern: ${_prefix}`);
@@ -8221,7 +8235,7 @@ export function buildNumberBinary(value: string | number, options?: T.NumberBina
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildNumberBinary(value, options),
+					content: (value: string | number | bigint) => buildNumberBinary(value, options),
 					prefix: (spelling: '0b' | '0B') => buildNumberBinary(value, { ...options, prefix: spelling })
 				}
 			},
@@ -8234,7 +8248,10 @@ export function buildNumberBinary(value: string | number, options?: T.NumberBina
 	);
 }
 
-export function buildNumberOctal(value: string | number, options?: T.NumberOctal.Options): T.NumberOctal.Built {
+export function buildNumberOctal(
+	value: string | number | bigint,
+	options?: T.NumberOctal.Options
+): T.NumberOctal.Built {
 	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
 		throw new Error(`number_octal.prefix: text does not match pattern: ${_prefix}`);
@@ -8250,7 +8267,7 @@ export function buildNumberOctal(value: string | number, options?: T.NumberOctal
 				_prefix,
 				_content,
 				$with: {
-					content: (value: string | number) => buildNumberOctal(value, options),
+					content: (value: string | number | bigint) => buildNumberOctal(value, options),
 					prefix: (spelling: '0o' | '0O') => buildNumberOctal(value, { ...options, prefix: spelling })
 				}
 			},
@@ -8263,19 +8280,88 @@ export function buildNumberOctal(value: string | number, options?: T.NumberOctal
 	);
 }
 
-export function buildNumberBigint(value: string | number): T.NumberBigint.Built {
+export function buildNumberBigintHex(value: string | number | bigint): T.NumberBigintHex.Built {
 	const _content = numberText(16, '0x', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigint_content.test(_content))
-		throw new Error(`number_bigint.content: text does not match pattern: ${_content}`);
+	if (_content !== undefined && !_slotRe_buildNumberBigintHex_content.test(_content))
+		throw new Error(`number_bigint_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.NumberBigint as const,
+				$type: TSKindId.NumberBigintHex as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: string | number) => buildNumberBigint(value)
+					content: (value: string | number | bigint) => buildNumberBigintHex(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintBinary(value: string | number | bigint): T.NumberBigintBinary.Built {
+	const _content = numberText(2, '0b', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintBinary_content.test(_content))
+		throw new Error(`number_bigint_binary.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintBinary as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintBinary(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintOctal(value: string | number | bigint): T.NumberBigintOctal.Built {
+	const _content = numberText(8, '0o', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintOctal_content.test(_content))
+		throw new Error(`number_bigint_octal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintOctal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintOctal(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigintDecimal(value: string | number | bigint): T.NumberBigintDecimal.Built {
+	const _content = numberText(10, '', value);
+	if (_content !== undefined && !_slotRe_buildNumberBigintDecimal_content.test(_content))
+		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigintDecimal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string | number | bigint) => buildNumberBigintDecimal(value)
 				}
 			},
 			{
@@ -9748,6 +9834,10 @@ export function buildSpace(): TSKindId.Space {
 	return TSKindId.Space;
 }
 
+export function buildTab(): TSKindId.Tab {
+	return TSKindId.Tab;
+}
+
 export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
@@ -10539,7 +10629,10 @@ export type FluentKindMap = {
 	number_decimal: T.NumberDecimal;
 	number_binary: T.NumberBinary.Built;
 	number_octal: T.NumberOctal.Built;
-	number_bigint: T.NumberBigint.Built;
+	number_bigint_hex: T.NumberBigintHex.Built;
+	number_bigint_binary: T.NumberBigintBinary.Built;
+	number_bigint_octal: T.NumberBigintOctal.Built;
+	number_bigint_decimal: T.NumberBigintDecimal.Built;
 	binary_expression_in: T.BinaryExpressionIn.Built;
 	empty_member: T.EmptyMember;
 	class_body_method: T.ClassBodyMethod.Built;
@@ -10583,6 +10676,7 @@ export type FluentKindMap = {
 	_function_signature_automatic_semicolon: T.FunctionSignatureAutomaticSemicolon;
 	_tight: T.Tight;
 	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
@@ -10793,7 +10887,10 @@ export const _factoryMap = {
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,
-	number_bigint: buildNumberBigint,
+	number_bigint_hex: buildNumberBigintHex,
+	number_bigint_binary: buildNumberBigintBinary,
+	number_bigint_octal: buildNumberBigintOctal,
+	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
 	empty_member: buildEmptyMember,
 	class_body_method: buildClassBodyMethod,
@@ -10837,6 +10934,7 @@ export const _factoryMap = {
 	_function_signature_automatic_semicolon: buildFunctionSignatureAutomaticSemicolon,
 	_tight: buildTight,
 	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,

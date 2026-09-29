@@ -1,5 +1,6 @@
 import type { RenderRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { isSoleEnumContent } from '../token-interior.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
@@ -32,6 +33,15 @@ function affixOf(member: RenderRule, forms: FullForms): FullFormAffix | undefine
 	return texts.every((text) => text !== undefined) ? { texts, slot: member.fieldName } : undefined;
 }
 
+function isEnumContent(member: RenderRule): boolean {
+	return member.type === CHOICE && member.fieldName !== undefined && member.members.every((arm) => arm.type === STRING);
+}
+
+function enumContentAsText(affixes: readonly (FullFormAffix | undefined)[]): readonly (FullFormAffix | undefined)[] {
+	const roles = affixes.map((affix) => (affix === undefined ? 'content' : affix.slot === undefined ? 'literal' : 'enum'));
+	return isSoleEnumContent(roles) ? affixes.map((affix, i) => (roles[i] === 'enum' ? undefined : affix)) : affixes;
+}
+
 function joinRun(run: readonly FullFormAffix[]): FullFormAffix | undefined {
 	if (run.length === 0) return { texts: [''] };
 	if (run.length === 1) return run[0];
@@ -42,6 +52,7 @@ function joinRun(run: readonly FullFormAffix[]): FullFormAffix | undefined {
 function isTextContent(member: RenderRule, node: AbstractAssembledCompound, forms: FullForms): boolean {
 	if (member.type === PATTERN) return true;
 	if (member.type === SYMBOL) return forms.isPattern(member.name);
+	if (isEnumContent(member)) return true;
 	if (member.type !== CHOICE || !(node instanceof AssembledPolymorph)) return false;
 	const arms = new Set(node.arms.flatMap((arm) => (arm.type === SYMBOL ? [arm.name] : [])));
 	return member.members.every((arm) => arm.type === SYMBOL && arms.has(arm.name) && forms.isText(arm.name));
@@ -54,7 +65,13 @@ function contentEdges(member: RenderRule, ctx: EdgeClassCtx): KindEdgeClasses {
 	if (member.type === SYMBOL) return edgeClassesOfKind(member.name, ctx);
 	const arms =
 		member.type === CHOICE
-			? member.members.flatMap((arm) => (arm.type === SYMBOL ? [edgeClassesOfKind(arm.name, ctx)] : []))
+			? member.members.flatMap((arm) =>
+					arm.type === SYMBOL
+						? [edgeClassesOfKind(arm.name, ctx)]
+						: arm.type === STRING && arm.value !== ''
+							? [{ starts: charEdgeClass(arm.value[0], ctx), ends: charEdgeClass(arm.value[arm.value.length - 1], ctx) }]
+							: []
+				)
 			: [];
 	return {
 		starts: uniformEdgeClass(arms.map((arm) => arm.starts)),
@@ -89,7 +106,7 @@ function isSeparated(node: AbstractAssembledCompound, form: FullForm, content: R
 function fullFormOf(node: AbstractAssembledCompound, forms: FullForms): FullForm | undefined {
 	if (node.renderRule.type !== SEQ) return undefined;
 	const members = node.renderRule.members;
-	const affixes = members.map((member) => affixOf(member, forms));
+	const affixes = enumContentAsText(members.map((member) => affixOf(member, forms)));
 	let start = 0;
 	while (start < members.length && affixes[start] !== undefined) start++;
 	let end = members.length;

@@ -17,13 +17,16 @@ interface WhitespaceMember {
 
 export const TIGHT_MEMBER = '_tight';
 export const SPACE_MEMBER = '_space';
+export const TAB_MEMBER = '_tab';
 export const NEWLINE_MEMBER = '_newline';
+export const INDENT_MEMBERS: readonly string[] = [SPACE_MEMBER, TAB_MEMBER];
 
 const HORIZONTAL_SPACE = ' ';
 
 const WHITESPACE_MEMBERS: readonly WhitespaceMember[] = [
 	{ name: TIGHT_MEMBER, body: { type: STRING, value: '' }, alwaysAdmitted: true },
 	{ name: SPACE_MEMBER, body: { type: STRING, value: ' ' } },
+	{ name: TAB_MEMBER, body: { type: STRING, value: '\t' } },
 	{ name: NEWLINE_MEMBER, body: { type: STRING, value: '\n' } },
 	{ name: '_blankline', body: { type: STRING, value: '\n\n' } },
 	{ name: '_double_blankline', body: { type: STRING, value: '\n\n\n' } },

@@ -6943,6 +6943,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_tab"
+          },
+          "named": true,
+          "value": "tab"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_newline"
           },
           "named": true,
@@ -7399,6 +7408,48 @@
       }
     },
     "integer_decimal": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "integer_decimal_long",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "long",
+            "variantOf": "integer_decimal"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_decimal_imaginary",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "imaginary",
+            "variantOf": "integer_decimal"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "integer_decimal_plain",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "integer_decimal",
+            "default": true
+          }
+        }
+      ],
+      "annotations": {
+        "tokenForm": true
+      }
+    },
+    "integer_decimal_long": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -7411,33 +7462,50 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[Ll]"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "[jJ]"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
+            "type": "PATTERN",
+            "value": "[Ll]"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_decimal_imaginary": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "[0-9]+_?"
+            }
+          },
+          {
+            "type": "PATTERN",
+            "value": "[jJ]"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_decimal_plain": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "[0-9]+_?"
+            }
           }
         ]
       },
@@ -8078,7 +8146,7 @@
           "name": "except_clause_exception_as",
           "annotations": {
             "variant": "as",
-            "variantOf": "except_clause"
+            "variantOf": "except_clause_exception"
           }
         },
         {
@@ -8086,7 +8154,7 @@
           "name": "except_clause_exception_list",
           "annotations": {
             "variant": "list",
-            "variantOf": "except_clause"
+            "variantOf": "except_clause_exception"
           }
         }
       ],
@@ -8643,6 +8711,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_tab"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_blankline"
     },
     {
@@ -8674,6 +8746,7 @@
     "parameter",
     "escape_sequence",
     "integer",
+    "integer_decimal",
     "float",
     "line_continuation",
     "_whitespace",

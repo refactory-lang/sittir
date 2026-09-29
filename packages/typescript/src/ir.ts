@@ -12,7 +12,6 @@
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';
-import { attachProps } from './utils.js';
 
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
@@ -243,6 +242,7 @@ export const primaryType: {
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
+	readonly tab: typeof F.buildTab;
 	readonly newline: typeof F.buildNewline;
 	readonly blankline: typeof F.buildBlankline;
 	readonly doubleBlankline: typeof F.buildDoubleBlankline;
@@ -251,6 +251,7 @@ export const whitespace: {
 } = {
 	tight: F.buildTight,
 	space: F.buildSpace,
+	tab: F.buildTab,
 	newline: F.buildNewline,
 	blankline: F.buildBlankline,
 	doubleBlankline: F.buildDoubleBlankline,
@@ -264,15 +265,15 @@ export const formalParameter: typeof F.formalParameter = F.formalParameter;
 
 export const destructuringPattern: typeof F.destructuringPattern = F.destructuringPattern;
 
-export const identifier: typeof F.buildIdentifier & typeof F.identifier = attachProps(F.buildIdentifier, F.identifier);
+export const identifier: typeof F.identifier = F.identifier;
 
 export const pattern: typeof F.pattern = F.pattern;
-
-export const propertyName: typeof F.propertyName = F.propertyName;
 
 export const moduleExportName: typeof F.moduleExportName = F.moduleExportName;
 
 export const statement: typeof F.statement = F.statement;
+
+export const propertyName: typeof F.propertyName = F.propertyName;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -449,11 +450,12 @@ export const ir: {
 	readonly updateExpression: typeof F.updateExpression;
 	readonly string: typeof F.string;
 	readonly comment: typeof F.comment;
-	readonly number: typeof F.number;
 	readonly metaProperty: typeof F.metaProperty;
 	readonly indexSignature: typeof F.indexSignature;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
+	readonly numberBigint: typeof F.numberBigint;
 	readonly exportStatement: typeof F.exportStatement;
+	readonly number: typeof F.number;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -491,9 +493,9 @@ export const ir: {
 	readonly destructuringPattern: typeof destructuringPattern;
 	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
-	readonly propertyName: typeof propertyName;
 	readonly moduleExportName: typeof moduleExportName;
 	readonly statement: typeof statement;
+	readonly propertyName: typeof propertyName;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -671,11 +673,12 @@ export const ir: {
 	updateExpression: F.updateExpression,
 	string: F.string,
 	comment: F.comment,
-	number: F.number,
 	metaProperty: F.metaProperty,
 	indexSignature: F.indexSignature,
 	exportStatementDefault: F.exportStatementDefault,
+	numberBigint: F.numberBigint,
 	exportStatement: F.exportStatement,
+	number: F.number,
 
 	// Keyword factories
 	import: F.buildImport,
@@ -719,8 +722,8 @@ export const ir: {
 	destructuringPattern,
 	identifier,
 	pattern,
-	propertyName,
 	moduleExportName,
 	statement,
+	propertyName,
 	synonym
 };

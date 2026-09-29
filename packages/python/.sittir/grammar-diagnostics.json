@@ -400,10 +400,12 @@
       "sourceChains": [
         [
           "except_clause_exception_as",
+          "except_clause_exception",
           "except_clause"
         ],
         [
           "except_clause_exception_list",
+          "except_clause_exception",
           "except_clause"
         ]
       ],
@@ -445,6 +447,7 @@
         ],
         [
           "except_clause_exception_as",
+          "except_clause_exception",
           "except_clause"
         ]
       ],

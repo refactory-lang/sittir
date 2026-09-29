@@ -145,8 +145,9 @@ export const suite: Hoisted<typeof O.suite> = hoistRoutes(O.suite);
 export const parameter: Hoisted<typeof O.parameter> = hoistRoutes(O.parameter);
 export const assignment: Hoisted<typeof O.assignment> = hoistRoutes(O.assignment);
 export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.escapeSequence);
-export const integer: Hoisted<typeof O.integer> = hoistRoutes(O.integer);
 export const float: Hoisted<typeof O.float> = hoistRoutes(O.float);
 export const lineContinuation: Hoisted<typeof O.lineContinuation> = hoistRoutes(O.lineContinuation);
+export const integerDecimal: Hoisted<typeof O.integerDecimal> = hoistRoutes(O.integerDecimal);
+export const integer: Hoisted<typeof O.integer> = hoistRoutes(O.integer);
 
 methodsEngine.trivia.comment = coerceToComment;

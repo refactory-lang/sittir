@@ -33,7 +33,7 @@ const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})
 const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
 const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
-const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
+export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern(value: T.Alternation | T.Term): T.Pattern.Built {
 	const _content = rejectBareText(value, 'Pattern.content', 'a built Alternation / Term');
@@ -801,7 +801,7 @@ export function buildGroupName(text: string): T.GroupName.Built {
 	);
 }
 
-export function buildDecimalDigits(text: string | number): T.DecimalDigits.Built {
+export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Built {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);
 	if (!_leafRe_buildDecimalDigits.test(text)) throw new Error(`decimal_digits: text does not match pattern: ${text}`);
@@ -857,7 +857,9 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Built {
 }
 
 export function buildCountQuantifierGroup(value?: T.DecimalDigits): ReturnType<typeof _buildCountQuantifierGroup>;
-export function buildCountQuantifierGroup(text: string | number): ReturnType<typeof _buildCountQuantifierGroup>;
+export function buildCountQuantifierGroup(
+	text: string | number | bigint
+): ReturnType<typeof _buildCountQuantifierGroup>;
 export function buildCountQuantifierGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildCountQuantifierGroup(args[0] as T.DecimalDigits);

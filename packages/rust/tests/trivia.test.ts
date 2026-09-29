@@ -133,7 +133,17 @@ describe('$trivia() integration', () => {
 		const letDecl = createEngine().parse('//!\n/*!*/\n//\n///\nlet x;\n').statements()[0]!;
 		const lead = triviaDataOf(letDecl)!.leading as WrappedEntry[];
 		expect(lead.every((entry) => typeof entry.content === 'function')).toBe(true);
-		expect(lead.map((entry) => entry.$render())).toEqual(['//!\n', '/*!*/', '//', '///\n']);
+		expect(lead.map((entry) => entry.$render())).toEqual(['//!\n', '/*!*/', '//\n', '///\n']);
+	});
+
+	it('reads each entry with the span the parser gave it, whatever its render adds', () => {
+		const source = '//!\n/*!*/\n//\n///\nlet x;\n';
+		const { root } = createEngine().diagnostics.parseAndRead(source, { deep: true });
+		const statements = (root as unknown as { _statements: unknown })._statements;
+		const statement = (Array.isArray(statements) ? statements[0] : statements) as {
+			$_trivia: { leading: { $span: { start: number; end: number } }[] };
+		};
+		expect(statement.$_trivia.leading.map(({ $span }) => source.slice($span.start, $span.end))).toEqual(['//!\n', '/*!*/', '//', '///\n']);
 	});
 
 	it('wraps the entries of an inner gap', () => {
@@ -145,6 +155,6 @@ describe('$trivia() integration', () => {
 			Object.values(inner)
 				.flat()
 				.map((entry) => entry.$render())
-		).toEqual(['// only']);
+		).toEqual(['// only\n']);
 	});
 });

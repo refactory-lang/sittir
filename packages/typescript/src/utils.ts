@@ -22,6 +22,7 @@ import type {
 	HtmlComment,
 	Newline,
 	Space,
+	Tab,
 	NamespaceMap
 } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -73,6 +74,7 @@ export const methodsEngine = {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'comment',
 			'comment_block',
 			'comment_line',
@@ -81,7 +83,7 @@ export const methodsEngine = {
 		innerGaps: INNER_GAPS,
 		whitespace: {
 			run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-			kindIdByText: { ' ': 178, '\n': 179, '\n\n': 180, '\n\n\n': 181 }
+			kindIdByText: { ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 }
 		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
@@ -95,7 +97,18 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | Comment | CommentBlock | CommentLine | DoubleBlankline | HtmlComment | Newline | Space | string)
+			| (
+					| Blankline
+					| Comment
+					| CommentBlock
+					| CommentLine
+					| DoubleBlankline
+					| HtmlComment
+					| Newline
+					| Space
+					| Tab
+					| string
+			  )
 			| {
 					leading?: (
 						| Blankline
@@ -106,6 +119,7 @@ export interface TriviaSetterOf<Self> {
 						| HtmlComment
 						| Newline
 						| Space
+						| Tab
 						| string
 					)[];
 					trailing?: (
@@ -117,6 +131,7 @@ export interface TriviaSetterOf<Self> {
 						| HtmlComment
 						| Newline
 						| Space
+						| Tab
 						| string
 					)[];
 			  }
@@ -131,6 +146,7 @@ export interface TriviaSetterOf<Self> {
 		| HtmlComment
 		| Newline
 		| Space
+		| Tab
 	)[];
 	leading(
 		...items: (
@@ -142,6 +158,7 @@ export interface TriviaSetterOf<Self> {
 			| HtmlComment
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): Self;
@@ -154,6 +171,7 @@ export interface TriviaSetterOf<Self> {
 		| HtmlComment
 		| Newline
 		| Space
+		| Tab
 	)[];
 	trailing(
 		...items: (
@@ -165,6 +183,7 @@ export interface TriviaSetterOf<Self> {
 			| HtmlComment
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): Self;
@@ -193,6 +212,7 @@ export interface InnerTrivia<N> {
 		| HtmlComment
 		| Newline
 		| Space
+		| Tab
 	)[];
 	inner(
 		...items: (
@@ -204,6 +224,7 @@ export interface InnerTrivia<N> {
 			| HtmlComment
 			| Newline
 			| Space
+			| Tab
 			| string
 		)[]
 	): N;
@@ -336,16 +357,6 @@ function extractNodeText(value: unknown): string | undefined {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
-	fn: T,
-	props: P
-): T & P {
-	for (const key of Object.keys(props)) {
-		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-	}
-	return fn as T & P;
 }
 
 export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {

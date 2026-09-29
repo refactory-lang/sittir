@@ -31,7 +31,7 @@ export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar
 export type LeafScalarMap = {
 	[TSKindId.TrueKeyword]: boolean;
 	[TSKindId.FalseKeyword]: boolean;
-	[TSKindId.IntegerLiteralDecimal]: number;
+	[TSKindId.IntegerLiteralDecimal]: number | bigint;
 	[TSKindId.FloatLiteral]: number;
 };
 
@@ -173,6 +173,7 @@ export type LeafStringMap = {
 	[TSKindId.OuterDocCommentMarker]: '*';
 	[TSKindId.InnerDocCommentMarker]: '!';
 	[TSKindId.Space]: ' ';
+	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
@@ -394,334 +395,339 @@ export enum TSKindId {
 	IntegerLiteralHex = 139,
 	IntegerLiteralBinary = 140,
 	IntegerLiteralOctal = 141,
-	CharLiteralEscaped = 142,
-	CharLiteralPlain = 143,
-	CharLiteralEmpty = 144,
-	EscapeSequenceSimple = 145,
-	EscapeSequenceUnicodeFixed = 146,
-	EscapeSequenceUnicodeBraced = 147,
-	EscapeSequenceHex = 148,
-	RawKeyword = 149,
-	StringOpen = 150,
-	LineCommentExtraSlashesToken1 = 151,
-	LineCommentExtraSlashesToken2 = 152,
-	LineCommentRegular = 153,
-	MacroRulesBang = 154,
-	StringContent = 155,
-	RawStringLiteralStart = 156,
-	RawStringLiteralContent = 157,
-	RawStringLiteralEnd = 158,
-	FloatLiteral = 159,
-	OuterDocCommentMarker = 160,
-	InnerDocCommentMarker = 161,
-	BlockCommentContent = 162,
-	DocComment = 163,
-	ErrorSentinel = 164,
-	Tight = 165,
-	Space = 166,
-	Newline = 167,
-	Blankline = 168,
-	DoubleBlankline = 169,
-	Indent = 170,
-	Dedent = 171,
-	SourceFile = 172,
-	Statement = 173,
-	EmptyStatement = 174,
-	ExpressionStatement = 175,
-	MacroDefinition = 176,
-	MacroRule = 177,
-	TokenPattern = 178,
-	TokenTreePattern = 179,
-	TokenBindingPattern = 180,
-	TokenRepetitionPattern = 181,
-	FragmentSpecifier = 182,
-	TokenTree = 183,
-	TokenRepetition = 184,
-	NonSpecialToken = 185,
-	AttributeItem = 186,
-	InnerAttributeItem = 187,
-	Attribute = 188,
-	ModItem = 189,
-	ForeignModItem = 190,
-	DeclarationList = 191,
-	StructItem = 192,
-	UnionItem = 193,
-	EnumItem = 194,
-	EnumVariantList = 195,
-	EnumVariant = 196,
-	FieldDeclarationList = 197,
-	FieldDeclaration = 198,
-	OrderedFieldDeclarationList = 199,
-	ExternCrateDeclaration = 200,
-	ConstItem = 201,
-	StaticItem = 202,
-	TypeItem = 203,
-	FunctionItem = 204,
-	FunctionSignatureItem = 205,
-	FunctionModifiers = 206,
-	WhereClause = 207,
-	WherePredicate = 208,
-	ImplItem = 209,
-	TraitItem = 210,
-	AssociatedType = 211,
-	TraitBounds = 212,
-	HigherRankedTraitBound = 213,
-	RemovedTraitBound = 214,
-	TypeParameters = 215,
-	ConstParameter = 216,
-	TypeParameter = 217,
-	LifetimeParameter = 218,
-	LetDeclaration = 219,
-	UseDeclaration = 220,
-	UseClause = 221,
-	ScopedUseList = 222,
-	UseList = 223,
-	UseAsClause = 224,
-	UseWildcard = 225,
-	Parameters = 226,
-	SelfParameter = 227,
-	VariadicParameter = 228,
-	Parameter = 229,
-	ExternModifier = 230,
-	VisibilityModifier = 231,
-	Type = 232,
-	BracketedType = 233,
-	QualifiedType = 234,
-	Lifetime = 235,
-	ArrayType = 236,
-	ForLifetimes = 237,
-	FunctionType = 238,
-	TupleType = 239,
-	UnitType = 240,
-	GenericFunction = 241,
-	GenericType = 242,
-	GenericTypeWithTurbofish = 243,
-	BoundedType = 244,
-	UseBounds = 245,
-	TypeArguments = 246,
-	TypeBinding = 247,
-	ReferenceType = 248,
-	PointerType = 249,
-	NeverType = 250,
-	AbstractType = 251,
-	DynamicType = 252,
-	ExpressionExceptRange = 253,
-	Expression = 254,
-	MacroInvocation = 255,
-	DelimTokenTree = 256,
-	DelimTokens = 257,
-	NonDelimToken = 258,
-	ScopedIdentifier = 259,
-	ScopedTypeIdentifierInExpressionPosition = 260,
-	ScopedTypeIdentifier = 261,
-	RangeExpression = 262,
-	UnaryExpression = 263,
-	TryExpression = 264,
-	ReferenceExpression = 265,
-	BinaryExpression = 266,
-	AssignmentExpression = 267,
-	CompoundAssignmentExpr = 268,
-	TypeCastExpression = 269,
-	ReturnExpression = 270,
-	YieldExpression = 271,
-	CallExpression = 272,
-	Arguments = 273,
-	ArrayExpression = 274,
-	ParenthesizedExpression = 275,
-	TupleExpression = 276,
-	UnitExpression = 277,
-	StructExpression = 278,
-	FieldInitializerList = 279,
-	ShorthandFieldInitializer = 280,
-	FieldInitializer = 281,
-	BaseFieldInitializer = 282,
-	IfExpression = 283,
-	LetCondition = 284,
-	LetChain = 285,
-	Condition = 286,
-	ElseClause = 287,
-	MatchExpression = 288,
-	MatchBlock = 289,
-	MatchArm = 290,
-	LastMatchArm = 291,
-	MatchPattern = 292,
-	WhileExpression = 293,
-	LoopExpression = 294,
-	ForExpression = 295,
-	ConstBlock = 296,
-	ClosureExpression = 297,
-	ClosureParameters = 298,
-	Label = 299,
-	BreakExpression = 300,
-	ContinueExpression = 301,
-	IndexExpression = 302,
-	AwaitExpression = 303,
-	FieldExpression = 304,
-	UnsafeBlock = 305,
-	AsyncBlock = 306,
-	GenBlock = 307,
-	TryBlock = 308,
-	Block = 309,
-	Pattern = 310,
-	GenericPattern = 311,
-	TuplePattern = 312,
-	SlicePattern = 313,
-	TupleStructPattern = 314,
-	StructPattern = 315,
-	FieldPattern = 316,
-	RemainingFieldPattern = 317,
-	MutPattern = 318,
-	RangePattern = 319,
-	RefPattern = 320,
-	CapturedPattern = 321,
-	ReferencePattern = 322,
-	OrPattern = 323,
-	Literal = 324,
-	LiteralPattern = 325,
-	NegativeLiteral = 326,
-	IntegerLiteral = 327,
-	StringLiteral = 328,
-	RawStringLiteral = 329,
-	CharLiteral = 330,
-	EscapeSequence = 331,
-	BooleanLiteral = 332,
-	LineComment = 333,
-	InnerLineDocCommentMarker = 334,
-	OuterLineDocCommentMarker = 335,
-	BlockComment = 336,
-	PrimitiveType = 337,
-	KwRefMarker = 338,
-	KwUnsafeMarker = 339,
-	KwStaticMarker = 340,
-	KwAsyncMarker = 341,
-	KwMoveMarker = 342,
-	MacroRules = 343,
-	EnumVariantListElements = 344,
-	FieldDeclarationListElements = 345,
-	OrderedFieldDeclarationListElements = 346,
-	WherePredicates = 347,
-	TypeParametersElements = 348,
-	UseClauses = 349,
-	ParametersElements = 350,
-	Lifetimes = 351,
-	UseBoundsElements = 352,
-	TypeArgumentsElements = 353,
-	ArgumentsElements = 354,
-	FieldInitializerListElements = 355,
-	TuplePatternElements = 356,
-	Patterns = 357,
-	StructPatternElements = 358,
-	UseWildcardGroup = 359,
-	KwAsync = 360,
-	KwDefault = 361,
-	KwConst = 362,
-	KwUnsafe = 363,
-	TupleTypeElements = 364,
-	TupleExpressionElements = 365,
-	TokenTreePunctuation = 366,
-	TokenKeywords = 367,
-	RangeExpressionBare = 368,
-	ImplItemUnsafeMarker = 369,
-	ArrayExpressionSemi = 370,
-	ArrayExpressionList = 371,
-	AttributeInput = 372,
-	ClosureExpressionBlock = 373,
-	ClosureExpressionExpr = 374,
-	ReferenceExpressionRawConst = 375,
-	ReferenceExpressionRawMut = 376,
-	ReferenceExpressionMut = 377,
-	ReferenceExpressionBare = 378,
-	ImplItemPositiveClause = 379,
-	ImplItemNegativeClause = 380,
-	ImplItemBody = 381,
-	ImplItemSemi = 382,
-	VisibilityModifierPubScopeInPath = 383,
-	VisibilityModifierPubScope = 384,
-	VisibilityModifierPub = 385,
-	FunctionTypeTraitForm = 386,
-	FunctionTypeFnForm = 387,
-	ModItemExternal = 388,
-	ModItemInline = 389,
-	OrPatternBinary = 390,
-	OrPatternPrefix = 391,
-	PointerTypeConst = 392,
-	PointerTypeMut = 393,
-	RangeExpressionBinary = 394,
-	RangeExpressionPostfix = 395,
-	RangeExpressionPrefix = 396,
-	ExpressionStatementWithSemi = 397,
-	ForeignModItemSemi = 398,
-	ForeignModItemBody = 399,
-	MatchArmWithComma = 400,
-	MatchArmBlockEnding = 401,
-	LineCommentExtraSlashes = 402,
-	LineCommentDocOuter = 403,
-	LineCommentDocInner = 404,
-	BlockCommentDocOuter = 405,
-	BlockCommentDocInner = 406,
-	TokenTreePatternParen = 407,
-	TokenTreePatternBracket = 408,
-	TokenTreePatternBrace = 409,
-	TokenTreeParen = 410,
-	TokenTreeBracket = 411,
-	TokenTreeBrace = 412,
-	DelimTokenTreeParen = 413,
-	DelimTokenTreeBracket = 414,
-	DelimTokenTreeBrace = 415,
-	FieldPatternShorthand = 416,
-	FieldPatternNamed = 417,
-	MacroDefinitionParen = 418,
-	MacroDefinitionBracket = 419,
-	MacroDefinitionBrace = 420,
-	RangePatternPrefix = 421,
-	RangePatternWithLeftWithRight = 422,
-	RangePatternWithLeftBare = 423,
-	RangePatternWithLeft = 424,
-	StructItemBrace = 425,
-	StructItemTuple = 426,
-	StructItemUnit = 427,
-	WildcardPattern = 428,
-	AttributedFieldDeclaration = 429,
-	AttributedEnumVariant = 430,
-	AttributedParameter = 431,
-	AttributedTypeParameter = 432,
-	AttributedArgument = 433,
-	AttributedOrderedField = 434,
-	TypeArgument = 435,
-	MatchBlockArms = 436,
-	SourceFileRepeat1 = 437,
-	TokenRepetitionPatternRepeat1 = 438,
-	TokenRepetitionRepeat1 = 439,
-	DeclarationListRepeat1 = 440,
-	FunctionModifiersRepeat1 = 441,
-	TraitBoundsRepeat1 = 442,
-	TupleExpressionRepeat1 = 443,
-	LastMatchArmRepeat1 = 444,
-	StringLiteralRepeat1 = 445,
-	MacroRulesRepeat1 = 446,
-	EnumVariantListElementsRepeat1 = 447,
-	FieldDeclarationListElementsRepeat1 = 448,
-	OrderedFieldDeclarationListElementsRepeat1 = 449,
-	WherePredicatesRepeat1 = 450,
-	TypeParametersElementsRepeat1 = 451,
-	UseClausesRepeat1 = 452,
-	ParametersElementsRepeat1 = 453,
-	LifetimesRepeat1 = 454,
-	UseBoundsElementsRepeat1 = 455,
-	TypeArgumentsElementsRepeat1 = 456,
-	ArgumentsElementsRepeat1 = 457,
-	FieldInitializerListElementsRepeat1 = 458,
-	_ClosureParametersOptional1Repeat1 = 459,
-	TuplePatternElementsRepeat1 = 460,
-	PatternsRepeat1 = 461,
-	StructPatternElementsRepeat1 = 462,
-	_TupleTypeElementsRepeat1 = 463,
-	_TupleExpressionElementsRepeat1 = 464,
-	DelimTokenTreeParenRepeat1 = 465,
-	_MatchBlockArmsRepeat1 = 466,
-	FieldIdentifier = 467,
-	ShorthandFieldIdentifier = 469,
-	TypeIdentifier = 470
+	CharLiteralPlain = 142,
+	CharLiteralEmpty = 143,
+	CharLiteralEscapedSimple = 144,
+	CharLiteralEscapedUnicodeFixed = 145,
+	CharLiteralEscapedUnicodeBraced = 146,
+	CharLiteralEscapedHex = 147,
+	EscapeSequenceSimple = 148,
+	EscapeSequenceUnicodeFixed = 149,
+	EscapeSequenceUnicodeBraced = 150,
+	EscapeSequenceHex = 151,
+	RawKeyword = 152,
+	StringOpen = 153,
+	LineCommentExtraSlashesToken1 = 154,
+	LineCommentExtraSlashesToken2 = 155,
+	LineCommentRegular = 156,
+	MacroRulesBang = 157,
+	StringContent = 158,
+	RawStringLiteralStart = 159,
+	RawStringLiteralContent = 160,
+	RawStringLiteralEnd = 161,
+	FloatLiteral = 162,
+	OuterDocCommentMarker = 163,
+	InnerDocCommentMarker = 164,
+	BlockCommentContent = 165,
+	DocComment = 166,
+	ErrorSentinel = 167,
+	Tight = 168,
+	Space = 169,
+	Tab = 170,
+	Newline = 171,
+	Blankline = 172,
+	DoubleBlankline = 173,
+	Indent = 174,
+	Dedent = 175,
+	SourceFile = 176,
+	Statement = 177,
+	EmptyStatement = 178,
+	ExpressionStatement = 179,
+	MacroDefinition = 180,
+	MacroRule = 181,
+	TokenPattern = 182,
+	TokenTreePattern = 183,
+	TokenBindingPattern = 184,
+	TokenRepetitionPattern = 185,
+	FragmentSpecifier = 186,
+	TokenTree = 187,
+	TokenRepetition = 188,
+	NonSpecialToken = 189,
+	AttributeItem = 190,
+	InnerAttributeItem = 191,
+	Attribute = 192,
+	ModItem = 193,
+	ForeignModItem = 194,
+	DeclarationList = 195,
+	StructItem = 196,
+	UnionItem = 197,
+	EnumItem = 198,
+	EnumVariantList = 199,
+	EnumVariant = 200,
+	FieldDeclarationList = 201,
+	FieldDeclaration = 202,
+	OrderedFieldDeclarationList = 203,
+	ExternCrateDeclaration = 204,
+	ConstItem = 205,
+	StaticItem = 206,
+	TypeItem = 207,
+	FunctionItem = 208,
+	FunctionSignatureItem = 209,
+	FunctionModifiers = 210,
+	WhereClause = 211,
+	WherePredicate = 212,
+	ImplItem = 213,
+	TraitItem = 214,
+	AssociatedType = 215,
+	TraitBounds = 216,
+	HigherRankedTraitBound = 217,
+	RemovedTraitBound = 218,
+	TypeParameters = 219,
+	ConstParameter = 220,
+	TypeParameter = 221,
+	LifetimeParameter = 222,
+	LetDeclaration = 223,
+	UseDeclaration = 224,
+	UseClause = 225,
+	ScopedUseList = 226,
+	UseList = 227,
+	UseAsClause = 228,
+	UseWildcard = 229,
+	Parameters = 230,
+	SelfParameter = 231,
+	VariadicParameter = 232,
+	Parameter = 233,
+	ExternModifier = 234,
+	VisibilityModifier = 235,
+	Type = 236,
+	BracketedType = 237,
+	QualifiedType = 238,
+	Lifetime = 239,
+	ArrayType = 240,
+	ForLifetimes = 241,
+	FunctionType = 242,
+	TupleType = 243,
+	UnitType = 244,
+	GenericFunction = 245,
+	GenericType = 246,
+	GenericTypeWithTurbofish = 247,
+	BoundedType = 248,
+	UseBounds = 249,
+	TypeArguments = 250,
+	TypeBinding = 251,
+	ReferenceType = 252,
+	PointerType = 253,
+	NeverType = 254,
+	AbstractType = 255,
+	DynamicType = 256,
+	ExpressionExceptRange = 257,
+	Expression = 258,
+	MacroInvocation = 259,
+	DelimTokenTree = 260,
+	DelimTokens = 261,
+	NonDelimToken = 262,
+	ScopedIdentifier = 263,
+	ScopedTypeIdentifierInExpressionPosition = 264,
+	ScopedTypeIdentifier = 265,
+	RangeExpression = 266,
+	UnaryExpression = 267,
+	TryExpression = 268,
+	ReferenceExpression = 269,
+	BinaryExpression = 270,
+	AssignmentExpression = 271,
+	CompoundAssignmentExpr = 272,
+	TypeCastExpression = 273,
+	ReturnExpression = 274,
+	YieldExpression = 275,
+	CallExpression = 276,
+	Arguments = 277,
+	ArrayExpression = 278,
+	ParenthesizedExpression = 279,
+	TupleExpression = 280,
+	UnitExpression = 281,
+	StructExpression = 282,
+	FieldInitializerList = 283,
+	ShorthandFieldInitializer = 284,
+	FieldInitializer = 285,
+	BaseFieldInitializer = 286,
+	IfExpression = 287,
+	LetCondition = 288,
+	LetChain = 289,
+	Condition = 290,
+	ElseClause = 291,
+	MatchExpression = 292,
+	MatchBlock = 293,
+	MatchArm = 294,
+	LastMatchArm = 295,
+	MatchPattern = 296,
+	WhileExpression = 297,
+	LoopExpression = 298,
+	ForExpression = 299,
+	ConstBlock = 300,
+	ClosureExpression = 301,
+	ClosureParameters = 302,
+	Label = 303,
+	BreakExpression = 304,
+	ContinueExpression = 305,
+	IndexExpression = 306,
+	AwaitExpression = 307,
+	FieldExpression = 308,
+	UnsafeBlock = 309,
+	AsyncBlock = 310,
+	GenBlock = 311,
+	TryBlock = 312,
+	Block = 313,
+	Pattern = 314,
+	GenericPattern = 315,
+	TuplePattern = 316,
+	SlicePattern = 317,
+	TupleStructPattern = 318,
+	StructPattern = 319,
+	FieldPattern = 320,
+	RemainingFieldPattern = 321,
+	MutPattern = 322,
+	RangePattern = 323,
+	RefPattern = 324,
+	CapturedPattern = 325,
+	ReferencePattern = 326,
+	OrPattern = 327,
+	Literal = 328,
+	LiteralPattern = 329,
+	NegativeLiteral = 330,
+	IntegerLiteral = 331,
+	StringLiteral = 332,
+	RawStringLiteral = 333,
+	CharLiteral = 334,
+	EscapeSequence = 335,
+	BooleanLiteral = 336,
+	LineComment = 337,
+	InnerLineDocCommentMarker = 338,
+	OuterLineDocCommentMarker = 339,
+	BlockComment = 340,
+	PrimitiveType = 341,
+	KwRefMarker = 342,
+	KwUnsafeMarker = 343,
+	KwStaticMarker = 344,
+	KwAsyncMarker = 345,
+	KwMoveMarker = 346,
+	MacroRules = 347,
+	EnumVariantListElements = 348,
+	FieldDeclarationListElements = 349,
+	OrderedFieldDeclarationListElements = 350,
+	WherePredicates = 351,
+	TypeParametersElements = 352,
+	UseClauses = 353,
+	ParametersElements = 354,
+	Lifetimes = 355,
+	UseBoundsElements = 356,
+	TypeArgumentsElements = 357,
+	ArgumentsElements = 358,
+	FieldInitializerListElements = 359,
+	TuplePatternElements = 360,
+	Patterns = 361,
+	StructPatternElements = 362,
+	UseWildcardGroup = 363,
+	KwAsync = 364,
+	KwDefault = 365,
+	KwConst = 366,
+	KwUnsafe = 367,
+	TupleTypeElements = 368,
+	TupleExpressionElements = 369,
+	TokenTreePunctuation = 370,
+	TokenKeywords = 371,
+	RangeExpressionBare = 372,
+	ImplItemUnsafeMarker = 373,
+	CharLiteralEscaped = 374,
+	ArrayExpressionSemi = 375,
+	ArrayExpressionList = 376,
+	AttributeInput = 377,
+	ClosureExpressionBlock = 378,
+	ClosureExpressionExpr = 379,
+	ReferenceExpressionRawConst = 380,
+	ReferenceExpressionRawMut = 381,
+	ReferenceExpressionMut = 382,
+	ReferenceExpressionBare = 383,
+	ImplItemPositiveClause = 384,
+	ImplItemNegativeClause = 385,
+	ImplItemBody = 386,
+	ImplItemSemi = 387,
+	VisibilityModifierPubScopeInPath = 388,
+	VisibilityModifierPubScope = 389,
+	VisibilityModifierPub = 390,
+	FunctionTypeTraitForm = 391,
+	FunctionTypeFnForm = 392,
+	ModItemExternal = 393,
+	ModItemInline = 394,
+	OrPatternBinary = 395,
+	OrPatternPrefix = 396,
+	PointerTypeConst = 397,
+	PointerTypeMut = 398,
+	RangeExpressionBinary = 399,
+	RangeExpressionPostfix = 400,
+	RangeExpressionPrefix = 401,
+	ExpressionStatementWithSemi = 402,
+	ForeignModItemSemi = 403,
+	ForeignModItemBody = 404,
+	MatchArmWithComma = 405,
+	MatchArmBlockEnding = 406,
+	LineCommentExtraSlashes = 407,
+	LineCommentDocOuter = 408,
+	LineCommentDocInner = 409,
+	BlockCommentDocOuter = 410,
+	BlockCommentDocInner = 411,
+	TokenTreePatternParen = 412,
+	TokenTreePatternBracket = 413,
+	TokenTreePatternBrace = 414,
+	TokenTreeParen = 415,
+	TokenTreeBracket = 416,
+	TokenTreeBrace = 417,
+	DelimTokenTreeParen = 418,
+	DelimTokenTreeBracket = 419,
+	DelimTokenTreeBrace = 420,
+	FieldPatternShorthand = 421,
+	FieldPatternNamed = 422,
+	MacroDefinitionParen = 423,
+	MacroDefinitionBracket = 424,
+	MacroDefinitionBrace = 425,
+	RangePatternPrefix = 426,
+	RangePatternWithLeftWithRight = 427,
+	RangePatternWithLeftBare = 428,
+	RangePatternWithLeft = 429,
+	StructItemBrace = 430,
+	StructItemTuple = 431,
+	StructItemUnit = 432,
+	WildcardPattern = 433,
+	AttributedFieldDeclaration = 434,
+	AttributedEnumVariant = 435,
+	AttributedParameter = 436,
+	AttributedTypeParameter = 437,
+	AttributedArgument = 438,
+	AttributedOrderedField = 439,
+	TypeArgument = 440,
+	MatchBlockArms = 441,
+	SourceFileRepeat1 = 442,
+	TokenRepetitionPatternRepeat1 = 443,
+	TokenRepetitionRepeat1 = 444,
+	DeclarationListRepeat1 = 445,
+	FunctionModifiersRepeat1 = 446,
+	TraitBoundsRepeat1 = 447,
+	TupleExpressionRepeat1 = 448,
+	LastMatchArmRepeat1 = 449,
+	StringLiteralRepeat1 = 450,
+	MacroRulesRepeat1 = 451,
+	EnumVariantListElementsRepeat1 = 452,
+	FieldDeclarationListElementsRepeat1 = 453,
+	OrderedFieldDeclarationListElementsRepeat1 = 454,
+	WherePredicatesRepeat1 = 455,
+	TypeParametersElementsRepeat1 = 456,
+	UseClausesRepeat1 = 457,
+	ParametersElementsRepeat1 = 458,
+	LifetimesRepeat1 = 459,
+	UseBoundsElementsRepeat1 = 460,
+	TypeArgumentsElementsRepeat1 = 461,
+	ArgumentsElementsRepeat1 = 462,
+	FieldInitializerListElementsRepeat1 = 463,
+	_ClosureParametersOptional1Repeat1 = 464,
+	TuplePatternElementsRepeat1 = 465,
+	PatternsRepeat1 = 466,
+	StructPatternElementsRepeat1 = 467,
+	_TupleTypeElementsRepeat1 = 468,
+	_TupleExpressionElementsRepeat1 = 469,
+	DelimTokenTreeParenRepeat1 = 470,
+	_MatchBlockArmsRepeat1 = 471,
+	FieldIdentifier = 472,
+	ShorthandFieldIdentifier = 474,
+	TypeIdentifier = 475
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -866,335 +872,340 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[139, 'integer_literal_hex'],
 	[140, 'integer_literal_binary'],
 	[141, 'integer_literal_octal'],
-	[142, 'char_literal_escaped'],
-	[143, 'char_literal_plain'],
-	[144, 'char_literal_empty'],
-	[145, 'escape_sequence_simple'],
-	[146, 'escape_sequence_unicode_fixed'],
-	[147, 'escape_sequence_unicode_braced'],
-	[148, 'escape_sequence_hex'],
-	[149, 'raw_keyword'],
-	[150, 'string_open'],
-	[151, 'line_comment_extra_slashes_token1'],
-	[152, 'line_comment_extra_slashes_token2'],
-	[153, 'line_comment_regular'],
-	[154, 'macro_rules_bang'],
-	[155, 'string_content'],
-	[156, 'raw_string_literal_start'],
-	[157, 'raw_string_literal_content'],
-	[158, 'raw_string_literal_end'],
-	[159, 'float_literal'],
-	[160, 'outer_doc_comment_marker'],
-	[161, 'inner_doc_comment_marker'],
-	[162, '_block_comment_content'],
-	[163, 'doc_comment'],
-	[164, '_error_sentinel'],
-	[165, '_tight'],
-	[166, '_space'],
-	[167, '_newline'],
-	[168, '_blankline'],
-	[169, '_double_blankline'],
-	[170, '_indent'],
-	[171, '_dedent'],
-	[172, 'source_file'],
-	[173, '_statement'],
-	[174, 'empty_statement'],
-	[175, 'expression_statement'],
-	[176, 'macro_definition'],
-	[177, 'macro_rule'],
-	[178, '_token_pattern'],
-	[179, 'token_tree_pattern'],
-	[180, 'token_binding_pattern'],
-	[181, 'token_repetition_pattern'],
-	[182, 'fragment_specifier'],
-	[183, 'token_tree'],
-	[184, 'token_repetition'],
-	[185, 'non_special_token'],
-	[186, 'attribute_item'],
-	[187, 'inner_attribute_item'],
-	[188, 'attribute'],
-	[189, 'mod_item'],
-	[190, 'foreign_mod_item'],
-	[191, 'declaration_list'],
-	[192, 'struct_item'],
-	[193, 'union_item'],
-	[194, 'enum_item'],
-	[195, 'enum_variant_list'],
-	[196, 'enum_variant'],
-	[197, 'field_declaration_list'],
-	[198, 'field_declaration'],
-	[199, 'ordered_field_declaration_list'],
-	[200, 'extern_crate_declaration'],
-	[201, 'const_item'],
-	[202, 'static_item'],
-	[203, 'type_item'],
-	[204, 'function_item'],
-	[205, 'function_signature_item'],
-	[206, 'function_modifiers'],
-	[207, 'where_clause'],
-	[208, 'where_predicate'],
-	[209, 'impl_item'],
-	[210, 'trait_item'],
-	[211, 'associated_type'],
-	[212, 'trait_bounds'],
-	[213, 'higher_ranked_trait_bound'],
-	[214, 'removed_trait_bound'],
-	[215, 'type_parameters'],
-	[216, 'const_parameter'],
-	[217, 'type_parameter'],
-	[218, 'lifetime_parameter'],
-	[219, 'let_declaration'],
-	[220, 'use_declaration'],
-	[221, '_use_clause'],
-	[222, 'scoped_use_list'],
-	[223, 'use_list'],
-	[224, 'use_as_clause'],
-	[225, 'use_wildcard'],
-	[226, 'parameters'],
-	[227, 'self_parameter'],
-	[228, 'variadic_parameter'],
-	[229, 'parameter'],
-	[230, 'extern_modifier'],
-	[231, 'visibility_modifier'],
-	[232, '_type'],
-	[233, 'bracketed_type'],
-	[234, 'qualified_type'],
-	[235, 'lifetime'],
-	[236, 'array_type'],
-	[237, 'for_lifetimes'],
-	[238, 'function_type'],
-	[239, 'tuple_type'],
-	[240, 'unit_type'],
-	[241, 'generic_function'],
-	[242, 'generic_type'],
-	[243, 'generic_type_with_turbofish'],
-	[244, 'bounded_type'],
-	[245, 'use_bounds'],
-	[246, 'type_arguments'],
-	[247, 'type_binding'],
-	[248, 'reference_type'],
-	[249, 'pointer_type'],
-	[250, 'never_type'],
-	[251, 'abstract_type'],
-	[252, 'dynamic_type'],
-	[253, '_expression_except_range'],
-	[254, '_expression'],
-	[255, 'macro_invocation'],
-	[256, 'delim_token_tree'],
-	[257, '_delim_tokens'],
-	[258, '_non_delim_token'],
-	[259, 'scoped_identifier'],
-	[260, 'scoped_type_identifier_in_expression_position'],
-	[261, 'scoped_type_identifier'],
-	[262, 'range_expression'],
-	[263, 'unary_expression'],
-	[264, 'try_expression'],
-	[265, 'reference_expression'],
-	[266, 'binary_expression'],
-	[267, 'assignment_expression'],
-	[268, 'compound_assignment_expr'],
-	[269, 'type_cast_expression'],
-	[270, 'return_expression'],
-	[271, 'yield_expression'],
-	[272, 'call_expression'],
-	[273, 'arguments'],
-	[274, 'array_expression'],
-	[275, 'parenthesized_expression'],
-	[276, 'tuple_expression'],
-	[277, 'unit_expression'],
-	[278, 'struct_expression'],
-	[279, 'field_initializer_list'],
-	[280, 'shorthand_field_initializer'],
-	[281, 'field_initializer'],
-	[282, 'base_field_initializer'],
-	[283, 'if_expression'],
-	[284, 'let_condition'],
-	[285, '_let_chain'],
-	[468, '_let_chain'],
-	[286, '_condition'],
-	[287, 'else_clause'],
-	[288, 'match_expression'],
-	[289, 'match_block'],
-	[290, 'match_arm'],
-	[291, 'last_match_arm'],
-	[292, 'match_pattern'],
-	[293, 'while_expression'],
-	[294, 'loop_expression'],
-	[295, 'for_expression'],
-	[296, 'const_block'],
-	[297, 'closure_expression'],
-	[298, 'closure_parameters'],
-	[299, 'label'],
-	[300, 'break_expression'],
-	[301, 'continue_expression'],
-	[302, 'index_expression'],
-	[303, 'await_expression'],
-	[304, 'field_expression'],
-	[305, 'unsafe_block'],
-	[306, 'async_block'],
-	[307, 'gen_block'],
-	[308, 'try_block'],
-	[309, 'block'],
-	[310, '_pattern'],
-	[311, 'generic_pattern'],
-	[312, 'tuple_pattern'],
-	[313, 'slice_pattern'],
-	[314, 'tuple_struct_pattern'],
-	[315, 'struct_pattern'],
-	[316, 'field_pattern'],
-	[317, 'remaining_field_pattern'],
-	[318, 'mut_pattern'],
-	[319, 'range_pattern'],
-	[320, 'ref_pattern'],
-	[321, 'captured_pattern'],
-	[322, 'reference_pattern'],
-	[323, 'or_pattern'],
-	[324, '_literal'],
-	[325, '_literal_pattern'],
-	[326, 'negative_literal'],
-	[327, 'integer_literal'],
-	[328, 'string_literal'],
-	[329, 'raw_string_literal'],
-	[330, 'char_literal'],
-	[331, 'escape_sequence'],
-	[332, 'boolean_literal'],
-	[333, 'line_comment'],
-	[334, 'inner_line_doc_comment_marker'],
-	[335, 'outer_line_doc_comment_marker'],
-	[336, 'block_comment'],
-	[337, 'primitive_type'],
-	[338, '_kw_ref_marker'],
-	[339, '_kw_unsafe_marker'],
-	[340, '_kw_static_marker'],
-	[341, '_kw_async_marker'],
-	[342, '_kw_move_marker'],
-	[343, 'macro_rules'],
-	[344, 'enum_variant_list_elements'],
-	[345, 'field_declaration_list_elements'],
-	[346, 'ordered_field_declaration_list_elements'],
-	[347, 'where_predicates'],
-	[348, 'type_parameters_elements'],
-	[349, 'use_clauses'],
-	[350, 'parameters_elements'],
-	[351, 'lifetimes'],
-	[352, 'use_bounds_elements'],
-	[353, 'type_arguments_elements'],
-	[354, 'arguments_elements'],
-	[355, 'field_initializer_list_elements'],
-	[356, 'tuple_pattern_elements'],
-	[357, 'patterns'],
-	[358, 'struct_pattern_elements'],
-	[359, 'use_wildcard_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, 'tuple_type_elements'],
-	[365, 'tuple_expression_elements'],
-	[366, 'token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, 'range_expression_bare'],
-	[369, '_impl_item_unsafe_marker'],
-	[370, 'array_expression_semi'],
-	[371, 'array_expression_list'],
-	[372, 'attribute_input'],
-	[373, 'closure_expression_block'],
-	[374, 'closure_expression_expr'],
-	[375, 'reference_expression_raw_const'],
-	[376, 'reference_expression_raw_mut'],
-	[377, 'reference_expression_mut'],
-	[378, 'reference_expression_bare'],
-	[379, 'impl_item_positive_clause'],
-	[380, 'impl_item_negative_clause'],
-	[381, 'impl_item_body'],
-	[382, 'impl_item_semi'],
-	[383, 'visibility_modifier_pub_scope_in_path'],
-	[384, 'visibility_modifier_pub_scope'],
-	[385, 'visibility_modifier_pub'],
-	[386, 'function_type_trait_form'],
-	[387, 'function_type_fn_form'],
-	[388, 'mod_item_external'],
-	[389, 'mod_item_inline'],
-	[390, 'or_pattern_binary'],
-	[391, 'or_pattern_prefix'],
-	[392, 'pointer_type_const'],
-	[393, 'pointer_type_mut'],
-	[394, 'range_expression_binary'],
-	[395, 'range_expression_postfix'],
-	[396, 'range_expression_prefix'],
-	[397, 'expression_statement_with_semi'],
-	[398, 'foreign_mod_item_semi'],
-	[399, 'foreign_mod_item_body'],
-	[400, 'match_arm_with_comma'],
-	[401, 'match_arm_block_ending'],
-	[402, 'line_comment_extra_slashes'],
-	[403, 'line_comment_doc_outer'],
-	[404, 'line_comment_doc_inner'],
-	[405, 'block_comment_doc_outer'],
-	[406, 'block_comment_doc_inner'],
-	[407, 'token_tree_pattern_paren'],
-	[408, 'token_tree_pattern_bracket'],
-	[409, 'token_tree_pattern_brace'],
-	[410, 'token_tree_paren'],
-	[411, 'token_tree_bracket'],
-	[412, 'token_tree_brace'],
-	[413, 'delim_token_tree_paren'],
-	[414, 'delim_token_tree_bracket'],
-	[415, 'delim_token_tree_brace'],
-	[416, 'field_pattern_shorthand'],
-	[417, 'field_pattern_named'],
-	[418, 'macro_definition_paren'],
-	[419, 'macro_definition_bracket'],
-	[420, 'macro_definition_brace'],
-	[421, 'range_pattern_prefix'],
-	[422, 'range_pattern_with_left_with_right'],
-	[423, 'range_pattern_with_left_bare'],
-	[424, 'range_pattern_with_left'],
-	[425, 'struct_item_brace'],
-	[426, 'struct_item_tuple'],
-	[427, 'struct_item_unit'],
-	[428, 'wildcard_pattern'],
-	[429, 'attributed_field_declaration'],
-	[430, 'attributed_enum_variant'],
-	[431, 'attributed_parameter'],
-	[432, 'attributed_type_parameter'],
-	[433, 'attributed_argument'],
-	[434, 'attributed_ordered_field'],
-	[435, 'type_argument'],
-	[436, 'match_block_arms'],
-	[437, 'source_file_repeat1'],
-	[438, 'token_repetition_pattern_repeat1'],
-	[439, 'token_repetition_repeat1'],
-	[440, 'declaration_list_repeat1'],
-	[441, 'function_modifiers_repeat1'],
-	[442, 'trait_bounds_repeat1'],
-	[443, 'tuple_expression_repeat1'],
-	[444, 'last_match_arm_repeat1'],
-	[445, 'string_literal_repeat1'],
-	[446, 'macro_rules_repeat1'],
-	[447, 'enum_variant_list_elements_repeat1'],
-	[448, 'field_declaration_list_elements_repeat1'],
-	[449, 'ordered_field_declaration_list_elements_repeat1'],
-	[450, 'where_predicates_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'use_clauses_repeat1'],
-	[453, 'parameters_elements_repeat1'],
-	[454, 'lifetimes_repeat1'],
-	[455, 'use_bounds_elements_repeat1'],
-	[456, 'type_arguments_elements_repeat1'],
-	[457, 'arguments_elements_repeat1'],
-	[458, 'field_initializer_list_elements_repeat1'],
-	[459, '_closure_parameters_optional1_repeat1'],
-	[460, 'tuple_pattern_elements_repeat1'],
-	[461, 'patterns_repeat1'],
-	[462, 'struct_pattern_elements_repeat1'],
-	[463, '_tuple_type_elements_repeat1'],
-	[464, '_tuple_expression_elements_repeat1'],
-	[465, 'delim_token_tree_paren_repeat1'],
-	[466, '_match_block_arms_repeat1'],
-	[467, 'field_identifier'],
-	[469, 'shorthand_field_identifier'],
-	[470, 'type_identifier']
+	[142, 'char_literal_plain'],
+	[143, 'char_literal_empty'],
+	[144, 'char_literal_escaped_simple'],
+	[145, 'char_literal_escaped_unicode_fixed'],
+	[146, 'char_literal_escaped_unicode_braced'],
+	[147, 'char_literal_escaped_hex'],
+	[148, 'escape_sequence_simple'],
+	[149, 'escape_sequence_unicode_fixed'],
+	[150, 'escape_sequence_unicode_braced'],
+	[151, 'escape_sequence_hex'],
+	[152, 'raw_keyword'],
+	[153, 'string_open'],
+	[154, 'line_comment_extra_slashes_token1'],
+	[155, 'line_comment_extra_slashes_token2'],
+	[156, 'line_comment_regular'],
+	[157, 'macro_rules_bang'],
+	[158, 'string_content'],
+	[159, 'raw_string_literal_start'],
+	[160, 'raw_string_literal_content'],
+	[161, 'raw_string_literal_end'],
+	[162, 'float_literal'],
+	[163, 'outer_doc_comment_marker'],
+	[164, 'inner_doc_comment_marker'],
+	[165, '_block_comment_content'],
+	[166, 'doc_comment'],
+	[167, '_error_sentinel'],
+	[168, '_tight'],
+	[169, '_space'],
+	[170, '_tab'],
+	[171, '_newline'],
+	[172, '_blankline'],
+	[173, '_double_blankline'],
+	[174, '_indent'],
+	[175, '_dedent'],
+	[176, 'source_file'],
+	[177, '_statement'],
+	[178, 'empty_statement'],
+	[179, 'expression_statement'],
+	[180, 'macro_definition'],
+	[181, 'macro_rule'],
+	[182, '_token_pattern'],
+	[183, 'token_tree_pattern'],
+	[184, 'token_binding_pattern'],
+	[185, 'token_repetition_pattern'],
+	[186, 'fragment_specifier'],
+	[187, 'token_tree'],
+	[188, 'token_repetition'],
+	[189, 'non_special_token'],
+	[190, 'attribute_item'],
+	[191, 'inner_attribute_item'],
+	[192, 'attribute'],
+	[193, 'mod_item'],
+	[194, 'foreign_mod_item'],
+	[195, 'declaration_list'],
+	[196, 'struct_item'],
+	[197, 'union_item'],
+	[198, 'enum_item'],
+	[199, 'enum_variant_list'],
+	[200, 'enum_variant'],
+	[201, 'field_declaration_list'],
+	[202, 'field_declaration'],
+	[203, 'ordered_field_declaration_list'],
+	[204, 'extern_crate_declaration'],
+	[205, 'const_item'],
+	[206, 'static_item'],
+	[207, 'type_item'],
+	[208, 'function_item'],
+	[209, 'function_signature_item'],
+	[210, 'function_modifiers'],
+	[211, 'where_clause'],
+	[212, 'where_predicate'],
+	[213, 'impl_item'],
+	[214, 'trait_item'],
+	[215, 'associated_type'],
+	[216, 'trait_bounds'],
+	[217, 'higher_ranked_trait_bound'],
+	[218, 'removed_trait_bound'],
+	[219, 'type_parameters'],
+	[220, 'const_parameter'],
+	[221, 'type_parameter'],
+	[222, 'lifetime_parameter'],
+	[223, 'let_declaration'],
+	[224, 'use_declaration'],
+	[225, '_use_clause'],
+	[226, 'scoped_use_list'],
+	[227, 'use_list'],
+	[228, 'use_as_clause'],
+	[229, 'use_wildcard'],
+	[230, 'parameters'],
+	[231, 'self_parameter'],
+	[232, 'variadic_parameter'],
+	[233, 'parameter'],
+	[234, 'extern_modifier'],
+	[235, 'visibility_modifier'],
+	[236, '_type'],
+	[237, 'bracketed_type'],
+	[238, 'qualified_type'],
+	[239, 'lifetime'],
+	[240, 'array_type'],
+	[241, 'for_lifetimes'],
+	[242, 'function_type'],
+	[243, 'tuple_type'],
+	[244, 'unit_type'],
+	[245, 'generic_function'],
+	[246, 'generic_type'],
+	[247, 'generic_type_with_turbofish'],
+	[248, 'bounded_type'],
+	[249, 'use_bounds'],
+	[250, 'type_arguments'],
+	[251, 'type_binding'],
+	[252, 'reference_type'],
+	[253, 'pointer_type'],
+	[254, 'never_type'],
+	[255, 'abstract_type'],
+	[256, 'dynamic_type'],
+	[257, '_expression_except_range'],
+	[258, '_expression'],
+	[259, 'macro_invocation'],
+	[260, 'delim_token_tree'],
+	[261, '_delim_tokens'],
+	[262, '_non_delim_token'],
+	[263, 'scoped_identifier'],
+	[264, 'scoped_type_identifier_in_expression_position'],
+	[265, 'scoped_type_identifier'],
+	[266, 'range_expression'],
+	[267, 'unary_expression'],
+	[268, 'try_expression'],
+	[269, 'reference_expression'],
+	[270, 'binary_expression'],
+	[271, 'assignment_expression'],
+	[272, 'compound_assignment_expr'],
+	[273, 'type_cast_expression'],
+	[274, 'return_expression'],
+	[275, 'yield_expression'],
+	[276, 'call_expression'],
+	[277, 'arguments'],
+	[278, 'array_expression'],
+	[279, 'parenthesized_expression'],
+	[280, 'tuple_expression'],
+	[281, 'unit_expression'],
+	[282, 'struct_expression'],
+	[283, 'field_initializer_list'],
+	[284, 'shorthand_field_initializer'],
+	[285, 'field_initializer'],
+	[286, 'base_field_initializer'],
+	[287, 'if_expression'],
+	[288, 'let_condition'],
+	[289, '_let_chain'],
+	[473, '_let_chain'],
+	[290, '_condition'],
+	[291, 'else_clause'],
+	[292, 'match_expression'],
+	[293, 'match_block'],
+	[294, 'match_arm'],
+	[295, 'last_match_arm'],
+	[296, 'match_pattern'],
+	[297, 'while_expression'],
+	[298, 'loop_expression'],
+	[299, 'for_expression'],
+	[300, 'const_block'],
+	[301, 'closure_expression'],
+	[302, 'closure_parameters'],
+	[303, 'label'],
+	[304, 'break_expression'],
+	[305, 'continue_expression'],
+	[306, 'index_expression'],
+	[307, 'await_expression'],
+	[308, 'field_expression'],
+	[309, 'unsafe_block'],
+	[310, 'async_block'],
+	[311, 'gen_block'],
+	[312, 'try_block'],
+	[313, 'block'],
+	[314, '_pattern'],
+	[315, 'generic_pattern'],
+	[316, 'tuple_pattern'],
+	[317, 'slice_pattern'],
+	[318, 'tuple_struct_pattern'],
+	[319, 'struct_pattern'],
+	[320, 'field_pattern'],
+	[321, 'remaining_field_pattern'],
+	[322, 'mut_pattern'],
+	[323, 'range_pattern'],
+	[324, 'ref_pattern'],
+	[325, 'captured_pattern'],
+	[326, 'reference_pattern'],
+	[327, 'or_pattern'],
+	[328, '_literal'],
+	[329, '_literal_pattern'],
+	[330, 'negative_literal'],
+	[331, 'integer_literal'],
+	[332, 'string_literal'],
+	[333, 'raw_string_literal'],
+	[334, 'char_literal'],
+	[335, 'escape_sequence'],
+	[336, 'boolean_literal'],
+	[337, 'line_comment'],
+	[338, 'inner_line_doc_comment_marker'],
+	[339, 'outer_line_doc_comment_marker'],
+	[340, 'block_comment'],
+	[341, 'primitive_type'],
+	[342, '_kw_ref_marker'],
+	[343, '_kw_unsafe_marker'],
+	[344, '_kw_static_marker'],
+	[345, '_kw_async_marker'],
+	[346, '_kw_move_marker'],
+	[347, 'macro_rules'],
+	[348, 'enum_variant_list_elements'],
+	[349, 'field_declaration_list_elements'],
+	[350, 'ordered_field_declaration_list_elements'],
+	[351, 'where_predicates'],
+	[352, 'type_parameters_elements'],
+	[353, 'use_clauses'],
+	[354, 'parameters_elements'],
+	[355, 'lifetimes'],
+	[356, 'use_bounds_elements'],
+	[357, 'type_arguments_elements'],
+	[358, 'arguments_elements'],
+	[359, 'field_initializer_list_elements'],
+	[360, 'tuple_pattern_elements'],
+	[361, 'patterns'],
+	[362, 'struct_pattern_elements'],
+	[363, 'use_wildcard_group'],
+	[364, '_kw_async'],
+	[365, '_kw_default'],
+	[366, '_kw_const'],
+	[367, '_kw_unsafe'],
+	[368, 'tuple_type_elements'],
+	[369, 'tuple_expression_elements'],
+	[370, 'token_tree_punctuation'],
+	[371, '_token_keywords'],
+	[372, 'range_expression_bare'],
+	[373, '_impl_item_unsafe_marker'],
+	[374, 'char_literal_escaped'],
+	[375, 'array_expression_semi'],
+	[376, 'array_expression_list'],
+	[377, 'attribute_input'],
+	[378, 'closure_expression_block'],
+	[379, 'closure_expression_expr'],
+	[380, 'reference_expression_raw_const'],
+	[381, 'reference_expression_raw_mut'],
+	[382, 'reference_expression_mut'],
+	[383, 'reference_expression_bare'],
+	[384, 'impl_item_positive_clause'],
+	[385, 'impl_item_negative_clause'],
+	[386, 'impl_item_body'],
+	[387, 'impl_item_semi'],
+	[388, 'visibility_modifier_pub_scope_in_path'],
+	[389, 'visibility_modifier_pub_scope'],
+	[390, 'visibility_modifier_pub'],
+	[391, 'function_type_trait_form'],
+	[392, 'function_type_fn_form'],
+	[393, 'mod_item_external'],
+	[394, 'mod_item_inline'],
+	[395, 'or_pattern_binary'],
+	[396, 'or_pattern_prefix'],
+	[397, 'pointer_type_const'],
+	[398, 'pointer_type_mut'],
+	[399, 'range_expression_binary'],
+	[400, 'range_expression_postfix'],
+	[401, 'range_expression_prefix'],
+	[402, 'expression_statement_with_semi'],
+	[403, 'foreign_mod_item_semi'],
+	[404, 'foreign_mod_item_body'],
+	[405, 'match_arm_with_comma'],
+	[406, 'match_arm_block_ending'],
+	[407, 'line_comment_extra_slashes'],
+	[408, 'line_comment_doc_outer'],
+	[409, 'line_comment_doc_inner'],
+	[410, 'block_comment_doc_outer'],
+	[411, 'block_comment_doc_inner'],
+	[412, 'token_tree_pattern_paren'],
+	[413, 'token_tree_pattern_bracket'],
+	[414, 'token_tree_pattern_brace'],
+	[415, 'token_tree_paren'],
+	[416, 'token_tree_bracket'],
+	[417, 'token_tree_brace'],
+	[418, 'delim_token_tree_paren'],
+	[419, 'delim_token_tree_bracket'],
+	[420, 'delim_token_tree_brace'],
+	[421, 'field_pattern_shorthand'],
+	[422, 'field_pattern_named'],
+	[423, 'macro_definition_paren'],
+	[424, 'macro_definition_bracket'],
+	[425, 'macro_definition_brace'],
+	[426, 'range_pattern_prefix'],
+	[427, 'range_pattern_with_left_with_right'],
+	[428, 'range_pattern_with_left_bare'],
+	[429, 'range_pattern_with_left'],
+	[430, 'struct_item_brace'],
+	[431, 'struct_item_tuple'],
+	[432, 'struct_item_unit'],
+	[433, 'wildcard_pattern'],
+	[434, 'attributed_field_declaration'],
+	[435, 'attributed_enum_variant'],
+	[436, 'attributed_parameter'],
+	[437, 'attributed_type_parameter'],
+	[438, 'attributed_argument'],
+	[439, 'attributed_ordered_field'],
+	[440, 'type_argument'],
+	[441, 'match_block_arms'],
+	[442, 'source_file_repeat1'],
+	[443, 'token_repetition_pattern_repeat1'],
+	[444, 'token_repetition_repeat1'],
+	[445, 'declaration_list_repeat1'],
+	[446, 'function_modifiers_repeat1'],
+	[447, 'trait_bounds_repeat1'],
+	[448, 'tuple_expression_repeat1'],
+	[449, 'last_match_arm_repeat1'],
+	[450, 'string_literal_repeat1'],
+	[451, 'macro_rules_repeat1'],
+	[452, 'enum_variant_list_elements_repeat1'],
+	[453, 'field_declaration_list_elements_repeat1'],
+	[454, 'ordered_field_declaration_list_elements_repeat1'],
+	[455, 'where_predicates_repeat1'],
+	[456, 'type_parameters_elements_repeat1'],
+	[457, 'use_clauses_repeat1'],
+	[458, 'parameters_elements_repeat1'],
+	[459, 'lifetimes_repeat1'],
+	[460, 'use_bounds_elements_repeat1'],
+	[461, 'type_arguments_elements_repeat1'],
+	[462, 'arguments_elements_repeat1'],
+	[463, 'field_initializer_list_elements_repeat1'],
+	[464, '_closure_parameters_optional1_repeat1'],
+	[465, 'tuple_pattern_elements_repeat1'],
+	[466, 'patterns_repeat1'],
+	[467, 'struct_pattern_elements_repeat1'],
+	[468, '_tuple_type_elements_repeat1'],
+	[469, '_tuple_expression_elements_repeat1'],
+	[470, 'delim_token_tree_paren_repeat1'],
+	[471, '_match_block_arms_repeat1'],
+	[472, 'field_identifier'],
+	[474, 'shorthand_field_identifier'],
+	[475, 'type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1340,335 +1351,340 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[139, 'integer_literal_hex'],
 	[140, 'integer_literal_binary'],
 	[141, 'integer_literal_octal'],
-	[142, 'char_literal_escaped'],
-	[143, 'char_literal_plain'],
-	[144, 'char_literal_empty'],
-	[145, 'escape_sequence_simple'],
-	[146, 'escape_sequence_unicode_fixed'],
-	[147, 'escape_sequence_unicode_braced'],
-	[148, 'escape_sequence_hex'],
-	[149, 'raw'],
-	[150, 'string_open'],
-	[151, 'line_comment_extra_slashes_token1'],
-	[152, 'line_comment_extra_slashes_token2'],
-	[153, 'line_comment_regular'],
-	[154, 'macro_rules!'],
-	[155, 'string_content'],
-	[156, 'raw_string_literal_start'],
-	[157, 'string_content'],
-	[158, 'raw_string_literal_end'],
-	[159, 'float_literal'],
-	[160, 'outer_doc_comment_marker'],
-	[161, 'inner_doc_comment_marker'],
-	[162, '_block_comment_content'],
-	[163, 'doc_comment'],
-	[164, '_error_sentinel'],
-	[165, '_tight'],
-	[166, '_space'],
-	[167, '_newline'],
-	[168, '_blankline'],
-	[169, '_double_blankline'],
-	[170, '_indent'],
-	[171, '_dedent'],
-	[172, 'source_file'],
-	[173, '_statement'],
-	[174, 'empty_statement'],
-	[175, 'expression_statement'],
-	[176, 'macro_definition'],
-	[177, 'macro_rule'],
-	[178, '_token_pattern'],
-	[179, 'token_tree_pattern'],
-	[180, 'token_binding_pattern'],
-	[181, 'token_repetition_pattern'],
-	[182, 'fragment_specifier'],
-	[183, 'token_tree'],
-	[184, 'token_repetition'],
-	[185, 'non_special_token'],
-	[186, 'attribute_item'],
-	[187, 'inner_attribute_item'],
-	[188, 'attribute'],
-	[189, 'mod_item'],
-	[190, 'foreign_mod_item'],
-	[191, 'declaration_list'],
-	[192, 'struct_item'],
-	[193, 'union_item'],
-	[194, 'enum_item'],
-	[195, 'enum_variant_list'],
-	[196, 'enum_variant'],
-	[197, 'field_declaration_list'],
-	[198, 'field_declaration'],
-	[199, 'ordered_field_declaration_list'],
-	[200, 'extern_crate_declaration'],
-	[201, 'const_item'],
-	[202, 'static_item'],
-	[203, 'type_item'],
-	[204, 'function_item'],
-	[205, 'function_signature_item'],
-	[206, 'function_modifiers'],
-	[207, 'where_clause'],
-	[208, 'where_predicate'],
-	[209, 'impl_item'],
-	[210, 'trait_item'],
-	[211, 'associated_type'],
-	[212, 'trait_bounds'],
-	[213, 'higher_ranked_trait_bound'],
-	[214, 'removed_trait_bound'],
-	[215, 'type_parameters'],
-	[216, 'const_parameter'],
-	[217, 'type_parameter'],
-	[218, 'lifetime_parameter'],
-	[219, 'let_declaration'],
-	[220, 'use_declaration'],
-	[221, '_use_clause'],
-	[222, 'scoped_use_list'],
-	[223, 'use_list'],
-	[224, 'use_as_clause'],
-	[225, 'use_wildcard'],
-	[226, 'parameters'],
-	[227, 'self_parameter'],
-	[228, 'variadic_parameter'],
-	[229, 'parameter'],
-	[230, 'extern_modifier'],
-	[231, 'visibility_modifier'],
-	[232, '_type'],
-	[233, 'bracketed_type'],
-	[234, 'qualified_type'],
-	[235, 'lifetime'],
-	[236, 'array_type'],
-	[237, 'for_lifetimes'],
-	[238, 'function_type'],
-	[239, 'tuple_type'],
-	[240, 'unit_type'],
-	[241, 'generic_function'],
-	[242, 'generic_type'],
-	[243, 'generic_type_with_turbofish'],
-	[244, 'bounded_type'],
-	[245, 'use_bounds'],
-	[246, 'type_arguments'],
-	[247, 'type_binding'],
-	[248, 'reference_type'],
-	[249, 'pointer_type'],
-	[250, 'never_type'],
-	[251, 'abstract_type'],
-	[252, 'dynamic_type'],
-	[253, '_expression_except_range'],
-	[254, '_expression'],
-	[255, 'macro_invocation'],
-	[256, 'delim_token_tree'],
-	[257, '_delim_tokens'],
-	[258, '_non_delim_token'],
-	[259, 'scoped_identifier'],
-	[260, 'scoped_type_identifier_in_expression_position'],
-	[261, 'scoped_type_identifier'],
-	[262, 'range_expression'],
-	[263, 'unary_expression'],
-	[264, 'try_expression'],
-	[265, 'reference_expression'],
-	[266, 'binary_expression'],
-	[267, 'assignment_expression'],
-	[268, 'compound_assignment_expr'],
-	[269, 'type_cast_expression'],
-	[270, 'return_expression'],
-	[271, 'yield_expression'],
-	[272, 'call_expression'],
-	[273, 'arguments'],
-	[274, 'array_expression'],
-	[275, 'parenthesized_expression'],
-	[276, 'tuple_expression'],
-	[277, 'unit_expression'],
-	[278, 'struct_expression'],
-	[279, 'field_initializer_list'],
-	[280, 'shorthand_field_initializer'],
-	[281, 'field_initializer'],
-	[282, 'base_field_initializer'],
-	[283, 'if_expression'],
-	[284, 'let_condition'],
-	[285, '_let_chain'],
-	[468, 'let_chain'],
-	[286, '_condition'],
-	[287, 'else_clause'],
-	[288, 'match_expression'],
-	[289, 'match_block'],
-	[290, 'match_arm'],
-	[291, 'last_match_arm'],
-	[292, 'match_pattern'],
-	[293, 'while_expression'],
-	[294, 'loop_expression'],
-	[295, 'for_expression'],
-	[296, 'const_block'],
-	[297, 'closure_expression'],
-	[298, 'closure_parameters'],
-	[299, 'label'],
-	[300, 'break_expression'],
-	[301, 'continue_expression'],
-	[302, 'index_expression'],
-	[303, 'await_expression'],
-	[304, 'field_expression'],
-	[305, 'unsafe_block'],
-	[306, 'async_block'],
-	[307, 'gen_block'],
-	[308, 'try_block'],
-	[309, 'block'],
-	[310, '_pattern'],
-	[311, 'generic_pattern'],
-	[312, 'tuple_pattern'],
-	[313, 'slice_pattern'],
-	[314, 'tuple_struct_pattern'],
-	[315, 'struct_pattern'],
-	[316, 'field_pattern'],
-	[317, 'remaining_field_pattern'],
-	[318, 'mut_pattern'],
-	[319, 'range_pattern'],
-	[320, 'ref_pattern'],
-	[321, 'captured_pattern'],
-	[322, 'reference_pattern'],
-	[323, 'or_pattern'],
-	[324, '_literal'],
-	[325, '_literal_pattern'],
-	[326, 'negative_literal'],
-	[327, 'integer_literal'],
-	[328, 'string_literal'],
-	[329, 'raw_string_literal'],
-	[330, 'char_literal'],
-	[331, 'escape_sequence'],
-	[332, 'boolean_literal'],
-	[333, 'line_comment'],
-	[334, 'inner_line_doc_comment_marker'],
-	[335, 'outer_line_doc_comment_marker'],
-	[336, 'block_comment'],
-	[337, 'primitive_type'],
-	[338, '_kw_ref_marker'],
-	[339, '_kw_unsafe_marker'],
-	[340, '_kw_static_marker'],
-	[341, '_kw_async_marker'],
-	[342, '_kw_move_marker'],
-	[343, 'macro_rules'],
-	[344, 'enum_variant_list_elements'],
-	[345, 'field_declaration_list_elements'],
-	[346, 'ordered_field_declaration_list_elements'],
-	[347, 'where_predicates'],
-	[348, 'type_parameters_elements'],
-	[349, 'use_clauses'],
-	[350, 'parameters_elements'],
-	[351, 'lifetimes'],
-	[352, 'use_bounds_elements'],
-	[353, 'type_arguments_elements'],
-	[354, 'arguments_elements'],
-	[355, 'field_initializer_list_elements'],
-	[356, 'tuple_pattern_elements'],
-	[357, 'patterns'],
-	[358, 'struct_pattern_elements'],
-	[359, 'use_wildcard_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, 'tuple_type_elements'],
-	[365, 'tuple_expression_elements'],
-	[366, 'token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, 'range_expression_bare'],
-	[369, '_impl_item_unsafe_marker'],
-	[370, 'array_expression_semi'],
-	[371, 'array_expression_list'],
-	[372, 'attribute_input'],
-	[373, 'closure_expression_block'],
-	[374, 'closure_expression_expr'],
-	[375, 'reference_expression_raw_const'],
-	[376, 'reference_expression_raw_mut'],
-	[377, 'reference_expression_mut'],
-	[378, 'reference_expression_bare'],
-	[379, 'impl_item_positive_clause'],
-	[380, 'impl_item_negative_clause'],
-	[381, 'impl_item_body'],
-	[382, 'impl_item_semi'],
-	[383, 'visibility_modifier_pub_scope_in_path'],
-	[384, 'visibility_modifier_pub_scope'],
-	[385, 'visibility_modifier_pub'],
-	[386, 'function_type_trait_form'],
-	[387, 'function_type_fn_form'],
-	[388, 'mod_item_external'],
-	[389, 'mod_item_inline'],
-	[390, 'or_pattern_binary'],
-	[391, 'or_pattern_prefix'],
-	[392, 'pointer_type_const'],
-	[393, 'pointer_type_mut'],
-	[394, 'range_expression_binary'],
-	[395, 'range_expression_postfix'],
-	[396, 'range_expression_prefix'],
-	[397, 'expression_statement_with_semi'],
-	[398, 'foreign_mod_item_semi'],
-	[399, 'foreign_mod_item_body'],
-	[400, 'match_arm_with_comma'],
-	[401, 'match_arm_block_ending'],
-	[402, 'line_comment_extra_slashes'],
-	[403, 'line_comment_doc_outer'],
-	[404, 'line_comment_doc_inner'],
-	[405, 'block_comment_doc_outer'],
-	[406, 'block_comment_doc_inner'],
-	[407, 'token_tree_pattern_paren'],
-	[408, 'token_tree_pattern_bracket'],
-	[409, 'token_tree_pattern_brace'],
-	[410, 'token_tree_paren'],
-	[411, 'token_tree_bracket'],
-	[412, 'token_tree_brace'],
-	[413, 'delim_token_tree_paren'],
-	[414, 'delim_token_tree_bracket'],
-	[415, 'delim_token_tree_brace'],
-	[416, 'field_pattern_shorthand'],
-	[417, 'field_pattern_named'],
-	[418, 'macro_definition_paren'],
-	[419, 'macro_definition_bracket'],
-	[420, 'macro_definition_brace'],
-	[421, 'range_pattern_prefix'],
-	[422, 'range_pattern_with_left_with_right'],
-	[423, 'range_pattern_with_left_bare'],
-	[424, 'range_pattern_with_left'],
-	[425, 'struct_item_brace'],
-	[426, 'struct_item_tuple'],
-	[427, 'struct_item_unit'],
-	[428, 'wildcard_pattern'],
-	[429, 'attributed_field_declaration'],
-	[430, 'attributed_enum_variant'],
-	[431, 'attributed_parameter'],
-	[432, 'attributed_type_parameter'],
-	[433, 'attributed_argument'],
-	[434, 'attributed_ordered_field'],
-	[435, 'type_argument'],
-	[436, 'match_block_arms'],
-	[437, 'source_file_repeat1'],
-	[438, 'token_repetition_pattern_repeat1'],
-	[439, 'token_repetition_repeat1'],
-	[440, 'declaration_list_repeat1'],
-	[441, 'function_modifiers_repeat1'],
-	[442, 'trait_bounds_repeat1'],
-	[443, 'tuple_expression_repeat1'],
-	[444, 'last_match_arm_repeat1'],
-	[445, 'string_literal_repeat1'],
-	[446, 'macro_rules_repeat1'],
-	[447, 'enum_variant_list_elements_repeat1'],
-	[448, 'field_declaration_list_elements_repeat1'],
-	[449, 'ordered_field_declaration_list_elements_repeat1'],
-	[450, 'where_predicates_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'use_clauses_repeat1'],
-	[453, 'parameters_elements_repeat1'],
-	[454, 'lifetimes_repeat1'],
-	[455, 'use_bounds_elements_repeat1'],
-	[456, 'type_arguments_elements_repeat1'],
-	[457, 'arguments_elements_repeat1'],
-	[458, 'field_initializer_list_elements_repeat1'],
-	[459, '_closure_parameters_optional1_repeat1'],
-	[460, 'tuple_pattern_elements_repeat1'],
-	[461, 'patterns_repeat1'],
-	[462, 'struct_pattern_elements_repeat1'],
-	[463, '_tuple_type_elements_repeat1'],
-	[464, '_tuple_expression_elements_repeat1'],
-	[465, 'delim_token_tree_paren_repeat1'],
-	[466, '_match_block_arms_repeat1'],
-	[467, 'field_identifier'],
-	[469, 'shorthand_field_identifier'],
-	[470, 'type_identifier']
+	[142, 'char_literal_plain'],
+	[143, 'char_literal_empty'],
+	[144, 'char_literal_escaped_simple'],
+	[145, 'char_literal_escaped_unicode_fixed'],
+	[146, 'char_literal_escaped_unicode_braced'],
+	[147, 'char_literal_escaped_hex'],
+	[148, 'escape_sequence_simple'],
+	[149, 'escape_sequence_unicode_fixed'],
+	[150, 'escape_sequence_unicode_braced'],
+	[151, 'escape_sequence_hex'],
+	[152, 'raw'],
+	[153, 'string_open'],
+	[154, 'line_comment_extra_slashes_token1'],
+	[155, 'line_comment_extra_slashes_token2'],
+	[156, 'line_comment_regular'],
+	[157, 'macro_rules!'],
+	[158, 'string_content'],
+	[159, 'raw_string_literal_start'],
+	[160, 'string_content'],
+	[161, 'raw_string_literal_end'],
+	[162, 'float_literal'],
+	[163, 'outer_doc_comment_marker'],
+	[164, 'inner_doc_comment_marker'],
+	[165, '_block_comment_content'],
+	[166, 'doc_comment'],
+	[167, '_error_sentinel'],
+	[168, '_tight'],
+	[169, '_space'],
+	[170, '_tab'],
+	[171, '_newline'],
+	[172, '_blankline'],
+	[173, '_double_blankline'],
+	[174, '_indent'],
+	[175, '_dedent'],
+	[176, 'source_file'],
+	[177, '_statement'],
+	[178, 'empty_statement'],
+	[179, 'expression_statement'],
+	[180, 'macro_definition'],
+	[181, 'macro_rule'],
+	[182, '_token_pattern'],
+	[183, 'token_tree_pattern'],
+	[184, 'token_binding_pattern'],
+	[185, 'token_repetition_pattern'],
+	[186, 'fragment_specifier'],
+	[187, 'token_tree'],
+	[188, 'token_repetition'],
+	[189, 'non_special_token'],
+	[190, 'attribute_item'],
+	[191, 'inner_attribute_item'],
+	[192, 'attribute'],
+	[193, 'mod_item'],
+	[194, 'foreign_mod_item'],
+	[195, 'declaration_list'],
+	[196, 'struct_item'],
+	[197, 'union_item'],
+	[198, 'enum_item'],
+	[199, 'enum_variant_list'],
+	[200, 'enum_variant'],
+	[201, 'field_declaration_list'],
+	[202, 'field_declaration'],
+	[203, 'ordered_field_declaration_list'],
+	[204, 'extern_crate_declaration'],
+	[205, 'const_item'],
+	[206, 'static_item'],
+	[207, 'type_item'],
+	[208, 'function_item'],
+	[209, 'function_signature_item'],
+	[210, 'function_modifiers'],
+	[211, 'where_clause'],
+	[212, 'where_predicate'],
+	[213, 'impl_item'],
+	[214, 'trait_item'],
+	[215, 'associated_type'],
+	[216, 'trait_bounds'],
+	[217, 'higher_ranked_trait_bound'],
+	[218, 'removed_trait_bound'],
+	[219, 'type_parameters'],
+	[220, 'const_parameter'],
+	[221, 'type_parameter'],
+	[222, 'lifetime_parameter'],
+	[223, 'let_declaration'],
+	[224, 'use_declaration'],
+	[225, '_use_clause'],
+	[226, 'scoped_use_list'],
+	[227, 'use_list'],
+	[228, 'use_as_clause'],
+	[229, 'use_wildcard'],
+	[230, 'parameters'],
+	[231, 'self_parameter'],
+	[232, 'variadic_parameter'],
+	[233, 'parameter'],
+	[234, 'extern_modifier'],
+	[235, 'visibility_modifier'],
+	[236, '_type'],
+	[237, 'bracketed_type'],
+	[238, 'qualified_type'],
+	[239, 'lifetime'],
+	[240, 'array_type'],
+	[241, 'for_lifetimes'],
+	[242, 'function_type'],
+	[243, 'tuple_type'],
+	[244, 'unit_type'],
+	[245, 'generic_function'],
+	[246, 'generic_type'],
+	[247, 'generic_type_with_turbofish'],
+	[248, 'bounded_type'],
+	[249, 'use_bounds'],
+	[250, 'type_arguments'],
+	[251, 'type_binding'],
+	[252, 'reference_type'],
+	[253, 'pointer_type'],
+	[254, 'never_type'],
+	[255, 'abstract_type'],
+	[256, 'dynamic_type'],
+	[257, '_expression_except_range'],
+	[258, '_expression'],
+	[259, 'macro_invocation'],
+	[260, 'delim_token_tree'],
+	[261, '_delim_tokens'],
+	[262, '_non_delim_token'],
+	[263, 'scoped_identifier'],
+	[264, 'scoped_type_identifier_in_expression_position'],
+	[265, 'scoped_type_identifier'],
+	[266, 'range_expression'],
+	[267, 'unary_expression'],
+	[268, 'try_expression'],
+	[269, 'reference_expression'],
+	[270, 'binary_expression'],
+	[271, 'assignment_expression'],
+	[272, 'compound_assignment_expr'],
+	[273, 'type_cast_expression'],
+	[274, 'return_expression'],
+	[275, 'yield_expression'],
+	[276, 'call_expression'],
+	[277, 'arguments'],
+	[278, 'array_expression'],
+	[279, 'parenthesized_expression'],
+	[280, 'tuple_expression'],
+	[281, 'unit_expression'],
+	[282, 'struct_expression'],
+	[283, 'field_initializer_list'],
+	[284, 'shorthand_field_initializer'],
+	[285, 'field_initializer'],
+	[286, 'base_field_initializer'],
+	[287, 'if_expression'],
+	[288, 'let_condition'],
+	[289, '_let_chain'],
+	[473, 'let_chain'],
+	[290, '_condition'],
+	[291, 'else_clause'],
+	[292, 'match_expression'],
+	[293, 'match_block'],
+	[294, 'match_arm'],
+	[295, 'last_match_arm'],
+	[296, 'match_pattern'],
+	[297, 'while_expression'],
+	[298, 'loop_expression'],
+	[299, 'for_expression'],
+	[300, 'const_block'],
+	[301, 'closure_expression'],
+	[302, 'closure_parameters'],
+	[303, 'label'],
+	[304, 'break_expression'],
+	[305, 'continue_expression'],
+	[306, 'index_expression'],
+	[307, 'await_expression'],
+	[308, 'field_expression'],
+	[309, 'unsafe_block'],
+	[310, 'async_block'],
+	[311, 'gen_block'],
+	[312, 'try_block'],
+	[313, 'block'],
+	[314, '_pattern'],
+	[315, 'generic_pattern'],
+	[316, 'tuple_pattern'],
+	[317, 'slice_pattern'],
+	[318, 'tuple_struct_pattern'],
+	[319, 'struct_pattern'],
+	[320, 'field_pattern'],
+	[321, 'remaining_field_pattern'],
+	[322, 'mut_pattern'],
+	[323, 'range_pattern'],
+	[324, 'ref_pattern'],
+	[325, 'captured_pattern'],
+	[326, 'reference_pattern'],
+	[327, 'or_pattern'],
+	[328, '_literal'],
+	[329, '_literal_pattern'],
+	[330, 'negative_literal'],
+	[331, 'integer_literal'],
+	[332, 'string_literal'],
+	[333, 'raw_string_literal'],
+	[334, 'char_literal'],
+	[335, 'escape_sequence'],
+	[336, 'boolean_literal'],
+	[337, 'line_comment'],
+	[338, 'inner_line_doc_comment_marker'],
+	[339, 'outer_line_doc_comment_marker'],
+	[340, 'block_comment'],
+	[341, 'primitive_type'],
+	[342, '_kw_ref_marker'],
+	[343, '_kw_unsafe_marker'],
+	[344, '_kw_static_marker'],
+	[345, '_kw_async_marker'],
+	[346, '_kw_move_marker'],
+	[347, 'macro_rules'],
+	[348, 'enum_variant_list_elements'],
+	[349, 'field_declaration_list_elements'],
+	[350, 'ordered_field_declaration_list_elements'],
+	[351, 'where_predicates'],
+	[352, 'type_parameters_elements'],
+	[353, 'use_clauses'],
+	[354, 'parameters_elements'],
+	[355, 'lifetimes'],
+	[356, 'use_bounds_elements'],
+	[357, 'type_arguments_elements'],
+	[358, 'arguments_elements'],
+	[359, 'field_initializer_list_elements'],
+	[360, 'tuple_pattern_elements'],
+	[361, 'patterns'],
+	[362, 'struct_pattern_elements'],
+	[363, 'use_wildcard_group'],
+	[364, '_kw_async'],
+	[365, '_kw_default'],
+	[366, '_kw_const'],
+	[367, '_kw_unsafe'],
+	[368, 'tuple_type_elements'],
+	[369, 'tuple_expression_elements'],
+	[370, 'token_tree_punctuation'],
+	[371, '_token_keywords'],
+	[372, 'range_expression_bare'],
+	[373, '_impl_item_unsafe_marker'],
+	[374, 'char_literal_escaped'],
+	[375, 'array_expression_semi'],
+	[376, 'array_expression_list'],
+	[377, 'attribute_input'],
+	[378, 'closure_expression_block'],
+	[379, 'closure_expression_expr'],
+	[380, 'reference_expression_raw_const'],
+	[381, 'reference_expression_raw_mut'],
+	[382, 'reference_expression_mut'],
+	[383, 'reference_expression_bare'],
+	[384, 'impl_item_positive_clause'],
+	[385, 'impl_item_negative_clause'],
+	[386, 'impl_item_body'],
+	[387, 'impl_item_semi'],
+	[388, 'visibility_modifier_pub_scope_in_path'],
+	[389, 'visibility_modifier_pub_scope'],
+	[390, 'visibility_modifier_pub'],
+	[391, 'function_type_trait_form'],
+	[392, 'function_type_fn_form'],
+	[393, 'mod_item_external'],
+	[394, 'mod_item_inline'],
+	[395, 'or_pattern_binary'],
+	[396, 'or_pattern_prefix'],
+	[397, 'pointer_type_const'],
+	[398, 'pointer_type_mut'],
+	[399, 'range_expression_binary'],
+	[400, 'range_expression_postfix'],
+	[401, 'range_expression_prefix'],
+	[402, 'expression_statement_with_semi'],
+	[403, 'foreign_mod_item_semi'],
+	[404, 'foreign_mod_item_body'],
+	[405, 'match_arm_with_comma'],
+	[406, 'match_arm_block_ending'],
+	[407, 'line_comment_extra_slashes'],
+	[408, 'line_comment_doc_outer'],
+	[409, 'line_comment_doc_inner'],
+	[410, 'block_comment_doc_outer'],
+	[411, 'block_comment_doc_inner'],
+	[412, 'token_tree_pattern_paren'],
+	[413, 'token_tree_pattern_bracket'],
+	[414, 'token_tree_pattern_brace'],
+	[415, 'token_tree_paren'],
+	[416, 'token_tree_bracket'],
+	[417, 'token_tree_brace'],
+	[418, 'delim_token_tree_paren'],
+	[419, 'delim_token_tree_bracket'],
+	[420, 'delim_token_tree_brace'],
+	[421, 'field_pattern_shorthand'],
+	[422, 'field_pattern_named'],
+	[423, 'macro_definition_paren'],
+	[424, 'macro_definition_bracket'],
+	[425, 'macro_definition_brace'],
+	[426, 'range_pattern_prefix'],
+	[427, 'range_pattern_with_left_with_right'],
+	[428, 'range_pattern_with_left_bare'],
+	[429, 'range_pattern_with_left'],
+	[430, 'struct_item_brace'],
+	[431, 'struct_item_tuple'],
+	[432, 'struct_item_unit'],
+	[433, 'wildcard_pattern'],
+	[434, 'attributed_field_declaration'],
+	[435, 'attributed_enum_variant'],
+	[436, 'attributed_parameter'],
+	[437, 'attributed_type_parameter'],
+	[438, 'attributed_argument'],
+	[439, 'attributed_ordered_field'],
+	[440, 'type_argument'],
+	[441, 'match_block_arms'],
+	[442, 'source_file_repeat1'],
+	[443, 'token_repetition_pattern_repeat1'],
+	[444, 'token_repetition_repeat1'],
+	[445, 'declaration_list_repeat1'],
+	[446, 'function_modifiers_repeat1'],
+	[447, 'trait_bounds_repeat1'],
+	[448, 'tuple_expression_repeat1'],
+	[449, 'last_match_arm_repeat1'],
+	[450, 'string_literal_repeat1'],
+	[451, 'macro_rules_repeat1'],
+	[452, 'enum_variant_list_elements_repeat1'],
+	[453, 'field_declaration_list_elements_repeat1'],
+	[454, 'ordered_field_declaration_list_elements_repeat1'],
+	[455, 'where_predicates_repeat1'],
+	[456, 'type_parameters_elements_repeat1'],
+	[457, 'use_clauses_repeat1'],
+	[458, 'parameters_elements_repeat1'],
+	[459, 'lifetimes_repeat1'],
+	[460, 'use_bounds_elements_repeat1'],
+	[461, 'type_arguments_elements_repeat1'],
+	[462, 'arguments_elements_repeat1'],
+	[463, 'field_initializer_list_elements_repeat1'],
+	[464, '_closure_parameters_optional1_repeat1'],
+	[465, 'tuple_pattern_elements_repeat1'],
+	[466, 'patterns_repeat1'],
+	[467, 'struct_pattern_elements_repeat1'],
+	[468, '_tuple_type_elements_repeat1'],
+	[469, '_tuple_expression_elements_repeat1'],
+	[470, 'delim_token_tree_paren_repeat1'],
+	[471, '_match_block_arms_repeat1'],
+	[472, 'field_identifier'],
+	[474, 'shorthand_field_identifier'],
+	[475, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1958,12 +1974,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IntegerLiteralBinary;
 		case 'integer_literal_octal':
 			return TSKindId.IntegerLiteralOctal;
-		case 'char_literal_escaped':
-			return TSKindId.CharLiteralEscaped;
 		case 'char_literal_plain':
 			return TSKindId.CharLiteralPlain;
 		case 'char_literal_empty':
 			return TSKindId.CharLiteralEmpty;
+		case 'char_literal_escaped_simple':
+			return TSKindId.CharLiteralEscapedSimple;
+		case 'char_literal_escaped_unicode_fixed':
+			return TSKindId.CharLiteralEscapedUnicodeFixed;
+		case 'char_literal_escaped_unicode_braced':
+			return TSKindId.CharLiteralEscapedUnicodeBraced;
+		case 'char_literal_escaped_hex':
+			return TSKindId.CharLiteralEscapedHex;
 		case 'escape_sequence_simple':
 			return TSKindId.EscapeSequenceSimple;
 		case 'escape_sequence_unicode_fixed':
@@ -2008,6 +2030,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Tight;
 		case '_space':
 			return TSKindId.Space;
+		case '_tab':
+			return TSKindId.Tab;
 		case '_newline':
 			return TSKindId.Newline;
 		case '_blankline':
@@ -2414,6 +2438,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangeExpressionBare;
 		case '_impl_item_unsafe_marker':
 			return TSKindId.ImplItemUnsafeMarker;
+		case 'char_literal_escaped':
+			return TSKindId.CharLiteralEscaped;
 		case 'array_expression_semi':
 			return TSKindId.ArrayExpressionSemi;
 		case 'array_expression_list':
@@ -2876,12 +2902,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 export type SpacingArm =
 	| TSKindId.Tight
 	| TSKindId.Space
+	| TSKindId.Tab
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline;
 export type WhitespaceArm =
 	| TSKindId.Tight
 	| TSKindId.Space
+	| TSKindId.Tab
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
@@ -3376,11 +3404,19 @@ export enum PathKind {
 export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
+	Tab = '_tab',
 	Newline = '_newline',
 	Blankline = '_blankline',
 	DoubleBlankline = '_double_blankline',
 	Indent = '_indent',
 	Dedent = '_dedent'
+}
+
+export enum CharLiteralEscapedKind {
+	CharLiteralEscapedSimple = 'char_literal_escaped_simple',
+	CharLiteralEscapedUnicodeFixed = 'char_literal_escaped_unicode_fixed',
+	CharLiteralEscapedUnicodeBraced = 'char_literal_escaped_unicode_braced',
+	CharLiteralEscapedHex = 'char_literal_escaped_hex'
 }
 
 // Node types — concrete interfaces
@@ -8089,8 +8125,8 @@ export interface IntegerLiteralOctal {
 		| undefined;
 }
 
-export interface CharLiteralEscaped {
-	readonly $type: TSKindId.CharLiteralEscaped;
+export interface CharLiteralPlain {
+	readonly $type: TSKindId.CharLiteralPlain;
 	readonly _b?: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
@@ -8100,8 +8136,41 @@ export interface CharLiteralEscaped {
 	content(): string;
 }
 
-export interface CharLiteralPlain {
-	readonly $type: TSKindId.CharLiteralPlain;
+export interface CharLiteralEscapedSimple {
+	readonly $type: TSKindId.CharLiteralEscapedSimple;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BaseBooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface CharLiteralEscapedUnicodeFixed {
+	readonly $type: TSKindId.CharLiteralEscapedUnicodeFixed;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BaseBooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface CharLiteralEscapedUnicodeBraced {
+	readonly $type: TSKindId.CharLiteralEscapedUnicodeBraced;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BaseBooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface CharLiteralEscapedHex {
+	readonly $type: TSKindId.CharLiteralEscapedHex;
 	readonly _b?: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
@@ -9953,6 +10022,7 @@ export type DocComment = Terminal<TSKindId.DocComment, string>;
 export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
+export type Tab = TSKindId.Tab;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
@@ -10133,8 +10203,11 @@ export interface IntegerLiteralDecimalTree extends TreeNode<'integer_literal_dec
 export interface IntegerLiteralHexTree extends TreeNode<'integer_literal_hex'> {}
 export interface IntegerLiteralBinaryTree extends TreeNode<'integer_literal_binary'> {}
 export interface IntegerLiteralOctalTree extends TreeNode<'integer_literal_octal'> {}
-export interface CharLiteralEscapedTree extends TreeNode<'char_literal_escaped'> {}
 export interface CharLiteralPlainTree extends TreeNode<'char_literal_plain'> {}
+export interface CharLiteralEscapedSimpleTree extends TreeNode<'char_literal_escaped_simple'> {}
+export interface CharLiteralEscapedUnicodeFixedTree extends TreeNode<'char_literal_escaped_unicode_fixed'> {}
+export interface CharLiteralEscapedUnicodeBracedTree extends TreeNode<'char_literal_escaped_unicode_braced'> {}
+export interface CharLiteralEscapedHexTree extends TreeNode<'char_literal_escaped_hex'> {}
 export interface EscapeSequenceSimpleTree extends TreeNode<'escape_sequence_simple'> {}
 export interface EscapeSequenceUnicodeFixedTree extends TreeNode<'escape_sequence_unicode_fixed'> {}
 export interface EscapeSequenceUnicodeBracedTree extends TreeNode<'escape_sequence_unicode_braced'> {}
@@ -10312,6 +10385,9 @@ export interface TightTree extends AnyTreeNode {
 }
 export interface SpaceTree extends AnyTreeNode {
 	readonly type: '_space';
+}
+export interface TabTree extends AnyTreeNode {
+	readonly type: '_tab';
 }
 export interface NewlineTree extends AnyTreeNode {
 	readonly type: '_newline';
@@ -11207,7 +11283,7 @@ export type IntegerLiteralTree =
 
 export type CharLiteral = CharLiteralEscaped | CharLiteralPlain | CharLiteralEmpty;
 
-export type CharLiteralTree = CharLiteralEscapedTree | CharLiteralPlainTree | CharLiteralEmptyTree;
+export type CharLiteralTree = CharLiteralPlainTree | CharLiteralEmptyTree;
 
 export type EscapeSequence =
 	| EscapeSequenceSimple
@@ -11281,16 +11357,29 @@ export type PathTree =
 	| UnionKeywordTree
 	| GenKeywordTree;
 
-export type Whitespace = Tight | Space | Newline | Blankline | DoubleBlankline | Indent | Dedent;
+export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
 export type WhitespaceTree =
 	| TightTree
 	| SpaceTree
+	| TabTree
 	| NewlineTree
 	| BlanklineTree
 	| DoubleBlanklineTree
 	| IndentTree
 	| DedentTree;
+
+export type CharLiteralEscaped =
+	| CharLiteralEscapedSimple
+	| CharLiteralEscapedUnicodeFixed
+	| CharLiteralEscapedUnicodeBraced
+	| CharLiteralEscapedHex;
+
+export type CharLiteralEscapedTree =
+	| CharLiteralEscapedSimpleTree
+	| CharLiteralEscapedUnicodeFixedTree
+	| CharLiteralEscapedUnicodeBracedTree
+	| CharLiteralEscapedHexTree;
 
 export namespace Statement {
 	export type Kind = '_statement';
@@ -11477,6 +11566,11 @@ export namespace Whitespace {
 	export type Tree = WhitespaceTree;
 }
 
+export namespace CharLiteralEscaped {
+	export type Kind = 'char_literal_escaped';
+	export type Tree = CharLiteralEscapedTree;
+}
+
 // Token type aliases (only tokens referenced in field/child unions)
 export type Dollar = TSKindId.Dollar;
 export interface DollarTree extends AnyTreeNode {
@@ -11634,8 +11728,11 @@ export type RustNode =
 	| IntegerLiteralHex
 	| IntegerLiteralBinary
 	| IntegerLiteralOctal
-	| CharLiteralEscaped
 	| CharLiteralPlain
+	| CharLiteralEscapedSimple
+	| CharLiteralEscapedUnicodeFixed
+	| CharLiteralEscapedUnicodeBraced
+	| CharLiteralEscapedHex
 	| EscapeSequenceSimple
 	| EscapeSequenceUnicodeFixed
 	| EscapeSequenceUnicodeBraced
@@ -16372,17 +16469,6 @@ export interface IntegerLiteralOctalNs extends NodeNs<
 	'content',
 	'integer_literal_octal'
 > {}
-export interface CharLiteralEscapedNs extends NodeNs<
-	CharLiteralEscaped,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	CharLiteralEscaped.Built,
-	CharLiteralEscaped.BuildArgs,
-	CharLiteralEscaped.LooseArgs,
-	'content',
-	'char_literal_escaped'
-> {}
 export interface CharLiteralPlainNs extends NodeNs<
 	CharLiteralPlain,
 	LeafScalarMap,
@@ -16393,6 +16479,50 @@ export interface CharLiteralPlainNs extends NodeNs<
 	CharLiteralPlain.LooseArgs,
 	'content',
 	'char_literal_plain'
+> {}
+export interface CharLiteralEscapedSimpleNs extends NodeNs<
+	CharLiteralEscapedSimple,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscapedSimple.Built,
+	CharLiteralEscapedSimple.BuildArgs,
+	CharLiteralEscapedSimple.LooseArgs,
+	'content',
+	'char_literal_escaped_simple'
+> {}
+export interface CharLiteralEscapedUnicodeFixedNs extends NodeNs<
+	CharLiteralEscapedUnicodeFixed,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscapedUnicodeFixed.Built,
+	CharLiteralEscapedUnicodeFixed.BuildArgs,
+	CharLiteralEscapedUnicodeFixed.LooseArgs,
+	'content',
+	'char_literal_escaped_unicode_fixed'
+> {}
+export interface CharLiteralEscapedUnicodeBracedNs extends NodeNs<
+	CharLiteralEscapedUnicodeBraced,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscapedUnicodeBraced.Built,
+	CharLiteralEscapedUnicodeBraced.BuildArgs,
+	CharLiteralEscapedUnicodeBraced.LooseArgs,
+	'content',
+	'char_literal_escaped_unicode_braced'
+> {}
+export interface CharLiteralEscapedHexNs extends NodeNs<
+	CharLiteralEscapedHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscapedHex.Built,
+	CharLiteralEscapedHex.BuildArgs,
+	CharLiteralEscapedHex.LooseArgs,
+	'content',
+	'char_literal_escaped_hex'
 > {}
 export interface EscapeSequenceSimpleNs extends NodeNs<
 	EscapeSequenceSimple,
@@ -17278,6 +17408,7 @@ export interface InnerDocCommentMarkerNs extends KeywordNs<
 > {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TightTree, '_tight'> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', SpaceTree, '_space'> {}
+export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TabTree, '_tab'> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', NewlineTree, '_newline'> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', BlanklineTree, '_blankline'> {}
 export interface DoubleBlanklineNs extends KeywordNs<
@@ -17538,8 +17669,11 @@ export interface NamespaceMap {
 	[TSKindId.IntegerLiteralHex]: IntegerLiteralHexNs;
 	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinaryNs;
 	[TSKindId.IntegerLiteralOctal]: IntegerLiteralOctalNs;
-	[TSKindId.CharLiteralEscaped]: CharLiteralEscapedNs;
 	[TSKindId.CharLiteralPlain]: CharLiteralPlainNs;
+	[TSKindId.CharLiteralEscapedSimple]: CharLiteralEscapedSimpleNs;
+	[TSKindId.CharLiteralEscapedUnicodeFixed]: CharLiteralEscapedUnicodeFixedNs;
+	[TSKindId.CharLiteralEscapedUnicodeBraced]: CharLiteralEscapedUnicodeBracedNs;
+	[TSKindId.CharLiteralEscapedHex]: CharLiteralEscapedHexNs;
 	[TSKindId.EscapeSequenceSimple]: EscapeSequenceSimpleNs;
 	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixedNs;
 	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBracedNs;
@@ -17639,6 +17773,7 @@ export interface NamespaceMap {
 	[TSKindId.InnerDocCommentMarker]: InnerDocCommentMarkerNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
+	[TSKindId.Tab]: TabNs;
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
@@ -21365,12 +21500,12 @@ export namespace TupleExpressionElements {
 	export type Kind = 'tuple_expression_elements';
 }
 export namespace IntegerLiteralDecimal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
 	export interface Built extends T.IntegerLiteralDecimal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerLiteralDecimal.Built;
+			content(value: string | number | bigint): T.IntegerLiteralDecimal.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -21392,15 +21527,16 @@ export namespace IntegerLiteralDecimal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralDecimal>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralDecimal>, 'content'>];
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralDecimal>, { content: number | bigint }>];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.IntegerLiteralDecimal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'content'
+					{ content: number | bigint }
 			  >
 			| T.IntegerLiteralDecimal
 	];
@@ -21408,12 +21544,12 @@ export namespace IntegerLiteralDecimal {
 	export type Kind = 'integer_literal_decimal';
 }
 export namespace IntegerLiteralHex {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
 	export interface Built extends T.IntegerLiteralHex, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerLiteralHex.Built;
+			content(value: string | number | bigint): T.IntegerLiteralHex.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -21435,15 +21571,16 @@ export namespace IntegerLiteralHex {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralHex>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralHex>, 'content'>];
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralHex>, { content: number | bigint }>];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.IntegerLiteralHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'content'
+					{ content: number | bigint }
 			  >
 			| T.IntegerLiteralHex
 	];
@@ -21451,12 +21588,12 @@ export namespace IntegerLiteralHex {
 	export type Kind = 'integer_literal_hex';
 }
 export namespace IntegerLiteralBinary {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
 	export interface Built extends T.IntegerLiteralBinary, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerLiteralBinary.Built;
+			content(value: string | number | bigint): T.IntegerLiteralBinary.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -21478,15 +21615,16 @@ export namespace IntegerLiteralBinary {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralBinary>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralBinary>, 'content'>];
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralBinary>, { content: number | bigint }>];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.IntegerLiteralBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'content'
+					{ content: number | bigint }
 			  >
 			| T.IntegerLiteralBinary
 	];
@@ -21494,12 +21632,12 @@ export namespace IntegerLiteralBinary {
 	export type Kind = 'integer_literal_binary';
 }
 export namespace IntegerLiteralOctal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
 	export interface Built extends T.IntegerLiteralOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string | number): T.IntegerLiteralOctal.Built;
+			content(value: string | number | bigint): T.IntegerLiteralOctal.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -21521,41 +21659,21 @@ export namespace IntegerLiteralOctal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralOctal>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>
-		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralOctal>, 'content'>];
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>
+		| number
+		| bigint;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralOctal>, { content: number | bigint }>];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
 					LooseConfigOf<T.IntegerLiteralOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'content'
+					{ content: number | bigint }
 			  >
 			| T.IntegerLiteralOctal
 	];
 	export type Tree = TreeFor<TSKindId.IntegerLiteralOctal>;
 	export type Kind = 'integer_literal_octal';
-}
-export namespace CharLiteralEscaped {
-	export type Config = ConfigFor<TSKindId.CharLiteralEscaped>;
-	export interface Built extends T.CharLiteralEscaped, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			b(value?: NonNullable<T.CharLiteralEscaped.Config>['b']): T.CharLiteralEscaped.Built;
-			content(value: string): T.CharLiteralEscaped.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.CharLiteralEscaped>;
-	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscaped>;
-	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscaped>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.CharLiteralEscaped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CharLiteralEscaped
-	];
-	export type Tree = TreeFor<TSKindId.CharLiteralEscaped>;
-	export type Kind = 'char_literal_escaped';
 }
 export namespace CharLiteralPlain {
 	export type Config = ConfigFor<TSKindId.CharLiteralPlain>;
@@ -21575,6 +21693,90 @@ export namespace CharLiteralPlain {
 	];
 	export type Tree = TreeFor<TSKindId.CharLiteralPlain>;
 	export type Kind = 'char_literal_plain';
+}
+export namespace CharLiteralEscapedSimple {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscapedSimple>;
+	export interface Built extends T.CharLiteralEscapedSimple, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscapedSimple.Config>['b']): T.CharLiteralEscapedSimple.Built;
+			content(value: string): T.CharLiteralEscapedSimple.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscapedSimple>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscapedSimple>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscapedSimple>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscapedSimple, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscapedSimple
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscapedSimple>;
+	export type Kind = 'char_literal_escaped_simple';
+}
+export namespace CharLiteralEscapedUnicodeFixed {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscapedUnicodeFixed>;
+	export interface Built extends T.CharLiteralEscapedUnicodeFixed, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b']): T.CharLiteralEscapedUnicodeFixed.Built;
+			content(value: string): T.CharLiteralEscapedUnicodeFixed.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscapedUnicodeFixed>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscapedUnicodeFixed>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscapedUnicodeFixed>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscapedUnicodeFixed, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscapedUnicodeFixed
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscapedUnicodeFixed>;
+	export type Kind = 'char_literal_escaped_unicode_fixed';
+}
+export namespace CharLiteralEscapedUnicodeBraced {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscapedUnicodeBraced>;
+	export interface Built extends T.CharLiteralEscapedUnicodeBraced, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b']): T.CharLiteralEscapedUnicodeBraced.Built;
+			content(value: string): T.CharLiteralEscapedUnicodeBraced.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscapedUnicodeBraced>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscapedUnicodeBraced>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscapedUnicodeBraced>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscapedUnicodeBraced, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscapedUnicodeBraced
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscapedUnicodeBraced>;
+	export type Kind = 'char_literal_escaped_unicode_braced';
+}
+export namespace CharLiteralEscapedHex {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscapedHex>;
+	export interface Built extends T.CharLiteralEscapedHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscapedHex.Config>['b']): T.CharLiteralEscapedHex.Built;
+			content(value: string): T.CharLiteralEscapedHex.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscapedHex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscapedHex>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscapedHex>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscapedHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscapedHex
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscapedHex>;
+	export type Kind = 'char_literal_escaped_hex';
 }
 export namespace EscapeSequenceSimple {
 	export type Config = ConfigFor<TSKindId.EscapeSequenceSimple>;
@@ -23434,6 +23636,16 @@ export namespace Space {
 	export type LooseArgs = SpaceNs['LooseArgs'];
 	export type Tree = SpaceNs['Tree'];
 	export type Kind = '_space';
+}
+export namespace Tab {
+	export type Config = TabNs['Config'];
+	export type Built = TabNs['Built'];
+	export type Loose = TabNs['Loose'];
+	export type LooseConfig = TabNs['LooseConfig'];
+	export type BuildArgs = TabNs['BuildArgs'];
+	export type LooseArgs = TabNs['LooseArgs'];
+	export type Tree = TabNs['Tree'];
+	export type Kind = '_tab';
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];

@@ -115,13 +115,13 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_definition_ids = new Set<number>([45, 44, 43, 50, 42, 48]);
-const _supertype_groupExpression_ids = new Set<number>([51]);
-const _supertype_namedNodeExpression_ids = new Set<number>([49, 52]);
+const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
+const _supertype_groupExpression_ids = new Set<number>([52]);
+const _supertype_namedNodeExpression_ids = new Set<number>([50, 53]);
 const _supertype_nodeIdentifier_ids = new Set<number>([5]);
-const _supertype_namedNode_ids = new Set<number>([55, 56]);
-const _supertype_namedNodeGroup_ids = new Set<number>([57, 58]);
-const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30]);
+const _supertype_namedNode_ids = new Set<number>([56, 57]);
+const _supertype_namedNodeGroup_ids = new Set<number>([58, 59]);
+const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
 
 export const is = {
 	program: _g(TSKindId.Program),

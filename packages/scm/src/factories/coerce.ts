@@ -37,6 +37,7 @@ export const _fromMap = {
 	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
+	_tab: coerceToTab,
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
@@ -58,6 +59,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	_tight: { values: [''], factory: () => F.buildTight() },
 	_space: { values: [' '], factory: () => F.buildSpace() },
+	_tab: { values: ['\t'], factory: () => F.buildTab() },
 	_newline: { values: ['\n'], factory: () => F.buildNewline() },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
@@ -80,6 +82,7 @@ function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_tight',
 	'_space',
+	'_tab',
 	'_newline',
 	'_blankline',
 	'_double_blankline',
@@ -109,15 +112,34 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
+const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
+	definition: ['named_node', 'anonymous_node', 'missing_node', 'grouping', 'predicate', 'list', 'field_definition'],
+	_group_expression: ['definition', 'group_expression_arm'],
+	_named_node_expression: ['definition', 'negated_field', 'named_node_expression_arm'],
+	_node_identifier: ['identifier'],
+	named_node: ['named_node_plain', 'named_node_supertyped'],
+	named_node_group: ['named_node_group_children', 'named_node_group_anchored_last'],
+	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent']
+};
+
 /** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name. */
+ *  stamped `TSKindId` enum value — both spellings resolve to the same name.
+ *  A supertype tag names its default arm; one without a default names no kind. */
 function _kindNameOf(kind: unknown): string | undefined {
-	return typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
+	if (tag === undefined || typeof tag === 'string') return tag ?? name;
+	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
-	return fn(rest);
+	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeData(rest))
+		return fn(rest);
+	const text = (rest as { text?: unknown }).text;
+	if (typeof text !== 'string')
+		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	return fn(text);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -135,7 +157,7 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(_v: boolean | number): AnyNodeData | number | undefined {
+function _resolveScalar(_v: boolean | number | bigint): AnyNodeData | number | undefined {
 	return undefined;
 }
 
@@ -143,14 +165,14 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 35
+	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
-	string: new Set([40]),
-	immediate_string: new Set([40]),
+	string: new Set([41]),
+	immediate_string: new Set([41]),
 	negated_field: new Set([5]),
-	grouping_group: new Set([42, 43, 44, 45, 48, 50, 51, 55, 56])
+	grouping_group: new Set([43, 44, 45, 46, 49, 51, 52, 56, 57])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
@@ -186,7 +208,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -297,7 +319,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -561,7 +583,7 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content)
 						: input,
 				_K0,
 				_K0
@@ -722,7 +744,7 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, ';', '')
+						? spelledInterior(input, ';', '', F._slotRe_buildComment_content)
 						: input,
 				_K0,
 				_K0
@@ -1124,6 +1146,10 @@ export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.build
 
 export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
 	return F.buildSpace();
+}
+
+export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
+	return F.buildTab();
 }
 
 export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {

@@ -1,8 +1,8 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
+import { defaultConcreteKindOf, isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -137,11 +137,7 @@ function buildKindInterner(
 	};
 }
 
-function emitNamespaceImports(
-	lines: string[],
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	usesAttachProps: boolean
-): void {
+function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
 	lines.push(`import * as F from './raw.js';`);
 	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
@@ -150,11 +146,7 @@ function emitNamespaceImports(
 		lines.push(`import { Delimiter } from '../types.js';`);
 	}
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push(
-		usesAttachProps
-			? "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData, attachProps } from '../utils.js';"
-			: "import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';"
-	);
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';");
 	lines.push('');
 }
 
@@ -219,7 +211,7 @@ export namespace from {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
-			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node) !== undefined);
+			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node));
 		} else if (isBuilderTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
@@ -275,9 +267,9 @@ function emitBranchNodeDataPassthrough(
 	inputOptional: boolean,
 	returnType: string,
 	typeName: string,
-	bare: false | 'text' | 'number' = false
+	bare: false | 'text' | NumberShape = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${bare === 'number' ? ' | number' : ''}${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${typeof bare === 'object' ? ` | ${numberInputType(bare)}` : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -395,7 +387,7 @@ function emitBranchFrom(
 			);
 		} else {
 			const shape = numericSlotShape(f);
-			const numeric = shape === undefined ? body : `typeof value === 'number' ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
+			const numeric = shape === undefined ? body : `${numberInputTest(shape, 'value')} ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
 			lines.push(signature, `  return ${numeric};`, '}', '');
 		}
 	}
@@ -430,26 +422,23 @@ function emitBranchFrom(
 		} else {
 			const bareKind =
 				bareInterior !== undefined
-					? bareInterior.number === undefined
-						? 'text'
-						: 'number'
+					? (bareInterior.number ?? 'text')
 					: bareContent === undefined
 						? false
-						: numericSlotShape(bareContent) === undefined
-							? 'text'
-							: 'number';
+						: (numericSlotShape(bareContent) ?? 'text');
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
 		}
 		if (bareInterior !== undefined) {
 			const shape = bareInterior.number;
 			const text = shape === undefined ? 'input' : `numberText(${numberTextArgs(shape)}, input)`;
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : " || typeof input === 'number'"} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : ` || ${numberInputTest(shape, 'input')}`} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		if (bareContent !== undefined) {
+			const bareShape = numericSlotShape(bareContent);
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${numericSlotShape(bareContent) === undefined ? '' : " || typeof input === 'number'"} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
@@ -461,6 +450,7 @@ function emitBranchFrom(
 			}
 		}
 		if (canDirectFactoryCall) {
+			const soleGuard = interiorSlotGuards(node.kind, node).find((guard) => guard.slot === soleField.name);
 			if (fullForm !== undefined && spelled.length > 0) {
 				const alternatives = (texts: readonly string[]) =>
 					`[${texts.map((text) => JSON.stringify(text)).join(', ')}] as const`;
@@ -473,13 +463,14 @@ function emitBranchFrom(
 					? 'input'
 					: spelled.length > 0
 						? `(_spelled === undefined ? input : ${refuseSiblingLeadExpr('_spelled.interior', siblings)})`
-						: `(typeof input === 'string' ? ${refuseSiblingLeadExpr(`spelledInterior(input, ${JSON.stringify(fullForm.open.texts[0])}, ${JSON.stringify(fullForm.close.texts[0])})`, siblings)} : input)`;
+						: `(typeof input === 'string' ? ${refuseSiblingLeadExpr(`spelledInterior(input, ${JSON.stringify(fullForm.open.texts[0])}, ${JSON.stringify(fullForm.close.texts[0])}${soleGuard === undefined ? '' : `, F.${soleGuard.constName}`})`, siblings)} : input)`;
 			const callOptions =
 				spelled.length === 0
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
-			const numeric = numericSlotShape(soleField) !== undefined;
+			const soleShape = numericSlotShape(soleField);
+			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
 			const resolved = resolveFieldCall(
 				numeric ? '_value' : inputExpr,
@@ -491,7 +482,7 @@ function emitBranchFrom(
 				undefined,
 				kindEntries
 			);
-			const call = numeric ? `(typeof _value === 'number' ? _value : ${resolved})` : resolved;
+			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefaultFactory = canDefaultToEmpty(soleField, nodeMap);
 			const guardedCall = directDefaultFactory
 				? `${call} ?? F.${directDefaultFactory}()`
@@ -827,12 +818,12 @@ interface LeafFromNode {
 	readonly fromFunctionName?: string;
 }
 
-function emitStringLikeFrom(node: LeafFromNode, numeric: boolean): string {
+function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (typeof input !== 'string'${numeric ? " && typeof input !== 'number'" : ''}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
+		`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'
 	].join('\n');
@@ -1166,15 +1157,27 @@ function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPatt
 	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
-function emitResolveByKindHelper(lines: string[]): void {
+function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('function _isFromKind(k: string): k is keyof _FromMap {');
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
 	lines.push('');
+	lines.push('const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {');
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype)) continue;
+		const concrete = defaultConcreteKindOf(kind, nodeMap);
+		lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(concrete ?? node.subtypeNames)},`);
+	}
+	lines.push('};');
+	lines.push('');
 	lines.push('/** A `kind:` discriminant names its kind by the grammar string or the');
-	lines.push(' *  stamped `TSKindId` enum value — both spellings resolve to the same name. */');
+	lines.push(' *  stamped `TSKindId` enum value — both spellings resolve to the same name.');
+	lines.push(' *  A supertype tag names its default arm; one without a default names no kind. */');
 	lines.push('function _kindNameOf(kind: unknown): string | undefined {');
-	lines.push('  return typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;');
+	lines.push('  const name = typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;');
+	lines.push('  const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];');
+	lines.push('  if (tag === undefined || typeof tag === "string") return tag ?? name;');
+	lines.push('  throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(", ")}]`);');
 	lines.push('}');
 	lines.push('');
 	lines.push('function _resolveByKind<K extends keyof _FromMap>(');
@@ -1182,7 +1185,10 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  rest: _LooseFieldInput,');
 	lines.push('): ReturnType<_FromMap[K]> {');
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
-	lines.push('  return fn(rest);');
+	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNodeData(rest)) return fn(rest);');
+	lines.push('  const text = (rest as { text?: unknown }).text;');
+	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);');
+	lines.push('  return fn(text);');
 	lines.push('}');
 	lines.push('');
 }
@@ -1319,7 +1325,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	);
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
+	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
@@ -1609,7 +1615,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitResolveByKindHelper(lines);
+	emitResolveByKindHelper(lines, nodeMap);
 
 	lines.push(
 		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'
@@ -1636,7 +1642,7 @@ function emitResolverHelpers(
 		scalars.boolean !== undefined && kindEntries !== undefined,
 		numeric.length > 0
 	);
-	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
+	lines.push(`function _resolveScalar(${scalarParam}: boolean | number | bigint): AnyNodeData | number | undefined {`);
 	const booleanMember = (kind: string): string | undefined =>
 		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
@@ -1645,7 +1651,7 @@ function emitResolverHelpers(
 		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
 	}
 	if (numeric.length > 0) {
-		lines.push('  if (typeof v === "number") {');
+		lines.push('  if (typeof v === "number" || typeof v === "bigint") {');
 		lines.push('    const text = String(v);');
 		lines.push(`    for (const kind of ${JSON.stringify(numeric)}) {`);
 		lines.push('      const e = _leafRegistry[kind];');
@@ -1730,7 +1736,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (isNodeData(v)) return v as T;');
-	lines.push('  if (typeof v === "boolean" || typeof v === "number") {');
+	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
@@ -1866,7 +1872,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const internKinds = buildKindInterner(supertypeByKey, kindTableIndex, kindTableLiterals, namedEntries);
 
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-		emitNamespaceImports(lines, kindEntries, false);
+		emitNamespaceImports(lines, kindEntries);
 		emitFromFieldInputType(lines);
 
 		this.#nodeMap = nodeMap;

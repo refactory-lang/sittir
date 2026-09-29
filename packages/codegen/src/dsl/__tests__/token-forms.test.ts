@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifyTokenChoice, distributeTokenForms } from '../transform/token-forms.ts';
+import { classifyTokenChoice, distributeTokenForms, factorSharedOptional } from '../transform/token-forms.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 
 const S = (value: string) => ({ type: 'STRING', value }) as unknown as RuntimeRule;
@@ -93,5 +93,36 @@ describe('distributeTokenForms', () => {
 		expect(() => distributeTokenForms(token(choice(arm, seq(S('0x'), P('[0-9a-f]+')))), 'demo')).toThrow(
 			/token forms: arms 0 and 1 of 'demo' are identical/
 		);
+	});
+});
+
+describe('factorSharedOptional', () => {
+	const optional = (content: RuntimeRule) => choice(content, BLANK);
+
+	it('factors a choice whose every member is optional into one optional choice', () => {
+		const rule = choice(optional(P('[Ll]')), optional(P('[jJ]')));
+		expect(shape(factorSharedOptional(rule))).toEqual(shape(optional(choice(P('[Ll]'), P('[jJ]')))));
+	});
+	it('is idempotent', () => {
+		const once = factorSharedOptional(token(seq(P('[0-9]+'), choice(optional(P('[Ll]')), optional(P('[jJ]'))))));
+		expect(factorSharedOptional(once)).toBe(once);
+	});
+	it('recurses into a choice nested in a choice, innermost first', () => {
+		const rule = choice(choice(optional(S('a')), optional(S('b'))), optional(S('c')));
+		expect(shape(factorSharedOptional(rule))).toEqual(shape(optional(choice(choice(S('a'), S('b')), S('c')))));
+	});
+	it('leaves a mixed choice alone when one member is not optional', () => {
+		const rule = choice(optional(S('a')), S('b'));
+		expect(factorSharedOptional(rule)).toBe(rule);
+	});
+	it('leaves a single optional alone', () => {
+		const rule = optional(S('a'));
+		expect(factorSharedOptional(rule)).toBe(rule);
+	});
+	it('gives the token-form hoist disjoint arms with the blank case as its own arm', () => {
+		const digits = P('[0-9]+');
+		const rule = token(seq(digits, choice(optional(P('[Ll]')), optional(P('[jJ]')))));
+		const out = distributeTokenForms(factorSharedOptional(rule), 'integer') as unknown as { members: RuntimeRule[] };
+		expect(out.members.map(shape)).toEqual([token(seq(digits, P('[Ll]'))), token(seq(digits, P('[jJ]'))), token(seq(digits))].map(shape));
 	});
 });

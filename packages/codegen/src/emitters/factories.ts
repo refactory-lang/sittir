@@ -3,13 +3,14 @@ import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
 import {
-	interiorEnumArms,
-	interiorOf,
+	interiorSlotGuards,
+	numberInputType,
 	numberTextArgs,
 	numericLeafShape,
 	numericSlotKeys,
 	numericSlotShape,
-	optionalGroupPeers
+	optionalGroupPeers,
+	widenNumericSlots
 } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -182,9 +183,14 @@ function buildLeafReConsts(
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
 	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words;
 	if (word?.rawFactoryName && reserved.length > 0) {
+		const listName = `_reservedWordList_${word.rawFactoryName}`;
 		const constName = `_reservedWords_${word.rawFactoryName}`;
+		const typeName = `_ReservedWord_${word.rawFactoryName}`;
 		leafReConsts.set(reservedGuardKey(word.kind), constName);
-		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${JSON.stringify(reserved)});`);
+		leafReConsts.set(reservedTypeKey(word.kind), typeName);
+		lines.push(`const ${listName} = ${JSON.stringify(reserved)} as const;`);
+		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
+		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		const declaration = leafReDeclaration(kind, node);
@@ -193,17 +199,9 @@ function buildLeafReConsts(
 		lines.push(`const ${declaration.constName} = ${declaration.literal};`);
 	}
 	for (const [kind, node] of nodeMap.nodes) {
-		const interior = interiorOf(node);
-		if (interior === undefined) continue;
-		for (const entry of interior.entries) {
-			const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
-			if (guarded === undefined) continue;
-			const { slot, pattern } = guarded;
-			const literal = anchoredLeafRegexLiteral(kind, pattern);
-			if (literal === undefined) continue;
-			const constName = `_slotRe_${node.rawFactoryName!}_${slot}`;
+		for (const { slot, literal, constName } of interiorSlotGuards(kind, node)) {
 			leafReConsts.set(slotGuardKey(kind, slot), constName);
-			lines.push(`const ${constName} = ${literal};`);
+			lines.push(`export const ${constName} = ${literal};`);
 		}
 	}
 	return leafReConsts;
@@ -342,7 +340,11 @@ export namespace factory {
 				const shape = numericLeafShape(node.kind, node);
 				if (shape !== undefined) guards.unshift(`text = numberText(${numberTextArgs(shape)}, text);`);
 				const guard = guards.join(' ');
-				result = emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap);
+				const reservedType = leafReConsts.get(reservedTypeKey(node.kind));
+				result =
+					reservedType === undefined
+						? emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap)
+						: emitTextFactory(node, `text: W extends ${reservedType} ? never : W`, 'text', guard, kindEntries, nodeMap, '<const W extends string>');
 				break;
 			}
 			case 'keyword':
@@ -379,7 +381,8 @@ export namespace factory {
 }
 
 function leafTextParams(node: AssembledNode): string {
-	return numericLeafShape(node.kind, node) === undefined ? 'text: string' : 'text: string | number';
+	const shape = numericLeafShape(node.kind, node);
+	return shape === undefined ? 'text: string' : `text: string | ${numberInputType(shape)}`;
 }
 
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
@@ -402,6 +405,10 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 
 function reservedGuardKey(kind: string): string {
 	return `${kind}\0\0reserved`;
+}
+
+function reservedTypeKey(kind: string): string {
+	return `${kind}\0\0reservedType`;
 }
 
 type FieldCarryingNode = AuthoredCompound;
@@ -798,8 +805,8 @@ export function constructionFieldElementType(
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
-	if (numericSlotShape(f) !== undefined) return `${type} | number`;
-	return type;
+	const shape = numericSlotShape(f);
+	return shape === undefined ? type : `${type} | ${numberInputType(shape)}`;
 }
 
 export function fieldElementType(
@@ -1001,7 +1008,8 @@ function resolveConfigFactorySurface(
 	}
 	if (singleField) {
 		const baseType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
-		const elemType = numericSlotShape(singleField) === undefined ? baseType : `${baseType} | number`;
+		const singleShape = numericSlotShape(singleField);
+		const elemType = singleShape === undefined ? baseType : `${baseType} | ${numberInputType(singleShape)}`;
 		const param: FactoryParam = {
 			label: 'value',
 			optional: !isRequired(singleField),
@@ -1025,9 +1033,7 @@ function resolveConfigFactorySurface(
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
-	const numericKeys = numericSlotKeys(node);
-	const widen = (type: string): string =>
-		numericKeys.length === 0 ? type : `WidenNumeric<${type}, ${numericKeys.map((key) => JSON.stringify(key)).join(' | ')}>`;
+	const widen = (type: string): string => widenNumericSlots(type, node);
 	const param: FactoryParam = {
 		label: 'config',
 		optional: opt === '?',
@@ -1757,11 +1763,12 @@ function emitTextFactory(
 	textExpr: string,
 	guard?: string,
 	kindEntries?: readonly KindEnumEntry[],
-	nodeMap?: NodeMap
+	nodeMap?: NodeMap,
+	typeParams: string = ''
 ): string {
 	const fn = node.rawFactoryName!;
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
-	const body: string[] = [`export function ${fn}(${params}): T.${node.typeName}.Built {`];
+	const body: string[] = [`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Built {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
 		'  return withMethods({',

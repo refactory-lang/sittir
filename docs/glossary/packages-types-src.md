@@ -14,7 +14,7 @@ A built node whose spelling slot `K` is narrowed to `P`, on both its stored fiel
 
 ### `packages/types/src/full-form.ts::Interior`
 
-The text between a full form's delimiters, or the text itself when it does not carry both: the type mirror of `spelledInterior`.
+The text between a full form's delimiters, or the text itself when it does not carry both: the type mirror of `spelledInterior`'s delimiter strip. A type cannot test the interior pattern, so the runtime's fallback to the whole input (a lone `\` escape) has no mirror here; its only reader is the sibling-lead check, so the gap shows only for a polymorph arm whose interior accepts its own delimiter.
 
 ### `packages/types/src/full-form.ts::LeadCheck`
 
@@ -23,3 +23,15 @@ Walks a polymorph's sibling leads in the runtime's order and, for the first lead
 ### `packages/types/src/full-form.ts::SiblingLeadRefusal`
 
 The compile-time form of `refuseSiblingLead`: a full-form coercer's input is `I & SiblingLeadRefusal<I, …>`, so a literal whose interior starts the way a sibling arm does is refused while it is being typed. A plain `string` and a config object pass unchanged and are checked at runtime.
+
+### `packages/types/src/full-form.ts::AllOf`
+
+Whether every character of `S` is one of `C`, walking `S` one leading character at a time: `true` for the empty rest, `false` at the first character outside `C`.
+
+### `packages/types/src/full-form.ts::OnlyOf`
+
+`I` when it is a non-empty string made only of characters in `C`, else `never`. A plain `string` passes unchanged, left to the runtime. Intersected with its own input (`I & OnlyOf<I, C>`), a literal outside the set fails to compile where it is written.
+
+### `packages/types/src/options.ts::IndentOption`
+
+The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit as the caller spelled it and checked whole, for a grammar that admits an indent character. `unknown` (no key) when `IndentChar` is `never`. `DerivedOptions` includes it at `I = string`, so a standalone `Options` value types `indent` as `string`; `createEngine`, `createRenderEngine` and `render` include it at their inferred `I`.

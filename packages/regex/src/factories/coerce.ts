@@ -164,15 +164,40 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
+const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
+	_class_atom: [
+		'class_character',
+		'bslash_dash',
+		'character_class_escape',
+		'control_escape',
+		'control_letter_escape',
+		'identity_escape',
+		'posix_character_class',
+		'class_range'
+	],
+	inline_flags_group: ['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable'],
+	_character_escape: ['control_escape', 'control_letter_escape', 'identity_escape'],
+	_whitespace: ['_tight', '_newline', '_blankline', '_double_blankline']
+};
+
 /** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name. */
+ *  stamped `TSKindId` enum value — both spellings resolve to the same name.
+ *  A supertype tag names its default arm; one without a default names no kind. */
 function _kindNameOf(kind: unknown): string | undefined {
-	return typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
+	if (tag === undefined || typeof tag === 'string') return tag ?? name;
+	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
-	return fn(rest);
+	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeData(rest))
+		return fn(rest);
+	const text = (rest as { text?: unknown }).text;
+	if (typeof text !== 'string')
+		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	return fn(text);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -190,8 +215,8 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
-	if (typeof v === 'number') {
+function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
+	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
 		for (const kind of ['decimal_digits']) {
 			const e = _leafRegistry[kind];
@@ -258,7 +283,7 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -369,7 +394,7 @@ function _listElements(
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) return v as T;
-	if (typeof v === 'boolean' || typeof v === 'number') {
+	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
@@ -1221,7 +1246,7 @@ export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 					? input.content
 					: typeof input === 'string'
-						? spelledInterior(input, '\\', '')
+						? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content)
 						: input,
 				_K0,
 				_K0
@@ -1236,7 +1261,7 @@ export function coerceToGroupName(input: T.GroupName.Loose): ReturnType<typeof F
 }
 
 export function coerceToDecimalDigits(input: T.DecimalDigits.Loose): ReturnType<typeof F.buildDecimalDigits> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildDecimalDigits>;
 	return F.buildDecimalDigits(input as Parameters<typeof F.buildDecimalDigits>[0]);
 }

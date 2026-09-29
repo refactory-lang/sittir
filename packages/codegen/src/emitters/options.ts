@@ -10,7 +10,7 @@ import {
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
+import { indentChars, spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
 import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
 import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
@@ -227,6 +227,7 @@ export function deriveAddressTables(
 export interface OptionsModuleInputs {
 	readonly arms?: ArmAliases;
 	readonly hints?: HintEmitter;
+	readonly indentChars?: readonly string[];
 }
 
 export function renderOptionsModule(inputs: OptionsModuleInputs = {}): string {
@@ -244,11 +245,13 @@ export function renderOptionsModule(inputs: OptionsModuleInputs = {}): string {
 	} else {
 		L.push('export type { SpacingArm, WhitespaceArm };', '');
 	}
+	const indentChars = inputs.indentChars ?? [];
+	L.push(`export type IndentChar = ${indentChars.length === 0 ? 'never' : indentChars.map((c) => JSON.stringify(c)).join(' | ')};`, '');
 	L.push('/// The virtual kinds the grammar declares beside its node kinds, by the sites bound to them.');
 	L.push('export interface LabelOptions {');
 	for (const l of labels) L.push(`\treadonly ${l.key}?: ${l.hint};`);
 	L.push('}', '');
-	L.push('export type Options = DerivedOptions<T.OptionsHintMap> & LabelOptions;', '');
+	L.push('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;', '');
 	return L.join('\n');
 }
 
@@ -283,5 +286,9 @@ export function emitOptions(config: EmitOptionsConfig): string {
 		});
 	const arms = armAliasesOf(config.nodeMap, config.kindEntries, sites);
 	const addresses = config.addresses ?? addressTablesFor(config.nodeMap, config.kindEntries, sites, config.options);
-	return renderOptionsModule({ arms, hints: hintEmitterOf(addresses, config.kindEntries, arms, displayedKinds(config.nodeMap)) });
+	return renderOptionsModule({
+		arms,
+		hints: hintEmitterOf(addresses, config.kindEntries, arms, displayedKinds(config.nodeMap)),
+		indentChars: indentChars(config.nodeMap)
+	});
 }

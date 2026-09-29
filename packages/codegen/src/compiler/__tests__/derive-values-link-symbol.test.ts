@@ -18,7 +18,7 @@
  * emits), `resolvedKind = name` (the kindId read-time matching keys on).
  */
 
-import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveValuesForRule, isTerminalValue, isNodeRef } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -75,3 +75,24 @@ describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () =>
 		expect(out.some(isNodeRef)).toBe(false);
 	});
 });
+
+describe('deriveValuesForRule — literals inside a token', () => {
+	const entries = [{ kind: 'dquote', id: 70, anon: true, symbolName: '"', literalText: '"' }];
+	const choice = { type: CHOICE, fieldName: 'content', members: [{ type: STRING, value: 'n' }, { type: STRING, value: '"' }] } as unknown as Rule;
+
+	it('stores every interior literal as text: the parser emits no node inside a token', () => {
+		const rule = { type: SEQ, tokenized: true, members: [{ type: STRING, value: '\\' }, choice] } as unknown as Rule;
+		const out = deriveValuesForRule(rule, { kindEntries: entries }, 'single');
+		expect(out.map((v) => (isTerminalValue(v) ? [v.value, v.resolvedKind] : undefined))).toEqual([
+			['\\', undefined],
+			['n', undefined],
+			['"', undefined]
+		]);
+	});
+
+	it('resolves the same literal to its kind outside a token', () => {
+		const out = deriveValuesForRule(choice, { kindEntries: entries }, 'single');
+		expect(out.map((v) => (isTerminalValue(v) ? v.resolvedKind : undefined))).toEqual([undefined, 'dquote']);
+	});
+});
+

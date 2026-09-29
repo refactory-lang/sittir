@@ -6,6 +6,8 @@ import type * as T from './types.js';
 
 export type { SpacingArm, WhitespaceArm };
 
+export type IndentChar = ' ' | '\t';
+
 /// The virtual kinds the grammar declares beside its node kinds, by the sites bound to them.
 export interface LabelOptions {
 	readonly body?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
@@ -21,4 +23,4 @@ export interface LabelOptions {
 	};
 }
 
-export type Options = DerivedOptions<T.OptionsHintMap> & LabelOptions;
+export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;

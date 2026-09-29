@@ -15,7 +15,7 @@ import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
-import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName } from '../primitives/variant.ts';
+import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
@@ -30,6 +30,7 @@ import {
 	wireRenameLift,
 	wireWithPatchSites,
 	wireHasAuthoredRule,
+	wireIsBaseSupertype,
 	wireRegisterSyntheticRule,
 	wireGetCurrentRuleKind,
 	wireIsExtraRule,
@@ -443,7 +444,7 @@ function buildHoistedVariants(
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
-		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
+		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, variantOwnerKind(parentKind, p.v), altMember), name });
 	}
 	for (const { altIdx, lift } of lifted) {
 		wireSetLiftBody(lift.liftName, hoist(lift.body));
@@ -499,7 +500,8 @@ function renameEnrichLift(
 	nodeName: string
 ): RuntimeRule {
 	if (!wireHasAuthoredRule(ruleName)) {
-		wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(renameRule(lift.body, new Map([[lift.liftName, ruleName]])) as RuntimeRule));
+		const body = renameRule(lift.body, new Map([[lift.liftName, ruleName]])) as RuntimeRule;
+		wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? body : withHoistedAnnotation(body));
 	}
 	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;
@@ -650,7 +652,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
 		const name = polymorphVisibleName(parentKind, variantMintName(patch));
-		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind, patch.default === true ? { annotations: { default: true } } : undefined);
+		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, variantOwnerKind(parentKind, patch), patch.default === true ? { annotations: { default: true } } : undefined);
 		const lift = enrichLiftArmOf(originalMember);
 		if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
 		if ((originalMember as { type?: string }).type === 'ALIAS') {

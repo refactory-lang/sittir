@@ -7244,7 +7244,8 @@
             },
             "annotations": {
               "variant": "postfix",
-              "variantOf": "update_expression"
+              "variantOf": "update_expression",
+              "default": true
             }
           },
           {
@@ -13670,6 +13671,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_tab"
+          },
+          "named": true,
+          "value": "tab"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_newline"
           },
           "named": true,
@@ -14669,84 +14679,180 @@
       }
     },
     "number_bigint": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "number_bigint_hex",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "hex",
+            "variantOf": "number_bigint"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number_bigint_binary",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "binary",
+            "variantOf": "number_bigint"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number_bigint_octal",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "octal",
+            "variantOf": "number_bigint"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number_bigint_decimal",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "decimal",
+            "variantOf": "number_bigint",
+            "default": true
+          }
+        }
+      ],
+      "annotations": {
+        "tokenForm": true
+      }
+    },
+    "number_bigint_hex": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
+            "type": "SEQ",
             "members": [
               {
-                "type": "SEQ",
+                "type": "CHOICE",
                 "members": [
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "0x"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "0X"
-                      }
-                    ]
+                    "type": "STRING",
+                    "value": "0x"
                   },
                   {
-                    "type": "PATTERN",
-                    "value": "[\\da-fA-F](_?[\\da-fA-F])*"
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "0b"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "0B"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-1](_?[0-1])*"
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "0o"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "0O"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "[0-7](_?[0-7])*"
+                    "type": "STRING",
+                    "value": "0X"
                   }
                 ]
               },
               {
                 "type": "PATTERN",
-                "value": "\\d(_?\\d)*"
+                "value": "[\\da-fA-F](_?[\\da-fA-F])*"
               }
             ]
+          },
+          {
+            "type": "STRING",
+            "value": "n"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "number_bigint_binary": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "0b"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "0B"
+                  }
+                ]
+              },
+              {
+                "type": "PATTERN",
+                "value": "[0-1](_?[0-1])*"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "n"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "number_bigint_octal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "0o"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "0O"
+                  }
+                ]
+              },
+              {
+                "type": "PATTERN",
+                "value": "[0-7](_?[0-7])*"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "n"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "number_bigint_decimal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "\\d(_?\\d)*"
           },
           {
             "type": "STRING",
@@ -16140,7 +16246,7 @@
               "name": "export_statement_default_from_star_from",
               "annotations": {
                 "variant": "star_from",
-                "variantOf": "export_statement_default"
+                "variantOf": "export_statement_default_from"
               }
             },
             {
@@ -16151,7 +16257,7 @@
               },
               "annotations": {
                 "variant": "ns_from",
-                "variantOf": "export_statement_default"
+                "variantOf": "export_statement_default_from"
               }
             },
             {
@@ -16159,7 +16265,7 @@
               "name": "export_statement_default_from_clause_from",
               "annotations": {
                 "variant": "clause_from",
-                "variantOf": "export_statement_default"
+                "variantOf": "export_statement_default_from"
               }
             },
             {
@@ -16218,7 +16324,7 @@
               },
               "annotations": {
                 "variant": "default_kw",
-                "variantOf": "export_statement_default"
+                "variantOf": "export_statement_default_declaration"
               }
             }
           ]
@@ -16305,7 +16411,7 @@
               },
               "annotations": {
                 "variant": "value",
-                "variantOf": "export_statement_default"
+                "variantOf": "export_statement_default_declaration_default_kw"
               }
             }
           ]
@@ -17606,6 +17712,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_tab"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_newline"
     },
     {
@@ -17653,6 +17763,7 @@
     "primary_type",
     "comment",
     "number",
+    "number_bigint",
     "_whitespace",
     "index_signature",
     "import_specifier",

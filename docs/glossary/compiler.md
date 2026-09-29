@@ -1498,6 +1498,13 @@ The classification left after every structural check: an all-text subtree is `'p
 // optional modifier group).
 ```
 
+#### lexical interior
+
+A tokenized compound body (a whole token whose interior was structured into
+slots) is collected under `lexical`: its members are lexeme fragments, not
+parser children, so `deriveValuesForRule` gives their literals no kind. A
+tokenized STRING or PATTERN is the token itself and keeps its own lookup.
+
 ### `packages/codegen/src/compiler/collect-slots.ts::recordUnclassifiableShape`
 
 ```text
@@ -7314,11 +7321,12 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
  * diagnostic. `syntactic` is false inside a lexed interior (below a
  * TOKEN): stamping is suppressed there, since its inner strings are lexeme
  * fragments of the token, not separate anon tokens, so a miss there is
- * meaningless by construction. A FIELD inside the interior (a structured
- * token-interior slot) still rewrites its literals, but only to an
- * anonymous token kind, never to a named rule: a named rule is a parser
- * node, and a lexed interior holds none (Go's `_` digit separator stays
- * text rather than becoming `blank_identifier`).
+ * meaningless by construction. Rewriting is suppressed there too, FIELD
+ * included: a FIELD re-enables the rewrite only in syntactic context, so a
+ * structured token-interior slot's literals stay text (Go's `_` digit
+ * separator and a rune escape's `"` never become `blank_identifier` or
+ * `dquote`). A FIELD holding a whole token (`field(x, token(';'))`) sits
+ * outside the TOKEN and still rewrites, because that string is the token.
  *
  * An inline SYMBOL (or inline SUPERTYPE subtype) whose name has an entry
  * in `aliasBodies` is not stamped in place — its alias body is spliced in
@@ -10116,6 +10124,40 @@ authored field is untouched: its nested sequences still compose into one slot, s
 
 The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so the pass records a blocking `token-interior-unstructurable` naming the kind on the link diagnostics and leaves the token whole-text (`recordUnnamedInGroup`). It never throws.
 
+### `packages/codegen/src/compiler/token-interior.ts::structureSeq`
+
+Structures one token's top-level sequence. A sequence carrying fields
+flattens every nested unlexed sequence; one without fields flattens only the
+pattern-free ones (`flattenLiteralSeqs`), so a literal run such as `'\\'`
+before an escape choice becomes members beside the choice. The token is
+structured when a slot or group holds a pattern, or when its one enum is the
+whole content (`isSoleEnumContent`); otherwise it stays whole-text.
+
+### `packages/codegen/src/compiler/token-interior.ts::flattenLiteralSeqs`
+
+Splices nested sequences that hold no pattern into their parent's members,
+keeping any sequence that is already lexed or holds a pattern whole.
+
+### `packages/codegen/src/compiler/token-interior.ts::InteriorState`
+
+The member loop's running state: whether a slot has been named yet (an enum
+before any slot is the `prefix`, after one the `suffix`), the count of
+unnamed slot runs (one run is `content`, several are `content<n>`), and
+whether the token's one enum is its content, named `content`.
+
+### `packages/codegen/src/compiler/token-interior.ts::ContentRole`
+
+A member's part in deciding what a token's content is: an `enum` of
+strings, other `content` (a slot, a pattern or a group), or a fixed
+`literal`.
+
+### `packages/codegen/src/compiler/token-interior.ts::isSoleEnumContent`
+
+A token whose members hold no other content and exactly one enum has that
+enum as its content. Shared by the token-interior pass (the enum is named
+`content`) and the full-form stamp (the enum sits between the literal runs),
+so the two cannot disagree about which enum is the text.
+
 ### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
 
 The members of a sequence with every nested (non-lexed) sequence spliced in, recursively.
@@ -10249,9 +10291,9 @@ Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline
 ### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
 
 ```text
-The slice of DeriveCtx slot derivation needs (kindEntries, simplifiedRules),
-passed through from the owning node's derive ctx so slots resolve alias
-envelopes the same way element and value derivation does.
+The slice of DeriveCtx slot derivation needs (kindEntries, simplifiedRules,
+lexical), passed through from the owning node's derive ctx so slots resolve
+alias envelopes the same way element and value derivation does.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`

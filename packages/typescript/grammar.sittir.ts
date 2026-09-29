@@ -112,20 +112,12 @@ export default sittirGrammar(base, {
 		statement_block: { before: preference('space') },
 		class_body: { before: preference('space') },
 		switch_body: { before: preference('space') },
-		named_imports: {
-			before: preference('space'),
-			after: preference('space'),
-			'"{"/after': preference('space'),
-			'"}"/before': preference('space')
-		},
-		export_clause: {
-			before: preference('space'),
-			after: preference('space'),
-			'"{"/after': preference('space'),
-			'"}"/before': preference('space')
-		},
-		object: { '"{"/after': preference('space'), '"}"/before': preference('space') },
-		object_pattern: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+		named_imports: { before: preference('space'), after: preference('space') },
+		import_specifiers: { 'import_specifier:/start': preference('space'), 'import_specifier:/end': preference('space') },
+		export_clause: { before: preference('space'), after: preference('space') },
+		export_specifiers: { 'export_specifier:/start': preference('space'), 'export_specifier:/end': preference('space') },
+		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
+		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		ternary_expression: { '":"/before': preference('space') },
 		for_statement: { '"("/before': preference('space'), '";"/after': preference('space') },
 		lexical_declaration: { after: preference('space') },
@@ -192,7 +184,11 @@ export default sittirGrammar(base, {
 			4: variant('decimal', { default: true }),
 			5: variant('binary'),
 			6: variant('octal'),
-			7: variant('bigint')
+			7: variant('bigint'),
+			'7/0': variant('hex'),
+			'7/1': variant('binary'),
+			'7/2': variant('octal'),
+			'7/3': variant('decimal', { default: true })
 		},
 		hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 		binary_expression: {
@@ -511,7 +507,7 @@ export default sittirGrammar(base, {
 		template_substitution: { 0: token.immediate('${'), 1: field('expression') },
 
 		update_expression: {
-			0: variant('postfix'),
+			0: variant('postfix', { default: true }),
 			1: variant('prefix')
 		},
 

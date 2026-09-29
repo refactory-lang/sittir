@@ -10,7 +10,8 @@
 import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/engine';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
 import { wrapNode, type SourceFileTree } from './wrap.js';
-import type { Options } from './options.js';
+import type { IndentChar, Options } from './options.js';
+import type { IndentOption } from '@sittir/types';
 
 export type { SourceFileRoot };
 export type { EngineOptions, ParseOptions, RenderOptions, SourceFileTree };
@@ -21,7 +22,8 @@ export type { EngineOptions, ParseOptions, RenderOptions, SourceFileTree };
  * accessors on the result return wrapped nodes too, with children expanding
  * lazily unless `{ deep: true }` is passed.
  */
-export interface SourceFileEngine extends SittirEngine<SourceFileRoot, Options>, ParseEngine<SourceFileTree> {}
+export interface SourceFileEngine
+	extends SittirEngine<SourceFileRoot, Options, IndentChar>, ParseEngine<SourceFileTree> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -32,8 +34,10 @@ export interface SourceFileEngine extends SittirEngine<SourceFileRoot, Options>,
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SourceFileEngine.
  */
-export function createEngine(options?: EngineOptions<Options>): SourceFileEngine {
-	const engine = createRenderEngine(options);
+export function createEngine<const I extends string = string>(
+	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+): SourceFileEngine {
+	const engine = createRenderEngine<I>(options);
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): SourceFileTree {

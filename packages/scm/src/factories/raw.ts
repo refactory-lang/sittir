@@ -20,8 +20,8 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
 const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
-const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
-const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
+export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(...children: T.Definition[]): T.Program.Built;
@@ -764,6 +764,10 @@ export function buildSpace(): TSKindId.Space {
 	return TSKindId.Space;
 }
 
+export function buildTab(): TSKindId.Tab {
+	return TSKindId.Tab;
+}
+
 export function buildNewline(): TSKindId.Newline {
 	return TSKindId.Newline;
 }
@@ -811,6 +815,7 @@ export type FluentKindMap = {
 	named_node_group_anchored_last: T.NamedNodeGroupAnchoredLast.Built;
 	_tight: T.Tight;
 	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
@@ -845,6 +850,7 @@ export const _factoryMap = {
 	named_node_group_anchored_last: buildNamedNodeGroupAnchoredLast,
 	_tight: buildTight,
 	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,

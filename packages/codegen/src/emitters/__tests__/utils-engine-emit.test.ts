@@ -45,8 +45,10 @@ describe('utils engine facade emission', () => {
 		expect(contents).not.toContain('export type Hoisted<B> = B extends {');
 	});
 
-	it('emits bundle() and hoist() beside attachProps()', () => {
+	it('emits bundle() and hoist(), and no helper that mutates a factory', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
+
+		expect(contents).not.toContain('attachProps');
 
 		expect(contents).toContain('export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {');
 		expect(contents).toContain(

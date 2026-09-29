@@ -13,7 +13,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, slotLiteralValues } from './shared.ts';
-import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -31,6 +31,17 @@ export interface NodeInterior {
 
 export function interiorEnumArms(values: readonly string[]): string {
 	return [...values].sort((a, b) => b.length - a.length).map(escapeRegexLiteral).join('|');
+}
+
+export function interiorSlotGuards(
+	kind: string,
+	node: AssembledNode
+): readonly { readonly slot: string; readonly literal: string; readonly constName: string }[] {
+	return (interiorOf(node)?.entries ?? []).flatMap((entry) => {
+		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+		const literal = guarded === undefined ? undefined : anchoredLeafRegexLiteral(kind, guarded.pattern);
+		return guarded === undefined || literal === undefined ? [] : [{ slot: guarded.slot, literal, constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
+	});
 }
 
 export function interiorEntryPattern(entry: InteriorEntry): string {
@@ -178,10 +189,12 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 	return out;
 }
 
-export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly prefix: '' };
+export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string };
 export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
 
 const FLOAT_PROBES = ['1.5', '.5', '1e5', '1.5e5'] as const;
+
+const FLOAT_WHOLE_SPELLINGS = ['.0', '.', 'e0'] as const;
 
 const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts: string; readonly rejects: string; readonly prefixes: readonly string[] }[] = [
 	{ base: 16, accepts: 'ff', rejects: 'g', prefixes: ['0x', '0X', ''] },
@@ -199,8 +212,8 @@ export function numberShape(pattern: RegExp): NumberShape | undefined {
 			}
 		}
 	}
-	if (!pattern.test('a') && FLOAT_PROBES.some((text) => pattern.test(text))) return { base: 'float', prefix: '' };
-	return undefined;
+	if (pattern.test('a') || !FLOAT_PROBES.some((text) => pattern.test(text))) return undefined;
+	return { base: 'float', whole: FLOAT_WHOLE_SPELLINGS.find((spelling) => pattern.test(`1${spelling}`)) ?? '' };
 }
 
 const SIGNATURE_OF_BASE = { 2: 'binary', 8: 'octal', 10: 'decimal', 16: 'hex', float: 'float' } as const;
@@ -235,7 +248,7 @@ export function numericLeafKinds(nodeMap: NodeMap): readonly string[] {
 	const defaults = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledSupertype)) continue;
-		const chosen = (node.variantSubtypes ?? []).find((ref) => ref.default === true);
+		const chosen = node.defaultVariantSubtype;
 		if (chosen !== undefined) defaults.add(storageKindOfRef(chosen.node));
 	}
 	const found = [...numberSignatures(nodeMap)].filter(([, signature]) => signature === 'decimal' || signature === 'float').map(([kind]) => kind);
@@ -275,5 +288,25 @@ export function bareInteriorText(kind: string, node: AssembledNode): BareInterio
 }
 
 export function numberTextArgs(shape: NumberShape): string {
-	return `${JSON.stringify(shape.base)}, ${JSON.stringify(shape.prefix)}`;
+	return `${JSON.stringify(shape.base)}, ${JSON.stringify(shape.base === 'float' ? shape.whole : shape.prefix)}`;
+}
+
+export function numberInputType(shape: NumberShape): string {
+	return shape.base === 'float' ? 'number' : 'number | bigint';
+}
+
+export function numberInputTest(shape: NumberShape, value: string): string {
+	return shape.base === 'float' ? `(typeof ${value} === 'number')` : `(typeof ${value} === 'number' || typeof ${value} === 'bigint')`;
+}
+
+export function widenNumericSlots(type: string, node: AssembledNode): string {
+	const widened = node.slots.flatMap((slot) => {
+		const shape = numericSlotShape(slot);
+		return shape === undefined ? [] : [`${JSON.stringify(slot.configKey)}: ${numberInputType(shape)}`];
+	});
+	return widened.length === 0 ? type : `WidenNumeric<${type}, { ${widened.join('; ')} }>`;
+}
+
+export function numericLeafInputTypes(nodeMap: NodeMap): ReadonlyMap<string, string> {
+	return new Map(numericLeafKinds(nodeMap).map((kind) => [kind, numberInputType(numberShape(leafGuard(kind, nodeMap.nodes.get(kind)!)!)!)]));
 }

@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Blankline, Comment, DoubleBlankline, Newline, Space, NamespaceMap } from './types.js';
+import type { Blankline, Comment, DoubleBlankline, Newline, Space, Tab, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import { KIND_NAMES } from './types.js';
 import { INNER_GAPS } from './consts.js';
@@ -58,9 +58,9 @@ export const methodsEngine = {
 	},
 	trivia: {
 		kindName: (type: AnyNodeData['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-		kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', 'comment']),
+		kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', '_tab', 'comment']),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\n': 26, '\n\n': 27, '\n\n\n': 28 } },
+		whitespace: { run: /^(?:(?:(?:\s+))+)$/u, kindIdByText: { ' ': 25, '\t': 26, '\n': 27, '\n\n': 28, '\n\n\n': 29 } },
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -73,17 +73,17 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | Comment | DoubleBlankline | Newline | Space | string)
+			| (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)
 			| {
-					leading?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
-					trailing?: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[];
+					leading?: (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)[];
+					trailing?: (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
-	leading(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
-	trailing(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
-	trailing(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): Self;
+	leading(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space | Tab)[];
+	leading(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)[]): Self;
+	trailing(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space | Tab)[];
+	trailing(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)[]): Self;
 }
 
 export interface NodeMethodsOf {
@@ -100,8 +100,8 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space)[];
-	inner(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | string)[]): N;
+	inner(): readonly (Blankline | Comment | DoubleBlankline | Newline | Space | Tab)[];
+	inner(...items: (Blankline | Comment | DoubleBlankline | Newline | Space | Tab | string)[]): N;
 }
 
 export function isEmpty(node: T.Program): node is T.EmptyProgram;
@@ -219,16 +219,6 @@ function extractNodeText(value: unknown): string | undefined {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
-	fn: T,
-	props: P
-): T & P {
-	for (const key of Object.keys(props)) {
-		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-	}
-	return fn as T & P;
 }
 
 export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {

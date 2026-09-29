@@ -50,7 +50,7 @@ describe('emitEngine root type', () => {
 			rootTreeTypeName: 'SourceFileTree'
 		});
 		expect(output).toContain('export type SourceFileRoot = NodeDataOf<SourceFile>;');
-		expect(output).toContain("import type { NodeDataOf } from '@sittir/types';");
+		expect(output).toContain("import type { IndentOption, NodeDataOf } from '@sittir/types';");
 		expect(output).not.toContain('AnyNodeData &');
 	});
 

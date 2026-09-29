@@ -6,9 +6,9 @@ const structPattern = { kind: 'struct_pattern', type: 'T' } as const;
 
 describe('a visible wrapper seated on its parent', () => {
 	it('takes the wrapped pattern where the arm takes the wrapper', () => {
-		expect(ir.matchArm.withComma({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T{} => {},');
-		expect(ir.matchArm.blockEnding({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T{} => {}');
-		expect(ir.lastMatchArm({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T{} => {}');
+		expect(ir.matchArm.withComma({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {},');
+		expect(ir.matchArm.blockEnding({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {}');
+		expect(ir.lastMatchArm({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {}');
 	});
 
 	it('takes the wrapper own condition beside the pattern', () => {
@@ -22,7 +22,7 @@ describe('a visible wrapper seated on its parent', () => {
 			pattern: ir.structPattern.strict({ type: ir.identifier('T') }),
 			value: ir.block.strict({})
 		});
-		expect(arm.$render()).toBe('T{} => {},');
+		expect(arm.$render()).toBe('T {} => {},');
 	});
 
 	it('still builds the hand-spelled wrapper, as a config and as a built node', () => {
@@ -31,8 +31,8 @@ describe('a visible wrapper seated on its parent', () => {
 			pattern: ir.matchPattern.strict({ pattern: ir.structPattern.strict({ type: ir.identifier('T') }) }),
 			value: ir.block.strict({})
 		});
-		expect(config.$render()).toBe('T{} => {},');
-		expect(built.$render()).toBe('T{} => {},');
+		expect(config.$render()).toBe('T {} => {},');
+		expect(built.$render()).toBe('T {} => {},');
 	});
 
 	it('records the seat on every parent in the node model', () => {

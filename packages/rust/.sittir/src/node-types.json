@@ -504,6 +504,28 @@
     ]
   },
   {
+    "type": "char_literal_escaped",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "char_literal_escaped_hex",
+        "named": true
+      },
+      {
+        "type": "char_literal_escaped_simple",
+        "named": true
+      },
+      {
+        "type": "char_literal_escaped_unicode_braced",
+        "named": true
+      },
+      {
+        "type": "char_literal_escaped_unicode_fixed",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "closure_expression",
     "named": true,
     "subtypes": [
@@ -7770,7 +7792,19 @@
     "named": true
   },
   {
-    "type": "char_literal_escaped",
+    "type": "char_literal_escaped_hex",
+    "named": true
+  },
+  {
+    "type": "char_literal_escaped_simple",
+    "named": true
+  },
+  {
+    "type": "char_literal_escaped_unicode_braced",
+    "named": true
+  },
+  {
+    "type": "char_literal_escaped_unicode_fixed",
     "named": true
   },
   {

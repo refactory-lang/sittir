@@ -218,7 +218,7 @@ export function adjacentInto(body: Body): Body {
 						fallback: node.fallback === undefined ? undefined : adjacentInto(node.fallback)
 					}
 				]
-			: node.kind === 'slot' || node.kind === 'seam' || node.kind === 'tokenSeam'
+			: node.kind === 'slot' || node.kind === 'seam' || node.kind === 'tokenSeam' || node.kind === 'text'
 				? [{ kind: 'adjacent' }, node]
 				: [node]
 	);

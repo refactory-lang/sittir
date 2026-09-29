@@ -16,6 +16,7 @@ import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
+import { indentChars } from '../compiler/model/whitespace-arms.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
@@ -182,7 +183,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: config.nodeTypes, sites: sitePreferences, addresses: addressTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule();
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

@@ -177,8 +177,8 @@ describe('structuralShape trivia handling', () => {
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
 	it('builds both doc-comment forms through line_comment', () => {
-		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi');
-		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi');
+		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi\n');
+		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi\n');
 	});
 	// `///` and `//!` are alternatives, so each is its own arm kind carrying
 	// only the doc text. Were they one kind with the markers as two optional
@@ -195,7 +195,7 @@ describe('namespaced constructors reach the arm kinds', () => {
 		}
 	});
 	it('builds a plain line comment through the same parent', () => {
-		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi');
+		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi\n');
 	});
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
@@ -228,7 +228,7 @@ describe('ir entry ratchet', () => {
 		// End, the comment-content patterns — are on the surface; the
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(178);
+		expect(builders.length).toBeLessThanOrEqual(179);
 	});
 });
 

@@ -1085,10 +1085,13 @@
 			"field": "captured_pattern_after"
 		}
 	],
-	"char_literal_escaped": [
+	"char_literal_escaped_hex": [
 		{
 			"kind": "slot",
 			"name": "b"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",
@@ -1100,6 +1103,90 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"char_literal_escaped_simple": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"char_literal_escaped_unicode_braced": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"char_literal_escaped_unicode_fixed": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",
@@ -1112,6 +1199,9 @@
 			"name": "b"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "text",
 			"text": "'"
 		},
@@ -1121,6 +1211,9 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "text",

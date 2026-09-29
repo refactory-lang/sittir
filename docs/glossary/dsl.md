@@ -3579,13 +3579,21 @@ The render body of a whitespace member: a STRING, whose value is the member's te
 
 `_space`, the whitespace member that renders one space, and the default arm of every grammar that admits it.
 
+### `packages/codegen/src/dsl/whitespace.ts::TAB_MEMBER`
+
+`_tab`, the whitespace member that renders one tab. Admitted where the grammar's extras accept a tab, like any member (`admitsWhitespaceMember`).
+
+### `packages/codegen/src/dsl/whitespace.ts::INDENT_MEMBERS`
+
+The members an indentation unit is made of: `_space` and `_tab`. The characters a render's `indent` may use are the texts of those of them the grammar admits (`indentChars`), so the unit is always text the grammar lexes as whitespace.
+
 ### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_MEMBER`
 
 `_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingArms`).
 
 ### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
 
-Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
+Every whitespace member sittir can mint, in the order `_whitespace` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
 
 ### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
 
@@ -4430,12 +4438,16 @@ and wire's pattern replacement names it under the authored key. The enriched
 grammar is then already self-consistent, with no minted rule for a later
 stage to take back.
 
+Before the token-form hoist, every rule passes through `factorSharedOptional`, so a choice whose every member is optional reaches the hoist as one optional choice and the blank case becomes its own arm. After clause hoisting, every clause group is stamped `hoisted` except the token-form parents, which are supertypes.
+
 ### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
 
 The part of a grammar's authored config enrich reads: `groupBodies`, the
 evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
 config's `extras:` callback, which decides the extras the final grammar
 lexes (`effectiveExtras`).
+
+`fieldSites` maps each kind to the index paths its authored patches mark with `field()` (`authoredFieldSites`); the token-form hoist leaves a choice at one of those paths unsplit.
 
 ### `packages/codegen/src/dsl/enrich.ts::coveredByAuthoredGroup`
 
@@ -5977,7 +5989,11 @@ themselves.
 
 ### `packages/codegen/src/dsl/enrich.ts::hoistTokenForms`
 
-The unconditional token-form hoist, one pass over every rule before clause hoisting: the body is distributed over its outermost form alternation (`distributeTokenForms`); each arm is minted as a visible group of the `arm` flavor through `visibleGroupSynthName` and referenced by a group-lift symbol, so the arms are reachable by path patches through the lift and a `variant()` on the parent's top-level arms renames them (`renameEnrichLift`), exactly as for any other enrich-minted arm. The rule becomes a choice of the minted symbols and is reported to `addSupertypes`. Minted arms get a visible-group source entry and the parent as owner, like every other enrich mint, so `collapseSingletonMintOrdinals` drops the ordinal from a lone unnamed arm. The grammar's `word` rule is left alone too: keyword extraction needs it to stay one token. A rule the grammar declares in `externals` is left alone: the scanner produces that token, and tree-sitter rejects a name that is both an external token and a non-terminal.
+The unconditional token-form hoist, one pass over every rule before clause hoisting: the body is distributed over its outermost form alternation (`distributeTokenForms`); each arm is minted as a visible group of the `arm` flavor through `visibleGroupSynthName` and referenced by a group-lift symbol, so the arms are reachable by path patches through the lift and a `variant()` on the parent's arms renames them (`renameEnrichLift`), exactly as for any other enrich-minted arm. The rule becomes a choice of the minted symbols and its name is pushed onto `parents`, which enrich appends to the grammar's supertypes. Minted arms get a visible-group source entry and the parent as owner, like every other enrich mint, so `collapseSingletonMintOrdinals` drops the ordinal from a lone unnamed arm. The grammar's `word` rule is left alone too: keyword extraction needs it to stay one token. A rule the grammar declares in `externals` is left alone: the scanner produces that token, and tree-sitter rejects a name that is both an external token and a non-terminal.
+
+The hoist recurses: each minted arm's body is hoisted in turn under the arm's own name, so an arm that is itself a token over a form alternation becomes a nested parent, listed as a supertype like the top-level one, with its own minted arms. A nested parent keeps `tokenForm` but is never stamped `hoisted` (enrich's group-stamping pass skips every name in `parents`): it is a supertype, and a `hoisted` stamp would make link skip its supertype promotion and assemble classify it as a compound.
+
+Only unfielded alternations are split. `fielded` lists the index paths, relative to this rule, where the authored patches put a `field()` (`authoredFieldSites`); a choice at one of those paths is a field's value and stays one lexeme, as does anything under a `FIELD` node. Each arm's recursion receives the sites under its own index.
 
 ### `packages/codegen/src/dsl/enrich.ts::annotateTokenFormArms`
 
@@ -6011,6 +6027,8 @@ Reads the sidecar enrich left under `ENRICH_WHITESPACE_KEY`; a grammar enrich di
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 
 Applies a rename map to every `SYMBOL` name and every `variantOf` arm owner in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies. A changed node is copied, never written: the copy is built from the original's property descriptors with the renamed values set in them, so a frozen input (the enriched base) copies cleanly.
+
+A `variantOf` annotation names a rule as well, so it follows the same map: when a `variant()` renames an enrich-minted parent whose arms were already stamped with that parent as owner, the arms' `variantOf` moves with it. Without that, a renamed nested token-form parent would keep arms owned by its minted name, and the flattened-parent derivation would reject them.
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
 

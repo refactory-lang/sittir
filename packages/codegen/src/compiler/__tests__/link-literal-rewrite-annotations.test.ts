@@ -1,4 +1,4 @@
-import { STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeRuleLiterals } from '../link.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -18,5 +18,30 @@ describe('canonicalizeRuleLiterals — a literal rewritten into its kind symbol'
 		const misses = { symbols: new Set<string>(), literals: new Set<string>(), aliasTargets: new Set<string>() };
 		const out = canonicalizeRuleLiterals(rule, entries, true, misses) as { annotations?: unknown };
 		expect(out.annotations).toBeUndefined();
+	});
+
+	it('leaves a literal inside a token as text, even under a field', () => {
+		const rule: Rule<'link'> = {
+			type: TOKEN,
+			content: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '\\' },
+					{ type: FIELD, name: 'content', content: { type: CHOICE, members: [{ type: STRING, value: 'n' }, { type: STRING, value: '"' }] } }
+				]
+			}
+		} as Rule<'link'>;
+		const entries = [{ kind: 'dquote', id: 70, anon: true, symbolName: '"', literalText: '"' }];
+		const misses = { symbols: new Set<string>(), literals: new Set<string>(), aliasTargets: new Set<string>() };
+		const out = canonicalizeRuleLiterals(rule, entries, false, misses);
+		expect(out).toEqual(rule);
+	});
+
+	it('still rewrites a field holding a whole token', () => {
+		const rule: Rule<'link'> = { type: FIELD, name: 'terminator', content: { type: TOKEN, content: { type: STRING, value: ';' } } } as Rule<'link'>;
+		const entries = [{ kind: 'semi', id: 7, anon: true, symbolName: ';', literalText: ';' }];
+		const misses = { symbols: new Set<string>(), literals: new Set<string>(), aliasTargets: new Set<string>() };
+		const out = canonicalizeRuleLiterals(rule, entries, false, misses);
+		expect(out).toMatchObject({ type: FIELD, content: { type: TOKEN, content: { type: SYMBOL, name: 'semi', literal: ';' } } });
 	});
 });

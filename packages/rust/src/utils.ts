@@ -21,6 +21,7 @@ import type {
 	LineComment,
 	Newline,
 	Space,
+	Tab,
 	NamespaceMap
 } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -72,12 +73,16 @@ export const methodsEngine = {
 			'_double_blankline',
 			'_newline',
 			'_space',
+			'_tab',
 			'block_comment',
 			'comment',
 			'line_comment'
 		]),
 		innerGaps: INNER_GAPS,
-		whitespace: { run: /^(?:(?:(?:\s))+)$/u, kindIdByText: { ' ': 166, '\n': 167, '\n\n': 168, '\n\n\n': 169 } },
+		whitespace: {
+			run: /^(?:(?:(?:\s))+)$/u,
+			kindIdByText: { ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 }
+		},
 		comment: undefined as ((text: string) => AnyNodeData) | undefined
 	}
 } satisfies WithMethodsEngine;
@@ -90,20 +95,40 @@ export const methodsEngine = {
 export interface TriviaSetterOf<Self> {
 	(
 		...args: (
-			| (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)
+			| (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)
 			| {
-					leading?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
-					trailing?: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[];
+					leading?: (
+						| Blankline
+						| BlockComment
+						| Comment
+						| DoubleBlankline
+						| LineComment
+						| Newline
+						| Space
+						| Tab
+						| string
+					)[];
+					trailing?: (
+						| Blankline
+						| BlockComment
+						| Comment
+						| DoubleBlankline
+						| LineComment
+						| Newline
+						| Space
+						| Tab
+						| string
+					)[];
 			  }
 		)[]
 	): Self;
-	leading(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	leading(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
 	leading(
-		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
 	): Self;
-	trailing(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
+	trailing(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
 	trailing(
-		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
 	): Self;
 }
 
@@ -121,8 +146,10 @@ export function withMethods<T extends object>(node: T, engine: typeof methodsEng
 }
 
 export interface InnerTrivia<N> {
-	inner(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space)[];
-	inner(...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | string)[]): N;
+	inner(): readonly (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab)[];
+	inner(
+		...items: (Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab | string)[]
+	): N;
 }
 
 export function isEmpty(node: T.SourceFile): node is T.EmptySourceFile;
@@ -263,16 +290,6 @@ function extractNodeText(value: unknown): string | undefined {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-export function attachProps<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
-	fn: T,
-	props: P
-): T & P {
-	for (const key of Object.keys(props)) {
-		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-	}
-	return fn as T & P;
 }
 
 export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {

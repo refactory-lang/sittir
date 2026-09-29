@@ -26,7 +26,7 @@ describe('builders accept their kind spelled in full', () => {
 	});
 
 	it('leaves a polymorph to the runtime refusal from its first pattern lead on', () => {
-		expect(ir.lineComment('// x').$render()).toBe('// x');
+		expect(ir.lineComment('// x').$render()).toBe('// x\n');
 		expect(() => ir.lineComment('//// x')).toThrow(/build it with ir\.lineCommentExtraSlashes/);
 		expect(() => ir.lineComment('/// x')).toThrow(/build it with ir\.lineCommentDocOuter/);
 	});

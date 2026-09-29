@@ -1,3 +1,5 @@
+import { polymorphVisibleName } from '../arm-names.ts';
+
 export interface VariantPlaceholder {
 	readonly __sittirPlaceholder: 'variant';
 	readonly name: string;
@@ -23,6 +25,10 @@ export function variant(name: string, options?: VariantOptions): VariantPlacehol
 
 export function variantMintName(v: VariantPlaceholder): string {
 	return [...(v.nestedUnder ?? []), v.name].join('_');
+}
+
+export function variantOwnerKind(parentKind: string, v: VariantPlaceholder): string {
+	return v.nestedUnder === undefined || v.nestedUnder.length === 0 ? parentKind : polymorphVisibleName(parentKind, v.nestedUnder.join('_'));
 }
 
 export function nestVariant(v: VariantPlaceholder, nestedUnder: readonly string[]): VariantPlaceholder {

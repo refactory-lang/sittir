@@ -10,7 +10,8 @@
 import type { SittirEngine, ParseEngine, EngineOptions, ParseOptions, RenderOptions } from '@sittir/common/engine';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
 import { wrapNode, type ModuleTree } from './wrap.js';
-import type { Options } from './options.js';
+import type { IndentChar, Options } from './options.js';
+import type { IndentOption } from '@sittir/types';
 
 export type { ModuleRoot };
 export type { EngineOptions, ParseOptions, RenderOptions, ModuleTree };
@@ -21,7 +22,7 @@ export type { EngineOptions, ParseOptions, RenderOptions, ModuleTree };
  * accessors on the result return wrapped nodes too, with children expanding
  * lazily unless `{ deep: true }` is passed.
  */
-export interface ModuleEngine extends SittirEngine<ModuleRoot, Options>, ParseEngine<ModuleTree> {}
+export interface ModuleEngine extends SittirEngine<ModuleRoot, Options, IndentChar>, ParseEngine<ModuleTree> {}
 
 /**
  * Create a grammar-specific engine instance.
@@ -32,8 +33,10 @@ export interface ModuleEngine extends SittirEngine<ModuleRoot, Options>, ParseEn
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing ModuleEngine.
  */
-export function createEngine(options?: EngineOptions<Options>): ModuleEngine {
-	const engine = createRenderEngine(options);
+export function createEngine<const I extends string = string>(
+	options?: EngineOptions<Options & IndentOption<I, IndentChar>>
+): ModuleEngine {
+	const engine = createRenderEngine<I>(options);
 	return {
 		...engine,
 		parse(source: string, options?: ParseOptions): ModuleTree {

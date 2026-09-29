@@ -27,7 +27,7 @@ export type NodeConfig<K extends NodeKind<RegexGrammar>> = BaseNodeConfig<RegexG
 export type TreeNode<K extends NodeKind<RegexGrammar>> = BaseTreeNode<RegexGrammar, K>;
 
 export type LeafScalarMap = {
-	[TSKindId.DecimalDigits]: number;
+	[TSKindId.DecimalDigits]: number | bigint;
 };
 
 export type LeafStringMap = {
@@ -1816,7 +1816,7 @@ export interface ControlLetterEscapeNs extends LeafNs<
 export interface GroupNameNs extends LeafNs<GroupName, string, GroupName.Built, GroupNameTree, 'group_name'> {}
 export interface DecimalDigitsNs extends LeafNs<
 	DecimalDigits,
-	string | number,
+	string | number | bigint,
 	DecimalDigits.Built,
 	DecimalDigitsTree,
 	'decimal_digits'

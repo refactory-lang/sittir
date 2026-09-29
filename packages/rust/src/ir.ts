@@ -426,6 +426,7 @@ export const path: {
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
+	readonly tab: typeof F.buildTab;
 	readonly newline: typeof F.buildNewline;
 	readonly blankline: typeof F.buildBlankline;
 	readonly doubleBlankline: typeof F.buildDoubleBlankline;
@@ -434,6 +435,7 @@ export const whitespace: {
 } = {
 	tight: F.buildTight,
 	space: F.buildSpace,
+	tab: F.buildTab,
 	newline: F.buildNewline,
 	blankline: F.buildBlankline,
 	doubleBlankline: F.buildDoubleBlankline,
@@ -615,8 +617,9 @@ export const ir: {
 	readonly rangePattern: typeof F.rangePattern;
 	readonly orPattern: typeof F.orPattern;
 	readonly integerLiteral: typeof F.integerLiteral;
-	readonly charLiteral: typeof F.charLiteral;
 	readonly escapeSequence: typeof F.escapeSequence;
+	readonly charLiteralEscaped: typeof F.charLiteralEscaped;
+	readonly charLiteral: typeof F.charLiteral;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -828,8 +831,9 @@ export const ir: {
 	rangePattern: F.rangePattern,
 	orPattern: F.orPattern,
 	integerLiteral: F.integerLiteral,
-	charLiteral: F.charLiteral,
 	escapeSequence: F.escapeSequence,
+	charLiteralEscaped: F.charLiteralEscaped,
+	charLiteral: F.charLiteral,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
