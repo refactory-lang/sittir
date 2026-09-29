@@ -753,9 +753,9 @@ throws rather than emit an unreachable builder.
 
 #### body
 
-The renamed node's `irKey` follows its new `typeName` (`lowerCamelCase`), so a
+The renamed node's `irKey` follows its new `typeName` (`irKeyOfTypeName`), so a
 node without a factory — a keyword leaf — never keeps the `irKey` it shared;
-its `factoryName` is the original type name lower-camel-cased under a `_`.
+its `factoryName` is the original type name's ir key under a `_`.
 
 ### `packages/codegen/src/compiler/assemble.ts::renameCollidingVisibleKinds`
 

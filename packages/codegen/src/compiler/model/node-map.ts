@@ -32,7 +32,7 @@ import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAlia
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
-import { casingWords, lowerCamelCase, pascalCase } from './casing.ts';
+import { casingWords, irKeyOfTypeName, kindTypeName } from './casing.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import {
@@ -957,11 +957,10 @@ export function nameNode(kind: string): {
 } {
 	const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind);
 	const marked = prepareKindForPascalCase(normalized);
-	const pascal = pascalCase(marked) || 'Anonymous';
-	const leadingDigit = /^\d/.test(pascal);
-	const typeName = leadingDigit ? `Tok_${pascal}` : pascal;
-	let factoryName = leadingDigit ? `tok_${pascal}` : lowerCamelCase(marked) || 'anonymous';
-	const irKey = factoryName;
+	const pascal = kindTypeName(marked) || 'Anonymous';
+	const typeName = /^\d/.test(pascal) ? `Tok_${pascal}` : pascal;
+	const irKey = irKeyOfTypeName(typeName);
+	let factoryName = irKey;
 	if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`;
 	return { typeName, factoryName, irKey };
 }

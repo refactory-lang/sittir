@@ -421,7 +421,7 @@
     {
       "kind": "MISSING_keyword",
       "modelType": "keyword",
-      "typeName": "MISSINGKeyword",
+      "typeName": "MissingKeyword",
       "irKey": "missingKeyword",
       "hidden": true,
       "isParameterless": true,

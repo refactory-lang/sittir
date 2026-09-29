@@ -347,10 +347,12 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::nameNode`
 
-Derives `typeName` (`pascalCase`), `factoryName` and `irKey`
-(`lowerCamelCase`) from a kind key, so the `AssembledNodeBase` constructor
-names every node the same way. A key whose Pascal form starts with a digit is
-prefixed `Tok_`/`tok_`. The derivations are not injective (C's
+Derives `typeName` (`kindTypeName`), `irKey` (`irKeyOfTypeName` of the type
+name) and `factoryName` (the ir key, suffixed `_` when it is a reserved word)
+from a kind key, so the `AssembledNodeBase` constructor names every node the
+same way and a kind's type name and ir key differ only in the case of their
+first letter. A key whose Pascal form starts with a digit is prefixed
+`Tok_`/`tok_`. The derivations are not injective (C's
 `_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
 type-name renames resolve that as a naming event.
 
@@ -5088,6 +5090,21 @@ turned into: splits on `_`, whitespace and `-`, then at a lower-to-upper
 boundary, and treats a run of capitals as one word (`MISSING_keyword` →
 `MISSING`, `keyword`; `JSXElement` → `JSX`, `Element`). Case is kept; each
 casing decides what to fold.
+
+### `packages/codegen/src/compiler/model/casing.ts::kindTypeName`
+
+A kind's type name: `lowerCamelCase` with its first letter upper-cased, so a
+first word that is a run of capitals reads like any other word
+(`MISSING_keyword` → `MissingKeyword`). Every derivation of a type name from a
+kind key goes through it: `nameNode`, and the emitters' fallbacks for a
+catalog kind with no model node (`kindIdMemberName`, the supertype enums, the
+enum value types).
+
+### `packages/codegen/src/compiler/model/casing.ts::irKeyOfTypeName`
+
+A type name's ir key: the name without its leading underscores, first letter
+lower-cased. `nameNode` and assemble's type-name collision renames both read
+it, so a node's ir key never takes a casing rule of its own.
 
 ### `packages/codegen/src/compiler/model/casing.ts::pascalCase`
 

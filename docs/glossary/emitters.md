@@ -6723,9 +6723,9 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * The generator stays name-first: the lookup helpers are still emitted
  * from kind names, but the runtime discriminant surface is numeric so
  * data/transport interfaces can carry `TSKindId.*` instead of string
- * literals. The ERROR member is followed by a `satisfies typeof
- * ERROR_KIND_ID` check, so a grammar whose `TSKindId` holds another
- * value fails its own type-check; `kind_ids.rs`'s const assert is the
+ * literals. The `ERROR` kind's member (`TSKindId.Error`) is followed
+ * by a `satisfies typeof ERROR_KIND_ID` check, so a grammar whose
+ * `TSKindId` holds another value fails its own type-check; `kind_ids.rs`'s const assert is the
  * Rust side of the same check.
  */
 ```

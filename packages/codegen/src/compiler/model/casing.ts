@@ -24,6 +24,15 @@ export function lowerCamelCase(s: string): string {
 	return head + rest.map(upperFirst).join('');
 }
 
+export function kindTypeName(s: string): string {
+	return upperFirst(lowerCamelCase(s));
+}
+
+export function irKeyOfTypeName(typeName: string): string {
+	const stripped = typeName.replace(/^_+/, '');
+	return stripped.charAt(0).toLowerCase() + stripped.slice(1);
+}
+
 export function screamingSnakeCase(s: string): string {
 	return casingWords(s)
 		.map((word) => word.toUpperCase())

@@ -722,10 +722,10 @@ export enum TSKindId {
 	FieldIdentifier = 472,
 	ShorthandFieldIdentifier = 474,
 	TypeIdentifier = 475,
-	ERROR = 65535
+	Error = 65535
 }
 
-void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
+void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
@@ -2640,7 +2640,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'type_identifier':
 			return TSKindId.TypeIdentifier;
 		case 'ERROR':
-			return TSKindId.ERROR;
+			return TSKindId.Error;
 		case ';':
 			return TSKindId.Semi;
 		case '=>':
