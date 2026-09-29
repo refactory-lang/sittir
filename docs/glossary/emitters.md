@@ -1923,6 +1923,8 @@ leading options object off first, keyed on `listOptionKeys(surface)`, the
 same key list the strict factory accepts, so the options object passes
 through untouched and only the elements resolve.
 
+`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. A list that seats a wrapper passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
+
 ### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
 ```text
@@ -2217,10 +2219,7 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  */
 ```
 
-`_SUPERTYPE_KIND_TAGS` lists declared supertypes only, so a loose
-`{ kind: '<supertype>' }` tag resolves through a declared supertype's
-default arm and an undeclared hidden choice's kind names no factory. The
-wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
+A `kind:` tag is a kind id, never a name and never a supertype: the tag always names the kind that is built.
 
 #### body
 
@@ -2229,11 +2228,7 @@ wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
 // narrow the string parameter without an unchecked cast.
 ```
 
-It also emits `_SUPERTYPE_KIND_TAGS`, which maps each supertype to its
-default concrete kind (`defaultConcreteKindOf`) or, without a default, to its
-subtypes. It emits `_kindNameOf`, the one reading of a `kind:` discriminant:
-a supertype tag that is not itself a from kind resolves to its default arm,
-and one without a default throws naming the arms.
+It emits `_fromOfTag(tag, candidates)`, the one reading of a `kind:` tag: a numeric tag that is the id of a kind with a from() coercer names that kind. Any other tag throws `the kind tag <tag> is not a kind id of [<candidates>]` where more than one kind could take the bag, and elsewhere is not a tag: a grammar slot may itself be named `kind`, and a lone kind's bag is decided by its slot, so the value stays config data.
 
 `_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
 the leaf registry, a plain tag object hands its `text` to the leaf's

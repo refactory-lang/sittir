@@ -277,7 +277,7 @@ A discriminated config accepts the raw grammar string but not the numeric enum
 the package exports for the purpose.
 
 ```ts
-ir.matchArm({ pattern: { pattern: { kind: 'struct_pattern', … } } })       // → "T{a}=>{}"
+ir.matchArm({ pattern: { pattern: { kind: kinds.StructPattern, … } } })       // → "T{a}=>{}"
 ir.matchArm({ pattern: { pattern: { kind: TSKindId.StructPattern, … } } }) // rejected
 ```
 
@@ -354,8 +354,8 @@ factory shape (the classification behind the strict factory's target
 overload), not a coincidence of field names.
 
 ```ts
-ir.matchArm.withComma({ pattern: { kind: 'struct_pattern', … } })              // → "T{a}=>{},"
-ir.matchArm.withComma({ pattern: { pattern: { kind: 'struct_pattern', … } } })   // still builds
+ir.matchArm.withComma({ pattern: { kind: kinds.StructPattern, … } })              // → "T{a}=>{},"
+ir.matchArm.withComma({ pattern: { pattern: { kind: kinds.StructPattern, … } } })   // still builds
 ```
 
 Affects rust (`match_arm.pattern` → `match_pattern`).

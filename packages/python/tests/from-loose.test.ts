@@ -44,7 +44,7 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 		// _resolveByKind.
 		const result = py.build.assignment.eq({
 			left: 'x' as any,
-			right: { kind: 'integer_decimal', text: '42' } as any
+			right: { kind: py.kinds.IntegerDecimalPlain, text: '42' } as any
 		}) as any;
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
 		expect(result.right().$type).toBe(py.kinds.IntegerDecimalPlain);
@@ -52,29 +52,28 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 	});
 
 	it('a leaf tag builds that leaf from its text', () => {
-		const result = py.build.assignment.eq({ left: 'x' as any, right: { kind: 'identifier', text: 'y' } as any }) as any;
+		const result = py.build.assignment.eq({ left: 'x' as any, right: { kind: py.kinds.Identifier, text: 'y' } as any }) as any;
 		expect(result.right().$type).toBe(py.kinds.Identifier);
 		expect(result.right().$text).toBe('y');
 	});
 
 	it('a leaf tag without its text throws naming the shape', () => {
-		expect(() => py.build.assignment.eq({ left: 'x' as any, right: { kind: 'identifier', value: 'y' } as any })).toThrow(
+		expect(() => py.build.assignment.eq({ left: 'x' as any, right: { kind: py.kinds.Identifier, value: 'y' } as any })).toThrow(
 			/the identifier tag takes its text: \{ kind: "identifier", text: "…" \}/
 		);
 	});
 });
 
 describe('loose from() — a supertype kind tag', () => {
-	it('resolves through the default arm chain', () => {
-		for (const kind of ['integer', 'integer_decimal']) {
-			const result = py.build.assignment.eq({ left: 'x' as any, right: { kind, text: '42' } as any }) as any;
-			expect(result.right().$type).toBe(py.kinds.IntegerDecimalPlain);
-		}
+	it('is not a kind id of the candidates', () => {
+		expect(() => py.build.expressionStatement({ kind: py.kinds.PrimaryExpression, text: '1' } as any)).toThrow(
+			/the kind tag \d+ is not a kind id of \[.*\binteger_decimal_plain\b/
+		);
 	});
 
-	it('throws naming the arms when the supertype has no default', () => {
-		expect(() => py.build.expressionStatement({ kind: 'primary_expression', text: '1' } as any)).toThrow(
-			/kind "primary_expression" has no default arm; name one of \[.*\binteger\b/
+	it('is not a kind id when it is a name string', () => {
+		expect(() => py.build.expressionStatement({ kind: 'integer_decimal', text: '1' } as any)).toThrow(
+			/the kind tag "integer_decimal" is not a kind id of \[/
 		);
 	});
 });
@@ -85,7 +84,7 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 		// pass a kind-tagged object — the resolver should route via
 		// _resolveByKind to the integer factory.
 		const result = py.build.expressionStatement({
-			kind: 'integer_decimal',
+			kind: py.kinds.IntegerDecimalPlain,
 			text: '1'
 		} as any) as any;
 		expect(result.$type).toBe(py.kinds.ExpressionStatement);

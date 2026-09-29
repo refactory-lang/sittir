@@ -384,136 +384,12 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	_statement: [
-		'_simple_statements',
-		'_compound_statement',
-		'if_statement',
-		'for_statement',
-		'while_statement',
-		'try_statement',
-		'with_statement',
-		'function_definition',
-		'class_definition',
-		'decorated_definition',
-		'match_statement'
-	],
-	_simple_statement: [
-		'future_import_statement',
-		'import_statement',
-		'import_from_statement',
-		'print_statement',
-		'assert_statement',
-		'expression_statement',
-		'return_statement',
-		'delete_statement',
-		'raise_statement',
-		'pass_statement',
-		'break_statement',
-		'continue_statement',
-		'global_statement',
-		'nonlocal_statement',
-		'exec_statement',
-		'type_alias_statement'
-	],
-	_compound_statement: [
-		'if_statement',
-		'for_statement',
-		'while_statement',
-		'try_statement',
-		'with_statement',
-		'function_definition',
-		'class_definition',
-		'decorated_definition',
-		'match_statement'
-	],
-	with_clause: ['with_clause_bare', 'with_clause_paren'],
-	_suite: ['suite_inline', 'suite_block', 'suite_empty'],
-	parameter: [
-		'identifier',
-		'typed_parameter',
-		'default_parameter',
-		'typed_default_parameter',
-		'list_splat_pattern',
-		'tuple_pattern',
-		'keyword_separator',
-		'positional_separator',
-		'dictionary_splat_pattern'
-	],
-	pattern: [
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword',
-		'subscript',
-		'attribute',
-		'list_splat_pattern',
-		'tuple_pattern',
-		'list_pattern'
-	],
-	expression: [
-		'comparison_operator',
-		'not_operator',
-		'boolean_operator',
-		'lambda',
-		'primary_expression',
-		'conditional_expression',
-		'named_expression',
-		'as_pattern'
-	],
-	primary_expression: [
-		'await',
-		'binary_operator',
-		'identifier',
-		'print_keyword',
-		'exec_keyword',
-		'async_keyword',
-		'await_keyword',
-		'type_keyword',
-		'match_keyword',
-		'string',
-		'concatenated_string',
-		'integer',
-		'float',
-		'true',
-		'false',
-		'none',
-		'unary_operator',
-		'attribute',
-		'subscript',
-		'call',
-		'list',
-		'list_comprehension',
-		'dictionary',
-		'dictionary_comprehension',
-		'set',
-		'set_comprehension',
-		'tuple',
-		'parenthesized_expression',
-		'generator_expression',
-		'ellipsis',
-		'list_splat_pattern'
-	],
-	assignment: ['assignment_eq', 'assignment_type', 'assignment_typed'],
-	escape_sequence: 'escape_sequence_simple',
-	integer: 'integer_decimal_plain',
-	float: 'float_point',
-	line_continuation: 'line_continuation_newline',
-	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline'],
-	integer_decimal: 'integer_decimal_plain'
-};
-
-/** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name.
- *  A supertype tag names its default arm; one without a default names no kind. */
-function _kindNameOf(kind: unknown): string | undefined {
-	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
-	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
-	if (tag === undefined || typeof tag === 'string') return tag ?? name;
-	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
+function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap | undefined {
+	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
+	if (name !== undefined && _isFromKind(name)) return name;
+	if (candidates.length > 1)
+		throw new Error(`the kind tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
+	return undefined;
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
@@ -910,8 +786,8 @@ function _resolveOne<T>(
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
-		const kindName = _kindNameOf(kind);
-		if (kindName !== undefined && _isFromKind(kindName)) {
+		const kindName = _fromOfTag(kind, [...leafKinds, ...branchKinds]);
+		if (kindName !== undefined) {
 			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
 			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 		}
@@ -965,7 +841,8 @@ function _listElements(
 	input: readonly unknown[],
 	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
-	resolve: (elements: readonly unknown[]) => readonly unknown[]
+	resolve: (elements: readonly unknown[]) => readonly unknown[],
+	bagKinds?: readonly string[]
 ): readonly unknown[] {
 	const head = input[0];
 	const optionsFirst =
@@ -975,17 +852,20 @@ function _listElements(
 		!Array.isArray(head) &&
 		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
-		wrapperKind !== undefined &&
-		_isFromKind(wrapperKind) &&
-		typeof e === 'object' &&
-		e !== null &&
-		!Array.isArray(e) &&
-		!isNode(e) &&
-		!('kind' in e)
-			? _resolveByKind(wrapperKind, e)
-			: e
-	);
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		if ('kind' in e) {
+			const { kind, ...rest } = e;
+			const kindName = _fromOfTag(kind, []);
+			return kindName === undefined ? e : _resolveByKind(kindName, rest);
+		}
+		if (bagKinds === undefined || bagKinds.length === 0) return e;
+		if (bagKinds.length > 1)
+			throw new Error(
+				`a bag in this list needs a kind tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+			);
+		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
+	});
 	const resolved = elements.map((e) =>
 		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
@@ -1004,8 +884,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
+		const kn = _fromOfTag(k, [kind]);
+		if (kn !== undefined) return _resolveByKind(kn, rest) as T;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
@@ -1427,8 +1307,8 @@ function _resolveOneBranch<T>(
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
 	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
+		const kn = _fromOfTag(k, [kind]);
+		if (kn !== undefined && kn !== kind && kind in _wrapKindIds) {
 			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
 		}
 	}
@@ -1449,8 +1329,8 @@ function _resolveOneBranch<T>(
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		if ('kind' in v) {
 			const { kind: k, ...rest } = v;
-			const kn = _kindNameOf(k);
-			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
+			const kn = _fromOfTag(k, [kind]);
+			if (kn !== undefined) return _resolveByKind(kn, rest) as T;
 		}
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
