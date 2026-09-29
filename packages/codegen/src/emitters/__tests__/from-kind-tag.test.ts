@@ -9,7 +9,7 @@ describe('a `$type` tag is a kind id', () => {
 		expect(emitted).toContain('function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {');
 		expect(emitted).toContain('const name = typeof tag === "number" ? KIND_NAMES.get(tag) : undefined;');
 		expect(emitted).toContain('is not a kind id of [');
-		expect(emitted).toContain('_seatedKinds[c]?.includes(name)');
+		expect(emitted).toContain('_BARE_ACCEPTS[c]?.has(tag as number)');
 	});
 
 	it('keeps no name reading and no supertype default arm', () => {

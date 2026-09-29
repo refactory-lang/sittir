@@ -284,9 +284,9 @@ ir.matchArm({ pattern: { pattern: { $type: kinds.StructPattern, … } } })   // 
 `kinds.StructPattern` is `305`; the resolver matched on names only, so every
 config re-spelled a name the enum already holds.
 
-The tag is now the kind id and only the id: `_fromOfTag` (from.ts) resolves it
-once for every `"kind" in v` site, and a name string or a kind outside the slot's
-candidates throws naming them.
+The tag is now the kind id and only the id, under the bag's `$type` key:
+`_fromOfTag` (from.ts) resolves it once for every resolver site, and a name string
+or a kind outside the slot's admitted kinds throws naming the candidates.
 
 ### L2 — List options are honoured only in first argument position — RESOLVED
 

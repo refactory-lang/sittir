@@ -1083,7 +1083,7 @@ export interface NodeNs<
 	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
 	 *  while keeping each field's `__looseHints__`. */
 	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;
-	/** The kind's grammar name when it has a from() coercer — the tag a
+	/** The kind's numeric id when it has a from() coercer — the `$type` tag a
 	 *  multi-kind slot's bag carries (`{ $type: kinds.X, … }`) — else `never`;
 	 *  see the `Kind` type parameter. */
 	readonly Kind: Kind;

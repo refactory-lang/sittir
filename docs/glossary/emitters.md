@@ -2228,12 +2228,12 @@ A bag's `$type` tag is a kind id, never a name and never a supertype: the tag al
 // narrow the string parameter without an unchecked cast.
 ```
 
-It emits `_fromOfTag(tag, candidates)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer, and that the slot admits, names that kind. A slot admits the kinds it lists (`candidates`) and the kinds `_seatedKinds` says each one seats: a candidate that is a wrap-children envelope or a list's own wrapper contributes its sole slot's kinds, followed down a chain only while each step has exactly one kind (`field_declaration_list` seats `field_declaration_list_elements`, `attributed_field_declaration` and `field_declaration`). Any other tag throws `the $type tag <tag> is not a kind id of [<candidates>]`, at every resolver site: `_resolveOne`, `_resolveOneBranch`, `_resolveOneLeaf` and `_listElements` (which passes the element slot's leaf and branch kinds and its wrapper as `tagKinds`). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
+It emits `_fromOfTag(tag, candidates)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer, and that the slot admits, names that kind. The slot admits a tag exactly when it would admit the node the tag builds: the tag is a candidate itself, or its id is in `_BARE_ACCEPTS[candidate]`, the table `bareAcceptClosure` derives for bare routing (a candidate's bare-input slot kinds, expanded through enum members and followed down every admitted kind). Any other tag throws `the $type tag <tag> is not a kind id of [<candidates>]`, at every resolver site: `_resolveOne`, `_resolveOneBranch`, `_resolveOneLeaf` and `_listElements` (which passes the wrapper and the element slot's leaf and branch kinds as `tagKinds`). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
 
-Emitted `_seatedKinds` rows per grammar (kinds that seat others), largest row, and resolver call sites (`_resolveOne` / `_resolveMany` / `_resolveOneBranch` / `_resolveOneLeaf` / `_listElements`): rust 108 rows, largest 80, sites 215/45/183/39/18; typescript 91, 76, 281/37/142/50/8; python 84, 52, 171/31/93/22/20; regex 15, 7, 22/2/17/19/0; scm 9, 10, 19/14/8/11/0.
+Bare-accept closure per grammar (kinds with a closure row, largest closure, and resolver call sites `_resolveOne` / `_resolveMany` / `_resolveOneBranch` / `_resolveOneLeaf` / `_listElements`): rust 88 rows, largest 114, sites 215/45/183/39/18; typescript 73 rows, largest 122, sites 281/37/142/50/8; python 71 rows, largest 89, sites 171/31/93/22/20; regex 12 rows, largest 3, sites 22/2/17/19/0; scm 5 rows, largest 9, sites 19/14/8/11/0.
 
-`_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
-the leaf registry, a plain tag object hands its `text` to the leaf's
+`_resolveByKind` takes a leaf kind's bag as `{ $type, text }`: `_splitTag` has already removed the `$type` tag, so for a kind in
+the leaf registry the remaining payload hands its `text` to the leaf's
 resolver, and one without a string `text` throws naming the shape. Bare
 strings, numbers and built nodes pass through unchanged.
 

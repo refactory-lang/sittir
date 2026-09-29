@@ -1161,52 +1161,6 @@ function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPatt
 	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
-function listWrapperKindsOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ReadonlySet<string> {
-	const wrappers = new Set<string>();
-	for (const node of nodeMap.nodes.values()) {
-		if (!(node instanceof AssembledList)) continue;
-		const surface = separatedListSurface(node, nodeMap, kindEntries);
-		if (surface.wrapper !== undefined) wrappers.add(slotKindNames(buildSeparatedListContentSlot(node))[0]!);
-	}
-	return wrappers;
-}
-
-function seatedKindsOf(
-	kind: string,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	listWrappers: ReadonlySet<string>
-): string[] {
-	const seated = new Set<string>();
-	const visit = (k: string): void => {
-		const node = nodeMap.nodes.get(k);
-		if (node === undefined) return;
-		const slot = isWrapChildrenKind(k, node, nodeMap, kindEntries)
-			? soleSlotFacts(node, nodeMap)?.slot
-			: listWrappers.has(k)
-				? transparentWrapperContentSlot(k, nodeMap)
-				: undefined;
-		if (slot === undefined) return;
-		const { leafKinds, branchKinds } = slotResolverKinds(slot, nodeMap);
-		const members = [...leafKinds, ...branchKinds].filter((m) => m !== kind && !seated.has(m));
-		for (const member of members) seated.add(member);
-		if (members.length === 1) visit(members[0]!);
-	};
-	visit(kind);
-	return [...seated];
-}
-
-function emitSeatedKindsTable(lines: string[], nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): void {
-	const listWrappers = listWrapperKindsOf(nodeMap, kindEntries);
-	lines.push('const _seatedKinds: { readonly [kind: string]: readonly string[] | undefined } = {');
-	for (const kind of nodeMap.nodes.keys()) {
-		const seated = seatedKindsOf(kind, nodeMap, kindEntries, listWrappers);
-		if (seated.length > 0) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(seated)},`);
-	}
-	lines.push('};');
-	lines.push('');
-}
-
 function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('function _isFromKind(k: string): k is keyof _FromMap {');
 	lines.push('  return k in _fromMap;');
@@ -1214,7 +1168,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 	lines.push('function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {');
 	lines.push('  const name = typeof tag === "number" ? KIND_NAMES.get(tag) : undefined;');
-	lines.push('  if (name !== undefined && _isFromKind(name) && candidates.some((c) => c === name || _seatedKinds[c]?.includes(name))) return name;');
+	lines.push('  if (name !== undefined && _isFromKind(name) && candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))) return name;');
 	lines.push('  throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(", ")}]`);');
 	lines.push('}');
 	lines.push('');
@@ -1656,7 +1610,6 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitSeatedKindsTable(lines, nodeMap, kindEntries);
 	emitResolveByKindHelper(lines);
 
 	lines.push(

@@ -39,12 +39,25 @@ describe('a kind tag must name a kind the slot admits, directly or through a wra
 		expect(variant({ $type: rs.kinds.FieldDeclaration, name: 'a', type: 'i32' }).$render()).toBe('V {\n    a: i32,\n}');
 	});
 
-	it('rejects a leaf kind the slot does not admit, naming the candidates', () => {
-		expect(() => variant({ $type: rs.kinds.Identifier, text: 'a' })).toThrow(/the \$type tag \d+ is not a kind id of \[/);
+	it('builds from a tag exactly when the slot takes the node that tag builds', () => {
+		const probes: { readonly bag: object; readonly node: () => unknown }[] = [
+			{ bag: { $type: rs.kinds.FieldDeclaration, name: 'a', type: 'i32' }, node: () => rs.build.fieldDeclaration({ name: 'a', type: 'i32' }) },
+			{ bag: { $type: rs.kinds.Identifier, text: 'a' }, node: () => rs.build.identifier('a') },
+			{ bag: { $type: rs.kinds.Block }, node: () => rs.build.block() }
+		];
+		const renders = (body: unknown): boolean => {
+			try {
+				variant(body).$render();
+				return true;
+			} catch {
+				return false;
+			}
+		};
+		for (const { bag, node } of probes) expect([JSON.stringify(bag), renders(bag)]).toEqual([JSON.stringify(bag), renders(node())]);
 	});
 
 	it('rejects a branch kind the slot does not admit, naming the candidates', () => {
-		expect(() => variant({ $type: rs.kinds.Block })).toThrow(/the \$type tag \d+ is not a kind id of \[/);
+		expect(() => variant({ $type: rs.kinds.Block })).toThrow(/the \$type tag \d+ is not a kind id of \[field_declaration_list, ordered_field_declaration_list/);
 	});
 
 	it('rejects a kind a list does not admit, naming the candidates', () => {

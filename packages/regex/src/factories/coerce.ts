@@ -161,39 +161,17 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | nu
 	return undefined;
 }
 
-const _seatedKinds: { readonly [kind: string]: readonly string[] | undefined } = {
-	pattern: ['alternation', 'term'],
-	alternation: ['term', 'term_group'],
-	term: ['term_group'],
-	lookaround_assertion: ['lookahead_assertion', 'lookbehind_assertion'],
-	character_class: [
-		'class_character',
-		'control_escape',
-		'control_letter_escape',
-		'character_class_escape',
-		'identity_escape',
-		'posix_character_class',
-		'class_range'
-	],
-	posix_character_class: ['posix_class_name'],
-	anonymous_capturing_group: ['pattern', 'alternation', 'term'],
-	non_capturing_group: ['pattern', 'alternation', 'term'],
-	count_quantifier: ['decimal_digits', 'count_quantifier_arm'],
-	backreference_escape: ['group_name'],
-	named_group_backreference: ['group_name'],
-	character_class_escape: ['unicode_character_escape', 'character_class_escape_arm'],
-	count_quantifier_group: ['decimal_digits'],
-	unicode_property_value_expression_group: ['unicode_property_name', 'unicode_property_value'],
-	unicode_property_name: ['unicode_property_value']
-};
-
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
 function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {
 	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
-	if (name !== undefined && _isFromKind(name) && candidates.some((c) => c === name || _seatedKinds[c]?.includes(name)))
+	if (
+		name !== undefined &&
+		_isFromKind(name) &&
+		candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))
+	)
 		return name;
 	throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
 }
