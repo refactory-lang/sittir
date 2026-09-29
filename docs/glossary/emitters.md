@@ -9238,7 +9238,7 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  */
 ```
 
-`is` is frozen, and stays a check on the kind id alone: the language of a node is a fact of the engine's node guards, not of the package-level table.
+`is` is frozen and is a check on the kind id alone, with no language check: the package-level table has no engine. `engine.is` is the same table composed with the engine's language check.
 
 ### `packages/codegen/src/emitters/shared.ts::module`
 
