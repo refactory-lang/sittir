@@ -20,12 +20,6 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly trivia: TriviaFacts;
 }
 
-export interface GrammarFacts {
-	render(node: AnyNodeData): string;
-	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
-	readonly trivia: TriviaFacts;
-}
-
 export interface GrammarTypeMap {
 	readonly namespaces: object;
 	readonly empty: { readonly node: unknown; readonly empty: unknown };
@@ -87,9 +81,19 @@ export interface LanguageHooks<API extends LanguageAPI> {
 export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyNodeData | number, options?: API['options'] & RenderCallOptions): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
-	parseAndRead(source: string, options?: ParseOptions): { root: unknown; tree: object };
-	holdsTree(tree: unknown): boolean;
+	parseAndRead: EngineDiagnostics['parseAndRead'];
+	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
+}
+
+export interface ParsedRead<TRoot = unknown, TTree extends object = object> {
+	root: TRoot;
+	tree: TTree;
+}
+
+export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
+	readonly buildProfile: string | undefined;
+	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot, TTree>;
 }
 
 export interface Rendered extends Disposable {
@@ -133,6 +137,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
 	readonly types: API['types'];
+	readonly diagnostics: EngineDiagnostics;
 	parse(source: string, options?: ParseOptions): API['root'];
 	read(path: string, options?: ParseOptions): Promise<API['root']>;
 	render<const R extends API['options'] = API['options']>(

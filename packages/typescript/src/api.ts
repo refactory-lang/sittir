@@ -6,7 +6,8 @@ import { ir } from './ir.js';
 import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type TypescriptNode } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
+import { triviaFacts } from './utils.js';
+import { coerceToCommentLine } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
@@ -30,7 +31,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = {
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: { ...triviaFacts, comment: coerceToCommentLine },
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
 };

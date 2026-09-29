@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { AnyNodeData, GrammarFacts, GrammarTypeMap } from '@sittir/types';
+import type { AnyNodeData, GrammarTypeMap, TriviaFacts } from '@sittir/types';
+import { inEngine } from '../src/engine-scope.ts';
+import { liveHandle } from './support/fake-engine.ts';
 import {
 	admitAliasContent,
 	bindRuntime,
@@ -12,12 +14,8 @@ import {
 	rejectKeywordText
 } from '../src/utils.ts';
 
-function facts(innerGaps: GrammarFacts['trivia']['innerGaps']): GrammarFacts {
-	return {
-		render: vi.fn(() => 'rendered'),
-		toEdit: vi.fn(() => ({ startPos: 0, endPos: 0, insertedText: 'rendered' })),
-		trivia: { kindName: (type) => (type === 1 ? 'list' : type === 2 ? 'leaf' : undefined), kinds: new Set(), innerGaps }
-	};
+function facts(innerGaps: TriviaFacts['innerGaps']): TriviaFacts {
+	return { kindName: (type) => (type === 1 ? 'list' : type === 2 ? 'leaf' : undefined), kinds: new Set(), innerGaps };
 }
 
 describe('bindRuntime', () => {
@@ -36,11 +34,16 @@ describe('bindRuntime', () => {
 		expect(runtime.isNode({ kind: 'leaf' })).toBe(false);
 	});
 
-	it('withMethods renders through the engine it is handed', () => {
-		const engine = facts({});
-		const node = runtime.withMethods({ $type: 2, $source: 2 }, engine);
+	it('withMethods renders through the engine in scope', () => {
+		const render = vi.fn(() => 'rendered');
+		const node = inEngine(liveHandle({ render }), () => runtime.withMethods({ $type: 2, $source: 2 }));
 		expect(node.$render()).toBe('rendered');
-		expect(engine.render).toHaveBeenCalledWith(node);
+		expect(render).toHaveBeenCalledWith(node);
+	});
+
+	it('withMethods on a node built outside any engine cannot render', () => {
+		const node = runtime.withMethods({ $type: 2, $source: 2 });
+		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 	});
 });
 

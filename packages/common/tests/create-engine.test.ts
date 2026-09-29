@@ -35,7 +35,6 @@ function fakeLanguage(name = 'fake') {
 					createRenderHandle(() => `${call?.indent ?? opts?.options?.indent ?? ''}${n.text ?? ''}`),
 				applyEdits: (s: string) => `${s}!`,
 				parseAndRead: (s: string) => ({ root: { $type: 1, text: s }, tree: { source: s } }),
-				holdsTree: () => true,
 				dispose: () => {
 					disposed = true;
 				},

@@ -1,16 +1,16 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { dumpMetrics, sliceSpan } from '@sittir/common';
+import { createEngine, dumpMetrics, sliceSpan } from '@sittir/common';
 import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
-import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
+import { languageByName } from '../languages.ts';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
@@ -176,36 +176,15 @@ export function treeHandle(
 	return handle;
 }
 
-let _cachedNativeEngine: { grammar: string; engine: SittirEngine; binaryMtimeMs: number } | null = null;
+export type NativeEngine = Engine<LanguageAPI>;
 
-export function boundaryModulePath(grammar: string): string {
-	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-	return pathToFileURL(join(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
-}
+const cachedNativeEngines = new Map<
+	string,
+	{ engine: Promise<NativeEngine>; binaryMtimeMs: number; profile?: string | undefined }
+>();
 
-export async function loadNativeEngine(grammar: string): Promise<SittirEngine> {
-	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);
-	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
-
-	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
-		if (_cachedNativeEngine.binaryMtimeMs !== binaryMtimeMs) {
-			throw new Error(
-				`Native engine for '${grammar}' was rebuilt after this process loaded it — ` +
-					`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
-			);
-		}
-		return _cachedNativeEngine.engine;
-	}
-
-	assertNativeBinaryFresh(repoRoot, grammar);
-
-	const mod = (await import(boundaryModulePath(grammar))) as { defaultEngine?: unknown };
-	if (typeof mod.defaultEngine !== 'function') {
-		throw new Error(`boundary module for grammar '${grammar}' does not export 'defaultEngine'`);
-	}
-	const engine = (mod.defaultEngine as () => SittirEngine)();
-
+async function createNativeEngine(grammar: string): Promise<NativeEngine> {
+	const engine = await createEngine(await languageByName(grammar));
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -214,16 +193,56 @@ export async function loadNativeEngine(grammar: string): Promise<SittirEngine> {
 				`or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
 		);
 	}
-
-	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
 	return engine;
 }
 
-export function cachedNativeEngineProfile(grammar: string): string | undefined {
-	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
-		return _cachedNativeEngine.engine.diagnostics.buildProfile;
+export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
+	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
+	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);
+	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
+
+	const cached = cachedNativeEngines.get(grammar);
+	if (cached) {
+		if (cached.binaryMtimeMs !== binaryMtimeMs) {
+			return Promise.reject(
+				new Error(
+					`Native engine for '${grammar}' was rebuilt after this process loaded it — ` +
+						`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
+				)
+			);
+		}
+		return cached.engine;
 	}
-	return undefined;
+
+	assertNativeBinaryFresh(repoRoot, grammar);
+
+	const engine = createNativeEngine(grammar);
+	const entry: NonNullable<ReturnType<typeof cachedNativeEngines.get>> = { engine, binaryMtimeMs };
+	cachedNativeEngines.set(grammar, entry);
+	engine.then(
+		(loaded) => {
+			entry.profile = loaded.diagnostics.buildProfile;
+		},
+		() => cachedNativeEngines.delete(grammar)
+	);
+	return engine;
+}
+
+export async function loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string> {
+	const engine = await loadNativeEngine(grammar);
+	return (node) => engine.render(node).toString();
+}
+
+export function cachedNativeEngineProfile(grammar: string): string | undefined {
+	return cachedNativeEngines.get(grammar)?.profile;
+}
+
+export function readNativeTree(
+	engine: NativeEngine,
+	source: string,
+	options?: ParseOptions
+): { root: AnyNodeData; tree: TreeHandle } {
+	return engine.diagnostics.parseAndRead(source, options) as { root: AnyNodeData; tree: TreeHandle };
 }
 
 export async function buildReadHandle(
@@ -236,7 +255,7 @@ export async function buildReadHandle(
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
 	if (effectiveBackend === 'native') {
 		const engine = await loadNativeEngine(grammar);
-		return engine.diagnostics.parseAndRead(source).tree;
+		return readNativeTree(engine, source).tree;
 	}
 	return treeHandle(tree, source, kindIdFromName);
 }

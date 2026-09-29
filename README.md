@@ -384,7 +384,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
 | `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
-| `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked render-module hash                                 |
+| `backend.ts` / `hash.ts`                      | Backend selection, baked render-module hash                                                    |
 | `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
 | `.sittir/render-bodies.json`                  | One render body per renderable kind, the validators' catalog                                   |
 

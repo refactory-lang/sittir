@@ -13,7 +13,7 @@ const identifier = {
 	$text: 'x'
 } as const;
 
-describe('boundary', () => {
+describe('engine render boundary', () => {
 	afterEach(() => {
 		vi.doUnmock('../src/backend.js');
 		vi.doUnmock('node:module');
@@ -52,15 +52,23 @@ describe('boundary', () => {
 		);
 	}
 
+	async function mockedEngine() {
+		const { createEngine } = await import('@sittir/common');
+		const descriptor = (await import('../src/index.ts')).default;
+		return createEngine(descriptor);
+	}
+
 	it('surfaces native render failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		expect(() => render(identifier)).toThrow(/native render boom/);
 	});
 
 	it('surfaces native applyEdits failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { applyEdits } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const applyEdits = engine.applyEdits.bind(engine);
 		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
 	});
 
@@ -77,7 +85,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
 		// $source is numeric: 2 = factory
 		expect(render(identifier)).toBe(`ok:${rs.kinds.Identifier}`);
@@ -92,8 +101,7 @@ describe('boundary', () => {
 	});
 
 	it('passes readNode-shaped children straight through to native render (no normalization step)', async () => {
-		// boundary.ts's render() is a pure pass-through to the engine
-		// (`getDefaultEngine().render(node)`) — no $children-to-named-field
+		// engine.render() is a pure pass-through to the native engine — no $children-to-named-field
 		// normalization logic exists there or anywhere else on the JS side.
 		// That's correct: readNode.ts itself emits the de-hoisted `_<name>`
 		// storage shape directly (specs/022-binding-simplify-assemble/
@@ -101,7 +109,7 @@ describe('boundary', () => {
 		// directly (no shim)"), matching source_file's real named `statements`
 		// field (`_statements`, per types.ts's `SourceFile` interface) — a
 		// generic `$children` intermediate shape is never actually produced,
-		// so there is nothing for boundary.ts to normalize.
+		// so there is nothing for the engine to normalize.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -114,7 +122,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawSourceFile = {
 			$type: rs.kinds.SourceFile,
@@ -145,13 +154,9 @@ describe('boundary', () => {
 		// generated types.ts / factories.ts / from.ts / wrap.ts / transports /
 		// templates." And: "Dispatch is by child kind ONLY — no runtime
 		// structural recovery... this supersedes any runtime slot-presence
-		// probe." This test previously asserted boundary.ts's render() infers
-		// and injects a `$variant: 'list'` tag from raw parsed child aliases —
-		// that's the superseded runtime-$variant-dispatch model. render() is
-		// in fact a pure pass-through to the engine (no transform logic exists
-		// in boundary.ts at all) — real polymorph dispatch happens natively,
-		// keyed on the child's own concrete $type, which the raw parsed data
-		// already carries untouched.
+		// probe." engine.render() infers and injects no `$variant` tag from raw
+		// parsed child aliases: it passes the data straight to the native
+		// engine, which dispatches on the child's own concrete $type.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -164,7 +169,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawArrayExpression = {
 			$type: rs.kinds.ArrayExpression,
@@ -197,7 +203,8 @@ describe('boundary', () => {
 				}
 			}
 		);
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: rs.kinds.Arguments,
 			$source: 2,
@@ -221,7 +228,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			...identifier,
 			$format: { boundary: { leading: '\t' } }

@@ -4,6 +4,7 @@ export interface EmitEngineConfig {
 	grammar: string;
 	rootTypeName: string;
 	rootTreeTypeName: string;
+	commentCoercer?: string;
 }
 
 export function emitRenderEngine(config: EmitEngineConfig): string {
@@ -13,11 +14,9 @@ export function emitRenderEngine(config: EmitEngineConfig): string {
  * Render-only engine for @sittir/${grammar}.
  *
  * Renders and edits node DATA. It imports no
- * wrapper, which is what keeps the module graph acyclic: constructed nodes
- * carry \`$render()\`, so \`factories -> utils -> boundary\` reaches this
- * module, and a \`parse()\` surface here would pull \`wrap.js\` and close the
- * loop back onto \`factories.js\`. Parsing lives in \`api.ts\` (the \`wrap\` hook) because
- * parsing is the half that needs the wrapper.
+ * wrapper: a \`parse()\` surface here would pull \`wrap.js\` into every render.
+ * Parsing lives in \`api.ts\` (the \`wrap\` hook) because parsing is the half that
+ * needs the wrapper.
  *
  * Native-only — there is no JS-engine fallback.
  */
@@ -75,8 +74,8 @@ import { ir } from './ir.js';
 import { is } from './is.js';
 import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
-import { RENDER_MODULE_HASH } from './hash.js';
+import { triviaFacts } from './utils.js';
+${config.commentCoercer === undefined ? '' : `import { ${config.commentCoercer} } from './factories/coerce.js';\n`}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, type ${rootTreeTypeName} } from './wrap.js';
 
@@ -99,7 +98,7 @@ export const hooks: LanguageHooks<${api}> = {
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: ${config.commentCoercer === undefined ? 'triviaFacts' : `{ ...triviaFacts, comment: ${config.commentCoercer} }`},
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle)
 };

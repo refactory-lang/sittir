@@ -156,31 +156,33 @@ would otherwise report a passing 0/0 run.
 // numeric $type). Supply it from the grammar's types module.
 ```
 
-### `packages/tools/src/validate/common.ts::boundaryModulePath`
+### `packages/tools/src/validate/common.ts::NativeEngine`
 
-```text
-/** The grammar package's boundary module, as a file URL for dynamic import. */
-```
+The public engine a validator reads and renders through, typed for any grammar: `Engine<LanguageAPI>`. One engine per grammar per process, because a coordinate names the tree by the tag its engine minted.
 
 ### `packages/tools/src/validate/common.ts::loadNativeEngine`
 
 ```text
 /**
- * The native engine the corpus validators read AND render through: the
- * grammar package's own default engine (`boundary.ts`'s `defaultEngine()`),
- * never a second instance. A coordinate names the tree by the tag its
- * engine minted, so a node read through one engine cannot render through
- * another — the read handle and the boundary's `render` must share the
- * instance.
+ * The engine the corpus validators read AND render through: the grammar's
+ * public engine (`createEngine` over its language descriptor), never a
+ * second instance. A coordinate names the tree by the tag its engine minted,
+ * so a node read through one engine cannot render through another — the read
+ * handle and the render must share the instance. That holds for concurrent
+ * callers too: the validators of a grammar run side by side, so the cache
+ * holds the load itself rather than its result, and every caller awaits the
+ * one engine. Caching the result after the load lets each concurrent caller
+ * create its own, and a tree read in one engine then fails to render in
+ * another.
  *
- * Cached per (grammar, binary mtime): napi modules cannot be re-dlopened
- * in-process, so a binary rebuilt mid-process is refused loudly rather than
- * validated stale. The staleness gate (`assertNativeBinaryFresh`) and the
- * debug-profile gate run on first load.
+ * Cached per grammar with the binary mtime: napi modules cannot be
+ * re-dlopened in-process, so a binary rebuilt mid-process is refused loudly
+ * rather than validated stale. The staleness gate (`assertNativeBinaryFresh`)
+ * runs on first load.
  */
 ```
 
-#### body
+### `packages/tools/src/validate/common.ts::createNativeEngine`
 
 ```text
 // Debug binaries have a known segfault class under validation; refuse
@@ -188,13 +190,21 @@ would otherwise report a passing 0/0 run.
 // undefined — tolerated.
 ```
 
+### `packages/tools/src/validate/common.ts::loadNativeRender`
+
+The render function of a grammar's cached native engine, `(node) => string`: what the validators and exercise tools render node data with, and, because it is the engine that read the tree, the one that can resolve its coordinates.
+
+### `packages/tools/src/validate/common.ts::readNativeTree`
+
+Parses `source` in the engine and returns the raw `{ root, tree }` its diagnostics give, the tree typed as the reader's `TreeHandle`. The engine binds the tree, so nodes wrapped over it stamp the engine. The one place the diagnostics' opaque tree is read as a handle.
+
 ### `packages/tools/src/validate/common.ts::cachedNativeEngineProfile`
 
 ```text
 /**
- * Compile profile of the currently cached native engine for `grammar`
- * ('debug' | 'release'), or undefined if no native engine has been loaded
- * for it yet (or the binary predates the `buildProfile` getter). A debug
+ * Compile profile of the cached native engine for `grammar` ('debug' |
+ * 'release'), or undefined if its engine has not finished loading (or the
+ * binary predates the `buildProfile` getter). A debug
  * profile only reaches here via `SITTIR_ALLOW_DEBUG_VALIDATE=1` — the loader
  * above refuses debug binaries by default — so callers that record results
  * (e.g. validation-history) still need to check this explicitly.
@@ -208,7 +218,7 @@ would otherwise report a passing 0/0 run.
  * Build the read-side TreeHandle for the corpus validators. Selects
  * between the wasm/JS handle (default) and a native-engine handle
  * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
- * engine's own parse (`diagnostics.parseAndRead`): every read — root and
+ * engine's own parse (`readNativeTree`): every read — root and
  * drill-in alike — goes through the engine that also renders, so the
  * coordinates it hands out resolve at render time.
  *

@@ -57,7 +57,19 @@ describe('emitApi', () => {
 		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = {');
 		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
-		expect(output).toContain('trivia: methodsEngine.trivia,');
+		expect(output).toContain('trivia: triviaFacts,');
+		expect(output).not.toContain('coerce.js');
+	});
+
+	it('carries the comment builder in the trivia hook when the grammar has a comment coercer', () => {
+		const withComment = emitApi({
+			grammar: 'python',
+			rootTypeName: 'Module',
+			rootTreeTypeName: 'ModuleTree',
+			commentCoercer: 'coerceToComment'
+		});
+		expect(withComment).toContain('trivia: { ...triviaFacts, comment: coerceToComment },');
+		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 
 	it("hands the engine the package's render module hash", () => {

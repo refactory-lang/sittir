@@ -1,60 +1,47 @@
 /**
- * Consumer-facing regression for explicit `withMethods(node, methodsEngine)`.
+ * Consumer-facing regression for the utils facade: the grammar's trivia facts
+ * and the node methods a `withMethods` node carries, which act through the
+ * engine the node belongs to.
  */
 
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, ByteRange, GrammarFacts } from '@sittir/types';
+import type { AnyNodeData, TriviaFacts } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import rust from '../src/index.ts';
 import { TSKindId } from '../src/types.ts';
-import { withMethods, methodsEngine } from '../src/utils.ts';
+import { triviaFacts, withMethods } from '../src/utils.ts';
 
 describe('utils facade surface', () => {
-	it('exports methodsEngine satisfying GrammarFacts', () => {
-		expect(typeof methodsEngine.render).toBe('function');
-		expect(typeof methodsEngine.toEdit).toBe('function');
-		// shape satisfies the interface
-		const _typed: GrammarFacts = methodsEngine;
-		expect(_typed).toBeDefined();
+	it('exports trivia facts satisfying TriviaFacts', () => {
+		const _typed: TriviaFacts = triviaFacts;
+		expect(_typed.kinds.has('line_comment')).toBe(true);
+		expect(_typed.kindName(TSKindId.Identifier)).toBe('identifier');
 	});
 
-	it('attaches render/edit method handles through the exported methodsEngine', () => {
+	it('attaches the method handles to a node made outside an engine, which cannot render', () => {
 		const plain = { $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' };
-		const node = withMethods(plain, methodsEngine);
+		const node = withMethods(plain as unknown as AnyNodeData) as unknown as {
+			$render(): string;
+			$toEdit(start: number, end: number): unknown;
+			$replace(target: unknown): unknown;
+		};
 
 		expect(typeof node.$render).toBe('function');
 		expect(typeof node.$toEdit).toBe('function');
 		expect(typeof node.$replace).toBe('function');
-		expect(typeof node.$trivia).toBe('function');
+		expect(() => node.$render()).toThrow(/node has no engine/);
 	});
 
-	it('$toEdit and $replace produce correct Edit objects (via mock engine)', () => {
-		// Use a mock engine so this test does not depend on the native render boundary.
-		const mockEngine = {
-			render(n: AnyNodeData): string {
-				return n.$text ?? '';
-			},
-			toEdit(
-				n: AnyNodeData,
-				startOrRange: number | ByteRange,
-				endPos?: number
-			): ReturnType<GrammarFacts['toEdit']> {
-				const text = n.$text ?? '';
-				const start = typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index;
-				const end = typeof startOrRange === 'number' ? (endPos ?? start) : startOrRange.end.index;
-				return { startPos: start, endPos: end, insertedText: text };
-			},
-			trivia: methodsEngine.trivia
-		} satisfies GrammarFacts;
-		const node = withMethods(
-			{ $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' },
-			mockEngine
-		);
+	it('$toEdit and $replace produce correct Edit objects through the node engine', async () => {
+		const engine = await createEngine(rust);
+		const node = engine.build.identifier('main');
 
-		expect(node.$toEdit({ start: { index: 0 }, end: { index: 4 } })).toEqual({
+		expect(node.$toEdit({ start: { index: 0 }, end: { index: 4 } } as never)).toEqual({
 			startPos: 0,
 			endPos: 4,
 			insertedText: 'main'
 		});
-		expect(node.$replace({ range: () => ({ start: { index: 1 }, end: { index: 3 } }) })).toEqual({
+		expect(node.$replace({ range: () => ({ start: { index: 1 }, end: { index: 3 } }) } as never)).toEqual({
 			startPos: 1,
 			endPos: 3,
 			insertedText: 'main'

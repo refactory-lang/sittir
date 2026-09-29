@@ -37,7 +37,8 @@ import {
 	type TSTree,
 	type WrappedNodeData,
 	type AccessorThrowRecord,
-	type ValidatorSkip
+	type ValidatorSkip,
+	loadNativeRender
 } from './common.ts';
 
 /**
@@ -450,8 +451,8 @@ export interface RenderFixture {
 	/** The kind the fixture renders, by name. */
 	pattern: string;
 	/** NodeData input — the deep-read result from readTreeNode, made
-	 *  self-contained by `selfContainedRenderInput` so the boundary render
-	 *  path can take it in any process. Serialized to JSON verbatim. */
+	 *  self-contained by `selfContainedRenderInput` so the engine's render
+	 *  can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
 	/** The bytes the engine rendered for `input` when the fixture was
 	 *  captured; the parity gate asserts a fresh render reproduces them. */
@@ -540,12 +541,7 @@ export async function validateReadRenderParse(
 	const rawEntries = loadRawEntries(grammar);
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const { backend } = options;
-	// Render through the grammar's boundary.ts, which dispatches to the
-	// native engine.
-	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
-	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
-		grammar
-	);
+	const render = await loadNativeRender(grammar);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);

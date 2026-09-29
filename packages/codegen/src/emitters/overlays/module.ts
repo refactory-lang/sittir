@@ -18,7 +18,6 @@ import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kin
 import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
-import { defaultTriviaForm } from '../../compiler/model/trivia.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
 export type OverlayName = (typeof OVERLAY_CHAIN)[number];
@@ -248,14 +247,11 @@ export function emitFactoriesIndex(
 	config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }
 ): string {
 	const source = `./overlays/${head}.js`;
-	const form = defaultTriviaForm(config.nodeMap);
 	const lines: string[] = [
 		HEADER,
 		`import * as O from '${source}';`,
 		"import type { Hoisted } from '@sittir/types';",
 		"import { hoist, hoistRoutes } from '@sittir/common/utils';",
-		...(form === undefined ? [] : ["import { methodsEngine } from '../utils.js';"]),
-		...(form === undefined ? [] : [`import { ${form.coercer} } from './coerce.js';`]),
 		`export * from '${source}';`,
 		''
 	];
@@ -265,7 +261,6 @@ export function emitFactoriesIndex(
 	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
 	}
-	if (form !== undefined) lines.push('', `methodsEngine.trivia.comment = ${form.coercer};`);
 	lines.push('');
 	return lines.join('\n');
 }

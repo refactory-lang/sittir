@@ -1,47 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, EngineIdentity, GrammarFacts, Rendered, TriviaFacts } from '@sittir/types';
-import { inEngine, type EngineHandle, type LiveEngine } from '../src/engine-scope.ts';
+import type { AnyNodeData } from '@sittir/types';
+import { inEngine, type EngineHandle } from '../src/engine-scope.ts';
 import { withMethods } from '../src/utils.ts';
+import { detach, liveHandle, triviaFacts } from './support/fake-engine.ts';
 
 const COMMENT = 9;
 
-function triviaFacts(comment: (text: string) => AnyNodeData): TriviaFacts {
-	return {
-		kindName: (type) => (type === COMMENT ? 'comment' : undefined),
-		kinds: new Set(['comment']),
-		innerGaps: {},
-		comment
-	};
-}
-
-const fallback: GrammarFacts = {
-	render: () => 'fallback',
-	toEdit: () => ({ startPos: 0, endPos: 0, insertedText: 'fallback' }),
-	trivia: triviaFacts(() => ({ $type: COMMENT, $text: 'fallback' }) as AnyNodeData)
-};
-
 function engineHandle(label: string): EngineHandle {
-	const handle: EngineHandle = { current: undefined as never };
-	const trivia = triviaFacts((text) => withMethods({ $type: COMMENT, $text: text } as AnyNodeData, fallback));
-	const live: LiveEngine = {
-		language: { name: 'fake', load: () => Promise.reject(new Error('type-only')) },
-		renderModuleHash: label,
-		options: {},
-		trivia,
-		render: () => ({ toString: () => label }) as Rendered
-	};
-	handle.current = live;
-	return handle;
-}
-
-function detach(handle: EngineHandle): EngineIdentity {
-	const { render: _render, ...identity } = handle.current as LiveEngine;
-	handle.current = identity;
-	return identity;
+	return liveHandle({
+		render: () => label,
+		trivia: triviaFacts((text) => withMethods({ $type: COMMENT, $text: text } as AnyNodeData))
+	});
 }
 
 function builtIn(handle: EngineHandle, node: Record<string, unknown> = { $type: 1, $text: 'x' }): AnyNodeData {
-	return inEngine(handle, () => withMethods(node as unknown as AnyNodeData, fallback));
+	return inEngine(handle, () => withMethods(node as unknown as AnyNodeData));
 }
 
 type Methods = {
@@ -62,10 +35,12 @@ describe('a node and its engine', () => {
 		expect(Object.keys(node)).not.toContain('$engine');
 	});
 
-	it('carries no engine outside a scope and renders through the supplied facts', () => {
-		const node = methods(withMethods({ $type: 1, $text: 'x' } as AnyNodeData, fallback));
+	it('carries no engine outside a scope, so it cannot render, edit or take trivia', () => {
+		const node = methods(withMethods({ $type: 1, $text: 'x' } as AnyNodeData));
 		expect(node.$engine).toBeUndefined();
-		expect(node.$render()).toBe('fallback');
+		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
+		expect(() => node.$toEdit(0, 1)).toThrow(/no engine/);
+		expect(() => node.$trivia).toThrow(/no engine/);
 	});
 
 	it('renders and edits through its engine, not the supplied facts', () => {
@@ -95,7 +70,7 @@ describe('a node and its engine', () => {
 			builtIn(a, {
 				$type: 1,
 				$text: 'x',
-				$with: { x: () => withMethods({ $type: 2, $text: 'y' } as AnyNodeData, fallback) }
+				$with: { x: () => withMethods({ $type: 2, $text: 'y' } as AnyNodeData) }
 			})
 		);
 		const rebuilt = inEngine(b, () => node.$with.x());

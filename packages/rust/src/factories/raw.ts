@@ -14,7 +14,7 @@ import {
 	rejectBareText,
 	rejectKeywordText
 } from '@sittir/common/utils';
-import { withMethods, methodsEngine, isNode } from '../utils.js';
+import { withMethods, isNode } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -86,8 +86,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 				shebang: () => _shebang,
 				statements: () => _statements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -143,8 +142,7 @@ export function buildExpressionStatement(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -168,8 +166,7 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Built {
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -210,8 +207,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 				name: () => _name,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -256,8 +252,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				separator: () => _separator,
 				operator: () => _operator
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -295,8 +290,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				separator: () => _separator,
 				operator: () => _operator
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -668,8 +662,7 @@ export function buildNonSpecialToken(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -704,8 +697,7 @@ function _buildAttributeItem(value: T.Attribute): T.AttributeItem.Built {
 			{
 				attribute: () => _attribute
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -740,8 +732,7 @@ function _buildInnerAttributeItem(value: T.Attribute): T.InnerAttributeItem.Buil
 			{
 				attribute: () => _attribute
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -822,8 +813,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 				path: () => _path,
 				input: () => _input
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -843,8 +833,7 @@ export function buildDeclarationList(...children: T.DeclarationStatement[]): T.D
 			{
 				declarations: () => _declarations
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -892,8 +881,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -936,8 +924,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -985,8 +972,7 @@ function _buildEnumVariantList(value?: T.EnumVariantListElements): T.EnumVariant
 			{
 				enumVariantListElements: () => _enum_variant_list_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1032,8 +1018,7 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bu
 				body: () => _body,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1083,8 +1068,7 @@ function _buildFieldDeclarationList(value?: T.FieldDeclarationListElements): T.F
 			{
 				fieldDeclarationListElements: () => _field_declaration_list_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1129,8 +1113,7 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 				name: () => _name,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1184,8 +1167,7 @@ function _buildOrderedFieldDeclarationList(
 			{
 				attributes: () => _attributes
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1218,8 +1200,7 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 				name: () => _name,
 				alias: () => _alias
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1267,8 +1248,7 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Built {
 				type: () => _type,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1326,8 +1306,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Built
 				type: () => _type,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1385,8 +1364,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Built {
 				type: () => _type,
 				trailingWhereClause: () => _trailing_where_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1460,8 +1438,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1532,8 +1509,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 				returnType: () => _return_type,
 				whereClause: () => _where_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1570,8 +1546,7 @@ export function buildFunctionModifiers(
 			{
 				modifiers: () => _modifier
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1610,8 +1585,7 @@ function _buildWhereClause(value?: T.WherePredicates): T.WhereClause.Built {
 			{
 				wherePredicates: () => _where_predicates
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1661,8 +1635,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 				left: () => _left,
 				bounds: () => _bounds
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1715,8 +1688,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1755,8 +1727,7 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 				bounds: () => _bounds,
 				whereClause: () => _where_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1783,8 +1754,7 @@ export function buildTraitBounds(
 			{
 				bounds: () => _bounds
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1821,8 +1791,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 				typeParameters: () => _type_parameters,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1849,8 +1818,7 @@ export function buildRemovedTraitBound(value: T.Type | T.TypeIdentifier.Types): 
 			{
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1901,8 +1869,7 @@ function _buildTypeParameters(value: T.TypeParametersElements): T.TypeParameters
 			{
 				typeParametersElements: () => _type_parameters_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1943,8 +1910,7 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 				type: () => _type,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1983,8 +1949,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 				bounds: () => _bounds,
 				defaultType: () => _default_type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2008,8 +1973,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 				name: () => _name,
 				bounds: () => _bounds
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2064,8 +2028,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 				value: () => _value,
 				alternative: () => _alternative
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2152,8 +2115,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 				visibilityModifier: () => _visibility_modifier,
 				argument: () => _argument
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2234,8 +2196,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 				path: () => _path,
 				list: () => _list
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2339,8 +2300,7 @@ function _buildUseList(value?: T.UseClauses): T.UseList.Built {
 			{
 				useClauses: () => _use_clauses
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2421,8 +2381,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bu
 				path: () => _path,
 				alias: () => _alias
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2485,8 +2444,7 @@ function _buildUseWildcard(value?: T.UseWildcardGroup): T.UseWildcard.Built {
 			{
 				useWildcardGroup: () => _use_wildcard_group
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2544,8 +2502,7 @@ function _buildParameters(value?: T.ParametersElements): T.Parameters.Built {
 			{
 				parametersElements: () => _parameters_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2575,8 +2532,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 				lifetime: () => _lifetime,
 				mutableSpecifier: () => _mutable_specifier
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2606,8 +2562,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 				mutableSpecifier: () => _mutable_specifier,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2647,8 +2602,7 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Built {
 				name: () => _name,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2683,8 +2637,7 @@ function _buildExternModifier(value?: T.StringLiteral): T.ExternModifier.Built {
 			{
 				abi: () => _abi
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2708,8 +2661,7 @@ export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModi
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2736,8 +2688,7 @@ export function buildBracketedType(value: (T.Type | T.QualifiedType) | T.TypeIde
 			{
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2776,8 +2727,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 				type: () => _type,
 				alias: () => _alias
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2812,8 +2762,7 @@ function _buildLifetime(value: T.Identifier): T.Lifetime.Built {
 			{
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2848,8 +2797,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
 				element: () => _element,
 				length: () => _length
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2888,8 +2836,7 @@ function _buildForLifetimes(value: T.Lifetimes): T.ForLifetimes.Built {
 			{
 				lifetimes: () => _lifetimes
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2938,8 +2885,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 				parameters: () => _parameters,
 				returnType: () => _return_type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -2980,8 +2926,7 @@ function _buildTupleType(value: T.TupleTypeElements): T.TupleType.Built {
 			{
 				tupleTypeElements: () => _tuple_type_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3014,8 +2959,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 				function: () => _function,
 				typeArguments: () => _type_arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3050,8 +2994,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bu
 				type: () => _type,
 				typeArguments: () => _type_arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3085,8 +3028,7 @@ export function buildGenericTypeWithTurbofish(
 				type: () => _type,
 				typeArguments: () => _type_arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3124,8 +3066,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bu
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3167,8 +3108,7 @@ function _buildUseBounds(value?: T.UseBoundsElements): T.UseBounds.Built {
 			{
 				bounds: () => _bounds
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3219,8 +3159,7 @@ function _buildTypeArguments(value: T.TypeArgumentsElements): T.TypeArguments.Bu
 			{
 				typeArgumentsElements: () => _type_arguments_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3258,8 +3197,7 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bu
 				typeArguments: () => _type_arguments,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3295,8 +3233,7 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 				mutableSpecifier: () => _mutable_specifier,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3345,8 +3282,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 				typeParameters: () => _type_parameters,
 				trait: () => _trait
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3395,8 +3331,7 @@ export function buildDynamicType(
 			{
 				trait: () => _trait
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3438,8 +3373,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 				macro: () => _macro,
 				arguments: () => _arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3533,8 +3467,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 				path: () => _path,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3622,8 +3555,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 				path: () => _path,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3709,8 +3641,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 				path: () => _path,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3745,8 +3676,7 @@ export function buildRangeExpression(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3780,8 +3710,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 				operator: () => _operator,
 				operand: () => _operand
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3805,8 +3734,7 @@ export function buildTryExpression(value: T.Expression): T.TryExpression.Built {
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3864,8 +3792,7 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config): T.Bina
 				operator: () => _operator,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3899,8 +3826,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3950,8 +3876,7 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 				operator: () => _operator,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -3988,8 +3913,7 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 				value: () => _value,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4013,8 +3937,7 @@ export function buildReturnExpression(value?: T.Expression): T.ReturnExpression.
 			{
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4038,8 +3961,7 @@ export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Bu
 			{
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4122,8 +4044,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 				function: () => _function,
 				arguments: () => _arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4165,8 +4086,7 @@ function _buildArguments(value?: T.ArgumentsElements): T.Arguments.Built {
 			{
 				argumentsElements: () => _arguments_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4190,8 +4110,7 @@ export function buildParenthesizedExpression(value: T.Expression): T.Parenthesiz
 			{
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4220,8 +4139,7 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 				attributes: () => _attributes,
 				tupleExpressionElements: () => _tuple_expression_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4266,8 +4184,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 				name: () => _name,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4317,8 +4234,7 @@ function _buildFieldInitializerList(value?: T.FieldInitializerListElements): T.F
 			{
 				initializers: () => _initializers
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4349,8 +4265,7 @@ export function buildShorthandFieldInitializer(
 				attributes: () => _attributes,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4391,8 +4306,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 				field: () => _field,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4416,8 +4330,7 @@ export function buildBaseFieldInitializer(value: T.Expression): T.BaseFieldIniti
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4450,8 +4363,7 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 				consequence: () => _consequence,
 				alternative: () => _alternative
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4484,8 +4396,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 				pattern: () => _pattern,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4517,8 +4428,7 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Built {
 				left: () => _left,
 				rights: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4538,8 +4448,7 @@ export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.B
 			{
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4568,8 +4477,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 				value: () => _value,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4591,8 +4499,7 @@ export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
 			{
 				matchBlockArms: () => _match_block_arms
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4633,8 +4540,7 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 				value: () => _value,
 				comma: () => _comma
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4668,8 +4574,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 				pattern: () => _pattern,
 				condition: () => _condition
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4702,8 +4607,7 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 				condition: () => _condition,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4727,8 +4631,7 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 				label: () => _label,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4770,8 +4673,7 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 				value: () => _value,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4809,8 +4711,7 @@ function _buildConstBlock(value: T.Block): T.ConstBlock.Built {
 			{
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4830,8 +4731,7 @@ export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[])
 			{
 				parameters: () => _parameters
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4866,8 +4766,7 @@ function _buildLabel(value: T.Identifier): T.Label.Built {
 			{
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4896,8 +4795,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 				label: () => _label,
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4932,8 +4830,7 @@ function _buildContinueExpression(value?: T.Label): T.ContinueExpression.Built {
 			{
 				label: () => _label
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4967,8 +4864,7 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 				object: () => _object,
 				index: () => _index
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -4992,8 +4888,7 @@ export function buildAwaitExpression(value: T.Expression): T.AwaitExpression.Bui
 			{
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5026,8 +4921,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 				value: () => _value,
 				field: () => _field
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5065,8 +4959,7 @@ function _buildUnsafeBlock(value: T.Block): T.UnsafeBlock.Built {
 			{
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5091,8 +4984,7 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 				moveMarker: () => _move_marker,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5117,8 +5009,7 @@ export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlo
 				moveMarker: () => _move_marker,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5156,8 +5047,7 @@ function _buildTryBlock(value: T.Block): T.TryBlock.Built {
 			{
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5197,8 +5087,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built 
 				statements: () => _statements,
 				trailingExpression: () => _trailing_expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5222,8 +5111,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 				name: () => _name,
 				typeArguments: () => _type_arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5267,8 +5155,7 @@ function _buildTuplePattern(value?: T.TuplePatternElements): T.TuplePattern.Buil
 			{
 				elements: () => _elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5308,8 +5195,7 @@ function _buildSlicePattern(value?: T.Patterns): T.SlicePattern.Built {
 			{
 				patterns: () => _patterns
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5334,8 +5220,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 				type: () => _type,
 				patterns: () => _patterns
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5363,8 +5248,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 				type: () => _type,
 				fields: () => _fields
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5392,8 +5276,7 @@ export function buildMutPattern(value: T.Pattern): T.MutPattern.Built {
 			{
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5417,8 +5300,7 @@ export function buildRefPattern(value: T.Pattern): T.RefPattern.Built {
 			{
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5447,8 +5329,7 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 				name: () => _name,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5478,8 +5359,7 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 				mutableSpecifier: () => _mutable_specifier,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5499,8 +5379,7 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5525,8 +5404,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				stringOpen: () => _string_open,
 				elements: () => _elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5569,8 +5447,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 				stringContent: () => _string_content,
 				rawStringLiteralEnd: () => _raw_string_literal_end
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5598,8 +5475,7 @@ export function buildLineComment(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5630,23 +5506,19 @@ export function buildBlockComment(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Identifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.Identifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildShebang(value: string): T.Shebang.Built {
@@ -5667,8 +5539,7 @@ export function buildShebang(value: string): T.Shebang.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5702,8 +5573,7 @@ export function buildMetavariable(value: string): T.Metavariable.Built {
 			{
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5747,8 +5617,7 @@ function _buildMacroRules(
 			{
 				macroRules: () => _macro_rule
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5806,8 +5675,7 @@ function _buildEnumVariantListElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5867,8 +5735,7 @@ function _buildFieldDeclarationListElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5929,8 +5796,7 @@ function _buildOrderedFieldDeclarationListElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -5978,8 +5844,7 @@ function _buildWherePredicates(
 			{
 				wherePredicates: () => _where_predicate
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6049,8 +5914,7 @@ function _buildTypeParametersElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6289,8 +6153,7 @@ function _buildUseClauses(
 			{
 				useClauses: () => _use_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6398,8 +6261,7 @@ function _buildParametersElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6443,8 +6305,7 @@ function _buildLifetimes(
 			{
 				lifetimes: () => _lifetime
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6500,8 +6361,7 @@ function _buildUseBoundsElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6571,8 +6431,7 @@ function _buildTypeArgumentsElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6628,8 +6487,7 @@ function _buildArgumentsElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6683,8 +6541,7 @@ function _buildFieldInitializerListElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6733,8 +6590,7 @@ function _buildTuplePatternElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6778,8 +6634,7 @@ function _buildPatterns(
 			{
 				patterns: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6830,8 +6685,7 @@ function _buildStructPatternElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -6965,8 +6819,7 @@ export function buildUseWildcardGroup(
 			{
 				path: () => _path
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7016,8 +6869,7 @@ function _buildTupleTypeElements(
 			{
 				types: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7068,8 +6920,7 @@ function _buildTupleExpressionElements(
 			{
 				elements: () => _element
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7119,8 +6970,7 @@ export function buildIntegerLiteralDecimal(
 				content: () => _content,
 				suffix: () => _suffix
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7166,8 +7016,7 @@ export function buildIntegerLiteralHex(
 				content: () => _content,
 				suffix: () => _suffix
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7213,8 +7062,7 @@ export function buildIntegerLiteralBinary(
 				content: () => _content,
 				suffix: () => _suffix
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7260,8 +7108,7 @@ export function buildIntegerLiteralOctal(
 				content: () => _content,
 				suffix: () => _suffix
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7287,8 +7134,7 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 				b: () => _b,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7296,15 +7142,12 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Built {
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
 	if (!_leafRe_buildCharLiteralEmpty.test(text))
 		throw new Error(`char_literal_empty: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.CharLiteralEmpty as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.CharLiteralEmpty as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildCharLiteralEscapedSimple(
@@ -7332,8 +7175,7 @@ export function buildCharLiteralEscapedSimple(
 				b: () => _b,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7362,8 +7204,7 @@ export function buildCharLiteralEscapedUnicodeFixed(
 				b: () => _b,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7392,8 +7233,7 @@ export function buildCharLiteralEscapedUnicodeBraced(
 				b: () => _b,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7420,8 +7260,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 				b: () => _b,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7443,8 +7282,7 @@ export function buildEscapeSequenceSimple(value: string): T.EscapeSequenceSimple
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7466,8 +7304,7 @@ export function buildEscapeSequenceUnicodeFixed(value: string): T.EscapeSequence
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7489,8 +7326,7 @@ export function buildEscapeSequenceUnicodeBraced(value: string): T.EscapeSequenc
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7512,8 +7348,7 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7555,8 +7390,7 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 				element: () => _element,
 				length: () => _length
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7593,8 +7427,7 @@ export function buildArrayExpressionList(
 				attributes: () => _attributes,
 				argumentsElements: () => _arguments_elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7623,8 +7456,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 				value: () => _value,
 				arguments: () => _arguments
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7679,8 +7511,7 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 				returnType: () => _return_type,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7730,8 +7561,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 				parameters: () => _parameters,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7755,8 +7585,7 @@ export function buildReferenceExpressionRawConst(value: T.Expression): T.Referen
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7780,8 +7609,7 @@ export function buildReferenceExpressionRawMut(value: T.Expression): T.Reference
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7805,8 +7633,7 @@ export function buildReferenceExpressionMut(value: T.Expression): T.ReferenceExp
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7830,8 +7657,7 @@ export function buildReferenceExpressionBare(value: T.Expression): T.ReferenceEx
 			{
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7861,8 +7687,7 @@ export function buildImplItemPositiveClause(
 			{
 				trait: () => _trait
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7892,8 +7717,7 @@ export function buildImplItemNegativeClause(
 			{
 				trait: () => _trait
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -7954,8 +7778,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 				whereClause: () => _where_clause,
 				declarationList: () => _declaration_list
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8008,8 +7831,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 				type: () => _type,
 				whereClause: () => _where_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8143,8 +7965,7 @@ export function buildVisibilityModifierPubScopeInPath(
 			{
 				path: () => _path
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8176,8 +7997,7 @@ export function buildVisibilityModifierPubScope(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8222,8 +8042,7 @@ function _buildVisibilityModifierPub(value?: T.VisibilityModifierPubScope): T.Vi
 			{
 				visibilityModifierPubScope: () => _visibility_modifier_pub_scope
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8249,8 +8068,7 @@ export function buildFunctionTypeTraitForm(
 			{
 				trait: () => _trait
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8299,8 +8117,7 @@ function _buildFunctionTypeFnForm(value?: T.FunctionModifiers): T.FunctionTypeFn
 			{
 				functionModifiers: () => _function_modifiers
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8329,8 +8146,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 				visibilityModifier: () => _visibility_modifier,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8363,8 +8179,7 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 				name: () => _name,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8398,8 +8213,7 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8423,8 +8237,7 @@ export function buildOrPatternPrefix(value: T.Pattern): T.OrPatternPrefix.Built 
 			{
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8451,8 +8264,7 @@ export function buildPointerTypeConst(value: T.Type | T.TypeIdentifier.Types): T
 			{
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8479,23 +8291,19 @@ export function buildPointerTypeMut(value: T.Type | T.TypeIdentifier.Types): T.P
 			{
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildStringOpen(text: string): T.StringOpen.Built {
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
 	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.StringOpen as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.StringOpen as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Built {
@@ -8537,8 +8345,7 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 				operator: () => _operator,
 				end: () => _end
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8562,8 +8369,7 @@ export function buildRangeExpressionPostfix(value: T.Expression): T.RangeExpress
 			{
 				start: () => _start
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8587,8 +8393,7 @@ export function buildRangeExpressionPrefix(value: T.Expression): T.RangeExpressi
 			{
 				end: () => _end
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8612,8 +8417,7 @@ export function buildExpressionStatementWithSemi(value: T.Expression): T.Express
 			{
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8646,8 +8450,7 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 				visibilityModifier: () => _visibility_modifier,
 				externModifier: () => _extern_modifier
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8688,8 +8491,7 @@ export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.
 				externModifier: () => _extern_modifier,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8727,8 +8529,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 				pattern: () => _pattern,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8778,8 +8579,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				pattern: () => _pattern,
 				value: () => _value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8787,15 +8587,12 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
 	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
 		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.LineCommentExtraSlashes as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.LineCommentExtraSlashes as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildLineCommentDocOuter(value: T.DocComment): ReturnType<typeof _buildLineCommentDocOuter>;
@@ -8829,8 +8626,7 @@ function _buildLineCommentDocOuter(value: T.DocComment): T.LineCommentDocOuter.B
 			{
 				doc: () => _doc
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8865,23 +8661,19 @@ function _buildLineCommentDocInner(value: T.DocComment): T.LineCommentDocInner.B
 			{
 				doc: () => _doc
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildLineCommentRegular(text: string): T.LineCommentRegular.Built {
 	if (!_leafRe_buildLineCommentRegular.test(text))
 		throw new Error(`line_comment_regular: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.LineCommentRegular as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.LineCommentRegular as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildBlockCommentDocOuter(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocOuter>;
@@ -8917,8 +8709,7 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 			{
 				doc: () => _doc
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -8955,8 +8746,7 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 			{
 				doc: () => _doc
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9006,8 +8796,7 @@ export function buildTokenTreePatternParen(
 			{
 				tokenPatterns: () => _token_patterns
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9057,8 +8846,7 @@ export function buildTokenTreePatternBracket(
 			{
 				tokenPatterns: () => _token_patterns
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9108,8 +8896,7 @@ export function buildTokenTreePatternBrace(
 			{
 				tokenPatterns: () => _token_patterns
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9140,8 +8927,7 @@ export function buildTokenTreeParen(
 			{
 				tokens: () => _tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9172,8 +8958,7 @@ export function buildTokenTreeBracket(
 			{
 				tokens: () => _tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9204,8 +8989,7 @@ export function buildTokenTreeBrace(
 			{
 				tokens: () => _tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9236,8 +9020,7 @@ export function buildDelimTokenTreeParen(
 			{
 				delimTokens: () => _delim_tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9268,8 +9051,7 @@ export function buildDelimTokenTreeBracket(
 			{
 				delimTokens: () => _delim_tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9300,8 +9082,7 @@ export function buildDelimTokenTreeBrace(
 			{
 				delimTokens: () => _delim_tokens
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9335,8 +9116,7 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 				mutableSpecifier: () => _mutable_specifier,
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9379,8 +9159,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 				name: () => _name,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9418,8 +9197,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 				name: () => _name,
 				macroRules: () => _macro_rules
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9457,8 +9235,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 				name: () => _name,
 				macroRules: () => _macro_rules
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9496,8 +9273,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 				name: () => _name,
 				macroRules: () => _macro_rules
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9583,8 +9359,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 				content: () => _content,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9673,8 +9448,7 @@ export function buildRangePatternWithLeftWithRight(
 				content: () => _content,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9767,8 +9541,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 				left: () => _left,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9820,8 +9593,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9873,8 +9645,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 				body: () => _body,
 				whereClause: () => _where_clause
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9914,8 +9685,7 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 				name: () => _name,
 				typeParameters: () => _type_parameters
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9955,8 +9725,7 @@ export function buildAttributedFieldDeclaration(
 				attributeItems: () => _attribute_item,
 				fieldDeclaration: () => _field_declaration
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -9985,8 +9754,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 				attributeItems: () => _attribute_item,
 				enumVariant: () => _enum_variant
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10024,8 +9792,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 				attributeItem: () => _attribute_item,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10061,8 +9828,7 @@ export function buildAttributedTypeParameter(
 				attributeItems: () => _attribute_item,
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10096,8 +9862,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 				attributeItems: () => _attribute_item,
 				expression: () => _expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10143,8 +9908,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 				visibilityModifier: () => _visibility_modifier,
 				type: () => _type
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10176,8 +9940,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 				content: () => _content,
 				traitBounds: () => _trait_bounds
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10201,8 +9964,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 				matchArms: () => _match_arm,
 				lastArm: () => _last_arm
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10210,43 +9972,34 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
 	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.FloatLiteral as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.FloatLiteral as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildStringContent(text: string): T.StringContent.Built {
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
 	if (!_leafRe_buildStringContent.test(text)) throw new Error(`string_content: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.StringContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.StringContent as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
 	if (!_leafRe_buildRawStringLiteralContent.test(text))
 		throw new Error(`raw_string_literal_content: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.RawStringLiteralContent as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildOuterDocCommentMarker(): TSKindId.OuterDocCommentMarker {
@@ -10261,57 +10014,45 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralStart.test(text))
 		throw new Error(`raw_string_literal_start: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralStart as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.RawStringLiteralStart as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralEnd.test(text))
 		throw new Error(`raw_string_literal_end: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralEnd as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.RawStringLiteralEnd as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildDocComment(text: string): T.DocComment.Built {
 	if (!_leafRe_buildDocComment.test(text)) throw new Error(`doc_comment: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.DocComment as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.DocComment as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Built {
 	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.BlockCommentContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.BlockCommentContent as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildTight(): TSKindId.Tight {
@@ -10348,15 +10089,12 @@ export function buildDedent(): TSKindId.Dedent {
 
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.ErrorSentinel as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ErrorSentinel as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built {
@@ -10375,8 +10113,7 @@ export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10396,8 +10133,7 @@ export function buildFieldIdentifier(value: T.Identifier): T.FieldIdentifier.Bui
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -10417,8 +10153,7 @@ export function buildShorthandFieldIdentifier(value: T.Identifier): T.ShorthandF
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { stripStructuralProvenance } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
-import { importGrammarModule, loadNativeEngine, loadReadTreeNode, materializeWrappedNodeData } from '../common.ts';
+import { loadNativeEngine, loadReadTreeNode, materializeWrappedNodeData, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 
 describe('read trivia layout, rendered detached', () => {
@@ -36,7 +36,7 @@ describe('read trivia layout, rendered detached', () => {
 		const engine = await loadNativeEngine('rust');
 		const read = (await loadReadTreeNode('rust'))!;
 		const source = 'fn f() { x = a + /* x */ b; }';
-		const data = stripStructuralProvenance(materializeWrappedNodeData(read(engine.diagnostics.parseAndRead(source).tree))) as never as {
+		const data = stripStructuralProvenance(materializeWrappedNodeData(read(readNativeTree(engine, source).tree))) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
@@ -68,7 +68,7 @@ describe('read trivia layout, rendered detached', () => {
 describe('built and read trivia render alike', () => {
 	it('gives a built tree and a read tree of the same source the same layout', async () => {
 		const render = await detachedRenderer('rust');
-		const { ir } = (await importGrammarModule('rust', 'ir.ts'))!;
+		const ir = (await loadNativeEngine('rust')).build as any;
 		const todo = () => ir.lineComment(' TODO');
 		const f = (body: unknown) => ir.functionItem({ name: 'f', parameters: ir.parameters(), body });
 		const pairs: [unknown, string][] = [

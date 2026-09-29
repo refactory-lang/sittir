@@ -84,6 +84,8 @@ import {
 	treeHandle,
 	adaptNode,
 	loadNativeEngine,
+	readNativeTree,
+	type NativeEngine,
 	materializeWrappedNodeData,
 	loadReadTreeNode,
 	walkNativeForKind,
@@ -106,7 +108,6 @@ import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import { stripStructuralProvenance } from '@sittir/common';
 import { toTransportData, type TreeHandle } from '@sittir/common/utils';
-import type { SittirEngine } from '@sittir/common/engine';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -556,11 +557,11 @@ export async function probe(
 	// inside that engine. Wasm parser above is kept only so the
 	// (informational) `cst` dump is comparable across paths.
 	let nodeData: unknown;
-	let nativeEngine: SittirEngine | undefined;
+	let nativeEngine: NativeEngine | undefined;
 	if (opts.engine === 'native' && !opts.noWrap) {
 		nativeEngine = await loadNativeEngine(grammar);
 		const readTreeNodeFn = await loadReadTreeNode(grammar);
-		const handle = nativeEngine.diagnostics.parseAndRead(source).tree;
+		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
 		} else {
@@ -911,7 +912,7 @@ async function readProbeNodeData(
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
 		const readTreeNodeFn = await loadReadTreeNode(grammar);
-		const handle = nativeEngine.diagnostics.parseAndRead(source).tree;
+		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
 			const legacyDeepNodeData = stripStructuralProvenance(await deepReadProbeNode(handle, undefined, undefined));

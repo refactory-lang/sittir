@@ -7,10 +7,13 @@ import type {
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,
+	ParseOptions,
 	Pending,
+	Rendered,
 	RenderOptionsCheck
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, isLive, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { metricsEnabled, recordFfi } from './metrics.ts';
 import { isNode, isParsedNode } from './utils.ts';
 
 const loaded = new WeakMap<Language<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
@@ -103,15 +106,30 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	const handle: EngineHandle = { current: identity };
 	const build = scopedBuild(hooks.build, handle);
+	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
+		const rendered = native.render(target, renderOptions);
+		if (!metricsEnabled) return rendered;
+		const kind =
+			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
+		const before = performance.now();
+		const text = rendered.toString();
+		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
+		return rendered;
+	};
+	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
+		const read = native.parseAndRead(source, parseOptions);
+		bindTree(read.tree, handle);
+		return read;
+	};
 	const engine: Engine<API> = {
 		...identity,
 		build,
 		is: hooks.is,
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
+		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind },
 		parse(source, parseOptions) {
-			const { root, tree } = native.parseAndRead(source, parseOptions);
-			bindTree(tree, handle);
+			const { root, tree } = readAndBind(source, parseOptions);
 			return hooks.wrap(root, tree);
 		},
 		read() {
@@ -131,7 +149,7 @@ function assembleEngine<API extends LanguageAPI>(
 				);
 			}
 			const [reader] = readers;
-			if (reader === undefined || reader === engine) return native.render(target, renderOptions);
+			if (reader === undefined || reader === engine) return renderNative(target, renderOptions);
 			if (!isLive(reader)) throw new Error('engine disposed; render it with engine.render(node)');
 			return reader.render(target, { ...options?.render, ...renderOptions });
 		},

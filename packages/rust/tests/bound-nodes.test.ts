@@ -64,6 +64,7 @@ describe('the engine a node belongs to', () => {
 		expect(stampOf(engine.build.identifier('a'))).toBe(engine);
 		expect(stampOf(built.name())).toBe(engine);
 		expect(stampOf(root)).toBe(engine);
+		expect(stampOf(root)).not.toBe(other);
 		expect(stampOf(fn)).toBe(engine);
 		expect(stampOf(fn.parameters())).toBe(engine);
 		expect(stampOf(other.build.identifier('a'))).toBe(other);

@@ -1,22 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, GrammarFacts } from '@sittir/types';
+import type { AnyNodeData } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { createRenderHandle } from '../src/engine.ts';
 import { inTreeEngine } from '../src/engine-scope.ts';
 import { Source } from '../src/source.ts';
 import { withMethods } from '../src/utils.ts';
+import { triviaFacts } from './support/fake-engine.ts';
 
 interface Options {
 	readonly indent?: string;
 }
 
-const facts: GrammarFacts = {
-	render: () => 'unscoped',
-	toEdit: () => ({ startPos: 0, endPos: 0, insertedText: 'unscoped' }),
-	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} }
-};
+const trivia = triviaFacts();
 
-const node = (data: Record<string, unknown>): AnyNodeData => withMethods(data as unknown as AnyNodeData, facts);
+const node = (data: Record<string, unknown>): AnyNodeData => withMethods(data as unknown as AnyNodeData);
 
 function fakeLanguage(name: string) {
 	const trees: object[] = [];
@@ -33,7 +30,7 @@ function fakeLanguage(name: string) {
 		},
 		is: {},
 		kinds: {},
-		trivia: facts.trivia,
+		trivia,
 		createNative: (opts?: { options?: Options }) => {
 			const label = String.fromCharCode(65 + engines++);
 			return {
@@ -45,7 +42,6 @@ function fakeLanguage(name: string) {
 					trees.push(tree);
 					return { root: { $type: 4, $source: Source.Ts, _items: [] }, tree };
 				},
-				holdsTree: () => true,
 				dispose: () => undefined
 			};
 		},

@@ -1,4 +1,4 @@
-import type { AnyNodeData, ByteRange, Edit, GrammarFacts, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyNodeData, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -36,27 +36,30 @@ interface TriviaSetterRuntime<Self> {
 
 type Scoped = <R>(fn: () => R) => R;
 
-export function withMethods<T extends AnyNodeData>(node: T, engine: GrammarFacts): T & WithMethodsRuntime<T> {
+const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
+
+export function withMethods<T extends AnyNodeData>(node: T): T & WithMethodsRuntime<T> {
 	const handle = currentHandle();
 	const scoped: Scoped = handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn);
-	const facts = (): TriviaFacts => handle?.current.trivia ?? engine.trivia;
+	const facts = (): TriviaFacts => {
+		if (handle === undefined) throw new Error(NO_ENGINE);
+		return handle.current.trivia;
+	};
 	const renderText = (self: AnyNodeData): string => {
-		if (handle === undefined) return engine.render(self);
+		if (handle === undefined) throw new Error(NO_ENGINE);
 		if (!isLive(handle.current)) throw new Error('engine disposed; render it with engine.render(node)');
 		return handle.current.render(self).toString();
 	};
-	carryTriviaThroughWith(node, facts(), scoped);
+	carryTriviaThroughWith(node, handle, scoped);
 	Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return renderText(this);
 		},
 		$toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-			return handle === undefined
-				? engine.toEdit(this, startOrRange, endPos)
-				: toEditAt(renderText(this), startOrRange, endPos);
+			return toEditAt(renderText(this), startOrRange, endPos);
 		},
 		$replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
-			return handle === undefined ? engine.toEdit(this, target.range()) : toEditAt(renderText(this), target.range());
+			return toEditAt(renderText(this), target.range());
 		}
 	});
 	Object.defineProperty(node, '$trivia', {
@@ -286,7 +289,7 @@ function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
  * empty: once the rebuild gives the node a child, the comment would sit beside
  * it, so the setter refuses.
  */
-function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts, scoped: Scoped): void {
+function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefined, scoped: Scoped): void {
 	const setters = (node as { $with?: Record<string, unknown> }).$with;
 	if (setters === undefined) return;
 	for (const key of Object.keys(setters)) {
@@ -298,7 +301,7 @@ function carryTriviaThroughWith(node: AnyNodeData, facts: TriviaFacts, scoped: S
 			const trivia = node.$_trivia;
 			if (trivia === undefined || !isNode(rebuilt)) return rebuilt;
 			if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(rebuilt)) {
-				const kind = facts.kindName(node.$type) ?? String(node.$type);
+				const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
 				throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 			}
 			setTriviaData(rebuilt, trivia);

@@ -2,8 +2,6 @@
 import * as O from './overlays/supertypes.js';
 import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
-import { methodsEngine } from '../utils.js';
-import { coerceToComment } from './coerce.js';
 export * from './overlays/supertypes.js';
 
 export const program: Hoisted<typeof O.program> = hoist(O.program);
@@ -28,5 +26,3 @@ export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistRoutes(O.na
 export const definition: Hoisted<typeof O.definition> = hoistRoutes(O.definition);
 export const groupExpression: Hoisted<typeof O.groupExpression> = hoistRoutes(O.groupExpression);
 export const namedNodeExpression: Hoisted<typeof O.namedNodeExpression> = hoistRoutes(O.namedNodeExpression);
-
-methodsEngine.trivia.comment = coerceToComment;

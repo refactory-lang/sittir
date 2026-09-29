@@ -2,8 +2,6 @@
 import * as O from './overlays/supertypes.js';
 import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
-import { methodsEngine } from '../utils.js';
-import { coerceToComment } from './coerce.js';
 export * from './overlays/supertypes.js';
 
 export const module: Hoisted<typeof O.module> = hoist(O.module);
@@ -151,5 +149,3 @@ export const float: Hoisted<typeof O.float> = hoistRoutes(O.float);
 export const lineContinuation: Hoisted<typeof O.lineContinuation> = hoistRoutes(O.lineContinuation);
 export const integerDecimal: Hoisted<typeof O.integerDecimal> = hoistRoutes(O.integerDecimal);
 export const integer: Hoisted<typeof O.integer> = hoistRoutes(O.integer);
-
-methodsEngine.trivia.comment = coerceToComment;

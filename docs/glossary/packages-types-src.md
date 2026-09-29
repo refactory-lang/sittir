@@ -52,9 +52,13 @@ How far one read expands. The default is lazy: a read returns one level, and a c
 
 What a node needs to know about its engine without holding it: the language's descriptor (which carries the grammar's name), the render module hash that identifies the generated surface, the engine's render options, and the language's trivia facts. Everything in it is plain data, so a node keeps it after its engine is disposed: the node guards read only the language, and `$trivia` reads its entries through the facts, while rendering and editing need the live engine.
 
-### `packages/types/src/engine-api.ts::GrammarFacts`
+### `packages/types/src/engine-api.ts::ParsedRead`
 
-The facts a grammar's runtime reads: `render` and `toEdit` from its native engine, and its `TriviaFacts`. Generated `utils.ts` declares them once as `methodsEngine`.
+What a parse produces before wrapping: the raw root data and the tree it was read from. Both types are parameters, opaque by default; the native engine fixes them to its root data and its tree handle.
+
+### `packages/types/src/engine-api.ts::EngineDiagnostics`
+
+What an engine exposes for tooling rather than for consumers: the native build's compile profile (`buildProfile`, undefined for a binary that predates it) and `parseAndRead`, the read a parse makes before wrapping. The tree it returns is bound to the engine, so a node wrapped over it stamps that engine, exactly as `parse` does; `parse` is `parseAndRead` plus the wrapper. The single declaration of these members: the native engine's diagnostics extend it with the reads only it has, and the native language engine's members are picked from it.
 
 ### `packages/types/src/engine-api.ts::GrammarTypeMap`
 
