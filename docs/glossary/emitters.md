@@ -1558,6 +1558,8 @@ The coercer's signature carries the same facts as types. With a spelled delimite
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
 
+A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
+
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
 An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
@@ -11607,6 +11609,8 @@ when the list declares no default separator.
  *  (`constructorSurface`) that never passed through a `FactoryParam`. */
 ```
 
+The rewrite consumes only the initializer (`= {}`), never what follows it: a defaulted `config` followed by a spelling `options?` keeps both parameters, so an all-optional kind with a registered option declares `[config?, options?]` in its `BuildArgs` / `LooseArgs` as its builder does.
+
 ### `packages/codegen/src/emitters/factories.ts::paramText`
 
 ```text
@@ -11621,6 +11625,8 @@ when the list declares no default separator.
 /** The strict and loose renderings of one parameter — the only place either
  *  string is composed. */
 ```
+
+It also answers the parameter's arity: 1, or none (unbounded) for a rest parameter. `resolveFactorySurface` adds 1 when it appends the spelling `options?`, so the count and the text come from the same parameter list.
 
 ### `packages/codegen/src/emitters/factories.ts::paramsToTuple`
 
@@ -11725,6 +11731,18 @@ when the list declares no default separator.
  * arguments straight through, transitively.
  */
 ```
+
+### `packages/codegen/src/emitters/factories.ts::forwardedConstructorTarget`
+
+The kind a field-carrying factory forwards its argument to, when its strict builder is a forwarding wrapper: the node takes a direct value (`directParamType`), `forwardedTargetKind` names a target, the target has a catalog entry, and the target is not a hoisted config-shaped group (which splices through its seat instead). `emitFieldCarryingFactory` emits the forwarding overloads exactly when this answers a kind; `listSpreadTarget` reads the same answer.
+
+### `packages/codegen/src/emitters/factories.ts::listSpreadTarget`
+
+The forward target of a kind whose strict builder accepts the spread of a list it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`): `forwardedConstructorTarget` names a target whose constructor resolves (`constructorTargetKind`) to a list, and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
+
+### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
+
+The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -11835,6 +11853,8 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * widened to what a coercing caller may pass.
  */
 ```
+
+`maxArgs` is the most arguments the calling convention accepts, beside the tuples it counts: the factory surface's `arity`, 1 for a leaf, 1 or 2 for a refine form (its config, plus its options when it has registered slots), and none for a list or for a kind that forwards a wrapped-list spread, whose tuples end in a rest element. `bundleEntries` reads it to stamp the hoisted builder.
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTuple`
 
@@ -14478,6 +14498,8 @@ Emits `factories/index.ts`, the dynamic final chain step: re-exports the top ove
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
 
+A bundle entry whose calling convention has a fixed maximum carries it into the hoist: `hoist(O.<exportName>, { key: '<exportName>', max: N })`, so the hoisted callable refuses a call with more arguments than its builder takes. `hoist` types the stamp by the hoisted flavor's own `MaxArity`, which makes a stamp that disagrees with the builder's signature (or a missing stamp on a fixed-arity builder) a type error in the generated package.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
 Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
@@ -14485,6 +14507,8 @@ Shared header for a static overlay module: imports the previous layer as `B`, an
 ### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
 
 One bundled kind: `key` is the ir property key (irKey, falling back to camelCase(kind)); `exportName` is the module-level export identifier — `key` suffixed with `_` when the key is a reserved identifier (e.g. `arguments`), since a reserved word is legal as an object property but not as a top-level export.
+
+`maxArgs` is the kind's `BuiltTypeSurface.maxArgs`: the stamp `emitFactoriesIndex` passes to `hoist`, absent for an unbounded (rest) calling convention.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 

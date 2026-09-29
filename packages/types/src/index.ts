@@ -169,6 +169,16 @@ export type ArgsOf<F> = F extends {
 	? MutableRest<A> | MutableRest<B> | MutableRest<C> | MutableRest<D>
 	: never;
 
+/**
+ * MaxArity<F> — the most arguments any declared overload of F accepts,
+ * read off {@link ArgsOf}: `number` when an overload takes a rest parameter.
+ */
+export type MaxArity<F> = number extends ArgsOf<F>['length'] ? number : MaxOf<ArgsOf<F>['length']>;
+
+type MaxOf<U, Seen extends unknown[] = []> = [Exclude<U, Seen['length']>] extends [never]
+	? Seen['length']
+	: MaxOf<Exclude<U, Seen['length']>, [...Seen, unknown]>;
+
 /** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
 type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
 	? readonly E[] extends A

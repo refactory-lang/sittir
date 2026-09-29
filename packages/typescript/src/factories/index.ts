@@ -4,178 +4,412 @@ import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
 export * from './overlays/supertypes.js';
 
-export const program: Hoisted<typeof O.program> = hoist(O.program);
-export const hashBangLine: Hoisted<typeof O.hashBangLine> = hoist(O.hashBangLine);
-export const namespaceExport: Hoisted<typeof O.namespaceExport> = hoist(O.namespaceExport);
+export const program: Hoisted<typeof O.program> = hoist(O.program, { key: 'program', max: 1 });
+export const hashBangLine: Hoisted<typeof O.hashBangLine> = hoist(O.hashBangLine, { key: 'hashBangLine', max: 1 });
+export const namespaceExport: Hoisted<typeof O.namespaceExport> = hoist(O.namespaceExport, {
+	key: 'namespaceExport',
+	max: 1
+});
 export const exportClause: Hoisted<typeof O.exportClause> = hoist(O.exportClause);
-export const exportSpecifier: Hoisted<typeof O.exportSpecifier> = hoist(O.exportSpecifier);
-export const importStatement: Hoisted<typeof O.importStatement> = hoist(O.importStatement);
-export const importClause: Hoisted<typeof O.importClause> = hoist(O.importClause);
-export const namespaceImport: Hoisted<typeof O.namespaceImport> = hoist(O.namespaceImport);
+export const exportSpecifier: Hoisted<typeof O.exportSpecifier> = hoist(O.exportSpecifier, {
+	key: 'exportSpecifier',
+	max: 1
+});
+export const importStatement: Hoisted<typeof O.importStatement> = hoist(O.importStatement, {
+	key: 'importStatement',
+	max: 2
+});
+export const importClause: Hoisted<typeof O.importClause> = hoist(O.importClause, { key: 'importClause', max: 1 });
+export const namespaceImport: Hoisted<typeof O.namespaceImport> = hoist(O.namespaceImport, {
+	key: 'namespaceImport',
+	max: 1
+});
 export const namedImports: Hoisted<typeof O.namedImports> = hoist(O.namedImports);
-export const importAttribute: Hoisted<typeof O.importAttribute> = hoist(O.importAttribute);
-export const expressionStatement: Hoisted<typeof O.expressionStatement> = hoist(O.expressionStatement);
-export const variableDeclaration: Hoisted<typeof O.variableDeclaration> = hoist(O.variableDeclaration);
-export const lexicalDeclaration: Hoisted<typeof O.lexicalDeclaration> = hoist(O.lexicalDeclaration);
-export const statementBlock: Hoisted<typeof O.statementBlock> = hoist(O.statementBlock);
-export const elseClause: Hoisted<typeof O.elseClause> = hoist(O.elseClause);
-export const ifStatement: Hoisted<typeof O.ifStatement> = hoist(O.ifStatement);
-export const switchStatement: Hoisted<typeof O.switchStatement> = hoist(O.switchStatement);
-export const forStatement: Hoisted<typeof O.forStatement> = hoist(O.forStatement);
-export const forInStatement: Hoisted<typeof O.forInStatement> = hoist(O.forInStatement);
-export const whileStatement: Hoisted<typeof O.whileStatement> = hoist(O.whileStatement);
-export const doStatement: Hoisted<typeof O.doStatement> = hoist(O.doStatement);
-export const tryStatement: Hoisted<typeof O.tryStatement> = hoist(O.tryStatement);
-export const withStatement: Hoisted<typeof O.withStatement> = hoist(O.withStatement);
-export const breakStatement: Hoisted<typeof O.breakStatement> = hoist(O.breakStatement);
-export const continueStatement: Hoisted<typeof O.continueStatement> = hoist(O.continueStatement);
-export const debuggerStatement: Hoisted<typeof O.debuggerStatement> = hoist(O.debuggerStatement);
-export const returnStatement: Hoisted<typeof O.returnStatement> = hoist(O.returnStatement);
-export const throwStatement: Hoisted<typeof O.throwStatement> = hoist(O.throwStatement);
-export const labeledStatement: Hoisted<typeof O.labeledStatement> = hoist(O.labeledStatement);
+export const importAttribute: Hoisted<typeof O.importAttribute> = hoist(O.importAttribute, {
+	key: 'importAttribute',
+	max: 1
+});
+export const expressionStatement: Hoisted<typeof O.expressionStatement> = hoist(O.expressionStatement, {
+	key: 'expressionStatement',
+	max: 2
+});
+export const variableDeclaration: Hoisted<typeof O.variableDeclaration> = hoist(O.variableDeclaration, {
+	key: 'variableDeclaration',
+	max: 2
+});
+export const lexicalDeclaration: Hoisted<typeof O.lexicalDeclaration> = hoist(O.lexicalDeclaration, {
+	key: 'lexicalDeclaration',
+	max: 2
+});
+export const statementBlock: Hoisted<typeof O.statementBlock> = hoist(O.statementBlock, {
+	key: 'statementBlock',
+	max: 1
+});
+export const elseClause: Hoisted<typeof O.elseClause> = hoist(O.elseClause, { key: 'elseClause', max: 1 });
+export const ifStatement: Hoisted<typeof O.ifStatement> = hoist(O.ifStatement, { key: 'ifStatement', max: 1 });
+export const switchStatement: Hoisted<typeof O.switchStatement> = hoist(O.switchStatement, {
+	key: 'switchStatement',
+	max: 1
+});
+export const forStatement: Hoisted<typeof O.forStatement> = hoist(O.forStatement, { key: 'forStatement', max: 1 });
+export const forInStatement: Hoisted<typeof O.forInStatement> = hoist(O.forInStatement, {
+	key: 'forInStatement',
+	max: 1
+});
+export const whileStatement: Hoisted<typeof O.whileStatement> = hoist(O.whileStatement, {
+	key: 'whileStatement',
+	max: 1
+});
+export const doStatement: Hoisted<typeof O.doStatement> = hoist(O.doStatement, { key: 'doStatement', max: 2 });
+export const tryStatement: Hoisted<typeof O.tryStatement> = hoist(O.tryStatement, { key: 'tryStatement', max: 1 });
+export const withStatement: Hoisted<typeof O.withStatement> = hoist(O.withStatement, { key: 'withStatement', max: 1 });
+export const breakStatement: Hoisted<typeof O.breakStatement> = hoist(O.breakStatement, {
+	key: 'breakStatement',
+	max: 2
+});
+export const continueStatement: Hoisted<typeof O.continueStatement> = hoist(O.continueStatement, {
+	key: 'continueStatement',
+	max: 2
+});
+export const debuggerStatement: Hoisted<typeof O.debuggerStatement> = hoist(O.debuggerStatement, {
+	key: 'debuggerStatement',
+	max: 1
+});
+export const returnStatement: Hoisted<typeof O.returnStatement> = hoist(O.returnStatement, {
+	key: 'returnStatement',
+	max: 2
+});
+export const throwStatement: Hoisted<typeof O.throwStatement> = hoist(O.throwStatement, {
+	key: 'throwStatement',
+	max: 2
+});
+export const labeledStatement: Hoisted<typeof O.labeledStatement> = hoist(O.labeledStatement, {
+	key: 'labeledStatement',
+	max: 1
+});
 export const switchBody: Hoisted<typeof O.switchBody> = hoist(O.switchBody);
-export const switchCase: Hoisted<typeof O.switchCase> = hoist(O.switchCase);
+export const switchCase: Hoisted<typeof O.switchCase> = hoist(O.switchCase, { key: 'switchCase', max: 1 });
 export const switchDefault: Hoisted<typeof O.switchDefault> = hoist(O.switchDefault);
-export const catchClause: Hoisted<typeof O.catchClause> = hoist(O.catchClause);
-export const finallyClause: Hoisted<typeof O.finallyClause> = hoist(O.finallyClause);
-export const yieldExpression: Hoisted<typeof O.yieldExpression> = hoist(O.yieldExpression);
+export const catchClause: Hoisted<typeof O.catchClause> = hoist(O.catchClause, { key: 'catchClause', max: 1 });
+export const finallyClause: Hoisted<typeof O.finallyClause> = hoist(O.finallyClause, { key: 'finallyClause', max: 1 });
+export const yieldExpression: Hoisted<typeof O.yieldExpression> = hoist(O.yieldExpression, {
+	key: 'yieldExpression',
+	max: 1
+});
 export const object: Hoisted<typeof O.object> = hoist(O.object);
 export const objectPattern: Hoisted<typeof O.objectPattern> = hoist(O.objectPattern);
-export const assignmentPattern: Hoisted<typeof O.assignmentPattern> = hoist(O.assignmentPattern);
-export const objectAssignmentPattern: Hoisted<typeof O.objectAssignmentPattern> = hoist(O.objectAssignmentPattern);
+export const assignmentPattern: Hoisted<typeof O.assignmentPattern> = hoist(O.assignmentPattern, {
+	key: 'assignmentPattern',
+	max: 1
+});
+export const objectAssignmentPattern: Hoisted<typeof O.objectAssignmentPattern> = hoist(O.objectAssignmentPattern, {
+	key: 'objectAssignmentPattern',
+	max: 1
+});
 export const array: Hoisted<typeof O.array> = hoist(O.array);
 export const arrayPattern: Hoisted<typeof O.arrayPattern> = hoist(O.arrayPattern);
-export const nestedIdentifier: Hoisted<typeof O.nestedIdentifier> = hoist(O.nestedIdentifier);
-export const class_: Hoisted<typeof O.class_> = hoist(O.class_);
-export const classDeclaration: Hoisted<typeof O.classDeclaration> = hoist(O.classDeclaration);
-export const classHeritage: Hoisted<typeof O.classHeritage> = hoist(O.classHeritage);
-export const functionExpression: Hoisted<typeof O.functionExpression> = hoist(O.functionExpression);
-export const functionDeclaration: Hoisted<typeof O.functionDeclaration> = hoist(O.functionDeclaration);
-export const generatorFunction: Hoisted<typeof O.generatorFunction> = hoist(O.generatorFunction);
+export const nestedIdentifier: Hoisted<typeof O.nestedIdentifier> = hoist(O.nestedIdentifier, {
+	key: 'nestedIdentifier',
+	max: 1
+});
+export const class_: Hoisted<typeof O.class_> = hoist(O.class_, { key: 'class_', max: 1 });
+export const classDeclaration: Hoisted<typeof O.classDeclaration> = hoist(O.classDeclaration, {
+	key: 'classDeclaration',
+	max: 1
+});
+export const classHeritage: Hoisted<typeof O.classHeritage> = hoist(O.classHeritage, { key: 'classHeritage', max: 1 });
+export const functionExpression: Hoisted<typeof O.functionExpression> = hoist(O.functionExpression, {
+	key: 'functionExpression',
+	max: 1
+});
+export const functionDeclaration: Hoisted<typeof O.functionDeclaration> = hoist(O.functionDeclaration, {
+	key: 'functionDeclaration',
+	max: 1
+});
+export const generatorFunction: Hoisted<typeof O.generatorFunction> = hoist(O.generatorFunction, {
+	key: 'generatorFunction',
+	max: 1
+});
 export const generatorFunctionDeclaration: Hoisted<typeof O.generatorFunctionDeclaration> = hoist(
-	O.generatorFunctionDeclaration
+	O.generatorFunctionDeclaration,
+	{ key: 'generatorFunctionDeclaration', max: 1 }
 );
-export const arrowFunction: Hoisted<typeof O.arrowFunction> = hoist(O.arrowFunction);
-export const newExpression: Hoisted<typeof O.newExpression> = hoist(O.newExpression);
-export const awaitExpression: Hoisted<typeof O.awaitExpression> = hoist(O.awaitExpression);
-export const memberExpression: Hoisted<typeof O.memberExpression> = hoist(O.memberExpression);
-export const subscriptExpression: Hoisted<typeof O.subscriptExpression> = hoist(O.subscriptExpression);
-export const lhsExpression: Hoisted<typeof O.lhsExpression> = hoist(O.lhsExpression);
-export const assignmentExpression: Hoisted<typeof O.assignmentExpression> = hoist(O.assignmentExpression);
+export const arrowFunction: Hoisted<typeof O.arrowFunction> = hoist(O.arrowFunction, { key: 'arrowFunction', max: 1 });
+export const newExpression: Hoisted<typeof O.newExpression> = hoist(O.newExpression, { key: 'newExpression', max: 1 });
+export const awaitExpression: Hoisted<typeof O.awaitExpression> = hoist(O.awaitExpression, {
+	key: 'awaitExpression',
+	max: 1
+});
+export const memberExpression: Hoisted<typeof O.memberExpression> = hoist(O.memberExpression, {
+	key: 'memberExpression',
+	max: 1
+});
+export const subscriptExpression: Hoisted<typeof O.subscriptExpression> = hoist(O.subscriptExpression, {
+	key: 'subscriptExpression',
+	max: 1
+});
+export const lhsExpression: Hoisted<typeof O.lhsExpression> = hoist(O.lhsExpression, { key: 'lhsExpression', max: 1 });
+export const assignmentExpression: Hoisted<typeof O.assignmentExpression> = hoist(O.assignmentExpression, {
+	key: 'assignmentExpression',
+	max: 1
+});
 export const augmentedAssignmentExpression: Hoisted<typeof O.augmentedAssignmentExpression> = hoist(
-	O.augmentedAssignmentExpression
+	O.augmentedAssignmentExpression,
+	{ key: 'augmentedAssignmentExpression', max: 1 }
 );
-export const spreadElement: Hoisted<typeof O.spreadElement> = hoist(O.spreadElement);
-export const ternaryExpression: Hoisted<typeof O.ternaryExpression> = hoist(O.ternaryExpression);
-export const binaryExpression: Hoisted<typeof O.binaryExpression> = hoist(O.binaryExpression);
-export const unaryExpression: Hoisted<typeof O.unaryExpression> = hoist(O.unaryExpression);
+export const spreadElement: Hoisted<typeof O.spreadElement> = hoist(O.spreadElement, { key: 'spreadElement', max: 1 });
+export const ternaryExpression: Hoisted<typeof O.ternaryExpression> = hoist(O.ternaryExpression, {
+	key: 'ternaryExpression',
+	max: 1
+});
+export const binaryExpression: Hoisted<typeof O.binaryExpression> = hoist(O.binaryExpression, {
+	key: 'binaryExpression',
+	max: 1
+});
+export const unaryExpression: Hoisted<typeof O.unaryExpression> = hoist(O.unaryExpression, {
+	key: 'unaryExpression',
+	max: 1
+});
 export const sequenceExpression: Hoisted<typeof O.sequenceExpression> = hoist(O.sequenceExpression);
-export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoist(O.escapeSequence);
+export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoist(O.escapeSequence, {
+	key: 'escapeSequence',
+	max: 1
+});
 export const templateString: Hoisted<typeof O.templateString> = hoist(O.templateString);
-export const templateSubstitution: Hoisted<typeof O.templateSubstitution> = hoist(O.templateSubstitution);
-export const regex: Hoisted<typeof O.regex> = hoist(O.regex);
+export const templateSubstitution: Hoisted<typeof O.templateSubstitution> = hoist(O.templateSubstitution, {
+	key: 'templateSubstitution',
+	max: 1
+});
+export const regex: Hoisted<typeof O.regex> = hoist(O.regex, { key: 'regex', max: 1 });
 export const privatePropertyIdentifier: Hoisted<typeof O.privatePropertyIdentifier> = hoist(
-	O.privatePropertyIdentifier
+	O.privatePropertyIdentifier,
+	{ key: 'privatePropertyIdentifier', max: 1 }
 );
 export const arguments_: Hoisted<typeof O.arguments_> = hoist(O.arguments_);
-export const decorator: Hoisted<typeof O.decorator> = hoist(O.decorator);
+export const decorator: Hoisted<typeof O.decorator> = hoist(O.decorator, { key: 'decorator', max: 1 });
 export const decoratorMemberExpression: Hoisted<typeof O.decoratorMemberExpression> = hoist(
-	O.decoratorMemberExpression
+	O.decoratorMemberExpression,
+	{ key: 'decoratorMemberExpression', max: 1 }
 );
-export const decoratorCallExpression: Hoisted<typeof O.decoratorCallExpression> = hoist(O.decoratorCallExpression);
+export const decoratorCallExpression: Hoisted<typeof O.decoratorCallExpression> = hoist(O.decoratorCallExpression, {
+	key: 'decoratorCallExpression',
+	max: 1
+});
 export const classBody: Hoisted<typeof O.classBody> = hoist(O.classBody);
 export const formalParameters: Hoisted<typeof O.formalParameters> = hoist(O.formalParameters);
-export const classStaticBlock: Hoisted<typeof O.classStaticBlock> = hoist(O.classStaticBlock);
-export const restPattern: Hoisted<typeof O.restPattern> = hoist(O.restPattern);
-export const methodDefinition: Hoisted<typeof O.methodDefinition> = hoist(O.methodDefinition);
-export const pair: Hoisted<typeof O.pair> = hoist(O.pair);
-export const pairPattern: Hoisted<typeof O.pairPattern> = hoist(O.pairPattern);
-export const computedPropertyName: Hoisted<typeof O.computedPropertyName> = hoist(O.computedPropertyName);
-export const publicFieldDefinition: Hoisted<typeof O.publicFieldDefinition> = hoist(O.publicFieldDefinition);
-export const nonNullExpression: Hoisted<typeof O.nonNullExpression> = hoist(O.nonNullExpression);
-export const methodSignature: Hoisted<typeof O.methodSignature> = hoist(O.methodSignature);
-export const abstractMethodSignature: Hoisted<typeof O.abstractMethodSignature> = hoist(O.abstractMethodSignature);
-export const functionSignature: Hoisted<typeof O.functionSignature> = hoist(O.functionSignature);
+export const classStaticBlock: Hoisted<typeof O.classStaticBlock> = hoist(O.classStaticBlock, {
+	key: 'classStaticBlock',
+	max: 1
+});
+export const restPattern: Hoisted<typeof O.restPattern> = hoist(O.restPattern, { key: 'restPattern', max: 1 });
+export const methodDefinition: Hoisted<typeof O.methodDefinition> = hoist(O.methodDefinition, {
+	key: 'methodDefinition',
+	max: 1
+});
+export const pair: Hoisted<typeof O.pair> = hoist(O.pair, { key: 'pair', max: 1 });
+export const pairPattern: Hoisted<typeof O.pairPattern> = hoist(O.pairPattern, { key: 'pairPattern', max: 1 });
+export const computedPropertyName: Hoisted<typeof O.computedPropertyName> = hoist(O.computedPropertyName, {
+	key: 'computedPropertyName',
+	max: 1
+});
+export const publicFieldDefinition: Hoisted<typeof O.publicFieldDefinition> = hoist(O.publicFieldDefinition, {
+	key: 'publicFieldDefinition',
+	max: 1
+});
+export const nonNullExpression: Hoisted<typeof O.nonNullExpression> = hoist(O.nonNullExpression, {
+	key: 'nonNullExpression',
+	max: 1
+});
+export const methodSignature: Hoisted<typeof O.methodSignature> = hoist(O.methodSignature, {
+	key: 'methodSignature',
+	max: 1
+});
+export const abstractMethodSignature: Hoisted<typeof O.abstractMethodSignature> = hoist(O.abstractMethodSignature, {
+	key: 'abstractMethodSignature',
+	max: 1
+});
+export const functionSignature: Hoisted<typeof O.functionSignature> = hoist(O.functionSignature, {
+	key: 'functionSignature',
+	max: 2
+});
 export const decoratorParenthesizedExpression: Hoisted<typeof O.decoratorParenthesizedExpression> = hoist(
-	O.decoratorParenthesizedExpression
+	O.decoratorParenthesizedExpression,
+	{ key: 'decoratorParenthesizedExpression', max: 1 }
 );
-export const typeAssertion: Hoisted<typeof O.typeAssertion> = hoist(O.typeAssertion);
-export const asExpression: Hoisted<typeof O.asExpression> = hoist(O.asExpression);
-export const satisfiesExpression: Hoisted<typeof O.satisfiesExpression> = hoist(O.satisfiesExpression);
-export const instantiationExpression: Hoisted<typeof O.instantiationExpression> = hoist(O.instantiationExpression);
-export const importRequireClause: Hoisted<typeof O.importRequireClause> = hoist(O.importRequireClause);
+export const typeAssertion: Hoisted<typeof O.typeAssertion> = hoist(O.typeAssertion, { key: 'typeAssertion', max: 1 });
+export const asExpression: Hoisted<typeof O.asExpression> = hoist(O.asExpression, { key: 'asExpression', max: 1 });
+export const satisfiesExpression: Hoisted<typeof O.satisfiesExpression> = hoist(O.satisfiesExpression, {
+	key: 'satisfiesExpression',
+	max: 1
+});
+export const instantiationExpression: Hoisted<typeof O.instantiationExpression> = hoist(O.instantiationExpression, {
+	key: 'instantiationExpression',
+	max: 1
+});
+export const importRequireClause: Hoisted<typeof O.importRequireClause> = hoist(O.importRequireClause, {
+	key: 'importRequireClause',
+	max: 1
+});
 export const extendsClause: Hoisted<typeof O.extendsClause> = hoist(O.extendsClause);
-export const extendsClauseSingle: Hoisted<typeof O.extendsClauseSingle> = hoist(O.extendsClauseSingle);
+export const extendsClauseSingle: Hoisted<typeof O.extendsClauseSingle> = hoist(O.extendsClauseSingle, {
+	key: 'extendsClauseSingle',
+	max: 1
+});
 export const implementsClause: Hoisted<typeof O.implementsClause> = hoist(O.implementsClause);
-export const ambientDeclaration: Hoisted<typeof O.ambientDeclaration> = hoist(O.ambientDeclaration);
-export const abstractClassDeclaration: Hoisted<typeof O.abstractClassDeclaration> = hoist(O.abstractClassDeclaration);
-export const module: Hoisted<typeof O.module> = hoist(O.module);
-export const internalModule: Hoisted<typeof O.internalModule> = hoist(O.internalModule);
-export const importAlias: Hoisted<typeof O.importAlias> = hoist(O.importAlias);
-export const nestedTypeIdentifier: Hoisted<typeof O.nestedTypeIdentifier> = hoist(O.nestedTypeIdentifier);
-export const interfaceDeclaration: Hoisted<typeof O.interfaceDeclaration> = hoist(O.interfaceDeclaration);
+export const ambientDeclaration: Hoisted<typeof O.ambientDeclaration> = hoist(O.ambientDeclaration, {
+	key: 'ambientDeclaration',
+	max: 1
+});
+export const abstractClassDeclaration: Hoisted<typeof O.abstractClassDeclaration> = hoist(O.abstractClassDeclaration, {
+	key: 'abstractClassDeclaration',
+	max: 1
+});
+export const module: Hoisted<typeof O.module> = hoist(O.module, { key: 'module', max: 1 });
+export const internalModule: Hoisted<typeof O.internalModule> = hoist(O.internalModule, {
+	key: 'internalModule',
+	max: 1
+});
+export const importAlias: Hoisted<typeof O.importAlias> = hoist(O.importAlias, { key: 'importAlias', max: 2 });
+export const nestedTypeIdentifier: Hoisted<typeof O.nestedTypeIdentifier> = hoist(O.nestedTypeIdentifier, {
+	key: 'nestedTypeIdentifier',
+	max: 1
+});
+export const interfaceDeclaration: Hoisted<typeof O.interfaceDeclaration> = hoist(O.interfaceDeclaration, {
+	key: 'interfaceDeclaration',
+	max: 1
+});
 export const extendsTypeClause: Hoisted<typeof O.extendsTypeClause> = hoist(O.extendsTypeClause);
-export const enumDeclaration: Hoisted<typeof O.enumDeclaration> = hoist(O.enumDeclaration);
+export const enumDeclaration: Hoisted<typeof O.enumDeclaration> = hoist(O.enumDeclaration, {
+	key: 'enumDeclaration',
+	max: 1
+});
 export const enumBody: Hoisted<typeof O.enumBody> = hoist(O.enumBody);
-export const enumAssignment: Hoisted<typeof O.enumAssignment> = hoist(O.enumAssignment);
-export const typeAliasDeclaration: Hoisted<typeof O.typeAliasDeclaration> = hoist(O.typeAliasDeclaration);
-export const requiredParameter: Hoisted<typeof O.requiredParameter> = hoist(O.requiredParameter);
-export const optionalParameter: Hoisted<typeof O.optionalParameter> = hoist(O.optionalParameter);
-export const omittingTypeAnnotation: Hoisted<typeof O.omittingTypeAnnotation> = hoist(O.omittingTypeAnnotation);
-export const addingTypeAnnotation: Hoisted<typeof O.addingTypeAnnotation> = hoist(O.addingTypeAnnotation);
-export const optingTypeAnnotation: Hoisted<typeof O.optingTypeAnnotation> = hoist(O.optingTypeAnnotation);
-export const typeAnnotation: Hoisted<typeof O.typeAnnotation> = hoist(O.typeAnnotation);
+export const enumAssignment: Hoisted<typeof O.enumAssignment> = hoist(O.enumAssignment, {
+	key: 'enumAssignment',
+	max: 1
+});
+export const typeAliasDeclaration: Hoisted<typeof O.typeAliasDeclaration> = hoist(O.typeAliasDeclaration, {
+	key: 'typeAliasDeclaration',
+	max: 2
+});
+export const requiredParameter: Hoisted<typeof O.requiredParameter> = hoist(O.requiredParameter, {
+	key: 'requiredParameter',
+	max: 1
+});
+export const optionalParameter: Hoisted<typeof O.optionalParameter> = hoist(O.optionalParameter, {
+	key: 'optionalParameter',
+	max: 1
+});
+export const omittingTypeAnnotation: Hoisted<typeof O.omittingTypeAnnotation> = hoist(O.omittingTypeAnnotation, {
+	key: 'omittingTypeAnnotation',
+	max: 1
+});
+export const addingTypeAnnotation: Hoisted<typeof O.addingTypeAnnotation> = hoist(O.addingTypeAnnotation, {
+	key: 'addingTypeAnnotation',
+	max: 1
+});
+export const optingTypeAnnotation: Hoisted<typeof O.optingTypeAnnotation> = hoist(O.optingTypeAnnotation, {
+	key: 'optingTypeAnnotation',
+	max: 1
+});
+export const typeAnnotation: Hoisted<typeof O.typeAnnotation> = hoist(O.typeAnnotation, {
+	key: 'typeAnnotation',
+	max: 1
+});
 export const typeQueryMemberExpressionInTypeAnnotation: Hoisted<typeof O.typeQueryMemberExpressionInTypeAnnotation> =
-	hoist(O.typeQueryMemberExpressionInTypeAnnotation);
+	hoist(O.typeQueryMemberExpressionInTypeAnnotation, { key: 'typeQueryMemberExpressionInTypeAnnotation', max: 1 });
 export const typeQueryCallExpressionInTypeAnnotation: Hoisted<typeof O.typeQueryCallExpressionInTypeAnnotation> = hoist(
-	O.typeQueryCallExpressionInTypeAnnotation
+	O.typeQueryCallExpressionInTypeAnnotation,
+	{ key: 'typeQueryCallExpressionInTypeAnnotation', max: 1 }
 );
-export const asserts: Hoisted<typeof O.asserts> = hoist(O.asserts);
-export const assertsAnnotation: Hoisted<typeof O.assertsAnnotation> = hoist(O.assertsAnnotation);
-export const tupleParameter: Hoisted<typeof O.tupleParameter> = hoist(O.tupleParameter);
-export const optionalTupleParameter: Hoisted<typeof O.optionalTupleParameter> = hoist(O.optionalTupleParameter);
-export const optionalType: Hoisted<typeof O.optionalType> = hoist(O.optionalType);
-export const restType: Hoisted<typeof O.restType> = hoist(O.restType);
-export const constructorType: Hoisted<typeof O.constructorType> = hoist(O.constructorType);
-export const templateType: Hoisted<typeof O.templateType> = hoist(O.templateType);
+export const asserts: Hoisted<typeof O.asserts> = hoist(O.asserts, { key: 'asserts', max: 1 });
+export const assertsAnnotation: Hoisted<typeof O.assertsAnnotation> = hoist(O.assertsAnnotation, {
+	key: 'assertsAnnotation',
+	max: 1
+});
+export const tupleParameter: Hoisted<typeof O.tupleParameter> = hoist(O.tupleParameter, {
+	key: 'tupleParameter',
+	max: 1
+});
+export const optionalTupleParameter: Hoisted<typeof O.optionalTupleParameter> = hoist(O.optionalTupleParameter, {
+	key: 'optionalTupleParameter',
+	max: 1
+});
+export const optionalType: Hoisted<typeof O.optionalType> = hoist(O.optionalType, { key: 'optionalType', max: 1 });
+export const restType: Hoisted<typeof O.restType> = hoist(O.restType, { key: 'restType', max: 1 });
+export const constructorType: Hoisted<typeof O.constructorType> = hoist(O.constructorType, {
+	key: 'constructorType',
+	max: 1
+});
+export const templateType: Hoisted<typeof O.templateType> = hoist(O.templateType, { key: 'templateType', max: 1 });
 export const templateLiteralType: Hoisted<typeof O.templateLiteralType> = hoist(O.templateLiteralType);
-export const inferType: Hoisted<typeof O.inferType> = hoist(O.inferType);
-export const conditionalType: Hoisted<typeof O.conditionalType> = hoist(O.conditionalType);
-export const genericType: Hoisted<typeof O.genericType> = hoist(O.genericType);
-export const typePredicate: Hoisted<typeof O.typePredicate> = hoist(O.typePredicate);
-export const typePredicateAnnotation: Hoisted<typeof O.typePredicateAnnotation> = hoist(O.typePredicateAnnotation);
+export const inferType: Hoisted<typeof O.inferType> = hoist(O.inferType, { key: 'inferType', max: 1 });
+export const conditionalType: Hoisted<typeof O.conditionalType> = hoist(O.conditionalType, {
+	key: 'conditionalType',
+	max: 1
+});
+export const genericType: Hoisted<typeof O.genericType> = hoist(O.genericType, { key: 'genericType', max: 1 });
+export const typePredicate: Hoisted<typeof O.typePredicate> = hoist(O.typePredicate, { key: 'typePredicate', max: 1 });
+export const typePredicateAnnotation: Hoisted<typeof O.typePredicateAnnotation> = hoist(O.typePredicateAnnotation, {
+	key: 'typePredicateAnnotation',
+	max: 1
+});
 export const typeQueryMemberExpression: Hoisted<typeof O.typeQueryMemberExpression> = hoist(
-	O.typeQueryMemberExpression
+	O.typeQueryMemberExpression,
+	{ key: 'typeQueryMemberExpression', max: 1 }
 );
 export const typeQuerySubscriptExpression: Hoisted<typeof O.typeQuerySubscriptExpression> = hoist(
-	O.typeQuerySubscriptExpression
+	O.typeQuerySubscriptExpression,
+	{ key: 'typeQuerySubscriptExpression', max: 1 }
 );
-export const typeQueryCallExpression: Hoisted<typeof O.typeQueryCallExpression> = hoist(O.typeQueryCallExpression);
+export const typeQueryCallExpression: Hoisted<typeof O.typeQueryCallExpression> = hoist(O.typeQueryCallExpression, {
+	key: 'typeQueryCallExpression',
+	max: 1
+});
 export const typeQueryInstantiationExpression: Hoisted<typeof O.typeQueryInstantiationExpression> = hoist(
-	O.typeQueryInstantiationExpression
+	O.typeQueryInstantiationExpression,
+	{ key: 'typeQueryInstantiationExpression', max: 1 }
 );
-export const typeQuery: Hoisted<typeof O.typeQuery> = hoist(O.typeQuery);
-export const indexTypeQuery: Hoisted<typeof O.indexTypeQuery> = hoist(O.indexTypeQuery);
-export const lookupType: Hoisted<typeof O.lookupType> = hoist(O.lookupType);
-export const mappedTypeClause: Hoisted<typeof O.mappedTypeClause> = hoist(O.mappedTypeClause);
-export const literalType: Hoisted<typeof O.literalType> = hoist(O.literalType);
-export const flowMaybeType: Hoisted<typeof O.flowMaybeType> = hoist(O.flowMaybeType);
-export const parenthesizedType: Hoisted<typeof O.parenthesizedType> = hoist(O.parenthesizedType);
+export const typeQuery: Hoisted<typeof O.typeQuery> = hoist(O.typeQuery, { key: 'typeQuery', max: 1 });
+export const indexTypeQuery: Hoisted<typeof O.indexTypeQuery> = hoist(O.indexTypeQuery, {
+	key: 'indexTypeQuery',
+	max: 1
+});
+export const lookupType: Hoisted<typeof O.lookupType> = hoist(O.lookupType, { key: 'lookupType', max: 1 });
+export const mappedTypeClause: Hoisted<typeof O.mappedTypeClause> = hoist(O.mappedTypeClause, {
+	key: 'mappedTypeClause',
+	max: 1
+});
+export const literalType: Hoisted<typeof O.literalType> = hoist(O.literalType, { key: 'literalType', max: 1 });
+export const flowMaybeType: Hoisted<typeof O.flowMaybeType> = hoist(O.flowMaybeType, { key: 'flowMaybeType', max: 1 });
+export const parenthesizedType: Hoisted<typeof O.parenthesizedType> = hoist(O.parenthesizedType, {
+	key: 'parenthesizedType',
+	max: 1
+});
 export const typeArguments: Hoisted<typeof O.typeArguments> = hoist(O.typeArguments);
-export const objectType: Hoisted<typeof O.objectType> = hoist(O.objectType);
-export const callSignature: Hoisted<typeof O.callSignature> = hoist(O.callSignature);
-export const propertySignature: Hoisted<typeof O.propertySignature> = hoist(O.propertySignature);
+export const objectType: Hoisted<typeof O.objectType> = hoist(O.objectType, { key: 'objectType', max: 1 });
+export const callSignature: Hoisted<typeof O.callSignature> = hoist(O.callSignature, { key: 'callSignature', max: 1 });
+export const propertySignature: Hoisted<typeof O.propertySignature> = hoist(O.propertySignature, {
+	key: 'propertySignature',
+	max: 1
+});
 export const typeParameters: Hoisted<typeof O.typeParameters> = hoist(O.typeParameters);
-export const typeParameter: Hoisted<typeof O.typeParameter> = hoist(O.typeParameter);
-export const defaultType: Hoisted<typeof O.defaultType> = hoist(O.defaultType);
-export const constraint: Hoisted<typeof O.constraint> = hoist(O.constraint);
-export const constructSignature: Hoisted<typeof O.constructSignature> = hoist(O.constructSignature);
-export const arrayType: Hoisted<typeof O.arrayType> = hoist(O.arrayType);
+export const typeParameter: Hoisted<typeof O.typeParameter> = hoist(O.typeParameter, { key: 'typeParameter', max: 1 });
+export const defaultType: Hoisted<typeof O.defaultType> = hoist(O.defaultType, { key: 'defaultType', max: 1 });
+export const constraint: Hoisted<typeof O.constraint> = hoist(O.constraint, { key: 'constraint', max: 1 });
+export const constructSignature: Hoisted<typeof O.constructSignature> = hoist(O.constructSignature, {
+	key: 'constructSignature',
+	max: 1
+});
+export const arrayType: Hoisted<typeof O.arrayType> = hoist(O.arrayType, { key: 'arrayType', max: 1 });
 export const tupleType: Hoisted<typeof O.tupleType> = hoist(O.tupleType);
-export const readonlyType: Hoisted<typeof O.readonlyType> = hoist(O.readonlyType);
-export const unionType: Hoisted<typeof O.unionType> = hoist(O.unionType);
-export const intersectionType: Hoisted<typeof O.intersectionType> = hoist(O.intersectionType);
-export const functionType: Hoisted<typeof O.functionType> = hoist(O.functionType);
+export const readonlyType: Hoisted<typeof O.readonlyType> = hoist(O.readonlyType, { key: 'readonlyType', max: 1 });
+export const unionType: Hoisted<typeof O.unionType> = hoist(O.unionType, { key: 'unionType', max: 1 });
+export const intersectionType: Hoisted<typeof O.intersectionType> = hoist(O.intersectionType, {
+	key: 'intersectionType',
+	max: 1
+});
+export const functionType: Hoisted<typeof O.functionType> = hoist(O.functionType, { key: 'functionType', max: 1 });
 export const exportSpecifiers: Hoisted<typeof O.exportSpecifiers> = hoist(O.exportSpecifiers);
 export const importSpecifiers: Hoisted<typeof O.importSpecifiers> = hoist(O.importSpecifiers);
 export const formalParametersElements: Hoisted<typeof O.formalParametersElements> = hoist(O.formalParametersElements);
@@ -183,17 +417,26 @@ export const enumBodyElements: Hoisted<typeof O.enumBodyElements> = hoist(O.enum
 export const types: Hoisted<typeof O.types> = hoist(O.types);
 export const typeParametersElements: Hoisted<typeof O.typeParametersElements> = hoist(O.typeParametersElements);
 export const tupleTypeMembers: Hoisted<typeof O.tupleTypeMembers> = hoist(O.tupleTypeMembers);
-export const ambientDeclarationGlobal: Hoisted<typeof O.ambientDeclarationGlobal> = hoist(O.ambientDeclarationGlobal);
-export const ambientDeclarationModule: Hoisted<typeof O.ambientDeclarationModule> = hoist(O.ambientDeclarationModule);
+export const ambientDeclarationGlobal: Hoisted<typeof O.ambientDeclarationGlobal> = hoist(O.ambientDeclarationGlobal, {
+	key: 'ambientDeclarationGlobal',
+	max: 1
+});
+export const ambientDeclarationModule: Hoisted<typeof O.ambientDeclarationModule> = hoist(O.ambientDeclarationModule, {
+	key: 'ambientDeclarationModule',
+	max: 2
+});
 export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoist(O.objectTypeContent);
 export const exportStatementNamespaceExport: Hoisted<typeof O.exportStatementNamespaceExport> = hoist(
-	O.exportStatementNamespaceExport
+	O.exportStatementNamespaceExport,
+	{ key: 'exportStatementNamespaceExport', max: 2 }
 );
 export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExport> = hoist(
-	O.exportStatementTypeExport
+	O.exportStatementTypeExport,
+	{ key: 'exportStatementTypeExport', max: 2 }
 );
 export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoist(
-	O.exportStatementEqualsExport
+	O.exportStatementEqualsExport,
+	{ key: 'exportStatementEqualsExport', max: 2 }
 );
 export const declaration: Hoisted<typeof O.declaration> = hoistRoutes(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistRoutes(O.importSpecifier);

@@ -5,22 +5,37 @@ import { hoist, hoistRoutes } from '@sittir/common/utils';
 export * from './overlays/supertypes.js';
 
 export const program: Hoisted<typeof O.program> = hoist(O.program);
-export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoist(O.escapeSequence);
-export const capture: Hoisted<typeof O.capture> = hoist(O.capture);
-export const string: Hoisted<typeof O.string> = hoist(O.string);
-export const immediateString: Hoisted<typeof O.immediateString> = hoist(O.immediateString);
+export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoist(O.escapeSequence, {
+	key: 'escapeSequence',
+	max: 1
+});
+export const capture: Hoisted<typeof O.capture> = hoist(O.capture, { key: 'capture', max: 1 });
+export const string: Hoisted<typeof O.string> = hoist(O.string, { key: 'string', max: 1 });
+export const immediateString: Hoisted<typeof O.immediateString> = hoist(O.immediateString, {
+	key: 'immediateString',
+	max: 1
+});
 export const stringContent: Hoisted<typeof O.stringContent> = hoist(O.stringContent);
 export const parameters: Hoisted<typeof O.parameters> = hoist(O.parameters);
-export const comment: Hoisted<typeof O.comment> = hoist(O.comment);
-export const list: Hoisted<typeof O.list> = hoist(O.list);
-export const grouping: Hoisted<typeof O.grouping> = hoist(O.grouping);
-export const missingNode: Hoisted<typeof O.missingNode> = hoist(O.missingNode);
-export const anonymousNode: Hoisted<typeof O.anonymousNode> = hoist(O.anonymousNode);
-export const fieldDefinition: Hoisted<typeof O.fieldDefinition> = hoist(O.fieldDefinition);
-export const negatedField: Hoisted<typeof O.negatedField> = hoist(O.negatedField);
-export const predicate: Hoisted<typeof O.predicate> = hoist(O.predicate);
-export const groupExpressionArm: Hoisted<typeof O.groupExpressionArm> = hoist(O.groupExpressionArm);
-export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = hoist(O.namedNodeExpressionArm);
+export const comment: Hoisted<typeof O.comment> = hoist(O.comment, { key: 'comment', max: 1 });
+export const list: Hoisted<typeof O.list> = hoist(O.list, { key: 'list', max: 1 });
+export const grouping: Hoisted<typeof O.grouping> = hoist(O.grouping, { key: 'grouping', max: 1 });
+export const missingNode: Hoisted<typeof O.missingNode> = hoist(O.missingNode, { key: 'missingNode', max: 1 });
+export const anonymousNode: Hoisted<typeof O.anonymousNode> = hoist(O.anonymousNode, { key: 'anonymousNode', max: 1 });
+export const fieldDefinition: Hoisted<typeof O.fieldDefinition> = hoist(O.fieldDefinition, {
+	key: 'fieldDefinition',
+	max: 1
+});
+export const negatedField: Hoisted<typeof O.negatedField> = hoist(O.negatedField, { key: 'negatedField', max: 1 });
+export const predicate: Hoisted<typeof O.predicate> = hoist(O.predicate, { key: 'predicate', max: 1 });
+export const groupExpressionArm: Hoisted<typeof O.groupExpressionArm> = hoist(O.groupExpressionArm, {
+	key: 'groupExpressionArm',
+	max: 1
+});
+export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = hoist(O.namedNodeExpressionArm, {
+	key: 'namedNodeExpressionArm',
+	max: 1
+});
 export const namedNode: Hoisted<typeof O.namedNode> = hoistRoutes(O.namedNode);
 export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistRoutes(O.namedNodeGroup);
 export const definition: Hoisted<typeof O.definition> = hoistRoutes(O.definition);

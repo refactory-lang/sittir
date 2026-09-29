@@ -3,7 +3,8 @@ import type {
 	FlavorPair,
 	NodeMethods,
 	GrammarTypeMap,
-	Hoisted
+	Hoisted,
+	MaxArity
 } from '@sittir/types';
 import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
@@ -132,9 +133,27 @@ function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unkn
 	return typeof v.strict === 'function' || typeof v.coerce === 'function';
 }
 
-export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Hoisted<B> {
+export interface HoistArity<Max extends number = number> {
+	readonly key: string;
+	readonly max: Max;
+}
+
+type HoistedFlavor<B> = B extends { coerce: infer C extends AnyFlavorFn } ? C : B extends { strict: infer S } ? S : never;
+
+type HoistArityArgs<B> = number extends MaxArity<HoistedFlavor<B>>
+	? []
+	: [arity: HoistArity<MaxArity<HoistedFlavor<B>>>];
+
+export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B, ...[arity]: HoistArityArgs<B>): Hoisted<B> {
 	const target = (typeof b.coerce === 'function' ? b.coerce : b.strict) as AnyFlavorFn;
-	const callable = (...args: never[]) => target(...args);
+	const callable = (...args: never[]) => {
+		if (arity !== undefined && args.length > arity.max) {
+			throw new Error(
+				`${arity.key}: takes at most ${arity.max} argument${arity.max === 1 ? '' : 's'}, got ${args.length}`
+			);
+		}
+		return target(...args);
+	};
 	for (const [key, value] of Object.entries(b)) {
 		Object.defineProperty(callable, key, {
 			value: hoistRoutes(value),

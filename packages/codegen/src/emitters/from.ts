@@ -69,7 +69,8 @@ import {
 	listHasOptions,
 	separatedListSurface,
 	spellingTypeOf,
-	listOptionKeys
+	listOptionKeys,
+	listSpreadTarget
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
@@ -411,7 +412,24 @@ function emitBranchFrom(
 			: refusal !== undefined
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: I & ${refusal}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
-	lines.push(...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';')));
+	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
+	if (spreadTarget === null) {
+		lines.push(...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';')));
+	} else {
+		if (spelledType !== undefined || refusal !== undefined) {
+			throw new Error(`from: '${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`);
+		}
+		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
+		lines.push(
+			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [
+				signature.replace(/ \{$/, ';'),
+				`export function ${fn}(...input: T.${spreadNode.typeName}.LooseArgs): ${returnType};`,
+				`export function ${fn}(...args: unknown[]): ${returnType} {`,
+				`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
+				`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`
+			])
+		);
+	}
 	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
 	const bareInterior = canDirectFactoryCall || slots.length === 0 ? undefined : bareInteriorText(node.kind, node);
 	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';

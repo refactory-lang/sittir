@@ -6,113 +6,233 @@ export * from './overlays/supertypes.js';
 
 export const module: Hoisted<typeof O.module> = hoist(O.module);
 export const simpleStatements: Hoisted<typeof O.simpleStatements> = hoist(O.simpleStatements);
-export const importStatement: Hoisted<typeof O.importStatement> = hoist(O.importStatement);
-export const relativeImport: Hoisted<typeof O.relativeImport> = hoist(O.relativeImport);
-export const futureImportStatement: Hoisted<typeof O.futureImportStatement> = hoist(O.futureImportStatement);
-export const importFromStatement: Hoisted<typeof O.importFromStatement> = hoist(O.importFromStatement);
+export const importStatement: Hoisted<typeof O.importStatement> = hoist(O.importStatement, {
+	key: 'importStatement',
+	max: 1
+});
+export const relativeImport: Hoisted<typeof O.relativeImport> = hoist(O.relativeImport, {
+	key: 'relativeImport',
+	max: 1
+});
+export const futureImportStatement: Hoisted<typeof O.futureImportStatement> = hoist(O.futureImportStatement, {
+	key: 'futureImportStatement',
+	max: 1
+});
+export const importFromStatement: Hoisted<typeof O.importFromStatement> = hoist(O.importFromStatement, {
+	key: 'importFromStatement',
+	max: 1
+});
 export const importList: Hoisted<typeof O.importList> = hoist(O.importList);
-export const aliasedImport: Hoisted<typeof O.aliasedImport> = hoist(O.aliasedImport);
-export const printStatement: Hoisted<typeof O.printStatement> = hoist(O.printStatement);
-export const chevron: Hoisted<typeof O.chevron> = hoist(O.chevron);
+export const aliasedImport: Hoisted<typeof O.aliasedImport> = hoist(O.aliasedImport, { key: 'aliasedImport', max: 1 });
+export const printStatement: Hoisted<typeof O.printStatement> = hoist(O.printStatement, {
+	key: 'printStatement',
+	max: 1
+});
+export const chevron: Hoisted<typeof O.chevron> = hoist(O.chevron, { key: 'chevron', max: 1 });
 export const assertStatement: Hoisted<typeof O.assertStatement> = hoist(O.assertStatement);
-export const expressionStatement: Hoisted<typeof O.expressionStatement> = hoist(O.expressionStatement);
-export const namedExpression: Hoisted<typeof O.namedExpression> = hoist(O.namedExpression);
-export const returnStatement: Hoisted<typeof O.returnStatement> = hoist(O.returnStatement);
-export const deleteStatement: Hoisted<typeof O.deleteStatement> = hoist(O.deleteStatement);
-export const raiseStatement: Hoisted<typeof O.raiseStatement> = hoist(O.raiseStatement);
-export const ifStatement: Hoisted<typeof O.ifStatement> = hoist(O.ifStatement);
-export const elifClause: Hoisted<typeof O.elifClause> = hoist(O.elifClause);
-export const elseClause: Hoisted<typeof O.elseClause> = hoist(O.elseClause);
-export const matchStatement: Hoisted<typeof O.matchStatement> = hoist(O.matchStatement);
-export const matchBlock: Hoisted<typeof O.matchBlock> = hoist(O.matchBlock);
-export const caseClause: Hoisted<typeof O.caseClause> = hoist(O.caseClause);
-export const forStatement: Hoisted<typeof O.forStatement> = hoist(O.forStatement);
-export const whileStatement: Hoisted<typeof O.whileStatement> = hoist(O.whileStatement);
-export const tryStatement: Hoisted<typeof O.tryStatement> = hoist(O.tryStatement);
-export const exceptClause: Hoisted<typeof O.exceptClause> = hoist(O.exceptClause);
-export const finallyClause: Hoisted<typeof O.finallyClause> = hoist(O.finallyClause);
-export const withStatement: Hoisted<typeof O.withStatement> = hoist(O.withStatement);
-export const withItem: Hoisted<typeof O.withItem> = hoist(O.withItem);
-export const functionDefinition: Hoisted<typeof O.functionDefinition> = hoist(O.functionDefinition);
+export const expressionStatement: Hoisted<typeof O.expressionStatement> = hoist(O.expressionStatement, {
+	key: 'expressionStatement',
+	max: 1
+});
+export const namedExpression: Hoisted<typeof O.namedExpression> = hoist(O.namedExpression, {
+	key: 'namedExpression',
+	max: 1
+});
+export const returnStatement: Hoisted<typeof O.returnStatement> = hoist(O.returnStatement, {
+	key: 'returnStatement',
+	max: 1
+});
+export const deleteStatement: Hoisted<typeof O.deleteStatement> = hoist(O.deleteStatement, {
+	key: 'deleteStatement',
+	max: 1
+});
+export const raiseStatement: Hoisted<typeof O.raiseStatement> = hoist(O.raiseStatement, {
+	key: 'raiseStatement',
+	max: 1
+});
+export const ifStatement: Hoisted<typeof O.ifStatement> = hoist(O.ifStatement, { key: 'ifStatement', max: 1 });
+export const elifClause: Hoisted<typeof O.elifClause> = hoist(O.elifClause, { key: 'elifClause', max: 1 });
+export const elseClause: Hoisted<typeof O.elseClause> = hoist(O.elseClause, { key: 'elseClause', max: 1 });
+export const matchStatement: Hoisted<typeof O.matchStatement> = hoist(O.matchStatement, {
+	key: 'matchStatement',
+	max: 1
+});
+export const matchBlock: Hoisted<typeof O.matchBlock> = hoist(O.matchBlock, { key: 'matchBlock', max: 1 });
+export const caseClause: Hoisted<typeof O.caseClause> = hoist(O.caseClause, { key: 'caseClause', max: 1 });
+export const forStatement: Hoisted<typeof O.forStatement> = hoist(O.forStatement, { key: 'forStatement', max: 1 });
+export const whileStatement: Hoisted<typeof O.whileStatement> = hoist(O.whileStatement, {
+	key: 'whileStatement',
+	max: 1
+});
+export const tryStatement: Hoisted<typeof O.tryStatement> = hoist(O.tryStatement, { key: 'tryStatement', max: 1 });
+export const exceptClause: Hoisted<typeof O.exceptClause> = hoist(O.exceptClause, { key: 'exceptClause', max: 1 });
+export const finallyClause: Hoisted<typeof O.finallyClause> = hoist(O.finallyClause, { key: 'finallyClause', max: 1 });
+export const withStatement: Hoisted<typeof O.withStatement> = hoist(O.withStatement, { key: 'withStatement', max: 1 });
+export const withItem: Hoisted<typeof O.withItem> = hoist(O.withItem, { key: 'withItem', max: 1 });
+export const functionDefinition: Hoisted<typeof O.functionDefinition> = hoist(O.functionDefinition, {
+	key: 'functionDefinition',
+	max: 1
+});
 export const parameters: Hoisted<typeof O.parameters> = hoist(O.parameters);
 export const lambdaParameters: Hoisted<typeof O.lambdaParameters> = hoist(O.lambdaParameters);
-export const listSplat: Hoisted<typeof O.listSplat> = hoist(O.listSplat);
-export const dictionarySplat: Hoisted<typeof O.dictionarySplat> = hoist(O.dictionarySplat);
+export const listSplat: Hoisted<typeof O.listSplat> = hoist(O.listSplat, { key: 'listSplat', max: 1 });
+export const dictionarySplat: Hoisted<typeof O.dictionarySplat> = hoist(O.dictionarySplat, {
+	key: 'dictionarySplat',
+	max: 1
+});
 export const globalStatement: Hoisted<typeof O.globalStatement> = hoist(O.globalStatement);
 export const nonlocalStatement: Hoisted<typeof O.nonlocalStatement> = hoist(O.nonlocalStatement);
-export const execStatement: Hoisted<typeof O.execStatement> = hoist(O.execStatement);
-export const typeAliasStatement: Hoisted<typeof O.typeAliasStatement> = hoist(O.typeAliasStatement);
-export const classDefinition: Hoisted<typeof O.classDefinition> = hoist(O.classDefinition);
+export const execStatement: Hoisted<typeof O.execStatement> = hoist(O.execStatement, { key: 'execStatement', max: 1 });
+export const typeAliasStatement: Hoisted<typeof O.typeAliasStatement> = hoist(O.typeAliasStatement, {
+	key: 'typeAliasStatement',
+	max: 1
+});
+export const classDefinition: Hoisted<typeof O.classDefinition> = hoist(O.classDefinition, {
+	key: 'classDefinition',
+	max: 1
+});
 export const typeParameter: Hoisted<typeof O.typeParameter> = hoist(O.typeParameter);
-export const parenthesizedListSplat: Hoisted<typeof O.parenthesizedListSplat> = hoist(O.parenthesizedListSplat);
+export const parenthesizedListSplat: Hoisted<typeof O.parenthesizedListSplat> = hoist(O.parenthesizedListSplat, {
+	key: 'parenthesizedListSplat',
+	max: 1
+});
 export const argumentList: Hoisted<typeof O.argumentList> = hoist(O.argumentList);
-export const decoratedDefinition: Hoisted<typeof O.decoratedDefinition> = hoist(O.decoratedDefinition);
-export const decorator: Hoisted<typeof O.decorator> = hoist(O.decorator);
+export const decoratedDefinition: Hoisted<typeof O.decoratedDefinition> = hoist(O.decoratedDefinition, {
+	key: 'decoratedDefinition',
+	max: 1
+});
+export const decorator: Hoisted<typeof O.decorator> = hoist(O.decorator, { key: 'decorator', max: 1 });
 export const block: Hoisted<typeof O.block> = hoist(O.block);
-export const expressionList: Hoisted<typeof O.expressionList> = hoist(O.expressionList);
+export const expressionList: Hoisted<typeof O.expressionList> = hoist(O.expressionList, {
+	key: 'expressionList',
+	max: 1
+});
 export const dottedName: Hoisted<typeof O.dottedName> = hoist(O.dottedName);
-export const casePattern: Hoisted<typeof O.casePattern> = hoist(O.casePattern);
-export const simplePattern: Hoisted<typeof O.simplePattern> = hoist(O.simplePattern);
-export const caseAsPattern: Hoisted<typeof O.caseAsPattern> = hoist(O.caseAsPattern);
+export const casePattern: Hoisted<typeof O.casePattern> = hoist(O.casePattern, { key: 'casePattern', max: 1 });
+export const simplePattern: Hoisted<typeof O.simplePattern> = hoist(O.simplePattern, { key: 'simplePattern', max: 1 });
+export const caseAsPattern: Hoisted<typeof O.caseAsPattern> = hoist(O.caseAsPattern, { key: 'caseAsPattern', max: 1 });
 export const unionPattern: Hoisted<typeof O.unionPattern> = hoist(O.unionPattern);
 export const dictPattern: Hoisted<typeof O.dictPattern> = hoist(O.dictPattern);
-export const keyValuePattern: Hoisted<typeof O.keyValuePattern> = hoist(O.keyValuePattern);
-export const keywordPattern: Hoisted<typeof O.keywordPattern> = hoist(O.keywordPattern);
-export const splatPattern: Hoisted<typeof O.splatPattern> = hoist(O.splatPattern);
-export const classPattern: Hoisted<typeof O.classPattern> = hoist(O.classPattern);
-export const complexPattern: Hoisted<typeof O.complexPattern> = hoist(O.complexPattern);
+export const keyValuePattern: Hoisted<typeof O.keyValuePattern> = hoist(O.keyValuePattern, {
+	key: 'keyValuePattern',
+	max: 1
+});
+export const keywordPattern: Hoisted<typeof O.keywordPattern> = hoist(O.keywordPattern, {
+	key: 'keywordPattern',
+	max: 1
+});
+export const splatPattern: Hoisted<typeof O.splatPattern> = hoist(O.splatPattern, { key: 'splatPattern', max: 1 });
+export const classPattern: Hoisted<typeof O.classPattern> = hoist(O.classPattern, { key: 'classPattern', max: 1 });
+export const complexPattern: Hoisted<typeof O.complexPattern> = hoist(O.complexPattern, {
+	key: 'complexPattern',
+	max: 1
+});
 export const parametersElements: Hoisted<typeof O.parametersElements> = hoist(O.parametersElements);
 export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
 export const tuplePattern: Hoisted<typeof O.tuplePattern> = hoist(O.tuplePattern);
 export const listPattern: Hoisted<typeof O.listPattern> = hoist(O.listPattern);
-export const defaultParameter: Hoisted<typeof O.defaultParameter> = hoist(O.defaultParameter);
-export const typedDefaultParameter: Hoisted<typeof O.typedDefaultParameter> = hoist(O.typedDefaultParameter);
-export const listSplatPattern: Hoisted<typeof O.listSplatPattern> = hoist(O.listSplatPattern);
-export const dictionarySplatPattern: Hoisted<typeof O.dictionarySplatPattern> = hoist(O.dictionarySplatPattern);
-export const asPattern: Hoisted<typeof O.asPattern> = hoist(O.asPattern);
-export const notOperator: Hoisted<typeof O.notOperator> = hoist(O.notOperator);
-export const booleanOperator: Hoisted<typeof O.booleanOperator> = hoist(O.booleanOperator);
-export const binaryOperator: Hoisted<typeof O.binaryOperator> = hoist(O.binaryOperator);
-export const unaryOperator: Hoisted<typeof O.unaryOperator> = hoist(O.unaryOperator);
-export const comparisonOperator: Hoisted<typeof O.comparisonOperator> = hoist(O.comparisonOperator);
-export const lambda: Hoisted<typeof O.lambda> = hoist(O.lambda);
-export const lambdaWithinForInClause: Hoisted<typeof O.lambdaWithinForInClause> = hoist(O.lambdaWithinForInClause);
-export const augmentedAssignment: Hoisted<typeof O.augmentedAssignment> = hoist(O.augmentedAssignment);
-export const patternList: Hoisted<typeof O.patternList> = hoist(O.patternList);
-export const yield_: Hoisted<typeof O.yield_> = hoist(O.yield_);
-export const attribute: Hoisted<typeof O.attribute> = hoist(O.attribute);
-export const subscript: Hoisted<typeof O.subscript> = hoist(O.subscript);
-export const slice: Hoisted<typeof O.slice> = hoist(O.slice);
-export const call: Hoisted<typeof O.call> = hoist(O.call);
-export const typedParameter: Hoisted<typeof O.typedParameter> = hoist(O.typedParameter);
-export const type: Hoisted<typeof O.type> = hoist(O.type);
-export const splatType: Hoisted<typeof O.splatType> = hoist(O.splatType);
-export const genericType: Hoisted<typeof O.genericType> = hoist(O.genericType);
-export const unionType: Hoisted<typeof O.unionType> = hoist(O.unionType);
-export const constrainedType: Hoisted<typeof O.constrainedType> = hoist(O.constrainedType);
-export const memberType: Hoisted<typeof O.memberType> = hoist(O.memberType);
-export const keywordArgument: Hoisted<typeof O.keywordArgument> = hoist(O.keywordArgument);
+export const defaultParameter: Hoisted<typeof O.defaultParameter> = hoist(O.defaultParameter, {
+	key: 'defaultParameter',
+	max: 1
+});
+export const typedDefaultParameter: Hoisted<typeof O.typedDefaultParameter> = hoist(O.typedDefaultParameter, {
+	key: 'typedDefaultParameter',
+	max: 1
+});
+export const listSplatPattern: Hoisted<typeof O.listSplatPattern> = hoist(O.listSplatPattern, {
+	key: 'listSplatPattern',
+	max: 1
+});
+export const dictionarySplatPattern: Hoisted<typeof O.dictionarySplatPattern> = hoist(O.dictionarySplatPattern, {
+	key: 'dictionarySplatPattern',
+	max: 1
+});
+export const asPattern: Hoisted<typeof O.asPattern> = hoist(O.asPattern, { key: 'asPattern', max: 1 });
+export const notOperator: Hoisted<typeof O.notOperator> = hoist(O.notOperator, { key: 'notOperator', max: 1 });
+export const booleanOperator: Hoisted<typeof O.booleanOperator> = hoist(O.booleanOperator, {
+	key: 'booleanOperator',
+	max: 1
+});
+export const binaryOperator: Hoisted<typeof O.binaryOperator> = hoist(O.binaryOperator, {
+	key: 'binaryOperator',
+	max: 1
+});
+export const unaryOperator: Hoisted<typeof O.unaryOperator> = hoist(O.unaryOperator, { key: 'unaryOperator', max: 1 });
+export const comparisonOperator: Hoisted<typeof O.comparisonOperator> = hoist(O.comparisonOperator, {
+	key: 'comparisonOperator',
+	max: 1
+});
+export const lambda: Hoisted<typeof O.lambda> = hoist(O.lambda, { key: 'lambda', max: 1 });
+export const lambdaWithinForInClause: Hoisted<typeof O.lambdaWithinForInClause> = hoist(O.lambdaWithinForInClause, {
+	key: 'lambdaWithinForInClause',
+	max: 1
+});
+export const augmentedAssignment: Hoisted<typeof O.augmentedAssignment> = hoist(O.augmentedAssignment, {
+	key: 'augmentedAssignment',
+	max: 1
+});
+export const patternList: Hoisted<typeof O.patternList> = hoist(O.patternList, { key: 'patternList', max: 1 });
+export const yield_: Hoisted<typeof O.yield_> = hoist(O.yield_, { key: 'yield_', max: 1 });
+export const attribute: Hoisted<typeof O.attribute> = hoist(O.attribute, { key: 'attribute', max: 1 });
+export const subscript: Hoisted<typeof O.subscript> = hoist(O.subscript, { key: 'subscript', max: 1 });
+export const slice: Hoisted<typeof O.slice> = hoist(O.slice, { key: 'slice', max: 1 });
+export const call: Hoisted<typeof O.call> = hoist(O.call, { key: 'call', max: 1 });
+export const typedParameter: Hoisted<typeof O.typedParameter> = hoist(O.typedParameter, {
+	key: 'typedParameter',
+	max: 1
+});
+export const type: Hoisted<typeof O.type> = hoist(O.type, { key: 'type', max: 1 });
+export const splatType: Hoisted<typeof O.splatType> = hoist(O.splatType, { key: 'splatType', max: 1 });
+export const genericType: Hoisted<typeof O.genericType> = hoist(O.genericType, { key: 'genericType', max: 1 });
+export const unionType: Hoisted<typeof O.unionType> = hoist(O.unionType, { key: 'unionType', max: 1 });
+export const constrainedType: Hoisted<typeof O.constrainedType> = hoist(O.constrainedType, {
+	key: 'constrainedType',
+	max: 1
+});
+export const memberType: Hoisted<typeof O.memberType> = hoist(O.memberType, { key: 'memberType', max: 1 });
+export const keywordArgument: Hoisted<typeof O.keywordArgument> = hoist(O.keywordArgument, {
+	key: 'keywordArgument',
+	max: 1
+});
 export const list: Hoisted<typeof O.list> = hoist(O.list);
 export const set: Hoisted<typeof O.set> = hoist(O.set);
 export const tuple: Hoisted<typeof O.tuple> = hoist(O.tuple);
 export const dictionary: Hoisted<typeof O.dictionary> = hoist(O.dictionary);
-export const pair: Hoisted<typeof O.pair> = hoist(O.pair);
-export const listComprehension: Hoisted<typeof O.listComprehension> = hoist(O.listComprehension);
-export const dictionaryComprehension: Hoisted<typeof O.dictionaryComprehension> = hoist(O.dictionaryComprehension);
-export const setComprehension: Hoisted<typeof O.setComprehension> = hoist(O.setComprehension);
-export const generatorExpression: Hoisted<typeof O.generatorExpression> = hoist(O.generatorExpression);
-export const parenthesizedExpression: Hoisted<typeof O.parenthesizedExpression> = hoist(O.parenthesizedExpression);
+export const pair: Hoisted<typeof O.pair> = hoist(O.pair, { key: 'pair', max: 1 });
+export const listComprehension: Hoisted<typeof O.listComprehension> = hoist(O.listComprehension, {
+	key: 'listComprehension',
+	max: 1
+});
+export const dictionaryComprehension: Hoisted<typeof O.dictionaryComprehension> = hoist(O.dictionaryComprehension, {
+	key: 'dictionaryComprehension',
+	max: 1
+});
+export const setComprehension: Hoisted<typeof O.setComprehension> = hoist(O.setComprehension, {
+	key: 'setComprehension',
+	max: 1
+});
+export const generatorExpression: Hoisted<typeof O.generatorExpression> = hoist(O.generatorExpression, {
+	key: 'generatorExpression',
+	max: 1
+});
+export const parenthesizedExpression: Hoisted<typeof O.parenthesizedExpression> = hoist(O.parenthesizedExpression, {
+	key: 'parenthesizedExpression',
+	max: 1
+});
 export const collectionElements: Hoisted<typeof O.collectionElements> = hoist(O.collectionElements);
-export const forInClause: Hoisted<typeof O.forInClause> = hoist(O.forInClause);
-export const ifClause: Hoisted<typeof O.ifClause> = hoist(O.ifClause);
-export const conditionalExpression: Hoisted<typeof O.conditionalExpression> = hoist(O.conditionalExpression);
+export const forInClause: Hoisted<typeof O.forInClause> = hoist(O.forInClause, { key: 'forInClause', max: 1 });
+export const ifClause: Hoisted<typeof O.ifClause> = hoist(O.ifClause, { key: 'ifClause', max: 1 });
+export const conditionalExpression: Hoisted<typeof O.conditionalExpression> = hoist(O.conditionalExpression, {
+	key: 'conditionalExpression',
+	max: 1
+});
 export const concatenatedString: Hoisted<typeof O.concatenatedString> = hoist(O.concatenatedString);
-export const string: Hoisted<typeof O.string> = hoist(O.string);
+export const string: Hoisted<typeof O.string> = hoist(O.string, { key: 'string', max: 1 });
 export const stringContent: Hoisted<typeof O.stringContent> = hoist(O.stringContent);
-export const interpolation: Hoisted<typeof O.interpolation> = hoist(O.interpolation);
+export const interpolation: Hoisted<typeof O.interpolation> = hoist(O.interpolation, { key: 'interpolation', max: 1 });
 export const formatSpecifier: Hoisted<typeof O.formatSpecifier> = hoist(O.formatSpecifier);
-export const await_: Hoisted<typeof O.await_> = hoist(O.await_);
-export const comment: Hoisted<typeof O.comment> = hoist(O.comment);
+export const await_: Hoisted<typeof O.await_> = hoist(O.await_, { key: 'await_', max: 1 });
+export const comment: Hoisted<typeof O.comment> = hoist(O.comment, { key: 'comment', max: 1 });
 export const simpleStatementsElements: Hoisted<typeof O.simpleStatementsElements> = hoist(O.simpleStatementsElements);
 export const subjects: Hoisted<typeof O.subjects> = hoist(O.subjects);
 export const casePatterns: Hoisted<typeof O.casePatterns> = hoist(O.casePatterns);
@@ -127,12 +247,18 @@ export const dictPatternElements: Hoisted<typeof O.dictPatternElements> = hoist(
 export const patternListPatterns: Hoisted<typeof O.patternListPatterns> = hoist(O.patternListPatterns);
 export const subscripts: Hoisted<typeof O.subscripts> = hoist(O.subscripts);
 export const dictionaryElements: Hoisted<typeof O.dictionaryElements> = hoist(O.dictionaryElements);
-export const exceptClauseExceptionAs: Hoisted<typeof O.exceptClauseExceptionAs> = hoist(O.exceptClauseExceptionAs);
+export const exceptClauseExceptionAs: Hoisted<typeof O.exceptClauseExceptionAs> = hoist(O.exceptClauseExceptionAs, {
+	key: 'exceptClauseExceptionAs',
+	max: 1
+});
 export const caseTuplePattern: Hoisted<typeof O.caseTuplePattern> = hoist(O.caseTuplePattern);
 export const caseListPattern: Hoisted<typeof O.caseListPattern> = hoist(O.caseListPattern);
 export const printArguments: Hoisted<typeof O.printArguments> = hoist(O.printArguments);
 export const printChevronArguments: Hoisted<typeof O.printChevronArguments> = hoist(O.printChevronArguments);
-export const printStatementChevron: Hoisted<typeof O.printStatementChevron> = hoist(O.printStatementChevron);
+export const printStatementChevron: Hoisted<typeof O.printStatementChevron> = hoist(O.printStatementChevron, {
+	key: 'printStatementChevron',
+	max: 1
+});
 export const printStatementPlain: Hoisted<typeof O.printStatementPlain> = hoist(O.printStatementPlain);
 export const parenthesizedImportList: Hoisted<typeof O.parenthesizedImportList> = hoist(O.parenthesizedImportList);
 export const comprehensionClauses: Hoisted<typeof O.comprehensionClauses> = hoist(O.comprehensionClauses);

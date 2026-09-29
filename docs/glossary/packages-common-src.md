@@ -169,6 +169,12 @@ Wraps a flavour pair as a callable (the coerce flavour when present, strict othe
 
 The callable's copied properties are non-writable and non-configurable, and the callable is frozen, so a factory shared under several keys cannot be changed under one of them.
 
+A fixed-arity builder is hoisted with its stamp, `hoist(pair, { key, max })`: a call with more than `max` arguments throws `<key>: takes at most <max> argument(s), got <n>`. An explicit trailing `undefined` counts, as it does for the type checker. The stamp's type is `HoistArity<MaxArity<flavor>>` and it is required exactly when the flavor's `MaxArity` is a number literal, so the emitted stamp cannot drift from the builder's declared signature, and an unbounded (rest) flavor takes none.
+
+### `packages/common/src/runtime.ts::HoistArity`
+
+The arity stamp `hoist` checks: the builder's key, for the error, and `max`, the most arguments it takes, typed as the hoisted flavor's `MaxArity` at every call.
+
 ### `packages/common/src/runtime.ts::hoistRoutes`
 
 Hoists a route object that need not be a pair at its top: a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`). A pair at the top hoists, recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair (a default route whose own variant is itself a route object) stays fully walked; anything else recurses member by member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, like a bundle entry's sub-factories.

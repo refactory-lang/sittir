@@ -78,10 +78,27 @@ describe('grammar-free runtime helpers', () => {
 		const coerce = (x: number) => `c${x}`;
 		const pair = bundle(strict, coerce);
 		expect(pair).toEqual({ strict, coerce });
-		const hoisted = hoist(pair);
+		const hoisted = hoist(pair, { key: 'pair', max: 1 });
 		expect(hoisted(1)).toBe('c1');
 		expect(hoisted.strict(1)).toBe('s1');
-		expect(hoist({ strict })(2)).toBe('s2');
+		expect(hoist({ strict }, { key: 'strict', max: 1 })(2)).toBe('s2');
+	});
+
+	it('hoist refuses more arguments than its stamp allows, and a rest callable takes no stamp', () => {
+		const pair = bundle((x: number, y?: number) => x + (y ?? 0), (x: number, y?: number) => x + (y ?? 0));
+		const hoisted = hoist(pair, { key: 'sum', max: 2 });
+		expect(hoisted(1, 2)).toBe(3);
+		expect(() => (hoisted as (...a: number[]) => number)(1, 2, 3)).toThrow('sum: takes at most 2 arguments, got 3');
+		expect(() => (hoisted as (...a: unknown[]) => number)(1, undefined, undefined)).toThrow('got 3');
+		expect(hoist({ strict: (...xs: number[]) => xs.length })(1, 2, 3)).toBe(3);
+	});
+
+	it('the stamp is typed by the hoisted callable: a wrong or missing arity is a type error', () => {
+		const strict = (x: number) => x;
+		// @ts-expect-error the callable takes at most one argument
+		hoist({ strict }, { key: 'strict', max: 2 });
+		// @ts-expect-error a fixed-arity callable must carry its stamp
+		hoist({ strict });
 	});
 
 	it('hoistRoutes hoists every nested flavour pair and leaves other values', () => {

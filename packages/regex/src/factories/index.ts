@@ -4,25 +4,62 @@ import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
 export * from './overlays/supertypes.js';
 
-export const pattern: Hoisted<typeof O.pattern> = hoist(O.pattern);
+export const pattern: Hoisted<typeof O.pattern> = hoist(O.pattern, { key: 'pattern', max: 1 });
 export const alternation: Hoisted<typeof O.alternation> = hoist(O.alternation);
 export const term: Hoisted<typeof O.term> = hoist(O.term);
-export const lookaroundAssertion: Hoisted<typeof O.lookaroundAssertion> = hoist(O.lookaroundAssertion);
-export const lookaheadAssertion: Hoisted<typeof O.lookaheadAssertion> = hoist(O.lookaheadAssertion);
-export const lookbehindAssertion: Hoisted<typeof O.lookbehindAssertion> = hoist(O.lookbehindAssertion);
+export const lookaroundAssertion: Hoisted<typeof O.lookaroundAssertion> = hoist(O.lookaroundAssertion, {
+	key: 'lookaroundAssertion',
+	max: 1
+});
+export const lookaheadAssertion: Hoisted<typeof O.lookaheadAssertion> = hoist(O.lookaheadAssertion, {
+	key: 'lookaheadAssertion',
+	max: 1
+});
+export const lookbehindAssertion: Hoisted<typeof O.lookbehindAssertion> = hoist(O.lookbehindAssertion, {
+	key: 'lookbehindAssertion',
+	max: 1
+});
 export const characterClass: Hoisted<typeof O.characterClass> = hoist(O.characterClass);
-export const posixCharacterClass: Hoisted<typeof O.posixCharacterClass> = hoist(O.posixCharacterClass);
-export const classRange: Hoisted<typeof O.classRange> = hoist(O.classRange);
-export const anonymousCapturingGroup: Hoisted<typeof O.anonymousCapturingGroup> = hoist(O.anonymousCapturingGroup);
-export const namedCapturingGroup: Hoisted<typeof O.namedCapturingGroup> = hoist(O.namedCapturingGroup);
-export const nonCapturingGroup: Hoisted<typeof O.nonCapturingGroup> = hoist(O.nonCapturingGroup);
-export const countQuantifier: Hoisted<typeof O.countQuantifier> = hoist(O.countQuantifier);
-export const backreferenceEscape: Hoisted<typeof O.backreferenceEscape> = hoist(O.backreferenceEscape);
-export const namedGroupBackreference: Hoisted<typeof O.namedGroupBackreference> = hoist(O.namedGroupBackreference);
-export const characterClassEscape: Hoisted<typeof O.characterClassEscape> = hoist(O.characterClassEscape);
+export const posixCharacterClass: Hoisted<typeof O.posixCharacterClass> = hoist(O.posixCharacterClass, {
+	key: 'posixCharacterClass',
+	max: 1
+});
+export const classRange: Hoisted<typeof O.classRange> = hoist(O.classRange, { key: 'classRange', max: 1 });
+export const anonymousCapturingGroup: Hoisted<typeof O.anonymousCapturingGroup> = hoist(O.anonymousCapturingGroup, {
+	key: 'anonymousCapturingGroup',
+	max: 1
+});
+export const namedCapturingGroup: Hoisted<typeof O.namedCapturingGroup> = hoist(O.namedCapturingGroup, {
+	key: 'namedCapturingGroup',
+	max: 1
+});
+export const nonCapturingGroup: Hoisted<typeof O.nonCapturingGroup> = hoist(O.nonCapturingGroup, {
+	key: 'nonCapturingGroup',
+	max: 1
+});
+export const countQuantifier: Hoisted<typeof O.countQuantifier> = hoist(O.countQuantifier, {
+	key: 'countQuantifier',
+	max: 1
+});
+export const backreferenceEscape: Hoisted<typeof O.backreferenceEscape> = hoist(O.backreferenceEscape, {
+	key: 'backreferenceEscape',
+	max: 1
+});
+export const namedGroupBackreference: Hoisted<typeof O.namedGroupBackreference> = hoist(O.namedGroupBackreference, {
+	key: 'namedGroupBackreference',
+	max: 1
+});
+export const characterClassEscape: Hoisted<typeof O.characterClassEscape> = hoist(O.characterClassEscape, {
+	key: 'characterClassEscape',
+	max: 1
+});
 export const unicodePropertyValueExpression: Hoisted<typeof O.unicodePropertyValueExpression> = hoist(
-	O.unicodePropertyValueExpression
+	O.unicodePropertyValueExpression,
+	{ key: 'unicodePropertyValueExpression', max: 1 }
 );
-export const identityEscape: Hoisted<typeof O.identityEscape> = hoist(O.identityEscape);
-export const termGroup: Hoisted<typeof O.termGroup> = hoist(O.termGroup);
+export const identityEscape: Hoisted<typeof O.identityEscape> = hoist(O.identityEscape, {
+	key: 'identityEscape',
+	max: 1
+});
+export const termGroup: Hoisted<typeof O.termGroup> = hoist(O.termGroup, { key: 'termGroup', max: 1 });
 export const inlineFlagsGroup: Hoisted<typeof O.inlineFlagsGroup> = hoistRoutes(O.inlineFlagsGroup);
