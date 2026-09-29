@@ -46,8 +46,8 @@ emitter and the wrap emitter call it.
 - Commit with pathspecs only: `git commit -- <paths>`.
 - Lint is oxlint (`pnpm run lint`). Never eslint.
 - Remap with key-remapping (`{ [P in keyof D as P extends K ? never : P]: D[P] }`),
-  never `Omit`. The storage interfaces carry an index signature, so
-  `Omit` drops every declared key.
+  never `Omit`: `Omit` does not distribute over unions, and in a throwaway
+  check of declared wrap returns it lost the declared keys.
 - `this` cannot appear inside a nested type literal. Pass it in at the
   member: `$with: WithOf<this>`.
 - Every task ends green on:
@@ -245,7 +245,7 @@ export type ParsedOf<N, ByKindId> = BoundOf<N, ByKindId>;
   - Children resolve only through `ByKindId`.
   - `Setters` reads only `__slotHints__`.
   - The `Parsed` interface gets its `$with` through the declaring
-    interface's `Setters<this>` (Task 3 emits
+    interface's `WithOf<this>` (Task 3 emits
     `interface Parsed extends ParsedOf<X, ParsedByKindId> { readonly $with: WithOf<this> }`).
   - `NodeMethods` are not part of `BoundOf`. Task 3's emitted interfaces
     add `NodeMethodsOf` in their `extends` list, as `Built` does today.
