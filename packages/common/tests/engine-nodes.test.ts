@@ -35,7 +35,8 @@ function fakeLanguage(name: string) {
 		},
 		is: {
 			leaf: (v: AnyNodeData) => v.$type === 1,
-			kind: (v: AnyNodeData, k: number) => v.$type === k
+			kind: (v: AnyNodeData, k: number) => v.$type === k,
+			expression: (v: AnyNodeData) => new Set([1, 3]).has(v.$type as number)
 		},
 		kinds: {},
 		trivia,
@@ -310,6 +311,9 @@ describe('the kind guards of an engine', () => {
 		expect(other.is.leaf(foreign)).toBe(true);
 		expect(a.is.leaf(foreign)).toBe(false);
 		expect(a.is.kind(other.build.group(), 3)).toBe(false);
+		expect(other.is.expression(foreign)).toBe(true);
+		expect(a.is.expression(foreign)).toBe(false);
+		expect(a.is.expression(a.build.leaf('y'))).toBe(true);
 	});
 
 	it('reject every value that carries no engine', async () => {
