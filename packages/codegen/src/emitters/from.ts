@@ -1165,7 +1165,7 @@ function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('');
 	lines.push('const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype)) continue;
+		if (!(node instanceof AssembledSupertype) || !node.declared) continue;
 		const concrete = defaultConcreteKindOf(kind, nodeMap);
 		lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(concrete ?? node.subtypeNames)},`);
 	}

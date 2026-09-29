@@ -45,7 +45,6 @@ describe('a bigint literal', () => {
 		expect(ts.build.literalType.bigint(42n).$render()).toBe('42n');
 		expect(ts.build.primaryType.literal.bigint(42n).$render()).toBe('42n');
 		expect(ts.build.primaryExpression.number.bigint(42n).$render()).toBe('42n');
-		expect(ts.build.propertyName.number.bigint(42n).$render()).toBe('42n');
 		expect(ts.build.literalType.bigint.hex(42n).$render()).toBe('0x2an');
 	});
 

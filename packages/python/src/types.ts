@@ -445,10 +445,10 @@ export enum TSKindId {
 	AsPatternTarget = 335,
 	FormatExpression = 336,
 	Names = 337,
-	ERROR = 65535
+	Error = 65535
 }
 
-void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
+void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
@@ -1817,7 +1817,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'names':
 			return TSKindId.Names;
 		case 'ERROR':
-			return TSKindId.ERROR;
+			return TSKindId.Error;
 		case 'import':
 			return TSKindId.ImportKeyword;
 		case '.':
@@ -2245,8 +2245,8 @@ export enum IntegerDecimalKind {
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
-	readonly _statements?: readonly (SimpleStatements | CompoundStatement)[];
-	statements(): readonly (SimpleStatements | CompoundStatement)[];
+	readonly _statements?: readonly Statement[];
+	statements(): readonly Statement[];
 }
 
 export interface SimpleStatements {
@@ -2788,8 +2788,8 @@ export interface Decorator {
 
 export interface Block {
 	readonly $type: TSKindId.Block;
-	readonly _statements?: readonly (SimpleStatements | CompoundStatement)[];
-	statements(): readonly (SimpleStatements | CompoundStatement)[];
+	readonly _statements?: readonly Statement[];
+	statements(): readonly Statement[];
 }
 
 export interface ExpressionList {
@@ -4294,7 +4294,7 @@ export interface SuiteBlock {
 	readonly $type: TSKindId.SuiteBlock;
 	readonly _block: Block;
 	readonly __looseHints__?: {
-		readonly block: readonly (SimpleStatements | CompoundStatement)[];
+		readonly block: readonly Statement[];
 	};
 	block(): Block;
 }
@@ -9081,20 +9081,13 @@ export namespace Module {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			statements(...vs: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built;
+			statements(...vs: T.Statement[]): T.Module.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
-	export type BuildArgs = [...children: (T.SimpleStatements | T.CompoundStatement)[]];
-	export type LooseArgs = [
-		...children: LooseValue<
-			T.SimpleStatements | T.CompoundStatement,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
-	];
+	export type BuildArgs = [...children: T.Statement[]];
+	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = 'module';
 }
 export namespace SimpleStatements {
@@ -9863,20 +9856,13 @@ export namespace Block {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			statements(...vs: (T.SimpleStatements | T.CompoundStatement)[]): T.Block.Built;
+			statements(...vs: T.Statement[]): T.Block.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Block>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Block>;
-	export type BuildArgs = [...children: (T.SimpleStatements | T.CompoundStatement)[]];
-	export type LooseArgs = [
-		...children: LooseValue<
-			T.SimpleStatements | T.CompoundStatement,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
-	];
+	export type BuildArgs = [...children: T.Statement[]];
+	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = 'block';
 }
 export namespace ExpressionList {

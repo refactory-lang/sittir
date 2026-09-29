@@ -3965,14 +3965,6 @@ export const forHeader: {
 	letConstKind: { strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind }
 };
 
-export const formalParameter: {
-	readonly required: typeof B.requiredParameter;
-	readonly optional: typeof B.optionalParameter;
-} = {
-	required: B.requiredParameter,
-	optional: B.optionalParameter
-};
-
 export const callExpression: {
 	readonly call: { strict: typeof F.buildCallExpressionCall; coerce: typeof C.coerceToCallExpressionCall };
 	readonly templateCall: {
@@ -3984,14 +3976,6 @@ export const callExpression: {
 	call: { strict: F.buildCallExpressionCall, coerce: C.coerceToCallExpressionCall },
 	templateCall: { strict: F.buildCallExpressionTemplateCall, coerce: C.coerceToCallExpressionTemplateCall },
 	member: { strict: F.buildCallExpressionMember, coerce: C.coerceToCallExpressionMember }
-};
-
-export const destructuringPattern: {
-	readonly object: typeof B.objectPattern;
-	readonly array: typeof B.arrayPattern;
-} = {
-	object: B.objectPattern,
-	array: B.arrayPattern
 };
 
 export const updateExpression: {
@@ -4544,18 +4528,6 @@ export const comment: {
 	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
 };
 
-export const identifier: {
-	readonly strict: typeof F.buildIdentifier;
-	readonly coerce: typeof C.coerceToIdentifier;
-	readonly undefined: { strict: typeof F.buildUndefined; coerce: typeof C.coerceToUndefined };
-	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
-} = {
-	strict: F.buildIdentifier,
-	coerce: C.coerceToIdentifier,
-	undefined: { strict: F.buildUndefined, coerce: C.coerceToUndefined },
-	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier }
-};
-
 export const metaProperty: {
 	readonly newTarget: { strict: typeof F.buildMetaPropertyNewTarget; coerce: typeof C.coerceToMetaPropertyNewTarget };
 	readonly importMeta: {
@@ -4873,14 +4845,6 @@ export const exportStatement: {
 	namespaceExport: B.exportStatementNamespaceExport
 };
 
-export const moduleExportName: {
-	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
-	readonly string: typeof string;
-} = {
-	identifier: { strict: F.buildIdentifier, coerce: C.coerceToIdentifier },
-	string: string
-};
-
 export const statement: {
 	readonly export: typeof exportStatement;
 	readonly import: typeof importStatement;
@@ -4953,18 +4917,4 @@ export const number: {
 	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
 	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
 	bigint: numberBigint
-};
-
-export const propertyName: {
-	readonly identifier: { strict: typeof F.buildPropertyIdentifier; coerce: typeof C.coerceToPropertyIdentifier };
-	readonly privateIdentifier: typeof B.privatePropertyIdentifier;
-	readonly string: typeof string;
-	readonly number: typeof number;
-	readonly computed: typeof B.computedPropertyName;
-} = {
-	identifier: { strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier },
-	privateIdentifier: B.privatePropertyIdentifier,
-	string: string,
-	number: number,
-	computed: B.computedPropertyName
 };

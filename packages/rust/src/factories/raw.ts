@@ -66,7 +66,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	const _statements = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], []),
 		'SourceFile.statements',
-		'a built ExpressionStatement / DeclarationStatement'
+		'a built Statement'
 	);
 	return withMethods(
 		withAccessors(
@@ -5168,7 +5168,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built 
 	const _statements = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], []),
 		'Block.statements',
-		'a built ExpressionStatement / DeclarationStatement'
+		'a built Statement'
 	);
 	const _trailing_expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.Block['_trailing_expression']>>(config.trailingExpression, []),
