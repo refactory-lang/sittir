@@ -346,6 +346,11 @@ function listOptionsAreDefault(
 	);
 }
 
+function seatHoistedSlot(seatKind: string, loose: LooseFacts): string | undefined {
+	const required = Object.entries(loose.slotRequired[seatKind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
+	return required.length === 1 ? required[0] : undefined;
+}
+
 function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
 	const loose = ctx.loose;
 	if (loose === undefined || !isPlainObject(item) || '$type' in item) return item;
@@ -355,8 +360,7 @@ function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): u
 	if (keys.length !== 1) return item;
 	for (const seat of Object.values(ctx.seats?.[listKind]?.['*'] ?? {})) {
 		if (seat.shape !== 'elements') continue;
-		const required = Object.entries(loose.slotRequired[seat.kind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
-		if (required.length === 1 && required[0] === keys[0]) return item[keys[0]!];
+		if (seatHoistedSlot(seat.kind, loose) === keys[0]) return item[keys[0]!];
 	}
 	return item;
 }
@@ -372,7 +376,11 @@ function wrapSeatElement(listKind: string, item: unknown, ctx: PrintContext): un
 	const seats = Object.values(ctx.seats?.[listKind]?.['*'] ?? {}).filter(
 		(seat) => seat.shape === 'elements' && keys.every((k) => k in (ctx.slotKinds?.[seat.kind] ?? {}))
 	);
-	return seats.length === 1 ? wrapTextLeaves(seats[0]!.kind, item, ctx) : item;
+	if (seats.length !== 1) return item;
+	const seat = seats[0]!;
+	const wrapped = wrapTextLeaves(seat.kind, item, ctx);
+	const sharesElementSlot = ctx.loose !== undefined && seatHoistedSlot(seat.kind, ctx.loose) !== undefined;
+	return sharesElementSlot && isPlainObject(wrapped) ? { kind: seat.kind, ...wrapped } : wrapped;
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
