@@ -23,7 +23,7 @@ pnpm add @sittir/types
 
 ## Using them
 
-A function generic over the language takes an engine and forwards that language's render options with no cast:
+A function can take an engine typed by its language, and builds and edits through that engine's own surface:
 
 ```ts
 import { createEngine } from '@sittir/common';

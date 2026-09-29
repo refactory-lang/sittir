@@ -13,8 +13,8 @@ const READMES = ['README.md', ...['rust', 'python', 'typescript', 'types'].map((
 // A fence preceded by this line shows a shape rather than a program, and is not run.
 const ILLUSTRATIVE = '<!-- snippet: illustrative -->';
 
-// A statement `expr; // "text"` (or `// true` / `// false`) in a snippet states the value of `expr`; the gate asserts it.
-const EXPECTED_VALUE = /^(?!(?:import|const|let|export|if|for|function|type|interface)\b)(.+?);\s*\/\/ (".*"|true|false)$/;
+// A statement `expr; // "text"` (or `// true`, `// false`, `// 3`) in a snippet states the value of `expr`; the gate asserts it. A boolean or number may be followed by `, prose`.
+const EXPECTED_VALUE = /^(?!(?:import|const|let|export|if|for|function|type|interface)\b)(.+?);\s*\/\/ (".*"|(?:true|false|-?\d+(?:\.\d+)?)(?=$|, ))(?:, .*)?$/;
 
 function tsBlocks(markdown: string): string[] {
 	return [...markdown.matchAll(/(^.*\n)?```ts\n([\s\S]*?)```/gm)]

@@ -303,7 +303,7 @@ from the resolved value (the underlying NodeData):
 <!-- snippet: illustrative -->
 ```ts
 fn.name        // cursor — handle into the tree, lazy
-fn.name()      // value  — resolved NodeData (or hoisted leaf text)
+fn.name()      // value  — the resolved node, an Identifier or a Metavariable
 fn.$with.name(engine.build.identifier('greet'))     // returns a new frozen node
 fn.$with.body(engine.build.block.strict())           // chainable, immutable
 ```
