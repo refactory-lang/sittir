@@ -739,6 +739,10 @@ The package script that type-checks the entry with `GRAMMAR_TSCONFIG`. It stays 
 
 Each grammar package's type-check ceiling: a file-to-maximum map in the same shape as `examples/generated-typecheck-ceiling.json`. An entry is a count, or a `{ max, issue }` pair for errors a tracking issue owns. The grammar type-check ratchet fails above a ceiling; a count below it lowers the ceiling in the same change.
 
+### `packages/codegen/src/__tests__/helpers/typecheck-ceiling.ts::typeCheckErrorLines`
+
+Runs a type-check through pnpm with `--pretty false` appended and returns tsc's `error TS` lines. The flag keeps the output plain whatever the terminal or `FORCE_COLOR` asks for; coloured output splits `error` from `TS` and no line would match. An exit other than 1 with error lines rethrows.
+
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 
 Every grammar package under `packages/`, sorted by name, each resolved by `grammarPackage`. Cached for the process: packages are not created mid-run.

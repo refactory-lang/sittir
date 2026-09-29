@@ -7,7 +7,7 @@ export type TypecheckCeiling = Readonly<Record<string, number | { readonly max: 
 export function typeCheckErrorLines(pnpmArgs: readonly string[], cwd: string): string[] {
 	let out = '';
 	try {
-		out = execFileSync('pnpm', pnpmArgs, { cwd, encoding: 'utf8' });
+		out = execFileSync('pnpm', [...pnpmArgs, '--pretty', 'false'], { cwd, encoding: 'utf8' });
 	} catch (e) {
 		const failure = e as { status?: number | null; stdout?: string };
 		out = String(failure.stdout ?? '');
