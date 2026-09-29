@@ -47,6 +47,8 @@
 
 One PR, stacked on master. It changes behaviour in one place: engine render options now reach `$render()`. Under default options, validation rows, render fixtures and dogfood `.rendered` files stay byte-identical.
 
+Commit order follows the dependencies, so every commit is green: Task 0, 1, 2, then 4 (with Task 7's pins), then 3 and 5 as one commit, then 6 and 8. Until the 3+5 commit, `withMethods` keeps its facts argument as the fallback for a node built outside any scope; that commit removes it, leaving one derivation of render and edit.
+
 ---
 
 ### Task 0: Worktree and baselines
@@ -113,9 +115,9 @@ export function isLive(current: EngineHandle['current']): current is EngineLike;
 - Test: `packages/common/tests/engine-scope.test.ts`
 
 **Behaviour:**
-- `withMethods(node)` takes no engine. It binds a non-enumerable `$engine()` returning `handle.current` for `currentHandle()`; with no handle in scope it binds none.
+- `withMethods(node)` takes no engine once Task 3+5 lands; until then its facts argument covers nodes built outside any scope. It binds a non-enumerable `$engine()` returning `handle.current` for `currentHandle()`; with no handle in scope it binds none.
 - `$render()`, `$toEdit()` and `$replace()` read `this.$engine?.()`: none throws `node has no engine; render it with engine.render(node)`; an identity throws `engine disposed; render it with engine.render(node)`; a live engine renders.
-- `$trivia` reads the facts from `this.$engine()` and runs its setter inside `inEngine` of the node's handle, so a comment built from text is stamped. The facts come from `$engine().trivia`, which the identity carries too, so `$trivia` reads and writes of existing entries keep working on a disposed engine's nodes; only a comment built from text needs a live engine, and throws "engine disposed" otherwise.
+- `$trivia` reads the facts from `this.$engine()` and runs its setter inside `inEngine` of the node's handle, so a comment built from text is stamped. The facts come from `$engine().trivia`, which the identity carries too, so `$trivia` reads and writes, including entries built from text, keep working on a disposed engine's nodes; only `$render()`, `$toEdit()` and `$replace()` need a live engine.
 - `$with` setters run inside `inEngine` of the node's own handle.
 
 - [ ] **Step 1: Failing tests** against a fake engine: stamping in scope; none out of scope; the three `$render` outcomes; a `$with` setter called inside another handle's scope rebuilds with the node's own; a `$trivia('// x')` entry built outside any scope carries the node's handle.
