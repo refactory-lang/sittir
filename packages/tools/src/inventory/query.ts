@@ -156,3 +156,81 @@ export async function compileQuery(grammar: string, text: string): Promise<Compi
 		query.delete();
 	}
 }
+
+export interface BindingIssue {
+	readonly line: number;
+	readonly message: string;
+}
+
+interface SourcePattern {
+	readonly line: number;
+	readonly text: string;
+}
+
+export function topLevelPatterns(text: string): SourcePattern[] {
+	const out: SourcePattern[] = [];
+	let depth = 0;
+	let start = -1;
+	let line = 1;
+	let startLine = 1;
+	for (let i = 0; i < text.length; i += 1) {
+		const c = text[i];
+		if (c === '\n') line += 1;
+		else if (c === ';') {
+			while (i < text.length && text[i] !== '\n') i += 1;
+			line += 1;
+		} else if (c === '"') {
+			i += 1;
+			while (i < text.length && text[i] !== '"') {
+				if (text[i] === '\\') i += 1;
+				else if (text[i] === '\n') line += 1;
+				i += 1;
+			}
+		} else if (c === '(' || c === '[') {
+			if (depth === 0) {
+				start = i;
+				startLine = line;
+			}
+			depth += 1;
+		} else if (c === ')' || c === ']') {
+			depth -= 1;
+			if (depth === 0 && start >= 0) {
+				let end = i + 1;
+				while (end < text.length && /[\s@\w.*+?!]/.test(text[end] ?? '') && text[end] !== '\n') end += 1;
+				out.push({ line: startLine, text: text.slice(start, end) });
+				start = -1;
+				i = end - 1;
+			}
+		}
+	}
+	return out;
+}
+
+const PSEUDO_KINDS = new Set(['<group>', '<token>', '_', 'ERROR', 'MISSING']);
+
+export async function bindingIssues(grammar: string, text: string): Promise<BindingIssue[]> {
+	const { lang } = await loadLanguageForGrammar(grammar);
+	const { Query } = await import('web-tree-sitter');
+	const issues: BindingIssue[] = [];
+	for (const pattern of topLevelPatterns(text)) {
+		const unknown: string[] = [];
+		for (const root of parseQuery(pattern.text)) {
+			for (const n of walk(root)) {
+				if (n.field !== null && lang.fieldIdForName(n.field) === null) unknown.push(`field ${n.field}`);
+				if (n.kind === '<token>') {
+					if (n.text !== null && lang.idForNodeType(n.text, false) === null) unknown.push(`token "${n.text}"`);
+				} else if (n.kind !== null && !PSEUDO_KINDS.has(n.kind) && lang.idForNodeType(n.kind, true) === null) {
+					unknown.push(`node ${n.kind}`);
+				}
+			}
+		}
+		for (const name of new Set(unknown)) issues.push({ line: pattern.line, message: `unknown ${name}` });
+		if (unknown.length > 0) continue;
+		try {
+			new Query(lang, pattern.text).delete();
+		} catch (e) {
+			issues.push({ line: pattern.line, message: e instanceof Error ? e.message : String(e) });
+		}
+	}
+	return issues;
+}

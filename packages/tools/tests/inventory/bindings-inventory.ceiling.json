@@ -1,4 +1,4 @@
 {
 	"unmapped": 319,
-	"compiling": []
+	"compiling": ["python", "rust", "typescript"]
 }
