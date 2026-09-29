@@ -58,13 +58,11 @@ const cases: readonly Case[] = [
 		},
 		expected: {
 			reversed: 'def f():\n    pass\n\n\nimport x',
-			'parsed-built': 'import x\n\n\ndef g():\n    pass\n',
+			'parsed-built': 'import x\ndef g():\n    pass\n',
 			'built-parsed': 'def g():\n    pass\n\n\nimport x'
 		}
 	}
 ];
-
-const PYTHON_SLICE_NEWLINE = "a parsed simple_statements' span excludes its trailing _newline, so its slice never ends its line";
 
 describe('a rebuilt list gives each parsed item the gap its seat declares', () => {
 	for (const { grammar, edit, expected } of cases) {
@@ -74,16 +72,20 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		it(`${grammar}: a built item after a parsed one`, () => {
 			expect(edit('built-parsed')).toBe(expected['built-parsed']);
 		});
-		const pending = grammar === 'python';
-		(pending ? it.fails : it)(`${grammar}: a parsed item before a built one${pending ? ` (${PYTHON_SLICE_NEWLINE})` : ''}`, () => {
+		it(`${grammar}: a parsed item before a built one`, () => {
 			expect(edit('parsed-built')).toBe(expected['parsed-built']);
 		});
 	}
 
-	it.fails(`python: reversed simple statements (${PYTHON_SLICE_NEWLINE})`, () => {
+	it('python: reversed simple statements', () => {
 		const root = python.parse('a = 1\nb = 2\n');
 		const [a, b] = root.statements();
 		expect(root.$with.statements(b!, a!).$render()).toBe('b = 2\na = 1');
+	});
+
+	it('python: a held line end keeps the wider source gap after it', () => {
+		const root = python.parse('a = 1\n\n\nb = 2\n');
+		expect(root.$with.statements(...root.statements()).$render()).toBe('a = 1\n\n\nb = 2');
 	});
 
 	it('keeps the source gap when the items keep their source order', () => {

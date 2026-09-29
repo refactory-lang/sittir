@@ -359,9 +359,18 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	};
 	assertWhitespaceAdmitted(assembled);
 	computeFieldStorageInfo(assembled);
+	stampExternalRoles(assembled, ctx);
 	stampTriviaInterior(assembled);
 	stampGrammarRoot(assembled);
 	return assembled;
+}
+
+function stampExternalRoles(nodeMap: NodeMap, ctx: AssembleCtx): void {
+	for (const [kind, { role }] of ctx.grammar.externalRoles ?? []) {
+		const node = nodeMap.nodes.get(kind);
+		if (node === undefined) throw new Error(`assemble: external '${kind}' declares the ${role} role but has no node`);
+		node.externalRole = role;
+	}
 }
 
 interface DroppedKindCtx {
