@@ -5,7 +5,11 @@ import type { RustAPI } from './api.js';
 
 export type { RustAPI } from './api.js';
 
-const rust: Language<RustAPI> = { name: 'rust', load: () => import('./api.js').then((m) => m.hooks) };
+const rust: Language<RustAPI> = {
+	name: 'rust',
+	fileTypes: ['rs'],
+	load: () => import('./api.js').then((m) => m.hooks)
+};
 export default rust;
 
 export type * from './types.js';

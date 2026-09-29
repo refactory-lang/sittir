@@ -6,7 +6,9 @@
             "camelcase": "Typescript",
             "scope": "source.typescript",
             "path": ".",
-            "file-types": []
+            "file-types": [
+                "ts"
+            ]
         }
     ],
     "metadata": {

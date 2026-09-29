@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { evaluate } from '../evaluate.ts';
 import type { RawGrammar } from '../types.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 const DSL = JSON.stringify(resolve(__dirname, '../../dsl/index.ts'));
 
@@ -21,7 +22,7 @@ export async function evaluateSittirGrammar(
 			join(dir, 'grammar.sittir.ts'),
 			`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { sittirGrammar } from ${DSL};\nexport default sittirGrammar(base, { resolutions, name: '${name}', ${config} });\n`
 		);
-		return await evaluate(join(dir, 'grammar.sittir.ts'));
+		return await evaluate(join(dir, 'grammar.sittir.ts'), NO_FILE_TYPES);
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}

@@ -24,6 +24,7 @@ function makeMinimalFixture(): {
 	return {
 		raw: {
 			name: 'synth',
+			fileTypes: [],
 			rules,
 			ruleCatalog,
 			extras: [],

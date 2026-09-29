@@ -13,9 +13,9 @@ vi.mock('../src/compiler/evaluate.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../src/compiler/evaluate.ts')>();
 	return {
 		...actual,
-		evaluate: async (entryPath: string) => {
+		evaluate: async (entryPath: string, fileTypes: readonly string[]) => {
 			evaluateCalls.push(Date.now());
-			return actual.evaluate(entryPath);
+			return actual.evaluate(entryPath, fileTypes);
 		}
 	};
 });

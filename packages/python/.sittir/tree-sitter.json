@@ -6,7 +6,9 @@
             "camelcase": "Python",
             "scope": "source.python",
             "path": ".",
-            "file-types": []
+            "file-types": [
+                "py"
+            ]
         }
     ],
     "metadata": {

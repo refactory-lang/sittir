@@ -114,6 +114,7 @@ export interface RawGrammar {
 	readonly precedences: string[][];
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
+	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
@@ -147,7 +148,7 @@ export interface EvaluationStages<G = RawGrammar> {
 	readonly enriched: StageEvaluation<G>;
 }
 
-export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages'> {
+export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages' | 'fileTypes'> {
 	readonly provenanceByKind: ReadonlyMap<string, RuleProvenance>;
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
@@ -218,6 +219,7 @@ export interface LinkedGrammar {
 	readonly nodelessExtrasRun?: RegExp;
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
+	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
@@ -249,6 +251,7 @@ export interface NormalizedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
+	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -282,6 +285,7 @@ export interface SimplifiedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
+	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -322,6 +326,7 @@ export interface NodeMap {
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
+	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;

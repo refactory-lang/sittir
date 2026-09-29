@@ -1,15 +1,13 @@
 import { parseArgs } from 'node:util';
 import { pathToFileURL } from 'node:url';
-import { existsSync } from 'node:fs';
 
-import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { assertGrammar, stableGrammars, type GrammarName } from '../grammars.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
+import { assertGrammar, grammarPackage, stableGrammars, type GrammarName } from '../grammars.ts';
+import { evaluatePackage } from '../compiler/evaluate-package.ts';
 
 
 export interface Divergence {
@@ -87,13 +85,8 @@ export function diffSlotNames(slot: AssembledNonterminal, kind: string): Diverge
 	return out;
 }
 
-function resolveEntryPath(grammar: GrammarName): string {
-	const overridesPath = resolveOverridesPath(grammar);
-	return existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-}
-
 async function probeGrammar(grammar: GrammarName): Promise<Divergence[]> {
-	const raw = await evaluate(resolveEntryPath(grammar));
+	const raw = await evaluatePackage(grammarPackage(grammar));
 	const normalized = normalizeGrammar(link(raw, undefined));
 	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(grammar)));
 	const divergences: Divergence[] = [];

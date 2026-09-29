@@ -14,6 +14,7 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import { transform } from '../../dsl/transform/transform.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from '../../__tests__/helpers/rule-catalog.ts';
 import { readRuleMetadata } from '../../dsl/rule-metadata.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
@@ -259,13 +260,13 @@ describe('Evaluate — edge cases', () => {
 
 	describe('T009a — malformed grammar.js', () => {
 		it('throws for a non-existent grammar file', async () => {
-			await expect(evaluate('/nonexistent/grammar.js')).rejects.toThrow();
+			await expect(evaluate('/nonexistent/grammar.js', NO_FILE_TYPES)).rejects.toThrow();
 		});
 	});
 
 	describe('T010a — grammar with zero visible rules', () => {
 		it('evaluates successfully (classification happens at Assemble)', async () => {
-			const raw = await evaluate(fixture('hidden-only-grammar.js'));
+			const raw = await evaluate(fixture('hidden-only-grammar.js'), NO_FILE_TYPES);
 			expect(raw.name).toBe('hidden_only');
 			expect(Object.keys(raw.rules)).toContain('_expr');
 		});
@@ -273,7 +274,7 @@ describe('Evaluate — edge cases', () => {
 
 	describe('desugar-divergence — body-pattern-group fallback', () => {
 		it('records a divergence event when a groups: entry mints with no wire-side deposit', async () => {
-			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'));
+			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'), NO_FILE_TYPES);
 			// `_orphan_group` is referenced nowhere else in the grammar, so it's
 			// pruned from the final catalog as unreachable — the divergence
 			// event itself is the proof the fallback fired, independent of
@@ -298,7 +299,7 @@ describe('Evaluate — edge cases', () => {
 				'utf8'
 			);
 			try {
-				await expect(evaluate(entry)).rejects.toThrow();
+				await expect(evaluate(entry, NO_FILE_TYPES)).rejects.toThrow();
 			} finally {
 				rmSync(dir, { recursive: true, force: true });
 			}
@@ -307,7 +308,7 @@ describe('Evaluate — edge cases', () => {
 
 	describe('createProxy — hidden-symbol and optional-ref stamping (private helper, exercised through evaluate())', () => {
 		it('marks underscore-prefixed symbol references inline via the proxy (hidden is a rule-level fact link stamps)', async () => {
-			const raw = await evaluate(fixture('test-grammar.js'));
+			const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 			const expressionStatement = raw.rules['expression_statement'] as {
 				members: readonly { type: string; name?: string; hidden?: boolean; inline?: boolean }[];
 			};
@@ -333,7 +334,7 @@ describe('Evaluate — edge cases', () => {
 				'utf8'
 			);
 			try {
-				const raw = await evaluate(entry);
+				const raw = await evaluate(entry, NO_FILE_TYPES);
 				const ref = raw.references.find((r) => r.from === 'source_file' && r.to === 'modifier');
 				expect(ref?.optional).toBe(true);
 			} finally {
@@ -345,7 +346,7 @@ describe('Evaluate — edge cases', () => {
 
 describe('Evaluate — evaluate()', () => {
 	it('evaluates a grammar.js file and returns a RawGrammar', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
+		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		expect(raw.name).toBe('test');
 		expect(Object.keys(raw.rules)).toContain('source_file');
 		expect(Object.keys(raw.rules)).toContain('assignment');
@@ -353,7 +354,7 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('captures the reference graph', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
+		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		expect(raw.references.length).toBeGreaterThan(0);
 		const sourceFileRefs = raw.references.filter((r) => r.from === 'source_file');
 		expect(sourceFileRefs).toEqual([
@@ -366,7 +367,7 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('populates grammar metadata', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
+		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		expect(raw.extras).toEqual([]);
 		expect(raw.externals).toEqual([]);
 		expect(raw.supertypes).toEqual([]);
@@ -394,7 +395,7 @@ describe('Evaluate — evaluate()', () => {
 			'utf8'
 		);
 		try {
-			const raw = await evaluate(entry);
+			const raw = await evaluate(entry, NO_FILE_TYPES);
 			const hiddenOperatorRules = Object.entries(raw.rules).filter(([name]) =>
 				name.startsWith('_binary_expression_operator')
 			);
@@ -433,7 +434,7 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('preserves pattern rules for terminals', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
+		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		expect(raw.rules['identifier']).toEqual(
 			expect.objectContaining({
 				type: 'PATTERN',
@@ -444,7 +445,7 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('captures field names in reference graph', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
+		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		const assignRefs = raw.references.filter((r) => r.from === 'assignment');
 		expect(assignRefs).toEqual(
 			expect.arrayContaining([
@@ -471,7 +472,7 @@ describe('Evaluate — evaluate()', () => {
 			'utf8'
 		);
 		try {
-			const raw = await evaluate(entry);
+			const raw = await evaluate(entry, NO_FILE_TYPES);
 			// Bare-symbol alias to an existing rule: source is object_type (exists)
 			// → no synthetic `_interface_body` rule is added to the rules map.
 			expect(raw.rules['_interface_body']).toBeUndefined();
@@ -489,13 +490,13 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('assigns inline IDs and catalog entries to every evaluated occurrence', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 
 		expectCompleteCatalog(raw.rules, raw.ruleCatalog);
 	});
 
 	it('uses positional IDs for identical subtrees in different branches', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 		const container = raw.rules['container']!;
 		const symbolIds: string[] = [];
 		walkRule(container, (rule) => {
@@ -509,8 +510,8 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('keeps catalog serialization deterministic for unchanged input', async () => {
-		const first = await evaluate(fixture('rule-identity-grammar.js'));
-		const second = await evaluate(fixture('rule-identity-grammar.js'));
+		const first = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
+		const second = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 
 		expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 	});
@@ -546,8 +547,8 @@ module.exports = grammar(base, {
 			'utf8'
 		);
 		try {
-			const base = await evaluate(baseEntry);
-			const override = await evaluate(overrideEntry);
+			const base = await evaluate(baseEntry, NO_FILE_TYPES);
+			const override = await evaluate(overrideEntry, NO_FILE_TYPES);
 			const baseContainer = base.ruleCatalog.byId.get(base.ruleCatalog.rootsByKind.get('container')!)!;
 			const overrideContainer = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('container')!)!;
 			const overrideOnly = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('override_only')!)!;
@@ -596,7 +597,7 @@ module.exports = grammar(base, {
 			'utf8'
 		);
 		try {
-			const raw = await evaluate(overrideEntry);
+			const raw = await evaluate(overrideEntry, NO_FILE_TYPES);
 			expect(raw.inline).toEqual(['foo', 'bar']);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
@@ -604,7 +605,7 @@ module.exports = grammar(base, {
 	});
 
 	it('anchors symbol references to the originating rule ID', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 		const refs = raw.references.filter((ref) => ref.from === 'container');
 
 		expect(refs.length).toBeGreaterThan(0);
@@ -613,7 +614,7 @@ module.exports = grammar(base, {
 	});
 
 	it('classifies fields, aliases, leaves, references, tokens, and wrappers', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 		const classifications = raw.ruleCatalog.classificationById;
 		const byRuleType = new Map<string, string[]>();
 		for (const entry of raw.ruleCatalog.byId.values()) {
@@ -638,7 +639,7 @@ module.exports = grammar(base, {
 	});
 
 	it('forces only the immediately wrapped field and named-alias content', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 		const forced = [...raw.ruleCatalog.classificationById.values()].filter(
 			(c) => c.forcedBy === 'field' || c.forcedBy === 'named-alias'
 		);
@@ -654,7 +655,7 @@ module.exports = grammar(base, {
 	});
 
 	it('aggregates wrapper classification from descendants', async () => {
-		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const raw = await evaluate(fixture('rule-identity-grammar.js'), NO_FILE_TYPES);
 		const entries = [...raw.ruleCatalog.byId.values()];
 		const choiceEntries = entries.filter((entry) => entry.ruleType === CHOICE);
 		const repeatEntry = entries.find((entry) => entry.ruleType === REPEAT1)!;

@@ -5,7 +5,11 @@ import type { TypescriptAPI } from './api.js';
 
 export type { TypescriptAPI } from './api.js';
 
-const typescript: Language<TypescriptAPI> = { name: 'typescript', load: () => import('./api.js').then((m) => m.hooks) };
+const typescript: Language<TypescriptAPI> = {
+	name: 'typescript',
+	fileTypes: ['ts'],
+	load: () => import('./api.js').then((m) => m.hooks)
+};
 export default typescript;
 
 export type * from './types.js';

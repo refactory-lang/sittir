@@ -6,7 +6,9 @@
             "camelcase": "Scm",
             "scope": "source.scm",
             "path": ".",
-            "file-types": []
+            "file-types": [
+                "scm"
+            ]
         }
     ],
     "metadata": {

@@ -84,11 +84,15 @@ describe('emitApi', () => {
 });
 
 describe('emitIndex', () => {
-	const output = emitIndex({ grammar: 'rust', nodeMap: undefined as never });
+	it('carries no file types for a grammar whose model has none', () => {
+		expect(emitIndex({ grammar: 'regex', nodeMap: { fileTypes: [] } as never })).toContain("fileTypes: [],");
+	});
+
+	const output = emitIndex({ grammar: 'rust', nodeMap: { fileTypes: ['rs'] } as never });
 
 	it('exports the language descriptor as the default, loading the api on demand', () => {
 		expect(output).toContain(
-			"const rust: Language<RustAPI> = { name: 'rust', load: () => import('./api.js').then((m) => m.hooks) };"
+			`const rust: Language<RustAPI> = { name: 'rust', fileTypes: ["rs"], load: () => import('./api.js').then((m) => m.hooks) };`
 		);
 		expect(output).toContain('export default rust;');
 		expect(output).toContain("export type { RustAPI } from './api.js';");

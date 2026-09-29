@@ -35,6 +35,7 @@ function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
+		fileTypes: [],
 		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],

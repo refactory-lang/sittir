@@ -1,8 +1,9 @@
 import { SEQ } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { evaluate } from '../compiler/evaluate.ts';
-import { resolveOverridesPath, resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
+import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
+import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { grammarPackage } from '../grammars.ts';
 
 describe('Overrides integration', () => {
 	it('evaluates Python with grammar.sittir.ts', async () => {
@@ -15,7 +16,7 @@ describe('Overrides integration', () => {
 			return;
 		}
 
-		const raw = await evaluate(overridesPath);
+		const raw = await evaluatePackage(grammarPackage('python'));
 		console.log('Name:', raw.name);
 		console.log('Rule count:', Object.keys(raw.rules).length);
 
@@ -63,8 +64,7 @@ describe('Overrides integration', () => {
 	}
 
 	it('evaluates Python without overrides (base grammar only)', async () => {
-		const grammarPath = resolveGrammarJsPath('python');
-		const raw = await evaluate(grammarPath);
+		const raw = await evaluatePackage(grammarPackage('python'), { base: true });
 		expect(raw.name).toBe('python');
 
 		// Without overrides, augmented_assignment should have grammar-level fields only
