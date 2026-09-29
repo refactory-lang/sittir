@@ -25123,14 +25123,14 @@ impl ::sittir_core::render::Render for ModuleTransport {
 impl ::sittir_core::prepare::Prepare for ModuleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_statements = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.statements_separator_space.is_none() { self.statements_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.statements_separator_space.is_none() { self.statements_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx); }
+        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, &separated_statements, ctx); }
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -25601,15 +25601,16 @@ impl ::sittir_core::render::Render for ImportListTransport {
 impl ::sittir_core::prepare::Prepare for ImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_name = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.name.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.name_separator_space_before.is_none() { self.name_separator_space_before = before; }
-            if self.name_separator_space_after.is_none() { self.name_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.name_separator_space_before.is_none() { self.name_separator_space_before = gaps.before; }
+            if self.name_separator_space_after.is_none() { self.name_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.name_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE].arm);
         self.name_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.name.iter_mut().map(Some), options::SEATS_IMPORT_LIST_NAME, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.name.iter_mut().map(Some), options::SEATS_IMPORT_LIST_NAME, &separated_name, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_IMPORT_LIST_NAME]);
         self.name.prepare(ctx)?;
         Ok(())
@@ -25953,15 +25954,16 @@ impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_expression = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = before; }
-            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = gaps.before; }
+            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
         self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_ASSERT_STATEMENT_EXPRESSION, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_ASSERT_STATEMENT_EXPRESSION, &separated_expression, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -26633,14 +26635,14 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_alternative = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.alternative.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.alternative_separator_space.is_none() { self.alternative_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.alternative_separator_space.is_none() { self.alternative_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx); }
+        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, &separated_alternative, ctx); }
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -27144,14 +27146,14 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_except_clauses = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.except_clauses.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.except_clauses_separator_space.is_none() { self.except_clauses_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.except_clauses_separator_space.is_none() { self.except_clauses_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx); }
+        if let Some(seated_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, &separated_except_clauses, ctx); }
         self.body.prepare(ctx)?;
         self.except_clauses.prepare(ctx)?;
         self.else_clause.prepare(ctx)?;
@@ -27766,9 +27768,9 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.names_separator_space_before.is_none() { self.names_separator_space_before = before; }
-            if self.names_separator_space_after.is_none() { self.names_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.names_separator_space_before.is_none() { self.names_separator_space_before = gaps.before; }
+            if self.names_separator_space_after.is_none() { self.names_separator_space_after = gaps.after; }
         }
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER].arm);
@@ -27836,9 +27838,9 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.names_separator_space_before.is_none() { self.names_separator_space_before = before; }
-            if self.names_separator_space_after.is_none() { self.names_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.names_separator_space_before.is_none() { self.names_separator_space_before = gaps.before; }
+            if self.names_separator_space_after.is_none() { self.names_separator_space_after = gaps.after; }
         }
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER].arm);
@@ -27906,15 +27908,16 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_in_clause = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.in_clause.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.in_clause_separator_space_before.is_none() { self.in_clause_separator_space_before = before; }
-            if self.in_clause_separator_space_after.is_none() { self.in_clause_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.in_clause_separator_space_before.is_none() { self.in_clause_separator_space_before = gaps.before; }
+            if self.in_clause_separator_space_after.is_none() { self.in_clause_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
         self.in_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx); }
+        if let Some(seated_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, &separated_in_clause, ctx); }
         self.code.prepare(ctx)?;
         self.in_clause.prepare(ctx)?;
         Ok(())
@@ -28280,14 +28283,14 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_decorator = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.decorator.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.decorator_separator_space.is_none() { self.decorator_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.decorator_separator_space.is_none() { self.decorator_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.decorator.iter_mut().map(Some), options::SEATS_DECORATED_DEFINITION_DECORATOR, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.decorator.iter_mut().map(Some), options::SEATS_DECORATED_DEFINITION_DECORATOR, &separated_decorator, ctx);
         self.definition.prepare(ctx)?;
         self.decorator.prepare(ctx)?;
         Ok(())
@@ -28407,14 +28410,14 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_statements = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.statements_separator_space.is_none() { self.statements_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.statements_separator_space.is_none() { self.statements_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx); }
+        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, &separated_statements, ctx); }
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -28539,9 +28542,9 @@ impl ::sittir_core::prepare::Prepare for DottedNameTransport {
         self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.names.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ".", options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.names_separator_space_before.is_none() { self.names_separator_space_before = before; }
-            if self.names_separator_space_after.is_none() { self.names_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ".", options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.names_separator_space_before.is_none() { self.names_separator_space_before = gaps.before; }
+            if self.names_separator_space_after.is_none() { self.names_separator_space_after = gaps.after; }
         }
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER].arm);
@@ -28781,15 +28784,16 @@ impl ::sittir_core::render::Render for UnionPatternTransport {
 impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_patterns = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.patterns.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "|", options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.patterns_separator_space_before.is_none() { self.patterns_separator_space_before = before; }
-            if self.patterns_separator_space_after.is_none() { self.patterns_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "|", options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.patterns_separator_space_before.is_none() { self.patterns_separator_space_before = gaps.before; }
+            if self.patterns_separator_space_after.is_none() { self.patterns_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.patterns_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE].arm);
         self.patterns_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.patterns.iter_mut().map(Some), options::SEATS_UNION_PATTERN_PATTERNS, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.patterns.iter_mut().map(Some), options::SEATS_UNION_PATTERN_PATTERNS, &separated_patterns, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
@@ -29222,15 +29226,16 @@ impl ::sittir_core::render::Render for ParametersElementsTransport {
 impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_parameter = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.parameter.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.parameter_separator_space_before.is_none() { self.parameter_separator_space_before = before; }
-            if self.parameter_separator_space_after.is_none() { self.parameter_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.parameter_separator_space_before.is_none() { self.parameter_separator_space_before = gaps.before; }
+            if self.parameter_separator_space_after.is_none() { self.parameter_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);
         self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.parameter.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_PARAMETER, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.parameter.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_PARAMETER, &separated_parameter, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_PARAMETER]);
         self.parameter.prepare(ctx)?;
         Ok(())
@@ -29295,15 +29300,16 @@ impl ::sittir_core::render::Render for PatternsTransport {
 impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_pattern = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = before; }
-            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = gaps.before; }
+            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE].arm);
         self.pattern_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.pattern.iter_mut().map(Some), options::SEATS_PATTERNS_PATTERN, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.pattern.iter_mut().map(Some), options::SEATS_PATTERNS_PATTERN, &separated_pattern, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PATTERNS_PATTERN]);
         self.pattern.prepare(ctx)?;
         Ok(())
@@ -30032,14 +30038,14 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_comparators = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.comparators.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.comparators_separator_space.is_none() { self.comparators_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.comparators_separator_space.is_none() { self.comparators_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.comparators_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.comparators.iter_mut().map(Some), options::SEATS_COMPARISON_OPERATOR_COMPARATORS, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.comparators.iter_mut().map(Some), options::SEATS_COMPARISON_OPERATOR_COMPARATORS, &separated_comparators, ctx);
         self.left.prepare(ctx)?;
         self.comparators.prepare(ctx)?;
         Ok(())
@@ -31839,15 +31845,16 @@ impl ::sittir_core::render::Render for CollectionElementsTransport {
 impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_element = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_COLLECTION_ELEMENTS_ELEMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_COLLECTION_ELEMENTS_ELEMENT, &separated_element, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_COLLECTION_ELEMENTS_ELEMENT]);
         self.element.prepare(ctx)?;
         Ok(())
@@ -31917,15 +31924,16 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_right = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.right.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.right_separator_space_before.is_none() { self.right_separator_space_before = before; }
-            if self.right_separator_space_after.is_none() { self.right_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.right_separator_space_before.is_none() { self.right_separator_space_before = gaps.before; }
+            if self.right_separator_space_after.is_none() { self.right_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_FOR_IN_CLAUSE_RIGHT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_FOR_IN_CLAUSE_RIGHT, &separated_right, ctx);
         self.async_marker.prepare(ctx)?;
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -32111,14 +32119,14 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_string = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.string.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.string_separator_space.is_none() { self.string_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.string_separator_space.is_none() { self.string_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.string_separator_space.get_or_insert(ctx.options.spacing[options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.string.iter_mut().map(Some), options::SEATS_CONCATENATED_STRING_STRING, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.string.iter_mut().map(Some), options::SEATS_CONCATENATED_STRING_STRING, &separated_string, ctx);
         self.string.prepare(ctx)?;
         Ok(())
     }
@@ -33520,15 +33528,16 @@ impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
 impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_simple_statement = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.simple_statement.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.simple_statement_separator_space_before.is_none() { self.simple_statement_separator_space_before = before; }
-            if self.simple_statement_separator_space_after.is_none() { self.simple_statement_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.simple_statement_separator_space_before.is_none() { self.simple_statement_separator_space_before = gaps.before; }
+            if self.simple_statement_separator_space_after.is_none() { self.simple_statement_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.simple_statement_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.simple_statement_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.simple_statement.iter_mut().map(Some), options::SEATS_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.simple_statement.iter_mut().map(Some), options::SEATS_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT, &separated_simple_statement, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT]);
         self.simple_statement.prepare(ctx)?;
         Ok(())
@@ -33593,15 +33602,16 @@ impl ::sittir_core::render::Render for SubjectsTransport {
 impl ::sittir_core::prepare::Prepare for SubjectsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_subject = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.subject.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.subject_separator_space_before.is_none() { self.subject_separator_space_before = before; }
-            if self.subject_separator_space_after.is_none() { self.subject_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.subject_separator_space_before.is_none() { self.subject_separator_space_before = gaps.before; }
+            if self.subject_separator_space_after.is_none() { self.subject_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.subject_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE].arm);
         self.subject_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.subject.iter_mut().map(Some), options::SEATS_SUBJECTS_SUBJECT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.subject.iter_mut().map(Some), options::SEATS_SUBJECTS_SUBJECT, &separated_subject, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_SUBJECTS_SUBJECT]);
         self.subject.prepare(ctx)?;
         Ok(())
@@ -33666,15 +33676,16 @@ impl ::sittir_core::render::Render for CasePatternsTransport {
 impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_case_pattern = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.case_pattern.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.case_pattern_separator_space_before.is_none() { self.case_pattern_separator_space_before = before; }
-            if self.case_pattern_separator_space_after.is_none() { self.case_pattern_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.case_pattern_separator_space_before.is_none() { self.case_pattern_separator_space_before = gaps.before; }
+            if self.case_pattern_separator_space_after.is_none() { self.case_pattern_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.case_pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE].arm);
         self.case_pattern_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.case_pattern.iter_mut().map(Some), options::SEATS_CASE_PATTERNS_CASE_PATTERN, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.case_pattern.iter_mut().map(Some), options::SEATS_CASE_PATTERNS_CASE_PATTERN, &separated_case_pattern, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_CASE_PATTERNS_CASE_PATTERN]);
         self.case_pattern.prepare(ctx)?;
         Ok(())
@@ -33741,9 +33752,9 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
         self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.with_item.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.with_item_separator_space_before.is_none() { self.with_item_separator_space_before = before; }
-            if self.with_item_separator_space_after.is_none() { self.with_item_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.with_item_separator_space_before.is_none() { self.with_item_separator_space_before = gaps.before; }
+            if self.with_item_separator_space_after.is_none() { self.with_item_separator_space_after = gaps.after; }
         }
         self.with_item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.with_item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -33811,15 +33822,16 @@ impl ::sittir_core::render::Render for TypesTransport {
 impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_type_ = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.type_separator_space_before.is_none() { self.type_separator_space_before = before; }
-            if self.type_separator_space_after.is_none() { self.type_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.type_separator_space_before.is_none() { self.type_separator_space_before = gaps.before; }
+            if self.type_separator_space_after.is_none() { self.type_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.type_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE].arm);
         self.type_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.type_.iter_mut().map(Some), options::SEATS_TYPES_TYPE, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.type_.iter_mut().map(Some), options::SEATS_TYPES_TYPE, &separated_type_, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_TYPES_TYPE]);
         self.type_.prepare(ctx)?;
         Ok(())
@@ -33884,15 +33896,16 @@ impl ::sittir_core::render::Render for ArgumentListElementsTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_element = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_ARGUMENT_LIST_ELEMENTS_ELEMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_ARGUMENT_LIST_ELEMENTS_ELEMENT, &separated_element, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT]);
         self.element.prepare(ctx)?;
         Ok(())
@@ -33957,15 +33970,16 @@ impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionListExpressionsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_expression = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = before; }
-            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = gaps.before; }
+            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
         self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION, &separated_expression, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION]);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -34030,15 +34044,16 @@ impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
 impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_case_pattern = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.case_pattern.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.case_pattern_separator_space_before.is_none() { self.case_pattern_separator_space_before = before; }
-            if self.case_pattern_separator_space_after.is_none() { self.case_pattern_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.case_pattern_separator_space_before.is_none() { self.case_pattern_separator_space_before = gaps.before; }
+            if self.case_pattern_separator_space_after.is_none() { self.case_pattern_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.case_pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_BEFORE].arm);
         self.case_pattern_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.case_pattern.iter_mut().map(Some), options::SEATS_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.case_pattern.iter_mut().map(Some), options::SEATS_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN, &separated_case_pattern, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN]);
         self.case_pattern.prepare(ctx)?;
         Ok(())
@@ -34103,15 +34118,16 @@ impl ::sittir_core::render::Render for DictPatternElementsTransport {
 impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_element = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_DICT_PATTERN_ELEMENTS_ELEMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_DICT_PATTERN_ELEMENTS_ELEMENT, &separated_element, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ELEMENT]);
         self.element.prepare(ctx)?;
         Ok(())
@@ -34176,15 +34192,16 @@ impl ::sittir_core::render::Render for PatternListPatternsTransport {
 impl ::sittir_core::prepare::Prepare for PatternListPatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_pattern = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = before; }
-            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = gaps.before; }
+            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE].arm);
         self.pattern_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.pattern.iter_mut().map(Some), options::SEATS_PATTERN_LIST_PATTERNS_PATTERN, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.pattern.iter_mut().map(Some), options::SEATS_PATTERN_LIST_PATTERNS_PATTERN, &separated_pattern, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PATTERN_LIST_PATTERNS_PATTERN]);
         self.pattern.prepare(ctx)?;
         Ok(())
@@ -34249,15 +34266,16 @@ impl ::sittir_core::render::Render for SubscriptsTransport {
 impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_subscript = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.subscript.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.subscript_separator_space_before.is_none() { self.subscript_separator_space_before = before; }
-            if self.subscript_separator_space_after.is_none() { self.subscript_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.subscript_separator_space_before.is_none() { self.subscript_separator_space_before = gaps.before; }
+            if self.subscript_separator_space_after.is_none() { self.subscript_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.subscript_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE].arm);
         self.subscript_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.subscript.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_SUBSCRIPT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.subscript.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_SUBSCRIPT, &separated_subscript, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT]);
         self.subscript.prepare(ctx)?;
         Ok(())
@@ -34322,15 +34340,16 @@ impl ::sittir_core::render::Render for DictionaryElementsTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_element = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
-            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.element_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_DICTIONARY_ELEMENTS_ELEMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.element.iter_mut().map(Some), options::SEATS_DICTIONARY_ELEMENTS_ELEMENT, &separated_element, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ELEMENT]);
         self.element.prepare(ctx)?;
         Ok(())
@@ -34806,15 +34825,16 @@ impl ::sittir_core::render::Render for PrintArgumentsTransport {
 impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_argument = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.argument.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.argument_separator_space_before.is_none() { self.argument_separator_space_before = before; }
-            if self.argument_separator_space_after.is_none() { self.argument_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.argument_separator_space_before.is_none() { self.argument_separator_space_before = gaps.before; }
+            if self.argument_separator_space_after.is_none() { self.argument_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_ARGUMENTS_ARGUMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_ARGUMENTS_ARGUMENT, &separated_argument, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PRINT_ARGUMENTS_ARGUMENT]);
         self.argument.prepare(ctx)?;
         Ok(())
@@ -34879,15 +34899,16 @@ impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
 impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_argument = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.argument.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.argument_separator_space_before.is_none() { self.argument_separator_space_before = before; }
-            if self.argument_separator_space_after.is_none() { self.argument_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.argument_separator_space_before.is_none() { self.argument_separator_space_before = gaps.before; }
+            if self.argument_separator_space_after.is_none() { self.argument_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.argument_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE].arm);
         self.argument_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_CHEVRON_ARGUMENTS_ARGUMENT, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.argument.iter_mut().map(Some), options::SEATS_PRINT_CHEVRON_ARGUMENTS_ARGUMENT, &separated_argument, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ARGUMENT]);
         self.argument.prepare(ctx)?;
         Ok(())
@@ -35229,14 +35250,14 @@ impl ::sittir_core::render::Render for ComprehensionClausesTransport {
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_content = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.content.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.content_separator_space.is_none() { self.content_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.content_separator_space.is_none() { self.content_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, ctx); }
+        if let Some(seated_items) = self.content.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, &separated_content, ctx); }
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -36690,15 +36711,16 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_value = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.value.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.value_separator_space_before.is_none() { self.value_separator_space_before = before; }
-            if self.value_separator_space_after.is_none() { self.value_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.value_separator_space_before.is_none() { self.value_separator_space_before = gaps.before; }
+            if self.value_separator_space_after.is_none() { self.value_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.value_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE].arm);
         self.value_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.value.iter_mut().map(Some), options::SEATS_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.value.iter_mut().map(Some), options::SEATS_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE, &separated_value, ctx);
         self.value.prepare(ctx)?;
         Ok(())
     }
@@ -37005,15 +37027,16 @@ impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_expression = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.expression.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = before; }
-            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = after; }
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.expression_separator_space_before.is_none() { self.expression_separator_space_before = gaps.before; }
+            if self.expression_separator_space_after.is_none() { self.expression_separator_space_after = gaps.after; }
+            gaps.separated
+        };
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
         self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_EXPRESSION_STATEMENT_TUPLE_EXPRESSION, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_EXPRESSION_STATEMENT_TUPLE_EXPRESSION, &separated_expression, ctx);
         self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_EXPRESSION]);
         self.expression.prepare(ctx)?;
         Ok(())
@@ -37080,9 +37103,9 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
         self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.with_item.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.with_item_separator_space_before.is_none() { self.with_item_separator_space_before = before; }
-            if self.with_item_separator_space_after.is_none() { self.with_item_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.with_item_separator_space_before.is_none() { self.with_item_separator_space_before = gaps.before; }
+            if self.with_item_separator_space_after.is_none() { self.with_item_separator_space_after = gaps.after; }
         }
         self.with_item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.with_item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER].arm);
@@ -37205,14 +37228,14 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        {
+        let separated_alternative = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.alternative.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.alternative_separator_space.is_none() { self.alternative_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.alternative_separator_space.is_none() { self.alternative_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx); }
+        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, &separated_alternative, ctx); }
         self.alternative.prepare(ctx)?;
         Ok(())
     }

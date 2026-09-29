@@ -1,4 +1,5 @@
 import type { VariantChild } from '../variant-structural.ts';
+import type { ExternalRole } from '../../types/ir.ts';
 import { opensLineEnd } from './pattern-automaton.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
@@ -1038,6 +1039,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	factoryInline: boolean = false;
 
 	triviaInterior: boolean = false;
+
+	externalRole?: ExternalRole['role'];
 
 	grammarRoot: boolean = false;
 

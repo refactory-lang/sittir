@@ -29,7 +29,7 @@ pub struct ResolvedOptions {
     pub edge_rows: &'static [u16],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
-    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`).
+    /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`).
     pub kind_flags: &'static [u8],
 }
 
@@ -38,6 +38,10 @@ pub const KIND_ANON: u8 = 1;
 /// A kind whose text ends only at a line break, and is not the end of an
 /// enclosing kind that does: the node written after it starts a new line.
 pub const KIND_LINE_TERMINATED: u8 = 2;
+/// A kind whose rule ends in the grammar's declared newline token, which its
+/// span leaves out, and is not the end of an enclosing kind that does: the
+/// node written after it starts a new line.
+pub const KIND_LINE_BREAK_TERMINATED: u8 = 4;
 
 /// One spacing site's default arm and the strength a default carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

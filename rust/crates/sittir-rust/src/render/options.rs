@@ -3279,7 +3279,7 @@ pub static EDGE_ROWS: &[u16] = &[
     188, NO_SITE, 189, 190, 191, 192, 193, 194, 195, 196,
 ];
 
-/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED.
+/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED.
 pub static KIND_FLAGS: &[u8] = &[
     0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,

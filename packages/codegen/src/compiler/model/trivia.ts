@@ -227,7 +227,36 @@ const lineTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>()
 export function lineTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = lineTerminatedKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;
-	const terminated = [...nodeMap.nodes.keys()].filter((kind) => lineTerminated(nodeMap, kind) === true);
+	const outermost = outermostEnds(nodeMap, (kind) => lineTerminated(nodeMap, kind) === true);
+	lineTerminatedKindsByNodeMap.set(nodeMap, outermost);
+	return outermost;
+}
+
+export function lineBreakTerminated(nodeMap: NodeMap, kind: string): boolean {
+	return endsInNewlineRole(nodeMap, kind, new Set());
+}
+
+function endsInNewlineRole(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): boolean {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined || seen.has(kind)) return false;
+	if (node.externalRole === 'newline') return true;
+	const within = new Set([...seen, kind]);
+	const ends = node.lineEnds;
+	return ends.length > 0 && ends.every((end) => typeof end !== 'string' && endsInNewlineRole(nodeMap, end.symbol, within));
+}
+
+const lineBreakTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function lineBreakTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = lineBreakTerminatedKindsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const outermost = outermostEnds(nodeMap, (kind) => lineBreakTerminated(nodeMap, kind));
+	lineBreakTerminatedKindsByNodeMap.set(nodeMap, outermost);
+	return outermost;
+}
+
+function outermostEnds(nodeMap: NodeMap, holds: (kind: string) => boolean): ReadonlySet<string> {
+	const holding = [...nodeMap.nodes.keys()].filter(holds);
 	const ending = new Set<string>();
 	const visit = (kind: string): void => {
 		for (const end of nodeMap.nodes.get(kind)?.lineEnds ?? []) {
@@ -236,8 +265,6 @@ export function lineTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
 			visit(end.symbol);
 		}
 	};
-	terminated.forEach(visit);
-	const outermost = new Set(terminated.filter((kind) => !ending.has(kind)));
-	lineTerminatedKindsByNodeMap.set(nodeMap, outermost);
-	return outermost;
+	holding.forEach(visit);
+	return new Set(holding.filter((kind) => !ending.has(kind)));
 }

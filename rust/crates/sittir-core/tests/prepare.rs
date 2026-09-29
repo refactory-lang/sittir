@@ -273,7 +273,7 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
     let opts = ResolvedOptions { spacing: arms(&[70, 80]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![seatable(3), None, seatable(4), seatable(5), seatable(3)];
-    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
     assert_eq!(after_of(&items[0]), Some(70));
     assert_eq!(after_of(&items[2]), Some(80));
     assert_eq!(after_of(&items[3]), None);
@@ -286,7 +286,7 @@ fn a_seated_gap_carries_its_own_sites_strength() {
     let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 70, strength: 0 }], ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![seatable(3), seatable(3)];
-    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
     let Some(SlotValue::Transport(first)) = &items[0] else { panic!() };
     assert_eq!(first.edges.after, Some(stamped(70, 0)));
 }
@@ -297,7 +297,7 @@ fn a_seated_gap_is_not_written_after_the_last_present_element() {
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![seatable(3), seatable(3), None, None];
-    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
     assert_eq!(after_of(&items[0]), Some(70));
     assert_eq!(after_of(&items[1]), None);
 }
@@ -311,7 +311,7 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
         Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(wire(1)) } })),
         seatable(3),
     ];
-    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
     assert_eq!(after_of(&items[0]), Some(1));
 }
 
@@ -322,8 +322,103 @@ fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges()
     let sources = Sources(HashMap::new());
     let wrapped = || SlotValue::<Wrapper>::Transport(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
     let mut items = vec![wrapped(), wrapped()];
-    fill_seated_gaps(items.iter_mut().map(Some), table, &ctx(&opts, &sources));
+    fill_seated_gaps(items.iter_mut().map(Some), table, &[], &ctx(&opts, &sources));
     let SlotValue::Transport(first) = &items[0] else { panic!() };
     assert_eq!(first.content.edges.after.map(|e| e.arm), Some(70));
     assert_eq!(first.edges, Edges::default());
 }
+
+impl Prepare for Seatable {
+    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        Ok(())
+    }
+}
+
+fn parsed(kind: u16, start: u32, end: u32) -> Option<SlotValue<Seatable>> {
+    let mut coord = NodeCoordinate::new(encode_handle(7, 0), Span { start, end });
+    coord.kind = Some(KindId(kind));
+    Some(SlotValue::Coord(coord))
+}
+
+fn coord_after_of(item: &Option<SlotValue<Seatable>>) -> Option<u16> {
+    match item {
+        Some(SlotValue::Coord(c)) => c.edges.and_then(|e| e.after).map(|e| e.arm),
+        _ => None,
+    }
+}
+
+fn source_tree() -> Sources {
+    Sources(HashMap::from([(7, Arc::from("use x;\n\nfn f() {}\n"))]))
+}
+
+#[test]
+fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 0, 6), seatable(3)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
+    assert_eq!(coord_after_of(&items[0]), Some(70));
+}
+
+#[test]
+fn a_coordinate_followed_by_one_out_of_source_order_takes_its_seat() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[false, false], &ctx(&opts, &sources));
+    assert_eq!(coord_after_of(&items[0]), Some(70));
+    assert_eq!(coord_after_of(&items[1]), None);
+}
+
+#[test]
+fn a_coordinate_followed_by_the_next_in_source_order_leaves_the_gap_to_the_source() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 0, 6), parsed(3, 8, 17)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[true, false], &ctx(&opts, &sources));
+    assert_eq!(coord_after_of(&items[0]), None);
+}
+
+#[test]
+fn a_coordinate_whose_source_gap_did_not_classify_takes_its_seat() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 0, 6), parsed(3, 8, 17)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[false, false], &ctx(&opts, &sources));
+    assert_eq!(coord_after_of(&items[0]), Some(70));
+}
+
+#[test]
+fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat_though_its_pair_classified() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 0, 6), seatable(3), parsed(3, 8, 17)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[true, false, false], &ctx(&opts, &sources));
+    assert_eq!(coord_after_of(&items[0]), Some(70));
+}
+
+#[test]
+fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 1];
+    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 5, strength: 1 }, SeamArm { arm: 70, strength: SEAM_DECLARED }, SeamArm { arm: 6, strength: 1 }], sites: EDGE_SPECS_3, edges: EDGE_ROWS_3, edge_rows: EDGE_ROW_OF, ..ResolvedOptions::default() };
+    let sources = source_tree();
+    let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &[], &ctx(&opts, &sources));
+    items.prepare(&ctx(&opts, &sources)).unwrap();
+    let Some(SlotValue::Coord(first)) = &items[0] else { panic!() };
+    assert_eq!(first.edges.and_then(|e| e.before).map(|e| e.arm), Some(5));
+    assert_eq!(coord_after_of(&items[0]), Some(70));
+    assert_eq!(coord_after_of(&items[1]), Some(6));
+}
+
+static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: 0, after: 2 }];
+static EDGE_SPECS_3: &[SiteSpec] = &[
+    SiteSpec { default_arm: 5, strength: 1 },
+    SiteSpec { default_arm: 70, strength: 1 },
+    SiteSpec { default_arm: 6, strength: 1 },
+];
