@@ -80,8 +80,8 @@ function maxOf(max: number | undefined): { readonly max?: number } {
 	return max === undefined ? {} : { max };
 }
 
-function surfaceArity(node: AssembledNode, wires: PolymorphWires, coerced = wires.coerceEmitted(node)): number | undefined {
-	return builtTypeSurfaceOf(node, wires.nodeMap, wires.kindEntries)?.maxArgs ?? keywordLeafArity(node, coerced);
+function surfaceArity(node: AssembledNode, wires: PolymorphWires): number | undefined {
+	return builtTypeSurfaceOf(node, wires.nodeMap, wires.kindEntries)?.maxArgs ?? keywordLeafArity(node);
 }
 
 function routeArity(path: string, wires: PolymorphWires): number | undefined {

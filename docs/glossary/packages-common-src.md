@@ -161,7 +161,7 @@ Storage for a slot that holds only kind ids: text, or a node's text, in the slot
 
 The `FlavorPair` constructor: a factory's strict and coerce flavours as one value, with the pair's arity stamp, `bundle(strict, coerce, { key, max })`. Every pair the factories surface carries is built here, so each pair holds its own stamp and no route needs a mirror structure for it.
 
-`coerce` may be `undefined` for a strict-only pair (a refine form); the result is a `StrictFlavor` with no `coerce` key, so hoisting falls back to the strict flavour. The stamp's type is `HoistArity<MaxArity<flavor>>`, the flavor being `coerce` when present and `strict` otherwise: it is required exactly when that flavor's `MaxArity` is a number literal and refused when the flavor takes a rest parameter, so a missing, wrong or superfluous stamp is a type error in the generated package.
+When `coerce` is present, `strict` need not be callable: a keyword leaf's strict entry is its kind id. `coerce` may be `undefined` for a strict-only pair (a refine form); the result is a `StrictFlavor` with no `coerce` key, so hoisting falls back to the strict flavour. The stamp's type is `HoistArity<MaxArity<flavor>>`, the flavor being `coerce` when present and `strict` otherwise: it is required exactly when that flavor's `MaxArity` is a number literal and refused when the flavor takes a rest parameter, so a missing, wrong or superfluous stamp is a type error in the generated package.
 
 The pair always has an `arity` key, `undefined` when unstamped, so spreading a pair into a route object after an earlier pair (`{ ...B.<key>, ...bundle(seated, …) }`) replaces the earlier stamp with its own.
 

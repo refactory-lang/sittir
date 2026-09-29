@@ -128,16 +128,12 @@ type AnyFlavorFn = (...args: never[]) => unknown;
 type ArityArgs<F> = number extends MaxArity<F> ? [] : [arity: HoistArity<MaxArity<F>>];
 
 export function bundle<S extends AnyFlavorFn>(strict: S, coerce: undefined, ...arity: NoInfer<ArityArgs<S>>): StrictFlavor<S>;
-export function bundle<S extends AnyFlavorFn, C extends AnyFlavorFn>(
-	strict: S,
-	coerce: C,
-	...arity: NoInfer<ArityArgs<C>>
-): FlavorPair<S, C>;
+export function bundle<S, C extends AnyFlavorFn>(strict: S, coerce: C, ...arity: NoInfer<ArityArgs<C>>): FlavorPair<S, C>;
 export function bundle(
-	strict: AnyFlavorFn,
+	strict: unknown,
 	coerce: AnyFlavorFn | undefined,
 	arity?: HoistArity
-): StrictFlavor<AnyFlavorFn> | FlavorPair<AnyFlavorFn, AnyFlavorFn> {
+): StrictFlavor<unknown> | FlavorPair<unknown, AnyFlavorFn> {
 	return Object.freeze(coerce === undefined ? { strict, arity } : { strict, coerce, arity });
 }
 

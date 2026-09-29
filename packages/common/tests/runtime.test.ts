@@ -85,6 +85,13 @@ describe('grammar-free runtime helpers', () => {
 		expect(hoist(bundle(strict, undefined, { key: 'strict', max: 1 }))(2)).toBe('s2');
 	});
 
+	it('a pair whose strict entry is a constant hoists to its coercer', () => {
+		const hoisted = hoist(bundle(7, (_input?: string) => 7, { key: 'kw', max: 1 }));
+		expect(hoisted()).toBe(7);
+		expect(hoisted.strict).toBe(7);
+		expect(() => (hoisted as (...a: unknown[]) => number)('x', 'y')).toThrow('kw: takes at most 1 argument, got 2');
+	});
+
 	it('hoist refuses more arguments than the pair stamp allows, and a rest callable takes no stamp', () => {
 		const sum = (x: number, y?: number) => x + (y ?? 0);
 		const hoisted = hoist(bundle(sum, sum, { key: 'sum', max: 2 }));

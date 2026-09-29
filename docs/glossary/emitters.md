@@ -12799,7 +12799,7 @@ Which coercer a leaf kind gets: `string` for a pattern leaf (its text), `keyword
 
 ### `packages/codegen/src/emitters/from.ts::keywordLeafArity`
 
-The arity of a keyword leaf's flavor: its coercer takes one optional `<Kind>.Loose` input, and its raw factory takes none. Undefined for any other leaf, whose arity its built-type surface states.
+The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose` input. Its strict entry is its kind id, a constant, so the pair's hoisted call is always the coercer. Undefined for any other leaf, whose arity its built-type surface states.
 
 ### `packages/codegen/src/emitters/from.ts::resolveFieldCall`
 
@@ -14657,7 +14657,7 @@ A spreadable `{ max }` that is empty when the arity is unbounded.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::surfaceArity`
 
-The most arguments a kind's own factory flavor takes: its `BuiltTypeSurface.maxArgs`, or, for a keyword leaf with no surface, `keywordLeafArity` for the coerced or strict flavor (`coerced` defaults to whether the kind has a coercer).
+The most arguments a kind's own factory flavor takes: its `BuiltTypeSurface.maxArgs`, or, for a keyword leaf with no surface, its coercer's (`keywordLeafArity`).
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::entryArity`
 

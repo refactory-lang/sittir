@@ -839,9 +839,8 @@ function leafFromForm(node: AssembledNode): 'string' | 'keyword' | undefined {
 	return undefined;
 }
 
-export function keywordLeafArity(node: AssembledNode, coerced: boolean): number | undefined {
-	if (leafFromForm(node) !== 'keyword') return undefined;
-	return coerced ? 1 : 0;
+export function keywordLeafArity(node: AssembledNode): number | undefined {
+	return leafFromForm(node) === 'keyword' ? 1 : undefined;
 }
 
 function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined): string {
