@@ -212,7 +212,7 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
     commit) and writes through the same temporary-file-and-rename path.
 - **Node guards** narrow to this engine's language. Each one is its grammar-agnostic
   counterpart in `@sittir/common/utils` plus a same-language check on the node's
-  engine stamp, `stampOf(x)?.language === this.language`:
+  engine, `x.$engine?.().language === this.language`:
   - `isNode`: any sittir node of this language.
   - `isParsedNode` / `isFactoryNode`: read from source, or built.
   - `isErrorNode`: a node of this language that `isErrorNode` in `@sittir/common/utils`
@@ -232,13 +232,22 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 
 ### Nodes are bound to their engine
 
-- `build.*` stamps each node with its engine, in a non-enumerable symbol field. Nodes
-  built implicitly inside a builder (from strings, plain objects or numbers) get the
-  same engine.
-- Parsed nodes carry the engine that read them, in the same field; their
-  coordinates already name that engine's tree.
-- A node's methods read the field: `$render()` is `engine.render(node)`, `$with.*`
-  rebuilds through the same engine, and `$trivia` works as today.
+- Each node has a bound, non-enumerable method `$engine()` that returns the engine it
+  belongs to. It is the stamp: there is no separate symbol field. `withMethods` binds
+  it like the node's other methods, as a closure.
+- The closure holds the engine's **handle**, not the engine: one small object per
+  engine, `{ current: Engine | EngineIdentity }`, shared by every node that engine
+  stamps. `$engine()` returns `handle.current`.
+- **`EngineIdentity`** is what a node needs to know about its engine without holding
+  it: `language` (the descriptor) and its metadata (grammar name, version, the
+  grammar's hash, the engine's options). `Engine` carries the same fields, so code
+  that needs only identity reads them the same way from either.
+- `build.*` stamps each node with its engine's handle. Nodes built implicitly inside a
+  builder (from strings, plain objects or numbers) get the same handle.
+- Parsed nodes carry the handle of the engine that read them; their coordinates
+  already name that engine's tree.
+- A node's methods go through `$engine()`: `$render()` is `$engine().render(node)`,
+  `$with.*` rebuilds through the same engine, and `$trivia` works as today.
 - The engine is found through scope, not through the parent: a child is built before
   its parent exists. `build.*` calls run inside the engine's scope (a module-level
   current engine, set for the synchronous call and restored in `finally`), and the
@@ -246,10 +255,20 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   engine is current. Coerced children therefore get the calling engine with no change to
   the generated builders. A node built by one engine and passed into another's call
   keeps its own stamp.
-- The stamp is a strong reference. A `WeakRef` would make `$render` fail whenever the
-  collector happened to reclaim the engine; an engine's lifetime is explicit instead.
-  After `engine.dispose()`, a stamped node's `$render()` and `$toEdit()` throw
-  "engine disposed".
+- **Swapping the engine for its identity.** Setting `handle.current` to the engine's
+  `EngineIdentity` detaches every node of that engine at once, with no registry of
+  nodes and no walk over them:
+  - `engine.dispose()` swaps its handle to the identity. Nodes no longer reach the
+    engine, so its native resources can be reclaimed however long the nodes live.
+    A detached node's `$render()` and `$toEdit()` throw "engine disposed" and name
+    `engine.render(node)`; the node guards keep working, because they read only
+    `$engine().language`.
+  - A single node can be detached, for example before serializing it, by rebinding its
+    methods to a handle that holds only the identity.
+
+  Engine lifetime stays explicit: a live engine is reached through a strong reference
+  in its handle, so `$render` never depends on when the collector runs, as it would
+  with a `WeakRef`.
 - **Every node origin on the public surface gets the engine stamp**, so the engine's
   language is the one language identity a node needs:
 
@@ -270,7 +289,7 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 - The process-wide default engine is retired, along with the free `render`, `toEdit`
   and `applyEdits` exports and every path that renders without an engine. Through the
   public surface every node has an engine. A node built by calling internal builders
-  outside any engine has no stamp; its `$render()` throws and names `engine.render(node)`.
+  outside any engine has no `$engine`; its `$render()` throws and names `engine.render(node)`.
 
 ### Projects: many engines, one staged file set
 
@@ -400,6 +419,11 @@ engine surface.
 - Stamp census: a node from each origin in the table (build, coercion, `.from()`,
   parse, a lazily expanded child, a `$with` rebuild, a comment entry built from
   `$trivia` text outside any build call) carries its engine's stamp.
+- Engine identity: after `engine.dispose()`, every node of that engine, however
+  built or read, has `$engine()` returning its `EngineIdentity`; its `$render()`
+  throws "engine disposed"; the node guards still accept it; and a node from another
+  engine of the same language is unaffected. A node detached on its own throws on
+  `$render()` and still passes the guards.
 - `api`: `'strict'` exposes the strict flavour as `build.x` and rejects loose input
   (type and runtime); `'portable'` rejects at creation.
 - Interceptors: the order is first-outermost; a `build` interceptor sees nested variant
