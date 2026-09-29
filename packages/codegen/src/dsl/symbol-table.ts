@@ -29,6 +29,7 @@ import {
 } from './rule-patterns.ts';
 import type { KindParserMetadata, ReservedWordsets } from '../compiler/types.ts';
 import { grammarRootNames } from '../util/reachable-rules.ts';
+import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 
 export interface ParserSymbolTable {
 	readonly symbols: ReadonlyMap<string, CEnumEntry>;
@@ -38,7 +39,7 @@ export interface ParserSymbolTable {
 
 export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: unknown): JoinedIds {
 	const symbolTextFacts = resolveSymbolTextFacts(table.names, collectGrammarFacts(grammarJson));
-	return joinIdNames(
+	const joined = joinIdNames(
 		table.symbols,
 		table.names,
 		deriveSymbolRuntimeName(symbolTextFacts),
@@ -46,7 +47,22 @@ export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: un
 		table.facts,
 		collectLexicalRanks(grammarJson)
 	);
+	joined.ids.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
+	return joined;
 }
+
+export const ERROR_KIND_ROW: GeneratedIdEntry = {
+	id: ERROR_KIND_ID,
+	parser: {
+		cSymbol: 'ts_builtin_sym_error',
+		parserName: ERROR_KIND_NAME,
+		symbolName: ERROR_KIND_NAME,
+		anon: false,
+		aux: false,
+		alias: false,
+		hidden: false
+	}
+};
 
 interface GrammarFacts {
 	readonly aliasTargets: ReadonlyMap<string, ReadonlySet<string>>;

@@ -6179,7 +6179,11 @@ A parser's symbol table as the kind catalog needs it: each symbol's C name with 
 
 ### `packages/codegen/src/dsl/symbol-table.ts::kindTableOfSymbolTable`
 
-The one derivation of the kind catalog's rows from a symbol table and its grammar.json: literal texts (`resolveSymbolTextFacts`), runtime kind names (`deriveSymbolRuntimeName`), lexical ranks (`collectLexicalRanks`), joined per symbol by `joinIdNames`. Both sources of a table go through it, so a predicted row and a real row can differ only where the tables do.
+The one derivation of the kind catalog's rows from a symbol table and its grammar.json: literal texts (`resolveSymbolTextFacts`), runtime kind names (`deriveSymbolRuntimeName`), lexical ranks (`collectLexicalRanks`), joined per symbol by `joinIdNames`, plus `ERROR_KIND_ROW`. Both sources of a table go through it, so a predicted row and a real row can differ only where the tables do.
+
+### `packages/codegen/src/dsl/symbol-table.ts::ERROR_KIND_ROW`
+
+The catalog row for tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`), under `ERROR_KIND_NAME` at `ERROR_KIND_ID` from `@sittir/common/error-kind`. parser.c's symbol enum never lists it, since tree-sitter issues it and no grammar declares it, so `kindTableOfSymbolTable` adds it to every table. The TS and Rust kind tables then carry it for every grammar, and a read tree holding an ERROR stays within the ids its transports decode. The row is named, visible and neither an alias nor aux, which is how the parser shows an ERROR node.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::literalRuleValue`
 

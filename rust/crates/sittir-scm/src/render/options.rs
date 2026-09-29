@@ -1085,7 +1085,7 @@ mod resolve_tests {
 
     #[test]
     fn a_value_the_site_does_not_admit_is_refused_with_its_path() {
-        assert_eq!(resolve("{\"anonymousNode\":{\"after\":65535}}"), Err("options: (anonymous_node)/after does not admit kind id 65535 (allowed: [24, 25, 26, 27, 28, 29, 30, 31])".to_string()));
+        assert_eq!(resolve("{\"anonymousNode\":{\"after\":65534}}"), Err("options: (anonymous_node)/after does not admit kind id 65534 (allowed: [24, 25, 26, 27, 28, 29, 30, 31])".to_string()));
     }
 
     #[test]

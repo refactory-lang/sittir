@@ -1,4 +1,5 @@
 import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
+import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
@@ -377,6 +378,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
+	if (/\bERROR_KIND_ID\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { ERROR_KIND_ID } from '@sittir/common/error-kind';`);
+	}
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
 	}
@@ -491,6 +495,10 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 		lines.push(`  ${entry.member} = ${entry.id},`);
 	}
 	lines.push('}');
+	lines.push('');
+	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
+	if (errorEntry === undefined) throw new Error(`types.ts: TSKindId has no ${ERROR_KIND_NAME} member`);
+	lines.push(`void (TSKindId.${errorEntry.member} satisfies typeof ERROR_KIND_ID);`);
 	lines.push('');
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');

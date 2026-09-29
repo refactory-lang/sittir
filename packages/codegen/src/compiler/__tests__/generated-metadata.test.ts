@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { deriveGeneratedIdTablesFromParserCSource } from '../generated-metadata.ts';
 import { collectGeneratedKindEntries, findEntryForLiteralText, reservedWordset } from '../../dsl/symbol-table.ts';
 
@@ -455,7 +457,8 @@ static const char * const ts_field_names[] = {
 		expect(kindIds).toEqual(
 			new Map([
 				['False_keyword', expect.objectContaining({ id: 20 })],
-				['false_keyword', expect.objectContaining({ id: 21 })]
+				['false_keyword', expect.objectContaining({ id: 21 })],
+				[ERROR_KIND_NAME, ERROR_KIND_ROW]
 			])
 		);
 	});

@@ -33,6 +33,11 @@
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
 		},
+		"./error-kind": {
+			"types": "./src/error-kind.ts",
+			"import": "./src/error-kind.ts",
+			"default": "./src/error-kind.ts"
+		},
 		"./utils": {
 			"types": "./dist/utils.d.ts",
 			"import": "./dist/utils.js",

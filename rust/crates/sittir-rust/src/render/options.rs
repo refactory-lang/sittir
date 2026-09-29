@@ -10045,7 +10045,7 @@ mod resolve_tests {
 
     #[test]
     fn a_value_the_site_does_not_admit_is_refused_with_its_path() {
-        assert_eq!(resolve("{\"abstractType\":{\"after\":65535}}"), Err("options: (abstract_type)/after does not admit kind id 65535 (allowed: [168, 169, 170, 171, 172, 173, 174, 175])".to_string()));
+        assert_eq!(resolve("{\"abstractType\":{\"after\":65534}}"), Err("options: (abstract_type)/after does not admit kind id 65534 (allowed: [168, 169, 170, 171, 172, 173, 174, 175])".to_string()));
     }
 
     #[test]

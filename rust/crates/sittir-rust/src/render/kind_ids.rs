@@ -482,6 +482,8 @@ pub const _MATCH_BLOCK_ARMS_REPEAT1: KindId = KindId(471);
 pub const _FIELD_IDENTIFIER: KindId = KindId(472);
 pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(474);
 pub const _TYPE_IDENTIFIER: KindId = KindId(475);
+pub const ERROR: KindId = KindId(65535);
+const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -962,6 +964,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         472 => "field_identifier", // "_field_identifier"
         474 => "shorthand_field_identifier", // "_shorthand_field_identifier"
         475 => "type_identifier", // "_type_identifier"
+        65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
 }

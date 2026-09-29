@@ -21,6 +21,7 @@ import type {
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
+import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
 	[TSKindId.True]: boolean;
@@ -622,8 +623,11 @@ export enum TSKindId {
 	ShorthandPropertyIdentifierPattern = 468,
 	StatementIdentifier = 469,
 	ThisType = 470,
-	TypeIdentifier = 471
+	TypeIdentifier = 471,
+	ERROR = 65535
 }
+
+void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
@@ -1096,7 +1100,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[468, 'shorthand_property_identifier_pattern'],
 	[469, 'statement_identifier'],
 	[470, 'this_type'],
-	[471, 'type_identifier']
+	[471, 'type_identifier'],
+	[65535, 'ERROR']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1571,7 +1576,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[468, 'shorthand_property_identifier_pattern'],
 	[469, 'statement_identifier'],
 	[470, 'this_type'],
-	[471, 'type_identifier']
+	[471, 'type_identifier'],
+	[65535, 'ERROR']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2522,6 +2528,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ThisType;
 		case 'type_identifier':
 			return TSKindId.TypeIdentifier;
+		case 'ERROR':
+			return TSKindId.ERROR;
 		case '*':
 			return TSKindId.Star;
 		case 'as':

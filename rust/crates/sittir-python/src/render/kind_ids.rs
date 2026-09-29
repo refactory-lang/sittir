@@ -345,6 +345,8 @@ pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(334);
 pub const _AS_PATTERN_TARGET: KindId = KindId(335);
 pub const _FORMAT_EXPRESSION: KindId = KindId(336);
 pub const _NAMES: KindId = KindId(337);
+pub const ERROR: KindId = KindId(65535);
+const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -689,6 +691,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         335 => "as_pattern_target", // "_as_pattern_target"
         336 => "format_expression", // "_format_expression"
         337 => "names", // "_names"
+        65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
 }

@@ -1,4 +1,5 @@
 import type { SeamOrigin } from '../types/rule.ts';
+import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -354,7 +355,7 @@ function resolveTests(plan: RenderOptionsPlan, addresses: AddressTables, siteInd
 			'',
 			'    #[test]',
 			'    fn a_value_the_site_does_not_admit_is_refused_with_its_path() {',
-			`        assert_eq!(resolve(${rustStringLiteral(jsonAt(refused.keys, 65535))}), Err(${rustStringLiteral(`options: ${refused.refs[0]!.path} does not admit kind id 65535 (allowed: [${site.allowedIds.join(', ')}])`)}.to_string()));`,
+			`        assert_eq!(resolve(${rustStringLiteral(jsonAt(refused.keys, UNCATALOGUED_KIND_ID))}), Err(${rustStringLiteral(`options: ${refused.refs[0]!.path} does not admit kind id ${UNCATALOGUED_KIND_ID} (allowed: [${site.allowedIds.join(', ')}])`)}.to_string()));`,
 			'    }'
 		);
 	}
@@ -467,6 +468,14 @@ const NO_SITE = 'NO_SITE';
 
 const NO_SITE_ID = 0xffff;
 
+const UNCATALOGUED_KIND_ID = ERROR_KIND_ID - 1;
+
+function denseWidth(name: string, ids: Iterable<number>): number {
+	const top = Math.max(-1, ...ids);
+	if (top >= ERROR_KIND_ID) throw new Error(`options.rs: ${name} keys a row by ${ERROR_KIND_NAME}'s id ${ERROR_KIND_ID}`);
+	return top + 1;
+}
+
 function siteOrNone(site: number | undefined): string {
 	if (site !== undefined && site >= NO_SITE_ID) throw new Error(`options.rs: site ${site} does not fit a u16 table below NO_SITE`);
 	return site === undefined ? NO_SITE : String(site);
@@ -474,8 +483,7 @@ function siteOrNone(site: number | undefined): string {
 
 function denseFlags(name: string, rows: readonly { readonly id: number; readonly flags: number }[]): string[] {
 	const byId = new Map(rows.map((row) => [row.id, row.flags]));
-	const width = rows.length === 0 ? 0 : Math.max(...byId.keys()) + 1;
-	const cells = Array.from({ length: width }, (_, id) => String(byId.get(id) ?? 0));
+	const cells = Array.from({ length: denseWidth(name, byId.keys()) }, (_, id) => String(byId.get(id) ?? 0));
 	const L = [`pub static ${name}: &[u8] = &[`];
 	for (let i = 0; i < cells.length; i += 32) L.push(`    ${cells.slice(i, i + 32).join(', ')},`);
 	L.push('];', '');
@@ -483,8 +491,7 @@ function denseFlags(name: string, rows: readonly { readonly id: number; readonly
 }
 
 function denseTable(name: string, entries: ReadonlyMap<number, number>): string[] {
-	const width = entries.size === 0 ? 0 : Math.max(...entries.keys()) + 1;
-	const cells = Array.from({ length: width }, (_, id) => siteOrNone(entries.get(id)));
+	const cells = Array.from({ length: denseWidth(name, entries.keys()) }, (_, id) => siteOrNone(entries.get(id)));
 	const L = [`pub static ${name}: &[u16] = &[`];
 	for (let i = 0; i < cells.length; i += 16) L.push(`    ${cells.slice(i, i + 16).join(', ')},`);
 	L.push('];', '');

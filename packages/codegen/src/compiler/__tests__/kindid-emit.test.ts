@@ -1,4 +1,6 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
+import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 
 import { structuralBuilder } from '../../dsl/builders.ts';
@@ -36,6 +38,7 @@ function makeMinimalFixture(): {
 		},
 		generatedIdTables: {
 			kindIds: {
+				[ERROR_KIND_NAME]: ERROR_KIND_ROW,
 				call_expression: {
 					id: 17,
 					parser: {

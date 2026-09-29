@@ -84,3 +84,12 @@ describe('built and read trivia render alike', () => {
 		}
 	});
 });
+
+describe('an ERROR node, rendered detached', () => {
+	it('renders the source it wraps as trivia text', async () => {
+		const render = await detachedRenderer('python');
+		expect(render('from a import (  # c\n    *)\n')).toBe('from a import (  # c\n    *)');
+		expect(render('x = 1 $ 2\n')).toBe('x = 1 $ 2\n');
+		expect(render('x = 1\n@@@\ny = 2\n')).toBe('x = 1\n@@@\ny = 2\n');
+	});
+});

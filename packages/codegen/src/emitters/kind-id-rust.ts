@@ -7,6 +7,7 @@ import type { RenderRule } from '../types/rule.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { reclaimsAnonymousChild, slotSeparatorTexts, wireRoutesOf } from './shared.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
+import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -35,6 +36,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		const constName = toScreamingSnakeCase(entry.member, entry.kind);
 		lines.push(`pub const ${constName}: KindId = KindId(${entry.id});`);
 	}
+	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
+	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
+	lines.push(`const _: () = assert!(${toScreamingSnakeCase(errorEntry.member, errorEntry.kind)}.0 == KindId::ERROR.0);`);
 
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);

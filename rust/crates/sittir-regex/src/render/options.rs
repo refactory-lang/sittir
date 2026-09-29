@@ -773,6 +773,6 @@ mod resolve_tests {
 
     #[test]
     fn a_value_the_site_does_not_admit_is_refused_with_its_path() {
-        assert_eq!(resolve("{\"alternation\":{\"term\":{\"separator\":{\"pipe\":{\"after\":65535}}}}}"), Err("options: (alternation)/term:/separator/\"|\"/after does not admit kind id 65535 (allowed: [47, 48, 49, 50])".to_string()));
+        assert_eq!(resolve("{\"alternation\":{\"term\":{\"separator\":{\"pipe\":{\"after\":65534}}}}}"), Err("options: (alternation)/term:/separator/\"|\"/after does not admit kind id 65534 (allowed: [47, 48, 49, 50])".to_string()));
     }
 }

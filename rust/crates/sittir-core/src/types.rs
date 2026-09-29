@@ -52,6 +52,11 @@ use std::fmt;
 pub struct KindId(pub u16);
 
 impl KindId {
+    /// tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`): the kind
+    /// of the node error recovery wraps unparsable source in. It is issued by
+    /// tree-sitter itself, not by any grammar, so every grammar shares it.
+    pub const ERROR: KindId = KindId(u16::MAX);
+
     pub const fn new(id: u16) -> Self {
         Self(id)
     }
