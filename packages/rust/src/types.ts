@@ -24,6 +24,7 @@ import type {
 	TriviaSetter,
 	GrammarInnerTrivia
 } from '@sittir/types';
+import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
 
 export type { RustGrammar };
@@ -2919,15 +2920,6 @@ export type WhitespaceArm =
 	| TSKindId.DoubleBlankline
 	| TSKindId.Indent
 	| TSKindId.Dedent;
-
-/** Separated-list optional-flank bitflag — the wire's `_delimiter` key
- *  and the list factories' `delimiter` option. */
-export enum Delimiter {
-	None = 0,
-	Leading = 1,
-	Trailing = 2,
-	Both = 3
-}
 
 // Scoped enums per supertype
 export enum StatementKind {

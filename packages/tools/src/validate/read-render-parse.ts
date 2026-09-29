@@ -11,7 +11,8 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
-import { mapTriviaEntries, spanSlicer, stripStructuralProvenance, type TriviaSides } from '@sittir/common';
+import { spanSlicer, stripStructuralProvenance, type TriviaSides } from '@sittir/common';
+import { mapTriviaEntries } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 

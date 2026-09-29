@@ -565,15 +565,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 export type SpacingArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
 export type WhitespaceArm = TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline;
 
-/** Separated-list optional-flank bitflag — the wire's `_delimiter` key
- *  and the list factories' `delimiter` option. */
-export enum Delimiter {
-	None = 0,
-	Leading = 1,
-	Trailing = 2,
-	Both = 3
-}
-
 // Scoped enums per supertype
 export enum ClassAtomKind {
 	ClassCharacter = 'class_character',

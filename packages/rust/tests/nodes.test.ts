@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
 import { TSKindId } from '../src/types.js';
-import { Delimiter } from '../src/types.js';
+import { Delimiter } from '@sittir/common/utils';
 
 describe('source_file', () => {
 	it('factory produces correct type', () => {

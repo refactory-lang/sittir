@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import type { Options } from '../src/options.ts';
-import { Delimiter, TSKindId } from '../src/types.ts';
+import { TSKindId } from '../src/types.ts';
+import { Delimiter } from '@sittir/common/utils';
 import { createEngine, ir } from '../src/index.ts';
 
 it('the emitted Options type is pinned', () => {

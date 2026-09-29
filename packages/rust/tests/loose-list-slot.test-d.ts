@@ -6,7 +6,8 @@
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
-import { Delimiter, ir } from '@sittir/rust';
+import { ir } from '@sittir/rust';
+import { Delimiter } from '@sittir/common/utils';
 
 const edit = ir.identifier('Edit');
 

@@ -4,7 +4,8 @@ import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES } from '../types.js';
+import { Delimiter } from '@sittir/common/utils';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SiblingLeadRefusal } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
 import { isNodeData } from '../utils.js';
@@ -8112,7 +8113,7 @@ export function coerceToMacroRules(
 		return F.buildMacroRules(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8155,7 +8156,7 @@ export function coerceToEnumVariantListElements(
 		return F.buildEnumVariantListElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8218,7 +8219,7 @@ export function coerceToFieldDeclarationListElements(
 		return F.buildFieldDeclarationListElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8281,7 +8282,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 		return F.buildOrderedFieldDeclarationListElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8325,7 +8326,7 @@ export function coerceToWherePredicates(
 		return F.buildWherePredicates(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8388,7 +8389,7 @@ export function coerceToTypeParametersElements(
 		return F.buildTypeParametersElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8573,7 +8574,7 @@ export function coerceToUseClauses(
 		return F.buildUseClauses(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8720,7 +8721,7 @@ export function coerceToParametersElements(
 		return F.buildParametersElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8767,7 +8768,7 @@ export function coerceToLifetimes(
 		return F.buildLifetimes(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8830,7 +8831,7 @@ export function coerceToUseBoundsElements(
 		return F.buildUseBoundsElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8893,7 +8894,7 @@ export function coerceToTypeArgumentsElements(
 		return F.buildTypeArgumentsElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -8947,7 +8948,7 @@ export function coerceToArgumentsElements(
 		return F.buildArgumentsElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9013,7 +9014,7 @@ export function coerceToFieldInitializerListElements(
 		return F.buildFieldInitializerListElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9058,7 +9059,7 @@ export function coerceToTuplePatternElements(
 		return F.buildTuplePatternElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9094,7 +9095,7 @@ export function coerceToPatterns(
 		return F.buildPatterns(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9160,7 +9161,7 @@ export function coerceToStructPatternElements(
 		return F.buildStructPatternElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9395,7 +9396,7 @@ export function coerceToTupleTypeElements(
 		return F.buildTupleTypeElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -9441,7 +9442,7 @@ export function coerceToTupleExpressionElements(
 		return F.buildTupleExpressionElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},

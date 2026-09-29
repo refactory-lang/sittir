@@ -4,7 +4,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
 {
   "AssignmentKind": "object",
   "CompoundStatementKind": "object",
-  "Delimiter": "object",
   "EscapeSequenceKind": "object",
   "ExpressionKind": "object",
   "ExpressionWithinForInClauseKind": "object",

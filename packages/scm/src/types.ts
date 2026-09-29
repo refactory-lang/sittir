@@ -440,15 +440,6 @@ export type WhitespaceArm =
 	| TSKindId.Indent
 	| TSKindId.Dedent;
 
-/** Separated-list optional-flank bitflag — the wire's `_delimiter` key
- *  and the list factories' `delimiter` option. */
-export enum Delimiter {
-	None = 0,
-	Leading = 1,
-	Trailing = 2,
-	Both = 3
-}
-
 // Scoped enums per supertype
 export enum DefinitionKind {
 	NamedNode = 'named_node',

@@ -1,4 +1,4 @@
-import type { TreeHandle } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import type { AnyNodeData, Edit, NodeTrivia } from '@sittir/types';
 import { readFileSync } from 'node:fs';
 export type { TreeHandle };

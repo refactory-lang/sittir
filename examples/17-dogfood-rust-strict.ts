@@ -1,4 +1,5 @@
-import { Delimiter, ir, TSKindId } from '@sittir/rust';
+import { ir, TSKindId } from '@sittir/rust';
+import { Delimiter } from '@sittir/common/utils';
 
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a

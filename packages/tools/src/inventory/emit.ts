@@ -1,4 +1,7 @@
-import { ir, TSKindId, Delimiter, createEngine } from '@sittir/typescript';
+import typescript, { ir, TSKindId, type TypescriptAPI } from '@sittir/typescript';
+import { createEngine } from '@sittir/common';
+import { Delimiter } from '@sittir/common/utils';
+import type { Engine } from '@sittir/types';
 import type {
 	PrimaryType,
 	TypeIdentifier,
@@ -630,15 +633,16 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 	return withTrivia(built, leading, []);
 }
 
-export function renderVocabularyFile(file: VocabularyFile): string {
+let engine: Promise<Engine<TypescriptAPI>> | undefined;
+
+export async function renderVocabularyFile(file: VocabularyFile): Promise<string> {
 	const base = file.name === 'context';
 	const statements: TsStatement[] = [
 		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
 		...file.statements.map((s) => statementIr(s, base))
 	];
 	const program = ir.program.strict({ statements });
-	const engine = createEngine();
-	return engine.render(program).toString();
+	return (await (engine ??= createEngine(typescript))).render(program).toString();
 }
 
 export function renderIndexFile(files: readonly VocabularyFile[]): string {

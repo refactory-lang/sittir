@@ -4,7 +4,8 @@ import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES } from '../types.js';
+import { Delimiter } from '@sittir/common/utils';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
 import { isNodeData } from '../utils.js';
@@ -2391,7 +2392,7 @@ export function coerceToImportList(
 		return F.buildImportList(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -4069,7 +4070,7 @@ export function coerceToParametersElements(
 		return F.buildParametersElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -4105,7 +4106,7 @@ export function coerceToPatterns(
 		return F.buildPatterns(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5314,7 +5315,7 @@ export function coerceToCollectionElements(
 		return F.buildCollectionElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5741,7 +5742,7 @@ export function coerceToSimpleStatementsElements(
 		return F.buildSimpleStatementsElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5777,7 +5778,7 @@ export function coerceToSubjects(
 		return F.buildSubjects(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5813,7 +5814,7 @@ export function coerceToCasePatterns(
 		return F.buildCasePatterns(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5852,7 +5853,7 @@ export function coerceToWithClauseWithItems(
 		return F.buildWithClauseWithItems(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5885,7 +5886,7 @@ export function coerceToTypes(
 		return F.buildTypes(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -5948,7 +5949,7 @@ export function coerceToArgumentListElements(
 		return F.buildArgumentListElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6004,7 +6005,7 @@ export function coerceToExpressionListExpressions(
 		return F.buildExpressionListExpressions(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6050,7 +6051,7 @@ export function coerceToListPatternCasePatterns(
 		return F.buildListPatternCasePatterns(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6093,7 +6094,7 @@ export function coerceToDictPatternElements(
 		return F.buildDictPatternElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6132,7 +6133,7 @@ export function coerceToPatternListPatterns(
 		return F.buildPatternListPatterns(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6175,7 +6176,7 @@ export function coerceToSubscripts(
 		return F.buildSubscripts(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6221,7 +6222,7 @@ export function coerceToDictionaryElements(
 		return F.buildDictionaryElements(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6361,7 +6362,7 @@ export function coerceToPrintArguments(
 		return F.buildPrintArguments(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -6407,7 +6408,7 @@ export function coerceToPrintChevronArguments(
 		return F.buildPrintChevronArguments(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -7221,7 +7222,7 @@ export function coerceToExpressionStatementTuple(
 		return F.buildExpressionStatementTuple(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
@@ -7257,7 +7258,7 @@ export function coerceToWithClauseBare(
 		return F.buildWithClauseBare(
 			{
 				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._delimiter;
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},

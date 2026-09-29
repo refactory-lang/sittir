@@ -2692,13 +2692,6 @@ function ruleEdgeCharSet(
 	}
 }
 
-export const DelimiterFlags = {
-	none: 0,
-	leading: 1,
-	trailing: 2,
-	both: 3
-} as const;
-
 export function delimiterMembersFor(list: {
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';

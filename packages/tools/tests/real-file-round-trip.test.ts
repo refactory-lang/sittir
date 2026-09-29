@@ -12,9 +12,8 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { createEngine as createRustEngine } from '../../rust/src/engine.js';
-import { createEngine as createTypeScriptEngine } from '../../typescript/src/engine.js';
-import { createEngine as createPythonEngine } from '../../python/src/engine.js';
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../src/languages.ts';
 import { structuralShape } from '../../../examples/helpers.ts';
 
 const REPO_ROOT = new URL('../../../', import.meta.url);
@@ -31,28 +30,28 @@ function shapeOf(root: unknown): string {
 
 const CASES: ReadonlyArray<{
 	readonly file: string;
-	readonly createEngine: () => { parse(source: string): Rendered };
+	readonly grammar: string;
 }> = [
 	// Mostly `//!` module documentation — the comments live between and around
 	// the root's children, which is exactly what a canonical re-spelling loses.
-	{ file: 'rust/crates/sittir-core/src/lib.rs', createEngine: createRustEngine },
+	{ file: 'rust/crates/sittir-core/src/lib.rs', grammar: 'rust' },
 	// `#[...]` attribute arguments: a delimited token tree whose content the
 	// reader collapses to bare text, in a slot with no kind to route it by.
-	{ file: 'rust/crates/sittir-core/src/splice.rs', createEngine: createRustEngine },
+	{ file: 'rust/crates/sittir-core/src/splice.rs', grammar: 'rust' },
 	// Function parameters whose pattern collapses to a bare identifier string.
-	{ file: 'packages/common/src/format.ts', createEngine: createTypeScriptEngine },
+	{ file: 'packages/common/src/format.ts', grammar: 'typescript' },
 	// Indentation-sensitive: lose the newline between a class and the next
 	// top-level `def` and the `def` becomes a method of the class.
-	{ file: 'tests/format-roundtrip/fixtures/python-4space.py', createEngine: createPythonEngine }
+	{ file: 'tests/format-roundtrip/fixtures/python-4space.py', grammar: 'python' }
 ];
 
 describe('real repo files round-trip through parse -> render -> parse', () => {
-	for (const { file, createEngine } of CASES) {
-		it(file, () => {
+	for (const { file, grammar } of CASES) {
+		it(file, async () => {
 			const source = readFileSync(fileURLToPath(new URL(file, REPO_ROOT)), 'utf8');
-			const engine = createEngine();
+			const engine = await createEngine(await languageByName(grammar));
 
-			const root = engine.parse(source);
+			const root = engine.parse(source) as unknown as Rendered;
 			const rendered = root.$render();
 
 			// Nothing was expanded below the root and nothing was rebuilt, so

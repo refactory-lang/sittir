@@ -1126,6 +1126,10 @@ as it always carries its delimiter.
 
 The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
+### `packages/codegen/src/emitters/shared.ts::DELIMITER_IMPORT`
+
+The import line every generated module that names `Delimiter` carries. `Delimiter` is one fact shared by every grammar, declared once in `@sittir/common/utils`; no grammar declares its own. Each emitter writes this line into its preamble and lets `pruneUnusedImports` drop it when the body never names `Delimiter`.
+
 ### `packages/codegen/src/emitters/shared.ts::importLocalName`
 
 The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X`.
@@ -1218,12 +1222,13 @@ The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pair
 // kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
 // above) — no call site references it anymore, so importing it here is
 // dead weight that trips no-unused-vars.
-// Delimiter is emitted unconditionally and PRUNED in finalize() when the
-// body never references it — whether any coercer carries a delimiter
-// guard depends on per-kind emission decisions made after this preamble.
+// `DELIMITER_IMPORT` is emitted unconditionally and PRUNED in finalize() when
+// the body never references `Delimiter` — whether any coercer carries a
+// delimiter guard depends on per-kind emission decisions made after this
+// preamble.
 ```
 
-The value imports are fixed (`TSKindId`, `KIND_NAMES`, `Delimiter`): a
+The grammar value imports are fixed (`TSKindId`, `KIND_NAMES`): a
 read `_separator` is passed to the factory as the kind id it was read as,
 so no kind-to-text table is needed here.
 
@@ -9814,14 +9819,6 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 // 1. TSKindId runtime discriminants + lookup helpers
-```
-
-#### body
-
-```text
-// 1b. Delimiter — separated-list optional-flank bitflag members. Values
-// serialize compiler/model DelimiterFlags (one source, one derivation);
-// factories/wrap/from reference the members instead of raw numbers.
 ```
 
 #### body

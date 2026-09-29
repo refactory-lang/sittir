@@ -104,7 +104,8 @@ its interfaces extends that way.
 The dogfood step: builds the file's statements through the typescript
 package's strict factories (`ir.interfaceDeclaration`, `ir.internalModule`,
 `ir.unionType`, `ir.lookupType`, `ir.templateLiteralType`, ...) and renders
-the program with the native engine. Comments ride as trivia. The caller
+the program with an engine from `createEngine(typescript)`, created on the
+first call and shared by later ones. Comments ride as trivia. The caller
 formats the result; a render defect that survives formatting is a finding
 about the typescript package, never something the emitter works around.
 ```

@@ -10,7 +10,7 @@
  * excludes `*.test-d.ts` from runtime).
  */
 import { describe, it, expectTypeOf } from 'vitest';
-import { Delimiter } from '../../../../rust/src/types.ts';
+import { Delimiter } from '@sittir/common/utils';
 import { ir } from '../../../../rust/src/index.ts';
 
 describe('an envelope forwarding to a repeat1 separated list rejects options-only', () => {

@@ -1137,6 +1137,8 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 	];
 }
 
+export const DELIMITER_IMPORT = "import { Delimiter } from '@sittir/common/utils';";
+
 const NAMED_IMPORT = /^(import (?:type )?)\{ (.*) \}( from .*)$/;
 
 export function importLocalName(specifier: string): string {

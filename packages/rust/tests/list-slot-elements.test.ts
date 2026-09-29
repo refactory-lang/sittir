@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { Delimiter, ir } from '../src/index.ts';
+import { ir } from '../src/index.ts';
+import { Delimiter } from '@sittir/common/utils';
 import type { GenericType } from '../src/types.ts';
 
 type TypeArgumentsSlot = NonNullable<GenericType.LooseConfig>['typeArguments'];

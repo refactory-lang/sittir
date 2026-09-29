@@ -24,6 +24,7 @@ type FormChildForFrom = AuthoredCompound;
 import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
 import {
+	DELIMITER_IMPORT,
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	withEmptyOverload,
@@ -141,10 +142,9 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	lines.push(`import * as F from './raw.js';`);
 	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
-		lines.push(`import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';`);
-	} else {
-		lines.push(`import { Delimiter } from '../types.js';`);
+		lines.push(`import { TSKindId, KIND_NAMES } from '../types.js';`);
 	}
+	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';");
 	lines.push("import { isNodeData } from '../utils.js';");
@@ -778,7 +778,7 @@ function emitSeparatedListFrom(
 	const spreadElements = (varExpr: string): string => `...(${varExpr} as unknown as ${elementsType})`;
 
 	const buildOptionsPreservingCall = (varExpr: string): string => {
-		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: T.Delimiter })';
+		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: Delimiter })';
 		const optionParts: string[] = [];
 		if (hasSeparatorKindOption) optionParts.push(`separator: ${sourceFields}._separator`);
 		if (hasLeadingOption || hasTrailingOption) {

@@ -2,7 +2,7 @@ import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
@@ -57,6 +57,7 @@ import type {
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import type { RawNodeEntry } from '../validate/node-types-loader.ts';
 import {
+	DELIMITER_IMPORT,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -186,8 +187,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.push('');
 	}
 	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap)) : undefined;
-
-	emitDelimiterEnum(lines);
 
 	if (supertypes.length > 0) {
 		lines.push('// Scoped enums per supertype');
@@ -393,8 +392,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
 	}
 	lines[sittirImportIndex] = `import type { ${VOCABULARY_IMPORTS.join(', ')} } from '@sittir/types';`;
+	lines.splice(sittirImportIndex + 1, 0, DELIMITER_IMPORT);
 
-	return pruneUnusedImports(lines, VOCABULARY_IMPORTS.map(importLocalName)).join('\n');
+	return pruneUnusedImports(lines, ['Delimiter', ...VOCABULARY_IMPORTS.map(importLocalName)]).join('\n');
 }
 
 const VOCABULARY_IMPORTS = [
@@ -503,17 +503,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 	const { structNodes, leafKinds } = collectNodesByCategory(nodeMap);
 	return [...structNodes.map((n) => n.kind), ...leafKinds];
-}
-
-function emitDelimiterEnum(lines: string[]): void {
-	lines.push("/** Separated-list optional-flank bitflag — the wire's `_delimiter` key");
-	lines.push(" *  and the list factories' `delimiter` option. */");
-	lines.push('export enum Delimiter {');
-	for (const [member, value] of Object.entries(DelimiterFlags)) {
-		lines.push(`  ${pascalCase(member)} = ${value},`);
-	}
-	lines.push('}');
-	lines.push('');
 }
 
 function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nodeMap: NodeMap): void {

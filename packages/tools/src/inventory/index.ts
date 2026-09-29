@@ -53,13 +53,13 @@ export function deriveVocabulary(grammars: readonly string[] = inventoryGrammars
 	return derive(loadInputs(grammars));
 }
 
-export function emitVocabulary(d: Derivation, outDir: string): string[] {
+export async function emitVocabulary(d: Derivation, outDir: string): Promise<string[]> {
 	mkdirSync(outDir, { recursive: true });
 	const files = vocabularyFiles(d);
 	const written: string[] = [];
 	for (const file of files) {
 		const path = join(outDir, `${file.name}.ts`);
-		writeFileSync(path, renderVocabularyFile(file));
+		writeFileSync(path, await renderVocabularyFile(file));
 		written.push(path);
 	}
 	const index = join(outDir, 'index.ts');
@@ -122,7 +122,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
 	if (opts.emit !== undefined) {
 		const outDir = opts.emit === true ? VOCABULARY_DIR : opts.emit;
-		const written = emitVocabulary(d, outDir);
+		const written = await emitVocabulary(d, outDir);
 		process.stdout.write(`emitted ${written.length} files into ${outDir}\n`);
 	}
 	if (d.cycles.length > 0) code = 1;

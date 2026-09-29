@@ -104,8 +104,8 @@ import {
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
-import type { TreeHandle } from '@sittir/common';
-import { stripStructuralProvenance, toTransportData } from '@sittir/common';
+import { stripStructuralProvenance } from '@sittir/common';
+import { toTransportData, type TreeHandle } from '@sittir/common/utils';
 import type { SittirEngine } from '@sittir/common/engine';
 // ---------------------------------------------------------------------------
 // CLI
@@ -852,7 +852,7 @@ function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 }
 
 async function fallbackReadNode(handle: ReturnType<typeof treeHandle>): Promise<unknown> {
-	const { readNode } = await import('@sittir/common');
+	const { readNode } = await import('@sittir/common/utils');
 	return readNode(handle);
 }
 
@@ -861,7 +861,7 @@ async function deepReadProbeNode(
 	nodeHandle: number | undefined,
 	childIndex: number | undefined
 ): Promise<unknown> {
-	const { readNode } = await import('@sittir/common');
+	const { readNode } = await import('@sittir/common/utils');
 	const data = readNode(handle, nodeHandle, childIndex);
 	const isNodeData = (value: unknown): value is AnyNodeData =>
 		typeof value === 'object' && value !== null && '$type' in value;

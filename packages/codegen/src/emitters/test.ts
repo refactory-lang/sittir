@@ -21,6 +21,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import {
+	DELIMITER_IMPORT,
 	isValidIdent,
 	resolveDirectFactorySlot,
 	testConstructsWithChildren,
@@ -137,7 +138,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 	}
 
-	if (usesDelimiter) lines.splice(lines.indexOf(''), 0, "import { Delimiter } from '../src/types.js';");
+	if (usesDelimiter) lines.splice(lines.indexOf(''), 0, DELIMITER_IMPORT);
 	return lines.join('\n');
 }
 

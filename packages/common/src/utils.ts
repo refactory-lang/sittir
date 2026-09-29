@@ -2,6 +2,8 @@ import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, GrammarFacts, NodeTri
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 
+export { Delimiter } from './delimiter.ts';
+
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * runtime shape backing the `$with` update namespace. Not yet wired into

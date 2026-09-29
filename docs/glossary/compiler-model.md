@@ -3304,21 +3304,6 @@ The single-char tokens `c` for which some direct follower begins with `cc`: writ
 // this side (nullable multiplicity already decided undefined above).
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DelimiterFlags`
-
-```text
-// ---------------------------------------------------------------------------
-// Delimiter flags — the separated-list options struct's instance value
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** Bitflag encoding of a separated list's OPTIONAL flank state — the
- *  `delimiter` member of the list options struct. Mandatory flanks are
- *  template text and never encoded; a slot's permitted values are exactly
- *  the grammar's optional flanks (see `permittedDelimiters`). */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
 
 ```text

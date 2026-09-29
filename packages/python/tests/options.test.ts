@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import type { Options } from '../src/options.ts';
-import { Delimiter, TSKindId } from '../src/types.ts';
+import { TSKindId } from '../src/types.ts';
+import { Delimiter } from '@sittir/common/utils';
 
 it('the emitted Options type is pinned', () => {
 	expect(readFileSync(new URL('../src/options.ts', import.meta.url), 'utf8')).toMatchSnapshot();
