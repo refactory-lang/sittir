@@ -8,13 +8,14 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from '../assemble.ts';
 import { predictionRecords } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 async function evaluateSource(source: string): Promise<RawGrammar> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-hydrate-slot-refs-'));
 	const entry = resolve(dir, 'grammar.js');
 	writeFileSync(entry, source, 'utf8');
 	try {
-		return await evaluate(entry);
+		return await evaluate(entry, NO_FILE_TYPES);
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}

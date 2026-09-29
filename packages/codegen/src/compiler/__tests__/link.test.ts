@@ -32,12 +32,14 @@ import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
-import { evaluate } from '../evaluate.ts';
 import { resolveOverridesPath } from '../resolve-grammar.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
 		name: 'test',
+		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
@@ -1281,7 +1283,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		process.chdir(repoRoot);
 		let diagnostics: DiagnosticSink;
 		try {
-			const raw = await evaluate(resolveOverridesPath('typescript'));
+			const raw = await evaluatePackage(grammarPackage('typescript'));
 			const generatedIdTables = await loadGeneratedIdTables('typescript');
 			diagnostics = new DiagnosticSink();
 			link(raw, { diagnostics, generatedIdTables });

@@ -10,7 +10,8 @@ import { isBlank } from '../rule-patterns.ts';
 import type { WiredOpts } from '../wire/wire.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
-import { evaluate, evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 
 const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
 const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;
@@ -99,7 +100,7 @@ describe('dead enrich mints in the in-repo grammars', () => {
 		}, 120_000);
 
 		it(`${name}: every arm label names a rule the final grammar keeps`, async () => {
-			const final = await evaluate(packageEntryPath(grammarPackage(name)));
+			const final = await evaluatePackage(grammarPackage(name));
 			const owners = new Set<string>();
 			const collect = (node: unknown): void => {
 				if (Array.isArray(node)) return node.forEach(collect);

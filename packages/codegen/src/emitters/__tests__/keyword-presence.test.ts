@@ -17,6 +17,7 @@ import { AssembledKeyword, AssembledPattern, AssembledEnum } from '../../compile
 function makeNodeMap(nodes: [string, any][]): NodeMap {
 	return {
 		name: 'test',
+		fileTypes: [],
 		nodes: new Map(nodes),
 		nodeByRuleId: new Map(),
 		nodeByKindId: new Map(),

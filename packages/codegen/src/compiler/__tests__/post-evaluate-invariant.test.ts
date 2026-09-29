@@ -22,10 +22,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { evaluate } from '../evaluate.ts';
-import { resolveOverridesPath } from '../resolve-grammar.ts';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -58,8 +58,7 @@ const GRAMMARS = stableGrammars();
 describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: rule tree contains only known rule types`, async () => {
-			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -79,8 +78,7 @@ describe('post-evaluate invariant', () => {
 		});
 
 		it(`${grammar}: rule tree contains no sittir placeholders`, async () => {
-			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -107,14 +105,12 @@ describe('post-evaluate invariant', () => {
 			// this stays 0 on the actual shipped pipeline even though the
 			// SAME check against the raw, un-enriched base grammar (see
 			// real-grammar.test.ts) is not representative of it.
-			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 			expect(raw.desugarDivergences ?? []).toEqual([]);
 		});
 
 		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, async () => {
-			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 
 			// Allowed top-level fields. Anything else is a leaked
 			// sittir-only payload that the pipeline doesn't expect.
@@ -132,6 +128,8 @@ describe('post-evaluate invariant', () => {
 				'precedences',
 				'word',
 				'reserved',
+				// The grammar package's file types, passed to evaluate and stamped on the raw grammar.
+				'fileTypes',
 				'references',
 				'ruleCatalog',
 				// Documented sidecar — populated by role() accumulator.
@@ -191,16 +189,14 @@ describe('post-evaluate invariant', () => {
 		});
 
 		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, async () => {
-			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 
 			expectCompleteCatalog(raw.rules, raw.ruleCatalog);
 		});
 
 		it(`${grammar}: unchanged evaluation has deterministic catalog identity`, async () => {
-			const overridesPath = resolveOverridesPath(grammar);
-			const first = await evaluate(overridesPath);
-			const second = await evaluate(overridesPath);
+			const first = await evaluatePackage(grammarPackage(grammar));
+			const second = await evaluatePackage(grammarPackage(grammar));
 
 			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 		});

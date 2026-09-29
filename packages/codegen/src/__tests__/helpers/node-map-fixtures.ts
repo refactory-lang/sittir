@@ -19,6 +19,7 @@ import { flatten } from '../../compiler/flatten.ts';
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 	return {
 		name: 'rust',
+		fileTypes: [],
 		nodes,
 		nodeByRuleId: new Map(),
 		nodeByKindId: new Map(),

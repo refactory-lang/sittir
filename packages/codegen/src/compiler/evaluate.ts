@@ -906,8 +906,8 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 let evaluateMutex: Promise<void> = Promise.resolve();
 
-export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	return canonicalGrammar(await evaluateDsl(entryPath));
+export async function evaluate(entryPath: string, fileTypes: readonly string[]): Promise<RawGrammar> {
+	return canonicalGrammar(await evaluateDsl(entryPath), fileTypes);
 }
 
 export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {

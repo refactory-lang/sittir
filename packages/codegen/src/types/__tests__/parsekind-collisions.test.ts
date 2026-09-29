@@ -11,6 +11,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	const raw: RawGrammar = {
 		name: 'synth',
+		fileTypes: [],
 		rules: catalogRules,
 		ruleCatalog,
 		extras: [],

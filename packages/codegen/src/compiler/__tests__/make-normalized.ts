@@ -39,6 +39,7 @@ export function makeNormalized(
 	}
 	return {
 		name: 'test',
+		fileTypes: [],
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: new Set(),

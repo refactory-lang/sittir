@@ -24,6 +24,7 @@ function makeMinimalFixture(): {
 	return {
 		raw: {
 			name: 'synth',
+			fileTypes: [],
 			rules,
 			ruleCatalog,
 			extras: [],
@@ -150,6 +151,7 @@ describe('emitKindIdRust', () => {
 
 		const raw: RawGrammar = {
 			name: 'synth2',
+			fileTypes: [],
 			rules,
 			ruleCatalog,
 			extras: [],

@@ -6,6 +6,7 @@ import type { RawGrammar } from '../types.ts';
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
 		name: 'test',
+		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],

@@ -102,13 +102,6 @@ const fn default_ascii_table() -> [bool; 128] {
     t
 }
 
-/// Streaming writer inserting lexically-required spaces at write seams.
-/// See the module doc. Every whitespace decision reaches the writer as a
-/// `RenderSink` call, never as a character in the text stream.
-///
-/// The indentation unit a writer uses when none is configured.
-pub const DEFAULT_INDENT: &str = "    ";
-
 /// A seam mark's payload, ranked so two consecutive payloads coalesce to
 /// the higher-ranked: a run of spaces, then no whitespace at all, then a
 /// run by how many lines it breaks. Tight beats space (a declared "glue
@@ -140,6 +133,10 @@ pub fn seam_rank(text: &str) -> SeamRank {
     }
 }
 
+/// Streaming writer inserting lexically-required spaces at write seams.
+/// See the module doc. Every whitespace decision reaches the writer as a
+/// `RenderSink` call, never as a character in the text stream.
+///
 /// a seam following `"fn "` has `last = ' '` (not word-class) → no insert.
 pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     inner: &'a mut W,
@@ -195,7 +192,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             adjacent_next: false,
             word,
             table: None,
-            indent: DEFAULT_INDENT,
+            indent: "",
             depth: 0,
             indent_pending: false,
             indent_armed: false,

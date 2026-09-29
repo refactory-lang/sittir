@@ -33,6 +33,7 @@ export default sittirGrammar(base, {
 			)
 	},
 	options: {
+		indent: preference('  '),
 		body: { before: preference('indent'), after: preference('dedent') },
 		case_body: { start: preference('indent'), end: preference('dedent') },
 		gap: { separator: preference('newline') },

@@ -6,7 +6,9 @@
             "camelcase": "Rust",
             "scope": "source.rust",
             "path": ".",
-            "file-types": []
+            "file-types": [
+                "rs"
+            ]
         }
     ],
     "metadata": {

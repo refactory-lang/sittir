@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it, expect } from 'vitest';
-import { evaluate } from '../evaluate.ts';
-import { resolveOverridesPath } from '../resolve-grammar.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 interface CompiledGrammarJson {
 	readonly rules: Record<string, unknown>;
@@ -24,21 +24,21 @@ function compiledNames(compiled: CompiledGrammarJson): ReadonlySet<string> {
 
 describe.each(['rust', 'typescript', 'python'])('%s metadata lists match what tree-sitter compiled', (grammar) => {
 	it('inline equals grammar.json inline', async () => {
-		const raw = await evaluate(resolveOverridesPath(grammar));
+		const raw = await evaluatePackage(grammarPackage(grammar));
 		const compiled = compiledGrammarJson(grammar);
 		const live = compiledNames(compiled);
 		expect(raw.inline.filter((name) => live.has(name))).toEqual(compiled.inline ?? []);
 	});
 
 	it('conflicts equal grammar.json conflicts', async () => {
-		const raw = await evaluate(resolveOverridesPath(grammar));
+		const raw = await evaluatePackage(grammarPackage(grammar));
 		const compiled = compiledGrammarJson(grammar);
 		const live = compiledNames(compiled);
 		expect(raw.conflicts.filter((group) => group.every((name) => live.has(name)))).toEqual(compiled.conflicts ?? []);
 	});
 
 	it('reserved wordsets equal grammar.json reserved', async () => {
-		const raw = await evaluate(resolveOverridesPath(grammar));
+		const raw = await evaluatePackage(grammarPackage(grammar));
 		expect(raw.reserved).toEqual(compiledGrammarJson(grammar).reserved);
 	});
 });
