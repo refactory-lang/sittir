@@ -19,10 +19,22 @@ import {
 	formatBoundaryStrict,
 	returnResultStrict
 } from '../../../examples/18-dogfood-typescript-strict.ts';
+import { interfaceToPythonDataclass } from '../../../examples/12-cross-language-migration.ts';
 import typescript from '@sittir/typescript';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+
+describe('examples/12 cross-language migration', () => {
+	it('prints a dataclass field per property signature, mapping scalar types', () => {
+		expect(interfaceToPythonDataclass('interface User {\n  name: string;\n  age: number;\n  tags: string[];\n}\n')).toBe(
+			'@dataclass\nclass User:\n    name: str\n    age: int\n    tags: string[]'
+		);
+	});
+	it('prints `pass` for an interface without properties', () => {
+		expect(interfaceToPythonDataclass('interface Empty {}\n')).toBe('@dataclass\nclass Empty:\n    pass');
+	});
+});
 
 // The strict surface alone, so each gap lands on the layer that owns it.
 describe('examples/18 dogfood typescript — strict factory surface', () => {

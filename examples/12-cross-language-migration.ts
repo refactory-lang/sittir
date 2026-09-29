@@ -1,5 +1,7 @@
-import { createEngine as createTsEngine, ir as tsIr, is } from '@sittir/typescript';
-import { nodeText } from './helpers.ts';
+import { createEngine } from '@sittir/common';
+import typescript from '@sittir/typescript';
+
+const engine = await createEngine(typescript);
 
 const typeMap: Record<string, string> = {
 	string: 'str',
@@ -7,26 +9,20 @@ const typeMap: Record<string, string> = {
 	boolean: 'bool',
 };
 
+/** Read a TypeScript interface and print the equivalent Python dataclass. */
 export function interfaceToPythonDataclass(tsSource: string) {
-	const tsEngine = createTsEngine();
-	const program = tsEngine.parse(tsSource);
-	const ifaceNode = program.statements()?.find(is.interfaceDeclaration);
-	if (!ifaceNode) {
+	const program = engine.parse(tsSource);
+	const iface = program.statements().find(engine.is.interfaceDeclaration);
+	if (iface === undefined) {
 		throw new Error('Expected a top-level TypeScript interface declaration.');
 	}
-	const iface = ifaceNode as ReturnType<typeof tsIr.interfaceDeclaration>;
 
-	const fields = iface.body().members()?.contents().filter(is.propertySignature).map((member) => {
-		const typedMember = member as ReturnType<typeof tsIr.propertySignature>;
-		const name = nodeText(typedMember.name());
-		const rawType = typedMember.type()?.type().$render() ?? 'Any';
-		const pyType = typeMap[rawType] ?? rawType;
-		return `    ${name}: ${pyType}`;
+	const fields = (iface.body().content().members()?.members() ?? []).flatMap((member) => {
+		if (!engine.is.propertySignature(member)) return [];
+		const annotation = member.type()?.type();
+		const rawType = annotation === undefined ? 'Any' : engine.render(annotation).toString();
+		return [`    ${engine.render(member.name())}: ${typeMap[rawType] ?? rawType}`];
 	});
 
-	return [
-		'@dataclass',
-		`class ${iface.name().$render()}:`,
-		...(fields.length > 0 ? fields : ['    pass']),
-	].join('\n');
+	return ['@dataclass', `class ${engine.render(iface.name())}:`, ...(fields.length > 0 ? fields : ['    pass'])].join('\n');
 }

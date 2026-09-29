@@ -482,31 +482,33 @@ fs.writeFileSync('src/handlers.rs', engine.applyEdits(source, edits));
 TypeScript interface → Python dataclass.
 
 ```ts
-import { createEngine as createTsEngine, wrap as wrapTs, is } from '@sittir/typescript';
-import { snippets as pySnippets } from '@sittir/python';
+import { createEngine } from '@sittir/common';
+import typescript from '@sittir/typescript';
 
-const tsEngine = createTsEngine();
-const tree = tsEngine.parse(tsSource);
-const iface = tree.$children[0];
+const engine = await createEngine(typescript);
 
-const typeMap: Record<string, string> = { string: 'str', number: 'int', boolean: 'bool' };
+const typeMap: Record<string, string> = {
+	string: 'str',
+	number: 'int',
+	boolean: 'bool',
+};
 
-const fields = iface
-	.body()
-	.$children.filter((m) => is.propertySignature(m))
-	.map((m) => {
-		const w = wrapTs(m, tree);
-		const name = w.name();
-		const pyType = typeMap[w.type()] || w.type();
-		return `${name}: ${pyType}`;
+export function interfaceToPythonDataclass(tsSource: string) {
+	const program = engine.parse(tsSource);
+	const iface = program.statements().find(engine.is.interfaceDeclaration);
+	if (iface === undefined) {
+		throw new Error('Expected a top-level TypeScript interface declaration.');
+	}
+
+	const fields = (iface.body().content().members()?.members() ?? []).flatMap((member) => {
+		if (!engine.is.propertySignature(member)) return [];
+		const annotation = member.type()?.type();
+		const rawType = annotation === undefined ? 'Any' : engine.render(annotation).toString();
+		return [`    ${engine.render(member.name())}: ${typeMap[rawType] ?? rawType}`];
 	});
 
-const source = pySnippets.dataclass
-	.from({
-		NAME: iface.name(),
-		FIELDS: fields
-	})
-	.render();
+	return ['@dataclass', `class ${engine.render(iface.name())}:`, ...(fields.length > 0 ? fields : ['    pass'])].join('\n');
+}
 ```
 
 ## 13. Bulk file processing
