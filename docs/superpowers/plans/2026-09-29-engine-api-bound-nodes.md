@@ -80,14 +80,13 @@ cd scratchpad/wt-bound-nodes && pnpm install
 ```ts
 // packages/types/src/engine-api.ts
 export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
-	readonly language: Language<API>;  // the descriptor
-	readonly grammar: API['name'];
+	readonly language: Language<API>;  // the descriptor; `language.name` is the grammar's name
 	readonly renderModuleHash: string; // the package's `hash.ts` `RENDER_MODULE_HASH`
 	readonly options: API['options'];  // the engine's render options
 	readonly trivia: TriviaFacts;      // plain data: $trivia reads work on a disposed engine's nodes
 }
 // Engine<API> extends EngineIdentity<API>. `language` changes from the grammar name to the
-// descriptor; the name moves to `grammar`. Callers of `engine.language` move with it.
+// descriptor; callers of `engine.language` read `engine.language.name`.
 
 // packages/common/src/engine-scope.ts
 export interface EngineHandle { current: EngineLike | EngineIdentity }

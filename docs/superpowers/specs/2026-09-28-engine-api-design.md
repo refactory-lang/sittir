@@ -239,7 +239,7 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   engine, `{ current: Engine | EngineIdentity }`, shared by every node that engine
   stamps. `$engine()` returns `handle.current`.
 - **`EngineIdentity`** is what a node needs to know about its engine without holding
-  it: `language` (the descriptor), the grammar name, the render module hash (which
+  it: `language` (the descriptor, whose `name` is the grammar's name), the render module hash (which
   identifies the generated surface), the engine's options, and the language's trivia
   facts. All of it is plain data, so `$trivia` reads keep working on a disposed
   engine's nodes. `Engine` carries the same fields, so code that needs only identity
