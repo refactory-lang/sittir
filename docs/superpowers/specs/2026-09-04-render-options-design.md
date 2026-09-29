@@ -244,7 +244,7 @@ bytes between consecutive items into the arm the site admits with the same
 seam rank, splits a separated gap around its token, and gives the site the
 majority class over its gaps, the grammar's declared default breaking a
 tie. That derived class is the occurrence's stamp in the precedence below;
-the flank stamp is the list's existing `_delimiter`. `tree.inferOptions()`
+the flank stamp is the list's existing `_delimiter`. The tree's inferred table
 folds the same stamps over a whole tree: each list is one vote for its
 site's key, the majority wins, the declared default breaks a tie, and a key
 no list in the tree carries is absent. The walk is the read-side twin of
@@ -328,15 +328,18 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - `render(node, { options?, reformat? })` on engines and tree handles; a
   handle's render fills from its tree's inferred table after per-call
   options and before engine options, and never needs the client to pass it.
-- `tree.inferOptions()` — the `Options` a parsed tree's bytes evidence:
-  per key, the majority of the stamps its lists carry, absent where the tree
-  holds no list of that site. An inference, never a declaration: a caller
-  who renders with it is round-tripping the tree's own spacing. The walk is
-  a native function over the parsed tree in the grammar crate, answering in
-  site and arm ids as the engine's resolved options do; the handle's method
-  projects the cached table to `Options` keys on demand, and a Rust consumer
-  reads the table directly. Rendering through the handle never needs this
-  call: the table is applied natively.
+- `engine.fromNode(node)` — a new engine whose options are the parent's with
+  the options a parsed tree's bytes evidence on top: per key, the majority of
+  the stamps its lists carry, absent where the tree holds no list of that
+  site. An inference, never a declaration: a caller who renders with it is
+  round-tripping the tree's own spacing, and reads it as
+  `engine.fromNode(node).options`. The walk is a native function over the
+  parsed tree in the grammar crate, answering in site and arm ids as the
+  engine's resolved options do; `fromNode` projects the cached table to
+  `Options` keys, and a Rust consumer reads the table directly. There is no
+  public method that returns the table alone. The tree is the node's own,
+  else the one its parsed descendants share, else the call is refused.
+  Rendering never needs `fromNode`: the table is applied natively.
 - Native: `SittirEngine` takes the options object once at construction and
   resolves it to one kind id per site there, applying the precedence above
   and rejecting unknown keys; per-call options travel the same way. Per
@@ -364,7 +367,7 @@ outrank engine options, and only an explicit `reformat` overrides them.
   stamps; `reformat` rewrites whitespace and never a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
-  slots; `tree.inferOptions()` on a parsed tree names the spacing its lists
+  slots; `engine.fromNode(node).options` names the spacing a parsed tree's lists
   were written with, and rendering a rebuilt node with that result reproduces
   the tree's list spacing.
 - Every existing gate stays identical: validator history compared
