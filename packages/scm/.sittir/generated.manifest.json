@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "af36ac3709d32b664ea43651b7e568d53fc9d05ccc444a17822e39299357eafc",
+  "source_hash": "78a320781714f7cd2d009c0f304de8ea2f8bd09a7843f7c4c97ffda622863243",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -27,7 +27,6 @@
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/scm/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/scm/src/factories/raw.ts": "04d19885e96a7bded50f89883160e026fbb71feed6ee6b0e2fcdb43756960264",
-    "packages/scm/src/grammar.ts": "e7231c8d555241ac9091b20e7e9e4f60ecf4d56607f0f44e5bab280548f34bad",
     "packages/scm/src/hash.ts": "7882cc742a195e32d5c0a3b976797abb5882b39c1fb6d4ff456bb2465128170c",
     "packages/scm/src/index.ts": "057b19305efd1fcb6d53e98cb1837ece38d776f8e4b0ac946136524862c9eda2",
     "packages/scm/src/ir.ts": "5326c33df7cadbaa58ddf265329126283683cb679e3b7485ebe674ad0d68cc1e",
@@ -35,7 +34,7 @@
     "packages/scm/src/node-model.json5": "131f6e59bfc569765c618b894bbc6b9fc5ec1cabad4582299cc4982ed07bc3fe",
     "packages/scm/src/options.ts": "ff87ad287deb2748feb18def7b265eeed14c3c3e208b3b64e9085b96cb1ccd83",
     "packages/scm/src/render-engine.ts": "d9eeee12ec5159a8c613308084107a293e7afc2bd38dbe088161bc1679163202",
-    "packages/scm/src/types.ts": "4043d4c443f51093fd14c6bd869b407c38dc7502baf7bec16d006696dede36aa",
+    "packages/scm/src/types.ts": "cc05e8c38f8520785877d89c5c30af2b860f1cfa38b582a939b144219b73c28d",
     "packages/scm/src/utils.ts": "40a0e60dcaf2438cf066f381e78965a6b0335067717721cadf4762fb51fea272",
     "packages/scm/src/wrap.ts": "6631320d847112098f796eb1cfc52652acd51099495bbe2285182d6dd9ba3e5e",
     "rust/crates/sittir-scm/index.d.ts": "1a7c621f7da9e3108a04c23cd0b51e45ac6b6d646fdc29b7424bae0b3c4165c3",

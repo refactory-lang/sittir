@@ -43,7 +43,6 @@ describe('runCodegen write ordering', () => {
 			).rejects.toThrow('simulated native build failure');
 
 			for (const derived of [
-				join(outDir, 'src', 'grammar.ts'),
 				join(outDir, 'src', 'types.ts'),
 				join(outDir, 'src', 'node-model.json5'),
 				join(outDir, 'tests', 'nodes.test.ts'),

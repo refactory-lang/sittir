@@ -11174,15 +11174,6 @@ omits the key.
  */
 ```
 
-### `packages/codegen/src/emitters/grammar.ts::module`
-
-```text
-/**
- * Emits a `grammar.ts` file containing a TypeScript type literal
- * derived from tree-sitter's node-types.json.
- */
-```
-
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
 The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; `isEmpty` is its one value export besides the descriptor. It depends on the grammar's name only, not on its node list.

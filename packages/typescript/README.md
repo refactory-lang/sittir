@@ -57,7 +57,6 @@ const patch = edit(treeSitterNode, (b) => b.body(ir.statementBlock()));
 
 ```ts
 import type {
-	TypescriptGrammar,
 	FunctionDeclaration,
 	Identifier, // leaf type
 	Expression, // supertype union

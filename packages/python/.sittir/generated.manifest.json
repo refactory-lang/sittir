@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "d4ea019d6e6e0a539203dedaa2b9f5320354f725ad515234c6f877186d23787f",
+  "source_hash": "39361a5e809ece2e2f03abcf4eac67b94f337b85058d99d0c5a773ebeee4ac28",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -28,7 +28,6 @@
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "b669abe5baf3146a1167a04c962a31c7dc10f82be56261a4fe53a5dee21d9a43",
-    "packages/python/src/grammar.ts": "06d2ebd39041cf19fb2083bf9c1bcee32f05f16959f7ab739e46f4977edb4ed5",
     "packages/python/src/hash.ts": "0feb11f7c5df4dfd27578968a0b5e7390b638884f57c2725d8652cdbb79b102b",
     "packages/python/src/index.ts": "4f66ccfcc0d1441b0adf5659d29126437e0795261fac51204830b7e3e2381126",
     "packages/python/src/ir.ts": "639ac74e2c54b42623dec1cbe2e4d90ef3d8ef85d586938701b081dc781587de",
@@ -36,7 +35,7 @@
     "packages/python/src/node-model.json5": "790263609649d88dd05d063c44af500bd6f6f59ee638d91d72f02ee23e73b19e",
     "packages/python/src/options.ts": "623cd2eb223bbf9c1cedbf47776494114ffe42251498ade12fdeb9e3a0b3b354",
     "packages/python/src/render-engine.ts": "afdfb79e61218055e5f43fdce367965b58fdb5f629e2203d4504417c72c0695a",
-    "packages/python/src/types.ts": "958aae452126172f8cba40db9bb3fb1dd05e62ad702ddc0ce29d183e9edad071",
+    "packages/python/src/types.ts": "911ae23e8dff2029d309a4ab33119df33ed3bb74d7310dcacd9ab668539d0dfa",
     "packages/python/src/utils.ts": "7947e9a4f9c2e739b838aebae666ae5d4ffe14cd91f1da788818cc09ca1c85c1",
     "packages/python/src/wrap.ts": "38f095ff2ba2f7e7c1f4f02f100a12e935acc9bfbc9991914f81c58bc7c9f8ef",
     "rust/crates/sittir-python/index.d.ts": "d2a4a4828891b73fec6e15bafced17051db3c3aa44017b7996be3ca95078ce9b",

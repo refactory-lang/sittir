@@ -125,7 +125,6 @@ tree-sitter-rust/src/grammar.json
   ├── src/nodes/*.ts      135 self-contained builder files
   ├── src/builder.ts       ir namespace + fromCST + edit
   ├── src/types.ts         Grammar-derived types + leaf types + supertype unions
-  ├── src/grammar.ts       Raw grammar types
   └── tests/*.ts           Per-node test scaffolds
 ```
 
@@ -133,7 +132,6 @@ tree-sitter-rust/src/grammar.json
 
 ```ts
 import type {
-	RustGrammar,
 	StructItem,
 	FunctionItem,
 	Identifier, // leaf type
