@@ -1152,6 +1152,7 @@ export type {
 	ApiSurface,
 	BuildSurface,
 	Engine,
+	EngineIdentity,
 	EngineOptions,
 	FileChange,
 	GrammarFacts,

@@ -48,6 +48,10 @@ The options a single render takes beside the language's render options: `ignoreF
 
 How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
 
+### `packages/types/src/engine-api.ts::EngineIdentity`
+
+What a node needs to know about its engine without holding it: the language's descriptor (which carries the grammar's name), the render module hash that identifies the generated surface, the engine's render options, and the language's trivia facts. Everything in it is plain data, so a node keeps it after its engine is disposed: the node guards read only the language, and `$trivia` reads its entries through the facts, while rendering and editing need the live engine.
+
 ### `packages/types/src/engine-api.ts::GrammarFacts`
 
 The facts a grammar's runtime reads: `render` and `toEdit` from its native engine, and its `TriviaFacts`. Generated `utils.ts` declares them once as `methodsEngine`.

@@ -13,6 +13,13 @@ export interface ParseOptions {
 	readonly deep?: boolean;
 }
 
+export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
+	readonly language: Language<API>;
+	readonly renderModuleHash: string;
+	readonly options: API['options'];
+	readonly trivia: TriviaFacts;
+}
+
 export interface GrammarFacts {
 	render(node: AnyNodeData): string;
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;

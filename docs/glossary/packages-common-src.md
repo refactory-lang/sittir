@@ -24,6 +24,26 @@ Builds one engine from a language's loaded hooks: it creates the native engine f
 
 The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
 
+### `packages/common/src/engine-scope.ts::LiveEngine`
+
+An engine's identity plus its `render`: what a node's `$render` and `$toEdit` reach through their handle. The public `Engine` satisfies it structurally.
+
+### `packages/common/src/engine-scope.ts::EngineHandle`
+
+The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs.
+
+### `packages/common/src/engine-scope.ts::inEngine`
+
+Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child expansion, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
+
+### `packages/common/src/engine-scope.ts::currentHandle`
+
+The handle in scope, or `undefined` outside any engine call. A node built with none has no engine.
+
+### `packages/common/src/engine-scope.ts::isLive`
+
+Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
+
 ### `packages/common/src/engine.ts::createRenderHandle`
 
 A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
