@@ -6,7 +6,7 @@ export type NumberBase = 'float' | 2 | 8 | 10 | 16;
  * the spelling that makes a whole number a float literal (`.0`). Text and
  * `undefined` pass through for the slot guard to judge.
  *
- * Refused: a negative value (a unary minus applied to a positive literal), a
+ * Refused: a negative value, `-0` included (a unary minus applied to a positive literal), a
  * number with no literal spelling (NaN, Infinity), an integer past
  * `Number.MAX_SAFE_INTEGER` (it has already lost precision; a bigint keeps
  * it), and a bigint for a float literal.
@@ -18,9 +18,10 @@ export function numberText<V extends string | number | bigint | undefined>(
 ): V extends number | bigint ? string : V {
 	if (typeof value !== 'number' && typeof value !== 'bigint') return value as never;
 	if (typeof value === 'number' && !Number.isFinite(value)) throw new RangeError(`numberText: ${value} has no literal spelling`);
-	if (value < 0) {
+	const negativeZero = Object.is(value, -0);
+	if (value < 0 || negativeZero) {
 		throw new RangeError(
-			`numberText: ${value}: a negative number is a unary minus applied to a positive literal; build the literal from its absolute value`
+			`numberText: ${negativeZero ? '-0' : value}: a negative number is a unary minus applied to a positive literal; build the literal from its absolute value`
 		);
 	}
 	if (base === 'float') {

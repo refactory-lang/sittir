@@ -29,6 +29,8 @@ describe('numberText', () => {
 		expect(() => numberText(16, '0x', -1)).toThrow(/a negative number is a unary minus applied to a positive literal; build the literal from its absolute value/);
 		expect(() => numberText(10, '', -1n)).toThrow(/unary minus/);
 		expect(() => numberText('float', '.0', -1.5)).toThrow(/unary minus/);
+		expect(() => numberText(10, '', -0)).toThrow(/numberText: -0: a negative number is a unary minus/);
+		expect(() => numberText('float', '.0', -0)).toThrow(/numberText: -0: a negative number is a unary minus/);
 	});
 	it('refuses a number with no literal spelling', () => {
 		expect(() => numberText('float', '.0', Number.NaN)).toThrow(/no literal spelling/);
