@@ -1,6 +1,6 @@
 import type { VariantChild } from './variant-structural.ts';
 import { isHiddenPunctuationLeaf } from './model/node-map.ts';
-import { lowerCamelCase } from './model/casing.ts';
+import { irKeyOfTypeName, lowerCamelCase } from './model/casing.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -833,9 +833,9 @@ function renameCollidingHiddenKinds(
 			message: `visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')}`
 		});
 		h.typeName = newType;
-		h.irKey = lowerCamelCase(newType);
+		h.irKey = irKeyOfTypeName(newType);
 		if (h.factoryName !== undefined) {
-			h.factoryName = `_${lowerCamelCase(typeName)}`;
+			h.factoryName = `_${irKeyOfTypeName(typeName)}`;
 		}
 	}
 }
@@ -859,7 +859,7 @@ function renameCollidingVisibleKinds(
 				.join(', ')}`
 		});
 		n.typeName = newType;
-		n.irKey = lowerCamelCase(newType);
+		n.irKey = irKeyOfTypeName(newType);
 		if (n.factoryName !== undefined) {
 			n.factoryName = n.irKey;
 		}
@@ -876,7 +876,7 @@ function renameCollidingHiddenOnlyKinds(
 		const newType = `${typeName}${i + 1}`;
 		diagnostics.namingEvents.record({ kind: h.kind, from: typeName, to: newType, message: 'hidden siblings' });
 		h.typeName = newType;
-		h.irKey = lowerCamelCase(newType);
+		h.irKey = irKeyOfTypeName(newType);
 		if (h.factoryName !== undefined) {
 			h.factoryName = h.irKey;
 		}

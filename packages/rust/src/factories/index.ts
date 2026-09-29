@@ -171,9 +171,6 @@ export const foreignModItem: Hoisted<typeof O.foreignModItem> = hoistRoutes(O.fo
 export const structItem: Hoisted<typeof O.structItem> = hoistRoutes(O.structItem);
 export const implItem: Hoisted<typeof O.implItem> = hoistRoutes(O.implItem);
 export const pointerType: Hoisted<typeof O.pointerType> = hoistRoutes(O.pointerType);
-export const expressionEndingWithBlock: Hoisted<typeof O.expressionEndingWithBlock> = hoistRoutes(
-	O.expressionEndingWithBlock
-);
 export const delimTokenTree: Hoisted<typeof O.delimTokenTree> = hoistRoutes(O.delimTokenTree);
 export const referenceExpression: Hoisted<typeof O.referenceExpression> = hoistRoutes(O.referenceExpression);
 export const arrayExpression: Hoisted<typeof O.arrayExpression> = hoistRoutes(O.arrayExpression);
@@ -187,8 +184,6 @@ export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.es
 export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
 export const charLiteralEscaped: Hoisted<typeof O.charLiteralEscaped> = hoistRoutes(O.charLiteralEscaped);
 export const declarationStatement: Hoisted<typeof O.declarationStatement> = hoistRoutes(O.declarationStatement);
-export const tokenPattern: Hoisted<typeof O.tokenPattern> = hoistRoutes(O.tokenPattern);
-export const tokens: Hoisted<typeof O.tokens> = hoistRoutes(O.tokens);
 export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
 
 methodsEngine.trivia.comment = coerceToLineComment;

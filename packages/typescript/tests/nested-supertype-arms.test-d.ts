@@ -32,7 +32,7 @@ ts.build.literalType.bigint(42n);
 ts.build.literalType.bigint.hex(42n);
 ts.build.primaryType.literal.bigint.octal(42n);
 ts.build.primaryExpression.number.bigint(42n);
-ts.build.propertyName.number.bigint.binary(42n);
+ts.build.number.bigint.binary(42n);
 
 // update_expression is callable through its postfix default, where it is
 // declared and where it is mounted as a sub-factory arm.

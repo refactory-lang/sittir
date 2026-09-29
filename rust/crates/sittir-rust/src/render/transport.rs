@@ -2946,6 +2946,507 @@ impl ::sittir_core::prepare::Prepare for VerbatimTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum StatementTransport {
+    ExpressionStatement(ExpressionStatementTransport),
+    DeclarationStatement(DeclarationStatementTransport),
+    ConstItem(ConstItemTransport),
+    MacroInvocation(MacroInvocationTransport),
+    MacroDefinition(MacroDefinitionTransport),
+    EmptyStatement(EmptyStatementTransport),
+    AttributeItem(AttributeItemTransport),
+    InnerAttributeItem(InnerAttributeItemTransport),
+    ModItem(ModItemTransport),
+    ForeignModItem(ForeignModItemTransport),
+    StructItem(StructItemTransport),
+    UnionItem(UnionItemTransport),
+    EnumItem(EnumItemTransport),
+    TypeItem(TypeItemTransport),
+    FunctionItem(FunctionItemTransport),
+    FunctionSignatureItem(FunctionSignatureItemTransport),
+    ImplItem(ImplItemTransport),
+    TraitItem(TraitItemTransport),
+    AssociatedType(AssociatedTypeTransport),
+    LetDeclaration(LetDeclarationTransport),
+    UseDeclaration(UseDeclarationTransport),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
+    StaticItem(StaticItemTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for StatementTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            StatementTransport::ExpressionStatement(t) => t.prepare(ctx),
+            StatementTransport::DeclarationStatement(t) => t.prepare(ctx),
+            StatementTransport::ConstItem(t) => t.prepare(ctx),
+            StatementTransport::MacroInvocation(t) => t.prepare(ctx),
+            StatementTransport::MacroDefinition(t) => t.prepare(ctx),
+            StatementTransport::EmptyStatement(t) => t.prepare(ctx),
+            StatementTransport::AttributeItem(t) => t.prepare(ctx),
+            StatementTransport::InnerAttributeItem(t) => t.prepare(ctx),
+            StatementTransport::ModItem(t) => t.prepare(ctx),
+            StatementTransport::ForeignModItem(t) => t.prepare(ctx),
+            StatementTransport::StructItem(t) => t.prepare(ctx),
+            StatementTransport::UnionItem(t) => t.prepare(ctx),
+            StatementTransport::EnumItem(t) => t.prepare(ctx),
+            StatementTransport::TypeItem(t) => t.prepare(ctx),
+            StatementTransport::FunctionItem(t) => t.prepare(ctx),
+            StatementTransport::FunctionSignatureItem(t) => t.prepare(ctx),
+            StatementTransport::ImplItem(t) => t.prepare(ctx),
+            StatementTransport::TraitItem(t) => t.prepare(ctx),
+            StatementTransport::AssociatedType(t) => t.prepare(ctx),
+            StatementTransport::LetDeclaration(t) => t.prepare(ctx),
+            StatementTransport::UseDeclaration(t) => t.prepare(ctx),
+            StatementTransport::ExternCrateDeclaration(t) => t.prepare(ctx),
+            StatementTransport::StaticItem(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    177 => {
+                        if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionStatement(value));
+                        }
+                        if let Ok(value) = ConstItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstItem(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = EmptyStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::EmptyStatement(value));
+                        }
+                        if let Ok(value) = AttributeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AttributeItem(value));
+                        }
+                        if let Ok(value) = InnerAttributeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::InnerAttributeItem(value));
+                        }
+                        if let Ok(value) = UnionItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnionItem(value));
+                        }
+                        if let Ok(value) = EnumItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::EnumItem(value));
+                        }
+                        if let Ok(value) = TypeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeItem(value));
+                        }
+                        if let Ok(value) = FunctionItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionItem(value));
+                        }
+                        if let Ok(value) = FunctionSignatureItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionSignatureItem(value));
+                        }
+                        if let Ok(value) = TraitItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TraitItem(value));
+                        }
+                        if let Ok(value) = AssociatedTypeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssociatedType(value));
+                        }
+                        if let Ok(value) = LetDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetDeclaration(value));
+                        }
+                        if let Ok(value) = UseDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UseDeclaration(value));
+                        }
+                        if let Ok(value) = ExternCrateDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExternCrateDeclaration(value));
+                        }
+                        if let Ok(value) = StaticItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StaticItem(value));
+                        }
+                        if let Ok(value) = DeclarationStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DeclarationStatement(value));
+                        }
+                        if let Ok(value) = MacroDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroDefinition(value));
+                        }
+                        if let Ok(value) = ModItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ModItem(value));
+                        }
+                        if let Ok(value) = ForeignModItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForeignModItem(value));
+                        }
+                        if let Ok(value) = StructItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructItem(value));
+                        }
+                        if let Ok(value) = ImplItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ImplItem(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 177 in StatementTransport decodes as none of its members"))
+                    },
+                    178 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    179 => Ok(Self::ExpressionStatement(
+                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    205 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    424 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    425 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    190 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    191 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    393 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    394 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    403 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    404 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    430 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    431 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    432 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    197 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    198 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    207 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    208 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    209 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    386 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    387 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    215 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    223 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    204 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    206 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    180 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    193 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    194 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    196 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in StatementTransport")
+                )?;
+                match kind_id {
+                    177 => {
+                        if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionStatement(value));
+                        }
+                        if let Ok(value) = ConstItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstItem(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = EmptyStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::EmptyStatement(value));
+                        }
+                        if let Ok(value) = AttributeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AttributeItem(value));
+                        }
+                        if let Ok(value) = InnerAttributeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::InnerAttributeItem(value));
+                        }
+                        if let Ok(value) = UnionItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnionItem(value));
+                        }
+                        if let Ok(value) = EnumItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::EnumItem(value));
+                        }
+                        if let Ok(value) = TypeItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeItem(value));
+                        }
+                        if let Ok(value) = FunctionItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionItem(value));
+                        }
+                        if let Ok(value) = FunctionSignatureItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FunctionSignatureItem(value));
+                        }
+                        if let Ok(value) = TraitItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TraitItem(value));
+                        }
+                        if let Ok(value) = AssociatedTypeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssociatedType(value));
+                        }
+                        if let Ok(value) = LetDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetDeclaration(value));
+                        }
+                        if let Ok(value) = UseDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UseDeclaration(value));
+                        }
+                        if let Ok(value) = ExternCrateDeclarationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExternCrateDeclaration(value));
+                        }
+                        if let Ok(value) = StaticItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StaticItem(value));
+                        }
+                        if let Ok(value) = DeclarationStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DeclarationStatement(value));
+                        }
+                        if let Ok(value) = MacroDefinitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroDefinition(value));
+                        }
+                        if let Ok(value) = ModItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ModItem(value));
+                        }
+                        if let Ok(value) = ForeignModItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForeignModItem(value));
+                        }
+                        if let Ok(value) = StructItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructItem(value));
+                        }
+                        if let Ok(value) = ImplItemTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ImplItem(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 177 in StatementTransport decodes as none of its members"))
+                    },
+                    178 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    179 => Ok(Self::ExpressionStatement(
+                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    205 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    424 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    425 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    190 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    191 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    393 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    394 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    403 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    404 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    430 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    431 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    432 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    197 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    198 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    207 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    208 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    209 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    386 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    387 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    214 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    215 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    223 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    224 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    204 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    206 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    180 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    193 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    194 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    196 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    213 => Ok(Self::DeclarationStatement(
+                        DeclarationStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("StatementTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StatementTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StatementTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StatementTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StatementTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StatementTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StatementTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for StatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
+            Self::DeclarationStatement(inner) => inner.kind_in(kinds),
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::MacroDefinition(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(inner) => inner.kind_in(kinds),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::ModItem(inner) => inner.kind_in(kinds),
+            Self::ForeignModItem(inner) => inner.kind_in(kinds),
+            Self::StructItem(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::FunctionItem(inner) => inner.kind_in(kinds),
+            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
+            Self::ImplItem(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_statement(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum DeclarationStatementTransport {
     ConstItem(ConstItemTransport),
     MacroInvocation(MacroInvocationTransport),
@@ -3281,6 +3782,32 @@ impl ::sittir_core::view::KindOf for DeclarationStatementTransport {
             Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
             Self::StaticItem(inner) => inner.kind_in(kinds),
         }
+    }
+}
+
+fn declaration_statement_transport_to_any(t: DeclarationStatementTransport) -> AnyTransport {
+    match t {
+        DeclarationStatementTransport::ConstItem(inner) => AnyTransport::ConstItem(inner),
+        DeclarationStatementTransport::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        DeclarationStatementTransport::MacroDefinition(inner) => macro_definition_transport_to_any(inner),
+        DeclarationStatementTransport::EmptyStatement(inner) => AnyTransport::EmptyStatement(inner),
+        DeclarationStatementTransport::AttributeItem(inner) => AnyTransport::AttributeItem(inner),
+        DeclarationStatementTransport::InnerAttributeItem(inner) => AnyTransport::InnerAttributeItem(inner),
+        DeclarationStatementTransport::ModItem(inner) => mod_item_transport_to_any(inner),
+        DeclarationStatementTransport::ForeignModItem(inner) => foreign_mod_item_transport_to_any(inner),
+        DeclarationStatementTransport::StructItem(inner) => struct_item_transport_to_any(inner),
+        DeclarationStatementTransport::UnionItem(inner) => AnyTransport::UnionItem(inner),
+        DeclarationStatementTransport::EnumItem(inner) => AnyTransport::EnumItem(inner),
+        DeclarationStatementTransport::TypeItem(inner) => AnyTransport::TypeItem(inner),
+        DeclarationStatementTransport::FunctionItem(inner) => AnyTransport::FunctionItem(inner),
+        DeclarationStatementTransport::FunctionSignatureItem(inner) => AnyTransport::FunctionSignatureItem(inner),
+        DeclarationStatementTransport::ImplItem(inner) => impl_item_transport_to_any(inner),
+        DeclarationStatementTransport::TraitItem(inner) => AnyTransport::TraitItem(inner),
+        DeclarationStatementTransport::AssociatedType(inner) => AnyTransport::AssociatedType(inner),
+        DeclarationStatementTransport::LetDeclaration(inner) => AnyTransport::LetDeclaration(inner),
+        DeclarationStatementTransport::UseDeclaration(inner) => AnyTransport::UseDeclaration(inner),
+        DeclarationStatementTransport::ExternCrateDeclaration(inner) => AnyTransport::ExternCrateDeclaration(inner),
+        DeclarationStatementTransport::StaticItem(inner) => AnyTransport::StaticItem(inner),
     }
 }
 
@@ -8920,415 +9447,6 @@ impl ::sittir_core::render::Render for CharLiteralEscapedTransport {
     }
 }
 
-
-#[derive(Debug, Clone)]
-pub enum SourceFileStatementsTransportSlot {
-    ExpressionStatement(ExpressionStatementTransport),
-    ConstItem(ConstItemTransport),
-    MacroInvocation(MacroInvocationTransport),
-    MacroDefinitionParen(MacroDefinitionParenTransport),
-    MacroDefinitionBracket(MacroDefinitionBracketTransport),
-    MacroDefinitionBrace(MacroDefinitionBraceTransport),
-    EmptyStatement(EmptyStatementTransport),
-    AttributeItem(AttributeItemTransport),
-    InnerAttributeItem(InnerAttributeItemTransport),
-    ModItemExternal(ModItemExternalTransport),
-    ModItemInline(ModItemInlineTransport),
-    ForeignModItemSemi(ForeignModItemSemiTransport),
-    ForeignModItemBody(ForeignModItemBodyTransport),
-    StructItemBrace(StructItemBraceTransport),
-    StructItemTuple(StructItemTupleTransport),
-    StructItemUnit(StructItemUnitTransport),
-    UnionItem(UnionItemTransport),
-    EnumItem(EnumItemTransport),
-    TypeItem(TypeItemTransport),
-    FunctionItem(FunctionItemTransport),
-    FunctionSignatureItem(FunctionSignatureItemTransport),
-    ImplItemBody(ImplItemBodyTransport),
-    ImplItemSemi(ImplItemSemiTransport),
-    TraitItem(TraitItemTransport),
-    AssociatedType(AssociatedTypeTransport),
-    LetDeclaration(LetDeclarationTransport),
-    UseDeclaration(UseDeclarationTransport),
-    ExternCrateDeclaration(ExternCrateDeclarationTransport),
-    StaticItem(StaticItemTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for SourceFileStatementsTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            SourceFileStatementsTransportSlot::ExpressionStatement(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ConstItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::MacroDefinitionParen(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::MacroDefinitionBracket(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::MacroDefinitionBrace(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::EmptyStatement(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::AttributeItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::InnerAttributeItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ModItemExternal(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ModItemInline(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ForeignModItemSemi(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ForeignModItemBody(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::StructItemBrace(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::StructItemTuple(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::StructItemUnit(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::UnionItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::EnumItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::TypeItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::FunctionItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::FunctionSignatureItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ImplItemBody(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ImplItemSemi(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::TraitItem(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::AssociatedType(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::LetDeclaration(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::UseDeclaration(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::ExternCrateDeclaration(t) => t.prepare(ctx),
-            SourceFileStatementsTransportSlot::StaticItem(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for SourceFileStatementsTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
-            Self::ConstItem(inner) => inner.kind_in(kinds),
-            Self::MacroInvocation(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionParen(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionBracket(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionBrace(inner) => inner.kind_in(kinds),
-            Self::EmptyStatement(inner) => inner.kind_in(kinds),
-            Self::AttributeItem(inner) => inner.kind_in(kinds),
-            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
-            Self::ModItemExternal(inner) => inner.kind_in(kinds),
-            Self::ModItemInline(inner) => inner.kind_in(kinds),
-            Self::ForeignModItemSemi(inner) => inner.kind_in(kinds),
-            Self::ForeignModItemBody(inner) => inner.kind_in(kinds),
-            Self::StructItemBrace(inner) => inner.kind_in(kinds),
-            Self::StructItemTuple(inner) => inner.kind_in(kinds),
-            Self::StructItemUnit(inner) => inner.kind_in(kinds),
-            Self::UnionItem(inner) => inner.kind_in(kinds),
-            Self::EnumItem(inner) => inner.kind_in(kinds),
-            Self::TypeItem(inner) => inner.kind_in(kinds),
-            Self::FunctionItem(inner) => inner.kind_in(kinds),
-            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
-            Self::ImplItemBody(inner) => inner.kind_in(kinds),
-            Self::ImplItemSemi(inner) => inner.kind_in(kinds),
-            Self::TraitItem(inner) => inner.kind_in(kinds),
-            Self::AssociatedType(inner) => inner.kind_in(kinds),
-            Self::LetDeclaration(inner) => inner.kind_in(kinds),
-            Self::UseDeclaration(inner) => inner.kind_in(kinds),
-            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
-            Self::StaticItem(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SourceFileStatementsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    178 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    179 => Ok(Self::ExpressionStatement(
-                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    205 => Ok(Self::ConstItem(
-                        ConstItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    259 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    423 => Ok(Self::MacroDefinitionParen(
-                        MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    424 => Ok(Self::MacroDefinitionBracket(
-                        MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
-                    )),
-                    425 => Ok(Self::MacroDefinitionBrace(
-                        MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    190 => Ok(Self::AttributeItem(
-                        AttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    191 => Ok(Self::InnerAttributeItem(
-                        InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    393 => Ok(Self::ModItemExternal(
-                        ModItemExternalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    394 => Ok(Self::ModItemInline(
-                        ModItemInlineTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::ForeignModItemSemi(
-                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    404 => Ok(Self::ForeignModItemBody(
-                        ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    430 => Ok(Self::StructItemBrace(
-                        StructItemBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    431 => Ok(Self::StructItemTuple(
-                        StructItemTupleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    432 => Ok(Self::StructItemUnit(
-                        StructItemUnitTransport::from_napi_value(env, napi_val)?
-                    )),
-                    197 => Ok(Self::UnionItem(
-                        UnionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    198 => Ok(Self::EnumItem(
-                        EnumItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    207 => Ok(Self::TypeItem(
-                        TypeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    208 => Ok(Self::FunctionItem(
-                        FunctionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    209 => Ok(Self::FunctionSignatureItem(
-                        FunctionSignatureItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    386 => Ok(Self::ImplItemBody(
-                        ImplItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    387 => Ok(Self::ImplItemSemi(
-                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::TraitItem(
-                        TraitItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::AssociatedType(
-                        AssociatedTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    223 => Ok(Self::LetDeclaration(
-                        LetDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::UseDeclaration(
-                        UseDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    204 => Ok(Self::ExternCrateDeclaration(
-                        ExternCrateDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    206 => Ok(Self::StaticItem(
-                        StaticItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SourceFileStatementsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SourceFileStatementsTransportSlot")
-                )?;
-                match kind_id {
-                    178 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    179 => Ok(Self::ExpressionStatement(
-                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    205 => Ok(Self::ConstItem(
-                        ConstItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    259 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    423 => Ok(Self::MacroDefinitionParen(
-                        MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    424 => Ok(Self::MacroDefinitionBracket(
-                        MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
-                    )),
-                    425 => Ok(Self::MacroDefinitionBrace(
-                        MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    190 => Ok(Self::AttributeItem(
-                        AttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    191 => Ok(Self::InnerAttributeItem(
-                        InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    393 => Ok(Self::ModItemExternal(
-                        ModItemExternalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    394 => Ok(Self::ModItemInline(
-                        ModItemInlineTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::ForeignModItemSemi(
-                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    404 => Ok(Self::ForeignModItemBody(
-                        ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    430 => Ok(Self::StructItemBrace(
-                        StructItemBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    431 => Ok(Self::StructItemTuple(
-                        StructItemTupleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    432 => Ok(Self::StructItemUnit(
-                        StructItemUnitTransport::from_napi_value(env, napi_val)?
-                    )),
-                    197 => Ok(Self::UnionItem(
-                        UnionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    198 => Ok(Self::EnumItem(
-                        EnumItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    207 => Ok(Self::TypeItem(
-                        TypeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    208 => Ok(Self::FunctionItem(
-                        FunctionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    209 => Ok(Self::FunctionSignatureItem(
-                        FunctionSignatureItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    386 => Ok(Self::ImplItemBody(
-                        ImplItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    387 => Ok(Self::ImplItemSemi(
-                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::TraitItem(
-                        TraitItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::AssociatedType(
-                        AssociatedTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    223 => Ok(Self::LetDeclaration(
-                        LetDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::UseDeclaration(
-                        UseDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    204 => Ok(Self::ExternCrateDeclaration(
-                        ExternCrateDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    206 => Ok(Self::StaticItem(
-                        StaticItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SourceFileStatementsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("SourceFileStatementsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SourceFileStatementsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SourceFileStatementsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SourceFileStatementsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SourceFileStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SourceFileStatementsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SourceFileStatementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn source_file_statements_transport_slot_to_any(t: SourceFileStatementsTransportSlot) -> AnyTransport {
-    match t {
-        SourceFileStatementsTransportSlot::ExpressionStatement(inner) => AnyTransport::ExpressionStatement(inner),
-        SourceFileStatementsTransportSlot::ConstItem(inner) => AnyTransport::ConstItem(inner),
-        SourceFileStatementsTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        SourceFileStatementsTransportSlot::MacroDefinitionParen(inner) => AnyTransport::MacroDefinitionParen(inner),
-        SourceFileStatementsTransportSlot::MacroDefinitionBracket(inner) => AnyTransport::MacroDefinitionBracket(inner),
-        SourceFileStatementsTransportSlot::MacroDefinitionBrace(inner) => AnyTransport::MacroDefinitionBrace(inner),
-        SourceFileStatementsTransportSlot::EmptyStatement(inner) => AnyTransport::EmptyStatement(inner),
-        SourceFileStatementsTransportSlot::AttributeItem(inner) => AnyTransport::AttributeItem(inner),
-        SourceFileStatementsTransportSlot::InnerAttributeItem(inner) => AnyTransport::InnerAttributeItem(inner),
-        SourceFileStatementsTransportSlot::ModItemExternal(inner) => AnyTransport::ModItemExternal(inner),
-        SourceFileStatementsTransportSlot::ModItemInline(inner) => AnyTransport::ModItemInline(inner),
-        SourceFileStatementsTransportSlot::ForeignModItemSemi(inner) => AnyTransport::ForeignModItemSemi(inner),
-        SourceFileStatementsTransportSlot::ForeignModItemBody(inner) => AnyTransport::ForeignModItemBody(inner),
-        SourceFileStatementsTransportSlot::StructItemBrace(inner) => AnyTransport::StructItemBrace(inner),
-        SourceFileStatementsTransportSlot::StructItemTuple(inner) => AnyTransport::StructItemTuple(inner),
-        SourceFileStatementsTransportSlot::StructItemUnit(inner) => AnyTransport::StructItemUnit(inner),
-        SourceFileStatementsTransportSlot::UnionItem(inner) => AnyTransport::UnionItem(inner),
-        SourceFileStatementsTransportSlot::EnumItem(inner) => AnyTransport::EnumItem(inner),
-        SourceFileStatementsTransportSlot::TypeItem(inner) => AnyTransport::TypeItem(inner),
-        SourceFileStatementsTransportSlot::FunctionItem(inner) => AnyTransport::FunctionItem(inner),
-        SourceFileStatementsTransportSlot::FunctionSignatureItem(inner) => AnyTransport::FunctionSignatureItem(inner),
-        SourceFileStatementsTransportSlot::ImplItemBody(inner) => AnyTransport::ImplItemBody(inner),
-        SourceFileStatementsTransportSlot::ImplItemSemi(inner) => AnyTransport::ImplItemSemi(inner),
-        SourceFileStatementsTransportSlot::TraitItem(inner) => AnyTransport::TraitItem(inner),
-        SourceFileStatementsTransportSlot::AssociatedType(inner) => AnyTransport::AssociatedType(inner),
-        SourceFileStatementsTransportSlot::LetDeclaration(inner) => AnyTransport::LetDeclaration(inner),
-        SourceFileStatementsTransportSlot::UseDeclaration(inner) => AnyTransport::UseDeclaration(inner),
-        SourceFileStatementsTransportSlot::ExternCrateDeclaration(inner) => AnyTransport::ExternCrateDeclaration(inner),
-        SourceFileStatementsTransportSlot::StaticItem(inner) => AnyTransport::StaticItem(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for SourceFileStatementsTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            SourceFileStatementsTransportSlot::ExpressionStatement(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ConstItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::MacroInvocation(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::MacroDefinitionParen(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::MacroDefinitionBracket(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::MacroDefinitionBrace(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::EmptyStatement(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::AttributeItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::InnerAttributeItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ModItemExternal(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ModItemInline(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ForeignModItemSemi(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ForeignModItemBody(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::StructItemBrace(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::StructItemTuple(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::StructItemUnit(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::UnionItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::EnumItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::TypeItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::FunctionItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::FunctionSignatureItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ImplItemBody(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ImplItemSemi(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::TraitItem(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::AssociatedType(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::LetDeclaration(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::UseDeclaration(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::ExternCrateDeclaration(inner) => inner.render(w),
-            SourceFileStatementsTransportSlot::StaticItem(inner) => inner.render(w),
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub enum ExpressionStatementContentTransportSlot {
@@ -28161,415 +28279,6 @@ impl ::sittir_core::render::Render for GenBlockMoveMarkerTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum BlockStatementsTransportSlot {
-    ExpressionStatement(ExpressionStatementTransport),
-    ConstItem(ConstItemTransport),
-    MacroInvocation(MacroInvocationTransport),
-    MacroDefinitionParen(MacroDefinitionParenTransport),
-    MacroDefinitionBracket(MacroDefinitionBracketTransport),
-    MacroDefinitionBrace(MacroDefinitionBraceTransport),
-    EmptyStatement(EmptyStatementTransport),
-    AttributeItem(AttributeItemTransport),
-    InnerAttributeItem(InnerAttributeItemTransport),
-    ModItemExternal(ModItemExternalTransport),
-    ModItemInline(ModItemInlineTransport),
-    ForeignModItemSemi(ForeignModItemSemiTransport),
-    ForeignModItemBody(ForeignModItemBodyTransport),
-    StructItemBrace(StructItemBraceTransport),
-    StructItemTuple(StructItemTupleTransport),
-    StructItemUnit(StructItemUnitTransport),
-    UnionItem(UnionItemTransport),
-    EnumItem(EnumItemTransport),
-    TypeItem(TypeItemTransport),
-    FunctionItem(FunctionItemTransport),
-    FunctionSignatureItem(FunctionSignatureItemTransport),
-    ImplItemBody(ImplItemBodyTransport),
-    ImplItemSemi(ImplItemSemiTransport),
-    TraitItem(TraitItemTransport),
-    AssociatedType(AssociatedTypeTransport),
-    LetDeclaration(LetDeclarationTransport),
-    UseDeclaration(UseDeclarationTransport),
-    ExternCrateDeclaration(ExternCrateDeclarationTransport),
-    StaticItem(StaticItemTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for BlockStatementsTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            BlockStatementsTransportSlot::ExpressionStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ConstItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::MacroDefinitionParen(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::MacroDefinitionBracket(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::MacroDefinitionBrace(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::EmptyStatement(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::AttributeItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::InnerAttributeItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ModItemExternal(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ModItemInline(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ForeignModItemSemi(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ForeignModItemBody(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::StructItemBrace(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::StructItemTuple(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::StructItemUnit(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::UnionItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::EnumItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::TypeItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::FunctionItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::FunctionSignatureItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ImplItemBody(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ImplItemSemi(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::TraitItem(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::AssociatedType(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::LetDeclaration(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::UseDeclaration(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::ExternCrateDeclaration(t) => t.prepare(ctx),
-            BlockStatementsTransportSlot::StaticItem(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for BlockStatementsTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
-            Self::ConstItem(inner) => inner.kind_in(kinds),
-            Self::MacroInvocation(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionParen(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionBracket(inner) => inner.kind_in(kinds),
-            Self::MacroDefinitionBrace(inner) => inner.kind_in(kinds),
-            Self::EmptyStatement(inner) => inner.kind_in(kinds),
-            Self::AttributeItem(inner) => inner.kind_in(kinds),
-            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
-            Self::ModItemExternal(inner) => inner.kind_in(kinds),
-            Self::ModItemInline(inner) => inner.kind_in(kinds),
-            Self::ForeignModItemSemi(inner) => inner.kind_in(kinds),
-            Self::ForeignModItemBody(inner) => inner.kind_in(kinds),
-            Self::StructItemBrace(inner) => inner.kind_in(kinds),
-            Self::StructItemTuple(inner) => inner.kind_in(kinds),
-            Self::StructItemUnit(inner) => inner.kind_in(kinds),
-            Self::UnionItem(inner) => inner.kind_in(kinds),
-            Self::EnumItem(inner) => inner.kind_in(kinds),
-            Self::TypeItem(inner) => inner.kind_in(kinds),
-            Self::FunctionItem(inner) => inner.kind_in(kinds),
-            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
-            Self::ImplItemBody(inner) => inner.kind_in(kinds),
-            Self::ImplItemSemi(inner) => inner.kind_in(kinds),
-            Self::TraitItem(inner) => inner.kind_in(kinds),
-            Self::AssociatedType(inner) => inner.kind_in(kinds),
-            Self::LetDeclaration(inner) => inner.kind_in(kinds),
-            Self::UseDeclaration(inner) => inner.kind_in(kinds),
-            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
-            Self::StaticItem(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    178 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    179 => Ok(Self::ExpressionStatement(
-                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    205 => Ok(Self::ConstItem(
-                        ConstItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    259 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    423 => Ok(Self::MacroDefinitionParen(
-                        MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    424 => Ok(Self::MacroDefinitionBracket(
-                        MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
-                    )),
-                    425 => Ok(Self::MacroDefinitionBrace(
-                        MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    190 => Ok(Self::AttributeItem(
-                        AttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    191 => Ok(Self::InnerAttributeItem(
-                        InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    393 => Ok(Self::ModItemExternal(
-                        ModItemExternalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    394 => Ok(Self::ModItemInline(
-                        ModItemInlineTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::ForeignModItemSemi(
-                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    404 => Ok(Self::ForeignModItemBody(
-                        ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    430 => Ok(Self::StructItemBrace(
-                        StructItemBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    431 => Ok(Self::StructItemTuple(
-                        StructItemTupleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    432 => Ok(Self::StructItemUnit(
-                        StructItemUnitTransport::from_napi_value(env, napi_val)?
-                    )),
-                    197 => Ok(Self::UnionItem(
-                        UnionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    198 => Ok(Self::EnumItem(
-                        EnumItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    207 => Ok(Self::TypeItem(
-                        TypeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    208 => Ok(Self::FunctionItem(
-                        FunctionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    209 => Ok(Self::FunctionSignatureItem(
-                        FunctionSignatureItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    386 => Ok(Self::ImplItemBody(
-                        ImplItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    387 => Ok(Self::ImplItemSemi(
-                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::TraitItem(
-                        TraitItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::AssociatedType(
-                        AssociatedTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    223 => Ok(Self::LetDeclaration(
-                        LetDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::UseDeclaration(
-                        UseDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    204 => Ok(Self::ExternCrateDeclaration(
-                        ExternCrateDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    206 => Ok(Self::StaticItem(
-                        StaticItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockStatementsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BlockStatementsTransportSlot")
-                )?;
-                match kind_id {
-                    178 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    179 => Ok(Self::ExpressionStatement(
-                        ExpressionStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    205 => Ok(Self::ConstItem(
-                        ConstItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    259 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    423 => Ok(Self::MacroDefinitionParen(
-                        MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    424 => Ok(Self::MacroDefinitionBracket(
-                        MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
-                    )),
-                    425 => Ok(Self::MacroDefinitionBrace(
-                        MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    190 => Ok(Self::AttributeItem(
-                        AttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    191 => Ok(Self::InnerAttributeItem(
-                        InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    393 => Ok(Self::ModItemExternal(
-                        ModItemExternalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    394 => Ok(Self::ModItemInline(
-                        ModItemInlineTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::ForeignModItemSemi(
-                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    404 => Ok(Self::ForeignModItemBody(
-                        ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    430 => Ok(Self::StructItemBrace(
-                        StructItemBraceTransport::from_napi_value(env, napi_val)?
-                    )),
-                    431 => Ok(Self::StructItemTuple(
-                        StructItemTupleTransport::from_napi_value(env, napi_val)?
-                    )),
-                    432 => Ok(Self::StructItemUnit(
-                        StructItemUnitTransport::from_napi_value(env, napi_val)?
-                    )),
-                    197 => Ok(Self::UnionItem(
-                        UnionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    198 => Ok(Self::EnumItem(
-                        EnumItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    207 => Ok(Self::TypeItem(
-                        TypeItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    208 => Ok(Self::FunctionItem(
-                        FunctionItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    209 => Ok(Self::FunctionSignatureItem(
-                        FunctionSignatureItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    386 => Ok(Self::ImplItemBody(
-                        ImplItemBodyTransport::from_napi_value(env, napi_val)?
-                    )),
-                    387 => Ok(Self::ImplItemSemi(
-                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
-                    )),
-                    214 => Ok(Self::TraitItem(
-                        TraitItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    215 => Ok(Self::AssociatedType(
-                        AssociatedTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    223 => Ok(Self::LetDeclaration(
-                        LetDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    224 => Ok(Self::UseDeclaration(
-                        UseDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    204 => Ok(Self::ExternCrateDeclaration(
-                        ExternCrateDeclarationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    206 => Ok(Self::StaticItem(
-                        StaticItemTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockStatementsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("BlockStatementsTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockStatementsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlockStatementsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockStatementsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockStatementsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockStatementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn block_statements_transport_slot_to_any(t: BlockStatementsTransportSlot) -> AnyTransport {
-    match t {
-        BlockStatementsTransportSlot::ExpressionStatement(inner) => AnyTransport::ExpressionStatement(inner),
-        BlockStatementsTransportSlot::ConstItem(inner) => AnyTransport::ConstItem(inner),
-        BlockStatementsTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        BlockStatementsTransportSlot::MacroDefinitionParen(inner) => AnyTransport::MacroDefinitionParen(inner),
-        BlockStatementsTransportSlot::MacroDefinitionBracket(inner) => AnyTransport::MacroDefinitionBracket(inner),
-        BlockStatementsTransportSlot::MacroDefinitionBrace(inner) => AnyTransport::MacroDefinitionBrace(inner),
-        BlockStatementsTransportSlot::EmptyStatement(inner) => AnyTransport::EmptyStatement(inner),
-        BlockStatementsTransportSlot::AttributeItem(inner) => AnyTransport::AttributeItem(inner),
-        BlockStatementsTransportSlot::InnerAttributeItem(inner) => AnyTransport::InnerAttributeItem(inner),
-        BlockStatementsTransportSlot::ModItemExternal(inner) => AnyTransport::ModItemExternal(inner),
-        BlockStatementsTransportSlot::ModItemInline(inner) => AnyTransport::ModItemInline(inner),
-        BlockStatementsTransportSlot::ForeignModItemSemi(inner) => AnyTransport::ForeignModItemSemi(inner),
-        BlockStatementsTransportSlot::ForeignModItemBody(inner) => AnyTransport::ForeignModItemBody(inner),
-        BlockStatementsTransportSlot::StructItemBrace(inner) => AnyTransport::StructItemBrace(inner),
-        BlockStatementsTransportSlot::StructItemTuple(inner) => AnyTransport::StructItemTuple(inner),
-        BlockStatementsTransportSlot::StructItemUnit(inner) => AnyTransport::StructItemUnit(inner),
-        BlockStatementsTransportSlot::UnionItem(inner) => AnyTransport::UnionItem(inner),
-        BlockStatementsTransportSlot::EnumItem(inner) => AnyTransport::EnumItem(inner),
-        BlockStatementsTransportSlot::TypeItem(inner) => AnyTransport::TypeItem(inner),
-        BlockStatementsTransportSlot::FunctionItem(inner) => AnyTransport::FunctionItem(inner),
-        BlockStatementsTransportSlot::FunctionSignatureItem(inner) => AnyTransport::FunctionSignatureItem(inner),
-        BlockStatementsTransportSlot::ImplItemBody(inner) => AnyTransport::ImplItemBody(inner),
-        BlockStatementsTransportSlot::ImplItemSemi(inner) => AnyTransport::ImplItemSemi(inner),
-        BlockStatementsTransportSlot::TraitItem(inner) => AnyTransport::TraitItem(inner),
-        BlockStatementsTransportSlot::AssociatedType(inner) => AnyTransport::AssociatedType(inner),
-        BlockStatementsTransportSlot::LetDeclaration(inner) => AnyTransport::LetDeclaration(inner),
-        BlockStatementsTransportSlot::UseDeclaration(inner) => AnyTransport::UseDeclaration(inner),
-        BlockStatementsTransportSlot::ExternCrateDeclaration(inner) => AnyTransport::ExternCrateDeclaration(inner),
-        BlockStatementsTransportSlot::StaticItem(inner) => AnyTransport::StaticItem(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for BlockStatementsTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            BlockStatementsTransportSlot::ExpressionStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ConstItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::MacroInvocation(inner) => inner.render(w),
-            BlockStatementsTransportSlot::MacroDefinitionParen(inner) => inner.render(w),
-            BlockStatementsTransportSlot::MacroDefinitionBracket(inner) => inner.render(w),
-            BlockStatementsTransportSlot::MacroDefinitionBrace(inner) => inner.render(w),
-            BlockStatementsTransportSlot::EmptyStatement(inner) => inner.render(w),
-            BlockStatementsTransportSlot::AttributeItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::InnerAttributeItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ModItemExternal(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ModItemInline(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ForeignModItemSemi(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ForeignModItemBody(inner) => inner.render(w),
-            BlockStatementsTransportSlot::StructItemBrace(inner) => inner.render(w),
-            BlockStatementsTransportSlot::StructItemTuple(inner) => inner.render(w),
-            BlockStatementsTransportSlot::StructItemUnit(inner) => inner.render(w),
-            BlockStatementsTransportSlot::UnionItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::EnumItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::TypeItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::FunctionItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::FunctionSignatureItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ImplItemBody(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ImplItemSemi(inner) => inner.render(w),
-            BlockStatementsTransportSlot::TraitItem(inner) => inner.render(w),
-            BlockStatementsTransportSlot::AssociatedType(inner) => inner.render(w),
-            BlockStatementsTransportSlot::LetDeclaration(inner) => inner.render(w),
-            BlockStatementsTransportSlot::UseDeclaration(inner) => inner.render(w),
-            BlockStatementsTransportSlot::ExternCrateDeclaration(inner) => inner.render(w),
-            BlockStatementsTransportSlot::StaticItem(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum GenericPatternNameTransportSlot {
     Identifier(IdentifierTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -41418,7 +41127,7 @@ pub struct SourceFileTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_shebang"))]
     pub shebang: Option<::sittir_core::SlotValue<ShebangTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Option<Vec<::sittir_core::SlotValue<SourceFileStatementsTransportSlot>>>,
+    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
     pub statements_separator_space: Option<u16>,
 }
@@ -49048,7 +48757,7 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Option<Vec<::sittir_core::SlotValue<BlockStatementsTransportSlot>>>,
+    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_expression"))]
     pub trailing_expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
@@ -76738,6 +76447,37 @@ impl ::sittir_core::prepare::SeatTarget for TypeArgumentTransport {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for StatementTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::ExpressionStatement(t) => t.seat_target(table),
+            Self::DeclarationStatement(t) => t.seat_target(table),
+            Self::ConstItem(t) => t.seat_target(table),
+            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::MacroDefinition(t) => t.seat_target(table),
+            Self::AttributeItem(t) => t.seat_target(table),
+            Self::InnerAttributeItem(t) => t.seat_target(table),
+            Self::ModItem(t) => t.seat_target(table),
+            Self::ForeignModItem(t) => t.seat_target(table),
+            Self::StructItem(t) => t.seat_target(table),
+            Self::UnionItem(t) => t.seat_target(table),
+            Self::EnumItem(t) => t.seat_target(table),
+            Self::TypeItem(t) => t.seat_target(table),
+            Self::FunctionItem(t) => t.seat_target(table),
+            Self::FunctionSignatureItem(t) => t.seat_target(table),
+            Self::ImplItem(t) => t.seat_target(table),
+            Self::TraitItem(t) => t.seat_target(table),
+            Self::AssociatedType(t) => t.seat_target(table),
+            Self::LetDeclaration(t) => t.seat_target(table),
+            Self::UseDeclaration(t) => t.seat_target(table),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table),
+            Self::StaticItem(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for DeclarationStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -77036,43 +76776,6 @@ impl ::sittir_core::prepare::SeatTarget for LiteralPatternTransport {
             Self::StringLiteral(t) => t.seat_target(table),
             Self::RawStringLiteral(t) => t.seat_target(table),
             Self::NegativeLiteral(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for SourceFileStatementsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::ConstItem(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::MacroDefinitionParen(t) => t.seat_target(table),
-            Self::MacroDefinitionBracket(t) => t.seat_target(table),
-            Self::MacroDefinitionBrace(t) => t.seat_target(table),
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
-            Self::ModItemExternal(t) => t.seat_target(table),
-            Self::ModItemInline(t) => t.seat_target(table),
-            Self::ForeignModItemSemi(t) => t.seat_target(table),
-            Self::ForeignModItemBody(t) => t.seat_target(table),
-            Self::StructItemBrace(t) => t.seat_target(table),
-            Self::StructItemTuple(t) => t.seat_target(table),
-            Self::StructItemUnit(t) => t.seat_target(table),
-            Self::UnionItem(t) => t.seat_target(table),
-            Self::EnumItem(t) => t.seat_target(table),
-            Self::TypeItem(t) => t.seat_target(table),
-            Self::FunctionItem(t) => t.seat_target(table),
-            Self::FunctionSignatureItem(t) => t.seat_target(table),
-            Self::ImplItemBody(t) => t.seat_target(table),
-            Self::ImplItemSemi(t) => t.seat_target(table),
-            Self::TraitItem(t) => t.seat_target(table),
-            Self::AssociatedType(t) => t.seat_target(table),
-            Self::LetDeclaration(t) => t.seat_target(table),
-            Self::UseDeclaration(t) => t.seat_target(table),
-            Self::ExternCrateDeclaration(t) => t.seat_target(table),
-            Self::StaticItem(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -77813,43 +77516,6 @@ impl ::sittir_core::prepare::SeatTarget for ClosureParametersParametersTransport
             Self::ConstBlock(t) => t.seat_target(table),
             Self::MacroInvocation(t) => t.seat_target(table),
             Self::Parameter(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for BlockStatementsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::ConstItem(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::MacroDefinitionParen(t) => t.seat_target(table),
-            Self::MacroDefinitionBracket(t) => t.seat_target(table),
-            Self::MacroDefinitionBrace(t) => t.seat_target(table),
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
-            Self::ModItemExternal(t) => t.seat_target(table),
-            Self::ModItemInline(t) => t.seat_target(table),
-            Self::ForeignModItemSemi(t) => t.seat_target(table),
-            Self::ForeignModItemBody(t) => t.seat_target(table),
-            Self::StructItemBrace(t) => t.seat_target(table),
-            Self::StructItemTuple(t) => t.seat_target(table),
-            Self::StructItemUnit(t) => t.seat_target(table),
-            Self::UnionItem(t) => t.seat_target(table),
-            Self::EnumItem(t) => t.seat_target(table),
-            Self::TypeItem(t) => t.seat_target(table),
-            Self::FunctionItem(t) => t.seat_target(table),
-            Self::FunctionSignatureItem(t) => t.seat_target(table),
-            Self::ImplItemBody(t) => t.seat_target(table),
-            Self::ImplItemSemi(t) => t.seat_target(table),
-            Self::TraitItem(t) => t.seat_target(table),
-            Self::AssociatedType(t) => t.seat_target(table),
-            Self::LetDeclaration(t) => t.seat_target(table),
-            Self::UseDeclaration(t) => t.seat_target(table),
-            Self::ExternCrateDeclaration(t) => t.seat_target(table),
-            Self::StaticItem(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -82724,6 +82390,34 @@ fn render_raw_keyword(t: &RawKeywordTransport, w: &mut dyn ::sittir_core::render
 
 fn render_macro_rules_bang(t: &MacroRulesBangTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
+}
+
+fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        StatementTransport::ExpressionStatement(inner) => inner.render(w),
+        StatementTransport::DeclarationStatement(inner) => inner.render(w),
+        StatementTransport::ConstItem(inner) => inner.render(w),
+        StatementTransport::MacroInvocation(inner) => inner.render(w),
+        StatementTransport::MacroDefinition(inner) => inner.render(w),
+        StatementTransport::EmptyStatement(inner) => inner.render(w),
+        StatementTransport::AttributeItem(inner) => inner.render(w),
+        StatementTransport::InnerAttributeItem(inner) => inner.render(w),
+        StatementTransport::ModItem(inner) => inner.render(w),
+        StatementTransport::ForeignModItem(inner) => inner.render(w),
+        StatementTransport::StructItem(inner) => inner.render(w),
+        StatementTransport::UnionItem(inner) => inner.render(w),
+        StatementTransport::EnumItem(inner) => inner.render(w),
+        StatementTransport::TypeItem(inner) => inner.render(w),
+        StatementTransport::FunctionItem(inner) => inner.render(w),
+        StatementTransport::FunctionSignatureItem(inner) => inner.render(w),
+        StatementTransport::ImplItem(inner) => inner.render(w),
+        StatementTransport::TraitItem(inner) => inner.render(w),
+        StatementTransport::AssociatedType(inner) => inner.render(w),
+        StatementTransport::LetDeclaration(inner) => inner.render(w),
+        StatementTransport::UseDeclaration(inner) => inner.render(w),
+        StatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
+        StatementTransport::StaticItem(inner) => inner.render(w),
+    }
 }
 
 fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

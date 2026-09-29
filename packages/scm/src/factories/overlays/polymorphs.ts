@@ -310,21 +310,3 @@ export const definition: {
 	list: list,
 	field: B.fieldDefinition
 };
-
-export const groupExpression: {
-	readonly definition: typeof definition;
-	readonly arm: typeof B.groupExpressionArm;
-} = {
-	definition: definition,
-	arm: B.groupExpressionArm
-};
-
-export const namedNodeExpression: {
-	readonly definition: typeof definition;
-	readonly negatedField: typeof B.negatedField;
-	readonly arm: typeof B.namedNodeExpressionArm;
-} = {
-	definition: definition,
-	negatedField: B.negatedField,
-	arm: B.namedNodeExpressionArm
-};

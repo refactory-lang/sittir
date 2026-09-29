@@ -173,11 +173,30 @@ describe('Link — hidden rule classification', () => {
 			type: 'SUPERTYPE',
 			name: '_expression',
 			hidden: true,
+			declared: true,
 			subtypes: [
 				{ type: 'SYMBOL', name: 'binary_expression', inline: false },
 				{ type: 'SYMBOL', name: 'identifier', inline: false }
 			]
 		});
+	});
+
+	it('stamps declared only on a supertype the grammar declares', () => {
+		const raw = makeRaw({
+			item: { type: SYMBOL, name: '_operand' },
+			_operand: {
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'number' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
+			},
+			number: { type: PATTERN, value: '[0-9]+' },
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const rule = link(raw).rules['_operand']!;
+		expect(rule.type).toBe('SUPERTYPE');
+		expect('declared' in rule).toBe(false);
 	});
 
 	it('classifies hidden choice-of-strings as enum', () => {
@@ -232,6 +251,7 @@ describe('Link — hidden rule classification', () => {
 				type: 'SUPERTYPE',
 				name: '_simple_pattern',
 				hidden: true,
+				declared: true,
 				// Each subtype ref stamps its own storage→parse alias inline
 				// (`aliasedFrom`) rather than a separate parallel map — the
 				// parse name carries the alias occurrence's own runtime symbol

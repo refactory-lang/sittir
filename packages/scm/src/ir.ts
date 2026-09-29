@@ -15,12 +15,6 @@ import * as F from './factories/index.js';
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const nodeIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
 export const whitespace: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
@@ -42,10 +36,6 @@ export const whitespace: {
 };
 
 export const definition: typeof F.definition = F.definition;
-
-export const groupExpression: typeof F.groupExpression = F.groupExpression;
-
-export const namedNodeExpression: typeof F.namedNodeExpression = F.namedNodeExpression;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -69,11 +59,8 @@ export const ir: {
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
-	readonly nodeIdentifier: typeof nodeIdentifier;
 	readonly whitespace: typeof whitespace;
 	readonly definition: typeof definition;
-	readonly groupExpression: typeof groupExpression;
-	readonly namedNodeExpression: typeof namedNodeExpression;
 } = {
 	// Node factories
 	program: F.program,
@@ -103,9 +90,6 @@ export const ir: {
 	immediateIdentifier: F.buildImmediateIdentifier,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	nodeIdentifier,
 	whitespace,
-	definition,
-	groupExpression,
-	namedNodeExpression
+	definition
 };

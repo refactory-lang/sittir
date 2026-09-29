@@ -6782,21 +6782,14 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "expression_statement",
-            "_declaration_statement"
+            "_statement"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "expression_statement",
-              "parseKind": "expression_statement"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_declaration_statement",
-              "parseKind": "_declaration_statement"
+              "name": "_statement",
+              "parseKind": "_statement"
             }
           ]
         },
@@ -21506,21 +21499,14 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "expression_statement",
-            "_declaration_statement"
+            "_statement"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "expression_statement",
-              "parseKind": "expression_statement"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_declaration_statement",
-              "parseKind": "_declaration_statement"
+              "name": "_statement",
+              "parseKind": "_statement"
             }
           ]
         }

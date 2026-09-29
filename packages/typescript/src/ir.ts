@@ -65,12 +65,6 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const expressions: {
-	readonly sequence: typeof F.sequenceExpression;
-} = {
-	sequence: F.sequenceExpression
-};
-
 export const expression: {
 	readonly as: typeof F.asExpression;
 	readonly satisfies: typeof F.satisfiesExpression;
@@ -153,26 +147,6 @@ export const primaryExpression: {
 	nonNull: F.nonNullExpression
 };
 
-export const augmentedAssignmentLhs: {
-	readonly member: typeof F.memberExpression;
-	readonly subscript: typeof F.subscriptExpression;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly nonNull: typeof F.nonNullExpression;
-} = {
-	member: F.memberExpression,
-	subscript: F.subscriptExpression,
-	identifier: F.buildIdentifier,
-	parenthesized: F.parenthesizedExpression,
-	nonNull: F.nonNullExpression
-};
-
-export const importIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
 export const type: {
 	readonly function: typeof F.functionType;
 	readonly readonly: typeof F.readonlyType;
@@ -187,18 +161,6 @@ export const type: {
 	infer: F.inferType,
 	queryMemberExpressionInAnnotation: F.typeQueryMemberExpressionInTypeAnnotation,
 	queryCallExpressionInAnnotation: F.typeQueryCallExpressionInTypeAnnotation
-};
-
-export const tupleTypeMember: {
-	readonly parameter: typeof F.tupleParameter;
-	readonly optionalParameter: typeof F.optionalTupleParameter;
-	readonly optional: typeof F.optionalType;
-	readonly rest: typeof F.restType;
-} = {
-	parameter: F.tupleParameter,
-	optionalParameter: F.optionalTupleParameter,
-	optional: F.optionalType,
-	rest: F.restType
 };
 
 export const primaryType: {
@@ -261,19 +223,9 @@ export const whitespace: {
 
 export const declaration: typeof F.declaration = F.declaration;
 
-export const formalParameter: typeof F.formalParameter = F.formalParameter;
-
-export const destructuringPattern: typeof F.destructuringPattern = F.destructuringPattern;
-
-export const identifier: typeof F.identifier = F.identifier;
-
 export const pattern: typeof F.pattern = F.pattern;
 
-export const moduleExportName: typeof F.moduleExportName = F.moduleExportName;
-
 export const statement: typeof F.statement = F.statement;
-
-export const propertyName: typeof F.propertyName = F.propertyName;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -476,26 +428,18 @@ export const ir: {
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly templateChars: typeof F.buildTemplateChars;
-	readonly expressions: typeof expressions;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
-	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
-	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
-	readonly tupleTypeMember: typeof tupleTypeMember;
 	readonly primaryType: typeof primaryType;
 	readonly whitespace: typeof whitespace;
 	readonly declaration: typeof declaration;
-	readonly formalParameter: typeof formalParameter;
-	readonly destructuringPattern: typeof destructuringPattern;
-	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
-	readonly moduleExportName: typeof moduleExportName;
 	readonly statement: typeof statement;
-	readonly propertyName: typeof propertyName;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -703,27 +647,19 @@ export const ir: {
 	unescapedSingleStringFragment: F.buildUnescapedSingleStringFragment,
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
+	identifier: F.buildIdentifier,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 	templateChars: F.buildTemplateChars,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	expressions,
 	expression,
 	primaryExpression,
-	augmentedAssignmentLhs,
-	importIdentifier,
 	type,
-	tupleTypeMember,
 	primaryType,
 	whitespace,
 	declaration,
-	formalParameter,
-	destructuringPattern,
-	identifier,
 	pattern,
-	moduleExportName,
 	statement,
-	propertyName,
 	synonym
 };

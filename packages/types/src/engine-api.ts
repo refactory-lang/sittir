@@ -141,10 +141,14 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 
 type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
 
-export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> = IndentOption<
-	R extends { readonly indent?: infer I extends string } ? I : string,
-	API['indentChar']
-> & { readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never };
+export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
+	IsExactly<R, API['options']> extends true
+		? unknown
+		: IndentOption<R extends { readonly indent?: infer I extends string } ? I : string, API['indentChar']> & {
+				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
+			};
+
+type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;

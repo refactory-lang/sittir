@@ -14631,6 +14631,7 @@
     "escape_sequence",
     "_whitespace",
     "comment",
+    "_statement",
     "reference_expression",
     "impl_item",
     "array_expression",

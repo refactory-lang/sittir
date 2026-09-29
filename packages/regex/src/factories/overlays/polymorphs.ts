@@ -1067,16 +1067,3 @@ export const inlineFlagsGroup: {
 	toggle: { strict: F.buildInlineFlagsGroupToggle, coerce: C.coerceToInlineFlagsGroupToggle },
 	disable: { strict: F.buildInlineFlagsGroupDisable, coerce: C.coerceToInlineFlagsGroupDisable }
 };
-
-export const characterEscape: {
-	readonly controlEscape: { strict: typeof F.buildControlEscape; coerce: typeof C.coerceToControlEscape };
-	readonly controlLetterEscape: {
-		strict: typeof F.buildControlLetterEscape;
-		coerce: typeof C.coerceToControlLetterEscape;
-	};
-	readonly identityEscape: typeof B.identityEscape;
-} = {
-	controlEscape: { strict: F.buildControlEscape, coerce: C.coerceToControlEscape },
-	controlLetterEscape: { strict: F.buildControlLetterEscape, coerce: C.coerceToControlLetterEscape },
-	identityEscape: B.identityEscape
-};
